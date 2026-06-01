@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -21,13 +20,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './cron-delete-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     FormActionsComponent,
-    MatDialogActions,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -37,8 +33,8 @@ export class CronDeleteDialog {
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<CronDeleteDialog>>(MatDialogRef);
-  cronjob = inject<CronjobRow>(MAT_DIALOG_DATA);
+  private dialogRef = inject<DialogRef<unknown, CronDeleteDialog>>(DialogRef);
+  cronjob = inject<CronjobRow>(DIALOG_DATA);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 

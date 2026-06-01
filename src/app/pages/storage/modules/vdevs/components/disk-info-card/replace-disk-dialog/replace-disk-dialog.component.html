@@ -1,6 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Replacing disk {name}' | translate: { name: data.diskName } }}
-</h1>
+<tn-dialog-shell [title]="'Replacing disk {name}' | translate: { name: data.diskName }">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-unused-disk-select
     formControlName="replacement"
@@ -27,7 +25,7 @@
   ></ix-checkbox>
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" matDialogClose>
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -42,3 +40,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

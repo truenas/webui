@@ -1,8 +1,6 @@
-<h1 mat-dialog-title>{{ 'Delete' | translate }}</h1>
-
+<tn-dialog-shell [title]="'Delete' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div
-    mat-dialog-content
     class="device-delete-modal-content"
   >
     <p
@@ -36,7 +34,7 @@
     ></ix-checkbox>
   </div>
 
-  <div mat-dialog-actions class="device-delete-modal-actions">
+  <div tnDialogAction class="device-delete-modal-actions">
     <button
       type="button"
       mat-button
@@ -59,3 +57,4 @@
     </button>
   </div>
 </form>
+</tn-dialog-shell>

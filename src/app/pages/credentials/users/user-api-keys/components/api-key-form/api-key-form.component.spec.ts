@@ -1,8 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { parseISO } from 'date-fns';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -41,7 +42,7 @@ describe('ApiKeyFormComponent', () => {
         mockCall('api_key.create', { key: 'generated-key' } as ApiKey),
         mockCall('api_key.update', {} as ApiKey),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService),
       mockProvider(LocaleService, {
@@ -60,7 +61,7 @@ describe('ApiKeyFormComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
 
-    jest.spyOn(spectator.inject(MatDialog), 'open').mockImplementation();
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockImplementation();
   }
 
   it('creates a new API key and shows it when dialog is opened with no data', async () => {
@@ -79,7 +80,7 @@ describe('ApiKeyFormComponent', () => {
       expires_at: null,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });
   });
@@ -127,7 +128,7 @@ describe('ApiKeyFormComponent', () => {
       expires_at: null,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
-    expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialog, {
+    expect(spectator.inject(TnDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });
   });
@@ -177,7 +178,7 @@ describe('ApiKeyFormComponent', () => {
       },
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });
   });

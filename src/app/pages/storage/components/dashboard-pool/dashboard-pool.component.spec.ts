@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, flush, tick } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -56,7 +56,7 @@ describe('DashboardPoolComponent', () => {
       MockComponent(SedLockedWarningComponent),
     ],
     providers: [
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({ afterClosed: jest.fn(() => of()) })),
       }),
       mockProvider(SnackbarService),
@@ -95,7 +95,7 @@ describe('DashboardPoolComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect' }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ExportDisconnectModalComponent, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ExportDisconnectModalComponent, {
       data: pool,
     });
   });
@@ -130,7 +130,7 @@ describe('DashboardPoolComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness);
     await menu.clickItem({ text: 'Auto TRIM' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AutotrimDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AutotrimDialog, {
       data: pool,
     });
   });

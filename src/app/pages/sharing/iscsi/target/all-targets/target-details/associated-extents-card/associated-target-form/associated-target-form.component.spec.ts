@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -31,9 +31,9 @@ describe('AssociatedTargetFormComponent', () => {
         mockCall('iscsi.targetextent.create'),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: dialogData,
       },
     ],
@@ -66,7 +66,7 @@ describe('AssociatedTargetFormComponent', () => {
   });
 
   it('closes dialog on cancel', async () => {
-    const dialogRef = spectator.inject(MatDialogRef);
+    const dialogRef = spectator.inject(DialogRef);
     const spyClose = jest.spyOn(dialogRef, 'close');
 
     const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));

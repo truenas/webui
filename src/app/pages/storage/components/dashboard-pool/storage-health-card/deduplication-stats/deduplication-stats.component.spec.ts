@@ -1,8 +1,8 @@
-import { MatDialog } from '@angular/material/dialog';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { TnDialog } from '@truenas/ui-components';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -23,7 +23,7 @@ describe('DeduplicationStatsComponent', () => {
     component: DeduplicationStatsComponent,
     providers: [
       mockProvider(PoolsDashboardStore),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
           afterClosed: jest.fn(() => of()),
         })),
@@ -73,7 +73,7 @@ describe('DeduplicationStatsComponent', () => {
 
     spectator.click(spectator.query(byText('Set Quota'))!);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SetDedupQuotaComponent, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SetDedupQuotaComponent, {
       data: {
         dedup_table_size: 100 * KiB,
       } as Pool,
@@ -87,7 +87,7 @@ describe('DeduplicationStatsComponent', () => {
 
     spectator.click(spectator.query(byText('Prune'))!);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(PruneDedupTableDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(PruneDedupTableDialog, {
       data: {
         dedup_table_size: 100 * KiB,
       } as Pool,

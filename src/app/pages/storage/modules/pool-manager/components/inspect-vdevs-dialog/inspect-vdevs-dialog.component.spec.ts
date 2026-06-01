@@ -1,4 +1,4 @@
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   byTextContent, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -35,9 +35,9 @@ describe('InspectVdevsDialogComponent', () => {
       MockComponent(ManualSelectionVdevComponent),
     ],
     providers: [
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           topology,
           enclosures: [
@@ -98,6 +98,6 @@ describe('InspectVdevsDialogComponent', () => {
   it('closes the dialog when X icon is pressed', () => {
     spectator.click('.close-icon');
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 });

@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
@@ -25,15 +24,12 @@ import { IscsiService } from 'app/services/iscsi.service';
   styleUrls: ['./delete-target-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxCheckboxComponent,
-    MatDialogActions,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -41,12 +37,12 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class DeleteTargetDialog implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject<MatDialogRef<DeleteTargetDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, DeleteTargetDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
-  target = inject<IscsiTarget>(MAT_DIALOG_DATA);
+  target = inject<IscsiTarget>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingIscsiTargetWrite];

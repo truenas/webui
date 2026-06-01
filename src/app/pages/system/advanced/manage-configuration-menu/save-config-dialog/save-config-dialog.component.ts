@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { format } from 'date-fns';
@@ -35,14 +34,13 @@ export interface SaveConfigDialogMessages {
   styleUrls: ['./save-config-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     FormsModule,
     IxCheckboxComponent,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -51,7 +49,7 @@ export class SaveConfigDialog {
   private store$ = inject<Store<AppState>>(Store);
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
-  private dialogRef = inject<MatDialogRef<SaveConfigDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, SaveConfigDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -71,7 +69,7 @@ export class SaveConfigDialog {
   };
 
   constructor() {
-    const messageOverrides = inject<Partial<SaveConfigDialogMessages>>(MAT_DIALOG_DATA, { optional: true }) ?? {};
+    const messageOverrides = inject<Partial<SaveConfigDialogMessages>>(DIALOG_DATA, { optional: true }) ?? {};
 
     this.helptext = {
       ...this.defaultMessages,

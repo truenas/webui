@@ -1,13 +1,11 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, inject } from '@angular/core';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogContent, MatDialogModule, MatDialogRef,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { catchError, Observable, of } from 'rxjs';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -30,12 +28,11 @@ export type ContainerImageWithId = ContainerImage & {
 @Component({
   selector: 'ix-select-image-dialog',
   imports: [
-    MatTableModule,
+    TnDialogShellComponent,
+MatTableModule,
     IxFieldsetComponent,
     IxSelectComponent,
     ReactiveFormsModule,
-    MatDialogContent,
-    MatDialogModule,
     TranslateModule,
     TnIconComponent,
     IxInputComponent,
@@ -50,7 +47,7 @@ export type ContainerImageWithId = ContainerImage & {
 })
 export class SelectImageDialog implements OnInit {
   private api = inject(ApiService);
-  private dialogRef = inject<MatDialogRef<SelectImageDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, SelectImageDialog>>(DialogRef);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -58,7 +55,7 @@ export class SelectImageDialog implements OnInit {
   protected data = inject<{
     remote: ContainerRemote;
     type: ContainerType;
-  }>(MAT_DIALOG_DATA);
+  }>(DIALOG_DATA);
 
   protected readonly columns = ['label', 'os', 'release', 'archs', 'variant', 'actions'];
   protected filterForm = this.fb.group({

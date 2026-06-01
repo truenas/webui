@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -40,8 +40,8 @@ describe('DeleteTargetDialogComponent', () => {
         }])),
         getTargetExtents: jest.fn(() => of(extents)),
       }),
-      mockProvider(MatDialogRef),
-      { provide: MAT_DIALOG_DATA, useValue: target },
+      mockProvider(DialogRef),
+      { provide: DIALOG_DATA, useValue: target },
     ],
   });
 
@@ -61,14 +61,14 @@ describe('DeleteTargetDialogComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.target.delete', [1, false, true]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('cancels the dialog when cancel button is clicked', async () => {
     const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
     await cancelButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(false);
   });
 
   it('shows extents checkbox when there are associated extents', async () => {

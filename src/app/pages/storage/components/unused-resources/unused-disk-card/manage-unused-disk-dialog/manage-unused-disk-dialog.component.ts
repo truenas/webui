@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { groupBy } from 'lodash-es';
@@ -30,17 +29,14 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
   styleUrls: ['./manage-unused-disk-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    MatDialogContent,
     WarningComponent,
     IxFieldsetComponent,
     IxRadioGroupComponent,
     IxSelectComponent,
-    MatDialogActions,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -51,8 +47,8 @@ export class ManageUnusedDiskDialog implements OnInit {
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
   cdr = inject(ChangeDetectorRef);
-  private dialogRef = inject<MatDialogRef<ManageUnusedDiskDialog>>(MatDialogRef);
-  resource = inject<ManageUnusedDiskDialogResource>(MAT_DIALOG_DATA);
+  private dialogRef = inject<DialogRef<unknown, ManageUnusedDiskDialog>>(DialogRef);
+  resource = inject<ManageUnusedDiskDialogResource>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];

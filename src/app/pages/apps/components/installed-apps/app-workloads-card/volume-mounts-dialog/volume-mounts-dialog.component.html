@@ -1,4 +1,5 @@
-<h1 mat-dialog-title>
+<tn-dialog-shell [title]="''">
+<h1>
   <span class="title">
     {{ '{service} Volume Mounts' | translate: { service: containerDetails.service_name } }}
   </span>
@@ -6,7 +7,7 @@
   <button
     class="close"
     mat-icon-button
-    mat-dialog-close="close"
+   
     ixTest="close"
     [aria-label]="'Close' | translate"
   >
@@ -14,7 +15,7 @@
   </button>
 </h1>
 
-<div mat-dialog-content>
+<div>
   <div class="table-container">
     <table ixTest="volume-mounts">
       <tr [ixTest]="['volume-mounts', 'header']">
@@ -42,10 +43,11 @@
   <ix-form-actions>
     <button
       mat-button
-      mat-dialog-close="close"
+     
       ixTest="close-button"
     >
       {{ 'Ok' | translate }}
     </button>
   </ix-form-actions>
 </div>
+</tn-dialog-shell>

@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { MatTableHarness } from '@angular/material/table/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -73,7 +73,7 @@ describe('MapUserGroupIdsDialogComponent', () => {
         mockCall('user.update'),
         mockCall('group.update'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(UserService, mockUserService),
     ],
   });
@@ -150,7 +150,7 @@ describe('MapUserGroupIdsDialogComponent', () => {
   });
 
   it('closes dialog when close button is clicked', async () => {
-    const dialogRef = spectator.inject(MatDialogRef);
+    const dialogRef = spectator.inject(DialogRef);
     jest.spyOn(dialogRef, 'close');
 
     const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '.header button[mat-icon-button]' }));

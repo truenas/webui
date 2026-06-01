@@ -1,5 +1,5 @@
 import { computed, Injectable, signal, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { TnDialog } from '@truenas/ui-components';
 import { ComponentStore } from '@ngrx/component-store';
 import { merge } from 'lodash-es';
 import {
@@ -62,7 +62,7 @@ const initialState: UserFormState = {
 @Injectable()
 export class UserFormStore extends ComponentStore<UserFormState> {
   private api = inject(ApiService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
 
   readonly isStigMode = computed(() => this.state().isStigMode);
   readonly homeModeOldValue = computed(() => this.state().setupDetails.homeModeOldValue);
@@ -102,7 +102,7 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     if (this.isNewUser() && this.state().setupDetails.stigPassword === UserStigPasswordOption.OneTimePassword) {
       return this.api.call('auth.generate_onetime_password', [{ username: this.userConfig()?.username }]).pipe(
         switchMap((password) => {
-          this.matDialog.open(OneTimePasswordCreatedDialog, { data: password });
+          this.tnDialog.open(OneTimePasswordCreatedDialog, { data: password });
           return of(user);
         }),
       );

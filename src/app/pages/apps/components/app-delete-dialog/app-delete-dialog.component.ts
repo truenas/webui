@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -18,9 +17,8 @@ import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/a
   styleUrls: ['./app-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatDialogTitle,
-    MatDialogClose,
+    TnDialogShellComponent,
+MatButton,
     ReactiveFormsModule,
     FormActionsComponent,
     IxCheckboxComponent,
@@ -31,8 +29,8 @@ import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/a
 })
 export class AppDeleteDialog {
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject<MatDialogRef<AppDeleteDialog, AppDeleteDialogOutputData>>(MatDialogRef);
-  protected data = inject<AppDeleteDialogInputData>(MAT_DIALOG_DATA);
+  private dialogRef = inject<DialogRef<AppDeleteDialogOutputData, AppDeleteDialog>>(DialogRef);
+  protected data = inject<AppDeleteDialogInputData>(DIALOG_DATA);
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);
   protected readonly deleteMessage = signal(this.translate.instant('The <i><b>{name}</b></i> application will be permanently deleted.', { name: this.data.name }));

@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import {
-  MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { parse } from 'date-fns';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -24,15 +23,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./ipmi-events-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FakeProgressBarComponent,
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
+FakeProgressBarComponent,
     EmptyComponent,
     FormActionsComponent,
-    MatDialogActions,
     MatButton,
     TestDirective,
-    MatDialogClose,
     TranslateModule,
     FormatDateTimePipe,
   ],

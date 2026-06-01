@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { TnDialog } from '@truenas/ui-components';
 import {
   FormArray,
   FormControl,
@@ -12,7 +13,6 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -97,7 +97,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ContainerFormComponent implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
@@ -339,7 +339,7 @@ export class ContainerFormComponent implements OnInit {
   }
 
   protected onBrowseCatalogImages(): void {
-    this.matDialog
+    this.tnDialog
       .open(SelectImageDialog, {
         minWidth: '90vw',
         data: {
@@ -347,7 +347,7 @@ export class ContainerFormComponent implements OnInit {
           type: ContainerType.Container,
         },
       })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe((image: ContainerImageWithId) => {
         this.form.controls.image.setValue(image.id);

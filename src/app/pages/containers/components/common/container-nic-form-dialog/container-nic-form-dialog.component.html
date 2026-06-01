@@ -1,11 +1,12 @@
-<h1 mat-dialog-title>
+<tn-dialog-shell [title]="''">
+<h1>
   @if (isEditMode()) {
     {{ 'Edit NIC Device: {nic}' | translate: { nic: nic() } }}
   } @else {
     {{ 'Add NIC Device: {nic}' | translate: { nic: nic() } }}
   }
 </h1>
-<div mat-dialog-content>
+<div>
   <form [formGroup]="form">
     <ix-select
       formControlName="type"
@@ -38,11 +39,11 @@
     }
   </form>
 </div>
-<div mat-dialog-actions>
+<div tnDialogAction>
     <button
       mat-button
       ixTest="cancel"
-      [mat-dialog-close]="null"
+     
     >
       {{ 'Cancel' | translate }}
     </button>
@@ -60,3 +61,4 @@
       }
     </button>
 </div>
+</tn-dialog-shell>

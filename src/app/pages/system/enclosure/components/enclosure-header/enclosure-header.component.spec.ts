@@ -1,7 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -21,7 +22,7 @@ describe('EnclosureHeaderComponent', () => {
     component: EnclosureHeaderComponent,
     shallow: true,
     providers: [
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(EnclosureStore, {
         enclosureLabel: () => 'My Enclosure',
         selectedEnclosure: () => ({
@@ -49,14 +50,14 @@ describe('EnclosureHeaderComponent', () => {
   });
 
   it('opens edit dialog when Edit Label is pressed', async () => {
-    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
-      afterClosed: () => of('new label'),
-    } as MatDialogRef<SetEnclosureLabelDialog>);
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of('new label'),
+    } as DialogRef<unknown, SetEnclosureLabelDialog>);
 
     const editLabel = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Label' }));
     await editLabel.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SetEnclosureLabelDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SetEnclosureLabelDialog, {
       data: {
         currentLabel: 'My Enclosure',
         defaultLabel: 'M50',

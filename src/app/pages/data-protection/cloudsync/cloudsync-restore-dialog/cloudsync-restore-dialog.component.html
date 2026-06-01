@@ -1,6 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Restore Cloud Sync Task' | translate }}
-</h1>
+<tn-dialog-shell [title]="'Restore Cloud Sync Task' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-input
     formControlName="description"
@@ -28,7 +26,7 @@
   ></ix-explorer>
 
   <ix-form-actions>
-    <button mat-button type="button" matDialogClose ixTest="cancel">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -44,3 +42,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

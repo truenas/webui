@@ -1,7 +1,6 @@
-<h1 mat-dialog-title>{{ 'Add To Pool' | translate }}</h1>
-
+<tn-dialog-shell [title]="'Add To Pool' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <div mat-dialog-content>
+  <div>
     @if (noPoolsDisks.length) {
       <h4>{{ 'Unassigned Disks' | translate }}</h4>
       <ul class="unused-disks">
@@ -49,8 +48,8 @@
     </ix-fieldset>
   </div>
 
-  <div mat-dialog-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+  <div tnDialogAction>
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -66,3 +65,4 @@
     </button>
   </div>
 </form>
+</tn-dialog-shell>

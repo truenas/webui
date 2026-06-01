@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -37,15 +36,14 @@ export const pruneByLabels = new Map<PruneBy, string>([
   templateUrl: './prune-dedup-table-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormActionsComponent,
+    TnDialogShellComponent,
+FormActionsComponent,
     IxInputComponent,
     MatButton,
-    MatDialogTitle,
     ReactiveFormsModule,
     TestDirective,
     TranslateModule,
     IxRadioGroupComponent,
-    MatDialogClose,
     MatSlider,
     MatSliderThumb,
     IxLabelComponent,
@@ -58,8 +56,8 @@ export class PruneDedupTableDialog {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<MatDialogRef<PruneDedupTableDialog>>(MatDialogRef);
-  protected pool = inject<Pool>(MAT_DIALOG_DATA);
+  private dialogRef = inject<DialogRef<unknown, PruneDedupTableDialog>>(DialogRef);
+  protected pool = inject<Pool>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({

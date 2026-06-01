@@ -1,4 +1,4 @@
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { VmDeviceType, VmDisplayType } from 'app/enums/vm.enum';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
@@ -10,7 +10,7 @@ describe('DeviceDetailsComponent', () => {
     component: DeviceDetailsComponent,
     providers: [
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           attributes: {
             dtype: VmDeviceType.Display,

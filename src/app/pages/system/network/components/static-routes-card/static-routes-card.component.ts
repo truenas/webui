@@ -1,12 +1,11 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, tnIconMarker } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -59,7 +58,7 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
   ],
 })
 export class StaticRoutesCardComponent implements OnInit {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
@@ -132,9 +131,9 @@ export class StaticRoutesCardComponent implements OnInit {
   }
 
   doDelete(route: StaticRoute): void {
-    this.matDialog.open(StaticRouteDeleteDialog, {
+    this.tnDialog.open(StaticRouteDeleteDialog, {
       data: route,
-    }).afterClosed()
+    }).closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getStaticRoutes();

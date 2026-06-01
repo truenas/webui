@@ -1,12 +1,11 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, tnIconMarker } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -49,7 +48,7 @@ import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card
 export class IpmiCardComponent implements OnInit {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
@@ -102,7 +101,7 @@ export class IpmiCardComponent implements OnInit {
   }
 
   onOpenEvents(): void {
-    this.matDialog.open(IpmiEventsDialog);
+    this.tnDialog.open(IpmiEventsDialog);
   }
 
   private loadIpmiEntries(): void {

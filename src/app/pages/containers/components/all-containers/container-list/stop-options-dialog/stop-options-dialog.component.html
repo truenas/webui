@@ -1,4 +1,5 @@
-<h1 matDialogTitle>
+<tn-dialog-shell [title]="''">
+<h1>
   @if (isRestart()) {
     {{ 'Restart Options' | translate }}
   } @else {
@@ -15,7 +16,7 @@
   ></ix-select>
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -28,3 +29,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

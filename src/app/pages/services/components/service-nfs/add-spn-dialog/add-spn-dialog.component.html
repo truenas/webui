@@ -1,6 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Add Kerberos SPN Entry' | translate }}
-</h1>
+<tn-dialog-shell [title]="'Add Kerberos SPN Entry' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-input
     formControlName="username"
@@ -31,9 +29,10 @@
       mat-button
       type="button"
       ixTest="cancel"
-      matDialogClose
+     
     >
       {{ 'Cancel' | translate }}
     </button>
   </div>
 </form>
+</tn-dialog-shell>

@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RestartSmbDialog } from './restart-smb-dialog.component';
 
@@ -14,7 +14,7 @@ describe('RestartSmbDialog', () => {
   const createComponent = createComponentFactory({
     component: RestartSmbDialog,
     providers: [
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockAuth(),
     ],
   });

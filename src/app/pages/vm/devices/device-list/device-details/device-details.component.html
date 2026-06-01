@@ -1,23 +1,25 @@
-<h1 mat-dialog-title>
+<tn-dialog-shell [title]="''">
+<h1>
   <tn-icon class="information-icon" name="information" library="mdi"></tn-icon>
   <span class="information-title">
     {{ title | translate }}
   </span>
 </h1>
-<div mat-dialog-content class="attributes">
+<div class="attributes">
   @for (attribute of attributes; track attribute) {
     <div>
       {{ attribute[0] }}: {{ attribute[1] }}
     </div>
   }
 </div>
-<div mat-dialog-actions>
+<div tnDialogAction>
   &nbsp;
   <button
     mat-button
     ixTest="dialog-close"
-    matDialogClose
+   
   >
     {{ 'Close' | translate }}
   </button>
 </div>
+</tn-dialog-shell>

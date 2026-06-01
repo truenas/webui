@@ -1,6 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Restore Replication Task' | translate }}
-</h1>
+<tn-dialog-shell [title]="'Restore Replication Task' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-input
     formControlName="name"
@@ -18,7 +16,7 @@
   ></ix-explorer>
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" matDialogClose>
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -34,3 +32,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

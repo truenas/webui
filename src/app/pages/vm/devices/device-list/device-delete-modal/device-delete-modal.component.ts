@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -28,12 +27,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    MatDialogContent,
     IxCheckboxComponent,
     IxInputComponent,
-    MatDialogActions,
     MatButton,
     TestDirective,
     RequiresRolesDirective,
@@ -42,9 +39,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class DeviceDeleteModalComponent implements OnInit {
   private loader = inject(LoaderService);
-  device = inject<VmDevice>(MAT_DIALOG_DATA);
+  device = inject<VmDevice>(DIALOG_DATA);
   private fb = inject(FormBuilder);
-  private dialogRef = inject<MatDialogRef<DeviceDeleteModalComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, DeviceDeleteModalComponent>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);

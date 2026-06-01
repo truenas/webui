@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent,
-} from '@angular/material/dialog';
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { formatDistance } from 'date-fns';
@@ -15,18 +14,16 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './dockerhub-rate-limit-info-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TranslateModule,
-    MatDialogContent,
-    MatDialogActions,
+    TnDialogShellComponent,
+TranslateModule,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RouterLink,
   ],
 })
 export class DockerHubRateInfoDialog {
   private translate = inject(TranslateService);
-  data = inject<DockerHubRateLimit>(MAT_DIALOG_DATA);
+  data = inject<DockerHubRateLimit>(DIALOG_DATA);
 
   helpText = helptextApps;
 

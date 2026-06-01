@@ -1,11 +1,10 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, TrackByFunction, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -26,14 +25,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./boot-pool-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     BulkListItemComponent,
     IxCheckboxComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
-    MatDialogClose,
     TranslateModule,
     KeyValuePipe,
   ],
@@ -41,9 +39,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class BootPoolDeleteDialog {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
-  private dialogRef = inject<MatDialogRef<BootPoolDeleteDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, BootPoolDeleteDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
-  bootenvs = inject<BootEnvironment[]>(MAT_DIALOG_DATA);
+  bootenvs = inject<BootEnvironment[]>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.BootEnvWrite];

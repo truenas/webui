@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
@@ -83,9 +83,9 @@ describe('ServiceNfsComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(),
+          closed: of(),
         })),
       }),
       mockProvider(SlideInRef, slideInRef),
@@ -170,7 +170,7 @@ describe('ServiceNfsComponent', () => {
     const addSpnButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add SPN' }));
     await addSpnButton.click();
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AddSpnDialog);
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AddSpnDialog);
   });
 
   it('disables RDMA field unless it is an enterprise system with RDMA capable NIC', async () => {

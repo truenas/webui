@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
+import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   filter,
@@ -37,7 +37,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 })
 export class AllTargetsComponent implements OnInit {
   private iscsiService = inject(IscsiService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);
   private destroyRef = inject(DestroyRef);
 
@@ -91,9 +91,9 @@ export class AllTargetsComponent implements OnInit {
   }
 
   deleteTarget(target: IscsiTarget): void {
-    this.matDialog
+    this.tnDialog
       .open(DeleteTargetDialog, { data: target, width: '600px' })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.dataProvider.load();

@@ -1,6 +1,5 @@
-<h1 mat-dialog-title>{{ 'Delete Target "{name}"' | translate:{ name: target.name } }}</h1>
-
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'Delete Target "{name}"' | translate:{ name: target.name }">
+<div>
   @if (warningMessage()) {
     <p [innerHTML]="warningMessage()"></p>
   }
@@ -26,12 +25,12 @@
     ></ix-checkbox>
   </form>
 </div>
-<mat-dialog-actions>
+<div tnDialogAction>
   <ix-form-actions>
     <button
       mat-button
       ixTest="cancel"
-      [matDialogClose]="false"
+     
     >
       {{ 'Cancel' | translate }}
     </button>
@@ -46,4 +45,5 @@
       {{ 'Delete' | translate }}
     </button>
   </ix-form-actions>
-</mat-dialog-actions>
+</div>
+</tn-dialog-shell>

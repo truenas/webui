@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -20,13 +21,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./add-spn-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxInputComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
-    MatDialogClose,
     TranslateModule,
   ],
 })
@@ -35,7 +35,7 @@ export class AddSpnDialog {
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<CloudSyncRestoreDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, CloudSyncRestoreDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);

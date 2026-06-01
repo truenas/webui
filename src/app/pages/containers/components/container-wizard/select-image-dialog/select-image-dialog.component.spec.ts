@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   createComponentFactory,
   mockProvider,
@@ -38,9 +38,9 @@ describe('SelectImageDialogComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       mockApi([mockCall('container.image.query_registry', imageChoices)]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           remote: ContainerRemote.LinuxContainers,
           type: ContainerType.Container,
@@ -111,7 +111,7 @@ describe('SelectImageDialogComponent', () => {
       expect(selectButtons).toHaveLength(2);
 
       await selectButtons[0].click();
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
         id: 'almalinux:8',
         archs: ['amd64'],
         description: 'almalinux container image',
@@ -124,7 +124,7 @@ describe('SelectImageDialogComponent', () => {
       });
 
       await selectButtons[1].click();
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
         id: 'alpine:3.18',
         archs: ['amd64'],
         description: 'alpine container image',
@@ -140,7 +140,7 @@ describe('SelectImageDialogComponent', () => {
     it('closes the dialog when X icon is pressed', () => {
       spectator.click('#ix-close-icon');
 
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
     });
 
     it('shows empty state when no images match search', async () => {

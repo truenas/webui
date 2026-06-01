@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, signal, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -35,13 +34,12 @@ export interface RaidzExtendDialogParams {
   styleUrls: ['./raidz-extend-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     UnusedDiskSelectComponent,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     TranslateModule,
     FileSizePipe,
   ],
@@ -52,11 +50,11 @@ export class RaidzExtendDialog {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<RaidzExtendDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, RaidzExtendDialog>>(DialogRef);
   private vDevsStore = inject(VDevsStore);
   private dialogService = inject(DialogService);
   private poolExtendJobService = inject(PoolExtendJobService);
-  data = inject<RaidzExtendDialogParams>(MAT_DIALOG_DATA);
+  data = inject<RaidzExtendDialogParams>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({

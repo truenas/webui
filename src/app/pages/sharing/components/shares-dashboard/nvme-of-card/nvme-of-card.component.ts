@@ -1,15 +1,14 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, computed, OnInit, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { nvmeOfEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -81,7 +80,7 @@ export class NvmeOfCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private store$ = inject<Store<ServicesState>>(Store);
   private nvmeOfStore = inject(NvmeOfStore);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
@@ -176,11 +175,11 @@ export class NvmeOfCardComponent implements OnInit {
   }
 
   doDelete(row: NvmeOfSubsystemDetails): void {
-    this.matDialog.open(
+    this.tnDialog.open(
       SubsystemDeleteDialogComponent,
       { data: row, minWidth: '500px' },
     )
-      .afterClosed()
+      .closed
       .pipe(
         filter((data: { confirmed: boolean; force: boolean }) => data?.confirmed),
         switchMap(({ force }) => {

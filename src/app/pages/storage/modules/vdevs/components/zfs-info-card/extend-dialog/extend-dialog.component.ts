@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -32,13 +31,12 @@ export interface ExtendDialogParams {
   styleUrls: ['./extend-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     UnusedDiskSelectComponent,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     TranslateModule,
   ],
 })
@@ -49,9 +47,9 @@ export class ExtendDialog {
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<ExtendDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, ExtendDialog>>(DialogRef);
   private poolExtendJobService = inject(PoolExtendJobService);
-  data = inject<ExtendDialogParams>(MAT_DIALOG_DATA);
+  data = inject<ExtendDialogParams>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({

@@ -1,9 +1,10 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogClose } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, filter, map } from 'rxjs';
@@ -43,7 +44,8 @@ export interface ManualDiskSelectionParams {
   styleUrls: ['./manual-disk-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnDialogShellComponent,
+MatCard,
     MatCardContent,
     ManualSelectionDisksComponent,
     MatDivider,
@@ -51,7 +53,6 @@ export interface ManualDiskSelectionParams {
     MatButton,
     TestDirective,
     ManualSelectionVdevComponent,
-    MatDialogClose,
     TranslateModule,
     AsyncPipe,
   ],
@@ -61,8 +62,8 @@ export interface ManualDiskSelectionParams {
   ],
 })
 export class ManualDiskSelectionComponent implements OnInit {
-  protected data = inject<ManualDiskSelectionParams>(MAT_DIALOG_DATA);
-  private dialogRef = inject<MatDialogRef<ManualDiskSelectionComponent>>(MatDialogRef);
+  protected data = inject<ManualDiskSelectionParams>(DIALOG_DATA);
+  private dialogRef = inject<DialogRef<unknown, ManualDiskSelectionComponent>>(DialogRef);
   private manualDiskSelectionStore = inject(ManualDiskSelectionStore);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);

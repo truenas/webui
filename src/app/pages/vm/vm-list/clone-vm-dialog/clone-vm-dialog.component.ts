@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -23,15 +22,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     IxInputComponent,
     ReactiveFormsModule,
-    MatDialogActions,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -40,8 +36,8 @@ export class CloneVmDialogComponent {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
-  vm = inject<VirtualMachine>(MAT_DIALOG_DATA);
-  private dialogRef = inject<MatDialogRef<CloneVmDialogComponent>>(MatDialogRef);
+  vm = inject<VirtualMachine>(DIALOG_DATA);
+  private dialogRef = inject<DialogRef<unknown, CloneVmDialogComponent>>(DialogRef);
   private destroyRef = inject(DestroyRef);
 
   nameControl = new FormControl('');

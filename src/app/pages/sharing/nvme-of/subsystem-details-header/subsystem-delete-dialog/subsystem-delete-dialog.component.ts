@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -18,23 +17,20 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TranslateModule,
+    TnDialogShellComponent,
+TranslateModule,
     IxCheckboxComponent,
     ReactiveFormsModule,
     FormActionsComponent,
     MatButton,
     RequiresRolesDirective,
     TestDirective,
-    MatDialogClose,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
   ],
 })
 export class SubsystemDeleteDialogComponent {
-  private dialogRef = inject<MatDialogRef<SubsystemDeleteDialogComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, SubsystemDeleteDialogComponent>>(DialogRef);
 
-  protected readonly subsystem = inject<NvmeOfSubsystem>(MAT_DIALOG_DATA);
+  protected readonly subsystem = inject<NvmeOfSubsystem>(DIALOG_DATA);
   protected readonly force = new FormControl(false as boolean);
   protected readonly requiredRoles: Role[] = [Role.SharingNvmeTargetWrite];
 

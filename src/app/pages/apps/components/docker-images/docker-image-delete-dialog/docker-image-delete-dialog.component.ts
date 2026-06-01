@@ -1,13 +1,12 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, TrackByFunction,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -29,7 +28,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./docker-image-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ReactiveFormsModule,
+    TnDialogShellComponent,
+ReactiveFormsModule,
     BulkListItemComponent,
     IxCheckboxComponent,
     RequiresRolesDirective,
@@ -37,8 +37,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     TestDirective,
     KeyValuePipe,
-    MatDialogTitle,
-    MatDialogClose,
   ],
 })
 export class DockerImageDeleteDialog {
@@ -46,8 +44,8 @@ export class DockerImageDeleteDialog {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<MatDialogRef<DockerImageDeleteDialog>>(MatDialogRef);
-  images = inject<ContainerImage[]>(MAT_DIALOG_DATA);
+  private dialogRef = inject<DialogRef<unknown, DockerImageDeleteDialog>>(DialogRef);
+  images = inject<ContainerImage[]>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];

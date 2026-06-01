@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -26,9 +26,9 @@ describe('SetEnclosureLabelDialogComponent', () => {
         mockCall('enclosure.label.set'),
       ]),
       mockProvider(DialogService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           enclosureId: '1234',
           currentLabel: 'My TRUENAS-M40-HA',
@@ -51,7 +51,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.label.set', ['1234', 'New label']);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('New label');
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('New label');
   });
 
   it('resets enclosure label to a default when Reset checkbox is ticked and form is saved', async () => {
@@ -62,6 +62,6 @@ describe('SetEnclosureLabelDialogComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.label.set', ['1234', 'TRUENAS-M40-HA']);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('TRUENAS-M40-HA');
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('TRUENAS-M40-HA');
   });
 });

@@ -1,4 +1,5 @@
-<h1 matDialogTitle>
+<tn-dialog-shell [title]="''">
+<h1>
   @if (isZvol) {
     {{ 'Delete zvol {name}' | translate: { name: dataset.name } }}
   } @else {
@@ -9,7 +10,6 @@
   <p [innerHTML]="deleteMessage"></p>
 
   <div
-    mat-dialog-content
     class="dialog-content"
   >
     @if (attachments.length) {
@@ -74,7 +74,7 @@
   ></ix-checkbox>
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -90,3 +90,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

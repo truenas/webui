@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { DeleteNamespaceParams, NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
@@ -22,26 +21,23 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TranslateModule,
+    TnDialogShellComponent,
+TranslateModule,
     IxCheckboxComponent,
     ReactiveFormsModule,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
   ],
 })
 export class DeleteNamespaceDialogComponent {
-  private dialogRef = inject<MatDialogRef<DeleteNamespaceDialogComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, DeleteNamespaceDialogComponent>>(DialogRef);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  protected namespace = inject<NvmeOfNamespace>(MAT_DIALOG_DATA);
+  protected namespace = inject<NvmeOfNamespace>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   readonly removeFileControl = new FormControl(false);

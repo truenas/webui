@@ -1,13 +1,13 @@
-<h1 mat-dialog-title>{{ 'Delete Subsystem' | translate }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'Delete Subsystem' | translate">
+<div>
   <p class="message">{{ 'Are you sure you want to delete subsystem {subsys}?' | translate: { subsys: subsystem.name } }}</p>
   <ix-checkbox
     [label]="'Force' | translate"
     [formControl]="force"
   ></ix-checkbox>
 </div>
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button ixTest="cancel" [matDialogClose]="{ confirmed: false }">{{ 'Cancel' | translate }}</button>
+<ix-form-actions tnDialogAction class="form-actions">
+  <button mat-button ixTest="cancel">{{ 'Cancel' | translate }}</button>
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
@@ -18,3 +18,4 @@
     {{ 'Delete' | translate }}
   </button>
 </ix-form-actions>
+</tn-dialog-shell>

@@ -1,10 +1,9 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs';
 import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -91,7 +90,7 @@ export class ReplicationListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private snackbar = inject(SnackbarService);
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
@@ -238,10 +237,10 @@ export class ReplicationListComponent implements OnInit {
   }
 
   protected restore(row: ReplicationTask): void {
-    const dialog = this.matDialog.open(ReplicationRestoreDialog, {
+    const dialog = this.tnDialog.open(ReplicationRestoreDialog, {
       data: row.id,
     });
-    dialog.afterClosed()
+    dialog.closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.getReplicationTasks());
   }

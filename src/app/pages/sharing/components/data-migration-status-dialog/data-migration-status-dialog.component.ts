@@ -1,12 +1,11 @@
 import { NgClass } from '@angular/common';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
@@ -32,10 +31,7 @@ export interface DataMigrationStatusDialogData {
   styleUrls: ['./data-migration-status-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
+    TnDialogShellComponent,
     MatButton,
     MatProgressBar,
     TranslateModule,
@@ -49,9 +45,9 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
-  private dialogRef = inject(MatDialogRef<DataMigrationStatusDialogComponent>);
+  private dialogRef = inject(DialogRef<unknown, DataMigrationStatusDialogComponent>);
   private dialogService = inject(DialogService);
-  protected data = inject<DataMigrationStatusDialogData>(MAT_DIALOG_DATA);
+  protected data = inject<DataMigrationStatusDialogData>(DIALOG_DATA);
 
   protected job = signal<ZfsTierRewriteJobEntry>(this.data.tierJob);
 

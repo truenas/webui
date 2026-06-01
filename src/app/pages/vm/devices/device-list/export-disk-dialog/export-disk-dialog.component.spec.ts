@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
@@ -52,9 +52,9 @@ describe('ExportDiskDialogComponent', () => {
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(() => jest.fn()),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: mockDialogData,
       },
     ],
@@ -87,7 +87,7 @@ describe('ExportDiskDialogComponent', () => {
 
     spectator.click(spectator.query('button[ixTest="export"]'));
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       request: {
         source: '/dev/zvol/tank/vm-disk',
         destination: '/mnt/tank/exports/my-vm-disk.vmdk',

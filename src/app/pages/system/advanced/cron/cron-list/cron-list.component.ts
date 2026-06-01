@@ -1,10 +1,9 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, TnTablePagerComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTablePagerComponent } from '@truenas/ui-components';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
@@ -70,7 +69,7 @@ export class CronListComponent implements OnInit {
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private slideIn = inject(SlideIn);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
@@ -187,9 +186,9 @@ export class CronListComponent implements OnInit {
   }
 
   protected doDelete(row: CronjobRow): void {
-    this.matDialog.open(CronDeleteDialog, {
+    this.tnDialog.open(CronDeleteDialog, {
       data: row,
-    }).afterClosed()
+    }).closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getCronJobs();

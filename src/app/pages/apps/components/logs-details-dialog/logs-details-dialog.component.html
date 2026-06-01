@@ -1,5 +1,4 @@
-<h1 mat-dialog-title>{{ 'Logs Details' | translate }}</h1>
-
+<tn-dialog-shell [title]="'Logs Details' | translate">
 <form class="ix-form-container" [formGroup]="form">
   <ix-input
     formControlName="tail_lines"
@@ -8,12 +7,12 @@
     [required]="true"
   ></ix-input>
 
-  <div mat-dialog-actions align="end">
+  <div tnDialogAction align="end">
     <button
       mat-button
       type="button"
       ixTest="cancel"
-      [matDialogClose]="false"
+     
     >
       {{ 'Cancel' | translate }}
     </button>
@@ -23,9 +22,10 @@
       color="primary"
       ixTest="choose"
       [disabled]="form.invalid"
-      [matDialogClose]="this.form.value"
+     
     >
       {{ 'Connect' | translate }}
     </button>
   </div>
 </form>
+</tn-dialog-shell>

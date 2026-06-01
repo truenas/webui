@@ -1,13 +1,12 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, Component, computed, inject, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -31,10 +30,7 @@ export interface ContainerNicFormDialogData {
   templateUrl: './container-nic-form-dialog.component.html',
   standalone: true,
   imports: [
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogTitle,
+    TnDialogShellComponent,
     TestDirective,
     ReactiveFormsModule,
     IxCheckboxComponent,
@@ -50,8 +46,8 @@ export class ContainerNicFormDialog {
   private fb = inject(FormBuilder);
   private ixValidator = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  private matDialogRef = inject<MatDialogRef<ContainerNicFormDialog>>(MatDialogRef);
-  private dialogData = inject<ContainerNicFormDialogData>(MAT_DIALOG_DATA);
+  private matDialogRef = inject<DialogRef<unknown, ContainerNicFormDialog>>(DialogRef);
+  private dialogData = inject<ContainerNicFormDialogData>(DIALOG_DATA);
 
   protected readonly isEditMode = computed(() => !!this.dialogData.device);
 

@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -43,23 +43,23 @@ describe('ManageConfigurationMenuComponent', () => {
   });
 
   it('opens SaveConfigDialogComponent when Download File is pressed', async () => {
-    const matDialog = spectator.inject(MatDialog);
-    jest.spyOn(matDialog, 'open').mockImplementation();
+    const tnDialog = spectator.inject(TnDialog);
+    jest.spyOn(tnDialog, 'open').mockImplementation();
 
     await menu.open();
     await menu.clickItem({ text: 'Download File' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(SaveConfigDialog);
+    expect(tnDialog.open).toHaveBeenCalledWith(SaveConfigDialog);
   });
 
   it('opens UploadConfigDialogComponent when Upload File is pressed', async () => {
-    const matDialog = spectator.inject(MatDialog);
-    jest.spyOn(matDialog, 'open').mockImplementation();
+    const tnDialog = spectator.inject(TnDialog);
+    jest.spyOn(tnDialog, 'open').mockImplementation();
 
     await menu.open();
     await menu.clickItem({ text: 'Upload File' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(UploadConfigDialog);
+    expect(tnDialog.open).toHaveBeenCalledWith(UploadConfigDialog);
   });
 
   describe('if logged user is a system administrator', () => {

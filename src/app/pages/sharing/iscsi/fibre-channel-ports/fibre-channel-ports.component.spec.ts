@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -88,7 +87,7 @@ describe('FibreChannelPortsComponent', () => {
         mockCall('fcport.query', ports),
         mockCall('fcport.status', statuses),
       ]),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
           afterClosed: jest.fn(() => of(true)),
         })),
@@ -150,7 +149,7 @@ describe('FibreChannelPortsComponent', () => {
     const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(MatDialog).open)
+    expect(spectator.inject(TnDialog).open)
       .toHaveBeenCalledWith(VirtualPortsNumberDialog, { data: hosts[0] });
   });
 

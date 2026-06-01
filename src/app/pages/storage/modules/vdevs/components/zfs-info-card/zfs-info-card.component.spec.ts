@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
@@ -39,12 +39,12 @@ describe('ZfsInfoCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of(null),
+          closed: of(null),
         })),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(),
+          closed: of(),
         })),
       }),
       mockProvider(VDevsStore, {
@@ -198,7 +198,7 @@ describe('ZfsInfoCardComponent', () => {
       const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
       await expandButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ExtendDialog, {
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ExtendDialog, {
         data: {
           poolId: 1,
           targetVdevGuid: '1296356085009973566',

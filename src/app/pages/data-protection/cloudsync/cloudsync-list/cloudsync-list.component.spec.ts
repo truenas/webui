@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -129,9 +129,9 @@ describe('CloudSyncListComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(LocaleService),
@@ -225,12 +225,12 @@ describe('CloudSyncListComponent', () => {
   it('shows dialog when Restore button is pressed', async () => {
     await table.expandRow(0);
 
-    jest.spyOn(spectator.inject(MatDialog), 'open');
+    jest.spyOn(spectator.inject(TnDialog), 'open');
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
     await editButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialog, {
       data: 1,
     });
 

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
+import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -37,7 +37,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class HardwareDiskEncryptionComponent {
   private store$ = inject<Store<AppState>>(Store);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
@@ -64,9 +64,9 @@ export class HardwareDiskEncryptionComponent {
   );
 
   onManageSedPassword(): void {
-    this.matDialog.open(ManageDiskSedDialog, {
+    this.tnDialog.open(ManageDiskSedDialog, {
       data: this.topologyDisk().disk,
-    }).afterClosed()
+    }).closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }

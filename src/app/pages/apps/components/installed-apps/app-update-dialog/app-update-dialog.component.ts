@@ -1,12 +1,12 @@
 import { KeyValuePipe } from '@angular/common';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogContent } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatFormField } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -26,7 +26,7 @@ type Version = Pick<AppUpgradeSummary, 'latest_version' | 'latest_human_version'
   templateUrl: './app-update-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogContent,
+    TnDialogShellComponent,
     ImgFallbackModule,
     MatFormField,
     MatSelect,
@@ -42,8 +42,8 @@ type Version = Pick<AppUpgradeSummary, 'latest_version' | 'latest_human_version'
   ],
 })
 export class AppUpdateDialog {
-  protected dialogRef = inject<MatDialogRef<AppUpdateDialog>>(MatDialogRef);
-  private data = inject<AppUpdateDialogConfig>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, AppUpdateDialog>>(DialogRef);
+  private data = inject<AppUpdateDialogConfig>(DIALOG_DATA);
 
   protected dialogConfig: AppUpdateDialogConfig;
   protected imagePlaceholder = appImagePlaceholder;

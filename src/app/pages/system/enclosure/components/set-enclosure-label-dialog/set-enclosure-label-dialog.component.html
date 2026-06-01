@@ -1,5 +1,4 @@
-<h1 matDialogTitle>{{ 'Change Enclosure Label' | translate }}</h1>
-
+<tn-dialog-shell [title]="'Change Enclosure Label' | translate">
 <form [formGroup]="form" (submit)="onSubmit()">
   <ix-input
     formControlName="label"
@@ -13,7 +12,7 @@
   ></ix-checkbox>
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" matDialogClose>
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -28,3 +27,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

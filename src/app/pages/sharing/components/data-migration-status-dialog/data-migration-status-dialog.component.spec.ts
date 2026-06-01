@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Subject, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -49,7 +49,7 @@ describe('DataMigrationStatusDialogComponent', () => {
       mockApi([
         mockCall('zfs.tier.rewrite_job_cancel'),
       ]),
-      mockProvider(MatDialogRef, { close: jest.fn() }),
+      mockProvider(DialogRef, { close: jest.fn() }),
       mockProvider(ErrorHandlerService),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
     ],
@@ -60,7 +60,7 @@ describe('DataMigrationStatusDialogComponent', () => {
     spectator = createComponent({
       detectChanges: false,
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: { tierJob: job, targetTier } },
+        { provide: DIALOG_DATA, useValue: { tierJob: job, targetTier } },
       ],
     });
     jest.spyOn(spectator.inject(ApiService), 'subscribe').mockReturnValue(updates$);
@@ -138,7 +138,7 @@ describe('DataMigrationStatusDialogComponent', () => {
         'zfs.tier.rewrite_job_cancel',
         [{ tier_job_id: 'job-1' }],
       );
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     });
   });
 

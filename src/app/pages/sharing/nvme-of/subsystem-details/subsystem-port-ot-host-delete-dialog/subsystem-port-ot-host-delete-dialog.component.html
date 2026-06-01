@@ -1,8 +1,9 @@
-<h1 mat-dialog-title>
+<tn-dialog-shell [title]="''">
+<h1>
   {{ 'Delete' | translate }} {{ type }}
 </h1>
 
-<div mat-dialog-content>
+<div>
   <p class="message">
     {{
       'Are you sure you want to delete {type}: {name}?' | translate: { type, name: data.name }
@@ -21,8 +22,8 @@
   }
 </div>
 
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button ixTest="cancel" [matDialogClose]="{ confirmed: false }">
+<ix-form-actions tnDialogAction class="form-actions">
+  <button mat-button ixTest="cancel">
     {{ 'Cancel' | translate }}
   </button>
   <button
@@ -35,3 +36,4 @@
     {{ data.subsystemsInUse?.length > 0 ? ('Delete Anyway' | translate) : ('Delete' | translate) }}
   </button>
 </ix-form-actions>
+</tn-dialog-shell>

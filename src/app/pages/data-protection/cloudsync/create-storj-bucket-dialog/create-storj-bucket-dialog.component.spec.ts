@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -25,9 +25,9 @@ describe('CreateStorjBucketDialogComponent', () => {
       mockApi([
         mockCall('cloudsync.create_bucket'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           credentialsId: 1,
         },
@@ -48,6 +48,6 @@ describe('CreateStorjBucketDialogComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.create_bucket', [1, 'new-bucket']);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('new-bucket');
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('new-bucket');
   });
 });

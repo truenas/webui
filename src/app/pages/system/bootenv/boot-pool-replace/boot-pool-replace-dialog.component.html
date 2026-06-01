@@ -1,6 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Replace' | translate }}
-</h1>
+<tn-dialog-shell [title]="'Replace' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset>
     <ix-unused-disk-select
@@ -12,7 +10,7 @@
   </ix-fieldset>
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -31,3 +29,4 @@
 @if (isFormLoading) {
   <ix-fake-progress-bar></ix-fake-progress-bar>
 }
+</tn-dialog-shell>

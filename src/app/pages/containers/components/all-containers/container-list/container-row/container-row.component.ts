@@ -1,11 +1,10 @@
 import { Component, ChangeDetectionStrategy, input, computed, output, inject, DestroyRef } from '@angular/core';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import {
   filter, switchMap,
 } from 'rxjs';
@@ -52,7 +51,7 @@ export class ContainerRowComponent {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private dialog = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private containersStore = inject(ContainersStore);
@@ -92,9 +91,9 @@ export class ContainerRowComponent {
   stop(): void {
     const containerId = this.container().id;
 
-    this.matDialog
+    this.tnDialog
       .open(StopOptionsDialog, { data: StopOptionsOperation.Stop })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         switchMap((options: ContainerStopParams) => {
@@ -115,9 +114,9 @@ export class ContainerRowComponent {
   restart(): void {
     const containerId = this.container().id;
 
-    this.matDialog
+    this.tnDialog
       .open(StopOptionsDialog, { data: StopOptionsOperation.Restart })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         switchMap((options: ContainerStopParams) => {

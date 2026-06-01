@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -24,22 +23,19 @@ export interface StopVmDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     IxCheckboxComponent,
     ReactiveFormsModule,
-    MatDialogActions,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class StopVmDialogComponent {
-  private dialogRef = inject<MatDialogRef<StopVmDialogComponent, StopVmDialogData>>(MatDialogRef);
-  vm = inject<VirtualMachine>(MAT_DIALOG_DATA);
+  private dialogRef = inject<DialogRef<StopVmDialogData, StopVmDialogComponent>>(DialogRef);
+  vm = inject<VirtualMachine>(DIALOG_DATA);
 
   forceAfterTimeoutCheckbox = new FormControl(false, { nonNullable: true });
   protected readonly requiredRoles = [Role.VmWrite];

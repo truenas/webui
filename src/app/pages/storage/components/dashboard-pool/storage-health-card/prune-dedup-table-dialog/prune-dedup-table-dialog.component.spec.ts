@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatSliderHarness } from '@angular/material/slider/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -25,15 +25,15 @@ describe('PruneDedupTableDialogComponent', () => {
       mockApi([
         mockJob('pool.ddt_prune', fakeSuccessfulJob()),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of(undefined),
+          closed: of(undefined),
         })),
       }),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           name: 'pewl',
         },
@@ -59,7 +59,7 @@ describe('PruneDedupTableDialogComponent', () => {
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.ddt_prune', [{ pool_name: 'pewl', percentage: 50 }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
@@ -75,7 +75,7 @@ describe('PruneDedupTableDialogComponent', () => {
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.ddt_prune', [{ pool_name: 'pewl', days: 10 }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

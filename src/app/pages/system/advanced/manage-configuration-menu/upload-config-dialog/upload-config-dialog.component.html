@@ -1,4 +1,4 @@
-<h1 matDialogTitle>{{ 'Upload Config' | translate }}</h1>
+<tn-dialog-shell [title]="'Upload Config' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div [innerHtml]="helptext.uploadConfigForm.message | translate"></div>
 
@@ -8,7 +8,7 @@
   ></ix-file-input>
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
     <button
@@ -23,3 +23,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

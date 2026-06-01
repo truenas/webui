@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatSelectHarness } from '@angular/material/select/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -58,9 +58,9 @@ describe('AppUpdateDialog', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(MatDialogRef),
+          mockProvider(DialogRef),
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               appInfo: fakeAppInfo,
               upgradeSummary: fakeUpgradeSummary,
@@ -127,9 +127,9 @@ describe('AppUpdateDialog', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(MatDialogRef),
+          mockProvider(DialogRef),
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               appInfo: fakeAppInfo,
               upgradeSummary: {
@@ -162,9 +162,9 @@ describe('AppUpdateDialog', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(MatDialogRef),
+          mockProvider(DialogRef),
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               appInfo: { ...fakeAppInfo, metadata: { ...fakeAppInfo.metadata, changelog_url: undefined } },
               upgradeSummary: fakeUpgradeSummary,
@@ -184,9 +184,9 @@ describe('AppUpdateDialog', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(MatDialogRef),
+          mockProvider(DialogRef),
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               appInfo: fakeAppInfo,
               upgradeSummary: { ...fakeUpgradeSummary, available_versions_for_upgrade: [] },

@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -32,7 +32,7 @@ describe('ContainerListBulkActionsComponent', () => {
     providers: [
       mockProvider(SnackbarService),
       mockAuth(),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
           afterClosed: jest.fn(() => of(true)),
         })),
@@ -83,21 +83,21 @@ describe('ContainerListBulkActionsComponent', () => {
   });
 
   it('opens the Stop Options dialog when Stop All Selected is clicked', async () => {
-    const matDialog = spectator.inject(MatDialog);
+    const tnDialog = spectator.inject(TnDialog);
 
     await menu.open();
     await menu.clickItem({ text: 'Stop All Selected' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
+    expect(tnDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
   });
 
   it('opens the Restart Options dialog when Restart All Selected is clicked', async () => {
-    const matDialog = spectator.inject(MatDialog);
+    const tnDialog = spectator.inject(TnDialog);
 
     await menu.open();
     await menu.clickItem({ text: 'Restart All Selected' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
+    expect(tnDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
   });
 
   it('emits resetBulkSelection after actions', async () => {

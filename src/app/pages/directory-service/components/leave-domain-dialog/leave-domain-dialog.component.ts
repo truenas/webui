@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
@@ -23,12 +24,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./leave-domain-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxInputComponent,
     FormActionsComponent,
     MatButton,
-    MatDialogClose,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -39,7 +39,7 @@ export class LeaveDomainDialog {
   private formBuilder = inject(FormBuilder);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
-  private dialogRef = inject<MatDialogRef<LeaveDomainDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, LeaveDomainDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);

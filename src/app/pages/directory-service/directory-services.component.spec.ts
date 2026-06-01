@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, throwError, NEVER } from 'rxjs';
@@ -72,7 +73,7 @@ describe('DirectoryServicesComponent', () => {
         error: jest.fn(),
       }),
       mockProvider(SlideIn),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
       }),
@@ -555,10 +556,10 @@ describe('DirectoryServicesComponent', () => {
     });
 
     it('should open Leave Domain dialog when Leave button is clicked', async () => {
-      const dialogRef: Partial<MatDialogRef<unknown>> = {
+      const dialogRef: Partial<DialogRef<unknown, unknown>> = {
         afterClosed: () => of(false),
       };
-      const dialogOpenSpy = jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue(dialogRef as MatDialogRef<unknown>);
+      const dialogOpenSpy = jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue(dialogRef as DialogRef<unknown, unknown>);
       await spectator.fixture.whenStable();
 
       const menu = await loader.getHarness(MatMenuHarness);
@@ -574,10 +575,10 @@ describe('DirectoryServicesComponent', () => {
       const originalWarn = console.warn;
       console.warn = jest.fn();
 
-      const dialogRef: Partial<MatDialogRef<unknown>> = {
+      const dialogRef: Partial<DialogRef<unknown, unknown>> = {
         afterClosed: () => of(true),
       };
-      jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue(dialogRef as MatDialogRef<unknown>);
+      jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue(dialogRef as DialogRef<unknown, unknown>);
       const apiCallSpy = jest.spyOn(spectator.inject(ApiService), 'call');
 
       await spectator.fixture.whenStable();

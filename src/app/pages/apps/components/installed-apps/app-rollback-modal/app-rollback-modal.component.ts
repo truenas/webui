@@ -2,11 +2,10 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -28,9 +27,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./app-rollback-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ReactiveFormsModule,
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
+ReactiveFormsModule,
     IxSelectComponent,
     IxCheckboxComponent,
     TranslateModule,
@@ -38,18 +36,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     RequiresRolesDirective,
     TestDirective,
-    MatDialogActions,
-    MatDialogClose,
   ],
 })
 export class AppRollbackModalComponent {
-  private dialogRef = inject<MatDialogRef<AppRollbackModalComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, AppRollbackModalComponent>>(DialogRef);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-  private app = inject<App>(MAT_DIALOG_DATA);
+  private app = inject<App>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({

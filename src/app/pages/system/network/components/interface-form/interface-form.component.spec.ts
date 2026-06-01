@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
@@ -214,7 +214,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('saves a new bridge interface when form is submitted for bridge interface', async () => {
-      jest.spyOn(spectator.inject(MatDialog), 'open');
+      jest.spyOn(spectator.inject(TnDialog), 'open');
 
       const store$ = spectator.inject(Store);
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
@@ -256,18 +256,18 @@ describe('InterfaceFormComponent', () => {
 
       expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
         {
           width: '600px',
           data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
         },
       );
-      jest.spyOn(spectator.inject(MatDialog), 'closeAll');
+      jest.spyOn(spectator.inject(TnDialog), 'closeAll');
     });
 
     it('saves a new link aggregation interface when form is submitted for LAG', async () => {
-      jest.spyOn(spectator.inject(MatDialog), 'open');
+      jest.spyOn(spectator.inject(TnDialog), 'open');
       const store$ = spectator.inject(Store);
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
@@ -307,7 +307,7 @@ describe('InterfaceFormComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
         {
           width: '600px',
@@ -317,7 +317,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('saves a new VLAN interface when form is submitted for a VLAN', async () => {
-      jest.spyOn(spectator.inject(MatDialog), 'open');
+      jest.spyOn(spectator.inject(TnDialog), 'open');
       await form.fillForm(
         {
           Type: 'VLAN',
@@ -347,7 +347,7 @@ describe('InterfaceFormComponent', () => {
       }]);
       expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
         {
           width: '600px',
@@ -550,7 +550,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('shows and saves additional fields in Aliases when failover is licensed', async () => {
-      jest.spyOn(spectator.inject(MatDialog), 'open');
+      jest.spyOn(spectator.inject(TnDialog), 'open');
 
       await form.fillForm({
         Type: 'Bridge',
@@ -572,7 +572,7 @@ describe('InterfaceFormComponent', () => {
       ]);
       expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
         {
           width: '600px',
@@ -582,7 +582,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('shows Failover Critical and Failover Group when failover is enabled', async () => {
-      jest.spyOn(spectator.inject(MatDialog), 'open');
+      jest.spyOn(spectator.inject(TnDialog), 'open');
 
       await aliasesList!.pressAddButton();
       await form.fillForm({
@@ -609,7 +609,7 @@ describe('InterfaceFormComponent', () => {
       ]);
       expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
         {
           width: '600px',
@@ -660,7 +660,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('sends fec_mode when saving on enterprise with FEC support', async () => {
-      jest.spyOn(spectator.inject(MatDialog), 'open');
+      jest.spyOn(spectator.inject(TnDialog), 'open');
 
       await form.fillForm({
         'FEC Mode': 'rs',

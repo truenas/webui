@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, ReactiveFormsModule, FormGroup, FormControl,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -58,7 +58,7 @@ export class CertificateEditComponent implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(FormErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   slideInRef = inject<SlideInRef<Certificate, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
@@ -107,7 +107,7 @@ export class CertificateEditComponent implements OnInit {
   }
 
   onViewCertificatePressed(): void {
-    this.matDialog.open(ViewCertificateDialog, {
+    this.tnDialog.open(ViewCertificateDialog, {
       data: {
         certificate: this.isCsr ? this.certificate.CSR : this.certificate.certificate,
         name: this.certificate.name,
@@ -118,7 +118,7 @@ export class CertificateEditComponent implements OnInit {
   }
 
   onViewKeyPressed(): void {
-    this.matDialog.open(ViewCertificateDialog, {
+    this.tnDialog.open(ViewCertificateDialog, {
       data: {
         certificate: this.certificate.privatekey,
         name: this.certificate.name,

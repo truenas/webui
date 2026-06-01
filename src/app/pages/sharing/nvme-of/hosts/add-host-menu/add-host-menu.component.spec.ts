@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -45,9 +45,9 @@ describe('AddHostMenuComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.success(newHost)),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
     ],
@@ -142,7 +142,7 @@ describe('AddHostMenuComponent', () => {
 
       await items[2].click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManageHostsDialog, { minWidth: '450px' });
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ManageHostsDialog, { minWidth: '450px' });
     });
   });
 });

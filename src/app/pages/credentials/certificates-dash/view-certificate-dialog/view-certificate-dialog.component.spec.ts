@@ -1,6 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -19,7 +19,7 @@ describe('ViewCertificateDialogComponent', () => {
     ],
     providers: [
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           name: 'truenas',
           certificate: '---BEGIN CERTIFICATE---',
@@ -28,7 +28,7 @@ describe('ViewCertificateDialogComponent', () => {
         } as ViewCertificateDialogData,
       },
       mockProvider(DownloadService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 

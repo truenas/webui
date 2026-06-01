@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
+import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -30,7 +30,7 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
 })
 export class DeduplicationStatsComponent {
   private fileSizePipe = inject(FileSizePipe);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private store = inject(PoolsDashboardStore);
   private destroyRef = inject(DestroyRef);
 
@@ -49,17 +49,17 @@ export class DeduplicationStatsComponent {
   });
 
   protected onPruneDedupTable(): void {
-    this.matDialog
+    this.tnDialog
       .open(PruneDedupTableDialog, { data: this.pool() })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.store.loadDashboard());
   }
 
   protected onSetDedupQuota(): void {
-    this.matDialog
+    this.tnDialog
       .open(SetDedupQuotaComponent, { data: this.pool() })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.store.loadDashboard());
   }

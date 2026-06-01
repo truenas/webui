@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -28,13 +28,13 @@ import {
   styleUrls: ['./inspect-vdevs-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnDialogShellComponent,
+MatCard,
     MatCardContent,
     MatNavList,
     MatListItem,
     MatDivider,
     MatIconButton,
-    MatDialogClose,
     TestDirective,
     TnIconComponent,
     ManualSelectionVdevComponent,
@@ -49,7 +49,7 @@ export class InspectVdevsDialog implements OnInit {
   protected data = inject<{
     topology: PoolManagerTopology;
     enclosures: Enclosure[];
-  }>(MAT_DIALOG_DATA);
+  }>(DIALOG_DATA);
 
   protected presentTypes: VDevType[] = [];
   protected selectedType: VDevType;

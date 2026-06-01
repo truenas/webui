@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -23,15 +22,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./delete-extent-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatDialogActions,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -42,8 +38,8 @@ export class DeleteExtentDialog {
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
-  extent = inject<IscsiExtent>(MAT_DIALOG_DATA);
-  private dialogRef = inject<MatDialogRef<DeleteExtentDialog>>(MatDialogRef);
+  extent = inject<IscsiExtent>(DIALOG_DATA);
+  private dialogRef = inject<DialogRef<unknown, DeleteExtentDialog>>(DialogRef);
 
   protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,

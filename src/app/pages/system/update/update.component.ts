@@ -1,13 +1,12 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -70,7 +69,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class UpdateComponent implements OnInit {
   private router = inject(Router);
   private translate = inject(TranslateService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
@@ -239,14 +238,14 @@ export class UpdateComponent implements OnInit {
   }
 
   private offerToSaveConfiguration(): Observable<boolean> {
-    return this.matDialog.open(SaveConfigDialog, {
+    return this.tnDialog.open(SaveConfigDialog, {
       data: {
         title: this.translate.instant('Save configuration settings from this machine before updating?'),
         saveButton: this.translate.instant('Save Configuration'),
         cancelButton: this.translate.instant('Do not save'),
       } as Partial<SaveConfigDialogMessages>,
     })
-      .afterClosed()
+      .closed
       .pipe(filter((result): result is boolean => typeof result === 'boolean'));
   }
 

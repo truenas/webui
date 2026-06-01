@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, DestroyRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { TnDialog } from '@truenas/ui-components';
 import {
   createServiceFactory, mockProvider, SpectatorService,
 } from '@ngneat/spectator/jest';
@@ -20,13 +20,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('SharingTierService', () => {
   let spectator: SpectatorService<SharingTierService>;
-  const matDialogOpen = jest.fn(() => ({ afterClosed: () => of(true) }));
+  const matDialogOpen = jest.fn(() => ({ closed: of(true) }));
 
   const createService = createServiceFactory({
     service: SharingTierService,
     providers: [
       mockApi([]),
-      mockProvider(MatDialog, { open: matDialogOpen }),
+      mockProvider(TnDialog, { open: matDialogOpen }),
       mockProvider(ErrorHandlerService),
       mockProvider(TranslateService, {
         instant: (key: string, params?: Record<string, unknown>) => (

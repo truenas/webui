@@ -1,7 +1,4 @@
-<h1 mat-dialog-title class="export-disconnect-modal-title">
-  {{ 'Disconnect Pool: {pool}' | translate: { pool: pool.name } }}
-</h1>
-
+<tn-dialog-shell [title]="'Disconnect Pool: {pool}' | translate: { pool: pool.name }">
 @if (isFormLoading) {
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 }
@@ -11,7 +8,7 @@
   [formGroup]="form"
   (submit)="startExportDisconnectJob()"
 >
-  <div mat-dialog-content class="export-disconnect-modal-content">
+  <div class="export-disconnect-modal-content">
     <div class="disconnect-options">
       <h4>{{ 'Disconnect Options' | translate }}</h4>
       <div class="option-cards">
@@ -241,3 +238,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

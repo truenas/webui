@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, output } from '@angular/core';
+import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   filter, switchMap,
@@ -30,7 +30,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubsystemsDetailsHeaderComponent {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
@@ -43,11 +43,11 @@ export class SubsystemsDetailsHeaderComponent {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   deleteSubsystem(): void {
-    this.matDialog.open(
+    this.tnDialog.open(
       SubsystemDeleteDialogComponent,
       { data: this.subsystem(), minWidth: '500px' },
     )
-      .afterClosed()
+      .closed
       .pipe(
         filter((data: { confirmed: boolean; force: boolean }) => data?.confirmed),
         switchMap(({ force }) => {

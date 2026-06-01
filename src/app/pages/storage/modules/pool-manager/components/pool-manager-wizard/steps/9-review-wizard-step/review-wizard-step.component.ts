@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
@@ -51,7 +51,7 @@ import {
   ],
 })
 export class ReviewWizardStepComponent implements OnInit {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private store = inject(PoolManagerStore);
   private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
@@ -115,7 +115,7 @@ export class ReviewWizardStepComponent implements OnInit {
   }
 
   onInspectVdevsPressed(): void {
-    this.matDialog.open(InspectVdevsDialog, {
+    this.tnDialog.open(InspectVdevsDialog, {
       data: {
         topology: this.state.topology,
         enclosures: this.state.enclosures,

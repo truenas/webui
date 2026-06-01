@@ -1,12 +1,9 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, TnDialogShellComponent, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import {
-  MatDialog, MatDialogClose, MatDialogContent, MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
 import { Role } from 'app/enums/role.enum';
@@ -42,14 +39,12 @@ interface NvmeOfPortAndUsage extends NvmeOfPort {
   styleUrl: './manage-ports-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnIconComponent,
+    TnDialogShellComponent,
+TnIconComponent,
     MatButton,
-    MatDialogContent,
-    MatDialogTitle,
     MatIconButton,
     TranslateModule,
     TestDirective,
-    MatDialogClose,
     AsyncPipe,
     IxTableBodyComponent,
     IxTableComponent,
@@ -65,7 +60,7 @@ export class ManagePortsDialog implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
@@ -150,7 +145,7 @@ export class ManagePortsDialog implements OnInit {
     const subsystemsInUse = this.nvmeOfStore?.subsystems?.()
       .filter((subsystem) => subsystem.ports.some((subsystemPort) => subsystemPort.id === port.id)) || [];
 
-    this.matDialog.open(
+    this.tnDialog.open(
       SubsystemPortOrHostDeleteDialogComponent,
       {
         data: {
@@ -162,7 +157,7 @@ export class ManagePortsDialog implements OnInit {
         minWidth: '500px',
       },
     )
-      .afterClosed()
+      .closed
       .pipe(
         filter((data: { confirmed: boolean; force: boolean }) => !!data?.confirmed),
         switchMap(({ force }) => {

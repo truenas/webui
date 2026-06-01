@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockJob, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -23,9 +23,9 @@ describe('AppRollbackModalComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           name: 'my-app',
         } as App,
@@ -37,7 +37,7 @@ describe('AppRollbackModalComponent', () => {
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of(null),
+          closed: of(null),
         })),
       }),
     ],
@@ -70,6 +70,6 @@ describe('AppRollbackModalComponent', () => {
       'app.rollback',
       ['my-app', { app_version: '0.9.8', rollback_snapshot: true }],
     );
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -36,9 +36,9 @@ describe('SelectPoolDialogComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        jobDialog: jest.fn(() => ({ afterClosed: () => of(null) })),
+        jobDialog: jest.fn(() => ({ closed: of(null) })),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(Router),
     ],
   });
@@ -61,7 +61,7 @@ describe('SelectPoolDialogComponent', () => {
     await chooseButton.click();
 
     expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith('pool2', false);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('shows a warning when no pools are available and takes user to create one', () => {
@@ -90,9 +90,9 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        jobDialog: jest.fn(() => ({ afterClosed: () => of(null) })),
+        jobDialog: jest.fn(() => ({ closed: of(null) })),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(Router),
     ],
   });

@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -38,13 +37,12 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
   templateUrl: './set-dedup-quota.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormActionsComponent,
+    TnDialogShellComponent,
+FormActionsComponent,
     MatButton,
-    MatDialogTitle,
     ReactiveFormsModule,
     TestDirective,
     TranslateModule,
-    MatDialogClose,
     IxSelectComponent,
     IxInputComponent,
   ],
@@ -56,9 +54,9 @@ export class SetDedupQuotaComponent {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<MatDialogRef<SetDedupQuotaComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, SetDedupQuotaComponent>>(DialogRef);
   protected formatter = inject(IxFormatterService);
-  protected pool = inject<Pool>(MAT_DIALOG_DATA);
+  protected pool = inject<Pool>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({

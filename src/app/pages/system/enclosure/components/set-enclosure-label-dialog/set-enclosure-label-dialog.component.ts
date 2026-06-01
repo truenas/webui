@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -27,14 +26,13 @@ export interface SetEnclosureLabelDialogData {
   styleUrls: ['./set-enclosure-label-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxInputComponent,
     IxCheckboxComponent,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     TranslateModule,
   ],
 })
@@ -42,11 +40,11 @@ export class SetEnclosureLabelDialog implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
-  private dialogRef = inject<MatDialogRef<SetEnclosureLabelDialog, string>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<string, SetEnclosureLabelDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private validatorsService = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  private data = inject<SetEnclosureLabelDialogData>(MAT_DIALOG_DATA);
+  private data = inject<SetEnclosureLabelDialogData>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   enclosureLabel = 'Enclosure Label';

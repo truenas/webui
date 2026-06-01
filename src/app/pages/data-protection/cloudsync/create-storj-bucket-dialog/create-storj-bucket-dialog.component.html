@@ -1,6 +1,6 @@
-<h1 mat-dialog-title>{{ 'Add bucket' | translate }}</h1>
+<tn-dialog-shell [title]="'Add bucket' | translate">
 <form [formGroup]="form" (submit)="onSubmit()">
-  <div mat-dialog-content>
+  <div>
     <p>{{ 'Add a new bucket to your Storj account.' | translate }}</p>
     <ix-input
       formControlName="bucket"
@@ -8,12 +8,12 @@
       [label]="'Bucket Name' | translate"
     ></ix-input>
   </div>
-  <ix-form-actions mat-dialog-actions class="form-actions">
+  <ix-form-actions tnDialogAction class="form-actions">
     <button
       mat-button
       type="button"
       ixTest="cancel"
-      [mat-dialog-close]="false"
+     
     >{{ 'Cancel' | translate }}</button>
     <button
       *ixRequiresRoles="requiredRoles"
@@ -25,4 +25,4 @@
     >{{ 'Save' | translate }}</button>
   </ix-form-actions>
 </form>
-
+</tn-dialog-shell>

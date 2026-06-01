@@ -1,6 +1,5 @@
-<h1 mat-dialog-title>{{ 'SED Reset - Secure Erase' | translate }}</h1>
-
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'SED Reset - Secure Erase' | translate">
+<div>
   <div class="warning-box" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="warning-header">
       <tn-icon name="alert" library="mdi"></tn-icon>
@@ -51,8 +50,8 @@
   </div>
 </div>
 
-<ix-form-actions mat-dialog-actions>
-  <button mat-button type="button" ixTest="cancel" matDialogClose>
+<ix-form-actions tnDialogAction>
+  <button mat-button type="button" ixTest="cancel">
     {{ 'Cancel' | translate }}
   </button>
 
@@ -68,3 +67,4 @@
     {{ 'Perform SED Reset' | translate }}
   </button>
 </ix-form-actions>
+</tn-dialog-shell>

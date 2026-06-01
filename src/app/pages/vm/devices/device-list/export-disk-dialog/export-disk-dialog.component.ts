@@ -1,14 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef,
-  MatDialogClose,
-  MatDialogTitle,
-  MatDialogContent,
-  MatDialogActions,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -39,16 +33,13 @@ interface ImageFormat {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxExplorerComponent,
     IxInputComponent,
     IxSelectComponent,
-    MatDialogActions,
     FormActionsComponent,
     MatButton,
-    MatDialogClose,
     TestDirective,
     TranslateModule,
     MatProgressBarModule,
@@ -58,8 +49,8 @@ export class ExportDiskDialogComponent {
   private fb = inject(FormBuilder);
   private filesystemService = inject(FilesystemService);
   private translate = inject(TranslateService);
-  dialogRef = inject(MatDialogRef) as MatDialogRef<ExportDiskDialogComponent>;
-  data = inject<ExportDiskDialogData>(MAT_DIALOG_DATA);
+  dialogRef = inject(DialogRef) as DialogRef<unknown, ExportDiskDialogComponent>;
+  data = inject<ExportDiskDialogData>(DIALOG_DATA);
 
   readonly helptext = helptextVmWizard;
   readonly imageFormats: ImageFormat[] = [

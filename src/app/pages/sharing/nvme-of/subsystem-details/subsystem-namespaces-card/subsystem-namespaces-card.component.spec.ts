@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
@@ -24,10 +24,10 @@ describe('SubsystemNamespacesCardComponent', () => {
       NamespaceDescriptionComponent,
     ],
     providers: [
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
-        } as MatDialogRef<unknown>)),
+          closed: of(true),
+        } as DialogRef<unknown, unknown>)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -100,7 +100,7 @@ describe('SubsystemNamespacesCardComponent', () => {
       const deleteButton = await loader.getHarness(TnIconHarness.with({ name: 'delete' }));
       await deleteButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
         DeleteNamespaceDialogComponent,
         {
           data: namespaces[0],

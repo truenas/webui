@@ -1,5 +1,5 @@
-import { MatDialog } from '@angular/material/dialog';
 import { SpectatorService } from '@ngneat/spectator';
+import { TnDialog } from '@truenas/ui-components';
 import { createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of, throwError } from 'rxjs';
@@ -43,9 +43,9 @@ describe('VmService', () => {
         mockJob('vm.restart', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(LoaderService, {
@@ -107,7 +107,7 @@ describe('VmService', () => {
 
   it('should open dialog to stop vm', () => {
     spectator.service.doStop({ id: 1 } as VirtualMachine);
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StopVmDialogComponent, { data: { id: 1 } });
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(StopVmDialogComponent, { data: { id: 1 } });
   });
 
   it('should call websocket to restart vm', () => {

@@ -1,12 +1,11 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -63,7 +62,7 @@ export class ExtentListComponent implements OnInit {
   emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private cdr = inject(ChangeDetectorRef);
   private iscsiService = inject(IscsiService);
   private destroyRef = inject(DestroyRef);
@@ -160,8 +159,8 @@ export class ExtentListComponent implements OnInit {
   }
 
   private showDeleteDialog(extent: IscsiExtent): void {
-    this.matDialog.open(DeleteExtentDialog, { data: extent })
-      .afterClosed()
+    this.tnDialog.open(DeleteExtentDialog, { data: extent })
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }

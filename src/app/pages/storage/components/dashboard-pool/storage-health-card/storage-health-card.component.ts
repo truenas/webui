@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject, Signal } from '@angular/core';
+import { TnDialog } from '@truenas/ui-components';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
@@ -84,7 +84,7 @@ export class StorageHealthCardComponent {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private store = inject(PoolsDashboardStore);
   private slideIn = inject(SlideIn);
   private router = inject(Router);
@@ -165,9 +165,9 @@ export class StorageHealthCardComponent {
   }
 
   protected onEditAutotrim(): void {
-    this.matDialog
+    this.tnDialog
       .open(AutotrimDialog, { data: this.pool() })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean))
       .subscribe(() => this.store.loadDashboard());
   }

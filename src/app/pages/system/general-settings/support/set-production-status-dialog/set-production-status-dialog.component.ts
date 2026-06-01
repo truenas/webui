@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -21,21 +20,18 @@ export interface SetProductionStatusDialogResult {
   styleUrls: ['./set-production-status-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     IxCheckboxComponent,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatDialogActions,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class SetProductionStatusDialog {
-  private dialogRef = inject<MatDialogRef<SetProductionStatusDialog, SetProductionStatusDialogResult>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<SetProductionStatusDialogResult, SetProductionStatusDialog>>(DialogRef);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 

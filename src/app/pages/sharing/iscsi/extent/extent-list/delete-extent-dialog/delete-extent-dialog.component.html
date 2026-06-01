@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>{{ 'Delete iSCSI extent {name}?' | translate: { name: extent.name } }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'Delete iSCSI extent {name}?' | translate: { name: extent.name }">
+<div>
   <form [formGroup]="form">
     @if (isFile) {
       <ix-checkbox
@@ -13,11 +13,11 @@
     ></ix-checkbox>
   </form>
 </div>
-<ix-form-actions mat-dialog-actions class="form-actions">
+<ix-form-actions tnDialogAction class="form-actions">
   <button
     mat-button
     ixTest="cancel"
-    [matDialogClose]="false"
+   
   >
     {{ 'Cancel' | translate }}
   </button>
@@ -31,3 +31,4 @@
     {{ 'Delete' | translate }}
   </button>
 </ix-form-actions>
+</tn-dialog-shell>

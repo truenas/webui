@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, signal, inject, DestroyRef } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -28,9 +26,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './associated-target-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogContent,
-    MatDialogTitle,
-    MatDialogClose,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
@@ -40,7 +36,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatButton,
     TestDirective,
     TranslateModule,
-    MatDialogActions,
   ],
 })
 export class AssociatedTargetFormComponent {
@@ -49,8 +44,8 @@ export class AssociatedTargetFormComponent {
   private errorHandler = inject(FormErrorHandlerService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
-  data = inject<AssociatedTargetDialogData>(MAT_DIALOG_DATA);
-  dialogRef = inject<MatDialogRef<AssociatedTargetFormComponent>>(MatDialogRef);
+  data = inject<AssociatedTargetDialogData>(DIALOG_DATA);
+  dialogRef = inject<DialogRef<unknown, AssociatedTargetFormComponent>>(DialogRef);
 
   form = this.formBuilder.group({
     lunid: [null as number | null, [

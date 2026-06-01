@@ -13,7 +13,7 @@ export class LoaderService {
   private dialog = inject(Dialog);
   private focusService = inject(FocusService);
 
-  dialogRef: DialogRef<unknown, AppLoaderComponent> | null = null;
+  dialogRef: DialogRef<AppLoaderComponent, unknown> | null = null;
   private onBeforeClose: (() => Observable<boolean>) | null = null;
   private handlersSetup = false;
   private keydownSubscription: Subscription | null = null;
@@ -119,7 +119,7 @@ export class LoaderService {
     this.handlersSetup = true;
 
     // Since disableClose is true, we need to manually listen for ESC and backdrop clicks.
-    // On cdk DialogRef these are observable properties (not methods like on MatDialogRef).
+    // On cdk DialogRef these are observable properties (not methods like on DialogRef).
     this.keydownSubscription = this.dialogRef.keydownEvents.pipe(
       filter((event) => event.key === 'Escape'),
     ).subscribe(() => {

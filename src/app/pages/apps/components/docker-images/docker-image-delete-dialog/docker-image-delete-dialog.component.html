@@ -1,4 +1,4 @@
-<h1 matDialogTitle>{{ 'Delete' | translate }}</h1>
+<tn-dialog-shell [title]="'Delete' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   @if (isJobCompleted) {
     <p>
@@ -67,7 +67,7 @@
           mat-button
           type="button"
           ixTest="close"
-          [matDialogClose]="true"
+         
         >
           {{ 'Close' | translate }}
         </button>
@@ -75,7 +75,7 @@
         <button
           mat-button
           type="button"
-          matDialogClose
+         
           ixTest="cancel"
         >
           {{ 'Cancel' | translate }}
@@ -84,3 +84,4 @@
     </div>
   </div>
 </form>
+</tn-dialog-shell>

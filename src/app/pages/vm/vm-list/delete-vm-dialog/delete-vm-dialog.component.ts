@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -29,16 +28,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxCheckboxComponent,
     IxInputComponent,
-    MatDialogActions,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -46,12 +42,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class DeleteVmDialogComponent implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject<MatDialogRef<DeleteVmDialogComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, DeleteVmDialogComponent>>(DialogRef);
   private validators = inject(IxValidatorsService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
-  vm = inject<VirtualMachine>(MAT_DIALOG_DATA);
+  vm = inject<VirtualMachine>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.VmWrite];

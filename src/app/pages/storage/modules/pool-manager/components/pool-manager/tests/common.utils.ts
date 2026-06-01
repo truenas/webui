@@ -1,5 +1,5 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { TnDialog } from '@truenas/ui-components';
 import { MatStepperModule } from '@angular/material/stepper';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -129,15 +129,15 @@ export const commonProviders = [
   GenerateVdevsService,
   PoolManagerValidationService,
   DiskStore,
-  mockProvider(MatDialog, {
+  mockProvider(TnDialog, {
     open: jest.fn(() => ({
-      afterClosed: () => of(undefined),
+      closed: of(undefined),
     })),
   }),
   mockProvider(DialogService, {
     confirm: jest.fn(() => of(true)),
     jobDialog: jest.fn(() => ({
-      afterClosed: () => of({
+      closed: of({
         result: {},
       } as Job<Pool>),
     })),

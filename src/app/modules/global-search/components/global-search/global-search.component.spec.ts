@@ -1,7 +1,7 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { provideRouter } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -34,7 +34,6 @@ describe('GlobalSearchComponent', () => {
     imports: [
       FormsModule,
       ReactiveFormsModule,
-      MatDialogModule,
       TranslateModule.forRoot(),
       A11yModule,
       EmptyComponent,
@@ -44,7 +43,7 @@ describe('GlobalSearchComponent', () => {
       provideRouter([]),
       mockAuth(),
       GlobalSearchSectionsProvider,
-      { provide: MatDialogRef, useValue: {} },
+      { provide: DialogRef, useValue: {} },
       mockProvider(UiSearchProvider, {
         search: jest.fn().mockReturnValue(of(mockedSearchResults)),
         selectionChanged$: of(),

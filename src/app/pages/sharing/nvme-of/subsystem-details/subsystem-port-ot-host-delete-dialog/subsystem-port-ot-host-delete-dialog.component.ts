@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogActions, MatDialogClose,
-  MatDialogContent, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -18,23 +16,20 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TranslateModule,
+    TnDialogShellComponent,
+TranslateModule,
     ReactiveFormsModule,
     FormActionsComponent,
     MatButton,
     RequiresRolesDirective,
     TestDirective,
-    MatDialogClose,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
   ],
 })
 export class SubsystemPortOrHostDeleteDialogComponent {
-  private dialogRef = inject<MatDialogRef<SubsystemPortOrHostDeleteDialogComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, SubsystemPortOrHostDeleteDialogComponent>>(DialogRef);
   private translate = inject(TranslateService);
 
-  protected readonly data = inject<PortOrHostDeleteDialogData>(MAT_DIALOG_DATA);
+  protected readonly data = inject<PortOrHostDeleteDialogData>(DIALOG_DATA);
   protected readonly requiredRoles: Role[] = [Role.SharingNvmeTargetWrite];
   protected readonly type = this.data.type === PortOrHostDeleteType.Host
     ? this.translate.instant('Host')

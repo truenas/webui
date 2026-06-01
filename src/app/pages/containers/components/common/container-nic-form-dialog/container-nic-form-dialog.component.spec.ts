@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -14,11 +14,11 @@ describe('ContainerNicFormDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: ContainerNicFormDialog,
     providers: [
-      mockProvider(MatDialogRef, {
+      mockProvider(DialogRef, {
         close: jest.fn(),
       }),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: { nic: 'ens' },
       },
     ],
@@ -40,7 +40,7 @@ describe('ContainerNicFormDialogComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     expect(await button.isDisabled()).toBeFalsy();
     await button.click();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       type: 'VIRTIO',
       useDefault: true,
       trust_guest_rx_filters: false,
@@ -55,7 +55,7 @@ describe('ContainerNicFormDialogComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     expect(await button.isDisabled()).toBeFalsy();
     await button.click();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       type: 'VIRTIO',
       useDefault: false,
       mac: 'aa:bb:cc:dd:ee:ff',

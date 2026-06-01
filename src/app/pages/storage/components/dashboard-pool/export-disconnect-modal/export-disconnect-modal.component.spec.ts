@@ -1,8 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -104,11 +105,11 @@ describe('ExportDisconnectModalComponent', () => {
         error: jest.fn(),
         warn: jest.fn(),
       }),
-      mockProvider(MatDialogRef),
-      mockProvider(MatDialog, {
+      mockProvider(DialogRef),
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(false),
-        }) as unknown as MatDialogRef<JobProgressDialogRef<unknown>>),
+        }) as unknown as DialogRef<unknown, JobProgressDialogRef<unknown>>),
       }),
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
@@ -134,7 +135,7 @@ describe('ExportDisconnectModalComponent', () => {
       }),
     ],
     componentProviders: [
-      { provide: MAT_DIALOG_DATA, useValue: fakePool },
+      { provide: DIALOG_DATA, useValue: fakePool },
     ],
   });
 
@@ -647,7 +648,7 @@ describe('ExportDisconnectModalComponent', () => {
 
         await submitExportForm();
 
-        expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ServicesToBeRestartedDialogComponent, {
+        expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ServicesToBeRestartedDialogComponent, {
           data: {
             code: 'control_services',
             restart_services: ['cifs', 'iscsi'],
@@ -673,9 +674,9 @@ describe('ExportDisconnectModalComponent', () => {
           }) as Observable<Job>,
         } as JobProgressDialogRef<unknown>);
 
-        jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+        jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
           afterClosed: () => of(true),
-        } as unknown as MatDialogRef<ServicesToBeRestartedDialogComponent>);
+        } as unknown as DialogRef<unknown, ServicesToBeRestartedDialogComponent>);
 
         await submitExportForm();
 
@@ -711,8 +712,8 @@ describe('ExportDisconnectModalComponent', () => {
           error: jest.fn(),
           warn: jest.fn(),
         }),
-        mockProvider(MatDialogRef),
-        mockProvider(MatDialog),
+        mockProvider(DialogRef),
+        mockProvider(TnDialog),
         mockProvider(LoaderService, {
           withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
         }),
@@ -733,7 +734,7 @@ describe('ExportDisconnectModalComponent', () => {
         }),
       ],
       componentProviders: [
-        { provide: MAT_DIALOG_DATA, useValue: fakePool },
+        { provide: DIALOG_DATA, useValue: fakePool },
       ],
     });
 

@@ -1,4 +1,4 @@
-<mat-dialog-content>
+
   <h3>{{ 'Restart SMB Service' | translate }}</h3>
   <div>
     <p>{{ helptext.restartMessage | translate }}</p>
@@ -29,15 +29,15 @@
       </div>
     }
   </div>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button ixTest="do-not-restart" [mat-dialog-close]="false">{{ 'No' | translate }}</button>
+
+<div tnDialogAction align="end">
+  <button mat-button ixTest="do-not-restart">{{ 'No' | translate }}</button>
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
     cdkFocusInitial
     color="primary"
     ixTest="restart-service"
-    [mat-dialog-close]="true"
+   
   >{{ 'Restart Service' | translate }}</button>
-</mat-dialog-actions>
+</div>

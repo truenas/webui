@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -32,20 +31,19 @@ enum StopMethod {
   styleUrls: ['./stop-options-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormActionsComponent,
+    TnDialogShellComponent,
+FormActionsComponent,
     MatButton,
-    MatDialogTitle,
     ReactiveFormsModule,
     TestDirective,
     TranslateModule,
-    MatDialogClose,
     IxSelectComponent,
   ],
 })
 export class StopOptionsDialog {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<StopOptionsDialog, ContainerStopParams | false>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<ContainerStopParams | false, StopOptionsDialog>>(DialogRef);
 
   protected readonly operation = signal(StopOptionsOperation.Stop);
 
@@ -76,7 +74,7 @@ export class StopOptionsDialog {
   );
 
   constructor() {
-    const operation = inject<StopOptionsOperation>(MAT_DIALOG_DATA);
+    const operation = inject<StopOptionsOperation>(DIALOG_DATA);
 
     this.operation.set(operation);
   }

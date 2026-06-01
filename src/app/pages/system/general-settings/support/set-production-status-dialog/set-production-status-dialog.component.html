@@ -1,6 +1,5 @@
-<h1 matDialogTitle>{{ 'Update Production Status' | translate }}</h1>
-
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'Update Production Status' | translate">
+<div>
   <p>{{ 'Set production status as active' | translate }}</p>
 
   <ix-checkbox
@@ -9,8 +8,8 @@
   ></ix-checkbox>
 </div>
 
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+<ix-form-actions tnDialogAction class="form-actions">
+  <button mat-button type="button" ixTest="cancel">
     {{ 'Cancel' | translate }}
   </button>
 
@@ -25,3 +24,4 @@
     {{ 'Proceed' | translate }}
   </button>
 </ix-form-actions>
+</tn-dialog-shell>

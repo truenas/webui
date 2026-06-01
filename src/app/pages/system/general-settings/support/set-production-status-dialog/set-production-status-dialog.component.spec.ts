@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -20,7 +20,7 @@ describe('SetProductionStatusDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -36,7 +36,7 @@ describe('SetProductionStatusDialogComponent', () => {
     const proceedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Proceed' }));
     await proceedButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       sendInitialDebug: true,
     });
   });

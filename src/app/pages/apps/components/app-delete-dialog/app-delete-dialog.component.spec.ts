@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -21,9 +21,9 @@ describe('AppDeleteDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           name: 'ix-test-app',
           showRemoveVolumes: true,
@@ -54,7 +54,7 @@ describe('AppDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       confirmAppName: 'ix-test-app',
       removeImages: true,
       removeVolumes: true,
@@ -76,7 +76,7 @@ describe('AppDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       confirmAppName: 'ix-test-app',
       removeImages: true,
       removeVolumes: true,

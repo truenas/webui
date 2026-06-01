@@ -1,7 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Extend Vdev' | translate }}
-</h1>
-
+<tn-dialog-shell [title]="'Extend Vdev' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit($event)">
   <div>{{ 'Only disks that are at least {size} are shown.' | translate: { size: minimumSize() | ixFileSize } }}</div>
 
@@ -16,7 +13,7 @@
   <div>{{ helptext.raidzExtendMessage | translate }}</div>
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
     <button
@@ -30,3 +27,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

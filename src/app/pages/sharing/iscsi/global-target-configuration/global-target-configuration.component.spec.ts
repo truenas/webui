@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -54,7 +54,7 @@ describe('TargetGlobalConfigurationComponent', () => {
         } as IscsiGlobalConfig),
         mockCall('iscsi.global.update'),
       ]),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

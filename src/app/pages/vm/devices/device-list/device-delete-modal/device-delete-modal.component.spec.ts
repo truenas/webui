@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
@@ -33,11 +33,11 @@ describe('DeviceDeleteModalComponent', () => {
           mockCall('vm.device.delete'),
         ]),
         mockProvider(DialogService),
-        mockProvider(MatDialogRef),
+        mockProvider(DialogRef),
         mockAuth(),
       ],
       componentProviders: [
-        { provide: MAT_DIALOG_DATA, useFactory: () => device },
+        { provide: DIALOG_DATA, useFactory: () => device },
       ],
     });
   }

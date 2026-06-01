@@ -1,6 +1,5 @@
-<h1 matDialogTitle>{{ 'System Thumbprint' | translate }}</h1>
-
-<div mat-dialog-content class="dialog-content">
+<tn-dialog-shell [title]="'System Thumbprint' | translate">
+<div class="dialog-content">
   @if (isLoading()) {
     <div class="loading">
       <mat-spinner [diameter]="36"></mat-spinner>
@@ -36,7 +35,7 @@
   }
 </div>
 
-<div mat-dialog-actions class="dialog-actions">
+<div tnDialogAction class="dialog-actions">
   <button
     mat-icon-button
     type="button"
@@ -50,7 +49,8 @@
 
   <span class="spacer"></span>
 
-  <button mat-button type="button" ixTest="close" [matDialogClose]="true">
+  <button mat-button type="button" ixTest="close">
     {{ 'Close' | translate }}
   </button>
 </div>
+</tn-dialog-shell>

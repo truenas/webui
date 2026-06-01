@@ -1,4 +1,4 @@
-<h1 matDialogTitle>{{ 'Update' | translate }}</h1>
+<tn-dialog-shell [title]="'Update' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <p>
     <strong>
@@ -104,8 +104,9 @@
     >
       {{ 'Update' | translate }}
     </button>
-    <button mat-button type="button" matDialogClose ixTest="cancel">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
   </div>
 </form>
+</tn-dialog-shell>

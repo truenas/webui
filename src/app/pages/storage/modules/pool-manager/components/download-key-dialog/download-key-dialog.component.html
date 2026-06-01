@@ -1,5 +1,6 @@
-<h1 mat-dialog-title>{{ helptext.dialogTitle | translate }}!</h1>
-<div mat-dialog-content>
+<tn-dialog-shell [title]="''">
+<h1>{{ helptext.dialogTitle | translate }}!</h1>
+<div>
   {{ helptext.dialogMessage | translate }}
 </div>
 
@@ -17,8 +18,9 @@
     color="primary"
     ixTest="done"
     [disabled]="!wasDownloaded()"
-    [matDialogClose]="true"
+   
   >
     {{ 'Done' | translate }}
   </button>
 </ix-form-actions>
+</tn-dialog-shell>

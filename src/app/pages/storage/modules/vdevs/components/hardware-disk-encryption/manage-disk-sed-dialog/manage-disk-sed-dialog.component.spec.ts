@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -33,11 +33,11 @@ describe('ManageDiskSedDialogComponent', () => {
         ] as Disk[]),
         mockCall('disk.update'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: 'sda',
       },
     ],
@@ -61,7 +61,7 @@ describe('ManageDiskSedDialogComponent', () => {
     await clearButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: '' }]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('SED password updated.');
   });
 
@@ -72,7 +72,7 @@ describe('ManageDiskSedDialogComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: 'new-password' }]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('SED password updated.');
   });
 });

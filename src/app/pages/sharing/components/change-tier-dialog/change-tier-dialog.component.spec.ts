@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
   EMPTY, Observable, catchError, of, throwError,
@@ -34,8 +34,8 @@ describe('ChangeTierDialogComponent — share usage list', () => {
         mockCall('sharing.nfs.query', []),
         mockCall('sharing.webshare.query', []),
       ]),
-      { provide: MAT_DIALOG_DATA, useValue: dialogData },
-      mockProvider(MatDialogRef),
+      { provide: DIALOG_DATA, useValue: dialogData },
+      mockProvider(DialogRef),
     ],
   });
 
@@ -122,8 +122,8 @@ describe('ChangeTierDialogComponent — load failure', () => {
         mockCall('sharing.nfs.query', []),
         mockCall('sharing.webshare.query', []),
       ]),
-      { provide: MAT_DIALOG_DATA, useValue: dialogData },
-      mockProvider(MatDialogRef),
+      { provide: DIALOG_DATA, useValue: dialogData },
+      mockProvider(DialogRef),
       mockProvider(ErrorHandlerService, {
         withErrorHandler: <T>() => (source$: Observable<T>) => source$.pipe(catchError((err: unknown) => {
           spectator.inject(ErrorHandlerService).showErrorModal(err);
@@ -182,8 +182,8 @@ describe('ChangeTierDialogComponent — loadDetails parsing', () => {
         mockCall('sharing.nfs.query', []),
         mockCall('sharing.webshare.query', []),
       ]),
-      { provide: MAT_DIALOG_DATA, useValue: dialogData },
-      mockProvider(MatDialogRef),
+      { provide: DIALOG_DATA, useValue: dialogData },
+      mockProvider(DialogRef),
     ],
   });
 

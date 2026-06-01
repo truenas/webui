@@ -1,4 +1,5 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
+import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, viewChild, inject,
@@ -6,13 +7,11 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   forkJoin,
 } from 'rxjs';
@@ -89,7 +88,7 @@ export class DirectoryServicesComponent implements OnInit {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private dialog = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private loader = inject(LoaderService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
@@ -369,8 +368,8 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   protected openLeaveDialog(): void {
-    this.matDialog.open(LeaveDomainDialog)
-      .afterClosed()
+    this.tnDialog.open(LeaveDomainDialog)
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),

@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
@@ -46,7 +46,7 @@ describe('BootenvStatsDialogComponent', () => {
     providers: [
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockApi([
         mockCall('boot.get_state', poolInstance),
         mockCall('boot.set_scrub_interval'),
@@ -114,7 +114,7 @@ describe('BootenvStatsDialogComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('boot.set_scrub_interval', [3]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Scrub interval set to 3 days');
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('tells user to look at alerts if boot pool status is degraded', () => {

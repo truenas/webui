@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -22,9 +22,9 @@ describe('StopVmDialogComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(DialogService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           id: 1,
           name: 'test',
@@ -45,6 +45,6 @@ describe('StopVmDialogComponent', () => {
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
     await stopButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ forceAfterTimeout: true });
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({ forceAfterTimeout: true });
   });
 });

@@ -1,11 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -65,9 +64,9 @@ describe('VirtualMachineDetailsRowComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(Router),
@@ -97,7 +96,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
     const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: /Clone/ }));
     await cloneButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
       CloneVmDialogComponent,
       { data: virtualMachine },
     );
@@ -107,7 +106,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
       DeleteVmDialogComponent,
       { data: virtualMachine },
     );

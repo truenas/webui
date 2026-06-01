@@ -1,8 +1,8 @@
 import { CdkStepper } from '@angular/cdk/stepper';
+import { TnDialog } from '@truenas/ui-components';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import {
   byTextContent, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -85,7 +85,7 @@ describe('ReviewWizardStepComponent', () => {
         state$,
         totalUsableCapacity$: of(2 * GiB),
       }),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockAuth(),
     ],
   });
@@ -112,7 +112,7 @@ describe('ReviewWizardStepComponent', () => {
       const inspectButton = await loader.getHarness(MatButtonHarness.with({ text: 'Inspect VDEVs' }));
       await inspectButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InspectVdevsDialog, {
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(InspectVdevsDialog, {
         data: {
           topology: state.topology,
           enclosures: state.enclosures,

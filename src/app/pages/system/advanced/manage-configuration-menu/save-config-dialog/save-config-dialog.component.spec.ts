@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of, throwError } from 'rxjs';
@@ -41,7 +41,7 @@ describe('SaveConfigDialogComponent', () => {
       mockProvider(DownloadService, {
         coreDownload: jest.fn(() => of(undefined)),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DialogService),
       mockProvider(ErrorHandlerService),
     ],
@@ -65,7 +65,7 @@ describe('SaveConfigDialogComponent', () => {
       fileName: expect.any(String),
       mimeType: 'application/x-sqlite3',
     });
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('saves configuration together with password seed when dialog is submitted with Export checkbox', async () => {
@@ -88,6 +88,6 @@ describe('SaveConfigDialogComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith();
   });
 });

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
+import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
@@ -31,7 +31,7 @@ import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-fo
 export class UserDetailHeaderComponent {
   private authService = inject(AuthService);
   private slideIn = inject(SlideIn);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
 
@@ -51,9 +51,9 @@ export class UserDetailHeaderComponent {
 
   protected doDelete(): void {
     if (!this.user().local) return;
-    this.matDialog
+    this.tnDialog
       .open(DeleteUserDialog, { data: this.user() })
-      .afterClosed()
+      .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }

@@ -1,7 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Prune Deduplication Table' | translate }}
-</h1>
-
+<tn-dialog-shell [title]="'Prune Deduplication Table' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
   <ix-radio-group
     formControlName="pruneBy"
@@ -38,7 +35,7 @@
   }
 
   <ix-form-actions class="actions">
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -47,3 +44,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

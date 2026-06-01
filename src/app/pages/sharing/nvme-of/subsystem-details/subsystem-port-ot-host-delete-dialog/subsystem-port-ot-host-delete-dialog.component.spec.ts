@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
@@ -16,7 +16,7 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
     providers: [
       mockAuth(),
       {
-        provide: MatDialogRef,
+        provide: DialogRef,
         useValue: { close: jest.fn() },
       },
     ],
@@ -27,7 +27,7 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               name: 'nvme1',
               type: PortOrHostDeleteType.Port,
@@ -47,7 +47,7 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
       const button = await loader.getHarness(MatButtonHarness.with({ text: /Delete/i }));
       await button.click();
 
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
         confirmed: true,
         force: false,
       });
@@ -59,7 +59,7 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               name: 'nvme1',
               type: PortOrHostDeleteType.Port,
@@ -80,7 +80,7 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
       const button = await loader.getHarness(MatButtonHarness.with({ text: /Delete Anyway/i }));
       await button.click();
 
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
         confirmed: true,
         force: true,
       });

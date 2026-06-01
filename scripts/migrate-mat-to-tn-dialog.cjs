@@ -78,9 +78,7 @@ function importsMatDialog(text) {
 }
 
 function usesJobProgressDialogRef(text) {
-  // Match either an explicit import/use of JobProgressDialogRef, or any call site of dialog.jobDialog(...)
-  // (DialogService.jobDialog returns a JobProgressDialogRef whose API keeps .afterClosed()).
-  return /\bJobProgressDialogRef\b/.test(text) || /\.jobDialog\s*\(/.test(text);
+  return /\bJobProgressDialogRef\b/.test(text);
 }
 
 function transformMatDialogImports(text) {
@@ -165,12 +163,21 @@ function transformTsBody(text, opts) {
   text = text.replace(/\bMatDialog\b(?!Title|Content|Actions|Close|Module|Config|State)/g, 'TnDialog');
   text = text.replace(/\bmatDialog\b/g, 'tnDialog');
 
-  // Drop generic on DialogRef<X> because cdk DialogRef<R, C> has R first;
-  // we cannot infer R from a Mat-style single-generic. Callers can re-add explicit types.
-  text = text.replace(/\bDialogRef<[^>]+>/g, 'DialogRef');
+  // `MatDialogRef<C>` → `DialogRef<unknown, C>` (cdk DialogRef<R, C> has R first; we don't know R).
+  // `MatDialogRef<C, R>` → `DialogRef<R, C>`.
+  text = text.replace(/\bDialogRef<([^,>]+),\s*([^>]+)>/g, 'DialogRef<$2, $1>');
+  text = text.replace(/\bDialogRef<([^,>]+)>/g, 'DialogRef<unknown, $1>');
 
+  // Convert .afterClosed() -> .closed everywhere EXCEPT immediately after .jobDialog(...) which
+  // returns a JobProgressDialogRef (our custom wrapper) whose API keeps .afterClosed().
   if (!usesJpdRef) {
+    // Use a placeholder to protect `.jobDialog(...).afterClosed()` chains, then restore them after.
+    const sentinel = '__KEEP_AFTERCLOSED__';
+    text = text.replace(/(\.jobDialog\s*\([\s\S]*?\)[\s\S]*?)\.afterClosed\(\)/g, `$1.${sentinel}()`);
     text = text.replace(/\.afterClosed\(\)/g, '.closed');
+    text = text.replace(new RegExp('\\.' + sentinel + '\\(\\)', 'g'), '.afterClosed()');
+
+    // Mock-style { afterClosed: () => x } -> { closed: x } — safe in non-JobProgress test files.
     text = text.replace(/afterClosed:\s*\(\s*\)\s*=>\s*([^,}\n]+)/g, 'closed: $1');
   }
 
@@ -184,9 +191,13 @@ function transformTsBody(text, opts) {
 
 function extractTitleExpr(inner) {
   inner = inner.trim();
+  // single {{ expr }} occupying the entire heading. Reject if the captured expression contains
+  // any further {{ or }} sequences (which would indicate multiple interpolations or text+interp).
   const m1 = inner.match(/^\{\{\s*([\s\S]+?)\s*\}\}$/);
-  if (m1) return m1[1].trim();
+  if (m1 && !/\{\{|\}\}/.test(m1[1])) return m1[1].trim();
+  // plain text only
   if (/^[^<>{}]+$/.test(inner)) return `'${inner.trim().replace(/'/g, "\\'")}' | translate`;
+  // anything else (multiple interpolations, icons, etc.) is too complex
   return null;
 }
 
@@ -196,40 +207,63 @@ function transformHtmlTemplate(file, text) {
   }
   const before = text;
 
+  // Title extraction (h1-h6 with mat-dialog-title or matDialogTitle attribute)
   const allTitleMatches = text.match(/<h\d[^>]*(?:mat-dialog-title|matDialogTitle)[^>]*>[\s\S]*?<\/h\d>/g) || [];
-  if (allTitleMatches.length > 1) {
-    stats.warnings.push(`SKIP (multiple titles): ${file}`);
-    stats.htmlSkipped++;
-    return { text, changed: false };
-  }
-
   let titleExpr = '';
-  if (allTitleMatches.length === 1) {
+  let leaveTitleInPlace = false;
+
+  if (allTitleMatches.length > 1) {
+    // Multiple titles — leave them as-is inside the shell; emit shell with empty title.
+    leaveTitleInPlace = true;
+    titleExpr = "''";
+    for (const m of allTitleMatches) {
+      // Strip the attribute so it just becomes a heading.
+      const cleaned = m
+        .replace(/\s+mat-dialog-title/g, '')
+        .replace(/\s+matDialogTitle/g, '');
+      text = text.replace(m, cleaned);
+    }
+  } else if (allTitleMatches.length === 1) {
     const titleMatch = allTitleMatches[0];
     const inner = titleMatch.replace(/^<h\d[^>]*>/, '').replace(/<\/h\d>$/, '');
     const ex = extractTitleExpr(inner);
     if (ex == null) {
-      stats.warnings.push(`SKIP (complex title): ${file}`);
-      stats.htmlSkipped++;
-      return { text, changed: false };
+      // Complex title (e.g. contains an icon). Leave it in place and use empty shell title.
+      leaveTitleInPlace = true;
+      titleExpr = "''";
+      const cleaned = titleMatch
+        .replace(/\s+mat-dialog-title/g, '')
+        .replace(/\s+matDialogTitle/g, '');
+      text = text.replace(titleMatch, cleaned);
+    } else {
+      titleExpr = ex;
+      text = text.replace(titleMatch, '');
     }
-    titleExpr = ex;
-    text = text.replace(titleMatch, '');
+  } else if (/<mat-dialog-title[^>]*>/.test(text)) {
+    // <mat-dialog-title>X</mat-dialog-title> element form — leave content in place.
+    leaveTitleInPlace = true;
+    titleExpr = "''";
+    text = text.replace(/<mat-dialog-title[^>]*>([\s\S]*?)<\/mat-dialog-title>/g, '<h2>$1</h2>');
   }
 
-  // Just strip the mat-dialog-content attribute, leave the div intact (regex-safe).
+  // Strip the mat-dialog-content attribute, leave the div intact (regex-safe).
   text = text.replace(/(<\w+[^>]*?)\s+mat-dialog-content(\s*[^>]*>)/g, '$1$2');
+  // <mat-dialog-content>X</mat-dialog-content> element form -> just content
   text = text.replace(/<mat-dialog-content[^>]*>([\s\S]*?)<\/mat-dialog-content>/g, '$1');
 
+  // mat-dialog-actions attribute -> tnDialogAction
   text = text.replace(/(<div[^>]*?)\s+mat-dialog-actions([^>]*>)/g, '$1 tnDialogAction$2');
   text = text.replace(/(<ix-form-actions[^>]*?)\s+mat-dialog-actions([^>]*>)/g, '$1 tnDialogAction$2');
+  // <mat-dialog-actions>X</mat-dialog-actions> element form -> <div tnDialogAction>X</div>
+  text = text.replace(/<mat-dialog-actions([^>]*)>([\s\S]*?)<\/mat-dialog-actions>/g, '<div tnDialogAction$1>$2</div>');
 
+  // Remove [mat-dialog-close]/mat-dialog-close/matDialogClose attributes. Callers should add explicit close.
   text = text.replace(/(\s)mat-dialog-close(?:=("|')([^"']*?)\2)?/g, '');
   text = text.replace(/(\s)\[mat-dialog-close\](?:=("|')([^"']*?)\2)?/g, '');
   text = text.replace(/(\s)matDialogClose(?:=("|')([^"']*?)\2)?/g, '');
   text = text.replace(/(\s)\[matDialogClose\](?:=("|')([^"']*?)\2)?/g, '');
 
-  if (titleExpr) {
+  if (titleExpr || leaveTitleInPlace) {
     text = `<tn-dialog-shell [title]="${titleExpr}">\n${text.trim()}\n</tn-dialog-shell>\n`;
   }
 

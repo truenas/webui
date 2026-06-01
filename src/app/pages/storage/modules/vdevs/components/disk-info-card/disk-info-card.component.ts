@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
+import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions,
 } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -46,7 +46,7 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
   ],
 })
 export class DiskInfoCardComponent {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);
   private route = inject(ActivatedRoute);
   private vDevsStore = inject(VDevsStore);
@@ -72,7 +72,7 @@ export class DiskInfoCardComponent {
 
   onReplace(): void {
     const poolId = this.route.snapshot.params.poolId as string;
-    this.matDialog
+    this.tnDialog
       .open(ReplaceDiskDialog, {
         data: {
           poolId: Number(poolId),
@@ -80,7 +80,7 @@ export class DiskInfoCardComponent {
           diskName: this.disk()?.name || this.topologyDisk().guid,
         } as ReplaceDiskDialogData,
       })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),

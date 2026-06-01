@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -49,7 +49,7 @@ describe('BootPoolAttachDialogComponent', () => {
           return { afterClosed: jest.fn(() => of(null)) };
         }),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockAuth(),
       mockProvider(SnackbarService),
     ],

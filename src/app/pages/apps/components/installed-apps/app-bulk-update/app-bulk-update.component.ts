@@ -1,19 +1,17 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, signal, TrackByFunction,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -42,11 +40,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./app-bulk-update.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ReactiveFormsModule,
+    TnDialogShellComponent,
+ReactiveFormsModule,
     TranslateModule,
-    MatDialogTitle,
     MatAccordion,
-    MatDialogClose,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     FakeProgressBarComponent,
@@ -66,11 +63,11 @@ export class AppBulkUpdateComponent {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<AppBulkUpdateComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, AppBulkUpdateComponent>>(DialogRef);
   private appService = inject(ApplicationsService);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
-  private apps = inject<App[]>(MAT_DIALOG_DATA);
+  private apps = inject<App[]>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   readonly expandedItems = signal<string[]>([]);

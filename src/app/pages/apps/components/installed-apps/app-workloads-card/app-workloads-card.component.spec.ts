@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import {
   createComponentFactory, mockProvider,
@@ -74,7 +74,7 @@ describe('AppContainersCardComponent', () => {
       MapValuePipe,
     ],
     providers: [
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => of(true)),
       }),
       mockAuth(),
@@ -120,7 +120,7 @@ describe('AppContainersCardComponent', () => {
     const volumeButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Volume Mounts"]' }));
     await volumeButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(VolumeMountsDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(VolumeMountsDialog, {
       data: app.active_workloads.container_details[0],
       minWidth: '60vw',
     });

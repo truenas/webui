@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
@@ -43,7 +43,7 @@ describe('UploadIsoDialogComponent', () => {
       mockProvider(SnackbarService, {
         success: jest.fn(),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockAuth(),
     ],
   });
@@ -70,7 +70,7 @@ describe('UploadIsoDialogComponent', () => {
       method: 'filesystem.put',
       params: ['/mnt/tank/iso/new-windows.iso', { mode: 493 }],
     }));
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('/mnt/tank/iso/new-windows.iso');
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('/mnt/tank/iso/new-windows.iso');
   });
 
   it('cancels upload and cleans up when component is destroyed', async () => {

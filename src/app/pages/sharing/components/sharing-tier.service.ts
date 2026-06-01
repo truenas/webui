@@ -2,10 +2,9 @@ import {
   ChangeDetectorRef, DestroyRef, Injectable, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
+import { TnDialog, tnIconMarker } from '@truenas/ui-components';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
 import {
   EMPTY, Observable, auditTime, catchError, filter, map, of, retry, shareReplay, tap, timer,
 } from 'rxjs';
@@ -34,7 +33,7 @@ interface TierRow {
 })
 export class SharingTierService {
   private api = inject(ApiService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
 
@@ -236,9 +235,9 @@ export class SharingTierService {
       return EMPTY;
     }
 
-    return this.matDialog.open(ChangeTierDialogComponent, {
+    return this.tnDialog.open(ChangeTierDialogComponent, {
       data,
-    }).afterClosed().pipe(filter(Boolean));
+    }).closed.pipe(filter(Boolean));
   }
 
   private datasetFromMountPath(path: string): string[] {

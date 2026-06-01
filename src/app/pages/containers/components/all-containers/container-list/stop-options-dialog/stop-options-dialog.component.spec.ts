@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
@@ -14,7 +14,7 @@ describe('StopOptionsDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: StopOptionsDialog,
     providers: [
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -22,7 +22,7 @@ describe('StopOptionsDialogComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: operation,
         },
       ],
@@ -54,7 +54,7 @@ describe('StopOptionsDialogComponent', () => {
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
     await stopButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({});
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({});
   });
 
   it('closes the form with parameters when force after timeout is selected', async () => {
@@ -68,7 +68,7 @@ describe('StopOptionsDialogComponent', () => {
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
     await stopButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       force_after_timeout: true,
     });
   });
@@ -84,7 +84,7 @@ describe('StopOptionsDialogComponent', () => {
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
     await stopButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       force: true,
     });
   });
@@ -95,6 +95,6 @@ describe('StopOptionsDialogComponent', () => {
     const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
     await cancelButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(false);
   });
 });

@@ -1,6 +1,5 @@
-<h1 mat-dialog-title>{{ 'Unlock SED for {diskName}' | translate: { diskName: data.diskName } }}</h1>
-
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'Unlock SED for {diskName}' | translate: { diskName: data.diskName }">
+<div>
   <p>{{ 'Successfully unlocking the disk will automatically update the database.' | translate }}</p>
 
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
@@ -13,8 +12,8 @@
   </form>
 </div>
 
-<ix-form-actions mat-dialog-actions>
-  <button mat-button type="button" ixTest="cancel" matDialogClose>
+<ix-form-actions tnDialogAction>
+  <button mat-button type="button" ixTest="cancel">
     {{ 'Cancel' | translate }}
   </button>
 
@@ -30,3 +29,4 @@
     {{ 'Unlock' | translate }}
   </button>
 </ix-form-actions>
+</tn-dialog-shell>

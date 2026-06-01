@@ -1,6 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Choose a pool for Apps' | translate }}
-</h1>
+<tn-dialog-shell [title]="'Choose a pool for Apps' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-select
     formControlName="pool"
@@ -17,7 +15,7 @@
   }
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -33,3 +31,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

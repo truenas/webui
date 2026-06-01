@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
 import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
@@ -21,7 +21,7 @@ describe('PasswordChangeRequiredDialog', () => {
     imports: [],
     declarations: [],
     providers: [
-      mockProvider(MatDialogRef, {
+      mockProvider(DialogRef, {
         close: jest.fn(),
       }),
       mockProvider(WebSocketHandlerService, {
@@ -84,6 +84,6 @@ describe('PasswordChangeRequiredDialog', () => {
     const finishButton = await loader.getHarness(MatButtonHarness.with({ text: 'Finish' }));
     await finishButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 });

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -16,12 +16,12 @@ describe('DeleteSubsystemDialogComponent', () => {
     providers: [
       mockAuth(),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           name: 'subsys-1',
         },
       },
-      mockProvider(MatDialogRef, {
+      mockProvider(DialogRef, {
         close: jest.fn(),
       }),
     ],
@@ -40,10 +40,10 @@ describe('DeleteSubsystemDialogComponent', () => {
   it('emits right object when delete is clicked', async () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await button.click();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ confirmed: true, force: false });
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({ confirmed: true, force: false });
     const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Force' }));
     await checkbox.setValue(true);
     await button.click();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ confirmed: true, force: true });
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({ confirmed: true, force: true });
   });
 });

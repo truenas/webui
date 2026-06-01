@@ -1,9 +1,10 @@
+<tn-dialog-shell [title]="''">
 <ix-fake-progress-bar
   [loading]="isLoading()"
 ></ix-fake-progress-bar>
 
 <div class="header">
-  <h1 mat-dialog-title>
+  <h1>
     {{ 'Map User And Group IDs' | translate }}
 
     <tn-icon
@@ -29,7 +30,7 @@
   </button>
 </div>
 
-<mat-dialog-content class="dialog-content">
+
   <ix-button-group
     class="type-selector"
     [formControl]="typeControl"
@@ -96,4 +97,4 @@
       (mappingAdded)="loadMappings()"
     ></ix-new-mapping-form>
   }
-</mat-dialog-content>
+</tn-dialog-shell>

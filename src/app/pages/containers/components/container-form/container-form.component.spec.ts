@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -94,9 +94,9 @@ describe('ContainerFormComponent', () => {
       mockProvider(ContainersStore, {
         reload: jest.fn(),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of({
+          closed: of({
             name: 'ubuntu',
             version: '22.04',
           }),
@@ -104,7 +104,7 @@ describe('ContainerFormComponent', () => {
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of({ result: createdContainer }),
+          closed: of({ result: createdContainer }),
         })),
       }),
       mockProvider(Router, {
@@ -156,7 +156,7 @@ describe('ContainerFormComponent', () => {
       const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
       await browseButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalled();
     });
   });
 
@@ -190,9 +190,9 @@ describe('ContainerFormComponent', () => {
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
         }),
-        mockProvider(MatDialog, {
+        mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: () => of({
+            closed: of({
               name: 'ubuntu',
               version: '22.04',
             }),
@@ -332,9 +332,9 @@ describe('ContainerFormComponent', () => {
           initialize: jest.fn(),
           containerUpdated: jest.fn(),
         }),
-        mockProvider(MatDialog, {
+        mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: () => of({
+            closed: of({
               name: 'ubuntu',
               version: '22.04',
             }),
@@ -484,9 +484,9 @@ describe('ContainerFormComponent', () => {
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
         }),
-        mockProvider(MatDialog, {
+        mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: () => of({
+            closed: of({
               name: 'ubuntu',
               version: '22.04',
             }),
@@ -494,7 +494,7 @@ describe('ContainerFormComponent', () => {
         }),
         mockProvider(DialogService, {
           jobDialog: jest.fn(() => ({
-            afterClosed: () => of({ result: createdContainer }),
+            closed: of({ result: createdContainer }),
           })),
         }),
         mockProvider(Router, {
@@ -607,7 +607,7 @@ describe('ContainerFormComponent', () => {
           requireConfirmationWhen: jest.fn(),
         }),
         mockProvider(ContainersStore, { initialize: jest.fn() }),
-        mockProvider(MatDialog),
+        mockProvider(TnDialog),
         mockProvider(DialogService),
         mockProvider(Router),
       ],

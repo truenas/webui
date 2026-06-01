@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -32,7 +32,7 @@ describe('DefaultGatewayDialogComponent', () => {
       mockCall('interface.save_network_config'),
       mockCall('network.configuration.update'),
     ]),
-    mockProvider(MatDialogRef),
+    mockProvider(DialogRef),
     mockProvider(ErrorHandlerService, {
       withErrorHandler: () => (source$: unknown) => source$,
     }),
@@ -49,7 +49,7 @@ describe('DefaultGatewayDialogComponent', () => {
     ],
     providers: [
       ...defaultProviders,
-      { provide: MAT_DIALOG_DATA, useValue: null },
+      { provide: DIALOG_DATA, useValue: null },
     ],
   });
 
@@ -76,7 +76,7 @@ describe('DefaultGatewayDialogComponent', () => {
   });
 
   it('saves gateway and DNS configuration when form is submitted', async () => {
-    const dialogRef = spectator.inject(MatDialogRef);
+    const dialogRef = spectator.inject(DialogRef);
     const snackbar = spectator.inject(SnackbarService);
 
     await form.fillForm({
@@ -110,7 +110,7 @@ describe('DefaultGatewayDialogComponent', () => {
       providers: [
         ...defaultProviders,
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: {
             ipv4gateway: '10.0.0.1',
             nameserver1: '1.1.1.1',

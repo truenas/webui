@@ -1,7 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Pool Options for {pool}' | translate: { pool: pool.name } }}
-</h1>
-
+<tn-dialog-shell [title]="'Pool Options for {pool}' | translate: { pool: pool.name }">
 <form class="ix-form-container" (submit)="onSubmit($event)">
   <ix-checkbox
     [formControl]="autotrimControl"
@@ -10,7 +7,7 @@
   ></ix-checkbox>
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Cancel' | translate }}
     </button>
 
@@ -19,3 +16,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

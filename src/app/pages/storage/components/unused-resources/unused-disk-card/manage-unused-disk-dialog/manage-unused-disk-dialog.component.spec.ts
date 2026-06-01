@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -30,7 +30,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
     providers: [
       mockAuth(),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           pools: [
             { id: 1, name: 'DEV' },
@@ -43,7 +43,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
           ] as DetailsDisk[],
         } as ManageUnusedDiskDialogResource,
       },
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -80,7 +80,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
     const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
     await addDisksButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 'create']);
   });
 
@@ -95,7 +95,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
     const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
     await addDisksButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 2, 'add-vdevs']);
   });
 });

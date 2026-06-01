@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -61,7 +61,7 @@ describe('CertificateEditComponent', () => {
       mockApi([
         mockJob('certificate.update'),
       ]),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(SlideIn),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService),
@@ -121,7 +121,7 @@ describe('CertificateEditComponent', () => {
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'View/Download Certificate' }));
       await button.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
         data: {
           certificate: '--BEGIN CERTIFICATE--',
           name: 'ray',
@@ -135,7 +135,7 @@ describe('CertificateEditComponent', () => {
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'View/Download Key' }));
       await button.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
         data: {
           certificate: '--BEGIN RSA PRIVATE KEY--',
           name: 'ray',
@@ -188,7 +188,7 @@ describe('CertificateEditComponent', () => {
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'View/Download CSR' }));
       await button.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
         data: {
           certificate: '--BEGIN CERTIFICATE REQUEST--',
           name: 'ray',

@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -30,14 +29,13 @@ export interface ReplaceDiskDialogData {
   styleUrls: ['./replace-disk-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     UnusedDiskSelectComponent,
     IxCheckboxComponent,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -46,9 +44,9 @@ export class ReplaceDiskDialog {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<ReplaceDiskDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, ReplaceDiskDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
-  data = inject<ReplaceDiskDialogData>(MAT_DIALOG_DATA);
+  data = inject<ReplaceDiskDialogData>(DIALOG_DATA);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

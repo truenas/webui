@@ -1,4 +1,4 @@
-<h1 matDialogTitle>{{ 'Stats/Settings' | translate }}</h1>
+<tn-dialog-shell [title]="'Stats/Settings' | translate">
 @if (state) {
   <form
     class="ix-form-container"
@@ -43,7 +43,7 @@
       [required]="true"
     ></ix-input>
     <ix-form-actions>
-      <button mat-button type="button" matDialogClose ixTest="close">
+      <button mat-button type="button" ixTest="close">
         {{ 'Close' | translate }}
       </button>
       <button
@@ -59,3 +59,4 @@
     </ix-form-actions>
   </form>
 }
+</tn-dialog-shell>

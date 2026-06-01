@@ -1,5 +1,6 @@
+<tn-dialog-shell [title]="'Select Image' | translate">
 <div class="header">
-  <h1 mat-dialog-title>{{ 'Select Image' | translate }}</h1>
+  
   <button
     mat-icon-button
     id="ix-close-icon"
@@ -12,7 +13,7 @@
   </button>
 </div>
 
-<mat-dialog-content>
+
   <form [formGroup]="filterForm">
     <ix-fieldset [title]="'Filters' | translate">
       <ix-input
@@ -89,4 +90,4 @@
       }
     </div>
   </form>
-</mat-dialog-content>
+</tn-dialog-shell>

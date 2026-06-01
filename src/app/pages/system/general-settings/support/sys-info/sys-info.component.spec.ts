@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -40,7 +40,7 @@ describe('SysInfoComponent', () => {
     component: SysInfoComponent,
     providers: [
       mockAuth(),
-      mockProvider(MatDialog, { open: jest.fn() }),
+      mockProvider(TnDialog, { open: jest.fn() }),
       mockApi([mockCall('truenas.license.fingerprint', fingerprintBase64)]),
     ],
   });
@@ -194,7 +194,7 @@ describe('SysInfoComponent', () => {
       );
       await viewButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
         LicenseFingerprintDialog,
         expect.any(Object),
       );
@@ -217,7 +217,7 @@ describe('SysInfoComponent', () => {
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.license.fingerprint');
       expect(writeText).toHaveBeenCalledWith(fingerprintBase64);
-      expect(spectator.inject(MatDialog).open).not.toHaveBeenCalled();
+      expect(spectator.inject(TnDialog).open).not.toHaveBeenCalled();
     });
 
     it('caches the fingerprint after the first copy and does not refetch', async () => {

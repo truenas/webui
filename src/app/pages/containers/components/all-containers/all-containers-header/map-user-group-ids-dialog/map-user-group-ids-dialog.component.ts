@@ -2,9 +2,10 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
-import { MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import {
   MatCell,
@@ -20,7 +21,6 @@ import {
 } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import {
   finalize, map, Observable, of,
 } from 'rxjs';
@@ -53,10 +53,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    FakeProgressBarComponent,
+    TnDialogShellComponent,
+FakeProgressBarComponent,
     TnIconComponent,
-    MatDialogContent,
-    MatDialogTitle,
     MatIconButton,
     MatProgressSpinner,
     TranslateModule,
@@ -83,7 +82,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  protected dialogRef = inject<MatDialogRef<MapUserGroupIdsDialogComponent>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, MapUserGroupIdsDialogComponent>>(DialogRef);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);

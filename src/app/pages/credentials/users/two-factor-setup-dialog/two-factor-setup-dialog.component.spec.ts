@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
@@ -27,7 +27,7 @@ describe('FirstLoginDialogComponent', () => {
         userTwoFactorConfig$: mockTwoFactorConfig$.asObservable(),
       }),
       provideMockStore(),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
     imports: [
       NgxSkeletonLoaderModule,
@@ -56,7 +56,7 @@ describe('FirstLoginDialogComponent', () => {
     expect(finishButton).toExist();
 
     await finishButton.click();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('closes dialog on first click of Finish button', async () => {
@@ -64,7 +64,7 @@ describe('FirstLoginDialogComponent', () => {
     spectator.detectChanges();
 
     const finishButton = await loader.getHarness(MatButtonHarness.with({ text: 'Finish' }));
-    const dialogRef = spectator.inject(MatDialogRef);
+    const dialogRef = spectator.inject(DialogRef);
 
     expect(finishButton).toExist();
 

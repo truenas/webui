@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -21,27 +20,24 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './create-storj-bucket-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    MatDialogContent,
     IxInputComponent,
     FormActionsComponent,
-    MatDialogActions,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class CreateStorjBucketDialog {
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject<MatDialogRef<CreateStorjBucketDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, CreateStorjBucketDialog>>(DialogRef);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   data = inject<{
     credentialsId: number;
-  }>(MAT_DIALOG_DATA, { optional: true });
+  }>(DIALOG_DATA, { optional: true });
 
   private formErrorHandler = inject(FormErrorHandlerService);
   private destroyRef = inject(DestroyRef);

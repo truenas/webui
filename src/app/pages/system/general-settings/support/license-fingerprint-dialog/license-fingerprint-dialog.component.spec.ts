@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -71,7 +71,7 @@ describe('LicenseFingerprintDialog', () => {
     providers: [
       mockAuth(),
       mockApi([mockCall('truenas.license.fingerprint', base64)]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -109,7 +109,7 @@ describe('LicenseFingerprintDialog fallback rendering', () => {
     providers: [
       mockAuth(),
       mockApi([mockCall('truenas.license.fingerprint', malformedRaw)]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 

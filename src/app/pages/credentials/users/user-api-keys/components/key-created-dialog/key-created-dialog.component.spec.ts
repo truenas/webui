@@ -2,7 +2,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -16,7 +16,7 @@ describe('KeyCreatedDialogComponent', () => {
     component: KeyCreatedDialog,
     providers: [
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: 'my-key',
       },
       mockProvider(SnackbarService),

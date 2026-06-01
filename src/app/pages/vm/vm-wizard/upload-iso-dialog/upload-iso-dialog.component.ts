@@ -1,8 +1,9 @@
 import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
+import { TnDialog, TnDialogShellComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   catchError, of, Subject, Subscription, takeUntil, tap,
@@ -32,13 +33,12 @@ import { UploadService } from 'app/services/upload.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxExplorerComponent,
     IxFileInputComponent,
     FormActionsComponent,
     MatButton,
-    MatDialogClose,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -50,7 +50,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private filesystemService = inject(FilesystemService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<UploadIsoDialogComponent, string | null>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<string | null, UploadIsoDialogComponent>>(DialogRef);
   private uploadService = inject(UploadService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
@@ -72,7 +72,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private uploadSubscription: Subscription | null = null;
   private loaderCloseSubscription: Subscription | null = null;
   private cancelUpload: (() => void) | null = null;
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
 
   ngOnDestroy(): void {
     // Cancel any ongoing upload and cleanup when component is destroyed
@@ -97,7 +97,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
 
   private closeAllConfirmationDialogs(): void {
     // Force close any open confirmation dialogs (but not the upload dialog itself)
-    const openDialogs = this.matDialog.openDialogs;
+    const openDialogs = this.tnDialog.openDialogs;
     openDialogs.forEach((dialog) => {
       // Only close dialogs that are not this upload dialog
       if (dialog !== this.dialogRef) {

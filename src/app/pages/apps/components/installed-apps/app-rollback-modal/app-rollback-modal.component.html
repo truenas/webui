@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>{{ 'Roll Back' | translate }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'Roll Back' | translate">
+<div>
   <form [formGroup]="form">
     <ix-select
       formControlName="app_version"
@@ -16,8 +16,8 @@
     ></ix-checkbox>
   </form>
 </div>
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
+<ix-form-actions tnDialogAction class="form-actions">
+  <button mat-button ixTest="cancel">{{ 'Cancel' | translate }}</button>
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
@@ -29,3 +29,4 @@
     {{ 'Roll Back' | translate }}
   </button>
 </ix-form-actions>
+</tn-dialog-shell>

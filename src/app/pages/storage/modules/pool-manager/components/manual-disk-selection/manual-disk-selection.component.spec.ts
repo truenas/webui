@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
@@ -59,7 +59,7 @@ describe('ManualDiskSelectionComponent', () => {
         layout$: of(CreateVdevLayout.Stripe),
         initialize: jest.fn(),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -68,7 +68,7 @@ describe('ManualDiskSelectionComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               inventory,
               enclosures,
@@ -126,7 +126,7 @@ describe('ManualDiskSelectionComponent', () => {
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Selection' }));
         await saveButton.click();
 
-        expect(spectator.inject(MatDialogRef, true).close).toHaveBeenCalledWith(false);
+        expect(spectator.inject(DialogRef, true).close).toHaveBeenCalledWith(false);
       });
 
       it('returns new vdevs when there was change in vdevs', async () => {
@@ -139,14 +139,14 @@ describe('ManualDiskSelectionComponent', () => {
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Selection' }));
         await saveButton.click();
 
-        expect(spectator.inject(MatDialogRef, true).close).toHaveBeenCalledWith([[{ devname: 'sda' }]]);
+        expect(spectator.inject(DialogRef, true).close).toHaveBeenCalledWith([[{ devname: 'sda' }]]);
       });
 
       it('returns false when Cancel button is pressed', async () => {
         const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
         await cancelButton.click();
 
-        expect(spectator.inject(MatDialogRef, true).close).toHaveBeenCalledWith(false);
+        expect(spectator.inject(DialogRef, true).close).toHaveBeenCalledWith(false);
       });
     });
   });
@@ -156,7 +156,7 @@ describe('ManualDiskSelectionComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               inventory,
               enclosures,

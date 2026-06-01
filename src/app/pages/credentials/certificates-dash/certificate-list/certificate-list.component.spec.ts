@@ -1,7 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -77,7 +78,7 @@ describe('CertificateListComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
           afterClosed: jest.fn(() => of(undefined)),
         })),
@@ -124,9 +125,9 @@ describe('CertificateListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
-      afterClosed: () => of({ force: true }),
-    } as MatDialogRef<unknown>);
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of({ force: true }),
+    } as DialogRef<unknown, unknown>);
 
     const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
     await menuButton.click();

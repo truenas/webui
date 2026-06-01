@@ -1,15 +1,14 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, startWith, tap,
 } from 'rxjs';
@@ -81,7 +80,7 @@ export class IscsiCardComponent implements OnInit {
   private api = inject(ApiService);
   protected emptyService = inject(EmptyService);
   private store$ = inject<Store<ServicesState>>(Store);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private iscsiService = inject(IscsiService);
   private cdr = inject(ChangeDetectorRef);
   private license = inject(LicenseService);
@@ -183,9 +182,9 @@ export class IscsiCardComponent implements OnInit {
   }
 
   doDelete(iscsi: IscsiTarget): void {
-    this.matDialog
+    this.tnDialog
       .open(DeleteTargetDialog, { data: iscsi, width: '600px' })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
   }

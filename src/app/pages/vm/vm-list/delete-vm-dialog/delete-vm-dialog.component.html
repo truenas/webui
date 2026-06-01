@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>{{ 'Delete Virtual Machine' | translate }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'Delete Virtual Machine' | translate">
+<div>
   <form [formGroup]="form">
     <ix-checkbox
       formControlName="zvols"
@@ -30,12 +30,12 @@
     ></ix-input>
   </form>
 </div>
-<mat-dialog-actions>
+<div tnDialogAction>
   <ix-form-actions>
     <button
       mat-button
       ixTest="cancel"
-      [matDialogClose]="false"
+     
     >
       {{ 'Cancel' | translate }}
     </button>
@@ -50,4 +50,5 @@
       {{ 'Delete' | translate }}
     </button>
   </ix-form-actions>
-</mat-dialog-actions>
+</div>
+</tn-dialog-shell>

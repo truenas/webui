@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
@@ -78,9 +78,9 @@ describe('SmbCardComponent', () => {
       confirmDelete: jest.fn(() => of(undefined)),
     }),
     mockProvider(SlideInRef, slideInRef),
-    mockProvider(MatDialog, {
+    mockProvider(TnDialog, {
       open: jest.fn(() => ({
-        afterClosed: () => of(true),
+        closed: of(true),
       })),
     }),
     mockProvider(LoaderService, {

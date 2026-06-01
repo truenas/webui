@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -24,10 +22,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./reset-sed-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxInputComponent,
     IxCheckboxComponent,
@@ -46,9 +41,9 @@ export class ResetSedDialog {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
-  private dialogRef = inject<MatDialogRef<ResetSedDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, ResetSedDialog>>(DialogRef);
   private destroyRef = inject(DestroyRef);
-  protected data = inject<{ diskName: string }>(MAT_DIALOG_DATA);
+  protected data = inject<{ diskName: string }>(DIALOG_DATA);
 
   protected readonly Role = Role;
 

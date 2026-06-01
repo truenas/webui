@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { FibreChannelHost } from 'app/interfaces/fibre-channel.interface';
@@ -20,9 +20,9 @@ describe('VirtualPortsNumberDialogComponent', () => {
       mockApi([
         mockCall('fc.fc_host.update'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           id: 123,
           npiv: 4,
@@ -51,6 +51,6 @@ describe('VirtualPortsNumberDialogComponent', () => {
     await changeButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fc.fc_host.update', [123, { npiv: 5 }]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

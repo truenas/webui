@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { AppContainerDetails } from 'app/interfaces/app.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -15,17 +13,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './volume-mounts-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
     MatButton,
     TestDirective,
     TnIconComponent,
     MatIconButton,
-    MatDialogContent,
     FormActionsComponent,
-    MatDialogClose,
   ],
 })
 export class VolumeMountsDialog {
-  protected containerDetails = inject<AppContainerDetails>(MAT_DIALOG_DATA);
+  protected containerDetails = inject<AppContainerDetails>(DIALOG_DATA);
 }

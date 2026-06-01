@@ -1,10 +1,10 @@
-import { MatDialog } from '@angular/material/dialog';
 import {
   createRoutingFactory,
   mockProvider,
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -37,7 +37,7 @@ describe('EnclosureDashboardComponent', () => {
       mockApi([
         mockCall('jbof.licensed', 5),
       ]),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockAuth(),
     ],
   });

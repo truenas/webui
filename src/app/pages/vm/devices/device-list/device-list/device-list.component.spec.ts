@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -78,14 +78,14 @@ describe('DeviceListComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(undefined),
+          closed: of(undefined),
         })),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of({ result: true }),
+          closed: of({ result: true }),
         })),
       }),
       mockProvider(SnackbarService),
@@ -134,7 +134,7 @@ describe('DeviceListComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness);
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeviceDeleteModalComponent, expect.objectContaining({
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeviceDeleteModalComponent, expect.objectContaining({
       data: devices[0],
     }));
   });
@@ -146,7 +146,7 @@ describe('DeviceListComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness);
     await menu.clickItem({ text: 'Details' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeviceDetailsComponent, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeviceDetailsComponent, {
       data: devices[0],
     });
   });
@@ -175,7 +175,7 @@ describe('DeviceListComponent', () => {
     });
 
     it('does not open export dialog when handleExportDisk is called and VM is running', () => {
-      const dialog = spectator.inject(MatDialog);
+      const dialog = spectator.inject(TnDialog);
       spectator.component.isVmRunning.set(true);
 
       spectator.component.handleExportDisk(devices[1]);
@@ -184,7 +184,7 @@ describe('DeviceListComponent', () => {
     });
 
     it('opens export dialog when handleExportDisk is called and VM is not running', () => {
-      const dialog = spectator.inject(MatDialog);
+      const dialog = spectator.inject(TnDialog);
       spectator.component.isVmRunning.set(false);
 
       spectator.component.handleExportDisk(devices[1]);
@@ -201,7 +201,7 @@ describe('DeviceListComponent', () => {
     });
 
     it('opens export dialog when onExportDisk is called', () => {
-      const dialog = spectator.inject(MatDialog);
+      const dialog = spectator.inject(TnDialog);
 
       spectator.component.onExportDisk(devices[1]);
 
@@ -219,11 +219,11 @@ describe('DeviceListComponent', () => {
     it('handles successful export with job dialog and success message', () => {
       const dialogService = spectator.inject(DialogService);
       const snackbar = spectator.inject(SnackbarService);
-      const matDialog = spectator.inject(MatDialog);
+      const tnDialog = spectator.inject(TnDialog);
 
       // Mock the export dialog result
-      (matDialog.open as jest.Mock).mockReturnValue({
-        afterClosed: () => of({
+      (tnDialog.open as jest.Mock).mockReturnValue({
+        closed: of({
           request: {
             source: '/dev/zvol/tank/test-disk',
             destination: '/mnt/exports/vm-disk.qcow2',
@@ -234,7 +234,7 @@ describe('DeviceListComponent', () => {
 
       // Mock successful job completion
       (dialogService.jobDialog as jest.Mock).mockReturnValue({
-        afterClosed: () => of({ result: true }),
+        closed: of({ result: true }),
       });
 
       // Trigger export

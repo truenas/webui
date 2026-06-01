@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatDialogClose, MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,18 +18,18 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
   styleUrls: ['./password-change-required-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TranslateModule,
+    TnDialogShellComponent,
+TranslateModule,
     ChangePasswordFormComponent,
     MatButton,
     MatCard,
     MatToolbarRow,
-    MatDialogClose,
     TestDirective,
   ],
 })
 export class PasswordChangeRequiredDialog {
   protected authService = inject(AuthService);
-  private dialogRef = inject<MatDialogRef<PasswordChangeRequiredDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, PasswordChangeRequiredDialog>>(DialogRef);
   private router = inject(Router);
   private wsHandler = inject(WebSocketHandlerService);
   private destroyRef = inject(DestroyRef);

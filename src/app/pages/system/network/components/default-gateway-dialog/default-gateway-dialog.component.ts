@@ -1,13 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -30,16 +28,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./default-gateway-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
     FormActionsComponent,
-    MatDialogActions,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -48,7 +43,7 @@ export class DefaultGatewayDialog implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   cdr = inject(ChangeDetectorRef);
-  private dialogRef = inject<MatDialogRef<DefaultGatewayDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, DefaultGatewayDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
@@ -58,7 +53,7 @@ export class DefaultGatewayDialog implements OnInit {
     nameserver1?: string;
     nameserver2?: string;
     nameserver3?: string;
-  }>(MAT_DIALOG_DATA);
+  }>(DIALOG_DATA);
 
   private destroyRef = inject(DestroyRef);
 

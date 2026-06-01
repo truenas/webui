@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>{{ helptext.exportError | translate }}</h1>
-<div mat-dialog-content class="message-content">
+<tn-dialog-shell [title]="helptext.exportError | translate">
+<div class="message-content">
   @if (servicesInfo.stop_services.length) {
     <div class="services-block">
       <p>{{ helptext.exportMessages.stopServices | translate }}</p>
@@ -27,11 +27,11 @@
   <p>{{ helptext.exportMessages.continueMessage | translate }}</p>
 </div>
 
-<ix-form-actions mat-dialog-actions class="form-actions">
+<ix-form-actions tnDialogAction class="form-actions">
   <button
     mat-button
     ixTest="cancel"
-    [matDialogClose]="false"
+   
   >
     {{ 'Cancel' | translate }}
   </button>
@@ -40,8 +40,9 @@
     mat-button
     ixTest="continue"
     color="primary"
-    [matDialogClose]="true"
+   
   >
     {{ helptext.exportMessages.continueAction | translate }}
   </button>
 </ix-form-actions>
+</tn-dialog-shell>

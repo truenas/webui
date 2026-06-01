@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -30,12 +31,11 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   styleUrls: ['./bootenv-stats-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxInputComponent,
     FormActionsComponent,
     MatButton,
-    MatDialogClose,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -48,7 +48,7 @@ export class BootenvStatsDialog implements OnInit {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private store$ = inject<Store<AppState>>(Store);
-  private dialogRef = inject<MatDialogRef<BootenvStatsDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, BootenvStatsDialog>>(DialogRef);
   private translate = inject(TranslateService);
   private fb = inject(NonNullableFormBuilder);
   private errorHandler = inject(ErrorHandlerService);

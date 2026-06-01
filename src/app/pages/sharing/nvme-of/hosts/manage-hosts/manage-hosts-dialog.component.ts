@@ -1,12 +1,10 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, TnDialogShellComponent, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import {
-  MatDialog, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
@@ -44,14 +42,12 @@ interface NvmeOfHostAndUsage extends NvmeOfHost {
   styleUrl: './manage-hosts-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnIconComponent,
+    TnDialogShellComponent,
+TnIconComponent,
     MatButton,
-    MatDialogContent,
-    MatDialogTitle,
     MatIconButton,
     TranslateModule,
     TestDirective,
-    MatDialogClose,
     AsyncPipe,
     IxTableBodyComponent,
     IxTableComponent,
@@ -67,8 +63,8 @@ export class ManageHostsDialog implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
-  private matDialog = inject(MatDialog);
-  private dialogRef = inject(MatDialogRef<ManageHostsDialog>);
+  private tnDialog = inject(TnDialog);
+  private dialogRef = inject(DialogRef<unknown, ManageHostsDialog>);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
@@ -163,7 +159,7 @@ export class ManageHostsDialog implements OnInit {
     const subsystemsInUse = this.nvmeOfStore?.subsystems?.()
       .filter((subsystem) => subsystem.hosts.some((subSystemHost) => subSystemHost.id === host.id)) || [];
 
-    this.matDialog.open(
+    this.tnDialog.open(
       SubsystemPortOrHostDeleteDialogComponent,
       {
         data: {
@@ -175,7 +171,7 @@ export class ManageHostsDialog implements OnInit {
         minWidth: '500px',
       },
     )
-      .afterClosed()
+      .closed
       .pipe(
         filter((data: { confirmed: boolean; force: boolean }) => !!data?.confirmed),
         switchMap(({ force }) => {

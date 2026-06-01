@@ -1,16 +1,16 @@
-<h1 mat-dialog-title>{{ 'Clone' | translate }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'Clone' | translate">
+<div>
   <ix-input
     [label]="'Enter a Name (optional)' | translate"
     [formControl]="nameControl"
   ></ix-input>
 </div>
-<mat-dialog-actions>
+<div tnDialogAction>
   <ix-form-actions>
     <button
       mat-button
       ixTest="cancel"
-      [matDialogClose]="false"
+     
     >
       {{ 'Cancel' | translate }}
     </button>
@@ -24,4 +24,5 @@
       {{ 'Clone' | translate }}
     </button>
   </ix-form-actions>
-</mat-dialog-actions>
+</div>
+</tn-dialog-shell>

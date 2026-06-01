@@ -1,15 +1,14 @@
 import { AsyncPipe } from '@angular/common';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, ViewContainerRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import {
   filter, forkJoin, switchMap,
 } from 'rxjs';
@@ -50,7 +49,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 export class AppSettingsButtonComponent {
   private ixSlideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   protected dockerStore = inject(DockerStore);
@@ -64,9 +63,9 @@ export class AppSettingsButtonComponent {
   protected readonly helptext = helptextApps;
 
   onChoosePool(): void {
-    this.matDialog
+    this.tnDialog
       .open(SelectPoolDialog, { viewContainerRef: this.viewContainerRef })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.appsStore.loadCatalog());
   }

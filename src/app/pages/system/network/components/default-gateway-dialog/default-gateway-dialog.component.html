@@ -1,11 +1,10 @@
-<h1 mat-dialog-title>{{ 'Set Gateway and DNS' | translate }}</h1>
-
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'Set Gateway and DNS' | translate">
+<div>
   <p class="message">{{ 'Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:' | translate }}</p>
   <p class="message">{{ 'Current values are pre-filled in the form below.' | translate }}</p>
 </div>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <div mat-dialog-content>
+  <div>
     <ix-fieldset>
       <ix-input
         formControlName="defaultGateway"
@@ -34,8 +33,8 @@
     </ix-fieldset>
   </div>
 
-  <ix-form-actions mat-dialog-actions class="form-actions">
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+  <ix-form-actions tnDialogAction class="form-actions">
+    <button mat-button type="button" ixTest="cancel">
       {{ 'Skip' | translate }}
     </button>
 
@@ -51,3 +50,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

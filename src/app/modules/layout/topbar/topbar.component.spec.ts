@@ -1,13 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { TnDialog, TnIconComponent, TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter, signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnIconComponent, TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -48,7 +47,7 @@ const fakeRebootInfo: RebootInfoState = {
 interface ComponentOptions {
   updateJob?: Job[];
   updateRunningStatus$?: EventEmitter<'true' | 'false'>;
-  matDialog?: Partial<MatDialog>;
+  tnDialog?: Partial<TnDialog>;
 }
 
 function createTopbarComponent(options: ComponentOptions = {}): {
@@ -63,12 +62,12 @@ function createTopbarComponent(options: ComponentOptions = {}): {
       } as Job,
     ],
     updateRunningStatus$ = new EventEmitter<'true' | 'false'>(),
-    matDialog = {
+    tnDialog = {
       open: jest.fn(() => ({
         componentInstance: {
           setMessage: jest.fn(),
         },
-        afterClosed: () => of({}),
+        closed: of({}),
       })),
     },
   } = options;
@@ -98,7 +97,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
         updateRunningNoticeSent: new EventEmitter<string>(),
       }),
       mockProvider(UiSearchProvider),
-      mockProvider(MatDialog, matDialog),
+      mockProvider(TnDialog, tnDialog),
       mockProvider(DialogService, {
         update: jest.fn(() => ({ close: jest.fn() })),
         rebootRequired: jest.fn(() => of(undefined)),

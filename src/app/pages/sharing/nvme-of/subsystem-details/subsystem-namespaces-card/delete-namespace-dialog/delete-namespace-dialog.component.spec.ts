@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
@@ -18,7 +18,7 @@ describe('DeleteNamespaceDialogComponent', () => {
     component: DeleteNamespaceDialogComponent,
     imports: [ReactiveFormsModule],
     providers: [
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockApi([mockCall('nvmet.namespace.delete')]),
     ],
   });
@@ -26,7 +26,7 @@ describe('DeleteNamespaceDialogComponent', () => {
   function initComponent(namespace: NvmeOfNamespace): void {
     spectator = createComponent({
       providers: [{
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: namespace,
       }],
     });
@@ -50,7 +50,7 @@ describe('DeleteNamespaceDialogComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.delete', [1]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('optionally deletes file namespace with remove flag when checkbox is checked', async () => {
@@ -68,6 +68,6 @@ describe('DeleteNamespaceDialogComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.delete', [2, { remove: true }]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

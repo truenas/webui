@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -30,10 +30,10 @@ describe('SetDedupQuotaComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of(undefined),
+          closed: of(undefined),
         })),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -41,7 +41,7 @@ describe('SetDedupQuotaComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: {
             id: 2,
             ...pool,
@@ -77,7 +77,7 @@ describe('SetDedupQuotaComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.update', [2, {
         dedup_table_quota: NewDeduplicationQuotaSetting.Auto,
       }]);
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
@@ -110,7 +110,7 @@ describe('SetDedupQuotaComponent', () => {
         dedup_table_quota: NewDeduplicationQuotaSetting.Custom,
         dedup_table_quota_value: 200 * MiB,
       }]);
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
@@ -140,7 +140,7 @@ describe('SetDedupQuotaComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.update', [2, {
         dedup_table_quota: null,
       }]);
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });

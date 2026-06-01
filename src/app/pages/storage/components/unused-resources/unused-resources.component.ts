@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, input, OnInit, inject } from '@angular/core';
+import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   Subscription, debounceTime, distinctUntilChanged,
@@ -23,7 +23,7 @@ export class UnusedResourcesComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
 
   readonly pools = input.required<Pool[]>();
@@ -77,7 +77,7 @@ export class UnusedResourcesComponent implements OnInit {
   }
 
   private addUnusedDisksToStorage(disks: DetailsDisk[]): void {
-    this.matDialog.open(ManageUnusedDiskDialog, {
+    this.tnDialog.open(ManageUnusedDiskDialog, {
       data: {
         pools: this.pools(),
         unusedDisks: [...disks],
