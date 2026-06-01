@@ -67,6 +67,7 @@
 <tn-side-panel
   [title]="'iSCSI Global Configuration' | translate"
   [(open)]="configOpen"
+  [closeGuard]="closeConfigGuard"
 >
   @if (configOpen()) {
     <ix-global-target-configuration (closed)="onConfigClosed()"></ix-global-target-configuration>

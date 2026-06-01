@@ -151,6 +151,11 @@ export class ServiceNfsComponent implements OnInit {
     this.onSubmit();
   }
 
+  /** Host hook (e.g. tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
+  }
+
   private close(saved: boolean): void {
     if (this.slideInRef) {
       this.slideInRef.close({ response: saved });

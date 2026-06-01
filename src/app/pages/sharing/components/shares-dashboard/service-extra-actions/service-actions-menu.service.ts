@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import type { TnCardHeaderStatus, TnMenuItem } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
+import { Observable, of } from 'rxjs';
 import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -12,6 +13,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -35,6 +37,7 @@ export class ServiceActionsMenuService {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
+  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   /**
@@ -158,6 +161,17 @@ export class ServiceActionsMenuService {
       this.buildSessionsItem(service),
       this.buildLogsItem(service),
     ].filter((item): item is TnMenuItem => item !== null);
+  }
+
+  /**
+   * Build a `tn-side-panel` `[closeGuard]` that reproduces the legacy slide-in host's
+   * unsaved-changes confirmation. When `isDirty()` is true it prompts before allowing
+   * the panel to close (× button, backdrop, or Escape); otherwise it closes immediately.
+   * Cards hosting a config form in a side panel pass this so dismissing with unsaved
+   * edits no longer silently discards them — parity with the old `requireConfirmationWhen`.
+   */
+  buildUnsavedChangesGuard(isDirty: () => boolean): () => Observable<boolean> {
+    return () => (isDirty() ? this.unsavedChanges.showConfirmDialog() : of(true));
   }
 
   private titleCase(value: string): string {

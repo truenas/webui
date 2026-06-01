@@ -295,6 +295,11 @@ export class ServiceSmbComponent implements OnInit {
     this.onSubmit();
   }
 
+  /** Host hook (e.g. tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
+  }
+
   protected onSubmit(): void {
     const { spotlight_search: spotlightSearch, ...formValues } = this.form.getRawValue();
     const values: SmbConfigUpdate = {

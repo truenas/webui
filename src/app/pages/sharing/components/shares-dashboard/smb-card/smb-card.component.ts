@@ -133,6 +133,9 @@ export class SmbCardComponent implements OnInit {
 
   protected configOpen = signal(false);
   protected configForm = viewChild(ServiceSmbComponent);
+  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
+    () => this.configForm()?.hasUnsavedChanges() ?? false,
+  );
 
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),

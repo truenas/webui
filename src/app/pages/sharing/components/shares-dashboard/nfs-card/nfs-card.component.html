@@ -62,6 +62,7 @@
 <tn-side-panel
   [title]="'NFS' | translate"
   [(open)]="configOpen"
+  [closeGuard]="closeConfigGuard"
 >
   @if (configOpen()) {
     <ix-service-nfs (closed)="onConfigClosed()"></ix-service-nfs>

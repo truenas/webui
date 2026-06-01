@@ -124,6 +124,9 @@ export class NvmeOfCardComponent implements OnInit {
 
   protected configOpen = signal(false);
   protected configForm = viewChild(NvmeOfConfigurationComponent);
+  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
+    () => this.configForm()?.hasUnsavedChanges() ?? false,
+  );
 
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
