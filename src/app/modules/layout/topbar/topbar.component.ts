@@ -7,13 +7,12 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -82,7 +81,7 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
 export class TopbarComponent implements OnInit {
   private router = inject(Router);
   private systemGeneralService = inject(SystemGeneralService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private dialogService = inject(DialogService);
   private store$ = inject<Store<AlertSlice>>(Store);
   private appStore$ = inject<Store<AppState>>(Store);
@@ -234,7 +233,7 @@ export class TopbarComponent implements OnInit {
   }
 
   onFeedbackIndicatorPressed(): void {
-    this.matDialog.open(FeedbackDialog);
+    this.tnDialog.open(FeedbackDialog);
   }
 
   private checkRebootInfo(): Observable<unknown> {
