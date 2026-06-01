@@ -16,13 +16,6 @@
   }
 }
 
-// Override global .mat-mdc-dialog-content { max-height: 50vh } so the pool name
-// input below the warning panels stays reachable without aggressive scrolling.
-.export-disconnect-modal-content {
-  max-height: 83vh !important;
-  overflow: auto !important;
-}
-
 .warnings-section .warning {
   font-size: 14px;
 }

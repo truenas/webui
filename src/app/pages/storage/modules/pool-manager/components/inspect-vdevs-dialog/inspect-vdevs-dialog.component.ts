@@ -4,10 +4,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-vdev/manual-selection-vdev.component';
 import {
   ManualSelectionVdev,
@@ -33,8 +32,6 @@ import {
     MatNavList,
     MatListItem,
     MatDivider,
-    TestDirective,
-    TnIconComponent,
     ManualSelectionVdevComponent,
     TranslateModule,
   ],
