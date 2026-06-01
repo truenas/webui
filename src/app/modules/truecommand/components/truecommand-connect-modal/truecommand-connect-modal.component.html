@@ -1,66 +1,47 @@
-<h1
-  mat-dialog-title
-  class="truecommand-connect-modal-form-title"
-  [innerHTML]="title | translate"
-></h1>
+<tn-dialog-shell [title]="(title | translate) || ''">
+  <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+    <div class="truecommand-connect-modal-form-content">
+      <ix-input
+        formControlName="api_key"
+        [label]="helptext.updateDialog.apiKey | translate"
+        [tooltip]="helptext.updateDialog.apiTooltip | translate"
+      ></ix-input>
 
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <div
-    mat-dialog-content
-    class="truecommand-connect-modal-form-content"
-  >
-    <ix-input
-      formControlName="api_key"
-      [label]="helptext.updateDialog.apiKey | translate"
-      [tooltip]="helptext.updateDialog.apiTooltip | translate"
-    ></ix-input>
+      <ix-checkbox
+        formControlName="enabled"
+        [label]="helptext.updateDialog.enabledLabel | translate"
+        [tooltip]="helptext.updateDialog.enabledTooltip | translate"
+      ></ix-checkbox>
+    </div>
 
-    <ix-checkbox
-      formControlName="enabled"
-      [label]="helptext.updateDialog.enabledLabel | translate"
-      [tooltip]="helptext.updateDialog.enabledTooltip | translate"
-    ></ix-checkbox>
-  </div>
+    <div tnDialogAction>
+      <tn-button
+        variant="outline"
+        class="action-btn"
+        ixTest="cancel"
+        [label]="'Cancel' | translate"
+        (onClick)="onCancel()"
+      ></tn-button>
 
-  <div mat-dialog-actions>
-    <button
-      mat-button
-      type="button"
-      class="action-btn"
-      name="Cancel_button"
-      ixTest="cancel"
-      (click)="onCancel()"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-
-    @if (isConnected) {
-      <span>
-        <button
+      @if (isConnected) {
+        <tn-button
           *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="button"
+          variant="outline"
           class="action-btn"
-          id="cust_button_deregister"
           ixTest="deregister"
-          [name]="helptext.tcDeregisterBtn + '_button'"
-          (click)="onDeregister()"
-        >
-          {{ helptext.tcDeregisterBtn | translate }}
-        </button>
-      </span>
-    }
+          [label]="helptext.tcDeregisterBtn | translate"
+          (onClick)="onDeregister()"
+        ></tn-button>
+      }
 
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="save"
-      [name]="saveButtonText + '_button'"
-      [disabled]="form.invalid"
-    >
-      {{ saveButtonText | translate }}
-    </button>
-  </div>
-</form>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        ixTest="save"
+        [label]="saveButtonText | translate"
+        [disabled]="form.invalid"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    </div>
+  </form>
+</tn-dialog-shell>

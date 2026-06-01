@@ -2,13 +2,9 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import {
   EMPTY, catchError, finalize, of, switchMap, Observable,
 } from 'rxjs';
@@ -23,12 +19,10 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 @Component({
   selector: 'ix-truenas-connect-status-modal',
   imports: [
+    TnDialogShellComponent,
+    TnButtonComponent,
     MatDivider,
-    MatDialogTitle,
-    MatDialogContent,
     TnIconComponent,
-    MatButton,
-    MatDialogActions,
     TranslateModule,
     TestDirective,
     TruenasConnectSpinnerComponent,

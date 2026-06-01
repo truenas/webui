@@ -1,13 +1,13 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   Spectator,
   createComponentFactory,
   mockProvider,
 } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -45,6 +45,7 @@ describe('TruenasConnectStatusModalComponent', () => {
         error: jest.fn(),
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(DialogRef),
       {
         provide: WINDOW,
         useValue: {
@@ -66,8 +67,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     spectator.detectChanges();
 
     const openBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Open TrueNAS Connect',
+      TnButtonHarness.with({
+        label: 'Open TrueNAS Connect',
       }),
     );
     expect(openBtn).toBeTruthy();
@@ -99,8 +100,8 @@ describe('TruenasConnectStatusModalComponent', () => {
 
     const connectSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'connect');
     const getConnectedBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Get Connected',
+      TnButtonHarness.with({
+        label: 'Get Connected',
       }),
     );
     await getConnectedBtn.click();
@@ -116,8 +117,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const connectSpy = jest.spyOn(service, 'connect');
 
     const getConnectedBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Get Connected',
+      TnButtonHarness.with({
+        label: 'Get Connected',
       }),
     );
     await getConnectedBtn.click();
@@ -140,8 +141,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const connectSpy = jest.spyOn(service, 'connect').mockReturnValue(of(null));
 
     const getConnectedBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Get Connected',
+      TnButtonHarness.with({
+        label: 'Get Connected',
       }),
     );
     await getConnectedBtn.click();
@@ -161,8 +162,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const errorSpy = jest.spyOn(dialogService, 'error');
 
     const getConnectedBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Get Connected',
+      TnButtonHarness.with({
+        label: 'Get Connected',
       }),
     );
     await getConnectedBtn.click();
@@ -184,8 +185,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const errorSpy = jest.spyOn(dialogService, 'error');
 
     const getConnectedBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Get Connected',
+      TnButtonHarness.with({
+        label: 'Get Connected',
       }),
     );
     await getConnectedBtn.click();
@@ -197,7 +198,7 @@ describe('TruenasConnectStatusModalComponent', () => {
     });
   });
 
-  it('should show disable service button when configured', () => {
+  it('should show disable service button when configured', async () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
@@ -205,10 +206,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(true));
     const confirmSpy = dialogService.confirm as jest.Mock;
     const disableSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'disableService');
-    const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
-    expect(disableBtn).toBeTruthy();
-
-    spectator.click(disableBtn);
+    const disableBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Disable' }));
+    await disableBtn.click();
     expect(confirmSpy).toHaveBeenCalledWith({
       title: expect.any(String),
       message: expect.any(String),
@@ -217,7 +216,7 @@ describe('TruenasConnectStatusModalComponent', () => {
     expect(disableSpy).toHaveBeenCalled();
   });
 
-  it('should handle error when clicking disable service button', () => {
+  it('should handle error when clicking disable service button', async () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
@@ -228,8 +227,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const confirmSpy = dialogService.confirm as jest.Mock;
     const errorSpy = jest.spyOn(dialogService, 'error');
 
-    const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
-    spectator.click(disableBtn);
+    const disableBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Disable' }));
+    await disableBtn.click();
 
     expect(confirmSpy).toHaveBeenCalled();
     expect(disableSpy).toHaveBeenCalled();
@@ -239,7 +238,7 @@ describe('TruenasConnectStatusModalComponent', () => {
     });
   });
 
-  it('should not disable service when user cancels confirmation', () => {
+  it('should not disable service when user cancels confirmation', async () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
@@ -249,8 +248,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(false));
     const confirmSpy = dialogService.confirm as jest.Mock;
 
-    const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
-    spectator.click(disableBtn);
+    const disableBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Disable' }));
+    await disableBtn.click();
 
     expect(confirmSpy).toHaveBeenCalled();
     expect(disableSpy).not.toHaveBeenCalled();
@@ -332,8 +331,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const enableSpy = jest.spyOn(service, 'enableService').mockReturnValue(of(null));
 
     const retryBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Retry Connection',
+      TnButtonHarness.with({
+        label: 'Retry Connection',
       }),
     );
     await retryBtn.click();
@@ -352,8 +351,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const errorSpy = jest.spyOn(dialogService, 'error');
 
     const retryBtn = await loader.getHarness(
-      MatButtonHarness.with({
-        text: 'Retry Connection',
+      TnButtonHarness.with({
+        label: 'Retry Connection',
       }),
     );
     await retryBtn.click();

@@ -1,61 +1,59 @@
-<div mat-dialog-title>{{ 'TrueCommand Cloud Service' | translate }}</div>
-<mat-divider></mat-divider>
-<div mat-dialog-content class="tc-dialog-content">
-  <div class="status-header">
-    @if (tc.status === TrueCommandStatus.Connected) {
-      <tn-icon
-        class="status-icon status-connected"
-        name="check-circle"
-        library="mdi"
-      ></tn-icon>
+<tn-dialog-shell [title]="'TrueCommand Cloud Service' | translate">
+  <mat-divider></mat-divider>
+  <div class="tc-dialog-content">
+    <div class="status-header">
+      @if (tc.status === TrueCommandStatus.Connected) {
+        <tn-icon
+          class="status-icon status-connected"
+          name="check-circle"
+          library="mdi"
+        ></tn-icon>
+      }
+      @if (tc.status === TrueCommandStatus.Failed) {
+        <tn-icon
+          class="status-icon status-failed"
+          name="close"
+          library="mdi"
+        ></tn-icon>
+      }
+      @if (tc.status === TrueCommandStatus.Disabled) {
+        <tn-icon
+          class="status-icon status-disabled"
+          name="pause-circle"
+          library="mdi"
+        ></tn-icon>
+      }
+      <span class="status-label">{{ tc.status | translate }}</span>
+    </div>
+    @if (tc.status_reason) {
+      <div class="status-reason">
+        {{ tc.status_reason | translate }}
+      </div>
     }
-    @if (tc.status === TrueCommandStatus.Failed) {
-      <tn-icon
-        class="status-icon status-failed"
-        name="close"
-        library="mdi"
-      ></tn-icon>
+    @if (tc.status === TrueCommandStatus.Connected && tc.remote_ip_address) {
+      <div class="tc-ip">
+        <tn-icon name="tn-truecommand-logo-mark-color" class="tc-ip-icon"></tn-icon>
+        <span class="tc-ip-label">{{ 'Remote IP:' | translate }}</span>
+        <span class="tc-ip-value">{{ tc.remote_ip_address }}</span>
+      </div>
     }
-    @if (tc.status === TrueCommandStatus.Disabled) {
-      <tn-icon
-        class="status-icon status-disabled"
-        name="pause-circle"
-        library="mdi"
-      ></tn-icon>
-    }
-    <span class="status-label">{{ tc.status | translate }}</span>
   </div>
-  @if (tc.status_reason) {
-    <div class="status-reason">
-      {{ tc.status_reason | translate }}
-    </div>
-  }
-  @if (tc.status === TrueCommandStatus.Connected && tc.remote_ip_address) {
-    <div class="tc-ip">
-      <tn-icon name="tn-truecommand-logo-mark-color" class="tc-ip-icon"></tn-icon>
-      <span class="tc-ip-label">{{ 'Remote IP:' | translate }}</span>
-      <span class="tc-ip-value">{{ tc.remote_ip_address }}</span>
-    </div>
-  }
-</div>
-<div mat-dialog-actions>
-  <button
-    mat-button
-    color="primary"
-    class="tc-action-button"
-    ixTest="truecommand-settings"
-    (click)="data.parent.handleUpdate()"
-  >
-    {{ 'Settings' | translate }}
-  </button>
-  <button
-    mat-button
-    color="primary"
-    class="tc-action-button"
-    ixTest="go-to-truecommand"
-    [disabled]="!tc.remote_url || tc.status !== TrueCommandStatus.Connected"
-    (click)="goToTrueCommand()"
-  >
-    {{ 'TrueCommand' }}
-  </button>
-</div>
+
+  <div tnDialogAction>
+    <tn-button
+      color="primary"
+      class="tc-action-button"
+      ixTest="truecommand-settings"
+      [label]="'Settings' | translate"
+      (onClick)="data.parent.handleUpdate()"
+    ></tn-button>
+    <tn-button
+      color="primary"
+      class="tc-action-button"
+      ixTest="go-to-truecommand"
+      [label]="'TrueCommand'"
+      [disabled]="!tc.remote_url || tc.status !== TrueCommandStatus.Connected"
+      (onClick)="goToTrueCommand()"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>

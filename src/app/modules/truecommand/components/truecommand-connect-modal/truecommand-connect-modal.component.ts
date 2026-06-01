@@ -1,13 +1,11 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -33,13 +31,11 @@ export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
   templateUrl: './truecommand-connect-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
+    TnButtonComponent,
     ReactiveFormsModule,
-    MatDialogContent,
     IxInputComponent,
     IxCheckboxComponent,
-    MatDialogActions,
-    MatButton,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -48,11 +44,11 @@ export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
 export class TruecommandConnectModalComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
-  private data = inject<TruecommandSignupModalState>(MAT_DIALOG_DATA);
+  private data = inject<TruecommandSignupModalState>(DIALOG_DATA);
   private dialogService = inject(DialogService);
   private dialogRef = inject<
-    MatDialogRef<TruecommandConnectModalComponent, TruecommandSignupModalResult>
-  >(MatDialogRef);
+    DialogRef<TruecommandSignupModalResult, TruecommandConnectModalComponent>
+  >(DialogRef);
 
   private fb = inject(FormBuilder);
   private loader = inject(LoaderService);

@@ -1,14 +1,15 @@
+import { DialogRef } from '@angular/cdk/dialog';
+import { Overlay } from '@angular/cdk/overlay';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { isObject } from 'lodash-es';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
@@ -57,7 +58,8 @@ const truecommandStatusLabels: Record<TrueCommandStatus, string> = {
 export class TruecommandButtonComponent implements OnInit {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
+  private overlay = inject(Overlay);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
@@ -69,7 +71,7 @@ export class TruecommandButtonComponent implements OnInit {
   protected tcStatus = signal<TrueCommandConfig | null>(null);
   private tcConnected = false;
   private isTcStatusOpened = false;
-  private tcStatusDialogRef: MatDialogRef<TruecommandStatusModalComponent>;
+  private tcStatusDialogRef: DialogRef<boolean, TruecommandStatusModalComponent>;
 
   protected statusBadge = computed<StatusBadge | null>(() => {
     switch (this.tcStatus()?.status) {
@@ -105,24 +107,27 @@ export class TruecommandButtonComponent implements OnInit {
       this.tcStatus.set(event.fields);
       this.tcConnected = !!event.fields.api_key;
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {
-        this.tcStatusDialogRef.componentInstance.update(event.fields);
+        this.tcStatusDialogRef.componentInstance?.update(event.fields);
       }
     });
   }
 
   handleUpdate(): void {
-    this.matDialog
-      .open(TruecommandConnectModalComponent, {
-        maxWidth: '420px',
-        minWidth: '350px',
-        data: {
-          isConnected: this.tcConnected,
-          config: this.tcStatus(),
-        } as TruecommandSignupModalState,
-      })
-      .afterClosed()
+    this.tnDialog
+      .open<TruecommandConnectModalComponent, TruecommandSignupModalState, TruecommandSignupModalResult>(
+        TruecommandConnectModalComponent,
+        {
+          maxWidth: '420px',
+          minWidth: '350px',
+          data: {
+            isConnected: this.tcConnected,
+            config: this.tcStatus() as TrueCommandConfig,
+          },
+        },
+      )
+      .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((dialogResult: TruecommandSignupModalResult) => {
+      .subscribe((dialogResult: TruecommandSignupModalResult | undefined) => {
         if (isObject(dialogResult) && dialogResult?.deregistered) {
           this.tcStatusDialogRef.close(true);
         }
@@ -160,8 +165,8 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   private openSignupDialog(): void {
-    this.matDialog.open(TruecommandSignupModalComponent)
-      .afterClosed()
+    this.tnDialog.open<TruecommandSignupModalComponent, void, boolean>(TruecommandSignupModalComponent)
+      .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((shouldConnect) => {
         if (!shouldConnect) {
@@ -181,18 +186,18 @@ export class TruecommandButtonComponent implements OnInit {
       this.tcStatusDialogRef.close(true);
     } else {
       this.isTcStatusOpened = true;
-      this.tcStatusDialogRef = this.matDialog.open(TruecommandStatusModalComponent, {
-        width: '400px',
-        hasBackdrop: true,
-        position: {
-          top: '48px',
-          right: '0px',
+      this.tcStatusDialogRef = this.tnDialog.open<TruecommandStatusModalComponent, unknown, boolean>(
+        TruecommandStatusModalComponent,
+        {
+          width: '400px',
+          hasBackdrop: true,
+          positionStrategy: this.overlay.position().global().top('48px').right('0px'),
+          data,
         },
-        data,
-      });
+      );
     }
 
-    this.tcStatusDialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
+    this.tcStatusDialogRef.closed.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       () => {
         this.isTcStatusOpened = false;
       },

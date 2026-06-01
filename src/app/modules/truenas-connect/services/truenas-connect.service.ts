@@ -1,6 +1,7 @@
+import { Overlay } from '@angular/cdk/overlay';
 import { Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
+import { TnDialog } from '@truenas/ui-components';
 import {
   filter, map, merge, Observable, switchMap, tap,
 } from 'rxjs';
@@ -20,7 +21,8 @@ export class TruenasConnectService {
   private window = inject<Window>(WINDOW);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
+  private overlay = inject(Overlay);
   private wsStatus = inject(WebSocketStatusService);
 
   /**
@@ -109,14 +111,11 @@ export class TruenasConnectService {
   }
 
   openStatusModal(): void {
-    this.matDialog.open(TruenasConnectStatusModalComponent, {
+    this.tnDialog.open(TruenasConnectStatusModalComponent, {
       width: '400px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
-      position: {
-        top: '48px',
-        right: '16px',
-      },
+      positionStrategy: this.overlay.position().global().top('48px').right('16px'),
     });
   }
 }
