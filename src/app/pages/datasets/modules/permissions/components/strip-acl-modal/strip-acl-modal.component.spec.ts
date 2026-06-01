@@ -2,8 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -29,7 +29,7 @@ describe('StripAclModalComponent', () => {
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of(null),
+          afterClosed: () => of(null),
         })),
       }),
       mockProvider(DialogRef),
@@ -48,7 +48,7 @@ describe('StripAclModalComponent', () => {
   });
 
   it('strips ACL when dialog is submitted', async () => {
-    const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACLs' }));
+    const stripButton = await loader.getHarness(TnButtonHarness.with({ label: 'Strip ACLs' }));
     await stripButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe('StripAclModalComponent', () => {
     );
     await traverseCheckbox.setValue(true);
 
-    const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACLs' }));
+    const stripButton = await loader.getHarness(TnButtonHarness.with({ label: 'Strip ACLs' }));
     await stripButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

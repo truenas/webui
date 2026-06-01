@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -50,7 +50,7 @@ describe('DeleteExtentDialogComponent', () => {
       Force: true,
     });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await submitButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, false, true]);
@@ -78,7 +78,7 @@ describe('DeleteExtentDialogComponent', () => {
       Force: true,
     });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await submitButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, true, true]);

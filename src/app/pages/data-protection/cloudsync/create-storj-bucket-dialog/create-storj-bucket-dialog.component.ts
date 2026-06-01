@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -24,7 +23,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     ReactiveFormsModule,
     IxInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -32,7 +31,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class CreateStorjBucketDialog {
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject<DialogRef<unknown, CreateStorjBucketDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, CreateStorjBucketDialog>>(DialogRef);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   data = inject<{

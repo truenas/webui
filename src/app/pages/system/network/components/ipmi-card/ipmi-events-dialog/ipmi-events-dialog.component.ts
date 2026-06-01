@@ -1,9 +1,8 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { parse } from 'date-fns';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -24,16 +23,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-FakeProgressBarComponent,
+    FakeProgressBarComponent,
     EmptyComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
     FormatDateTimePipe,
   ],
 })
 export class IpmiEventsDialog implements OnInit {
+  protected dialogRef = inject<DialogRef<unknown, IpmiEventsDialog>>(DialogRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);

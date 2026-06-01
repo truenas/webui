@@ -1,8 +1,8 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
@@ -37,7 +37,7 @@ describe('ContainerNicFormDialogComponent', () => {
   it('returns default value', async () => {
     const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Default Mac Address' }));
     await checkbox.setValue(true);
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await button.isDisabled()).toBeFalsy();
     await button.click();
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
@@ -52,7 +52,7 @@ describe('ContainerNicFormDialogComponent', () => {
     await checkbox.setValue(false);
     const input = await loader.getHarness(IxInputHarness.with({ label: 'Mac Address' }));
     await input.setValue('aa:bb:cc:dd:ee:ff');
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await button.isDisabled()).toBeFalsy();
     await button.click();
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
@@ -68,7 +68,7 @@ describe('ContainerNicFormDialogComponent', () => {
     await checkbox.setValue(false);
     const input = await loader.getHarness(IxInputHarness.with({ label: 'Mac Address' }));
     await input.setValue('aa:bb:cc:dd:ff');
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await button.isDisabled()).toBeTruthy();
   });
 });

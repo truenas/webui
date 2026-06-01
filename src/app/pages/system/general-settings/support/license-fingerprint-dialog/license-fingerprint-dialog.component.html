@@ -49,8 +49,6 @@
 
   <span class="spacer"></span>
 
-  <button mat-button type="button" ixTest="close">
-    {{ 'Close' | translate }}
-  </button>
+  <tn-button variant="outline" ixTest="close" [label]="'Close' | translate" (onClick)="dialogRef.close(true)"></tn-button>
 </div>
 </tn-dialog-shell>

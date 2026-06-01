@@ -70,14 +70,7 @@
         <ng-container matColumnDef="actions">
           <th *matHeaderCellDef mat-header-cell></th>
           <td *matCellDef="let image" mat-cell>
-            <button
-              mat-button
-              type="button"
-              [ixTest]="['select-image', image.label]"
-              (click)="selectImage(image)"
-            >
-              {{ 'Select' | translate }}
-            </button>
+            <tn-button variant="outline" [label]="'Select' | translate" (onClick)="selectImage(image)"></tn-button>
           </td>
         </ng-container>
 

@@ -24,22 +24,8 @@
 </div>
 <ix-form-actions tnDialogAction class="form-actions">
   @if (canClear) {
-    <button
-      mat-button
-      color="warn"
-      ixTest="clear"
-      (click)="onClear()"
-    >
-      {{ 'Clear' | translate }}
-    </button>
+    <tn-button color="warn" ixTest="clear" [label]="'Clear' | translate" (onClick)="onClear()"></tn-button>
   }
-  <button
-    mat-button
-   
-    color="primary"
-    ixTest="close"
-  >
-    {{ 'Close' | translate }}
-  </button>
+  <tn-button color="primary" ixTest="close" [label]="'Close' | translate" (onClick)="dialogRef.close()"></tn-button>
 </ix-form-actions>
 </tn-dialog-shell>

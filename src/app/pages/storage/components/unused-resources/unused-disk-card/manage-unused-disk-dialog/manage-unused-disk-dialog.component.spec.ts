@@ -1,10 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -64,7 +64,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
   });
 
   it('shows a title', () => {
-    expect(spectator.query('.mat-mdc-dialog-title')).toHaveText('Add To Pool');
+    expect(spectator.query('.tn-dialog__title')).toHaveText('Add To Pool');
   });
 
   it('shows the list of Unassigned Disks', () => {
@@ -77,7 +77,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
       'Add Disks To:': 'New Pool',
     });
 
-    const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
+    const addDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disks' }));
     await addDisksButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
@@ -92,7 +92,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
       },
     );
 
-    const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
+    const addDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disks' }));
     await addDisksButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalled();

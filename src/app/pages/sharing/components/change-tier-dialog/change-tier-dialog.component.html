@@ -82,21 +82,7 @@
 </div>
 
 <div tnDialogAction align="end">
-  <button
-    mat-button
-    ixTest="cancel"
-   
-  >
-    {{ 'Cancel' | translate }}
-  </button>
-  <button
-    mat-button
-    color="primary"
-    ixTest="apply"
-    [disabled]="isSubmitting() || loadFailed()"
-    (click)="onApply()"
-  >
-    {{ 'Apply' | translate }}
-  </button>
+  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
+  <tn-button color="primary" ixTest="apply" [label]="'Apply' | translate" [disabled]="isSubmitting() || loadFailed()" (onClick)="onApply()"></tn-button>
 </div>
 </tn-dialog-shell>

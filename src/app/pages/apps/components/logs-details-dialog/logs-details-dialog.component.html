@@ -8,24 +8,8 @@
   ></ix-input>
 
   <div tnDialogAction align="end">
-    <button
-      mat-button
-      type="button"
-      ixTest="cancel"
-     
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="choose"
-      [disabled]="form.invalid"
-     
-    >
-      {{ 'Connect' | translate }}
-    </button>
+    <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
+    <tn-button color="primary" ixTest="choose" [label]="'Connect' | translate" [disabled]="form.invalid" (onClick)="dialogRef.close(this.form.value)"></tn-button>
   </div>
 </form>
 </tn-dialog-shell>

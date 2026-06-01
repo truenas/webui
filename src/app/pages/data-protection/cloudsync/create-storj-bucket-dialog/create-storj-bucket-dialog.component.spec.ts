@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -44,7 +44,7 @@ describe('CreateStorjBucketDialogComponent', () => {
     const bucketName = await loader.getHarness(IxInputHarness.with({ label: 'Bucket Name' }));
     await bucketName.setValue('new-bucket');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.create_bucket', [1, 'new-bucket']);

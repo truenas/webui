@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -28,7 +27,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxCheckboxComponent,
     TnIconComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -41,7 +40,7 @@ export class ResetSedDialog {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
-  private dialogRef = inject<DialogRef<unknown, ResetSedDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ResetSedDialog>>(DialogRef);
   private destroyRef = inject(DestroyRef);
   protected data = inject<{ diskName: string }>(DIALOG_DATA);
 

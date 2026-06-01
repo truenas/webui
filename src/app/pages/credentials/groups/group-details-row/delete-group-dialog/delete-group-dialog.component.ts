@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -27,7 +26,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxCheckboxComponent,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -38,7 +37,7 @@ export class DeleteGroupDialog {
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<DialogRef<unknown, DeleteGroupDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DeleteGroupDialog>>(DialogRef);
   group = inject<Group>(DIALOG_DATA);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

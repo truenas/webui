@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Group } from 'app/interfaces/group.interface';
@@ -55,7 +55,7 @@ describe('DeleteGroupDialogComponent', () => {
     const deleteUsersCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Delete 3 users with this primary group?' }));
     await deleteUsersCheckbox.setValue(true);
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('group.delete', [2, { delete_users: true }]);

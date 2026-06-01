@@ -28,21 +28,8 @@
 </div>
 
 <ix-form-actions tnDialogAction class="form-actions">
-  <button
-    mat-button
-    ixTest="cancel"
-   
-  >
-    {{ 'Cancel' | translate }}
-  </button>
+  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
 
-  <button
-    mat-button
-    ixTest="continue"
-    color="primary"
-   
-  >
-    {{ helptext.exportMessages.continueAction | translate }}
-  </button>
+  <tn-button color="primary" ixTest="continue" [label]="helptext.exportMessages.continueAction | translate" (onClick)="dialogRef.close(true)"></tn-button>
 </ix-form-actions>
 </tn-dialog-shell>

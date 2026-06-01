@@ -1,12 +1,11 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { Observable, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -28,18 +27,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-ReactiveFormsModule,
+    ReactiveFormsModule,
     IxSelectComponent,
     IxCheckboxComponent,
     TranslateModule,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
     TestDirective,
   ],
 })
 export class AppRollbackModalComponent {
-  private dialogRef = inject<DialogRef<unknown, AppRollbackModalComponent>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, AppRollbackModalComponent>>(DialogRef);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private formBuilder = inject(FormBuilder);

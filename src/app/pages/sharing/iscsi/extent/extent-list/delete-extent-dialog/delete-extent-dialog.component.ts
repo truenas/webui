@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
@@ -26,7 +25,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     ReactiveFormsModule,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -39,7 +38,7 @@ export class DeleteExtentDialog {
   private formBuilder = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
   extent = inject<IscsiExtent>(DIALOG_DATA);
-  private dialogRef = inject<DialogRef<unknown, DeleteExtentDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DeleteExtentDialog>>(DialogRef);
 
   protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,

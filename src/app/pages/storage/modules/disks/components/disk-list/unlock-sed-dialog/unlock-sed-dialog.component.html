@@ -13,20 +13,8 @@
 </div>
 
 <ix-form-actions tnDialogAction>
-  <button mat-button type="button" ixTest="cancel">
-    {{ 'Cancel' | translate }}
-  </button>
+  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
 
-  <button
-    *ixRequiresRoles="[Role.DiskWrite]"
-    mat-button
-    type="submit"
-    color="primary"
-    ixTest="unlock"
-    [disabled]="form.invalid"
-    (click)="onSubmit()"
-  >
-    {{ 'Unlock' | translate }}
-  </button>
+  <tn-button *ixRequiresRoles="[Role.DiskWrite]" color="primary" ixTest="unlock" [label]="'Unlock' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
 </ix-form-actions>
 </tn-dialog-shell>

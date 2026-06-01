@@ -1,10 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
@@ -61,7 +61,7 @@ describe('DefaultGatewayDialogComponent', () => {
   });
 
   it('shows the correct dialog title', () => {
-    expect(spectator.query('h1')).toHaveText('Set Gateway and DNS');
+    expect(spectator.query('.tn-dialog__title')).toHaveText('Set Gateway and DNS');
   });
 
   it('pre-fills the form with current gateway and DNS values', async () => {
@@ -85,7 +85,7 @@ describe('DefaultGatewayDialogComponent', () => {
       'Secondary DNS Server': '1.1.1.1',
     });
 
-    const registerButton = await loader.getHarness(MatButtonHarness.with({ text: 'Register' }));
+    const registerButton = await loader.getHarness(TnButtonHarness.with({ label: 'Register' }));
     await registerButton.click();
 
     expect(dialogRef.close).toHaveBeenCalled();

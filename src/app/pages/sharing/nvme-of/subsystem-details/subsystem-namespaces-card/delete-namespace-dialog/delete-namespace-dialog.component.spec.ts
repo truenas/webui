@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
@@ -46,7 +46,7 @@ describe('DeleteNamespaceDialogComponent', () => {
 
     expect(await loader.getHarnessOrNull(IxCheckboxHarness)).toBeNull();
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.delete', [1]);
@@ -64,7 +64,7 @@ describe('DeleteNamespaceDialogComponent', () => {
     expect(await checkbox.getLabelText()).toBe('Also delete the underlying file – /mnt/file1');
     await checkbox.setValue(true);
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.delete', [2, { remove: true }]);

@@ -1,9 +1,8 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -13,14 +12,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-TranslateModule,
+    TranslateModule,
     ReactiveFormsModule,
     IxInputComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
   ],
 })
 export class LogsDetailsDialog {
+  protected dialogRef = inject<DialogRef<unknown, LogsDetailsDialog>>(DialogRef);
   private fb = inject(FormBuilder);
 
   form = this.fb.group({

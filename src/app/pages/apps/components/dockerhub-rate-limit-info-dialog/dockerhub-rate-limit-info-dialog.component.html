@@ -8,23 +8,7 @@
   </div>
 
 <div tnDialogAction align="end">
-  <button
-    mat-button
-    type="button"
-    ixTest="close"
-   
-  >
-    {{ 'Close' | translate }}
-  </button>
-  <button
-    mat-button
-    type="button"
-    color="primary"
-    ixTest="navigate-to-docker-registries"
-    [routerLink]="['/apps', 'docker-registries']"
-   
-  >
-    {{ 'Sign-in to Docker Hub' | translate }}
-  </button>
+  <tn-button variant="outline" ixTest="close" [label]="'Close' | translate" (onClick)="dialogRef.close(true)"></tn-button>
+  <tn-button color="primary" ixTest="navigate-to-docker-registries" [label]="'Sign-in to Docker Hub' | translate" (onClick)="dialogRef.close(true)"></tn-button>
 </div>
 </tn-dialog-shell>

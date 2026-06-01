@@ -49,20 +49,9 @@
   </div>
 
   <div tnDialogAction>
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
+    <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
 
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="add-disks"
-      [disabled]="form.invalid"
-    >
-      {{ 'Add Disks' | translate }}
-    </button>
+    <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="add-disks" [label]="'Add Disks' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
   </div>
 </form>
 </tn-dialog-shell>

@@ -1,8 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -40,7 +40,7 @@ describe('UnlockSedDialog', () => {
   });
 
   it('shows dialog title with disk name', () => {
-    const title = spectator.query('h1');
+    const title = spectator.query('.tn-dialog__title');
     expect(title).toHaveText('Unlock SED for sda');
   });
 
@@ -55,7 +55,7 @@ describe('UnlockSedDialog', () => {
       Password: 'test-password',
     });
 
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
     await unlockButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.unlock_sed', [{
@@ -67,7 +67,7 @@ describe('UnlockSedDialog', () => {
   });
 
   it('disables submit button when password is empty', async () => {
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
     expect(await unlockButton.isDisabled()).toBe(true);
   });
 });

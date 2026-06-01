@@ -1,12 +1,11 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { EMPTY } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -33,7 +32,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxFieldsetComponent,
     IxInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -43,7 +42,7 @@ export class DefaultGatewayDialog implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   cdr = inject(ChangeDetectorRef);
-  private dialogRef = inject<DialogRef<unknown, DefaultGatewayDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DefaultGatewayDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);

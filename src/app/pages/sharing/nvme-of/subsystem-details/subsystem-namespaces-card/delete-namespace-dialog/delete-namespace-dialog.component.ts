@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { DeleteNamespaceParams, NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -22,16 +21,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-TranslateModule,
+    TranslateModule,
     IxCheckboxComponent,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
   ],
 })
 export class DeleteNamespaceDialogComponent {
-  private dialogRef = inject<DialogRef<unknown, DeleteNamespaceDialogComponent>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DeleteNamespaceDialogComponent>>(DialogRef);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);

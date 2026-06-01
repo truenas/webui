@@ -9,14 +9,7 @@
   ></ix-checkbox>
 </div>
 <ix-form-actions tnDialogAction class="form-actions">
-  <button mat-button ixTest="cancel">{{ 'Cancel' | translate }}</button>
-  <button
-    mat-button
-    color="warn"
-    ixTest="strip-acl"
-    (click)="onStrip()"
-  >
-    {{ 'Strip ACLs' | translate }}
-  </button>
+  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
+  <tn-button color="warn" ixTest="strip-acl" [label]="'Strip ACLs' | translate" (onClick)="onStrip()"></tn-button>
 </ix-form-actions>
 </tn-dialog-shell>

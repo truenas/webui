@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
@@ -17,16 +16,16 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-TranslateModule,
+    TranslateModule,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
     TestDirective,
   ],
 })
 export class SubsystemPortOrHostDeleteDialogComponent {
-  private dialogRef = inject<DialogRef<unknown, SubsystemPortOrHostDeleteDialogComponent>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, SubsystemPortOrHostDeleteDialogComponent>>(DialogRef);
   private translate = inject(TranslateService);
 
   protected readonly data = inject<PortOrHostDeleteDialogData>(DIALOG_DATA);

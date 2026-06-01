@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockJob, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -37,7 +37,7 @@ describe('AppRollbackModalComponent', () => {
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of(null),
+          afterClosed: () => of(null),
         })),
       }),
     ],
@@ -62,7 +62,7 @@ describe('AppRollbackModalComponent', () => {
       'Roll back snapshots': true,
     });
 
-    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Roll Back' }));
+    const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Roll Back' }));
     await rollbackButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

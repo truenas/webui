@@ -1,13 +1,13 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   createComponentFactory,
   mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import {
   mockCall,
   mockApi,
@@ -56,7 +56,7 @@ describe('SelectImageDialogComponent', () => {
     });
 
     it('shows the header', () => {
-      expect(spectator.query('h1')).toHaveText('Select Image');
+      expect(spectator.query('.tn-dialog__title')).toHaveText('Select Image');
     });
 
     it('loads image choices', () => {
@@ -105,7 +105,7 @@ describe('SelectImageDialogComponent', () => {
 
     it('closes the dialog with the selected image when Select button is pressed', async () => {
       const selectButtons = await loader.getAllHarnesses(
-        MatButtonHarness.with({ text: 'Select' }),
+        TnButtonHarness.with({ label: 'Select' }),
       );
 
       expect(selectButtons).toHaveLength(2);

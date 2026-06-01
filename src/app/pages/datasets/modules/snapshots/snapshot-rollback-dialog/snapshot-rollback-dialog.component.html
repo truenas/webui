@@ -66,19 +66,8 @@
         ></ix-checkbox>
 
         <div class="form-buttons">
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            type="submit"
-            color="primary"
-            ixTest="rollback"
-            [disabled]="form.invalid"
-          >
-            {{ 'Rollback' | translate }}
-          </button>
-          <button mat-button type="button" ixTest="cancel">
-            {{ 'Cancel' | translate }}
-          </button>
+          <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="rollback" [label]="'Rollback' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
+          <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
         </div>
       </div>
     </form>
@@ -100,9 +89,7 @@
           {{ 'Go to Storage' | translate }}
         </a>
 
-        <button mat-button type="button" ixTest="close">
-          {{ 'Close' | translate }}
-        </button>
+        <tn-button variant="outline" ixTest="close" [label]="'Close' | translate" (onClick)="dialogRef.close()"></tn-button>
       </div>
     </ix-form-actions>
   }

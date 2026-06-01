@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -60,7 +60,7 @@ describe('DeleteUserDialogComponent', () => {
       'Are you sure you want to delete user "peppa"?',
     );
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: false }]);
@@ -83,7 +83,7 @@ describe('DeleteUserDialogComponent', () => {
     const deleteGroupCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Delete user primary group `swine`' }));
     await deleteGroupCheckbox.setValue(true);
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: true }]);

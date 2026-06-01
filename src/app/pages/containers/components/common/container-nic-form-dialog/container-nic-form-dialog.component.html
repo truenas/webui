@@ -35,25 +35,18 @@
   </form>
 </div>
 <div tnDialogAction>
-    <button
-      mat-button
-      ixTest="cancel"
-     
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      mat-button
-      color="primary"
-      ixTest="close"
-      [disabled]="!(isValid$ | async)"
-      (click)="saveDevice()"
-    >
-      @if (isEditMode()) {
-        {{ 'Update' | translate }}
-      } @else {
-        {{ 'Add' | translate }}
-      }
-    </button>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="matDialogRef.close(null)"
+  ></tn-button>
+  <tn-button
+    color="primary"
+    ixTest="close"
+    [label]="(isEditMode() ? 'Update' : 'Add') | translate"
+    [disabled]="!(isValid$ | async)"
+    (onClick)="saveDevice()"
+  ></tn-button>
 </div>
 </tn-dialog-shell>

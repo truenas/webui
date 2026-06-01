@@ -5,9 +5,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { cloneDeep, concat } from 'lodash-es';
 import {
   EMPTY, Observable, catchError, combineLatest, map, of, switchMap, tap,
@@ -44,7 +44,7 @@ import { UserService } from 'app/services/user.service';
     TnIconComponent,
     IxInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -55,7 +55,7 @@ export class SaveAsPresetModalComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private userService = inject(UserService);
-  private dialogRef = inject<DialogRef>(DialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private store = inject(DatasetAclEditorStore);
   private destroyRef = inject(DestroyRef);
   data = inject<SaveAsPresetModalConfig>(DIALOG_DATA);

@@ -2,8 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -94,7 +94,7 @@ describe('SnapshotRollbackDialog', () => {
       Confirm: true,
     });
 
-    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
+    const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
@@ -112,7 +112,7 @@ describe('SnapshotRollbackDialog', () => {
       'Stop Rollback if Snapshots Exist:': 'Newer Clone',
     });
 
-    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
+    const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
@@ -187,7 +187,7 @@ describe('SnapshotRollbackDialog', () => {
       'Stop Rollback if Snapshots Exist:': 'No Safety Check (CAUTION)',
     });
 
-    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
+    const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [

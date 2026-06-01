@@ -1,11 +1,11 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, inject } from '@angular/core';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { MatIconButton } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { catchError, Observable, of } from 'rxjs';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -29,14 +29,14 @@ export type ContainerImageWithId = ContainerImage & {
   selector: 'ix-select-image-dialog',
   imports: [
     TnDialogShellComponent,
-MatTableModule,
+    MatTableModule,
     IxFieldsetComponent,
     IxSelectComponent,
     ReactiveFormsModule,
     TranslateModule,
     TnIconComponent,
     IxInputComponent,
-    MatButton,
+    TnButtonComponent,
     MatIconButton,
     TestDirective,
     EmptyComponent,

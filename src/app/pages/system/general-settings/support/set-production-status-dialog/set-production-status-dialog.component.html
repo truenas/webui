@@ -9,19 +9,8 @@
 </div>
 
 <ix-form-actions tnDialogAction class="form-actions">
-  <button mat-button type="button" ixTest="cancel">
-    {{ 'Cancel' | translate }}
-  </button>
+  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
 
-  <button
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    type="submit"
-    color="primary"
-    ixTest="proceed"
-    (click)="onSubmit()"
-  >
-    {{ 'Proceed' | translate }}
-  </button>
+  <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="proceed" [label]="'Proceed' | translate" (onClick)="onSubmit()"></tn-button>
 </ix-form-actions>
 </tn-dialog-shell>

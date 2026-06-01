@@ -1,14 +1,13 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, Component, computed, inject, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import {
   map, Observable, of, startWith,
 } from 'rxjs';
@@ -37,7 +36,7 @@ export interface ContainerNicFormDialogData {
     IxInputComponent,
     IxSelectComponent,
     AsyncPipe,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,7 +45,7 @@ export class ContainerNicFormDialog {
   private fb = inject(FormBuilder);
   private ixValidator = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  private matDialogRef = inject<DialogRef<unknown, ContainerNicFormDialog>>(DialogRef);
+  protected matDialogRef = inject<DialogRef<unknown, ContainerNicFormDialog>>(DialogRef);
   private dialogData = inject<ContainerNicFormDialogData>(DIALOG_DATA);
 
   protected readonly isEditMode = computed(() => !!this.dialogData.device);

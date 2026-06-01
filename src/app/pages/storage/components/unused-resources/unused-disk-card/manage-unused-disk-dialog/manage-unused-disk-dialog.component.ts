@@ -1,13 +1,12 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { groupBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -35,7 +34,7 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
     IxFieldsetComponent,
     IxRadioGroupComponent,
     IxSelectComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -47,7 +46,7 @@ export class ManageUnusedDiskDialog implements OnInit {
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
   cdr = inject(ChangeDetectorRef);
-  private dialogRef = inject<DialogRef<unknown, ManageUnusedDiskDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ManageUnusedDiskDialog>>(DialogRef);
   resource = inject<ManageUnusedDiskDialogResource>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 

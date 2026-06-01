@@ -1,8 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import {
   EMPTY, Observable, catchError, of, throwError,
 } from 'rxjs';
@@ -147,7 +147,7 @@ describe('ChangeTierDialogComponent — load failure', () => {
     spectator.detectChanges();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    const applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
+    const applyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Apply' }));
     expect(await applyButton.isDisabled()).toBe(true);
     expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
   });

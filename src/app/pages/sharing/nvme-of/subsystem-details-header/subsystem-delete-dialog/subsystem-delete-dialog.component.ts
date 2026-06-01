@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
@@ -18,17 +17,17 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-TranslateModule,
+    TranslateModule,
     IxCheckboxComponent,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
     TestDirective,
   ],
 })
 export class SubsystemDeleteDialogComponent {
-  private dialogRef = inject<DialogRef<unknown, SubsystemDeleteDialogComponent>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, SubsystemDeleteDialogComponent>>(DialogRef);
 
   protected readonly subsystem = inject<NvmeOfSubsystem>(DIALOG_DATA);
   protected readonly force = new FormControl(false as boolean);

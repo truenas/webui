@@ -1,9 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 
@@ -35,7 +35,7 @@ describe('LogsDetailsDialogComponent', () => {
       'Tail Lines': '600',
     });
 
-    const connectButton = await loader.getHarness(MatButtonHarness.with({ text: 'Connect' }));
+    const connectButton = await loader.getHarness(TnButtonHarness.with({ label: 'Connect' }));
     await connectButton.click();
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       tail_lines: 600,

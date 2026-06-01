@@ -1,12 +1,11 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { forkJoin, tap } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -31,7 +30,7 @@ export interface ChangeTierDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
     ReactiveFormsModule,
     IxCheckboxComponent,
@@ -43,7 +42,7 @@ export class ChangeTierDialogComponent implements OnInit {
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
-  private dialogRef = inject(DialogRef<unknown, ChangeTierDialogComponent>);
+  protected dialogRef = inject(DialogRef<unknown, ChangeTierDialogComponent>);
   private destroyRef = inject(DestroyRef);
   protected data = inject<ChangeTierDialogData>(DIALOG_DATA);
 

@@ -1,14 +1,14 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
-import { MatButton, MatIconButton } from '@angular/material/button';
-
+import { MatIconButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { LicenseFingerprintValue } from 'app/interfaces/system-info.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -95,7 +95,7 @@ export function buildFingerprintField(
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-MatButton,
+    TnButtonComponent,
     MatIconButton,
     MatProgressSpinner,
     MatTooltip,
@@ -105,6 +105,7 @@ MatButton,
   ],
 })
 export class LicenseFingerprintDialog implements OnInit {
+  protected dialogRef = inject<DialogRef<unknown, LicenseFingerprintDialog>>(DialogRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
