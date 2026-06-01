@@ -1,6 +1,5 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { formatDistance } from 'date-fns';
@@ -17,7 +16,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     TnButtonComponent,
     TestDirective,
-    RouterLink,
   ],
 })
 export class DockerHubRateInfoDialog {
