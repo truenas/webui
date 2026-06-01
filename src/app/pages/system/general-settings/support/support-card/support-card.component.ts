@@ -74,7 +74,6 @@ export class SupportCardComponent implements OnInit {
   protected api = inject(ApiService);
   private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);
-  private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);

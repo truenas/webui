@@ -13,7 +13,7 @@ export class LoaderService {
   private dialog = inject(Dialog);
   private focusService = inject(FocusService);
 
-  dialogRef: DialogRef<AppLoaderComponent, unknown> | null = null;
+  dialogRef: DialogRef<unknown, AppLoaderComponent> | null = null;
   private onBeforeClose: (() => Observable<boolean>) | null = null;
   private handlersSetup = false;
   private keydownSubscription: Subscription | null = null;

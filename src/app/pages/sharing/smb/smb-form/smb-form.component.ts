@@ -804,7 +804,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       map((service) => service.state === ServiceStatus.Running),
       switchMap((isRunning) => {
         if (isRunning && this.isRestartRequired) {
-          return this.tnDialog.open(RestartSmbDialog).closed;
+          return this.tnDialog.open<RestartSmbDialog, void, boolean>(RestartSmbDialog).closed as Observable<boolean>;
         }
         return of(false);
       }),

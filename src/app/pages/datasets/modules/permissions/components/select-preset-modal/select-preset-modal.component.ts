@@ -6,6 +6,7 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
@@ -28,6 +29,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: 'select-preset-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxRadioGroupComponent,
     IxSelectComponent,

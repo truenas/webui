@@ -1,10 +1,10 @@
 import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
-import { TnDialog, TnDialogShellComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { DialogRef } from '@angular/cdk/dialog';
+import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import {
   catchError, of, Subject, Subscription, takeUntil, tap,
 } from 'rxjs';
@@ -72,7 +72,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private uploadSubscription: Subscription | null = null;
   private loaderCloseSubscription: Subscription | null = null;
   private cancelUpload: (() => void) | null = null;
-  private tnDialog = inject(TnDialog);
+  private cdkDialog = inject(Dialog);
 
   ngOnDestroy(): void {
     // Cancel any ongoing upload and cleanup when component is destroyed
@@ -97,7 +97,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
 
   private closeAllConfirmationDialogs(): void {
     // Force close any open confirmation dialogs (but not the upload dialog itself)
-    const openDialogs = this.tnDialog.openDialogs;
+    const openDialogs = this.cdkDialog.openDialogs;
     openDialogs.forEach((dialog) => {
       // Only close dialogs that are not this upload dialog
       if (dialog !== this.dialogRef) {

@@ -49,6 +49,7 @@ export class DeleteTargetDialog implements OnInit {
 
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);
   protected warningMessage = signal<string>('');
+  protected get title(): string { return this.translate.instant('Delete Target "{name}"', { name: this.target.name }); }
 
   form = this.formBuilder.group({
     delete_extents: [false],

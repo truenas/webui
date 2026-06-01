@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Delete Target "{name}"' | translate:{ name: target.name }">
+<tn-dialog-shell [title]="title">
 <div>
   @if (warningMessage()) {
     <p [innerHTML]="warningMessage()"></p>
