@@ -1,14 +1,12 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { BehaviorSubject, tap } from 'rxjs';
 import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -29,15 +27,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./create-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
+    TnButtonComponent,
     MatProgressBar,
     FormsModule,
     ReactiveFormsModule,
     IxInputComponent,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
-    MatDialogClose,
     AsyncPipe,
     TranslateModule,
     RequiresRolesDirective,
@@ -49,11 +45,11 @@ export class CreateDatasetDialog implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<MatDialogRef<CreateDatasetDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<Dataset | false, CreateDatasetDialog>>(DialogRef);
   private data = inject<{
     parentId: string;
     dataset: DatasetCreate;
-  }>(MAT_DIALOG_DATA);
+  }>(DIALOG_DATA);
 
   private destroyRef = inject(DestroyRef);
 

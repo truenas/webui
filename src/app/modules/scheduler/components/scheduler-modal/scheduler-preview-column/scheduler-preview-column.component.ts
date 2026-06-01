@@ -1,9 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, OnInit, Signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, OnInit, output, Signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
-import { MatDialogClose } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import {
@@ -23,7 +22,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TestDirective,
-    MatDialogClose,
     TnIconButtonComponent,
     MatCalendar,
     SchedulerDateExamplesComponent,
@@ -39,6 +37,8 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   readonly startTime = input<string>();
   readonly endTime = input<string>();
+
+  readonly closeRequested = output();
 
   /**
    * 1 for 1st day of the month, etc.

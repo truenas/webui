@@ -1,9 +1,9 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetAclType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
@@ -33,7 +33,7 @@ describe('CreateDatasetDialogComponent', () => {
         }] as Dataset[]),
         mockCall('pool.dataset.create', { name: 'created_dataset' } as Dataset),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -41,7 +41,7 @@ describe('CreateDatasetDialogComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: {
             parentId,
             dataset: { acltype: DatasetAclType.Nfsv4 } as DatasetCreate,
@@ -76,7 +76,7 @@ describe('CreateDatasetDialogComponent', () => {
         Name: 'new_dataset',
       });
 
-      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      const createButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create' }));
       await createButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
@@ -84,7 +84,7 @@ describe('CreateDatasetDialogComponent', () => {
         acltype: DatasetAclType.Nfsv4,
       }]);
 
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
         name: 'created_dataset',
       });
     });

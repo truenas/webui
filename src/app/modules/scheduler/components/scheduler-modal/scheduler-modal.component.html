@@ -94,15 +94,13 @@
     </section>
 
     <div class="form-actions">
-      <button
-        mat-button
+      <tn-button
         color="primary"
         ixTest="done"
+        [label]="'Done' | translate"
         [disabled]="form.invalid"
-        (click)="onDone()"
-      >
-        {{ 'Done' | translate }}
-      </button>
+        (onClick)="onDone()"
+      ></tn-button>
     </div>
   </form>
 </div>
@@ -111,4 +109,5 @@
   [timezone]="timezone"
   [startTime]="config.startTime"
   [endTime]="config.endTime"
+  (closeRequested)="closeModal()"
 ></ix-scheduler-preview-column>

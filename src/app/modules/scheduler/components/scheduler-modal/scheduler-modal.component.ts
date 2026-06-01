@@ -1,15 +1,15 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import * as cronParser from 'cron-parser';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
 import { of } from 'rxjs';
@@ -42,19 +42,19 @@ import { SchedulerPreviewColumnComponent } from './scheduler-preview-column/sche
     IxInputComponent,
     MatCheckbox,
     TestDirective,
-    MatButton,
+    TnButtonComponent,
     SchedulerPreviewColumnComponent,
     TranslateModule,
     AsyncPipe,
   ],
 })
 export class SchedulerModalComponent implements OnInit {
-  private dialogRef = inject<MatDialogRef<SchedulerModalComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<string, SchedulerModalComponent>>(DialogRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private validators = inject(CrontabPartValidatorService);
   private store$ = inject<Store<AppState>>(Store);
-  config = inject<SchedulerModalConfig>(MAT_DIALOG_DATA);
+  config = inject<SchedulerModalConfig>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({
@@ -131,6 +131,10 @@ export class SchedulerModalComponent implements OnInit {
 
   onDone(): void {
     this.dialogRef.close(this.crontab);
+  }
+
+  closeModal(): void {
+    this.dialogRef.close();
   }
 
   private setInitialValues(): void {

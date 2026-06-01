@@ -1,13 +1,13 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatCalendar } from '@angular/material/datepicker';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent, MockInstance } from 'ng-mocks';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -31,9 +31,9 @@ describe('SchedulerModalComponent', () => {
       TooltipComponent,
     ],
     providers: [
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           crontab: '0 2 * * mon',
           hideMinutes: false,
@@ -103,10 +103,10 @@ describe('SchedulerModalComponent', () => {
     });
 
     it('closes dialog with crontab value when Done is pressed', async () => {
-      const doneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Done' }));
+      const doneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Done' }));
       await doneButton.click();
 
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('0 2 * * mon');
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('0 2 * * mon');
     });
 
     it('shows preview column for the current crontab', () => {
@@ -199,7 +199,7 @@ describe('SchedulerModalComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               crontab: '0 2 * * mon',
               hideMinutes: true,
