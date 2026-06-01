@@ -3,6 +3,7 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
 :host {
   display: block;
   min-width: 300px;
+  max-width: 560px;
 
   // The icon + title are rendered as a body heading, so hide the empty dialog
   // shell header (the shell title is text-only and can't show the icon).
@@ -11,10 +12,19 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   }
 }
 
+.err-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .err-title-row {
   align-items: center;
   display: flex;
+  font-size: 20px;
+  font-weight: 600;
   gap: 8px;
+  margin: 0;
 }
 
 .mat-mdc-dialog-actions {

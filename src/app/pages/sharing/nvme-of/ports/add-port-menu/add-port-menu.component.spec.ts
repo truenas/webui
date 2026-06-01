@@ -124,7 +124,7 @@ describe('AddPortMenuComponent', () => {
 
       await items[2].click();
 
-      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ManagePortsDialog, { minWidth: '450px' });
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ManagePortsDialog, { minWidth: '450px', maxWidth: '768px' });
     });
   });
 });

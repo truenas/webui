@@ -1,6 +1,7 @@
 :host {
   display: block;
   min-width: 330px;
+  max-width: 480px;
 
   // The icon + title are rendered as a body heading below, so hide the empty
   // dialog shell header (the shell title is text-only and can't show the icon).
@@ -41,6 +42,9 @@
 h1 {
   align-items: center;
   display: flex;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 12px;
 }
 
 .information-icon {

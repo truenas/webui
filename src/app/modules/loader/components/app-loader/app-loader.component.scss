@@ -1,7 +1,5 @@
 :host {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: block;
   box-sizing: border-box;
   height: 100%;
   padding: 24px;
@@ -21,11 +19,14 @@ mat-spinner {
 }
 
 .spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 120px;
   overflow: hidden;
 }
 
 .title {
-  margin: 0;
-  padding: 15px 0 0;
+  margin: 0 0 16px;
+  padding: 0;
 }

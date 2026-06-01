@@ -24,7 +24,8 @@
   align-items: center;
   display: flex;
   flex-wrap: nowrap;
-  justify-content: space-between;
+  gap: 8px;
+  justify-content: flex-end;
   padding-top: 16px;
   margin-top: 12px;
 

@@ -67,6 +67,7 @@ export class AddHostMenuComponent {
   protected manageHosts(): void {
     this.tnDialog.open(ManageHostsDialog, {
       minWidth: '450px',
+      maxWidth: '768px',
     });
   }
 

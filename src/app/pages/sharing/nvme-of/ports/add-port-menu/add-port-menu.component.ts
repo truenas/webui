@@ -66,6 +66,7 @@ export class AddPortMenuComponent {
   protected onManagePorts(): void {
     this.tnDialog.open(ManagePortsDialog, {
       minWidth: '450px',
+      maxWidth: '768px',
     });
   }
 }
