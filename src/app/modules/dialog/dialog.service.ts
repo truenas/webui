@@ -1,10 +1,13 @@
+import { Dialog, DialogRef } from '@angular/cdk/dialog';
+import { Overlay } from '@angular/cdk/overlay';
 import { Injectable, Injector, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   Observable, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
+import { ServiceName } from 'app/enums/service-name.enum';
 import {
   ConfirmDeleteOptions,
   ConfirmOptions,
@@ -17,9 +20,23 @@ import { ConfirmDialog } from 'app/modules/dialog/components/confirm-dialog/conf
 import { ErrorDialog } from 'app/modules/dialog/components/error-dialog/error-dialog.component';
 import { FullScreenDialog } from 'app/modules/dialog/components/full-screen-dialog/full-screen-dialog.component';
 import { GeneralDialog, GeneralDialogConfig } from 'app/modules/dialog/components/general-dialog/general-dialog.component';
-import { InfoDialog } from 'app/modules/dialog/components/info-dialog/info-dialog.component';
+import { InfoDialog, InfoDialogData } from 'app/modules/dialog/components/info-dialog/info-dialog.component';
 import { JobProgressDialog } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { MultiErrorDialog } from 'app/modules/dialog/components/multi-error-dialog/multi-error-dialog.component';
+import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
+import { RedirectDialogData } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog-data.interface';
+import { RedirectDialog } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog.component';
+import {
+  SessionExpiringDialog, SessionExpiringDialogOptions,
+} from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
+import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
+import {
+  StartServiceDialog, StartServiceDialogResult,
+} from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
+import {
+  SubsystemPartiallyCreatedDialogComponent, SubsystemPartiallyCreatedDialogData,
+} from 'app/modules/dialog/components/subsystem-partially-created-dialog/subsystem-partially-created-dialog.component';
+import { UpdateDialog, UpdateDialogData } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -29,7 +46,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   providedIn: 'root',
 })
 export class DialogService {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
+  // The cdk `Dialog` is the underlying service `TnDialog` wraps; we inject it
+  // directly to access `openDialogs` / `closeAll()` which `TnDialog` does not expose.
+  private cdkDialog = inject(Dialog);
+  private overlay = inject(Overlay);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
@@ -94,32 +115,31 @@ export class DialogService {
   confirm(
     options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
   ): Observable<boolean> | Observable<DialogWithSecondaryCheckboxResult> {
-    return this.matDialog.open(ConfirmDialog, {
+    type ConfirmData = ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox;
+    type ConfirmResult = boolean | DialogWithSecondaryCheckboxResult;
+    return this.tnDialog.open<ConfirmDialog, ConfirmData, ConfirmResult>(ConfirmDialog, {
       disableClose: options.disableClose || false,
       data: options,
       autoFocus: true,
-    })
-      .afterClosed();
+    }).closed as Observable<boolean> | Observable<DialogWithSecondaryCheckboxResult>;
   }
 
   error(error: ErrorReport | ErrorReport[]): Observable<boolean> {
     if (Array.isArray(error)) {
       error = this.cleanErrors(error);
       if (error.length > 1) {
-        const dialogRef = this.matDialog.open(MultiErrorDialog, {
+        return this.tnDialog.open<MultiErrorDialog, ErrorReport[], boolean>(MultiErrorDialog, {
           data: error,
-        });
-        return dialogRef.afterClosed();
+        }).closed as Observable<boolean>;
       }
       error = error[0];
     }
     if (!error?.message) {
       return of(false);
     }
-    const dialogRef = this.matDialog.open(ErrorDialog, {
+    return this.tnDialog.open<ErrorDialog, ErrorReport, boolean>(ErrorDialog, {
       data: error,
-    });
-    return dialogRef.afterClosed();
+    }).closed as Observable<boolean>;
   }
 
   private cleanErrors(errorReports: ErrorReport[]): ErrorReport[] {
@@ -133,53 +153,106 @@ export class DialogService {
   }
 
   info(title: string, info: string, isHtml = false): Observable<boolean> {
-    const dialogRef = this.matDialog.open<InfoDialog>(InfoDialog);
-
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.info = info;
-    dialogRef.componentInstance.icon = 'information';
-    dialogRef.componentInstance.isHtml = isHtml;
-
-    return dialogRef.afterClosed();
+    return this.tnDialog.open<InfoDialog, InfoDialogData, boolean>(InfoDialog, {
+      data: {
+        title,
+        info,
+        icon: 'information',
+        isHtml,
+      },
+    }).closed as Observable<boolean>;
   }
 
   warn(title: string, info: string, isHtml = false): Observable<boolean> {
-    const dialogRef = this.matDialog.open<InfoDialog>(InfoDialog);
-
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.info = info;
-    dialogRef.componentInstance.icon = 'alert';
-    dialogRef.componentInstance.isHtml = isHtml;
-
-    return dialogRef.afterClosed();
+    return this.tnDialog.open<InfoDialog, InfoDialogData, boolean>(InfoDialog, {
+      data: {
+        title,
+        info,
+        icon: 'alert',
+        isHtml,
+      },
+    }).closed as Observable<boolean>;
   }
 
   generalDialog(conf: GeneralDialogConfig): Observable<boolean> {
-    const dialogRef = this.matDialog.open(GeneralDialog, {
+    return this.tnDialog.open<GeneralDialog, GeneralDialogConfig, boolean>(GeneralDialog, {
       data: conf,
-    });
-
-    return dialogRef.afterClosed();
+    }).closed as Observable<boolean>;
   }
 
   fullScreenDialog(options: Partial<FullScreenDialogOptions> = {}): Observable<void> {
-    const dialogRef = this.matDialog.open(FullScreenDialog, {
-      maxWidth: '100vw',
-      maxHeight: '100vh',
-      height: '100%',
-      width: '100%',
-      panelClass: 'full-screen-modal',
+    return this.tnDialog.openFullscreen<FullScreenDialog, Partial<FullScreenDialogOptions>, void>(FullScreenDialog, {
       disableClose: true,
       data: options,
-    });
-
-    return dialogRef.afterClosed();
+    }).closed as Observable<void>;
   }
 
   closeAllDialogs(): void {
-    for (const openDialog of (this.matDialog.openDialogs || [])) {
-      openDialog.close();
-    }
+    this.cdkDialog.closeAll();
+  }
+
+  /** Re-exposed for callers that need to react to dialog open events (e.g. inactivity tracking). */
+  get afterOpened$(): Observable<DialogRef> {
+    return this.cdkDialog.afterOpened.asObservable();
+  }
+
+  rebootRequired(): Observable<boolean | undefined> {
+    return this.tnDialog.open<RebootRequiredDialog, void, boolean>(RebootRequiredDialog, {
+      minWidth: '400px',
+    }).closed;
+  }
+
+  /**
+   * Opens the topbar update dialog. Returns the ref so the caller can `.close()` it
+   * across the update lifecycle (e.g. when the update job completes or fails).
+   * The dialog is anchored to the top-right of the screen below the topbar.
+   */
+  update(data: UpdateDialogData): DialogRef<unknown, UpdateDialog> {
+    const positionStrategy = this.overlay.position().global().top('48px').right('16px');
+    return this.tnDialog.open<UpdateDialog, UpdateDialogData>(UpdateDialog, {
+      width: '400px',
+      hasBackdrop: true,
+      panelClass: 'topbar-panel',
+      positionStrategy,
+      data,
+    });
+  }
+
+  showLogs(job: Job): Observable<void | undefined> {
+    return this.tnDialog.open<ShowLogsDialog, Job, void>(ShowLogsDialog, {
+      data: job,
+    }).closed;
+  }
+
+  startService(serviceName: ServiceName): Observable<StartServiceDialogResult | undefined> {
+    return this.tnDialog.open<StartServiceDialog, ServiceName, StartServiceDialogResult>(StartServiceDialog, {
+      data: serviceName,
+      disableClose: true,
+    }).closed;
+  }
+
+  redirect(data: RedirectDialogData): Observable<boolean | undefined> {
+    return this.tnDialog.open<RedirectDialog, RedirectDialogData, boolean>(RedirectDialog, {
+      data,
+    }).closed;
+  }
+
+  /**
+   * Opens the session-expiring warning dialog. Returns the ref so the caller can
+   * `.close()` it if user activity is detected before the warning is acted on.
+   */
+  sessionExpiring(opts: SessionExpiringDialogOptions): DialogRef<boolean, SessionExpiringDialog> {
+    return this.tnDialog.open<SessionExpiringDialog, SessionExpiringDialogOptions, boolean>(SessionExpiringDialog, {
+      data: opts,
+      disableClose: true,
+    });
+  }
+
+  subsystemPartiallyCreated(data: SubsystemPartiallyCreatedDialogData): Observable<void | undefined> {
+    return this.tnDialog.open<SubsystemPartiallyCreatedDialogComponent, SubsystemPartiallyCreatedDialogData, void>(
+      SubsystemPartiallyCreatedDialogComponent,
+      { data },
+    ).closed;
   }
 
   private executeDelete(options: ConfirmDeleteOptions): Observable<unknown> {
@@ -225,7 +298,7 @@ export class DialogService {
       canMinimize?: boolean;
     } = {},
   ): JobProgressDialogRef<R> {
-    const matDialogRef = this.matDialog.open<JobProgressDialog<R>>(JobProgressDialog<R>, {
+    const dialogRef = this.tnDialog.open<JobProgressDialog<R>, unknown, void>(JobProgressDialog<R>, {
       data: {
         job$,
         title,
@@ -233,6 +306,6 @@ export class DialogService {
         canMinimize,
       },
     });
-    return new JobProgressDialogRef<R>(matDialogRef);
+    return new JobProgressDialogRef<R>(dialogRef);
   }
 }

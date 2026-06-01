@@ -8,11 +8,11 @@
     }
   </div>
   @if (data.showClose) {
-    <button
-      mat-button
+    <tn-button
       color="primary"
       ixTest="close-full-screen"
-      (click)="close()"
-    >{{ 'Continue' | translate }}</button>
+      [label]="'Continue' | translate"
+      (onClick)="close()"
+    ></tn-button>
   }
 </div>

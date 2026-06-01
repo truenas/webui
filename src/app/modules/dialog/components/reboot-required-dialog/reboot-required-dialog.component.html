@@ -1,8 +1,4 @@
-<h3 mat-dialog-title>
-  {{ 'Reboot Required' | translate }}
-</h3>
-
-<div mat-dialog-content>
+<tn-dialog-shell [title]="'Reboot Required' | translate">
   @if (isHaLicensed() && !canFailover()) {
     <div class="failover-reasons">
       <p class="dialog-message error">
@@ -50,51 +46,42 @@
       }
     </div>
   }
-</div>
 
-@if (thisNodeRebootReasons()?.length || otherNodeRebootReasons()?.length) {
-  <ix-form-actions mat-dialog-actions class="form-actions">
-    <ix-checkbox
-      class="confirm"
-      [formControl]="form.controls.confirm"
-      [label]="'Confirm' | translate"
-      [required]="true"
-    ></ix-checkbox>
+  @if (thisNodeRebootReasons()?.length || otherNodeRebootReasons()?.length) {
+    <ix-form-actions tnDialogAction class="form-actions">
+      <ix-checkbox
+        class="confirm"
+        [formControl]="form.controls.confirm"
+        [label]="'Confirm' | translate"
+        [required]="true"
+      ></ix-checkbox>
 
-    <button mat-button type="button" matDialogClose ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
+      <tn-button
+        variant="outline"
+        ixTest="cancel"
+        [label]="'Cancel' | translate"
+        (onClick)="dialogRef.close()"
+      ></tn-button>
 
-    @if(thisNodeRebootReasons()?.length) {
-      <button
-        mat-button
-        color="primary"
-        ixTest="reboot-local"
-        [disabled]="form.invalid"
-        (click)="rebootLocalNode()"
-      >
-        @if (isHaLicensed()) {
-          {{ 'Reboot Active Controller' | translate }}
-        } @else {
-          {{ 'Reboot Local' | translate }}
-        }
-      </button>
-    }
+      @if(thisNodeRebootReasons()?.length) {
+        <tn-button
+          color="primary"
+          ixTest="reboot-local"
+          [label]="isHaLicensed() ? ('Reboot Active Controller' | translate) : ('Reboot Local' | translate)"
+          [disabled]="form.invalid"
+          (onClick)="rebootLocalNode()"
+        ></tn-button>
+      }
 
-    @if (otherNodeRebootReasons()?.length) {
-      <button
-        mat-button
-        color="primary"
-        ixTest="reboot-remote"
-        [disabled]="form.invalid"
-        (click)="rebootRemoteNode()"
-      >
-        @if (isHaLicensed()) {
-          {{ 'Reboot Standby Controller' | translate }}
-        } @else {
-          {{ 'Reboot Remote' | translate }}
-        }
-      </button>
-    }
-  </ix-form-actions>
-}
+      @if (otherNodeRebootReasons()?.length) {
+        <tn-button
+          color="primary"
+          ixTest="reboot-remote"
+          [label]="isHaLicensed() ? ('Reboot Standby Controller' | translate) : ('Reboot Remote' | translate)"
+          [disabled]="form.invalid"
+          (onClick)="rebootRemoteNode()"
+        ></tn-button>
+      }
+    </ix-form-actions>
+  }
+</tn-dialog-shell>

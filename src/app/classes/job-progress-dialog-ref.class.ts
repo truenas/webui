@@ -1,6 +1,6 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { DestroyRef } from '@angular/core';
 import { outputToObservable } from '@angular/core/rxjs-interop';
-import { MatDialogRef } from '@angular/material/dialog';
 import {
   merge, Observable, switchMap, take, throwError,
 } from 'rxjs';
@@ -10,21 +10,29 @@ import { AbortedJobError } from 'app/services/errors/error.classes';
 
 export class JobProgressDialogRef<T> {
   constructor(
-    private readonly matDialogRef: MatDialogRef<JobProgressDialog<T>>,
+    private readonly dialogRef: DialogRef<void, JobProgressDialog<T>>,
   ) {}
 
   afterClosed(): Observable<Job<T>> {
+    const componentInstance = this.dialogRef.componentInstance;
+    if (!componentInstance) {
+      throw new Error('JobProgressDialogRef: componentInstance is not available.');
+    }
     return merge(
-      outputToObservable(this.matDialogRef.componentInstance.jobSuccess),
-      outputToObservable(this.matDialogRef.componentInstance.jobAborted).pipe(
+      outputToObservable(componentInstance.jobSuccess),
+      outputToObservable(componentInstance.jobAborted).pipe(
         switchMap((job) => throwError(() => new AbortedJobError(job))),
       ),
-      outputToObservable(this.matDialogRef.componentInstance.jobFailure)
+      outputToObservable(componentInstance.jobFailure)
         .pipe(switchMap((error) => throwError(() => error))),
     ).pipe(take(1));
   }
 
   getDestroyRef(): DestroyRef {
-    return this.matDialogRef.componentInstance.destroyRef;
+    const componentInstance = this.dialogRef.componentInstance;
+    if (!componentInstance) {
+      throw new Error('JobProgressDialogRef: componentInstance is not available.');
+    }
+    return componentInstance.destroyRef;
   }
 }

@@ -1,14 +1,15 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent,
-  MatDialogActions,
-  MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+
+export interface SubsystemPartiallyCreatedDialogData {
+  subsystem: NvmeOfSubsystem;
+  relatedErrors: string[];
+}
 
 @Component({
   selector: 'ix-subsystem-partially-created-dialog',
@@ -17,20 +18,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatButtonModule,
-    MatDialogActions,
-    MatDialogClose,
+    TnDialogShellComponent,
+    TnButtonComponent,
+    TnIconComponent,
+    FormActionsComponent,
     TestDirective,
     TranslateModule,
-    TnIconComponent,
   ],
 })
 export class SubsystemPartiallyCreatedDialogComponent {
-  dialogRef = inject<MatDialogRef<SubsystemPartiallyCreatedDialogComponent>>(MatDialogRef);
-  data = inject<{
-    subsystem: NvmeOfSubsystem;
-    relatedErrors: string[];
-  }>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<void, SubsystemPartiallyCreatedDialogComponent>>(DialogRef);
+  data = inject<SubsystemPartiallyCreatedDialogData>(DIALOG_DATA);
 }

@@ -1,9 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
@@ -58,7 +58,7 @@ describe('RebootRequiredDialogComponent', () => {
         restart: jest.fn(),
         restartRemote: jest.fn(() => of(undefined)),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -91,18 +91,18 @@ describe('RebootRequiredDialogComponent', () => {
     const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.setValue(true);
 
-    const rebootRemoteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reboot Standby Controller' }));
+    const rebootRemoteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Reboot Standby Controller' }));
     await rebootRemoteButton.click();
 
     expect(spectator.inject(RebootService).restartRemote).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('reboots local node with translated reason when Reboot Active Controller is pressed', async () => {
     const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.setValue(true);
 
-    const rebootLocalButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reboot Active Controller' }));
+    const rebootLocalButton = await loader.getHarness(TnButtonHarness.with({ label: 'Reboot Active Controller' }));
     await rebootLocalButton.click();
 
     expect(spectator.inject(RebootService).restart).toHaveBeenCalledWith('Active Controller Update Reboot');

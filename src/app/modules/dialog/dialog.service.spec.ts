@@ -1,4 +1,6 @@
+import { Dialog } from '@angular/cdk/dialog';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -13,6 +15,8 @@ describe('DialogService', () => {
   const createService = createServiceFactory({
     service: DialogService,
     providers: [
+      mockProvider(TnDialog),
+      mockProvider(Dialog),
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
@@ -25,6 +29,16 @@ describe('DialogService', () => {
 
   beforeEach(() => {
     spectator = createService();
+  });
+
+  describe('closeAllDialogs', () => {
+    it('delegates to cdk Dialog.closeAll()', () => {
+      const cdkDialog = spectator.inject(Dialog);
+
+      spectator.service.closeAllDialogs();
+
+      expect(cdkDialog.closeAll).toHaveBeenCalled();
+    });
   });
 
   describe('confirmDelete', () => {

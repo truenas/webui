@@ -1,13 +1,10 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { DecimalPipe } from '@angular/common';
 import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import {
   Observable, Subscription, map,
 } from 'rxjs';
@@ -51,21 +48,18 @@ export interface JobProgressDialogConfig<Result> {
   styleUrls: ['./job-progress-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatProgressBar,
-    MatDialogActions,
-    MatButton,
-    MatDialogClose,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TnIconButtonComponent,
+    MatProgressBar,
     TranslateModule,
     DecimalPipe,
     TestDirective,
   ],
 })
 export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
-  private dialogRef = inject<MatDialogRef<JobProgressDialog<T>, MatDialogConfig>>(MatDialogRef);
-  data = inject<JobProgressDialogConfig<T>>(MAT_DIALOG_DATA);
+  private dialogRef = inject<DialogRef<void, JobProgressDialog<T>>>(DialogRef);
+  data = inject<JobProgressDialogConfig<T>>(DIALOG_DATA);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
@@ -180,7 +174,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
 
   private scrollBottom(): void {
     const cardContainer = document.getElementsByClassName('job-dialog')[0];
-    const logsContainer = cardContainer.getElementsByClassName('logs-container')[0];
+    const logsContainer = cardContainer?.getElementsByClassName('logs-container')[0];
     if (!logsContainer) {
       return;
     }
@@ -197,6 +191,10 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
       takeUntilDestroyed(this.destroyRef),
     )
       .subscribe();
+  }
+
+  protected minimize(): void {
+    this.dialogRef.close();
   }
 
   /**

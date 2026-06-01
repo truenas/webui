@@ -1,26 +1,23 @@
-<h1 mat-dialog-title>{{ 'Logs' | translate }}</h1>
+<tn-dialog-shell [title]="'Logs' | translate">
+  @if (job.logs_excerpt) {
+    <div class="logs">
+      <pre><code>{{ job.logs_excerpt }}</code></pre>
+      <ix-copy-button [text]="job.logs_excerpt"></ix-copy-button>
+    </div>
+  }
 
-@if (job.logs_excerpt) {
-  <div class="logs">
-    <pre><code>{{ job.logs_excerpt }}</code></pre>
-    <ix-copy-button [text]="job.logs_excerpt"></ix-copy-button>
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      ixTest="close"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
+    <tn-button
+      color="primary"
+      ixTest="download-logs"
+      [label]="'Download Logs' | translate"
+      (onClick)="downloadLogs()"
+    ></tn-button>
   </div>
-}
-
-<div mat-dialog-actions>
-  <button
-    mat-button
-    matDialogClose
-    ixTest="close"
-  >
-    {{ 'Close' | translate }}
-  </button>
-  <button
-    mat-button
-    color="primary"
-    ixTest="download-logs"
-    (click)="downloadLogs()"
-  >
-    {{ 'Download Logs' | translate }}
-  </button>
-</div>
+</tn-dialog-shell>

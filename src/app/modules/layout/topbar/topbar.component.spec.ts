@@ -16,7 +16,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { selectImportantUnreadAlertsCount, selectIsAlertPanelOpen, selectTopAlertSeverity } from 'app/modules/alerts/store/alert.selectors';
-import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
@@ -99,6 +99,10 @@ function createTopbarComponent(options: ComponentOptions = {}): {
       }),
       mockProvider(UiSearchProvider),
       mockProvider(MatDialog, matDialog),
+      mockProvider(DialogService, {
+        update: jest.fn(() => ({ close: jest.fn() })),
+        rebootRequired: jest.fn(() => of(undefined)),
+      }),
       mockApi([]),
       mockProvider(TruenasConnectService, {
         config: mockConfigSignal,
@@ -186,18 +190,9 @@ describe('TopbarComponent', () => {
     updateRunningStatus$.emit('true');
     spectator.detectChanges();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenNthCalledWith(1, UpdateDialog, {
-      hasBackdrop: true,
-      panelClass: 'topbar-panel',
-      position: {
-        right: '16px',
-        top: '48px',
-      },
-      width: '400px',
-      data: {
-        title: 'Update in Progress',
-        message: 'A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.',
-      },
+    expect(spectator.inject(DialogService).update).toHaveBeenCalledWith({
+      title: 'Update in Progress',
+      message: 'A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.',
     });
   });
 

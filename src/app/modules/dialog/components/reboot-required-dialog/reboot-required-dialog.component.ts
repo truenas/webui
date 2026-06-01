@@ -1,10 +1,10 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { failoverDisabledReasonLabels } from 'app/enums/failover-disabled-reason.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -22,11 +22,11 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
   styleUrls: ['./reboot-required-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
+    TnButtonComponent,
     TranslateModule,
     ReactiveFormsModule,
-    MatDialogModule,
     IxCheckboxComponent,
-    MatButton,
     TestDirective,
     MapValuePipe,
     FormActionsComponent,
@@ -36,7 +36,7 @@ export class RebootRequiredDialog {
   private store$ = inject<Store<AppState>>(Store);
   private reboot = inject(RebootService);
   private fb = inject(NonNullableFormBuilder);
-  private dialogRef = inject<MatDialogRef<RebootRequiredDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<boolean, RebootRequiredDialog>>(DialogRef);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 

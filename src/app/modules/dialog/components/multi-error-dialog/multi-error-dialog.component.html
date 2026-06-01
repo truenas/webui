@@ -1,36 +1,22 @@
-<h1 mat-dialog-title>{{ 'Multiple Errors' | translate }}</h1>
-<div
-  class="multi-error-dialog"
-  mat-dialog-content
->
-  @for (error of errors; track error) {
-    <ix-error-template
-      class="error-template"
-      [title]="error.title"
-      [message]="error.message"
-      [stackTrace]="error.stackTrace"
-      [logs]="error.logs"
-    ></ix-error-template>
-    <mat-divider></mat-divider>
-  }
+<tn-dialog-shell [title]="'Multiple Errors' | translate">
+  <div class="multi-error-dialog">
+    @for (error of errors; track error) {
+      <ix-error-template
+        class="error-template"
+        [title]="error.title"
+        [message]="error.message"
+        [stackTrace]="error.stackTrace"
+        [logs]="error.logs"
+      ></ix-error-template>
+      <mat-divider></mat-divider>
+    }
+  </div>
 
-</div>
-<div mat-dialog-actions>
-  <button
-    mat-button
-    class="mat-mdc-button mat-button mat-accent"
-    ixTest="close-error-dialog"
-    (click)="dialogRef.close(true)"
-  >
-    {{ 'Close' | translate }}
-  </button>
-  <!-- <button
-    *ngIf="logs"
-    mat-button
-    class="mat-mdc-button mat-button mat-primary"
-    ixTest="download-logs"
-    (click)="downloadLogs()"
-  >
-    {{ 'Download Logs' | translate }}
-  </button> -->
-</div>
+  <div tnDialogAction>
+    <tn-button
+      ixTest="close-error-dialog"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close(true)"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>

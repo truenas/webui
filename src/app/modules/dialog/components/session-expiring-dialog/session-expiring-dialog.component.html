@@ -1,26 +1,24 @@
-<h1 mat-dialog-title>{{ options.title | translate }}</h1>
-<div mat-dialog-content id="confirm-msg">
-  <div class="message-content">
-    <span [innerHTML]="options.message | translate"></span>
+<tn-dialog-shell [title]="options.title | translate">
+  <div id="confirm-msg">
+    <div class="message-content">
+      <span [innerHTML]="options.message | translate"></span>
 
-    <p>
-      {{ 'Change Session Timeout in' | translate }}
-      <button class="preferences-link" (click)="openPreferences()">
-        {{ 'Preferences' | translate }}
-      </button>
-    </p>
+      <p>
+        {{ 'Change Session Timeout in' | translate }}
+        <button class="preferences-link" (click)="openPreferences()">
+          {{ 'Preferences' | translate }}
+        </button>
+      </p>
+    </div>
   </div>
-</div>
 
-<div mat-dialog-actions>
-  <button
-    mat-button
-    color="primary"
-    name="ok_button"
-    class="submit-button"
-    ixTest="session-expiring-extend-confirm"
-    (click)="extendSession()"
-  >
-    {{ options.buttonText | translate }}
-  </button>
-</div>
+  <div tnDialogAction>
+    <tn-button
+      color="primary"
+      class="submit-button"
+      ixTest="session-expiring-extend-confirm"
+      [label]="options.buttonText | translate"
+      (onClick)="extendSession()"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>

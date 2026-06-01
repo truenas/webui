@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, input, Signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatDialogTitle } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { Job } from 'app/interfaces/job.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -16,9 +14,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./error-template.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
     TnIconComponent,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
     TestDirective,
   ],

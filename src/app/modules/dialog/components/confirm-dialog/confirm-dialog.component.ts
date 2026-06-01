@@ -1,14 +1,16 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult,
+} from 'app/interfaces/dialog.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+
+type ConfirmDialogResult = boolean | DialogWithSecondaryCheckboxResult;
 
 @Component({
   selector: 'ix-confirm-dialog',
@@ -16,20 +18,18 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./confirm-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
+    TnButtonComponent,
     MatCheckbox,
     ReactiveFormsModule,
     FormsModule,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
     TranslateModule,
     TestDirective,
   ],
 })
 export class ConfirmDialog {
-  private dialogRef = inject<MatDialogRef<ConfirmDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<ConfirmDialogResult, ConfirmDialog>>(DialogRef);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -47,7 +47,7 @@ export class ConfirmDialog {
   } as ConfirmOptions;
 
   constructor() {
-    const options = inject<ConfirmOptionsWithSecondaryCheckbox>(MAT_DIALOG_DATA);
+    const options = inject<ConfirmOptionsWithSecondaryCheckbox>(DIALOG_DATA);
 
     this.options = { ...this.defaultOptions, ...options };
     if (options.hideCancel) {
@@ -77,22 +77,22 @@ export class ConfirmDialog {
   }
 
   onCancel(): void {
-    const result = this.withSecondaryCheckbox
+    const result: ConfirmDialogResult = this.withSecondaryCheckbox
       ? {
           confirmed: false,
           secondaryCheckbox: this.isSecondaryCheckboxChecked,
-        } as DialogWithSecondaryCheckboxResult
+        }
       : false;
 
     this.dialogRef.close(result);
   }
 
   onSubmit(): void {
-    const result = this.withSecondaryCheckbox
+    const result: ConfirmDialogResult = this.withSecondaryCheckbox
       ? {
           confirmed: true,
           secondaryCheckbox: this.isSecondaryCheckboxChecked,
-        } as DialogWithSecondaryCheckboxResult
+        }
       : true;
 
     this.dialogRef.close(result);

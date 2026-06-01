@@ -1,12 +1,10 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { Observable, forkJoin, filter } from 'rxjs';
 import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
@@ -31,13 +29,11 @@ export interface StartServiceDialogResult {
   templateUrl: './start-service-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
+    TnButtonComponent,
     IxSlideToggleComponent,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
     TranslateModule,
     FakeProgressBarComponent,
     TestDirective,
@@ -48,10 +44,10 @@ export class StartServiceDialog implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
-  private dialogRef = inject<MatDialogRef<StartServiceDialog, StartServiceDialogResult>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<StartServiceDialogResult, StartServiceDialog>>(DialogRef);
   private store$ = inject<Store<ServicesState>>(Store);
   private errorHandler = inject(ErrorHandlerService);
-  serviceName = inject<ServiceName>(MAT_DIALOG_DATA);
+  serviceName = inject<ServiceName>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   startAutomaticallyControl = new FormControl(true, { nonNullable: true });

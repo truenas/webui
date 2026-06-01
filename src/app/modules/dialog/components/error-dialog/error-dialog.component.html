@@ -1,98 +1,94 @@
-<h1 mat-dialog-title class="err-title">
-  <tn-icon class="error-warning-icon" library="mdi" [name]="error.icon || 'alert-circle'"></tn-icon>
-  {{ error.title | translate }}
-</h1>
+<tn-dialog-shell [title]="error.title | translate">
+  <div id="err-md-content" class="err-content" role="alertdialog">
+    <div class="err-title-row">
+      <tn-icon class="error-warning-icon" library="mdi" [name]="error.icon || 'alert-circle'"></tn-icon>
+    </div>
 
-<div mat-dialog-content id="err-md-content" role="alertdialog">
-  <div class="err-message-wrapper">
-    <span [innerHTML]="error.message"></span>
-    @if (error.hint) {
-      <div class="hint-text">
-        <tn-icon name="information" library="mdi" class="hint-icon"></tn-icon>
-        <span>{{ error.hint | translate }}</span>
+    <div class="err-message-wrapper">
+      <span [innerHTML]="error.message"></span>
+      @if (error.hint) {
+        <div class="hint-text">
+          <tn-icon name="information" library="mdi" class="hint-icon"></tn-icon>
+          <span>{{ error.hint | translate }}</span>
+        </div>
+      }
+    </div>
+
+    @if (error.details && error.details.length > 0) {
+      <a
+        ixTest="view-details"
+        class="more-info"
+        (click)="toggleDetails()"
+      >
+        @if (isDetailsOpen()) {
+          <tn-icon name="minus-circle-outline" library="mdi"></tn-icon>
+        } @else {
+          <tn-icon name="plus-circle-outline" library="mdi"></tn-icon>
+        }
+        <span>{{ 'View Details' | translate }}</span>
+      </a>
+
+      <div
+        class="details-panel"
+        [class.open]="isDetailsOpen()"
+      >
+        <div class="details-content">
+          <table class="details-table">
+            @for (detail of error.details; track detail.label) {
+              <tr>
+                <td class="detail-label">{{ detail.label }}:</td>
+                <td class="detail-value">
+                  @if (isCollapsibleDetail(detail.label)) {
+                    @if (!isDetailExpanded(detail.label)) {
+                      <a class="trace-toggle" (click)="toggleDetailExpanded(detail.label)">
+                        <tn-icon name="eye" library="mdi" customSize="18px"></tn-icon>
+                        <span>{{ 'Show' | translate }}</span>
+                      </a>
+                    } @else {
+                      <a class="trace-toggle" (click)="toggleDetailExpanded(detail.label)">
+                        <tn-icon name="eye-off" library="mdi" customSize="18px"></tn-icon>
+                        <span>{{ 'Hide' | translate }}</span>
+                      </a>
+                      <pre>{{ detail.value }}</pre>
+                    }
+                  } @else if (detail.value && detail.value.toString().includes('\n')) {
+                    <pre>{{ detail.value }}</pre>
+                  } @else {
+                    {{ detail.value || 'N/A' }}
+                  }
+                </td>
+              </tr>
+            }
+          </table>
+        </div>
+
+        <ix-copy-button [text]="getDetailsAsText()"></ix-copy-button>
       </div>
     }
   </div>
 
-  @if (error.details && error.details.length > 0) {
-    <a
-      ixTest="view-details"
-      class="more-info"
-      (click)="toggleDetails()"
-    >
-      @if (isDetailsOpen()) {
-        <tn-icon name="minus-circle-outline" library="mdi"></tn-icon>
-      } @else {
-        <tn-icon name="plus-circle-outline" library="mdi"></tn-icon>
-      }
-      <span>{{ 'View Details' | translate }}</span>
-    </a>
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      ixTest="close-error-dialog"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close(true)"
+    ></tn-button>
 
-    <div
-      class="details-panel"
-      [class.open]="isDetailsOpen()"
-    >
-      <div class="details-content">
-        <table class="details-table">
-          @for (detail of error.details; track detail.label) {
-            <tr>
-              <td class="detail-label">{{ detail.label }}:</td>
-              <td class="detail-value">
-                @if (isCollapsibleDetail(detail.label)) {
-                  @if (!isDetailExpanded(detail.label)) {
-                    <a class="trace-toggle" (click)="toggleDetailExpanded(detail.label)">
-                      <tn-icon name="eye" library="mdi" customSize="18px"></tn-icon>
-                      <span>{{ 'Show' | translate }}</span>
-                    </a>
-                  } @else {
-                    <a class="trace-toggle" (click)="toggleDetailExpanded(detail.label)">
-                      <tn-icon name="eye-off" library="mdi" customSize="18px"></tn-icon>
-                      <span>{{ 'Hide' | translate }}</span>
-                    </a>
-                    <pre>{{ detail.value }}</pre>
-                  }
-                } @else if (detail.value && detail.value.toString().includes('\n')) {
-                  <pre>{{ detail.value }}</pre>
-                } @else {
-                  {{ detail.value || 'N/A' }}
-                }
-              </td>
-            </tr>
-          }
-        </table>
-      </div>
+    @if (error.logs) {
+      <tn-button
+        ixTest="download-logs"
+        [label]="'Download Logs' | translate"
+        (onClick)="downloadLogs()"
+      ></tn-button>
+    }
 
-      <ix-copy-button [text]="getDetailsAsText()"></ix-copy-button>
-    </div>
-  }
-</div>
-
-<div mat-dialog-actions>
-  <button
-    mat-button
-    ixTest="close-error-dialog"
-    (click)="dialogRef.close(true)"
-  >
-    {{ 'Close' | translate }}
-  </button>
-
-  @if (error.logs) {
-    <button
-      mat-button
-      ixTest="download-logs"
-      (click)="downloadLogs()"
-    >
-      {{ 'Download Logs' | translate }}
-    </button>
-  }
-
-  @for (action of error.actions; track action.label) {
-    <button
-      mat-button
-      [ixTest]="'action-' + action.label"
-      (click)="handleAction(action)"
-    >
-      {{ action.label | translate }}
-    </button>
-  }
-</div>
+    @for (action of error.actions; track action.label) {
+      <tn-button
+        [ixTest]="'action-' + action.label"
+        [label]="action.label | translate"
+        (onClick)="handleAction(action)"
+      ></tn-button>
+    }
+  </div>
+</tn-dialog-shell>

@@ -1,7 +1,7 @@
-<h1 #errorTitle mat-dialog-title id="err-title" class="err-title">
+<h2 #errorTitle id="err-title" class="err-title">
   <tn-icon class="error-warning-icon" library="mdi" name="alert-circle"></tn-icon>
   {{ title() | translate }}
-</h1>
+</h2>
 <div #errorMdContent id="err-md-content">
   <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message()"></span></div>
   @if (stackTrace()) {
@@ -31,12 +31,9 @@
   }
 </div>
 @if (logs()) {
-  <button
-    mat-button
-    class="mat-mdc-button mat-button mat-primary"
+  <tn-button
     ixTest="download-logs"
-    (click)="downloadLogs()"
-  >
-    {{ 'Download Logs' | translate }}
-  </button>
+    [label]="'Download Logs' | translate"
+    (onClick)="downloadLogs()"
+  ></tn-button>
 }

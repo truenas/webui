@@ -1,3 +1,4 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef,
@@ -6,7 +7,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -23,8 +24,8 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import {
   AlertSlice, selectImportantUnreadAlertsCount, selectIsAlertPanelOpen, selectTopAlertSeverity,
 } from 'app/modules/alerts/store/alert.selectors';
-import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
@@ -33,7 +34,6 @@ import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
-import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -83,6 +83,7 @@ export class TopbarComponent implements OnInit {
   private router = inject(Router);
   private systemGeneralService = inject(SystemGeneralService);
   private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
   private store$ = inject<Store<AlertSlice>>(Store);
   private appStore$ = inject<Store<AppState>>(Store);
   private cdr = inject(ChangeDetectorRef);
@@ -96,7 +97,7 @@ export class TopbarComponent implements OnInit {
 
   updateIsDone: Subscription;
 
-  updateDialog: MatDialogRef<UpdateDialog>;
+  updateDialog: DialogRef<unknown, UpdateDialog> | null = null;
   private readonly isEnterprise = toSignal(this.appStore$.select(selectIsEnterprise));
   isHaLicensed = false;
   updateIsRunning = false;
@@ -223,16 +224,7 @@ export class TopbarComponent implements OnInit {
     const title = this.translate.instant('Update in Progress');
     const message = this.updateText();
 
-    this.updateDialog = this.matDialog.open(UpdateDialog, {
-      width: '400px',
-      hasBackdrop: true,
-      panelClass: 'topbar-panel',
-      position: topbarDialogPosition,
-      data: {
-        title,
-        message,
-      },
-    });
+    this.updateDialog = this.dialogService.update({ title, message });
   }
 
   showRebootInfoDialog(): void {
@@ -256,7 +248,7 @@ export class TopbarComponent implements OnInit {
       filter(() => !this.shownDialog()),
       filter(() => !this.updateIsRunning && !this.rebootInfoSuppression.isSuppressed()),
       tap(() => this.shownDialog.set(true)),
-      switchMap(() => this.matDialog.open(RebootRequiredDialog, { minWidth: '400px' }).afterClosed()),
+      switchMap(() => this.dialogService.rebootRequired()),
     );
   }
 }

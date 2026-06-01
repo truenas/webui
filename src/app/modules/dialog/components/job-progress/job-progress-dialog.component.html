@@ -1,84 +1,81 @@
-<h1 mat-dialog-title>
-  {{ title ? title : ('Loading' | translate) }}
-</h1>
-<mat-dialog-content class="job-dialog">
-  @if (showRealtimeLogs && realtimeLogs) {
-    <div class="logs-container">
-      <h5>{{ 'Logs' | translate }}</h5>
-      <pre #logs class="message logs">{{ realtimeLogs | translate }}</pre>
-    </div>
-  }
-
-  @if (isJobRunning) {
-    <div>
-      <div class="description-line">
-        <span>{{ job.description ? job.description : job.method }}</span>
-        @if (!hideProgressValue) {
-          <small>
-            {{ progressTotalPercent || 0 | number: '1.2-2' }}%
-          </small>
-        }
+<tn-dialog-shell [title]="(title || ('Loading' | translate)) || ''">
+  <div class="job-dialog">
+    @if (showRealtimeLogs && realtimeLogs) {
+      <div class="logs-container">
+        <h5>{{ 'Logs' | translate }}</h5>
+        <pre #logs class="message logs">{{ realtimeLogs | translate }}</pre>
       </div>
-      <mat-progress-bar
-        color="primary"
-        class="job-progress job-running"
-        [value]="progressTotalPercent"
-        [mode]="progressTotalPercent ? 'determinate' : 'indeterminate'"
-      ></mat-progress-bar>
-    </div>
-  }
+    }
 
-  @if (!isJobStateDeterminate) {
-    <div>
-      <mat-progress-bar
-        color="primary"
-        class="job-progress job-ended"
-        [mode]="'indeterminate'"
-      ></mat-progress-bar>
-    </div>
-  }
+    @if (isJobRunning) {
+      <div>
+        <div class="description-line">
+          <span>{{ job.description ? job.description : job.method }}</span>
+          @if (!hideProgressValue) {
+            <small>
+              {{ progressTotalPercent || 0 | number: '1.2-2' }}%
+            </small>
+          }
+        </div>
+        <mat-progress-bar
+          color="primary"
+          class="job-progress job-running"
+          [value]="progressTotalPercent"
+          [mode]="progressTotalPercent ? 'determinate' : 'indeterminate'"
+        ></mat-progress-bar>
+      </div>
+    }
 
-  @if (description) {
-    <div
-      class="job-description"
-      [innerHTML]="description"
-    ></div>
-  }
+    @if (!isJobStateDeterminate) {
+      <div>
+        <mat-progress-bar
+          color="primary"
+          class="job-progress job-ended"
+          [mode]="'indeterminate'"
+        ></mat-progress-bar>
+      </div>
+    }
 
-  @if (!description && !job) {
-    <div>
-      <mat-progress-bar
-        color="primary"
-        mode="indeterminate"
-        class="job-progress"
-      >
-      </mat-progress-bar>
-    </div>
-  }
+    @if (description) {
+      <div
+        class="job-description"
+        [innerHTML]="description"
+      ></div>
+    }
 
-</mat-dialog-content>
+    @if (!description && !job) {
+      <div>
+        <mat-progress-bar
+          color="primary"
+          mode="indeterminate"
+          class="job-progress"
+        >
+        </mat-progress-bar>
+      </div>
+    }
+  </div>
 
-<div mat-dialog-actions>
-  @if (hasAbortButton) {
-    <button
-      mat-button
-      ixTest="abort"
-      [disabled]="isAbortingJob"
-      [attr.aria-label]="'Abort Job' | translate"
-      (click)="abortJob()"
-    >
-      {{ isAbortingJob ? ('Aborting...' | translate) : ('Abort' | translate) }}
-    </button>
-  }
+  <div tnDialogAction>
+    @if (hasAbortButton) {
+      <tn-button
+        variant="outline"
+        ixTest="abort"
+        [label]="isAbortingJob ? ('Aborting...' | translate) : ('Abort' | translate)"
+        [disabled]="isAbortingJob"
+        [ariaLabel]="'Abort Job' | translate"
+        (onClick)="abortJob()"
+      ></tn-button>
+    }
 
-  @if (showMinimizeButton) {
-    <tn-icon-button
-      name="minus"
-      library="mdi"
-      class="mat-dialog-close"
-      mat-dialog-close="close"
-      ixTest="close"
-      [attr.aria-label]="'Hide Job' | translate: { jobMethod: job.method }"
-    ></tn-icon-button>
-  }
-</div>
+    @if (showMinimizeButton) {
+      <tn-icon-button
+        name="minus"
+        library="mdi"
+        class="mat-dialog-close"
+        ixTest="close"
+        [attr.aria-label]="'Hide Job' | translate: { jobMethod: job.method }"
+        (click)="minimize()"
+      ></tn-icon-button>
+    }
+  </div>
+</tn-dialog-shell>
