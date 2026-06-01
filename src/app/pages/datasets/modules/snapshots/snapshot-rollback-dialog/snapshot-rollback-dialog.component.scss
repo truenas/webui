@@ -13,11 +13,7 @@
   display: flex;
   flex: 1;
   flex-direction: row-reverse;
-
-  a,
-  button {
-    margin-left: 10px;
-  }
+  gap: 8px;
 }
 
 .form-actions {

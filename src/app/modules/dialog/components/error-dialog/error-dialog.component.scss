@@ -133,6 +133,13 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   align-items: center;
 }
 
+.more-info {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 6px;
+}
+
 .err-message-wrapper {
   word-wrap: break-word;
 
