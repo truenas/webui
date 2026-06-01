@@ -1,5 +1,5 @@
+import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { Injectable, inject } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import {
   defer, EMPTY, finalize, MonoTypeOperatorFunction, Observable, Subscription,
@@ -10,10 +10,10 @@ import { FocusService } from 'app/services/focus.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoaderService {
-  private matDialog = inject(MatDialog);
+  private dialog = inject(Dialog);
   private focusService = inject(FocusService);
 
-  dialogRef: MatDialogRef<AppLoaderComponent> | null = null;
+  dialogRef: DialogRef<unknown, AppLoaderComponent> | null = null;
   private onBeforeClose: (() => Observable<boolean>) | null = null;
   private handlersSetup = false;
   private keydownSubscription: Subscription | null = null;
@@ -31,12 +31,12 @@ export class LoaderService {
     });
   }
 
-  open(title: string = T('Please wait')): Observable<boolean> {
+  open(title: string = T('Please wait')): Observable<unknown> {
     if (this.dialogRef !== null) {
       return EMPTY;
     }
 
-    this.dialogRef = this.matDialog.open(AppLoaderComponent, {
+    this.dialogRef = this.dialog.open<unknown, unknown, AppLoaderComponent>(AppLoaderComponent, {
       disableClose: this.onBeforeClose !== null,
       width: '200px',
       height: '200px',
@@ -51,7 +51,7 @@ export class LoaderService {
       this.setupConfirmationHandlers();
     }
 
-    return this.dialogRef.afterClosed();
+    return this.dialogRef.closed;
   }
 
   close(): void {
@@ -118,14 +118,15 @@ export class LoaderService {
 
     this.handlersSetup = true;
 
-    // Since disableClose is true, we need to manually listen for ESC and backdrop clicks
-    this.keydownSubscription = this.dialogRef.keydownEvents().pipe(
+    // Since disableClose is true, we need to manually listen for ESC and backdrop clicks.
+    // On cdk DialogRef these are observable properties (not methods like on MatDialogRef).
+    this.keydownSubscription = this.dialogRef.keydownEvents.pipe(
       filter((event) => event.key === 'Escape'),
     ).subscribe(() => {
       this.handleConfirmationClose();
     });
 
-    this.backdropSubscription = this.dialogRef.backdropClick().subscribe(() => {
+    this.backdropSubscription = this.dialogRef.backdropClick.subscribe(() => {
       this.handleConfirmationClose();
     });
   }
@@ -151,7 +152,7 @@ export class LoaderService {
   }
 
   private tryToRestoreFocusToThePreviousDialog(): void {
-    const previousDialogs = this.matDialog.openDialogs.filter((dialog) => dialog.id !== this.dialogRef?.id);
+    const previousDialogs = this.dialog.openDialogs.filter((dialog) => dialog.id !== this.dialogRef?.id);
     const previousDialogId = previousDialogs[previousDialogs.length - 1]?.id;
 
     if (previousDialogId) {

@@ -1,5 +1,5 @@
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -17,7 +17,7 @@ describe('ResilveringIndicatorComponent', () => {
   const createComponent = createComponentFactory({
     component: ResilveringIndicatorComponent,
     providers: [
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(ApiService, {
         subscribe: jest.fn().mockReturnValue(of({
           fields: {
@@ -42,6 +42,6 @@ describe('ResilveringIndicatorComponent', () => {
   it('opens resilver progress dialog when icon is pressed', () => {
     spectator.click('button');
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ResilverProgressDialog);
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ResilverProgressDialog);
   });
 });

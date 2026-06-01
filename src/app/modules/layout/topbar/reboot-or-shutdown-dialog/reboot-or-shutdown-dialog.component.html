@@ -1,7 +1,5 @@
-<h3 mat-dialog-title>{{ title }}</h3>
-
-@if (isEnterprise()) {
-  <div mat-dialog-content>
+<tn-dialog-shell [title]="title">
+  @if (isEnterprise()) {
     <ix-select
       [formControl]="form.controls.reason"
       [label]="'Reason' | translate"
@@ -16,29 +14,29 @@
         [required]="true"
       ></ix-input>
     }
-  </div>
-}
+  }
 
-<ix-form-actions mat-dialog-actions>
-  <ix-checkbox
-    class="confirm"
-    [formControl]="form.controls.confirm"
-    [label]="'Confirm' | translate"
-    [required]="true"
-  ></ix-checkbox>
+  <ix-form-actions tnDialogAction>
+    <ix-checkbox
+      class="confirm"
+      [formControl]="form.controls.confirm"
+      [label]="'Confirm' | translate"
+      [required]="true"
+    ></ix-checkbox>
 
-  <button mat-button type="button" matDialogClose ixTest="cancel">
-    {{ 'Cancel' | translate }}
-  </button>
+    <tn-button
+      variant="outline"
+      ixTest="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
 
-  <button
-    mat-button
-    type="button"
-    color="primary"
-    ixTest="submit"
-    [disabled]="!form.controls.confirm.value || (isEnterprise() && form.invalid)"
-    (click)="onSubmit()"
-  >
-    {{ buttonText }}
-  </button>
-</ix-form-actions>
+    <tn-button
+      color="primary"
+      ixTest="submit"
+      [label]="buttonText"
+      [disabled]="!form.controls.confirm.value || (isEnterprise() && form.invalid)"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  </ix-form-actions>
+</tn-dialog-shell>

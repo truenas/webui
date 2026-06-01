@@ -1,9 +1,9 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -18,7 +18,7 @@ describe('RebootOrShutdownDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: RebootOrShutdownDialog,
     providers: [
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       provideMockStore({
         selectors: [
           {
@@ -34,14 +34,14 @@ describe('RebootOrShutdownDialogComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: true,
         },
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Shut Down' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Shut Down' }));
     expect(button).toBeTruthy();
   });
 
@@ -49,14 +49,14 @@ describe('RebootOrShutdownDialogComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: false,
         },
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Restart' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Restart' }));
     expect(button).toBeTruthy();
   });
 
@@ -65,7 +65,7 @@ describe('RebootOrShutdownDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: true,
           },
         ],
@@ -81,10 +81,10 @@ describe('RebootOrShutdownDialogComponent', () => {
       const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
       await confirmCheckbox.setValue(true);
 
-      const shutdownButton = await loader.getHarness(MatButtonHarness.with({ text: 'Shut Down' }));
+      const shutdownButton = await loader.getHarness(TnButtonHarness.with({ label: 'Shut Down' }));
       await shutdownButton.click();
 
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('System Update');
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('System Update');
     });
 
     it('allows user to enter custom reason', async () => {
@@ -97,10 +97,10 @@ describe('RebootOrShutdownDialogComponent', () => {
       const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
       await confirmCheckbox.setValue(true);
 
-      const shutdownButton = await loader.getHarness(MatButtonHarness.with({ text: 'Shut Down' }));
+      const shutdownButton = await loader.getHarness(TnButtonHarness.with({ label: 'Shut Down' }));
       await shutdownButton.click();
 
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('House on fire');
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('House on fire');
     });
   });
 });
@@ -112,7 +112,7 @@ describe('RebootOrShutdownDialog – non-enterprise', () => {
   const createComponent = createComponentFactory({
     component: RebootOrShutdownDialog,
     providers: [
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       provideMockStore({
         selectors: [
           {
@@ -128,7 +128,7 @@ describe('RebootOrShutdownDialog – non-enterprise', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: true,
         },
       ],
@@ -157,9 +157,9 @@ describe('RebootOrShutdownDialog – non-enterprise', () => {
     const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
     await checkbox.setValue(true);
 
-    const submit = await loader.getHarness(MatButtonHarness.with({ text: /Restart|Shut Down/ }));
+    const submit = await loader.getHarness(TnButtonHarness.with({ label: /Restart|Shut Down/ }));
     await submit.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(expect.stringMatching(/Unspecified/i));
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(expect.stringMatching(/Unspecified/i));
   });
 });

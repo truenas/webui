@@ -1,8 +1,8 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
@@ -32,7 +32,7 @@ describe('ChangePasswordDialogComponent', () => {
         mockCall('user.set_password'),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(LoaderService, {
         withLoader: () => <T>(source$: T) => source$,
       }),
@@ -90,7 +90,7 @@ describe('ChangePasswordDialogComponent', () => {
       new_password: '123456',
       username: 'root',
     }]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('shows error if any happened during password change request', async () => {

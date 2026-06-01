@@ -1,13 +1,13 @@
+import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { AppLoaderComponent } from 'app/modules/loader/components/app-loader/app-loader.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 
 describe('LoaderService', () => {
   let service: LoaderService;
-  let matDialog: MatDialog;
-  let mockDialogRef: Partial<MatDialogRef<AppLoaderComponent>>;
+  let dialog: Dialog;
+  let mockDialogRef: Partial<DialogRef<unknown, AppLoaderComponent>>;
   let mockComponentInstance: Partial<AppLoaderComponent>;
 
   beforeEach(() => {
@@ -18,24 +18,24 @@ describe('LoaderService', () => {
     mockDialogRef = {
       id: 'test-dialog-id',
       componentInstance: mockComponentInstance as AppLoaderComponent,
-      afterClosed: jest.fn(() => of(true)),
+      closed: of(true),
       close: jest.fn(),
     };
 
-    const mockMatDialog = {
+    const mockDialog = {
       open: jest.fn(() => mockDialogRef),
-      openDialogs: [] as MatDialogRef<unknown>[],
+      openDialogs: [] as DialogRef[],
     };
 
     TestBed.configureTestingModule({
       providers: [
         LoaderService,
-        { provide: MatDialog, useValue: mockMatDialog },
+        { provide: Dialog, useValue: mockDialog },
       ],
     });
 
     service = TestBed.inject(LoaderService);
-    matDialog = TestBed.inject(MatDialog);
+    dialog = TestBed.inject(Dialog);
   });
 
   afterEach(() => {
@@ -46,7 +46,7 @@ describe('LoaderService', () => {
     it('opens a dialog with default title', () => {
       service.open();
 
-      expect(matDialog.open).toHaveBeenCalledWith(AppLoaderComponent, {
+      expect(dialog.open).toHaveBeenCalledWith(AppLoaderComponent, {
         disableClose: false,
         width: '200px',
         height: '200px',
@@ -65,7 +65,7 @@ describe('LoaderService', () => {
 
       service.open('Test title');
 
-      expect(matDialog.open).toHaveBeenCalled();
+      expect(dialog.open).toHaveBeenCalled();
       expect(mockComponentInstance.setTitle).not.toHaveBeenCalled();
     });
   });

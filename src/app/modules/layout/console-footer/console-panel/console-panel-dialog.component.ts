@@ -1,9 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, Signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -13,16 +13,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./console-panel-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogContent,
-    MatDialogActions,
-    MatButton,
-    MatDialogClose,
+    TnDialogShellComponent,
+    TnButtonComponent,
     AsyncPipe,
     TranslateModule,
     TestDirective,
   ],
 })
 export class ConsolePanelDialog implements OnInit {
+  protected dialogRef = inject<DialogRef<boolean, ConsolePanelDialog>>(DialogRef);
   private messagesStore = inject(ConsoleMessagesStore);
   private destroyRef = inject(DestroyRef);
 

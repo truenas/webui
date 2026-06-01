@@ -1,9 +1,16 @@
-<div mat-dialog-content id="console-box">
-  <pre #messageContainer class="messages">{{ lines$ | async }}</pre>
-</div>
-<div mat-dialog-actions>
-  <button mat-button matDialogClose="false" class="close-button" ixTest="close">
-    {{ 'Close' | translate }}
-  </button>
-</div>
+<tn-dialog-shell [title]="'Console' | translate">
+  <div id="console-box">
+    <pre #messageContainer class="messages">{{ lines$ | async }}</pre>
+  </div>
+
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      class="close-button"
+      ixTest="close"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close(false)"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>
 <div id="placeholder"></div>
