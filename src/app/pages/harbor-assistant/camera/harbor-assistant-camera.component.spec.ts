@@ -5,6 +5,7 @@ import { of, Subject, throwError } from 'rxjs';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { HarborAssistantCameraComponent } from 'app/pages/harbor-assistant/camera/harbor-assistant-camera.component';
 import {
+  HarborAssistantCameraLiveSessionResponse,
   HarborAssistantSearchCameraStateResponse,
   HarborAssistantSearchDvrStatusResponse,
   HarborAssistantSearchDvrTimelineResponse,
@@ -40,6 +41,9 @@ describe('Harbor Assistant camera component', () => {
       cameraState: jest.fn(() => of(cameraState())),
       dvrStatus: jest.fn(() => of(dvrStatus())),
       dvrTimeline: jest.fn(() => of(dvrTimeline())),
+      startCameraLiveSession: jest.fn(() => of(liveSession())),
+      stopCameraLiveSession: jest.fn(() => of(liveSession({ status: 'stopped', playlist_url: null, playlist_ready: false }))),
+      cameraLiveStatus: jest.fn(() => of(liveSession())),
       createSnapshotTask: jest.fn(() => snapshotSubject.asObservable()),
       startDvrRecording: jest.fn(() => of(dvrStatus('recording'))),
       stopDvrRecording: jest.fn(() => of(dvrStatus('stopped'))),
@@ -59,6 +63,16 @@ describe('Harbor Assistant camera component', () => {
 
     expect(liveUrl).toContain('/api/harbor-beacon/cameras/cam-1/snapshot.jpg?ts=');
     expect(liveUrl).not.toContain('live.mjpeg');
+    discardPeriodicTasks();
+  }));
+
+  it('starts a same-origin HLS live session on demand', fakeAsync(() => {
+    spectator = createComponent();
+
+    spectator.component.startLive();
+
+    expect(api.startCameraLiveSession).toHaveBeenCalledWith('cam-1');
+    expect(spectator.component.liveModeLabel()).toBe('Live H.264');
     discardPeriodicTasks();
   }));
 
@@ -435,6 +449,22 @@ function dvrStatus(status = 'stopped'): HarborAssistantSearchDvrStatusResponse {
         live_mjpeg_url: '/api/cameras/cam-1/live.mjpeg',
       },
     ],
+  };
+}
+
+function liveSession(options: Partial<HarborAssistantCameraLiveSessionResponse> = {}): HarborAssistantCameraLiveSessionResponse {
+  return {
+    device_id: 'cam-1',
+    session_id: 'live-test',
+    status: 'running',
+    playlist_url: '/api/beacon/cameras/cam-1/live/live-test/index.m3u8',
+    playlist_ready: true,
+    mode: 'hls_fmp4',
+    codec: 'h264_copy',
+    started_at: '1714600000',
+    updated_at: '1714600001',
+    message: 'H.264 live remux is running',
+    ...options,
   };
 }
 

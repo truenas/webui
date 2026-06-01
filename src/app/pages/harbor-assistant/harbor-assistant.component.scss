@@ -22,6 +22,10 @@ $hd-space-5: 20px;
 }
 
 .harbor-assistant-page {
+  --fg1: #172033;
+  --fg2: #64748b;
+  --lines: rgba(15, 23, 42, 0.12);
+
   background: $hd-bg-surface;
   border: 1px solid $hd-border-subtle;
   border-radius: 16px;
@@ -32,6 +36,7 @@ $hd-space-5: 20px;
   flex-direction: column;
   margin: $hd-space-5;
   overflow: hidden;
+  color: var(--fg1);
 }
 
 .tab-strip {
@@ -78,7 +83,7 @@ $hd-space-5: 20px;
 
   &.active {
     border-bottom-color: var(--primary);
-    color: var(--fg1);
+    color: #172033;
   }
 }
 
@@ -172,7 +177,12 @@ $hd-space-5: 20px;
 }
 
 .event-intelligence-panel {
-  margin: 0 $hd-space-5 $hd-space-5;
+  margin: 0;
+}
+
+.camera-live-event-intelligence {
+  display: block;
+  min-width: 0;
 }
 
 .event-intelligence-status-grid {
@@ -407,6 +417,33 @@ $hd-space-5: 20px;
 
 .native-panel {
   background: $hd-bg-surface;
+  color: var(--fg1);
+}
+
+.native-panel,
+.native-panel mat-card-header,
+.native-panel mat-card-title,
+.native-panel mat-card-content,
+.native-panel h2,
+.native-panel h3,
+.native-panel strong,
+.event-intelligence-panel,
+.event-intelligence-main,
+.event-intelligence-metrics {
+  color: var(--fg1);
+}
+
+.native-panel .muted,
+.native-panel p,
+.event-intelligence-meta,
+.event-intelligence-metrics span {
+  color: var(--fg2);
+}
+
+.native-panel .pill {
+  background: #eef2f7;
+  border-color: rgba(15, 23, 42, 0.18);
+  color: #334155;
 }
 
 .overview-action-grid,

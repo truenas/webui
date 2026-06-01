@@ -458,13 +458,9 @@ describe('Harbor Assistant API service', () => {
       'utf8',
     );
 
-    const literalApiUrls = Array.from(source.matchAll(/['`]([^'`]*\/api\/[^'`]*)['`]/g))
-      .map((match) => match[1])
-      .filter((url) => !url.startsWith('app/'));
-
-    expect(literalApiUrls.length).toBeGreaterThan(0);
-    literalApiUrls.forEach((url) => expect(url).toContain('/api/harbor-beacon'));
-    expect(source).toContain('/api/harbor-beacon/inference/healthz');
+    expect(source).toContain('harborAssistantBeaconApiUrl');
+    expect(source).toContain("this.apiUrl('/inference/healthz')");
+    expect(source).not.toContain('/api/harbor-assistant');
     [':4174', ':4175', ':4176', ':4196', ':8787', '/api/turns', '/api/web/turns'].forEach((forbidden) => {
       expect(source).not.toContain(forbidden);
     });

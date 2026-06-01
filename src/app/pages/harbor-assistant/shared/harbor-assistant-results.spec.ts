@@ -84,7 +84,7 @@ describe('Harbor Assistant search result helpers', () => {
     expect(url).toBe('/api/harbor-beacon/knowledge/preview?path=%2Fmnt%2Fsoftware%2Fphotos%2F%E6%98%A5%E5%A4%A9%2001.jpg');
     expect(url).not.toContain(':4174');
     expect(url).not.toContain(':8787');
-    expect(harborAssistantSearchSameOriginAdminUrl('http://192.168.3.82:4174/api/knowledge/preview?path=/recordings/a.mp4'))
+    expect(harborAssistantSearchSameOriginAdminUrl('http://192.168.3.21:4174/api/knowledge/preview?path=/recordings/a.mp4'))
       .toBe('/api/harbor-beacon/knowledge/preview?path=/recordings/a.mp4');
     expect(harborAssistantSearchSameOriginAdminUrl('/api/cameras/camera-main/snapshot.jpg'))
       .toBe('/api/harbor-beacon/cameras/camera-main/snapshot.jpg');

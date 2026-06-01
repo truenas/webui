@@ -89,6 +89,7 @@ import {
   ShareLinkSummary,
 } from 'app/pages/harbor-assistant/interfaces/harbor-assistant-status.interface';
 import { HarborAssistantApiService } from 'app/pages/harbor-assistant/services/harbor-assistant-api.service';
+import { harborAssistantBeaconApiUrl } from 'app/pages/harbor-assistant/services/harbor-assistant-api-prefix';
 import { harborGateConnectorManageUrl, harborGateConnectorSetupUrl } from 'app/pages/harbor-assistant/utils/harborgate-urls';
 
 interface HarborAssistantPageData {
@@ -1289,7 +1290,7 @@ export class HarborAssistantComponent implements OnInit {
 
   protected openDvrReplay(segment: DvrTimelineSegment): void {
     const replayUrl = this.sameOriginAdminUrl(segment.replay_url)
-      ?? `/api/harbor-beacon/knowledge/preview?path=${encodeURIComponent(segment.file_path)}`;
+      ?? harborAssistantBeaconApiUrl(`/knowledge/preview?path=${encodeURIComponent(segment.file_path)}`);
     window.open(replayUrl, '_blank', 'noopener');
   }
 
@@ -4573,11 +4574,11 @@ export class HarborAssistantComponent implements OnInit {
     try {
       const parsed = new URL(url, 'http://harbor.local');
       const path = `${parsed.pathname}${parsed.search}`;
-      if (path.startsWith('/api/harbor-beacon/')) {
+      if (path.startsWith('/api/harbor-beacon/') || path.startsWith('/api/beacon/')) {
         return path;
       }
       if (path.startsWith('/api/')) {
-        return `/api/harbor-beacon${path.slice(4)}`;
+        return harborAssistantBeaconApiUrl(path.slice(4));
       }
       return path.startsWith('/') ? path : null;
     } catch {
@@ -4601,7 +4602,7 @@ export class HarborAssistantComponent implements OnInit {
       {
         label: T('Admin API'),
         value: state ? T('Connected') : T('Offline'),
-        detail: T('Harbor Assistant reads HarborBeacon through the /api/harbor-beacon/* service entry.'),
+        detail: T('Harbor Assistant reads HarborBeacon through the same-origin Beacon service entry.'),
         tone: state ? 'good' : 'danger',
       },
       {

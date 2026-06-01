@@ -146,11 +146,13 @@ describe('Harbor Assistant content API service', () => {
       'src/app/pages/harbor-assistant/camera/harbor-assistant-camera.component.ts',
     ].map((path) => readFileSync(join(process.cwd(), path), 'utf8')).join('\n');
 
-    expect(sources).toContain('/api/harbor-beacon/knowledge/search');
-    expect(sources).toContain('/api/harbor-beacon/knowledge/preview');
-    expect(sources).toContain('/api/harbor-beacon/cameras/recordings/status');
-    expect(sources).toContain('/api/harbor-beacon/cameras/${encodeURIComponent(deviceId)}/recordings/start');
-    expect(sources).toContain('/api/harbor-beacon/cameras/${encodeURIComponent(deviceId)}/snapshot');
+    expect(sources).toContain('harborAssistantBeaconApiUrl');
+    expect(sources).toContain("this.apiUrl('/knowledge/search')");
+    expect(sources).toContain('harborAssistantBeaconApiUrl(`/knowledge/preview');
+    expect(sources).toContain("this.apiUrl('/cameras/recordings/status')");
+    expect(sources).toContain('this.apiUrl(`/cameras/${encodeURIComponent(deviceId)}/recordings/start`)');
+    expect(sources).toContain('this.apiUrl(`/cameras/${encodeURIComponent(deviceId)}/snapshot`)');
+    expect(sources).not.toContain('/api/harbor-assistant');
     [':4174', ':4175', ':4176', ':4196', ':8787', '/api/turns', '/api/web/turns'].forEach((forbidden) => {
       expect(sources).not.toContain(forbidden);
     });

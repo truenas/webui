@@ -1326,7 +1326,7 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
     getHarborOsStatus: jest.fn(() => of({
       status: 'ready',
       version: '26.04',
-      webui_url: 'https://192.168.3.82/ui',
+      webui_url: 'https://192.168.3.21/ui',
       system_domain_only: true,
       services: [],
       jobs_alerts: harborOsService('jobs-alerts'),
@@ -1363,7 +1363,7 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
       status: {
         configured: true,
         enabled: true,
-        base_url: 'http://192.168.3.82:8123',
+        base_url: 'http://homeassistant.local:8123',
         token_configured: true,
         token_redacted: true,
         exposed_domains: ['light', 'camera'],
@@ -1378,7 +1378,7 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
       status: {
         configured: true,
         enabled: true,
-        base_url: 'http://192.168.3.82:8123',
+        base_url: 'http://homeassistant.local:8123',
         token_configured: true,
         token_redacted: true,
         exposed_domains: ['light', 'camera'],
