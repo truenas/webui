@@ -1,9 +1,8 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TnIconHarness } from '@truenas/ui-components';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { DialogRef } from '@angular/cdk/dialog';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RestartSmbDialog } from './restart-smb-dialog.component';
 
@@ -25,20 +24,20 @@ describe('RestartSmbDialog', () => {
   });
 
   it('shows restart message and prompt', () => {
-    expect(spectator.query('mat-dialog-content')).toContainText(
+    expect(spectator.query('.tn-dialog__content')).toContainText(
       'Changes to the SMB share configuration may not fully apply to existing SMB client sessions until the SMB service restarts.',
     );
-    expect(spectator.query('mat-dialog-content')).toContainText(
+    expect(spectator.query('.tn-dialog__content')).toContainText(
       'Do you want to restart the SMB service now?',
     );
-    expect(spectator.query('mat-dialog-content')).toContainText(
+    expect(spectator.query('.tn-dialog__content')).toContainText(
       'CAUTION: Restarting the SMB service causes a short service interruption for all connected SMB clients.',
     );
   });
 
   it('has No and Restart Service buttons', async () => {
-    const noButton = await loader.getHarness(MatButtonHarness.with({ text: 'No' }));
-    const restartButton = await loader.getHarness(MatButtonHarness.with({ text: 'Restart Service' }));
+    const noButton = await loader.getHarness(TnButtonHarness.with({ label: 'No' }));
+    const restartButton = await loader.getHarness(TnButtonHarness.with({ label: 'Restart Service' }));
 
     expect(noButton).toBeTruthy();
     expect(restartButton).toBeTruthy();

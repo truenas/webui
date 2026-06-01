@@ -1,9 +1,4 @@
-<tn-dialog-shell [title]="''">
-<h1>
-  {{ 'Associate' | translate }}
-  {{ data.target.name }}
-</h1>
-
+<tn-dialog-shell [title]="('Associate' | translate) + ' ' + data.target.name">
 
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
     <ix-fieldset>
@@ -22,27 +17,22 @@
         [required]="true"
       ></ix-select>
     </ix-fieldset>
-
-    <ix-form-actions tnDialogAction class="form-actions">
-      <button
-        mat-button
-        type="button"
-        ixTest="cancel-associate-target"
-       
-      >
-        {{ 'Cancel' | translate }}
-      </button>
-
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        type="submit"
-        color="primary"
-        ixTest="associate-target"
-        [disabled]="form.invalid || isLoading()"
-      >
-        {{ 'Associate' | translate }}
-      </button>
-    </ix-form-actions>
   </form>
+  <ix-form-actions tnDialogAction class="form-actions">
+    <tn-button
+      variant="outline"
+      ixTest="cancel-associate-target"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close(false)"
+    ></tn-button>
+
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      ixTest="associate-target"
+      [label]="'Associate' | translate"
+      [disabled]="form.invalid || isLoading()"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  </ix-form-actions>
 </tn-dialog-shell>

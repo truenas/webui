@@ -1,9 +1,8 @@
-<tn-dialog-shell [title]="''">
+<tn-dialog-shell [title]="'Manual Selection' | translate">
 <mat-card class="container">
   <mat-card-content class="card-content">
     <div class="inner-container">
       <div class="left-pane">
-        <div class="header dialog-header"><h3>{{ 'Manual Selection' | translate }}</h3></div>
         <ix-manual-selection-disks
           [enclosures]="data.enclosures"
           [isSedEncryption]="data.isSedEncryption || false"

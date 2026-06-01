@@ -33,13 +33,13 @@ describe('StopOptionsDialogComponent', () => {
 
   it('shows labels and text related to stopping a container when operation is Stop', async () => {
     setupTest(StopOptionsOperation.Stop);
-    expect(spectator.query('h1')).toHaveText('Stop Options');
+    expect(spectator.query('.tn-dialog__title')).toHaveText('Stop Options');
     expect(await loader.getHarness(TnButtonHarness.with({ label: 'Stop' }))).toBeTruthy();
   });
 
   it('shows labels and text related to restarting a container when operation is Restart', async () => {
     setupTest(StopOptionsOperation.Restart);
-    expect(spectator.query('h1')).toHaveText('Restart Options');
+    expect(spectator.query('.tn-dialog__title')).toHaveText('Restart Options');
     expect(await loader.getHarness(TnButtonHarness.with({ label: 'Restart' }))).toBeTruthy();
   });
 

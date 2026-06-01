@@ -1,10 +1,4 @@
-<tn-dialog-shell [title]="''">
-<h1>
-  <tn-icon class="information-icon" name="information" library="mdi"></tn-icon>
-  <span class="information-title">
-    {{ title | translate }}
-  </span>
-</h1>
+<tn-dialog-shell [title]="title | translate">
 <div class="attributes">
   @for (attribute of attributes; track attribute) {
     <div>

@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -47,7 +47,7 @@ describe('AssociatedTargetFormComponent', () => {
   });
 
   it('shows the dialog title with target name', () => {
-    const title = spectator.query('h1');
+    const title = spectator.query('.tn-dialog__title');
     expect(title).toHaveText('Associate Target 1');
   });
 
@@ -57,7 +57,7 @@ describe('AssociatedTargetFormComponent', () => {
       Extent: 'Extent 1',
     });
 
-    const associateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Associate' }));
+    const associateButton = await loader.getHarness(TnButtonHarness.with({ label: 'Associate' }));
     await associateButton.click();
 
     expect(api.call).toHaveBeenCalledWith('iscsi.targetextent.create', [
@@ -69,7 +69,7 @@ describe('AssociatedTargetFormComponent', () => {
     const dialogRef = spectator.inject(DialogRef);
     const spyClose = jest.spyOn(dialogRef, 'close');
 
-    const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+    const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
     await cancelButton.click();
 
     expect(spyClose).toHaveBeenCalledWith(false);

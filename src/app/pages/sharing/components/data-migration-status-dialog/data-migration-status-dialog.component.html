@@ -1,13 +1,12 @@
-<tn-dialog-shell [title]="''">
-<h1>
-  {{ 'Data Migration' | translate }}
+<tn-dialog-shell [title]="'Data Migration' | translate">
+<div>
   <span
     class="status-badge"
     [ngClass]="statusClass()"
   >
     {{ statusLabel() }}
   </span>
-</h1>
+</div>
 
 <div>
   <div class="dataset-name">

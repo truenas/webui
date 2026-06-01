@@ -45,7 +45,7 @@ describe('VolumeMountsDialogComponent', () => {
   });
 
   it('shows dialog header', () => {
-    expect(spectator.query('h1')).toHaveText('netdata Volume Mounts');
+    expect(spectator.query('.tn-dialog__title')).toHaveText('netdata Volume Mounts');
   });
 
   it('shows a table with information about volume mounts', () => {

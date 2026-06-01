@@ -1,7 +1,7 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { DialogRef } from '@angular/cdk/dialog';
 import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
@@ -107,7 +107,7 @@ describe('JobsPanelComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
-          closed: of(undefined),
+          afterClosed: () => of(undefined),
           getDestroyRef: () => ({ onDestroy: jest.fn(() => () => {}) }),
         })),
       }),

@@ -1,11 +1,6 @@
-<tn-dialog-shell [title]="''">
-<h1>
-  @if (isZvol) {
-    {{ 'Delete zvol {name}' | translate: { name: dataset.name } }}
-  } @else {
-    {{ 'Delete dataset {name}' | translate: { name: dataset.name } }}
-  }
-</h1>
+<tn-dialog-shell
+  [title]="(isZvol ? 'Delete zvol {name}' : 'Delete dataset {name}') | translate: { name: dataset.name }"
+>
 <form class="ix-form-container" [formGroup]="form" (submit)="onDelete()">
   <p [innerHTML]="deleteMessage"></p>
 

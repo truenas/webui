@@ -1,33 +1,20 @@
-<tn-dialog-shell [title]="''">
+<tn-dialog-shell [title]="'Map User And Group IDs' | translate">
 <ix-fake-progress-bar
   [loading]="isLoading()"
 ></ix-fake-progress-bar>
 
 <div class="header">
-  <h1>
-    {{ 'Map User And Group IDs' | translate }}
-
-    <tn-icon
-      name="help_outline"
-      class="help-icon"
-      tabindex="0"
-      role="button"
-      matTooltipClass="tooltip-wide tooltip-multiline"
-      [attr.aria-label]="'Help' | translate"
-      [matTooltip]="idMapHintText"
-      (keydown.enter)="$event.preventDefault()"
-      (keydown.space)="$event.preventDefault()"
-    ></tn-icon>
-  </h1>
-
-  <button
-    mat-icon-button
-    [ixTest]="['close-dialog']"
-    [attr.aria-label]="'Close Dialog' | translate"
-    (click)="dialogRef.close()"
-  >
-    <tn-icon name="close" library="mdi"></tn-icon>
-  </button>
+  <tn-icon
+    name="help_outline"
+    class="help-icon"
+    tabindex="0"
+    role="button"
+    matTooltipClass="tooltip-wide tooltip-multiline"
+    [attr.aria-label]="'Help' | translate"
+    [matTooltip]="idMapHintText"
+    (keydown.enter)="$event.preventDefault()"
+    (keydown.space)="$event.preventDefault()"
+  ></tn-icon>
 </div>
 
 

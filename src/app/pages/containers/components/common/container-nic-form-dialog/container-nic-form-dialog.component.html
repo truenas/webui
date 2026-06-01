@@ -1,11 +1,6 @@
-<tn-dialog-shell [title]="''">
-<h1>
-  @if (isEditMode()) {
-    {{ 'Edit NIC Device: {nic}' | translate: { nic: nic() } }}
-  } @else {
-    {{ 'Add NIC Device: {nic}' | translate: { nic: nic() } }}
-  }
-</h1>
+<tn-dialog-shell
+  [title]="(isEditMode() ? 'Edit NIC Device: {nic}' : 'Add NIC Device: {nic}') | translate: { nic: nic() }"
+>
 <div>
   <form [formGroup]="form">
     <ix-select

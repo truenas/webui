@@ -1,12 +1,4 @@
-<tn-dialog-shell [title]="''">
-<h1>
-  @if (isRestart()) {
-    {{ 'Restart Options' | translate }}
-  } @else {
-    {{ 'Stop Options' | translate }}
-  }
-</h1>
-
+<tn-dialog-shell [title]="(isRestart() ? 'Restart Options' : 'Stop Options') | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-select
     formControlName="stopMethod"

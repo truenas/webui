@@ -1,9 +1,8 @@
-<tn-dialog-shell [title]="''">
+<tn-dialog-shell [title]="'Inspect VDEVs' | translate">
 <mat-card class="container">
   <mat-card-content class="card-content">
     <div class="inner-container">
       <div class="left-pane">
-        <div class="header dialog-header"><h3>{{ 'Inspect VDEVs' | translate }}</h3></div>
         <mat-nav-list>
           @for (type of presentTypes; track type) {
             <mat-list-item
