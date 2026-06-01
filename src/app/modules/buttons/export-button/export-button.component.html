@@ -1,16 +1,14 @@
 <div class="relative">
-  @if (isLoading) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  @if (isLoading()) {
+    <tn-progress-bar mode="indeterminate"></tn-progress-bar>
   }
 
-  <button
-    mat-button
-    color="accent"
+  <tn-button
     ixTest="export"
-    [disabled]="isLoading"
-    [attr.aria-label]="ariaLabel() || ('Export' | translate)"
-    (click)="onExport()"
-  >
-    {{ 'Export As {fileType}' | translate:{ fileType: displayFormat() || fileType().toUpperCase()} }}
-  </button>
+    color="default"
+    [disabled]="isLoading()"
+    [ariaLabel]="ariaLabel() || ('Export' | translate)"
+    [label]="'Export As {fileType}' | translate:{ fileType: displayFormat() || fileType().toUpperCase()}"
+    (onClick)="onExport()"
+  ></tn-button>
 </div>

@@ -40,10 +40,15 @@ export const auditEntries = [
 
 export const mockAuditApiDataProvider = {
   currentPage$: of(auditEntries),
+  currentPageCount$: of(auditEntries.length),
+  isLoading$: of(false),
+  emptyType$: of(null),
   selectedControllerType: ControllerType.Active,
   load: jest.fn(),
   setPagination: jest.fn(),
   setParams: jest.fn(),
+  setQueryFilters: jest.fn(),
+  setSorting: jest.fn(),
   sorting: {
     propertyName: 'message_timestamp',
     direction: 'desc',

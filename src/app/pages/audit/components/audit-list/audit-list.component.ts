@@ -1,25 +1,57 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  Component, ChangeDetectionStrategy, input, output,
+} from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnIconComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { auditServiceLabels, auditEventLabels } from 'app/enums/audit.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
+import { AuditEventLabelPipe } from 'app/pages/audit/utils/audit-event-label.pipe';
+import { AuditServiceLabelPipe } from 'app/pages/audit/utils/audit-service-label.pipe';
 import { GetLogImportantDataPipe } from 'app/pages/audit/utils/get-log-important-data.pipe';
 import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
+
+// Frozen so the module-scope index cached in audit.component.ts stays valid — the
+// declared `string[]` type is kept for tn-table's `displayedColumns` input.
+export const auditDisplayedColumns: string[] = Object.freeze([
+  'service', 'username', 'message_timestamp', 'event', 'event_data',
+]) as string[];
+
+interface EmptyAttrs {
+  title: string;
+  icon: string;
+}
+
+const loadingTitle = T('Loading…');
+
+const emptyTypeAttrs = new Map<EmptyType, EmptyAttrs>([
+  [EmptyType.Loading, { title: loadingTitle, icon: 'mdi-loading' }],
+  [EmptyType.Errors, { title: T('Cannot retrieve response'), icon: 'mdi-alert-octagon' }],
+  [EmptyType.NoSearchResults, { title: T('No Search Results.'), icon: 'mdi-magnify-scan' }],
+  [EmptyType.FirstUse, { title: T('No records have been added yet'), icon: 'mdi-format-list-text' }],
+  [EmptyType.NoPageData, { title: T('No records have been added yet'), icon: 'mdi-format-list-text' }],
+]);
+
+const defaultEmptyAttrs: EmptyAttrs = {
+  title: T('No records have been added yet'),
+  icon: 'mdi-format-list-text',
+};
 
 @Component({
   selector: 'ix-audit-list',
@@ -28,69 +60,45 @@ import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    IxTableBodyComponent,
-    IxTableCellDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    TnTablePagerComponent,
-    MatTooltip,
-    UiSearchDirective,
+    AuditEventLabelPipe,
     AuditSearchComponent,
-    TranslateModule,
-    TnIconComponent,
+    AuditServiceLabelPipe,
+    IxDateComponent,
     GetLogImportantDataPipe,
+    TnCellDefDirective,
+    TnHeaderCellDefDirective,
+    TnIconComponent,
+    TnTableColumnDirective,
+    TnTableComponent,
+    TnTablePagerComponent,
+    TnTooltipDirective,
+    TranslateModule,
+    UiSearchDirective,
     UserAvatarPipe,
   ],
 })
 export class AuditListComponent {
-  protected emptyService = inject(EmptyService);
-  private translate = inject(TranslateService);
-
   readonly dataProvider = input.required<AuditApiDataProvider>();
 
   protected readonly searchableElements = auditElements;
-  protected readonly toggleShowMobileDetails = output<boolean>();
-  protected readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
+  readonly toggleShowMobileDetails = output<boolean>();
+  readonly rowSelected = output<AuditEntry>();
 
-  columns = createTable<AuditEntry>([
-    textColumn({
-      title: this.translate.instant('Service'),
-      propertyName: 'service',
-      getValue: (row) => {
-        const service = auditServiceLabels.get(row.service);
-        return service ? this.translate.instant(service) : row.service || '-';
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('User'),
-      propertyName: 'username',
-    }),
-    dateColumn({
-      title: this.translate.instant('Timestamp'),
-      propertyName: 'message_timestamp',
-      getValue: (row) => row.message_timestamp * 1000,
-    }),
-    textColumn({
-      title: this.translate.instant('Event'),
-      propertyName: 'event',
-      getValue: (row) => {
-        const event = auditEventLabels.get(row.event);
-        return event ? this.translate.instant(event) : row.event || '-';
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Event Data'),
-      disableSorting: true,
-    }),
-  ], {
-    uniqueRowTag: (row) => `audit-${row.service}-${row.username}-${row.event}-${row.audit_id}`,
-    ariaLabels: (row) => [row.service, row.username, row.event, this.translate.instant('Audit Entry')],
-  });
+  protected readonly displayedColumns = auditDisplayedColumns;
+  protected readonly loadingTitle = loadingTitle;
 
-  expanded(row: AuditEntry): void {
-    if (!row) return;
+  protected emptyAttrsFor(type: EmptyType | null | undefined): EmptyAttrs {
+    return (type && emptyTypeAttrs.get(type)) ?? defaultEmptyAttrs;
+  }
 
+  protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider().setSorting(mapTnSortToTableSort<AuditEntry>(event, this.displayedColumns));
+  }
+
+  protected onRowClick(row: AuditEntry): void {
+    this.rowSelected.emit(row);
     this.toggleShowMobileDetails.emit(true);
   }
 }

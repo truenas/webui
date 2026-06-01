@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent, TnCardHeaderDirective } from '@truenas/ui-components';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { convertObjectKeysToHumanReadable } from 'app/helpers/object-keys-to-human-readable.helper';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -15,9 +15,8 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CopyButtonComponent,
-    MatCard,
-    MatCardHeader,
-    MatCardContent,
+    TnCardComponent,
+    TnCardHeaderDirective,
     TranslateModule,
   ],
 })
@@ -25,6 +24,8 @@ export class EventDataDetailsCardComponent {
   readonly log = input.required<AuditEntry>();
 
   protected eventData = computed(() => {
+    // Preserve the previous merge order: a `success` key inside event_data
+    // (if present) wins over the top-level log().success.
     return {
       success: this.log().success,
       ...this.log().event_data,

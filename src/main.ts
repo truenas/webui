@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import {
   provideNativeDateAdapter,
 } from '@angular/material/core';
-import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import {
   withPreloading,
@@ -111,13 +110,6 @@ bootstrapApplication(AppComponent, {
     {
       provide: OVERLAY_DEFAULT_CONFIG,
       useValue: { usePopover: false },
-    },
-    {
-      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
-      useValue: {
-        verticalPosition: 'top',
-        duration: 3000,
-      } as MatSnackBarConfig,
     },
     {
       provide: ErrorHandler,

@@ -31,6 +31,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/vdevs/components/vdev-group-node/vdev-group-node.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
+import { collectDescendantWarning } from 'app/pages/storage/modules/vdevs/utils/descendant-warning';
 
 @Component({
   selector: 'ix-vdevs-list',
@@ -70,6 +71,10 @@ export class VDevsListComponent implements OnInit {
   poolId = input.required<number>();
   showMobileDetails = output<boolean>();
   showDetails = output<{ poolId: number; guid: string }>();
+
+  // GUIDs we've already auto-expanded because of a descendant warning. Tracked so a user
+  // collapse sticks across `nodes$` refreshes — we only auto-expand a given node once.
+  private readonly autoExpandedGuids = new Set<string>();
 
   searchQuery = signal('');
   protected isLoading$ = this.vDevsStore.isLoading$;
@@ -118,6 +123,7 @@ export class VDevsListComponent implements OnInit {
           this.createDataSource(nodes);
           this.treeControl.dataNodes = nodes;
           this.openGroupNodes();
+          this.expandNodesWithDescendantWarning(nodes);
           this.cdr.markForCheck();
 
           if (!nodes.length) {
@@ -176,6 +182,25 @@ export class VDevsListComponent implements OnInit {
 
   private openGroupNodes(): void {
     this.treeControl?.dataNodes?.forEach((node) => this.treeControl.expand(node));
+  }
+
+  // Expand any VDEV whose subtree contains a non-optimal disk so a failing child isn't hidden
+  // behind a collapsed parent row. Each GUID is only auto-expanded once (see autoExpandedGuids)
+  // so a subsequent user collapse isn't undone when the store re-emits.
+  private expandNodesWithDescendantWarning(nodes: VDevNestedDataNode[]): void {
+    for (const node of nodes) {
+      if (isVdevGroup(node)) {
+        this.expandNodesWithDescendantWarning(node.children);
+        continue;
+      }
+      if (!this.autoExpandedGuids.has(node.guid) && collectDescendantWarning(node).count > 0) {
+        this.treeControl.expand(node);
+        this.autoExpandedGuids.add(node.guid);
+      }
+      if (node.children?.length) {
+        this.expandNodesWithDescendantWarning(node.children);
+      }
+    }
   }
 
   private listenForRouteChanges(): void {

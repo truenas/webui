@@ -1,17 +1,11 @@
+import { TnToastType } from '@truenas/ui-components';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-
-export interface SnackbarConfig {
-  message: string;
-  iconCssColor?: string;
-  icon?: string;
-  button?: {
-    title: string;
-    action?: () => void;
-  };
-}
 
 /**
  * Configuration options for displaying snackbar notifications.
+ *
+ * Backed by `TnToastService`; prefer the typed helpers `success()` / `error()`
+ * on `SnackbarService` unless you need a custom action button.
  *
  * @example
  * // Simple success message
@@ -21,68 +15,33 @@ export interface SnackbarConfig {
  * // Custom snackbar with action button
  * snackbar.open({
  *   message: 'File deleted',
- *   icon: tnIconMarker('delete', 'mdi'),
  *   button: {
  *     title: 'Undo',
- *     action: () => restoreFile()
- *   }
- * });
- *
- * @example
- * // Error message with assertive politeness
- * snackbar.open({
- *   message: 'Connection lost',
- *   icon: tnIconMarker('alert-circle', 'mdi'),
- *   iconCssColor: 'var(--red)',
- *   politeness: 'assertive',  // Interrupts screen reader
- *   verticalPosition: 'top'
+ *     action: () => restoreFile(),
+ *   },
  * });
  */
 export interface SnackbarOptions {
-  /** The message to display in the snackbar. Should be a translated string. */
+  /** The message to display. Should be a translated string. */
   message: TranslatedString;
 
-  /** Optional icon to display alongside the message. Use tnIconMarker() to get a typed icon. */
-  icon?: string;
-
   /**
-   * CSS color value for the icon. Defaults to 'var(--primary)'.
-   * Common values: 'var(--green)', 'var(--red)', 'var(--orange)'
+   * Semantic toast style. Drives the icon and color picked by `tn-toast`.
+   *
+   * @default TnToastType.Info
    */
-  iconCssColor?: string;
+  type?: TnToastType;
 
   /**
-   * Optional action button configuration.
-   * If no action is provided, the button will only dismiss the snackbar.
+   * Optional action button. If `action` is omitted, the button only dismisses the toast.
    */
   button?: {
     /** Button label text. Should be a translated string. */
     title: TranslatedString;
-    /** Optional callback to execute when button is clicked. Button always dismisses the snackbar. */
+    /** Optional callback invoked when the button is clicked. */
     action?: () => void;
   };
 
-  /** Duration in milliseconds before auto-dismissing. Defaults to 5000ms. Set to 0 to disable auto-dismiss. */
+  /** Duration in ms before auto-dismissing. Defaults to 4000ms. Set to 0 to disable. */
   duration?: number;
-
-  /** Custom CSS class(es) to apply to the snackbar container. */
-  panelClass?: string | string[];
-
-  /**
-   * Politeness level for screen readers (ARIA live regions).
-   * - 'assertive': Important messages that should interrupt the user immediately (errors, critical alerts)
-   * - 'polite': Messages that wait for a pause in user activity (default, success messages, info)
-   *
-   * @default 'polite'
-   */
-  politeness?: 'assertive' | 'polite';
-
-  /**
-   * Vertical position of the snackbar on screen.
-   * - 'top': Appears at top of viewport (recommended for success messages)
-   * - 'bottom': Appears at bottom of viewport (default, less intrusive)
-   *
-   * @default 'bottom'
-   */
-  verticalPosition?: 'top' | 'bottom';
 }
