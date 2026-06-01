@@ -1,13 +1,12 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
@@ -28,7 +27,7 @@ import { UploadService } from 'app/services/upload.service';
     ReactiveFormsModule,
     IxFileInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -36,6 +35,7 @@ import { UploadService } from 'app/services/upload.service';
 })
 export class UploadConfigDialog {
   private formBuilder = inject(NonNullableFormBuilder);
+  protected dialogRef = inject<DialogRef<unknown, UploadConfigDialog>>(DialogRef);
   private router = inject(Router);
   private translate = inject(TranslateService);
   private upload = inject(UploadService);

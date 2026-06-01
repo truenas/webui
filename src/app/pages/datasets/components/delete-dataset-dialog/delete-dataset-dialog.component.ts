@@ -1,11 +1,10 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import {
   combineLatest, Observable, of,
 } from 'rxjs';
@@ -35,12 +34,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-TranslateModule,
+    TranslateModule,
     ReactiveFormsModule,
     IxInputComponent,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
   ],
@@ -51,7 +50,7 @@ export class DeleteDatasetDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
-  private dialogRef = inject<DialogRef>(DialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private validators = inject(IxValidatorsService);

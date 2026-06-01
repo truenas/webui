@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, vmDeviceTypeLabels } from 'app/enums/vm.enum';
@@ -33,7 +32,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxCheckboxComponent,
     IxInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -42,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class DeleteVmDialogComponent implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject<DialogRef<unknown, DeleteVmDialogComponent>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DeleteVmDialogComponent>>(DialogRef);
   private validators = inject(IxValidatorsService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);

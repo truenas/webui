@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -47,7 +47,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
     const labelInput = await loader.getHarness(IxInputHarness.with({ label: 'Enclosure Label' }));
     await labelInput.setValue('New label');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.label.set', ['1234', 'New label']);
@@ -58,7 +58,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
     const resetCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Reset to default' }));
     await resetCheckbox.setValue(true);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.label.set', ['1234', 'TRUENAS-M40-HA']);

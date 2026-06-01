@@ -1,10 +1,10 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -109,7 +109,7 @@ describe('BootenvStatsDialogComponent', () => {
       'Scrub interval (in days)': 3,
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update Interval' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Update Interval' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('boot.set_scrub_interval', [3]);

@@ -7,19 +7,20 @@
     [tooltip]="helptext.dialogFormFields.newDisk.tooltip | translate"
   ></ix-unused-disk-select>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="extend"
-      [disabled]="form.invalid"
-    >
-      {{ 'Extend' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    color="primary"
+    ixTest="extend"
+    [label]="'Extend' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

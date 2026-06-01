@@ -7,30 +7,29 @@
     [tooltip]="helptext.passwordTooltip | translate"
   ></ix-input>
 
-  <ix-form-actions>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="save"
-      [disabled]="passwordControl.invalid"
-    >
-      {{ 'Save' | translate }}
-    </button>
-    @if (disk?.passwd) {
-      <button
-        mat-button
-        type="button"
-        ixTest="clear-sed-password"
-        (click)="onClearPassword()"
-      >
-        {{ 'Clear SED Password' | translate }}
-      </button>
-    }
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  @if (disk?.passwd) {
+    <tn-button
+      variant="outline"
+      ixTest="clear-sed-password"
+      [label]="'Clear SED Password' | translate"
+      (onClick)="onClearPassword()"
+    ></tn-button>
+  }
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    ixTest="save"
+    [label]="'Save' | translate"
+    [disabled]="passwordControl.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

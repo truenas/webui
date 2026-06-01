@@ -2,8 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -47,7 +47,7 @@ describe('SnapshotCloneDialogComponent', () => {
     const input = await loader.getHarness(IxInputHarness);
     await input.setValue('pool/dataset');
 
-    const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clone' }));
+    const cloneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clone' }));
     await cloneButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.clone', [{

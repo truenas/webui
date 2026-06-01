@@ -7,24 +7,19 @@
   ></ix-checkbox>
 </div>
 
-<div tnDialogAction>
-  <ix-form-actions>
-    <button
-      mat-button
-      ixTest="cancel"
-     
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      ixTest="stop-vm"
-      (click)="onStop()"
-    >
-      {{ 'Stop' | translate }}
-    </button>
-  </ix-form-actions>
-</div>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    ixTest="stop-vm"
+    [label]="'Stop' | translate"
+    (onClick)="onStop()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

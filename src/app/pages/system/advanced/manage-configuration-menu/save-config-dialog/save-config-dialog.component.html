@@ -9,13 +9,20 @@
 
   <div [innerHtml]="helptext.warning | translate"></div>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel">
-      {{ helptext.cancelButton | translate }}
-    </button>
-    <button *ixRequiresRoles="requiredRoles" mat-button type="submit" color="primary" ixTest="save">
-      {{ helptext.saveButton | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="helptext.cancelButton | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    ixTest="save"
+    [label]="helptext.saveButton | translate"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

@@ -1,10 +1,10 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -62,7 +62,7 @@ describe('UploadIsoDialogComponent', () => {
       'Installer image file': [upload],
     });
 
-    const uploadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upload' }));
+    const uploadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Upload' }));
     await uploadButton.click();
 
     expect(spectator.inject(UploadService).upload).toHaveBeenCalledWith(expect.objectContaining({
@@ -88,7 +88,7 @@ describe('UploadIsoDialogComponent', () => {
       'Installer image file': [upload],
     });
 
-    const uploadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upload' }));
+    const uploadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Upload' }));
     await uploadButton.click();
 
     // Verify upload started

@@ -1,13 +1,12 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DialogRef } from '@angular/cdk/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import {
   forkJoin, Observable, of, take,
 } from 'rxjs';
@@ -34,11 +33,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-ReactiveFormsModule,
+    ReactiveFormsModule,
     TranslateModule,
     IxSelectComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     IxCheckboxComponent,
     RequiresRolesDirective,
@@ -52,7 +51,7 @@ export class SelectPoolDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<DialogRef<unknown, SelectPoolDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, SelectPoolDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
   private dockerStore = inject(DockerStore);
   private destroyRef = inject(DestroyRef);

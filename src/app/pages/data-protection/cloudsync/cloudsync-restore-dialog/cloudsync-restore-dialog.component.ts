@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -36,7 +35,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TransferModeExplanationComponent,
     IxExplorerComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -47,7 +46,7 @@ export class CloudSyncRestoreDialog {
   private formBuilder = inject(FormBuilder);
   private filesystem = inject(FilesystemService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<DialogRef<unknown, CloudSyncRestoreDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, CloudSyncRestoreDialog>>(DialogRef);
   private errorHandler = inject(FormErrorHandlerService);
   private loader = inject(LoaderService);
   private parentTaskId = inject(DIALOG_DATA);

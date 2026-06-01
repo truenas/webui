@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -57,7 +57,7 @@ describe('ManageDiskSedDialogComponent', () => {
   });
 
   it('allows password to be cleared if it is set', async () => {
-    const clearButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear SED Password' }));
+    const clearButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear SED Password' }));
     await clearButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: '' }]);
@@ -68,7 +68,7 @@ describe('ManageDiskSedDialogComponent', () => {
   it('allows new SED password to be set', async () => {
     await passwordInput.setValue('new-password');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: 'new-password' }]);

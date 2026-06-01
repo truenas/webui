@@ -11,41 +11,40 @@
       [required]="true"
       [tooltip]="tooltips.dataset_dst | translate"
     ></ix-input>
-
-    <ix-form-actions>
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        type="submit"
-        color="primary"
-        ixTest="clone"
-        [disabled]="form.invalid"
-      >
-        {{ 'Clone' | translate }}
-      </button>
-      <button mat-button type="button" ixTest="cancel">
-        {{ 'Cancel' | translate }}
-      </button>
-    </ix-form-actions>
   </form>
 } @else {
   <p>{{ 'Dataset {name} was created.' | translate: { name: datasetName } }}</p>
-
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="close">
-      {{ 'Close' | translate }}
-    </button>
-
-    <a
-      mat-button
-      type="submit"
+}
+<ix-form-actions tnDialogAction>
+  @if (!wasDatasetCloned) {
+    <tn-button
+      variant="outline"
+      ixTest="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      ixTest="clone"
+      [label]="'Clone' | translate"
+      [disabled]="form.invalid"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  } @else {
+    <tn-button
+      variant="outline"
+      ixTest="close"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
+    <tn-button
       color="primary"
       ixTest="go-to-datasets"
-     
+      [label]="'Go to Datasets' | translate"
       [routerLink]="['/datasets']"
-    >
-      {{ 'Go to Datasets' | translate }}
-    </a>
-  </ix-form-actions>
-}
+      (onClick)="dialogRef.close()"
+    ></tn-button>
+  }
+</ix-form-actions>
 </tn-dialog-shell>

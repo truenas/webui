@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
@@ -28,7 +27,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
   ],
@@ -37,7 +36,7 @@ export class ManageDiskSedDialog implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
-  private dialogRef = inject<DialogRef<unknown, ManageDiskSedDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ManageDiskSedDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private diskName = inject(DIALOG_DATA);
@@ -62,8 +61,8 @@ export class ManageDiskSedDialog implements OnInit {
     this.setNewPassword('');
   }
 
-  onSubmit(event: SubmitEvent): void {
-    event.preventDefault();
+  onSubmit(event?: SubmitEvent): void {
+    event?.preventDefault();
     this.setNewPassword(this.passwordControl.value);
   }
 

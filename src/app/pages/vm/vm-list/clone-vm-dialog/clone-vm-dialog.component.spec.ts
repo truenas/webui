@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -45,7 +45,7 @@ describe('CloneVmDialogComponent', () => {
     const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Enter a Name (optional)' }));
     await nameInput.setValue('Dolly');
 
-    const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clone' }));
+    const cloneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clone' }));
     await cloneButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.clone', [1, 'Dolly']);

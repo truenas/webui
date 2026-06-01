@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -18,7 +17,7 @@ import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/a
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-MatButton,
+    TnButtonComponent,
     ReactiveFormsModule,
     FormActionsComponent,
     IxCheckboxComponent,
@@ -29,7 +28,7 @@ MatButton,
 })
 export class AppDeleteDialog {
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject<DialogRef<AppDeleteDialogOutputData, AppDeleteDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<AppDeleteDialogOutputData, AppDeleteDialog>>(DialogRef);
   protected data = inject<AppDeleteDialogInputData>(DIALOG_DATA);
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);

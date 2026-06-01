@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -31,7 +30,7 @@ export interface SetEnclosureLabelDialogData {
     IxInputComponent,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
   ],
@@ -40,7 +39,7 @@ export class SetEnclosureLabelDialog implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
-  private dialogRef = inject<DialogRef<string, SetEnclosureLabelDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<string, SetEnclosureLabelDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private validatorsService = inject(IxValidatorsService);
   private translate = inject(TranslateService);

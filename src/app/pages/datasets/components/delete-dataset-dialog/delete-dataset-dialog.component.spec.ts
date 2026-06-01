@@ -2,8 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -78,7 +78,7 @@ describe('DeleteDatasetDialogComponent', () => {
     const confirmCheckbox = await loader.getHarness(IxCheckboxHarness);
     await confirmCheckbox.setValue(true);
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Dataset' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete Dataset' }));
     await deleteButton.click();
   }
 

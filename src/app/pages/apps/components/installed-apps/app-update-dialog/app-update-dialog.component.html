@@ -75,24 +75,20 @@
     </div>
   }
 
-  <ix-form-actions>
-    <button
-      mat-button
-      ixTest="close"
-      (click)="dialogRef.close(false)"
-    >
-      {{ 'Close' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      ixTest="update"
-      (click)="dialogRef.close(selectedVersionKey)"
-    >
-      {{ 'Update' | translate }}
-    </button>
-  </ix-form-actions>
-
 </div>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="close"
+    [label]="'Close' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    ixTest="update"
+    [label]="'Update' | translate"
+    (onClick)="dialogRef.close(selectedVersionKey)"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

@@ -1,11 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { DialogRef } from '@angular/cdk/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -36,7 +36,7 @@ describe('SelectPoolDialogComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        jobDialog: jest.fn(() => ({ closed: of(null) })),
+        jobDialog: jest.fn(() => ({ afterClosed: () => of(null) })),
       }),
       mockProvider(DialogRef),
       mockProvider(Router),
@@ -57,7 +57,7 @@ describe('SelectPoolDialogComponent', () => {
   it('sets a pool for applications when form is submitted', async () => {
     await form.fillForm({ Pool: 'pool2' });
 
-    const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
+    const chooseButton = await loader.getHarness(TnButtonHarness.with({ label: 'Choose' }));
     await chooseButton.click();
 
     expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith('pool2', false);
@@ -90,7 +90,7 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        jobDialog: jest.fn(() => ({ closed: of(null) })),
+        jobDialog: jest.fn(() => ({ afterClosed: () => of(null) })),
       }),
       mockProvider(DialogRef),
       mockProvider(Router),
@@ -165,7 +165,7 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
     const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: /Migrate existing/ }));
     await checkbox.check();
 
-    const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
+    const chooseButton = await loader.getHarness(TnButtonHarness.with({ label: 'Choose' }));
     await chooseButton.click();
 
     expect(setDockerPoolMock).toHaveBeenCalledWith('pool2', true);

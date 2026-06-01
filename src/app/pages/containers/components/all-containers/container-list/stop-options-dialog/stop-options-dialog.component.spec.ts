@@ -1,8 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   StopOptionsDialog, StopOptionsOperation,
@@ -34,13 +34,13 @@ describe('StopOptionsDialogComponent', () => {
   it('shows labels and text related to stopping a container when operation is Stop', async () => {
     setupTest(StopOptionsOperation.Stop);
     expect(spectator.query('h1')).toHaveText('Stop Options');
-    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }))).toBeTruthy();
+    expect(await loader.getHarness(TnButtonHarness.with({ label: 'Stop' }))).toBeTruthy();
   });
 
   it('shows labels and text related to restarting a container when operation is Restart', async () => {
     setupTest(StopOptionsOperation.Restart);
     expect(spectator.query('h1')).toHaveText('Restart Options');
-    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Restart' }))).toBeTruthy();
+    expect(await loader.getHarness(TnButtonHarness.with({ label: 'Restart' }))).toBeTruthy();
   });
 
   it('closes the form with parameters when graceful stop is selected', async () => {
@@ -51,7 +51,7 @@ describe('StopOptionsDialogComponent', () => {
       'Stop Method': 'Wait for graceful stop',
     });
 
-    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
+    const stopButton = await loader.getHarness(TnButtonHarness.with({ label: 'Stop' }));
     await stopButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({});
@@ -65,7 +65,7 @@ describe('StopOptionsDialogComponent', () => {
       'Stop Method': 'Wait for graceful stop, then force',
     });
 
-    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
+    const stopButton = await loader.getHarness(TnButtonHarness.with({ label: 'Stop' }));
     await stopButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
@@ -81,7 +81,7 @@ describe('StopOptionsDialogComponent', () => {
       'Stop Method': 'Force stop immediately',
     });
 
-    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
+    const stopButton = await loader.getHarness(TnButtonHarness.with({ label: 'Stop' }));
     await stopButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
@@ -92,7 +92,7 @@ describe('StopOptionsDialogComponent', () => {
   it('closes the form with false when Cancel button is pressed', async () => {
     setupTest(StopOptionsOperation.Stop);
 
-    const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+    const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
     await cancelButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(false);

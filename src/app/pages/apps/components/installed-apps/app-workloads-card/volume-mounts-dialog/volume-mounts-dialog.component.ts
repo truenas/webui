@@ -1,8 +1,7 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { AppContainerDetails } from 'app/interfaces/app.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -15,13 +14,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     TnDialogShellComponent,
     TranslateModule,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
-    TnIconComponent,
-    MatIconButton,
     FormActionsComponent,
   ],
 })
 export class VolumeMountsDialog {
   protected containerDetails = inject<AppContainerDetails>(DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, VolumeMountsDialog>>(DialogRef);
 }

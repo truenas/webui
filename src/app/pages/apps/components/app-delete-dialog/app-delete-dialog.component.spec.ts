@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -39,7 +39,7 @@ describe('AppDeleteDialogComponent', () => {
   });
 
   it('shows dialog title', () => {
-    expect(spectator.query('[matDialogTitle]')).toHaveText('Delete application ix-test-app');
+    expect(spectator.query('.tn-dialog__title')).toHaveText('Delete application ix-test-app');
   });
 
   it('closes dialog with form values when dialog is submitted', async () => {
@@ -51,7 +51,7 @@ describe('AppDeleteDialogComponent', () => {
       'Remove Images': true,
     });
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
@@ -73,7 +73,7 @@ describe('AppDeleteDialogComponent', () => {
       'Force-remove iXVolumes': true,
     });
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
@@ -89,7 +89,7 @@ describe('AppDeleteDialogComponent', () => {
       'Remove iXVolumes': true,
     });
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     expect(await deleteButton.isDisabled()).toBe(true);
   });
 
@@ -101,7 +101,7 @@ describe('AppDeleteDialogComponent', () => {
       'Remove iXVolumes': true,
     });
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     expect(await deleteButton.isDisabled()).toBe(true);
   });
 });

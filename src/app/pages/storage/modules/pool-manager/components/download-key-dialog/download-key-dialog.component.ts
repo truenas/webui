@@ -1,9 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { helptextDownloadKey } from 'app/helptext/storage/volumes/download-key';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -24,7 +23,7 @@ export interface DownloadKeyDialogParams {
   imports: [
     TnDialogShellComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
   ],
@@ -32,6 +31,7 @@ export interface DownloadKeyDialogParams {
 export class DownloadKeyDialog {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
+  protected dialogRef = inject<DialogRef<boolean, DownloadKeyDialog>>(DialogRef);
   private download = inject(DownloadService);
   private data = inject<DownloadKeyDialogParams>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);

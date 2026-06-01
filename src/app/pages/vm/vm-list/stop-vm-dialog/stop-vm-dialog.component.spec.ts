@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -42,7 +42,7 @@ describe('StopVmDialogComponent', () => {
     const forceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Force Stop After Timeout' }));
     await forceCheckbox.setValue(true);
 
-    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
+    const stopButton = await loader.getHarness(TnButtonHarness.with({ label: 'Stop' }));
     await stopButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({ forceAfterTimeout: true });

@@ -1,9 +1,8 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -21,7 +20,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnDialogShellComponent,
     TranslateModule,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
   ],
 })
@@ -29,7 +28,7 @@ export class ExportAllKeysDialog {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
-  private dialogRef = inject<DialogRef>(DialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private download = inject(DownloadService);
   dataset = inject<Dataset>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);

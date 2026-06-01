@@ -2,8 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -32,7 +32,7 @@ describe('EncryptionOptionsDialogComponent', () => {
       mockProvider(DialogRef),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of(undefined),
+          afterClosed: () => of(undefined),
         })),
       }),
       mockApi([
@@ -93,7 +93,7 @@ describe('EncryptionOptionsDialogComponent', () => {
       Confirm: true,
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('pool.dataset.inherit_parent_encryption_properties', ['pool/parent/child']);
@@ -117,7 +117,7 @@ describe('EncryptionOptionsDialogComponent', () => {
       Confirm: true,
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).not.toHaveBeenCalledWith('pool.dataset.inherit_parent_encryption_properties');
@@ -147,7 +147,7 @@ describe('EncryptionOptionsDialogComponent', () => {
       },
     );
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.job).toHaveBeenCalledWith(
@@ -168,7 +168,7 @@ describe('EncryptionOptionsDialogComponent', () => {
       },
     );
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.job).toHaveBeenCalledWith(
@@ -191,7 +191,7 @@ describe('EncryptionOptionsDialogComponent', () => {
       },
     );
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.job).toHaveBeenCalledWith(
@@ -220,7 +220,7 @@ describe('EncryptionOptionsDialogComponent', () => {
       },
     );
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     expect(await saveButton.isDisabled()).toBe(false);
 
     await saveButton.click();

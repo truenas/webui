@@ -1,9 +1,8 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -25,7 +24,7 @@ import {
     TestDirective,
     TnIconComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
   ],
 })
 export class UnlockSummaryDialog {

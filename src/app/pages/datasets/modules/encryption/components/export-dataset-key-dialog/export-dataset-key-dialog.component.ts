@@ -1,9 +1,8 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -22,7 +21,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnDialogShellComponent,
     TranslateModule,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
   ],
 })
@@ -30,7 +29,7 @@ export class ExportDatasetKeyDialog implements OnInit {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<DialogRef>(DialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private download = inject(DownloadService);
   private cdr = inject(ChangeDetectorRef);
   dataset = inject<Dataset>(DIALOG_DATA);

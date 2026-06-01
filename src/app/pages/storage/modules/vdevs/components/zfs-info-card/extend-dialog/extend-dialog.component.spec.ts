@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -57,7 +57,7 @@ describe('ExtendDialogComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of({}),
+          afterClosed: () => of({}),
         })),
       }),
       mockProvider(PoolExtendJobService, {
@@ -84,7 +84,7 @@ describe('ExtendDialogComponent', () => {
       'New Disk': 'sde (10.91 TiB)',
     });
 
-    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -109,7 +109,7 @@ describe('ExtendDialogComponent', () => {
       'New Disk': 'sde (10.91 TiB)',
     });
 
-    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
 
     expect(poolExtendJobService.checkForExistingExtendJob).toHaveBeenCalledWith(4);
@@ -128,7 +128,7 @@ describe('ExtendDialogComponent', () => {
       'New Disk': 'sde (10.91 TiB)',
     });
 
-    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
 
     expect(poolExtendJobService.checkForExistingExtendJob).toHaveBeenCalledWith(4);

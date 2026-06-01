@@ -26,20 +26,21 @@
     [type]="'password'"
   ></ix-input>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="[Role.DirectoryServiceWrite]"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="leave-domain"
-      [disabled]="form.invalid"
-    >
-      {{ 'Leave Domain' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="[Role.DirectoryServiceWrite]"
+    color="primary"
+    ixTest="leave-domain"
+    [label]="'Leave Domain' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

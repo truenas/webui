@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { FibreChannelHost } from 'app/interfaces/fibre-channel.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -20,8 +19,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-FormActionsComponent,
-    MatButton,
+    FormActionsComponent,
+    TnButtonComponent,
     ReactiveFormsModule,
     TestDirective,
     TranslateModule,
@@ -31,7 +30,7 @@ FormActionsComponent,
 export class VirtualPortsNumberDialog {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
-  private dialogRef = inject<DialogRef<unknown, VirtualPortsNumberDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, VirtualPortsNumberDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
   private host = inject<FibreChannelHost>(DIALOG_DATA);

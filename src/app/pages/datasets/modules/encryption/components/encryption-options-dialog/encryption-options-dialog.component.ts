@@ -5,10 +5,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { minimumPbkdf2Iterations } from 'app/constants/dataset.constants';
@@ -57,7 +56,7 @@ enum EncryptionType {
     IxInputComponent,
     AsyncPipe,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
   ],
@@ -68,7 +67,7 @@ export class EncryptionOptionsDialog implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private dialog = inject(DialogService);
-  private dialogRef = inject<DialogRef>(DialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);

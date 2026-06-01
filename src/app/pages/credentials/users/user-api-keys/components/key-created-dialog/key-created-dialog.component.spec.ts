@@ -1,9 +1,9 @@
 import { Clipboard } from '@angular/cdk/clipboard';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { KeyCreatedDialog } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
@@ -15,6 +15,7 @@ describe('KeyCreatedDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: KeyCreatedDialog,
     providers: [
+      mockProvider(DialogRef),
       {
         provide: DIALOG_DATA,
         useValue: 'my-key',
@@ -40,7 +41,7 @@ describe('KeyCreatedDialogComponent', () => {
   });
 
   it('copies key to clipboard when Copy button is pressed', async () => {
-    const copyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Copy to Clipboard' }));
+    const copyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Copy to Clipboard' }));
     await copyButton.click();
 
     expect(spectator.inject(Clipboard).copy).toHaveBeenCalledWith('my-key');

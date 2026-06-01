@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
@@ -32,8 +31,8 @@ enum StopMethod {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-FormActionsComponent,
-    MatButton,
+    FormActionsComponent,
+    TnButtonComponent,
     ReactiveFormsModule,
     TestDirective,
     TranslateModule,
@@ -43,7 +42,7 @@ FormActionsComponent,
 export class StopOptionsDialog {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private dialogRef = inject<DialogRef<ContainerStopParams | false, StopOptionsDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<ContainerStopParams | false, StopOptionsDialog>>(DialogRef);
 
   protected readonly operation = signal(StopOptionsOperation.Stop);
 

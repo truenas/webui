@@ -1,11 +1,10 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DialogRef } from '@angular/cdk/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
@@ -35,7 +34,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
     ReactiveFormsModule,
     IxInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -48,7 +47,7 @@ export class BootenvStatsDialog implements OnInit {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private store$ = inject<Store<AppState>>(Store);
-  private dialogRef = inject<DialogRef<unknown, BootenvStatsDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, BootenvStatsDialog>>(DialogRef);
   private translate = inject(TranslateService);
   private fb = inject(NonNullableFormBuilder);
   private errorHandler = inject(ErrorHandlerService);

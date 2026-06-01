@@ -2,8 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
@@ -108,7 +108,7 @@ describe('SelectPresetModalComponent', () => {
     const actionsRadios = await loader.getHarness(IxRadioGroupHarness);
     await actionsRadios.setValue('Create a custom ACL');
 
-    const continueButton = await loader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
+    const continueButton = await loader.getHarness(TnButtonHarness.with({ label: 'Continue' }));
     await continueButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
@@ -122,7 +122,7 @@ describe('SelectPresetModalComponent', () => {
     const presetSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Preset' }));
     await presetSelect.setValue('POSIX_HOME');
 
-    const continueButton = await loader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
+    const continueButton = await loader.getHarness(TnButtonHarness.with({ label: 'Continue' }));
     await continueButton.click();
 
     expect(spectator.inject(DatasetAclEditorStore).usePreset).toHaveBeenCalledWith(presets[0]);

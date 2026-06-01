@@ -1,8 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -30,7 +30,7 @@ describe('SetDedupQuotaComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of(undefined),
+          afterClosed: () => of(undefined),
         })),
       }),
       mockProvider(DialogRef),
@@ -71,7 +71,7 @@ describe('SetDedupQuotaComponent', () => {
         Quota: 'Auto',
       });
 
-      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submitButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.update', [2, {
@@ -103,7 +103,7 @@ describe('SetDedupQuotaComponent', () => {
         'Custom Quota': '200 MiB',
       });
 
-      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submitButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.update', [2, {
@@ -134,7 +134,7 @@ describe('SetDedupQuotaComponent', () => {
         Quota: 'None',
       });
 
-      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submitButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.update', [2, {

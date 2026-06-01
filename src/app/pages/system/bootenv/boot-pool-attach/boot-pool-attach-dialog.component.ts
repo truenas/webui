@@ -1,10 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
@@ -32,7 +31,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     UnusedDiskSelectComponent,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     FakeProgressBarComponent,
@@ -42,7 +41,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class BootPoolAttachDialog implements OnInit {
   private fb = inject(FormBuilder);
   private dialogService = inject(DialogService);
-  private dialogRef = inject<DialogRef<unknown, BootPoolAttachDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, BootPoolAttachDialog>>(DialogRef);
   private translate = inject(TranslateService);
   protected api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);

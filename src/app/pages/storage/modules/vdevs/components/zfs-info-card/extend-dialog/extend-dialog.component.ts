@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
@@ -35,7 +34,7 @@ export interface ExtendDialogParams {
     ReactiveFormsModule,
     UnusedDiskSelectComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
   ],
@@ -47,7 +46,7 @@ export class ExtendDialog {
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<DialogRef<unknown, ExtendDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ExtendDialog>>(DialogRef);
   private poolExtendJobService = inject(PoolExtendJobService);
   data = inject<ExtendDialogParams>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
@@ -60,8 +59,8 @@ export class ExtendDialog {
 
   unusedDisks: DetailsDisk[] = [];
 
-  onSubmit(event: SubmitEvent): void {
-    event.preventDefault();
+  onSubmit(event?: SubmitEvent): void {
+    event?.preventDefault();
 
     // Check for existing pool.attach jobs for this pool
     this.poolExtendJobService.checkForExistingExtendJob(this.data.poolId).pipe(

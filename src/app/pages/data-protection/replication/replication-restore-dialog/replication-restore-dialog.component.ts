@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
@@ -29,7 +28,7 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
     IxInputComponent,
     IxExplorerComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -40,7 +39,7 @@ export class ReplicationRestoreDialog {
   private loader = inject(LoaderService);
   private formBuilder = inject(FormBuilder);
   private datasetService = inject(DatasetService);
-  private dialogRef = inject<DialogRef<unknown, ReplicationRestoreDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ReplicationRestoreDialog>>(DialogRef);
   private errorHandler = inject(FormErrorHandlerService);
   private parentTaskId = inject(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);

@@ -1,13 +1,12 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
-import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
+import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { Observable, of, throwError } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import {
@@ -157,7 +156,7 @@ describe('ExportDisconnectModalComponent', () => {
   });
 
   it('should display the pool name in the title', () => {
-    expect(spectator.query('.export-disconnect-modal-title')).toContainText('Disconnect Pool: fakePool');
+    expect(spectator.query('.tn-dialog__title')).toContainText('Disconnect Pool: fakePool');
   });
 
   it('should start with Export option selected by default', () => {
@@ -525,7 +524,7 @@ describe('ExportDisconnectModalComponent', () => {
       'Confirm Export Pool': true,
     });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Disconnect' }));
     await submitButton.click();
   }
 
@@ -544,7 +543,7 @@ describe('ExportDisconnectModalComponent', () => {
       'Enter fakePool below to confirm': 'fakePool',
     });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Disconnect' }));
     await submitButton.click();
   }
 

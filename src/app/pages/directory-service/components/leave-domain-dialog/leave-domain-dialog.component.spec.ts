@@ -1,9 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -29,7 +29,7 @@ describe('LeaveDomainDialogComponent', () => {
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of(undefined),
+          afterClosed: () => of(undefined),
         })),
       }),
       mockProvider(SnackbarService),
@@ -50,7 +50,7 @@ describe('LeaveDomainDialogComponent', () => {
       Password: '12345678',
     });
 
-    const leaveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Leave Domain' }));
+    const leaveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Leave Domain' }));
     await leaveButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('directoryservices.leave', [{

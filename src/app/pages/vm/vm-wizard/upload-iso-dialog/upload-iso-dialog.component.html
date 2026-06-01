@@ -18,21 +18,22 @@
     [tooltip]="helptext.upload_iso_tooltip | translate"
   ></ix-file-input>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
 
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="save"
-      [disabled]="form.invalid"
-    >
-      {{ 'Upload' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    ixTest="save"
+    [label]="'Upload' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

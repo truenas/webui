@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -57,7 +57,7 @@ describe('DeleteTargetDialogComponent', () => {
       'Force Delete': false,
     });
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.target.delete', [1, false, true]);
@@ -65,7 +65,7 @@ describe('DeleteTargetDialogComponent', () => {
   });
 
   it('cancels the dialog when cancel button is clicked', async () => {
-    const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+    const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
     await cancelButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(false);

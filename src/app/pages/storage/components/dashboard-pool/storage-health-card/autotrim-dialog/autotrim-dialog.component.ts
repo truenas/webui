@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
@@ -28,7 +27,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     ReactiveFormsModule,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -38,7 +37,7 @@ export class AutotrimDialog implements OnInit {
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
-  private dialogRef = inject<DialogRef<unknown, AutotrimDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, AutotrimDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   pool = inject<Pool>(DIALOG_DATA);
@@ -54,8 +53,8 @@ export class AutotrimDialog implements OnInit {
     this.autotrimControl.setValue(this.pool.autotrim.value === 'on');
   }
 
-  onSubmit(event: SubmitEvent): void {
-    event.preventDefault();
+  onSubmit(event?: SubmitEvent): void {
+    event?.preventDefault();
     this.api.job('pool.update', [this.pool.id, { autotrim: this.autotrimControl.value ? OnOff.On : OnOff.Off }])
       .pipe(
         this.loader.withLoader(),

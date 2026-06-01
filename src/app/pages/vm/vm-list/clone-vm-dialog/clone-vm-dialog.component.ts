@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VirtualMachine, VmCloneParams } from 'app/interfaces/virtual-machine.interface';
@@ -26,7 +25,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxInputComponent,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -37,7 +36,7 @@ export class CloneVmDialogComponent {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   vm = inject<VirtualMachine>(DIALOG_DATA);
-  private dialogRef = inject<DialogRef<unknown, CloneVmDialogComponent>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, CloneVmDialogComponent>>(DialogRef);
   private destroyRef = inject(DestroyRef);
 
   nameControl = new FormControl('');

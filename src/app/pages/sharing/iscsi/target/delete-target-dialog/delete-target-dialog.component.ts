@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -28,7 +27,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     ReactiveFormsModule,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -37,7 +36,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class DeleteTargetDialog implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject<DialogRef<unknown, DeleteTargetDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DeleteTargetDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private iscsiService = inject(IscsiService);

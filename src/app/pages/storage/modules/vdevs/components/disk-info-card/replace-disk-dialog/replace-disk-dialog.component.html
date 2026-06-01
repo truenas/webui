@@ -24,20 +24,21 @@
     [tooltip]="helptext.dialogFormFields.force.tooltip | translate"
   ></ix-checkbox>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button
-      *ixRequiresRoles="[Role.PoolWrite]"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="replace"
-    >
-      {{ 'Replace Disk' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="[Role.PoolWrite]"
+    color="primary"
+    ixTest="replace"
+    [label]="'Replace Disk' | translate"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

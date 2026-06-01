@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatSliderHarness } from '@angular/material/slider/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -29,7 +29,7 @@ describe('PruneDedupTableDialogComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of(undefined),
+          afterClosed: () => of(undefined),
         })),
       }),
       {
@@ -54,7 +54,7 @@ describe('PruneDedupTableDialogComponent', () => {
     const sliderThumb = await percentageSlider.getEndThumb();
     await sliderThumb.setValue(50);
 
-    const pruneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Prune' }));
+    const pruneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Prune' }));
     await pruneButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.ddt_prune', [{ pool_name: 'pewl', percentage: 50 }]);
@@ -70,7 +70,7 @@ describe('PruneDedupTableDialogComponent', () => {
     const daysInput = await loader.getHarness(IxInputHarness.with({ label: 'Age (in days)' }));
     await daysInput.setValue('10');
 
-    const pruneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Prune' }));
+    const pruneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Prune' }));
     await pruneButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.ddt_prune', [{ pool_name: 'pewl', days: 10 }]);

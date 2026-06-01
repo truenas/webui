@@ -33,27 +33,20 @@
   </form>
 
 
-<div tnDialogAction>
-  <ix-form-actions>
-    <button
-      mat-button
-      ixTest="cancel"
-      type="button"
-     
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      mat-button
-      ixTest="export"
-      color="primary"
-      type="button"
-      [disabled]="!form.valid"
-      [attr.aria-label]="'Export disk image' | translate"
-      (click)="onSubmit()"
-    >
-      {{ 'Export' | translate }}
-    </button>
-  </ix-form-actions>
-</div>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    ixTest="export"
+    color="primary"
+    [label]="'Export' | translate"
+    [disabled]="!form.valid"
+    [ariaLabel]="'Export disk image' | translate"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

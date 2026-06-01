@@ -1,8 +1,8 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -47,7 +47,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
   });
 
   it('downloads key as json file when Download Key button is pressed', async () => {
-    const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Key' }));
+    const downloadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Download Key' }));
     await downloadButton.click();
 
     expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({

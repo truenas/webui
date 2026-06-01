@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -43,7 +43,7 @@ describe('ReplaceDiskDialogComponent', () => {
       mockProvider(DialogRef),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of(undefined),
+          afterClosed: () => of(undefined),
         })),
       }),
       mockProvider(SnackbarService),
@@ -65,7 +65,7 @@ describe('ReplaceDiskDialogComponent', () => {
   });
 
   it('shows a name of the disk that is about to be replaced', () => {
-    const title = spectator.query('h1');
+    const title = spectator.query('.tn-dialog__title');
 
     expect(title).toHaveText('Replacing disk sda');
   });
@@ -77,7 +77,7 @@ describe('ReplaceDiskDialogComponent', () => {
       Force: true,
     });
 
-    const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Replace Disk' }));
+    const replaceButton = await loader.getHarness(TnButtonHarness.with({ label: 'Replace Disk' }));
     await replaceButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -111,7 +111,7 @@ describe('ReplaceDiskDialogComponent', () => {
       'Member Disk': 'sdb (10 GiB)',
     });
 
-    const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Replace Disk' }));
+    const replaceButton = await loader.getHarness(TnButtonHarness.with({ label: 'Replace Disk' }));
     await replaceButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.replace', [

@@ -7,20 +7,21 @@
     [label]="'Select Configuration File' | translate"
   ></ix-file-input>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="warn"
-      ixTest="upload"
-      [disabled]="form.invalid"
-    >
-      {{ 'Upload' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="warn"
+    ixTest="upload"
+    [label]="'Upload' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

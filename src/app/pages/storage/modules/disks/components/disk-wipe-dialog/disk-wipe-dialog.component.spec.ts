@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -51,7 +51,7 @@ describe('DiskWipeDialogComponent', () => {
       Method: 'Full with zeros',
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Wipe' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Wipe' }));
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();

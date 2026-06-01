@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
@@ -27,14 +26,14 @@ export interface StopVmDialogData {
     IxCheckboxComponent,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class StopVmDialogComponent {
-  private dialogRef = inject<DialogRef<StopVmDialogData, StopVmDialogComponent>>(DialogRef);
+  protected dialogRef = inject<DialogRef<StopVmDialogData, StopVmDialogComponent>>(DialogRef);
   vm = inject<VirtualMachine>(DIALOG_DATA);
 
   forceAfterTimeoutCheckbox = new FormControl(false, { nonNullable: true });

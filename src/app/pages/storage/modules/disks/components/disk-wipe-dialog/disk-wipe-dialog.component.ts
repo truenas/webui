@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -31,7 +30,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     ReactiveFormsModule,
     IxSelectComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -43,7 +42,7 @@ export class DiskWipeDialog {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
-  private dialogRef = inject<DialogRef<unknown, DiskWipeDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DiskWipeDialog>>(DialogRef);
   data = inject<{
     diskName: string;
     exportedPool: string;

@@ -4,9 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
@@ -34,13 +33,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxRadioGroupComponent,
     IxSelectComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
   ],
 })
 export class SelectPresetModalComponent implements OnInit {
-  private dialogRef = inject<DialogRef>(DialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);

@@ -42,21 +42,24 @@
       [label]="'Scrub interval (in days)' | translate"
       [required]="true"
     ></ix-input>
-    <ix-form-actions>
-      <button mat-button type="button" ixTest="close">
-        {{ 'Close' | translate }}
-      </button>
-      <button
-        *ixRequiresRoles="[Role.BootEnvWrite]"
-        mat-button
-        type="submit"
-        color="primary"
-        ixTest="update-interval"
-        [disabled]="form.invalid"
-      >
-        {{ 'Update Interval' | translate }}
-      </button>
-    </ix-form-actions>
   </form>
 }
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="close"
+    [label]="'Close' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+  @if (state) {
+    <tn-button
+      *ixRequiresRoles="[Role.BootEnvWrite]"
+      color="primary"
+      ixTest="update-interval"
+      [label]="'Update Interval' | translate"
+      [disabled]="form.invalid"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  }
+</ix-form-actions>
 </tn-dialog-shell>

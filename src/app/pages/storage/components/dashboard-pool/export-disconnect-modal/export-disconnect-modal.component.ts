@@ -1,17 +1,16 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { TnDialog, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialog, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -61,7 +60,7 @@ export enum DisconnectOption {
     IxCheckboxComponent,
     IxInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,

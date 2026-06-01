@@ -2,8 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -27,7 +27,7 @@ describe('LockDatasetDialogComponent', () => {
       mockProvider(DialogRef),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of(undefined),
+          afterClosed: () => of(undefined),
         })),
       }),
       mockApi([
@@ -52,7 +52,7 @@ describe('LockDatasetDialogComponent', () => {
     const forceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Force unmount' }));
     await forceCheckbox.setValue(true);
 
-    const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock' }));
+    const lockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Lock' }));
     await lockButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

@@ -24,20 +24,21 @@
     [label]="'Remove Images' | translate"
   ></ix-checkbox>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
 
-    <button
-      mat-button
-      type="submit"
-      color="warn"
-      ixTest="delete"
-      [disabled]="form.invalid"
-    >
-      {{ 'Delete' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  <tn-button
+    color="warn"
+    ixTest="delete"
+    [label]="'Delete' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

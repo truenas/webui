@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -50,7 +50,7 @@ describe('ReplicationRestoreDialogComponent', () => {
       Destination: '/mnt/dataset',
     });
 
-    const save = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
+    const save = await loader.getHarness(TnButtonHarness.with({ label: 'Restore' }));
     await save.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.restore', [

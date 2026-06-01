@@ -1,5 +1,5 @@
-import { DIALOG_DATA } from '@angular/cdk/dialog';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
@@ -16,6 +16,7 @@ describe('VolumeMountsDialogComponent', () => {
       ),
     ],
     providers: [
+      mockProvider(DialogRef),
       {
         provide: DIALOG_DATA,
         useValue: {

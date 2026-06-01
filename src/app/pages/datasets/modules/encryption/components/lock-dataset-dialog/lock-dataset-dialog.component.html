@@ -8,15 +8,21 @@
     [formControl]="forceCheckbox"
     [label]="'Force unmount' | translate"
   ></ix-checkbox>
-
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button *ixRequiresRoles="requiredRoles" mat-button type="submit" color="primary" ixTest="lock">
-      {{ 'Lock' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    ixTest="lock"
+    [label]="'Lock' | translate"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

@@ -34,14 +34,20 @@
     ></ix-input>
   }
 
-  <ix-form-actions class="actions">
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button mat-button type="submit" color="primary" ixTest="prune">
-      {{ 'Prune' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+<ix-form-actions tnDialogAction class="actions">
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    color="primary"
+    ixTest="prune"
+    [label]="'Prune' | translate"
+    (onClick)="submit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

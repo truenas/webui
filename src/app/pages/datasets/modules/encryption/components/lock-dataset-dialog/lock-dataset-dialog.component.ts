@@ -2,9 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
@@ -28,7 +27,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     ReactiveFormsModule,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
   ],
@@ -38,7 +37,7 @@ export class LockDatasetDialog {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
-  private dialogRef = inject<DialogRef>(DialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private dialogService = inject(DialogService);
   dataset = inject<Dataset>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
@@ -47,8 +46,8 @@ export class LockDatasetDialog {
 
   forceCheckbox = new FormControl(false, { nonNullable: true });
 
-  onSubmit($event: SubmitEvent): void {
-    $event.preventDefault();
+  onSubmit($event?: SubmitEvent): void {
+    $event?.preventDefault();
 
     const force = this.forceCheckbox.value;
     this.dialogService.jobDialog(

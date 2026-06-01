@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, signal, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
@@ -38,7 +37,7 @@ export interface RaidzExtendDialogParams {
     ReactiveFormsModule,
     UnusedDiskSelectComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
     FileSizePipe,
@@ -50,7 +49,7 @@ export class RaidzExtendDialog {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<DialogRef<unknown, RaidzExtendDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, RaidzExtendDialog>>(DialogRef);
   private vDevsStore = inject(VDevsStore);
   private dialogService = inject(DialogService);
   private poolExtendJobService = inject(PoolExtendJobService);
@@ -72,8 +71,8 @@ export class RaidzExtendDialog {
     this.setFilterMinimumSizeFn();
   }
 
-  protected onSubmit(event: SubmitEvent): void {
-    event.preventDefault();
+  protected onSubmit(event?: SubmitEvent): void {
+    event?.preventDefault();
 
     // Check for existing pool.attach jobs for this pool
     this.poolExtendJobService.checkForExistingExtendJob(this.data.poolId).pipe(

@@ -4,19 +4,19 @@
   </p>
 
 
-<ix-form-actions matDialogActions>
-  <button mat-button type="button" ixTest="close">
-    {{ 'Close' | translate }}
-  </button>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="close"
+    [label]="'Close' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
 
-  <button
-    mat-button
-    type="submit"
+  <tn-button
     color="primary"
     ixTest="download-keys"
-    (click)="onDownload()"
-  >
-    {{ 'Download Keys' | translate }}
-  </button>
+    [label]="'Download Keys' | translate"
+    (onClick)="onDownload()"
+  ></tn-button>
 </ix-form-actions>
 </tn-dialog-shell>

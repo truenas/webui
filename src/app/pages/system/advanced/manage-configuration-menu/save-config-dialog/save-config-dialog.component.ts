@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -39,7 +38,7 @@ export interface SaveConfigDialogMessages {
     FormsModule,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -49,7 +48,7 @@ export class SaveConfigDialog {
   private store$ = inject<Store<AppState>>(Store);
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
-  private dialogRef = inject<DialogRef<unknown, SaveConfigDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, SaveConfigDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);

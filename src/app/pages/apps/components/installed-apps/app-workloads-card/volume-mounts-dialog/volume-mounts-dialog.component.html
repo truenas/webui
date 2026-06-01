@@ -3,16 +3,6 @@
   <span class="title">
     {{ '{service} Volume Mounts' | translate: { service: containerDetails.service_name } }}
   </span>
-
-  <button
-    class="close"
-    mat-icon-button
-   
-    ixTest="close"
-    [aria-label]="'Close' | translate"
-  >
-    <tn-icon name="close" library="mdi"></tn-icon>
-  </button>
 </h1>
 
 <div>
@@ -40,14 +30,12 @@
     </table>
   </div>
 
-  <ix-form-actions>
-    <button
-      mat-button
-     
-      ixTest="close-button"
-    >
-      {{ 'Ok' | translate }}
-    </button>
-  </ix-form-actions>
 </div>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    ixTest="close-button"
+    [label]="'Ok' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

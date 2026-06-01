@@ -4,23 +4,19 @@
   {{ helptext.dialogMessage | translate }}
 </div>
 
-<ix-form-actions>
-  <button
-    mat-button
+<ix-form-actions tnDialogAction>
+  <tn-button
     color="warn"
     ixTest="download-key"
-    (click)="downloadKey()"
-  >
-    {{ 'Download Encryption Key' | translate }}
-  </button>
-  <button
-    mat-button
+    [label]="'Download Encryption Key' | translate"
+    (onClick)="downloadKey()"
+  ></tn-button>
+  <tn-button
     color="primary"
     ixTest="done"
+    [label]="'Done' | translate"
     [disabled]="!wasDownloaded()"
-   
-  >
-    {{ 'Done' | translate }}
-  </button>
+    (onClick)="dialogRef.close(true)"
+  ></tn-button>
 </ix-form-actions>
 </tn-dialog-shell>

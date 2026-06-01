@@ -1,15 +1,13 @@
-import { DIALOG_DATA } from '@angular/cdk/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatAnchor, MatButton } from '@angular/material/button';
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import { MatTooltip } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { filter, finalize, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -41,15 +39,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatTooltip,
     RequiresRolesDirective,
     TestDirective,
-    MatButton,
+    TnButtonComponent,
     FormActionsComponent,
-    RouterLink,
-    MatAnchor,
   ],
 })
 export class SnapshotBatchDeleteDialog implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
+  protected dialogRef = inject<DialogRef<boolean, SnapshotBatchDeleteDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private snapshots = inject<ZfsSnapshot[]>(DIALOG_DATA);

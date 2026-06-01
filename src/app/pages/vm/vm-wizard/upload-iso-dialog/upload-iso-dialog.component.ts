@@ -1,10 +1,9 @@
+import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import {
   catchError, of, Subject, Subscription, takeUntil, tap,
 } from 'rxjs';
@@ -38,7 +37,7 @@ import { UploadService } from 'app/services/upload.service';
     IxExplorerComponent,
     IxFileInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -50,7 +49,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private filesystemService = inject(FilesystemService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<DialogRef<string | null, UploadIsoDialogComponent>>(DialogRef);
+  protected dialogRef = inject<DialogRef<string | null, UploadIsoDialogComponent>>(DialogRef);
   private uploadService = inject(UploadService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);

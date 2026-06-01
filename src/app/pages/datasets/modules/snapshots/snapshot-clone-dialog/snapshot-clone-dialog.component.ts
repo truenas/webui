@@ -1,11 +1,9 @@
-import { DIALOG_DATA } from '@angular/cdk/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
@@ -27,16 +25,15 @@ import { ApiService } from 'app/modules/websocket/api.service';
     ReactiveFormsModule,
     IxInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
     TestDirective,
-    RouterLink,
-    MatAnchor,
   ],
 })
 export class SnapshotCloneDialog implements OnInit {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
+  protected dialogRef = inject<DialogRef<unknown, SnapshotCloneDialog>>(DialogRef);
   private fb = inject(FormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);

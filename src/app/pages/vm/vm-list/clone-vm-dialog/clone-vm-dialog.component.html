@@ -5,24 +5,19 @@
     [formControl]="nameControl"
   ></ix-input>
 </div>
-<div tnDialogAction>
-  <ix-form-actions>
-    <button
-      mat-button
-      ixTest="cancel"
-     
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      ixTest="clone"
-      (click)="onClone()"
-    >
-      {{ 'Clone' | translate }}
-    </button>
-  </ix-form-actions>
-</div>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    ixTest="clone"
+    [label]="'Clone' | translate"
+    (onClick)="onClone()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

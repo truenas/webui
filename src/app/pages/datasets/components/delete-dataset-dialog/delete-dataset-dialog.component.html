@@ -72,22 +72,22 @@
     formControlName="confirm"
     [label]="'Confirm' | translate"
   ></ix-checkbox>
-
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="warn"
-      ixTest="delete-dataset"
-      [disabled]="form.invalid"
-    >
-      {{ 'Delete' | translate }} {{ isZvol ? ('Zvol' | translate) : ('Dataset' | translate) }}
-    </button>
-  </ix-form-actions>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="warn"
+    ixTest="delete-dataset"
+    [label]="(isZvol ? 'Delete Zvol' : 'Delete Dataset') | translate"
+    [disabled]="form.invalid"
+    (onClick)="onDelete()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

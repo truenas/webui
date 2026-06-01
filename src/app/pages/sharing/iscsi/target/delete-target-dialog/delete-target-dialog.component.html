@@ -25,25 +25,20 @@
     ></ix-checkbox>
   </form>
 </div>
-<div tnDialogAction>
-  <ix-form-actions>
-    <button
-      mat-button
-      ixTest="cancel"
-     
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="warn"
-      ixTest="delete"
-      [disabled]="form.invalid"
-      (click)="onDelete()"
-    >
-      {{ 'Delete' | translate }}
-    </button>
-  </ix-form-actions>
-</div>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="warn"
+    ixTest="delete"
+    [label]="'Delete' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onDelete()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

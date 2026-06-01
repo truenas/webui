@@ -38,34 +38,11 @@
       }
     </mat-accordion>
 
-    <div class="form-actions">
-      <ix-checkbox
-        formControlName="confirm"
-        [label]="'Confirm' | translate"
-        [required]="true"
-      ></ix-checkbox>
-
-      <div class="form-buttons">
-        <div
-          [matTooltip]="'Snapshots must not have dependent clones' | translate"
-          [matTooltipDisabled]="!hasClones"
-        >
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            type="submit"
-            color="warn"
-            ixTest="delete"
-            [disabled]="form.invalid || hasClones || isDeleting()"
-          >
-            {{ 'Delete' | translate }}
-          </button>
-        </div>
-        <button mat-button type="button" ixTest="cancel">
-          {{ 'Cancel' | translate }}
-        </button>
-      </div>
-    </div>
+    <ix-checkbox
+      formControlName="confirm"
+      [label]="'Confirm' | translate"
+      [required]="true"
+    ></ix-checkbox>
   </form>
 } @else {
   @if (jobErrors.length) {
@@ -81,20 +58,42 @@
       { n: jobSuccess.length} }}
     </p>
   }
-  <ix-form-actions>
-    <a
-      mat-button
-      type="submit"
+}
+<ix-form-actions tnDialogAction>
+  @if (!isJobCompleted) {
+    <tn-button
+      variant="outline"
+      ixTest="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
+    <div
+      [matTooltip]="'Snapshots must not have dependent clones' | translate"
+      [matTooltipDisabled]="!hasClones"
+    >
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="warn"
+        ixTest="delete"
+        [label]="'Delete' | translate"
+        [disabled]="form.invalid || hasClones || isDeleting()"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    </div>
+  } @else {
+    <tn-button
+      variant="outline"
+      ixTest="close"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close(true)"
+    ></tn-button>
+    <tn-button
       color="primary"
       ixTest="go-to-storage"
-     
+      [label]="'Go to Storage' | translate"
       [routerLink]="['/storage']"
-    >
-      {{ 'Go to Storage' | translate }}
-    </a>
-    <button mat-button type="button" ixTest="close">
-      {{ 'Close' | translate }}
-    </button>
-  </ix-form-actions>
-}
+      (onClick)="dialogRef.close(true)"
+    ></tn-button>
+  }
+</ix-form-actions>
 </tn-dialog-shell>
