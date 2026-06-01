@@ -1,7 +1,8 @@
-<tn-dialog-shell [title]="data.title | translate">
-  <div class="information-header">
+<tn-dialog-shell [title]="''">
+  <h1 class="information-header">
     <tn-icon class="information-icon" library="mdi" [name]="data.icon || 'information'"></tn-icon>
-  </div>
+    <span class="information-title">{{ data.title | translate }}</span>
+  </h1>
   @if (data.isHtml) {
     <div class="info-panel ip-overflow-auto">
       <span [innerHtml]="data.info | translate"></span>

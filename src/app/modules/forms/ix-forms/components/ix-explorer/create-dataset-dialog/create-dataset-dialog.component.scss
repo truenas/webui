@@ -1,10 +1,16 @@
 :host {
   display: block;
   min-width: 370px;
+  // Anchor the absolutely-positioned progress bar to the dialog instead of
+  // letting it escape to a far ancestor (which rendered it outside the dialog).
+  position: relative;
 }
 
 mat-progress-bar {
   position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 form {

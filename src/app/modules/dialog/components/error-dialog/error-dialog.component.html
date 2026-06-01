@@ -1,8 +1,9 @@
-<tn-dialog-shell [title]="error.title | translate">
+<tn-dialog-shell [title]="''">
   <div id="err-md-content" class="err-content" role="alertdialog">
-    <div class="err-title-row">
+    <h1 class="err-title-row">
       <tn-icon class="error-warning-icon" library="mdi" [name]="error.icon || 'alert-circle'"></tn-icon>
-    </div>
+      <span class="err-title">{{ error.title | translate }}</span>
+    </h1>
 
     <div class="err-message-wrapper">
       <span [innerHTML]="error.message"></span>

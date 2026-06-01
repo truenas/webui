@@ -3,6 +3,18 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
 :host {
   display: block;
   min-width: 300px;
+
+  // The icon + title are rendered as a body heading, so hide the empty dialog
+  // shell header (the shell title is text-only and can't show the icon).
+  ::ng-deep .tn-dialog__header {
+    display: none;
+  }
+}
+
+.err-title-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
 }
 
 .mat-mdc-dialog-actions {

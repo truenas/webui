@@ -121,7 +121,11 @@ export class DialogService {
       disableClose: options.disableClose || false,
       data: options,
       autoFocus: true,
-    }).closed as Observable<boolean> | Observable<DialogWithSecondaryCheckboxResult>;
+    }).closed.pipe(
+      // The dialog can be dismissed without a result (ESC/backdrop); treat that
+      // as "not confirmed" so consumers reading `result.confirmed` don't crash.
+      map((result) => result ?? false),
+    ) as Observable<boolean> | Observable<DialogWithSecondaryCheckboxResult>;
   }
 
   error(error: ErrorReport | ErrorReport[]): Observable<boolean> {

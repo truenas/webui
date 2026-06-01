@@ -1,6 +1,12 @@
 :host {
   display: block;
   min-width: 330px;
+
+  // The icon + title are rendered as a body heading below, so hide the empty
+  // dialog shell header (the shell title is text-only and can't show the icon).
+  ::ng-deep .tn-dialog__header {
+    display: none;
+  }
 }
 
 .info-panel {

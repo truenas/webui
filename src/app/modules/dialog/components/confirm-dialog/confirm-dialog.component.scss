@@ -4,6 +4,12 @@
   // TnDialog panel is max-width: 90vw with no default width, so without this a
   // long single-line message would stretch the dialog very wide.
   max-width: 480px;
+
+  // Confirm dialogs are dismissed via their explicit Cancel/Continue buttons,
+  // so hide the dialog shell's close (X) button.
+  ::ng-deep .tn-dialog__close {
+    display: none;
+  }
 }
 
 .confirm-checkbox {

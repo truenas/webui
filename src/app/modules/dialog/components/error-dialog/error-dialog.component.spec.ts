@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialogHarness, TnIconHarness, tnIconMarker } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconHarness, tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
@@ -65,9 +65,8 @@ describe('ErrorDialog', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows error title', async () => {
-      const dialog = await loader.getHarness(TnDialogHarness);
-      expect(await dialog.getTitle()).toBe(baseError.title);
+    it('shows error title', () => {
+      expect(spectator.query('.err-title')).toHaveText(baseError.title);
     });
 
     it('shows error message', () => {

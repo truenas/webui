@@ -1,4 +1,14 @@
 <tn-dialog-shell [title]="(title || ('Loading' | translate)) || ''">
+  @if (showMinimizeButton) {
+    <tn-icon-button
+      name="minus"
+      library="mdi"
+      class="minimize-button"
+      ixTest="close"
+      [attr.aria-label]="'Hide Job' | translate: { jobMethod: job.method }"
+      (click)="minimize()"
+    ></tn-icon-button>
+  }
   <div class="job-dialog">
     @if (showRealtimeLogs && realtimeLogs) {
       <div class="logs-container">
@@ -55,28 +65,16 @@
     }
   </div>
 
-  @if (hasAbortButton || showMinimizeButton) {
+  @if (hasAbortButton) {
     <div tnDialogAction>
-      @if (hasAbortButton) {
-        <tn-button
-          variant="outline"
-          ixTest="abort"
-          [label]="isAbortingJob ? ('Aborting...' | translate) : ('Abort' | translate)"
-          [disabled]="isAbortingJob"
-          [ariaLabel]="'Abort Job' | translate"
-          (onClick)="abortJob()"
-        ></tn-button>
-      }
-
-      @if (showMinimizeButton) {
-        <tn-icon-button
-          name="minus"
-          library="mdi"
-          ixTest="close"
-          [attr.aria-label]="'Hide Job' | translate: { jobMethod: job.method }"
-          (click)="minimize()"
-        ></tn-icon-button>
-      }
+      <tn-button
+        variant="outline"
+        ixTest="abort"
+        [label]="isAbortingJob ? ('Aborting...' | translate) : ('Abort' | translate)"
+        [disabled]="isAbortingJob"
+        [ariaLabel]="'Abort Job' | translate"
+        (onClick)="abortJob()"
+      ></tn-button>
     </div>
   }
 </tn-dialog-shell>
