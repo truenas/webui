@@ -1,6 +1,9 @@
 :host {
   display: block;
   min-width: 330px;
+  // TnDialog panel is max-width: 90vw with no default width, so without this a
+  // long single-line message would stretch the dialog very wide.
+  max-width: 480px;
 }
 
 .confirm-checkbox {

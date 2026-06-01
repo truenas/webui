@@ -48,6 +48,7 @@ describe('LoaderService', () => {
 
       expect(dialog.open).toHaveBeenCalledWith(AppLoaderComponent, {
         disableClose: false,
+        panelClass: 'app-loader-overlay',
         width: '200px',
         height: '200px',
       });

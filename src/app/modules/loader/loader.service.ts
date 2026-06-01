@@ -38,6 +38,7 @@ export class LoaderService {
 
     this.dialogRef = this.dialog.open<unknown, unknown, AppLoaderComponent>(AppLoaderComponent, {
       disableClose: this.onBeforeClose !== null,
+      panelClass: 'app-loader-overlay',
       width: '200px',
       height: '200px',
     });
