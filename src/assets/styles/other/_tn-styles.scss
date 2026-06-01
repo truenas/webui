@@ -956,3 +956,9 @@ mat-form-field {
 .tn-dialog__content:empty {
   display: none;
 }
+
+// Likewise, hide the footer when no actions are projected, so dialogs without
+// footer buttons don't render an empty bordered action bar.
+.tn-dialog__actions:empty {
+  display: none;
+}

@@ -55,27 +55,28 @@
     }
   </div>
 
-  <div tnDialogAction>
-    @if (hasAbortButton) {
-      <tn-button
-        variant="outline"
-        ixTest="abort"
-        [label]="isAbortingJob ? ('Aborting...' | translate) : ('Abort' | translate)"
-        [disabled]="isAbortingJob"
-        [ariaLabel]="'Abort Job' | translate"
-        (onClick)="abortJob()"
-      ></tn-button>
-    }
+  @if (hasAbortButton || showMinimizeButton) {
+    <div tnDialogAction>
+      @if (hasAbortButton) {
+        <tn-button
+          variant="outline"
+          ixTest="abort"
+          [label]="isAbortingJob ? ('Aborting...' | translate) : ('Abort' | translate)"
+          [disabled]="isAbortingJob"
+          [ariaLabel]="'Abort Job' | translate"
+          (onClick)="abortJob()"
+        ></tn-button>
+      }
 
-    @if (showMinimizeButton) {
-      <tn-icon-button
-        name="minus"
-        library="mdi"
-        class="mat-dialog-close"
-        ixTest="close"
-        [attr.aria-label]="'Hide Job' | translate: { jobMethod: job.method }"
-        (click)="minimize()"
-      ></tn-icon-button>
-    }
-  </div>
+      @if (showMinimizeButton) {
+        <tn-icon-button
+          name="minus"
+          library="mdi"
+          ixTest="close"
+          [attr.aria-label]="'Hide Job' | translate: { jobMethod: job.method }"
+          (click)="minimize()"
+        ></tn-icon-button>
+      }
+    </div>
+  }
 </tn-dialog-shell>

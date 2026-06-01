@@ -8,6 +8,12 @@
     .mat-mdc-dialog-actions {
       position: static;
     }
+
+    // A running job can only be minimized (the footer "-" button), never closed,
+    // so hide the dialog shell's built-in close (X) button.
+    .tn-dialog__close {
+      display: none;
+    }
   }
 }
 
@@ -26,11 +32,6 @@ mat-dialog-content.job-dialog {
   }
 }
 
-.mat-dialog-close {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-}
 
 .job-progress {
   margin: 3px 0;
