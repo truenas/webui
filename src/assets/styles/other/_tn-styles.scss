@@ -946,3 +946,13 @@ mat-form-field {
 .multi-error-dialog.mat-mdc-dialog-content {
   overflow: auto !important;
 }
+
+// Some dialogs have a fully conditional body (content shown only in certain
+// states) or only footer actions. When nothing is projected into the TnDialog
+// body, hide the empty content section so it doesn't render as an empty
+// bordered/padded area between the header and footer. `:empty` ignores the
+// ng-content comment anchor but still matches when there is real text/content,
+// so dialogs with actual body content are unaffected.
+.tn-dialog__content:empty {
+  display: none;
+}
