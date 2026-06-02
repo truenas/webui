@@ -13,35 +13,35 @@
         [tooltip]="helptext.updateDialog.enabledTooltip | translate"
       ></ix-checkbox>
     </div>
+  </form>
 
-    <div tnDialogAction>
-      <tn-button
-        variant="outline"
-        class="action-btn"
-        ixTest="cancel"
-        [label]="'Cancel' | translate"
-        (onClick)="onCancel()"
-      ></tn-button>
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      class="action-btn"
+      ixTest="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="onCancel()"
+    ></tn-button>
 
-      @if (isConnected) {
-        <tn-button
-          *ixRequiresRoles="requiredRoles"
-          variant="outline"
-          class="action-btn"
-          ixTest="deregister"
-          [label]="helptext.tcDeregisterBtn | translate"
-          (onClick)="onDeregister()"
-        ></tn-button>
-      }
-
+    @if (isConnected) {
       <tn-button
         *ixRequiresRoles="requiredRoles"
-        color="primary"
-        ixTest="save"
-        [label]="saveButtonText | translate"
-        [disabled]="form.invalid"
-        (onClick)="onSubmit()"
+        variant="outline"
+        class="action-btn"
+        ixTest="deregister"
+        [label]="helptext.tcDeregisterBtn | translate"
+        (onClick)="onDeregister()"
       ></tn-button>
-    </div>
-  </form>
+    }
+
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      ixTest="save"
+      [label]="saveButtonText | translate"
+      [disabled]="form.invalid"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  </div>
 </tn-dialog-shell>

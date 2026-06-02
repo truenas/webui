@@ -47,11 +47,11 @@
       }
     </ix-fieldset>
   </div>
-
-  <div tnDialogAction>
-    <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
-
-    <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="add-disks" [label]="'Add Disks' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
-  </div>
 </form>
+
+<div tnDialogAction>
+  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
+
+  <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="add-disks" [label]="'Add Disks' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
+</div>
 </tn-dialog-shell>

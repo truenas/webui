@@ -33,28 +33,29 @@
       [label]="'Force Delete' | translate"
     ></ix-checkbox>
   </div>
-
-  <div tnDialogAction class="device-delete-modal-actions">
-    <button
-      type="button"
-      mat-button
-      class="action-btn"
-      name="Cancel_button"
-      ixTest="cancel"
-      (click)="cancel()"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      type="submit"
-      mat-button
-      color="warn"
-      ixTest="delete-device"
-      [disabled]="form.invalid"
-    >
-      {{ 'Delete Device' | translate }}
-    </button>
-  </div>
 </form>
+
+<div tnDialogAction class="device-delete-modal-actions">
+  <button
+    type="button"
+    mat-button
+    class="action-btn"
+    name="Cancel_button"
+    ixTest="cancel"
+    (click)="cancel()"
+  >
+    {{ 'Cancel' | translate }}
+  </button>
+  <button
+    *ixRequiresRoles="requiredRoles"
+    type="button"
+    mat-button
+    color="warn"
+    ixTest="delete-device"
+    [disabled]="form.invalid"
+    (click)="onSubmit()"
+  >
+    {{ 'Delete Device' | translate }}
+  </button>
+</div>
 </tn-dialog-shell>

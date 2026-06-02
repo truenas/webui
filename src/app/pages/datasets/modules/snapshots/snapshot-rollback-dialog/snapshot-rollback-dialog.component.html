@@ -58,19 +58,19 @@
         ></tn-banner>
       </div>
 
-      <div tnDialogAction class="form-actions">
-        <ix-checkbox
-          [formControlName]="force.fcName"
-          [label]="force.label"
-          [required]="force.required"
-        ></ix-checkbox>
-
-        <div class="form-buttons">
-          <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="rollback" [label]="'Rollback' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
-          <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
-        </div>
-      </div>
+      <ix-checkbox
+        [formControlName]="force.fcName"
+        [label]="force.label"
+        [required]="force.required"
+      ></ix-checkbox>
     </form>
+
+    <div tnDialogAction class="form-actions">
+      <div class="form-buttons">
+        <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="rollback" [label]="'Rollback' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
+        <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
+      </div>
+    </div>
   } @else {
     <p>
       {{ 'Dataset rolled back to snapshot {name}.' | translate: { name: snapshot.snapshot_name } }}

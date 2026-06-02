@@ -32,11 +32,11 @@
       ></ix-input>
     </ix-fieldset>
   </div>
-
-  <ix-form-actions tnDialogAction class="form-actions">
-    <tn-button variant="outline" ixTest="cancel" [label]="'Skip' | translate" (onClick)="dialogRef.close(false)"></tn-button>
-
-    <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="register" [label]="'Register' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
-  </ix-form-actions>
 </form>
+
+<ix-form-actions tnDialogAction class="form-actions">
+  <tn-button variant="outline" ixTest="cancel" [label]="'Skip' | translate" (onClick)="dialogRef.close(false)"></tn-button>
+
+  <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="register" [label]="'Register' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

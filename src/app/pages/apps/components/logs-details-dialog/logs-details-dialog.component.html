@@ -6,10 +6,10 @@
     [label]="'Tail Lines' | translate"
     [required]="true"
   ></ix-input>
-
-  <div tnDialogAction align="end">
-    <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
-    <tn-button color="primary" ixTest="choose" [label]="'Connect' | translate" [disabled]="form.invalid" (onClick)="dialogRef.close(this.form.value)"></tn-button>
-  </div>
 </form>
+
+<div tnDialogAction align="end">
+  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
+  <tn-button color="primary" ixTest="choose" [label]="'Connect' | translate" [disabled]="form.invalid" (onClick)="dialogRef.close(this.form.value)"></tn-button>
+</div>
 </tn-dialog-shell>
