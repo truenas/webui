@@ -61,7 +61,7 @@
                       <span class="value"> {{ poolInfo.disksWithError.value }} </span>
                     </li>
                     @if (isTwoTilesInRow || getColumnsInTile(poolInfo.name) === 1) {
-                      <li>
+                      <li [attr.aria-label]="poolInfo.scan.label + ': ' + poolInfo.scan.value">
                         <span [class]="['icon', poolInfo.scan.level]">
                           <tn-icon
                             size="sm"

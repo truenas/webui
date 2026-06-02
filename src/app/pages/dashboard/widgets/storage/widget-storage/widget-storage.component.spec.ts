@@ -319,6 +319,13 @@ describe('WidgetStorageComponent', () => {
         expect(labels).toContain('Last Scrub');
       });
     });
+
+    it('exposes the scan date via aria-label since it is hidden from view in the compact layout', () => {
+      const ariaLabels = spectator.queryAll('.tile li[aria-label]')
+        .map((row) => row.getAttribute('aria-label'));
+
+      expect(ariaLabels).toContain('Last Scrub: 2024-05-05 10:00:13');
+    });
   });
 
   describe('Live Updates', () => {
