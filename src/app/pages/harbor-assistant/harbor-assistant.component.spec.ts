@@ -715,6 +715,70 @@ describe('Harbor Assistant component', () => {
     expect(spectator.element.textContent).not.toContain('compatible runtime');
   });
 
+  it('auto-configures an OpenAI-compatible installed model when selected', () => {
+    const installedModel = {
+      model_id: 'Qwen/Qwen3-Embedding-0.6B',
+      display_name: 'Qwen3 Embedding 0.6B',
+      provider_key: 'qwen',
+      model_kind: 'embedder',
+      status: 'ready',
+      installed: true,
+      local_path: '/mnt/software/harborbeacon-agent-ci/model-store/qwen-qwen3-embedding-0.6b',
+      source_kind: 'huggingface',
+      repo_id: 'Qwen/Qwen3-Embedding-0.6B',
+      file_policy: 'runtime_snapshot',
+      expected_capabilities: ['embedder'],
+      runtime_profiles: ['openai-compatible-embedding'],
+    };
+    api.getModelCapabilities = jest.fn(() => of(modelCapabilitiesWithEmbedder({
+      status: 'installed_not_running',
+      current_model: {
+        model_endpoint_id: 'embedder-local',
+        model_name: '/models/old-embed.gguf',
+        provider_key: 'local',
+        status: 'active',
+      },
+      installed_models: [installedModel],
+    })));
+    api.selectModelCapability = jest.fn();
+
+    spectator = createComponent();
+    spectator.click(spectator.queryAll('.ai-settings-subtab')[1]);
+    spectator.detectChanges();
+
+    const component = spectator.component as unknown as {
+      aiModelCapabilities: () => Array<{ id: string; kind: string }>;
+      toggleModelCapabilityChooser: (capability: { id: string; kind: string }) => void;
+    };
+    component.toggleModelCapabilityChooser(component.aiModelCapabilities()[1]);
+    spectator.detectChanges();
+
+    const panel = spectator.query('.model-capability-row .inline-model-panel');
+    expect(panel).toHaveText('Qwen3 Embedding 0.6B');
+    expect(panel).toHaveText('Select');
+    expect(panel).not.toHaveText('Configure endpoint');
+
+    spectator.click(spectator.query('.model-capability-row .inline-model-panel button'));
+    spectator.detectChanges();
+
+    expect(api.selectModelCapability).not.toHaveBeenCalled();
+    expect(api.updateModelEndpoint).toHaveBeenCalledWith('embedder-local', expect.objectContaining({
+      model_kind: 'embedder',
+      endpoint_kind: 'local',
+      model_name: 'Qwen/Qwen3-Embedding-0.6B',
+      status: 'active',
+      metadata: expect.objectContaining({
+        auto_configured_by: 'harbor-assistant-select',
+        base_url: 'http://127.0.0.1:4174/api/inference/v1',
+        catalog_model_id: 'Qwen/Qwen3-Embedding-0.6B',
+        healthz_url: 'http://127.0.0.1:4174/api/inference/healthz',
+        local_path: '/mnt/software/harborbeacon-agent-ci/model-store/qwen-qwen3-embedding-0.6b',
+        runtime_profiles: ['openai-compatible-embedding'],
+      }),
+    }));
+    expect(spectator.element.textContent).toContain('Model selected');
+  });
+
   it('groups installed 4B as not recommended and keeps FlashV4 visible as cloud backup', () => {
     api.getHardwareReadiness = jest.fn(() => of({
       status: 'ready',
@@ -848,11 +912,15 @@ describe('Harbor Assistant component', () => {
       handleModelCardAction: (card: unknown) => void;
     };
     const bge = component.workflowAvailableModelChoices('embedder')[0];
+    expect((bge as { actionLabel: string }).actionLabel).toBe('Select');
     component.handleModelCardAction(bge);
 
     expect(api.createLocalModelDownload).toHaveBeenCalledWith(expect.objectContaining({
       model_id: 'bge-m3',
       metadata: expect.objectContaining({
+        auto_select_after_download: true,
+        auto_select_capability_id: 'embedder',
+        auto_select_model_id: 'bge-m3',
         repo_id: 'BAAI/bge-m3',
         source_kind: 'huggingface',
         file_policy: 'runtime_snapshot',

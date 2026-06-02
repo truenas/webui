@@ -159,7 +159,7 @@ interface EventIntelligenceStatusCard {
 }
 
 type CustomerModelSection = 'downloading' | 'installed' | 'available';
-type CustomerModelAction = 'download' | 'downloading' | 'set-current' | 'current' | 'retry' | 'configure-cloud' | 'configure-external-runtime' | 'manual-source';
+type CustomerModelAction = 'download' | 'downloading' | 'set-current' | 'current' | 'retry' | 'configure-cloud' | 'manual-source';
 
 interface RuntimeManagerCard extends ModelRuntimeStatus {
   tone: HarborAssistantStatusTone;
@@ -203,6 +203,7 @@ interface CustomerModelCard {
   speedLabel: string | null;
   errorMessage: string | null;
   runtimeGuidance: string | null;
+  runtimeProfiles: string[];
   evidence: string[];
   section: CustomerModelSection;
   catalogModel: LocalModelCatalogItem | null;
@@ -354,7 +355,6 @@ export const harborAssistantI18nMarkers = [
   T('Add Endpoint'),
   T('Capturing'),
   T('Configured; leave blank to keep'),
-  T('Configure endpoint'),
   T('Core capability'),
   T('Edit Endpoint'),
   T('Finalizing'),
@@ -487,6 +487,7 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly modelChooserCapabilityId = signal<string | null>(null);
   protected readonly manualModelDownloadCapabilityId = signal<string | null>(null);
   private readonly downloadPollInProgress = signal(false);
+  private readonly autoSelectedDownloadJobIds = new Set<string>();
 
   protected readonly protocolOptions: ProtocolOption[] = [
     { label: T('RTSP'), value: 'rtsp' },
@@ -1517,16 +1518,13 @@ export class HarborAssistantComponent implements OnInit {
     switch (card.action) {
       case 'download':
       case 'retry':
-        this.createModelDownloadForCard(card);
+        this.selectOrDownloadModel(card);
         return;
       case 'set-current':
         this.useInstalledModel(card);
         return;
       case 'configure-cloud':
         this.openCloudModelSettings(card.endpoint ?? null);
-        return;
-      case 'configure-external-runtime':
-        this.prepareEndpointFormForModel(card);
         return;
       case 'manual-source':
         this.selectModelCardForManualDownload(card);
@@ -1691,13 +1689,21 @@ export class HarborAssistantComponent implements OnInit {
   }
 
   protected createModelDownloadForCard(card: CustomerModelCard): void {
+    this.selectOrDownloadModel(card);
+  }
+
+  protected selectOrDownloadModel(card: CustomerModelCard): void {
+    if (card.section === 'installed') {
+      this.useInstalledModel(card);
+      return;
+    }
     if (!this.modelCardIsInstallable(card)) {
       this.actionError.set(T('This model requires a manual download source and cannot be installed with one click.'));
       return;
     }
 
     this.runAction(
-      `model-download:${card.modelId}`,
+      `model-select-download:${card.modelId}`,
       this.harborAssistantApi.createLocalModelDownload({
         model_id: card.modelId,
         capability_id: card.capabilityId ?? null,
@@ -1708,6 +1714,9 @@ export class HarborAssistantComponent implements OnInit {
         metadata: {
           catalog_action: 'customer_download',
           capability_id: card.capabilityId ?? null,
+          auto_select_after_download: true,
+          auto_select_capability_id: card.capabilityId ?? null,
+          auto_select_model_id: card.modelId,
           source: card.source,
           source_kind: card.catalogModel?.source_kind ?? null,
           repo_id: card.catalogModel?.repo_id ?? null,
@@ -1716,12 +1725,14 @@ export class HarborAssistantComponent implements OnInit {
           hf_endpoint: card.catalogModel?.default_hf_endpoint ?? null,
         },
       }),
-      T('Local model download job was started by explicit action.'),
+      T('Model download started. Harbor Assistant will select and enable it automatically when it is ready.'),
     );
   }
 
   protected useInstalledModel(card: CustomerModelCard): void {
-    if (card.capabilityId) {
+    const externalRuntimeOnly = this.modelUsesExternalRuntime(card.runtimeProfiles)
+      && !this.modelUsesManagedRuntime(card.runtimeProfiles);
+    if (card.capabilityId && !externalRuntimeOnly) {
       this.runAction(
         `model-capability-select:${card.capabilityId}`,
         this.harborAssistantApi.selectModelCapability(card.capabilityId, card.modelId),
@@ -1735,58 +1746,74 @@ export class HarborAssistantComponent implements OnInit {
     }
 
     const targetKinds = this.targetEndpointKinds(card.kind);
-    const missingKind = targetKinds.find((kind) => !this.endpointForKind(kind));
-    if (missingKind) {
-      this.prepareEndpointFormForModel(card, missingKind);
-      return;
-    }
-
-    const endpoints = this.uniqueEndpointsForKinds(targetKinds);
-    const requests = endpoints.map((endpoint) => {
-      const metadata: Record<string, unknown> = {
-        ...this.editableEndpointMetadata(endpoint),
-        catalog_model_id: card.modelId,
-        local_path: card.localPath,
-      };
-      return this.harborAssistantApi.updateModelEndpoint(endpoint.model_endpoint_id, {
-        model_endpoint_id: endpoint.model_endpoint_id,
-        workspace_id: endpoint.workspace_id ?? null,
-        provider_account_id: endpoint.provider_account_id ?? null,
-        model_kind: endpoint.model_kind,
-        endpoint_kind: endpoint.endpoint_kind || 'local',
-        provider_key: card.providerKey || endpoint.provider_key || 'local',
-        model_name: card.localPath,
-        capability_tags: card.capabilities.length > 0 ? card.capabilities : endpoint.capability_tags ?? [endpoint.model_kind],
-        cost_policy: endpoint.cost_policy ?? {},
-        status: 'active',
-        metadata,
-      });
-    });
+    const requests = targetKinds.map((kind) => this.upsertEndpointForSelectedModel(kind, card));
 
     this.runAction(
       `model-endpoint:set-current:${card.modelId}`,
       forkJoin(requests),
-      T('Current model endpoints were updated. Run health checks before live use.'),
+      T('Model selected. Harbor Assistant configured the endpoint automatically.'),
     );
   }
 
-  protected prepareEndpointFormForModel(card: CustomerModelCard, endpointKind = this.targetEndpointKinds(card.kind)[0] ?? 'llm'): void {
-    this.openAdvancedModels(true);
-    this.modelEndpointEditingId.set(null);
-    this.modelEndpointForm.patchValue({
-      modelEndpointId: `${endpointKind}-local`,
-      modelKind: endpointKind,
-      endpointKind: 'local',
-      providerKey: card.providerKey || 'local',
-      modelName: card.localPath ?? card.modelId,
+  private upsertEndpointForSelectedModel(kind: string, card: CustomerModelCard): Observable<ModelEndpointsResponse> {
+    const endpoint = this.endpointForKind(kind);
+    const modelKind = this.endpointKindAliases(kind)[0] ?? kind;
+    const endpointId = endpoint?.model_endpoint_id ?? this.defaultEndpointIdForKind(modelKind);
+    const existingMetadata = endpoint ? this.editableEndpointMetadata(endpoint) : {};
+    const metadata: Record<string, unknown> = {
+      ...existingMetadata,
+      base_url: this.metadataString(endpoint, 'base_url') || 'http://127.0.0.1:4174/api/inference/v1',
+      healthz_url: this.metadataString(endpoint, 'healthz_url') || 'http://127.0.0.1:4174/api/inference/healthz',
+      api_key_configured: endpoint ? this.metadataBoolean(endpoint, 'api_key_configured') : true,
+      catalog_model_id: card.modelId,
+      local_path: card.localPath,
+      runtime_profiles: card.runtimeProfiles,
+      auto_configured_by: 'harbor-assistant-select',
+    };
+    const payload: ModelEndpointPayload = {
+      model_endpoint_id: endpointId,
+      workspace_id: endpoint?.workspace_id ?? null,
+      provider_account_id: endpoint?.provider_account_id ?? null,
+      model_kind: endpoint?.model_kind ?? modelKind,
+      endpoint_kind: endpoint?.endpoint_kind || 'local',
+      provider_key: card.providerKey || endpoint?.provider_key || 'local',
+      model_name: this.endpointModelNameForCard(card),
+      capability_tags: card.capabilities.length > 0 ? card.capabilities : endpoint?.capability_tags ?? [modelKind],
+      cost_policy: endpoint?.cost_policy ?? {},
       status: 'active',
-      capabilityTags: card.capabilities.length > 0 ? card.capabilities.join('\n') : card.kind,
-      baseUrl: '',
-      healthzUrl: '',
-      apiKey: '',
-    });
-    this.actionMessage.set(T('Endpoint editor was prepared for this installed model. Add the runtime URL, then save and run health check.'));
-    this.actionError.set(null);
+      metadata,
+    };
+    return endpoint
+      ? this.harborAssistantApi.updateModelEndpoint(endpointId, payload)
+      : this.harborAssistantApi.createModelEndpoint(payload);
+  }
+
+  private endpointModelNameForCard(card: CustomerModelCard): string {
+    const managedRuntime = this.modelUsesManagedRuntime(card.runtimeProfiles);
+    if (managedRuntime && card.localPath?.trim()) {
+      return card.localPath.trim();
+    }
+    return card.modelId;
+  }
+
+  private defaultEndpointIdForKind(kind: string): string {
+    switch (kind) {
+      case 'embedder':
+      case 'embedding':
+      case 'embeddings':
+        return 'embed-local-openai-compatible';
+      case 'vlm':
+      case 'vision':
+        return 'vlm-local-openai-compatible';
+      case 'ocr':
+        return 'ocr-local-tesseract';
+      case 'asr':
+        return 'asr-local-openai-compatible';
+      case 'llm':
+      case 'chat':
+      default:
+        return 'llm-local-openai-compatible';
+    }
   }
 
   protected prepareEndpointFormForKind(kind: string): void {
@@ -2201,12 +2228,14 @@ export class HarborAssistantComponent implements OnInit {
         .slice(0, 6);
       const catalogInstalled = this.customerModelCards()
         .filter((card) => card.section === 'installed' && this.modelCardMatchesWorkflowKind(card, matchKind))
+        .map((card) => this.withCapabilityContext(card, capability.capability_id))
         .slice(0, 6);
       const available = (capability.installable_models ?? [])
         .map((model) => this.modelCapabilityChoiceCard(capability.capability_id, model, 'available'))
         .slice(0, installed.length ? 4 : 8);
       const catalogAvailable = this.customerModelCards()
         .filter((card) => card.section === 'available' && this.modelCardMatchesWorkflowKind(card, matchKind))
+        .map((card) => this.withCapabilityContext(card, capability.capability_id))
         .slice(0, installed.length || catalogInstalled.length ? 4 : 8);
       return this.uniqueModelCards([
         ...installed,
@@ -2336,6 +2365,7 @@ export class HarborAssistantComponent implements OnInit {
       const catalogChoices = this.customerModelCards()
         .filter((card) => card.section === 'available' && this.modelCardMatchesWorkflowKind(card, matchKind))
         .filter((card) => this.modelCardIsInstallable(card) || card.action === 'configure-cloud' || card.action === 'manual-source')
+        .map((card) => this.withCapabilityContext(card, capability.capability_id))
         .slice(0, 8);
       return this.uniqueModelCards([...capabilityChoices, ...catalogChoices]).slice(0, 10);
     }
@@ -2368,6 +2398,20 @@ export class HarborAssistantComponent implements OnInit {
       seen.add(key);
       return true;
     });
+  }
+
+  private withCapabilityContext(card: CustomerModelCard, capabilityId: string): CustomerModelCard {
+    if (card.capabilityId === capabilityId) {
+      return card;
+    }
+    return {
+      ...card,
+      key: `${capabilityId}:${card.key}`,
+      capabilityId,
+      capabilities: card.capabilities.includes(capabilityId)
+        ? card.capabilities
+        : [...card.capabilities, capabilityId],
+    };
   }
 
   protected workflowDownloadingModelChoices(kind: string): CustomerModelCard[] {
@@ -2892,10 +2936,8 @@ export class HarborAssistantComponent implements OnInit {
     const selected = capability?.selected_model_id === model.model_id;
     const isCurrent = runtimeActive;
     const runtimeProfiles = model.runtime_profiles ?? catalogModel?.runtime_profiles ?? [];
-    const externalRuntimeOnly = this.modelUsesExternalRuntime(runtimeProfiles)
-      && !this.modelUsesManagedRuntime(runtimeProfiles);
     const action: CustomerModelAction = section === 'installed'
-      ? (isCurrent ? 'current' : externalRuntimeOnly ? 'configure-external-runtime' : 'set-current')
+      ? (isCurrent ? 'current' : 'set-current')
       : this.isFailedStatus(model.status) ? 'retry' : 'download';
     return {
       key: `${capabilityId}:${section}:${model.model_id}`,
@@ -2919,18 +2961,17 @@ export class HarborAssistantComponent implements OnInit {
       action,
       actionLabel: action === 'current'
         ? T('Selected')
-        : action === 'configure-external-runtime'
-          ? T('Configure endpoint')
         : action === 'set-current'
           ? (selected ? T('Restart') : T('Select'))
           : action === 'retry'
             ? T('Download again')
-            : T('Download'),
+            : T('Select'),
       progressLabel: null,
       bytesLabel: null,
       speedLabel: null,
       errorMessage: null,
       runtimeGuidance: this.modelRuntimeGuidance(runtimeProfiles),
+      runtimeProfiles,
       evidence: [],
       section,
       catalogModel,
@@ -2970,6 +3011,7 @@ export class HarborAssistantComponent implements OnInit {
       speedLabel: this.downloadSpeedLabel(job),
       errorMessage: job.error_message ?? null,
       runtimeGuidance: this.modelRuntimeGuidance(catalogModel?.runtime_profiles),
+      runtimeProfiles: catalogModel?.runtime_profiles ?? [],
       evidence: [],
       section: failed ? 'available' : 'downloading',
       catalogModel,
@@ -3006,6 +3048,7 @@ export class HarborAssistantComponent implements OnInit {
       speedLabel: null,
       errorMessage: configured ? null : T('FlashV4 is not missing; the current cloud endpoint has no API key configured.'),
       runtimeGuidance: null,
+      runtimeProfiles: [],
       evidence: [],
       section: 'available',
       catalogModel: null,
@@ -3181,7 +3224,7 @@ export class HarborAssistantComponent implements OnInit {
         || normalized.includes('sglang');
     });
     return externalOnly
-      ? T('Uses an external OpenAI-compatible runtime; configure it in advanced settings.')
+      ? T('Uses an OpenAI-compatible runtime. Harbor Assistant will configure the endpoint automatically when selected.')
       : null;
   }
 
@@ -3429,6 +3472,7 @@ export class HarborAssistantComponent implements OnInit {
       speedLabel: latestJob ? this.downloadSpeedLabel(latestJob) : null,
       errorMessage: latestJob?.error_message ?? null,
       runtimeGuidance: this.modelRuntimeGuidance(model.runtime_profiles),
+      runtimeProfiles: model.runtime_profiles ?? [],
       evidence: model.evidence ?? [],
       section: activeJob ? 'downloading' : installed ? 'installed' : 'available',
       catalogModel: model,
@@ -3504,20 +3548,18 @@ export class HarborAssistantComponent implements OnInit {
       case 'downloading':
         return T('Downloading');
       case 'set-current':
-        return T('Set as current model');
+        return T('Select');
       case 'current':
-        return T('Current model');
+        return T('Selected');
       case 'retry':
         return T('Download again');
       case 'manual-source':
         return T('Enter download URL');
-      case 'configure-external-runtime':
-        return T('Configure endpoint');
       case 'configure-cloud':
         return T('Configure API key');
       case 'download':
       default:
-        return T('Download');
+        return T('Select');
     }
   }
 
@@ -3617,17 +3659,6 @@ export class HarborAssistantComponent implements OnInit {
       ?? null;
   }
 
-  private uniqueEndpointsForKinds(kinds: string[]): ModelEndpointRecord[] {
-    const selected = new Map<string, ModelEndpointRecord>();
-    kinds.forEach((kind) => {
-      const endpoint = this.endpointForKind(kind);
-      if (endpoint) {
-        selected.set(endpoint.model_endpoint_id, endpoint);
-      }
-    });
-    return Array.from(selected.values());
-  }
-
   private endpointKindMatches(endpoint: ModelEndpointRecord, targetKind: string): boolean {
     const endpointKind = (endpoint.model_kind || '').trim().toLowerCase();
     return this.endpointKindAliases(targetKind).includes(endpointKind);
@@ -3725,8 +3756,60 @@ export class HarborAssistantComponent implements OnInit {
     return this.isFailedStatus(job.status);
   }
 
+  private isCompletedDownloadJob(job: LocalModelDownloadJob): boolean {
+    return ['completed', 'ready', 'installed'].includes((job.status || '').toLowerCase());
+  }
+
   private isFailedStatus(status: string | null | undefined): boolean {
     return ['failed', 'error', 'canceled', 'cancelled'].includes((status || '').toLowerCase());
+  }
+
+  private completeAutoModelSelections(): void {
+    if (this.isBusy()) {
+      return;
+    }
+    const job = this.downloadJobs().find((candidate) => {
+      return this.isCompletedDownloadJob(candidate)
+        && this.jobMetadataBoolean(candidate, 'auto_select_after_download')
+        && !this.autoSelectedDownloadJobIds.has(candidate.job_id);
+    });
+    if (!job) {
+      return;
+    }
+    const modelId = this.jobMetadataString(job, 'auto_select_model_id') || job.model_id;
+    const capabilityId = this.jobMetadataString(job, 'auto_select_capability_id')
+      || this.jobMetadataString(job, 'capability_id');
+    const card = this.customerModelCards().find((candidate) => {
+      return candidate.modelId === modelId
+        && candidate.section === 'installed'
+        && (!capabilityId || candidate.capabilityId === capabilityId || candidate.capabilities.includes(capabilityId));
+    }) ?? this.installedCapabilityModelCard(modelId, capabilityId);
+    if (!card) {
+      return;
+    }
+    this.autoSelectedDownloadJobIds.add(job.job_id);
+    this.useInstalledModel({
+      ...card,
+      capabilityId: card.capabilityId ?? capabilityId,
+    });
+  }
+
+  private jobMetadataString(job: LocalModelDownloadJob, key: string): string {
+    const value = job.metadata?.[key];
+    return typeof value === 'string' ? value.trim() : '';
+  }
+
+  private jobMetadataBoolean(job: LocalModelDownloadJob, key: string): boolean {
+    return job.metadata?.[key] === true;
+  }
+
+  private installedCapabilityModelCard(modelId: string, capabilityId: string): CustomerModelCard | null {
+    const capability = this.workflowCapabilityForKind(capabilityId);
+    const installedModel = capability?.installed_models?.find((model) => model.model_id === modelId);
+    if (!capability || !installedModel) {
+      return null;
+    }
+    return this.modelCapabilityChoiceCard(capability.capability_id, installedModel, 'installed');
   }
 
   private metadataNumber(metadata: Record<string, unknown> | undefined, key: string): number | null {
@@ -3753,6 +3836,7 @@ export class HarborAssistantComponent implements OnInit {
     ).subscribe({
       next: (downloads) => {
         this.localDownloads.set(downloads);
+        this.completeAutoModelSelections();
         if (!this.hasActiveDownloadJobs(downloads.jobs)) {
           this.loadData();
         }
@@ -3888,6 +3972,7 @@ export class HarborAssistantComponent implements OnInit {
         hardware: payload.hardware.error,
         rag: payload.rag.error,
       });
+      this.completeAutoModelSelections();
     });
   }
 
@@ -3995,6 +4080,7 @@ export class HarborAssistantComponent implements OnInit {
     this.patchDvrForm(pageData.dvrSettings.data);
     this.ensureSelectedPolicy();
     this.patchCloudApiForm();
+    this.completeAutoModelSelections();
   }
 
   private clearData(): void {
