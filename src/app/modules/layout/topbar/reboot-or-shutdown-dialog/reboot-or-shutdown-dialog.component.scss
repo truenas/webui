@@ -1,4 +1,8 @@
 .confirm {
+  // Stack the validation error under the label (ix-checkbox lays them out in a
+  // row by default) so it doesn't widen the row and wrap the buttons.
+  align-items: flex-start;
+  flex-direction: column;
   margin-right: auto;
 }
 

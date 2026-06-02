@@ -16,6 +16,10 @@ ix-form-actions {
 
 // The Confirm gate sits on the left of the footer; action buttons stay right.
 .confirm {
+  // Stack the validation error under the label (ix-checkbox lays them out in a
+  // row by default) so it doesn't widen the row and wrap the buttons.
+  align-items: flex-start;
+  flex-direction: column;
   margin-right: auto;
 }
 

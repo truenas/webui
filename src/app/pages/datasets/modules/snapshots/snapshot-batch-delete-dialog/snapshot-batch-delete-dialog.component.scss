@@ -2,8 +2,11 @@
   display: block;
   min-width: 370px;
 
-  // Confirm gate left, action buttons right.
+  // Confirm gate left, action buttons right. Stack the validation error under
+  // the label (ix-checkbox rows them by default) so it doesn't wrap the buttons.
   .confirm {
+    align-items: flex-start;
+    flex-direction: column;
     margin-right: auto;
   }
 
