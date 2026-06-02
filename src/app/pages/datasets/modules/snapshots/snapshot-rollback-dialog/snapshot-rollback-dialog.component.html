@@ -83,8 +83,8 @@
           type="submit"
           color="primary"
           ixTest="go-to-storage"
-         
           [routerLink]="['/storage']"
+          (click)="dialogRef.close()"
         >
           {{ 'Go to Storage' | translate }}
         </a>
