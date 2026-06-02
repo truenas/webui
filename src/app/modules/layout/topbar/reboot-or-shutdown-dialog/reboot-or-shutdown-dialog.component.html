@@ -16,14 +16,13 @@
     }
   }
 
-  <ix-checkbox
-    class="confirm"
-    [formControl]="form.controls.confirm"
-    [label]="'Confirm' | translate"
-    [required]="true"
-  ></ix-checkbox>
-
   <ix-form-actions tnDialogAction>
+    <ix-checkbox
+      class="confirm"
+      [formControl]="form.controls.confirm"
+      [label]="'Confirm' | translate"
+      [required]="true"
+    ></ix-checkbox>
     <tn-button
       variant="outline"
       ixTest="cancel"

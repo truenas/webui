@@ -20,14 +20,13 @@
   padding: 0 12px 12px;
 }
 
+// Anchor the footer row to the top so the Confirm validation error grows
+// downward without shifting the action buttons.
+.form-actions {
+  align-items: flex-start;
+}
+
 .confirm {
   margin-right: auto;
   padding-right: 10px;
-
-  // Reboot buttons are disabled until this is checked and the label is marked
-  // required (*), so suppress the inline "Confirm is required" error — it would
-  // otherwise grow the footer and shift the buttons when toggled.
-  ::ng-deep ix-errors {
-    display: none;
-  }
 }

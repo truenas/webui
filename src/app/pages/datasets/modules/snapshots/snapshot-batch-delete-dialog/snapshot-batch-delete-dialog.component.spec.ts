@@ -10,7 +10,7 @@ import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
@@ -59,10 +59,8 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
   });
 
   it('deletes selected snapshots when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Confirm: true,
-    });
+    const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.setValue(true);
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();

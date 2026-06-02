@@ -1,3 +1,9 @@
 .confirm {
   margin-right: auto;
 }
+
+// Anchor the footer row to the top so the Confirm validation error grows
+// downward without shifting the action buttons.
+ix-form-actions {
+  align-items: flex-start;
+}

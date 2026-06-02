@@ -12,6 +12,7 @@ import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -83,10 +84,8 @@ describe('DockerImageDeleteDialogComponent', () => {
 
     expect(spectator.fixture.nativeElement).toHaveText('The following 2 docker images will be deleted. Are you sure you want to proceed?');
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Confirm: true,
-    });
+    const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.setValue(true);
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
@@ -110,9 +109,10 @@ describe('DockerImageDeleteDialogComponent', () => {
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      Confirm: true,
       Force: true,
     });
+    const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.setValue(true);
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
@@ -130,10 +130,8 @@ describe('DockerImageDeleteDialogComponent', () => {
     ];
     spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Confirm: true,
-    });
+    const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.setValue(true);
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ selector: '[ixTest="delete"]' }));
     await deleteButton.click();

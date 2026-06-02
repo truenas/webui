@@ -29,16 +29,15 @@
     }
   </div>
 
+</form>
+<ix-form-actions tnDialogAction [formGroup]="form">
   @if (!isJobCompleted()) {
     <ix-checkbox
+      class="confirm"
       formControlName="confirm"
       [label]="'Confirm' | translate"
       [required]="true"
     ></ix-checkbox>
-  }
-</form>
-<ix-form-actions tnDialogAction>
-  @if (!isJobCompleted()) {
     <tn-button
       variant="outline"
       ixTest="save"

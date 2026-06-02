@@ -2,6 +2,17 @@
   display: block;
   min-width: 500px;
 
+  // Confirm gate left, action buttons right.
+  .confirm {
+    margin-right: auto;
+  }
+
+  // Anchor the footer row to the top so the Confirm validation error grows
+  // downward without shifting the action buttons.
+  ix-form-actions {
+    align-items: flex-start;
+  }
+
   .bulk-list {
     max-height: 50vh;
     overflow-y: auto;
