@@ -50,8 +50,11 @@ export function harborAssistantSearchSameOriginAdminUrl(url: string | null | und
   try {
     const parsed = new URL(url, 'http://harbor.local');
     const path = `${parsed.pathname}${parsed.search}`;
-    if (path.startsWith('/api/harbor-beacon/') || path.startsWith('/api/beacon/')) {
+    if (path.startsWith('/api/beacon/')) {
       return path;
+    }
+    if (path.startsWith('/api/harbor-beacon/')) {
+      return harborAssistantBeaconApiUrl(path.slice('/api/harbor-beacon'.length));
     }
     if (path.startsWith('/api/')) {
       return harborAssistantBeaconApiUrl(path.slice(4));

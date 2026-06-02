@@ -158,6 +158,9 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
 
   protected readonly metrics = computed<HomeAssistantMetric[]>(() => {
     const status = this.status();
+    const serviceDomainCount = this.serviceDomains().length;
+    const serviceCount = status?.service_count
+      ?? this.serviceDomains().reduce((count, domain) => count + domain.services.length, 0);
     return [
       {
         label: T('Entities'),
@@ -166,8 +169,13 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
       },
       {
         label: T('Service domains'),
-        value: String(status?.service_count ?? this.serviceDomains().length),
-        tone: (status?.service_count ?? this.serviceDomains().length) > 0 ? 'good' : 'neutral',
+        value: String(serviceDomainCount),
+        tone: serviceDomainCount > 0 ? 'good' : 'neutral',
+      },
+      {
+        label: T('Services'),
+        value: String(serviceCount),
+        tone: serviceCount > 0 ? 'good' : 'neutral',
       },
       {
         label: T('Version'),
@@ -379,7 +387,15 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
     if (!value) {
       return T('Never');
     }
-    return value;
+    const trimmed = value.trim();
+    const numericTimestamp = /^\d{10,13}$/.test(trimmed) ? Number(trimmed) : NaN;
+    const date = Number.isFinite(numericTimestamp)
+      ? new Date(trimmed.length === 10 ? numericTimestamp * 1000 : numericTimestamp)
+      : new Date(trimmed);
+    if (!Number.isNaN(date.getTime())) {
+      return date.toLocaleString();
+    }
+    return trimmed;
   }
 
   private refreshInventory(): void {

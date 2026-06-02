@@ -51,6 +51,8 @@ import {
   ModelEndpointsResponse,
   ModelEndpointTestResult,
   ModelPoliciesResponse,
+  ModelRuntimeInstallResponse,
+  ModelRuntimeManagerResponse,
   NotificationTargetsResponse,
   RagReadinessResponse,
   RtspCheckPayload,
@@ -226,6 +228,17 @@ export class HarborAssistantApiService {
 
   getModelCapabilities(): Observable<ModelCapabilitiesResponse> {
     return this.http.get<ModelCapabilitiesResponse>(this.apiUrl('/models/capabilities'));
+  }
+
+  getModelRuntimes(): Observable<ModelRuntimeManagerResponse> {
+    return this.http.get<ModelRuntimeManagerResponse>(this.apiUrl('/models/runtimes'));
+  }
+
+  installModelRuntime(runtimeId: string): Observable<ModelRuntimeInstallResponse> {
+    return this.http.post<ModelRuntimeInstallResponse>(
+      this.apiUrl(`/models/runtimes/${encodeURIComponent(runtimeId)}/install`),
+      {},
+    );
   }
 
   updateModelStore(path: string): Observable<ModelStoreStatusResponse> {

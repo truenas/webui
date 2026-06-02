@@ -88,6 +88,8 @@ describe('Harbor Assistant search result helpers', () => {
       .toBe('/api/harbor-beacon/knowledge/preview?path=/recordings/a.mp4');
     expect(harborAssistantSearchSameOriginAdminUrl('/api/cameras/camera-main/snapshot.jpg'))
       .toBe('/api/harbor-beacon/cameras/camera-main/snapshot.jpg');
+    expect(harborAssistantSearchSameOriginAdminUrl('/api/harbor-beacon/cameras/camera-main/snapshot.jpg'))
+      .toBe('/api/harbor-beacon/cameras/camera-main/snapshot.jpg');
     expect(harborAssistantSearchSameOriginAdminUrl('http://127.0.0.1/ui/assets/harbor-fixtures/public-fixture-dvr.jpg'))
       .toBe('/ui/assets/harbor-fixtures/public-fixture-dvr.jpg');
   });

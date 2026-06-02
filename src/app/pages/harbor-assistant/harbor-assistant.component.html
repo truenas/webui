@@ -484,6 +484,51 @@
                 </div>
               </section>
             }
+            @if (modelRuntimeCards().length) {
+              <section class="ai-settings-panel runtime-manager-panel">
+                <div class="runtime-manager-heading">
+                  <div>
+                    <span class="field-label">{{ 'Runtime Manager' | translate }}</span>
+                    <strong>{{ (modelRuntimeManagerResponse()?.status || modelCapabilitiesResponse()?.runtime_manager?.status || 'unknown') | translate }}</strong>
+                  </div>
+                  @if (modelRuntimeManagerResponse()?.blockers?.length || modelCapabilitiesResponse()?.runtime_manager?.blockers?.length) {
+                    <p class="muted warn">
+                      {{ (modelRuntimeManagerResponse()?.blockers || modelCapabilitiesResponse()?.runtime_manager?.blockers || [])[0] | translate }}
+                    </p>
+                  }
+                </div>
+                <div class="runtime-card-grid">
+                  @for (runtime of modelRuntimeCards(); track runtime.runtime_id) {
+                    <article class="runtime-card">
+                      <div>
+                        <strong>{{ runtime.display_name }}</strong>
+                        <p class="muted">{{ runtimeCapabilitiesLabel(runtime) | translate }}</p>
+                        @if (runtime.model_store_path) {
+                          <p class="muted mono-text">{{ runtime.model_store_path }}</p>
+                        }
+                        @if (runtime.message) {
+                          <p class="muted">{{ runtime.message | translate }}</p>
+                        }
+                      </div>
+                      <div class="runtime-card-actions">
+                        <span class="pill" [ngClass]="runtimeToneClass(runtime)">
+                          {{ runtime.status | translate }}
+                        </span>
+                        <button
+                          mat-button
+                          color="primary"
+                          type="button"
+                          [disabled]="runtimeActionDisabled(runtime)"
+                          (click)="installModelRuntime(runtime)"
+                        >
+                          {{ actionBusy('model-runtime-install:' + runtime.runtime_id) ? ('Installing...' | translate) : (runtimeActionLabel(runtime) | translate) }}
+                        </button>
+                      </div>
+                    </article>
+                  }
+                </div>
+              </section>
+            }
 
             <section class="ai-settings-panel model-capability-list">
               <div class="model-capability-header">
@@ -503,6 +548,9 @@
                     <div class="model-current-cell">
                       <strong>{{ workflowCurrentModelName(capability.capabilityId) }}</strong>
                       <p class="muted">{{ workflowCurrentModelDetail(capability.capabilityId) }}</p>
+                      @if (workflowRuntimeNotice(capability.capabilityId); as runtimeNotice) {
+                        <p class="muted warn">{{ runtimeNotice | translate }}</p>
+                      }
                     </div>
                     <span class="pill" [ngClass]="workflowCapabilityToneClass(capability.capabilityId)">
                       {{ workflowCapabilityStatusLabel(capability.capabilityId) | translate }}
@@ -514,6 +562,17 @@
                       <button mat-button type="button" (click)="openModelCapabilityMoreModels(capability)">
                         {{ 'More models' | translate }}
                       </button>
+                      @if (workflowRuntimeInstallCandidate(capability.capabilityId); as runtime) {
+                        <button
+                          mat-button
+                          color="primary"
+                          type="button"
+                          [disabled]="runtimeActionDisabled(runtime)"
+                          (click)="installModelRuntime(runtime)"
+                        >
+                          {{ 'Install runtime' | translate }}
+                        </button>
+                      }
                       @if (workflowTestEndpoint(capability.capabilityId); as endpoint) {
                         <button
                           mat-button
