@@ -1,7 +1,6 @@
-import { Overlay } from '@angular/cdk/overlay';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnDialog } from '@truenas/ui-components';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
@@ -13,14 +12,10 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
 describe('HaStatusIconComponent', () => {
   let spectator: Spectator<HaStatusIconComponent>;
   let mockStore$: MockStore;
-  const positionStrategy = { top: jest.fn().mockReturnThis(), right: jest.fn().mockReturnThis() };
   const createComponent = createComponentFactory({
     component: HaStatusIconComponent,
     providers: [
-      mockProvider(TnDialog),
-      mockProvider(Overlay, {
-        position: jest.fn(() => ({ global: () => positionStrategy })),
-      }),
+      mockProvider(MatDialog),
       provideMockStore({
         selectors: [
           {
@@ -73,7 +68,7 @@ describe('HaStatusIconComponent', () => {
   it('opens status popover when icon is clicked', () => {
     spectator.click('button');
 
-    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
       HaStatusPopoverComponent,
       expect.objectContaining({
         data: [],

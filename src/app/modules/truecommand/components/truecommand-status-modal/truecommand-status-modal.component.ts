@@ -1,11 +1,14 @@
-import { DIALOG_DATA } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
+} from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent } from '@truenas/ui-components';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -20,10 +23,12 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
   styleUrls: ['./truecommand-status-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnDialogShellComponent,
-    TnButtonComponent,
+    MatDialogTitle,
     MatDivider,
+    MatDialogContent,
     TnIconComponent,
+    MatDialogActions,
+    MatButton,
     TestDirective,
     TranslateModule,
   ],
@@ -32,7 +37,7 @@ export class TruecommandStatusModalComponent {
   data = inject<{
     parent: TruecommandButtonComponent;
     data: TrueCommandConfig;
-  }>(DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
   private window = inject<Window>(WINDOW);
   private dialogService = inject(DialogService);

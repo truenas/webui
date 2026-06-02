@@ -7,6 +7,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -82,6 +83,9 @@ export class TopbarComponent implements OnInit {
   private router = inject(Router);
   private systemGeneralService = inject(SystemGeneralService);
   private tnDialog = inject(TnDialog);
+  // FeedbackDialog is still a MatDialog component (migrated separately), so it
+  // must be opened via MatDialog until that migration lands.
+  private matDialog = inject(MatDialog);
   private dialogService = inject(DialogService);
   private store$ = inject<Store<AlertSlice>>(Store);
   private appStore$ = inject<Store<AppState>>(Store);
@@ -233,7 +237,7 @@ export class TopbarComponent implements OnInit {
   }
 
   onFeedbackIndicatorPressed(): void {
-    this.tnDialog.open(FeedbackDialog);
+    this.matDialog.open(FeedbackDialog);
   }
 
   private checkRebootInfo(): Observable<unknown> {

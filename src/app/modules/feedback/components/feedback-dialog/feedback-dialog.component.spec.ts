@@ -1,12 +1,11 @@
-import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnDialogHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -52,12 +51,12 @@ describe('FeedbackDialogComponent', () => {
         checkIfReviewAllowed: () => isReviewAllowed$,
       }),
       mockProvider(SystemGeneralService),
-      mockProvider(DialogRef),
+      mockProvider(MatDialogRef),
       mockApi([
         mockCall('support.attach_ticket_max_size', 5),
       ]),
       {
-        provide: DIALOG_DATA,
+        provide: MAT_DIALOG_DATA,
         useValue: null,
       },
       provideMockStore({
@@ -87,9 +86,8 @@ describe('FeedbackDialogComponent', () => {
       await setupTest();
     });
 
-    it('shows the header', async () => {
-      const dialog = await loader.getHarness(TnDialogHarness);
-      expect(await dialog.getTitle()).toBe('Send Feedback');
+    it('shows the header', () => {
+      expect(spectator.query('h1')).toHaveText('Send Feedback');
     });
 
     describe('type selector', () => {
@@ -127,7 +125,7 @@ describe('FeedbackDialogComponent', () => {
 
         const visibleForm = spectator.query(FileReviewComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm!.dialogRef).toBe(spectator.inject(DialogRef));
+        expect(visibleForm!.dialogRef).toBe(spectator.inject(MatDialogRef));
 
         expect(spectator.query(FileTicketComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
@@ -139,7 +137,7 @@ describe('FeedbackDialogComponent', () => {
 
         let visibleForm = spectator.query(FileTicketComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm!.dialogRef()).toBe(spectator.inject(DialogRef));
+        expect(visibleForm!.dialogRef()).toBe(spectator.inject(MatDialogRef));
         expect(visibleForm!.type()).toBe(FeedbackType.Bug);
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
@@ -147,7 +145,7 @@ describe('FeedbackDialogComponent', () => {
 
         visibleForm = spectator.query(FileTicketComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm!.dialogRef()).toBe(spectator.inject(DialogRef));
+        expect(visibleForm!.dialogRef()).toBe(spectator.inject(MatDialogRef));
         expect(visibleForm!.type()).toBe(FeedbackType.Bug);
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
@@ -165,7 +163,7 @@ describe('FeedbackDialogComponent', () => {
 
         const visibleForm = spectator.query(FileTicketLicensedComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm!.dialogRef).toBe(spectator.inject(DialogRef));
+        expect(visibleForm!.dialogRef).toBe(spectator.inject(MatDialogRef));
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketComponent)).not.toExist();
@@ -182,7 +180,7 @@ describe('FeedbackDialogComponent', () => {
         spectator.detectChanges();
 
         const visibleForm = spectator.query(FileTicketComponent);
-        expect(visibleForm!.dialogRef()).toBe(spectator.inject(DialogRef));
+        expect(visibleForm!.dialogRef()).toBe(spectator.inject(MatDialogRef));
 
         spectator.component.onIsLoadingChange(true);
         expect(visibleForm!.dialogRef()).toHaveProperty('disableClose', true);
@@ -197,7 +195,7 @@ describe('FeedbackDialogComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: DIALOG_DATA,
+          provide: MAT_DIALOG_DATA,
           useValue: FeedbackType.Bug,
         },
       ],

@@ -1,18 +1,18 @@
-import { DialogRef } from '@angular/cdk/dialog';
-import { Overlay } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import {
   HaStatusPopoverComponent,
 } from 'app/modules/layout/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
+import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -33,8 +33,7 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
 export class HaStatusIconComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private cdr = inject(ChangeDetectorRef);
-  private tnDialog = inject(TnDialog);
-  private overlay = inject(Overlay);
+  private matDialog = inject(MatDialog);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
@@ -43,7 +42,7 @@ export class HaStatusIconComponent implements OnInit {
   failoverDisabledReasons: FailoverDisabledReason[] = [];
 
   private isStatusPanelOpen = false;
-  private statusPanelRef: DialogRef<boolean, HaStatusPopoverComponent>;
+  private statusPanelRef: MatDialogRef<HaStatusPopoverComponent>;
 
   get isReconnecting(): boolean {
     return this.failoverDisabledReasons[0] === FailoverDisabledReason.NoSystemReady;
@@ -72,15 +71,12 @@ export class HaStatusIconComponent implements OnInit {
     if (this.isStatusPanelOpen) {
       this.statusPanelRef.close(true);
     } else {
-      this.statusPanelRef = this.tnDialog.open<HaStatusPopoverComponent, FailoverDisabledReason[], boolean>(
-        HaStatusPopoverComponent,
-        {
-          hasBackdrop: true,
-          panelClass: 'topbar-panel',
-          positionStrategy: this.overlay.position().global().top('48px').right('16px'),
-          data: this.failoverDisabledReasons,
-        },
-      );
+      this.statusPanelRef = this.matDialog.open(HaStatusPopoverComponent, {
+        hasBackdrop: true,
+        panelClass: 'topbar-panel',
+        position: topbarDialogPosition,
+        data: this.failoverDisabledReasons,
+      });
     }
   }
 

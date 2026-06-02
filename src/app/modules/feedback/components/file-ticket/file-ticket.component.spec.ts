@@ -1,7 +1,7 @@
-import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule, ValidationErrors } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, createSpyObject, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -26,7 +26,7 @@ describe('FileTicketComponent', () => {
   let form: IxFormHarness;
   let loginToJiraButton: OauthButtonComponent;
   let feedbackService: FeedbackService;
-  const dialogRef = createSpyObject(DialogRef);
+  const dialogRef = createSpyObject(MatDialogRef);
 
   const createComponent = createComponentFactory({
     component: FileTicketComponent,

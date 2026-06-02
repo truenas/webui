@@ -1,4 +1,4 @@
-import { DIALOG_DATA } from '@angular/cdk/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import {
@@ -17,7 +17,7 @@ describe('HaStatusPopoverComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: DIALOG_DATA,
+          provide: MAT_DIALOG_DATA,
           useValue: [],
         },
       ],
@@ -30,7 +30,7 @@ describe('HaStatusPopoverComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: DIALOG_DATA,
+          provide: MAT_DIALOG_DATA,
           useValue: [
             FailoverDisabledReason.NoVip,
             FailoverDisabledReason.NoPong,

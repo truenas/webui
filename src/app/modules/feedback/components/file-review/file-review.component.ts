@@ -1,10 +1,10 @@
-import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
 import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
@@ -33,13 +33,15 @@ export const maxFileSizeBytes = 5 * MiB;
   templateUrl: './file-review.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    MatDialogContent,
     ReactiveFormsModule,
     IxStarRatingComponent,
     IxTextareaComponent,
     IxCheckboxComponent,
     IxFileInputComponent,
+    MatDialogActions,
     FormActionsComponent,
-    TnButtonComponent,
+    MatButton,
     TestDirective,
     TranslateModule,
   ],
@@ -53,7 +55,7 @@ export class FileReviewComponent {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  readonly dialogRef = input.required<DialogRef<unknown, FeedbackDialog>>();
+  readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
   readonly isLoading = input<boolean>();
 
   readonly isLoadingChange = output<boolean>();

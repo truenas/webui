@@ -1,7 +1,7 @@
-import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -28,12 +28,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './file-ticket.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    MatDialogContent,
     ReactiveFormsModule,
     IxInputComponent,
     SimilarIssuesComponent,
     IxTextareaComponent,
     IxCheckboxComponent,
     IxFileInputComponent,
+    MatDialogActions,
     FormActionsComponent,
     OauthButtonComponent,
     TranslateModule,
@@ -48,7 +50,7 @@ export class FileTicketComponent {
   private destroyRef = inject(DestroyRef);
 
   readonly type = input.required<FeedbackType.Bug | FeedbackType.Suggestion>();
-  readonly dialogRef = input.required<DialogRef<unknown, FeedbackDialog>>();
+  readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
   readonly isLoading = input.required<boolean>();
 
   readonly isLoadingChange = output<boolean>();

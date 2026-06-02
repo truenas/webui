@@ -1,12 +1,12 @@
 /* eslint-disable jest/no-conditional-expect */
-import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   Spectator, createComponentFactory, mockProvider, SpectatorFactory,
 } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
@@ -35,7 +35,7 @@ describe('TruecommandButtonComponent', () => {
   let spectator: Spectator<TruecommandButtonComponent>;
   let loader: HarnessLoader;
   let dialogServiceMock: DialogService;
-  let tnDialogMock: TnDialog;
+  let matDialogMock: MatDialog;
 
   function createComponentWithData(config: Partial<TrueCommandConfig>): SpectatorFactory<TruecommandButtonComponent> {
     return createComponentFactory({
@@ -51,12 +51,12 @@ describe('TruecommandButtonComponent', () => {
         mockProvider(DialogService, {
           generalDialog: jest.fn(() => of()),
         }),
-        mockProvider(TnDialog, {
+        mockProvider(MatDialog, {
           open: jest.fn(() => ({
-            closed: of(undefined),
+            afterClosed: jest.fn(() => of()),
           })),
         }),
-        mockProvider(DialogRef),
+        mockProvider(MatDialogRef),
       ],
     });
   }
@@ -84,7 +84,7 @@ describe('TruecommandButtonComponent', () => {
         spectator.click(spectator.query(expectedButtonId)!);
 
         if (expectedDialogType === 'form') {
-          expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(TruecommandSignupModalComponent);
+          expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(TruecommandSignupModalComponent);
         }
 
         if (expectedDialogType === 'general') {
@@ -129,8 +129,8 @@ describe('TruecommandButtonComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         dialogServiceMock = spectator.inject(DialogService);
 
-        tnDialogMock = spectator.inject(TnDialog);
-        jest.spyOn(tnDialogMock, 'open');
+        matDialogMock = spectator.inject(MatDialog);
+        jest.spyOn(matDialogMock, 'open');
       });
 
       it(`shows ${expectedButtonId} button with trueconnect icon`, async () => {
@@ -156,7 +156,7 @@ describe('TruecommandButtonComponent', () => {
         spectator.click(spectator.query(expectedButtonId)!);
 
         if (expectedDialogType === 'status') {
-          expect(tnDialogMock.open).toHaveBeenCalledWith(
+          expect(matDialogMock.open).toHaveBeenCalledWith(
             TruecommandStatusModalComponent,
             expect.objectContaining({
               data: expect.objectContaining({
@@ -171,7 +171,7 @@ describe('TruecommandButtonComponent', () => {
         }
 
         if (expectedDialogType === 'form') {
-          expect(tnDialogMock.open).toHaveBeenCalledWith(TruecommandSignupModalComponent);
+          expect(matDialogMock.open).toHaveBeenCalledWith(TruecommandSignupModalComponent);
         }
       });
     });
