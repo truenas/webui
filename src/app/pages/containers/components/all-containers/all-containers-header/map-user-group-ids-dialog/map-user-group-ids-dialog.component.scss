@@ -1,3 +1,17 @@
+:host {
+  display: block;
+  // Anchor the absolutely-positioned progress bar to the top of the dialog
+  // instead of letting it sit in normal flow below the header.
+  position: relative;
+}
+
+ix-fake-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
 .header {
   align-items: center;
   display: flex;
