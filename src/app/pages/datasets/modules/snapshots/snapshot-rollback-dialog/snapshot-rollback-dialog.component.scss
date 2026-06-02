@@ -7,13 +7,21 @@
     display: flex;
     justify-content: center;
   }
+
+  // The action container is a permanent direct child of the shell (so it can be
+  // projected into the footer), and only its content is conditional. While the
+  // snapshot is still loading the container is empty, so hide the footer bar to
+  // avoid rendering an empty bordered section.
+  ::ng-deep .tn-dialog__actions:has(.form-actions:empty) {
+    display: none;
+  }
 }
 
 .form-buttons {
   display: flex;
   flex: 1;
-  flex-direction: row-reverse;
   gap: 8px;
+  justify-content: flex-end;
 }
 
 .form-actions {
@@ -22,10 +30,4 @@
   flex-wrap: nowrap;
   gap: 8px;
   justify-content: flex-end;
-  padding-top: 16px;
-  margin-top: 12px;
-
-  ix-checkbox {
-    margin: 0;
-  }
 }

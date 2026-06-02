@@ -14,7 +14,6 @@ import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
@@ -43,7 +42,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormatDateTimePipe,
     RequiresRolesDirective,
     TestDirective,
-    FormActionsComponent,
     RouterLink,
     MatAnchor,
     TnBannerComponent,
