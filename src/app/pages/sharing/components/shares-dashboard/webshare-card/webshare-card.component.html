@@ -87,8 +87,8 @@
 
 <tn-side-panel
   [title]="'WebShare' | translate"
-  [(open)]="configOpen"
   [closeGuard]="closeConfigGuard"
+  [(open)]="configOpen"
 >
   @if (configOpen()) {
     <ix-service-webshare (closed)="onConfigClosed()"></ix-service-webshare>
