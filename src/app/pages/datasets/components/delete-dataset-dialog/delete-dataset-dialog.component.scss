@@ -8,21 +8,6 @@
   width: 400px;
 }
 
-// Anchor the footer row to the top so the Confirm validation error grows
-// downward without shifting the action buttons.
-ix-form-actions {
-  align-items: flex-start;
-}
-
-// The Confirm gate sits on the left of the footer; action buttons stay right.
-.confirm {
-  // Stack the validation error under the label (ix-checkbox lays them out in a
-  // row by default) so it doesn't widen the row and wrap the buttons.
-  align-items: flex-start;
-  flex-direction: column;
-  margin-right: auto;
-}
-
 .attachments {
   .services {
     list-style-type: none;

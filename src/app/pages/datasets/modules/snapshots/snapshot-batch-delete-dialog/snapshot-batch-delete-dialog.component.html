@@ -37,6 +37,12 @@
         </mat-expansion-panel>
       }
     </mat-accordion>
+
+    <ix-checkbox
+      formControlName="confirm"
+      [label]="'Confirm' | translate"
+      [required]="true"
+    ></ix-checkbox>
   </form>
 } @else {
   @if (jobErrors.length) {
@@ -53,14 +59,8 @@
     </p>
   }
 }
-<ix-form-actions tnDialogAction [formGroup]="form">
+<ix-form-actions tnDialogAction>
   @if (!isJobCompleted) {
-    <ix-checkbox
-      class="confirm"
-      formControlName="confirm"
-      [label]="'Confirm' | translate"
-      [required]="true"
-    ></ix-checkbox>
     <tn-button
       variant="outline"
       ixTest="cancel"

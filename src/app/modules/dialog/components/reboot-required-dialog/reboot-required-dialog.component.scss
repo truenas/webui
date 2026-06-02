@@ -20,17 +20,7 @@
   padding: 0 12px 12px;
 }
 
-// Anchor the footer row to the top so the Confirm validation error grows
-// downward without shifting the action buttons.
-.form-actions {
-  align-items: flex-start;
-}
-
 .confirm {
-  // Stack the validation error under the label so it doesn't widen the row and
-  // wrap the buttons (ix-checkbox lays label + errors out in a row by default).
-  align-items: flex-start;
-  flex-direction: column;
   margin-right: auto;
   padding-right: 10px;
 }

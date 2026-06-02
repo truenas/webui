@@ -23,20 +23,9 @@
 }
 
 .form-actions {
-  // Anchor the row to the top so the Confirm validation error grows downward
-  // without shifting the action buttons.
-  align-items: flex-start;
+  align-items: center;
   display: flex;
   flex-wrap: nowrap;
   gap: 8px;
   justify-content: flex-end;
-}
-
-// The Confirm gate sits on the left; the action buttons stay on the right.
-.confirm {
-  // Stack the validation error under the label (ix-checkbox lays them out in a
-  // row by default) so it doesn't widen the row and wrap the buttons.
-  align-items: flex-start;
-  flex-direction: column;
-  margin-right: auto;
 }

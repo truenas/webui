@@ -33,13 +33,18 @@
 
   @if (!isJobCompleted) {
     <ix-checkbox
+      formControlName="confirm"
+      [label]="'Confirm' | translate"
+      [required]="true"
+    ></ix-checkbox>
+    <ix-checkbox
       formControlName="force"
       [label]="'Force' | translate"
       [tooltip]="forceCheckboxTooltip | translate"
     ></ix-checkbox>
   }
 </form>
-<ix-form-actions tnDialogAction [formGroup]="form">
+<ix-form-actions tnDialogAction>
   @if (isJobCompleted) {
     <tn-button
       variant="outline"
@@ -48,12 +53,6 @@
       (onClick)="dialogRef.close(true)"
     ></tn-button>
   } @else {
-    <ix-checkbox
-      class="confirm"
-      formControlName="confirm"
-      [label]="'Confirm' | translate"
-      [required]="true"
-    ></ix-checkbox>
     <tn-button
       variant="outline"
       ixTest="cancel"

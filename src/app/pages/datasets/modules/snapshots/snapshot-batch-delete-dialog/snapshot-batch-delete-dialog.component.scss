@@ -2,14 +2,6 @@
   display: block;
   min-width: 370px;
 
-  // Confirm gate left, action buttons right. Stack the validation error under
-  // the label (ix-checkbox rows them by default) so it doesn't wrap the buttons.
-  .confirm {
-    align-items: flex-start;
-    flex-direction: column;
-    margin-right: auto;
-  }
-
   .mat-mdc-list {
     max-height: 50vh;
     overflow-y: auto;
@@ -74,9 +66,6 @@
   }
 
   ix-form-actions {
-    // Anchor the row to the top so the Confirm validation error grows downward
-    // without shifting the action buttons.
-    align-items: flex-start;
     padding: 0 24px 24px;
   }
 }
