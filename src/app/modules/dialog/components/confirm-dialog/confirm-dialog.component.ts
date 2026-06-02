@@ -50,13 +50,12 @@ export class ConfirmDialog {
     const options = inject<ConfirmOptionsWithSecondaryCheckbox>(DIALOG_DATA);
 
     this.options = { ...this.defaultOptions, ...options };
+    // Only block dismissal when there is no Cancel button (the user must make an
+    // explicit choice). Otherwise the dialog stays closable via ESC/backdrop —
+    // a dismiss resolves to `false` (see DialogService.confirm), so callers
+    // reading `.confirmed` are unaffected even with a secondary checkbox.
     if (options.hideCancel) {
       this.dialogRef.disableClose = options.hideCancel;
-    }
-
-    if (this.withSecondaryCheckbox) {
-      // Don't allow user to close via backdrop to ensure that object is returned.
-      this.dialogRef.disableClose = true;
     }
   }
 
