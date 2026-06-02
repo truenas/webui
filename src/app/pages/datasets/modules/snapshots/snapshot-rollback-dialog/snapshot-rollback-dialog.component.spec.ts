@@ -10,6 +10,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -91,8 +92,8 @@ describe('SnapshotRollbackDialog', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Stop Rollback if Snapshots Exist:': 'Newer Intermediate, Child, and Clone',
-      Confirm: true,
     });
+    await (await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }))).setValue(true);
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
@@ -108,9 +109,9 @@ describe('SnapshotRollbackDialog', () => {
     setupDialog();
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      Confirm: true,
       'Stop Rollback if Snapshots Exist:': 'Newer Clone',
     });
+    await (await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }))).setValue(true);
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
@@ -183,9 +184,9 @@ describe('SnapshotRollbackDialog', () => {
     setupDialog();
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      Confirm: true,
       'Stop Rollback if Snapshots Exist:': 'No Safety Check (CAUTION)',
     });
+    await (await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }))).setValue(true);
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();

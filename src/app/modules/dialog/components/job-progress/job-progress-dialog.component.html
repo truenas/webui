@@ -65,8 +65,14 @@
     }
   </div>
 
-  @if (hasAbortButton) {
-    <div tnDialogAction>
+  <!--
+    The footer must be a direct child of tn-dialog-shell: ng-content [select]
+    does not project from inside @if blocks, so the conditional lives inside the
+    action container. The empty container is hidden via scss when there is no
+    abort button (see :has(.abort-action:empty)).
+  -->
+  <div tnDialogAction class="abort-action">
+    @if (hasAbortButton) {
       <tn-button
         variant="outline"
         ixTest="abort"
@@ -75,6 +81,6 @@
         [ariaLabel]="'Abort Job' | translate"
         (onClick)="abortJob()"
       ></tn-button>
-    </div>
-  }
+    }
+  </div>
 </tn-dialog-shell>

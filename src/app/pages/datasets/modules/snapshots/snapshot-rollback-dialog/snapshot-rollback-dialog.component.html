@@ -57,12 +57,6 @@
           [message]="'Rolling the dataset back destroys data on the dataset and can destroy additional snapshots that are related to the dataset. This can result in permanent data loss. Do not roll back until all desired data and snapshots are backed up.' | translate"
         ></tn-banner>
       </div>
-
-      <ix-checkbox
-        [formControlName]="force.fcName"
-        [label]="force.label"
-        [required]="force.required"
-      ></ix-checkbox>
     </form>
   } @else {
     <p>
@@ -76,9 +70,14 @@
   not project from inside @if/@else blocks, so the conditional logic lives inside
   the action container instead of wrapping it.
 -->
-<div tnDialogAction class="form-actions">
+<div tnDialogAction class="form-actions" [formGroup]="form">
   @if (!isLoading() && snapshot && !wasDatasetRolledBack()) {
     <div class="form-buttons">
+      <ix-checkbox
+        [formControlName]="force.fcName"
+        [label]="force.label"
+        [required]="force.required"
+      ></ix-checkbox>
       <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
       <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="rollback" [label]="'Rollback' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
     </div>

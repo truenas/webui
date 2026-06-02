@@ -47,8 +47,8 @@
     </div>
   }
 
-  @if (thisNodeRebootReasons()?.length || otherNodeRebootReasons()?.length) {
-    <ix-form-actions tnDialogAction class="form-actions">
+  <ix-form-actions tnDialogAction class="form-actions">
+    @if (thisNodeRebootReasons()?.length || otherNodeRebootReasons()?.length) {
       <ix-checkbox
         class="confirm"
         [formControl]="form.controls.confirm"
@@ -82,6 +82,6 @@
           (onClick)="rebootRemoteNode()"
         ></tn-button>
       }
-    </ix-form-actions>
-  }
+    }
+  </ix-form-actions>
 </tn-dialog-shell>
