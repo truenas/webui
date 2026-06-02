@@ -19,9 +19,7 @@
 
 .form-buttons {
   display: flex;
-  flex: 1;
   gap: 8px;
-  justify-content: flex-end;
 }
 
 .form-actions {
@@ -30,4 +28,16 @@
   flex-wrap: nowrap;
   gap: 8px;
   justify-content: flex-end;
+}
+
+// The Confirm gate sits on the left; the action buttons stay on the right.
+.confirm {
+  margin-right: auto;
+
+  // The Rollback button is disabled until this is checked and the label is
+  // marked required (*), so suppress the inline "Confirm is required" error —
+  // it would otherwise grow the footer and shift the buttons when toggled.
+  ::ng-deep ix-errors {
+    display: none;
+  }
 }

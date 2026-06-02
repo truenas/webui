@@ -72,12 +72,13 @@
 -->
 <div tnDialogAction class="form-actions" [formGroup]="form">
   @if (!isLoading() && snapshot && !wasDatasetRolledBack()) {
+    <ix-checkbox
+      class="confirm"
+      [formControlName]="force.fcName"
+      [label]="force.label"
+      [required]="force.required"
+    ></ix-checkbox>
     <div class="form-buttons">
-      <ix-checkbox
-        [formControlName]="force.fcName"
-        [label]="force.label"
-        [required]="force.required"
-      ></ix-checkbox>
       <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
       <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="rollback" [label]="'Rollback' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
     </div>
