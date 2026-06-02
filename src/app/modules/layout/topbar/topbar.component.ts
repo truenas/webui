@@ -5,14 +5,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
-import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent } from '@truenas/ui-components';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -59,9 +57,6 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   imports: [
     MatToolbar,
     MatToolbarRow,
-    MatIconButton,
-    MatTooltip,
-    TnIconComponent,
     TnIconButtonComponent,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,

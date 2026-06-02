@@ -123,6 +123,8 @@ describe('FeedbackDialogComponent', () => {
 
         const visibleForm = spectator.query(FileReviewComponent);
         expect(visibleForm).toExist();
+        // White-box read of the child's signal input: no harness exposes "which form
+        // is active / what dialogRef it received", so we assert it directly.
         expect(visibleForm!.dialogRef()).toBe(spectator.inject(DialogRef));
 
         expect(spectator.query(FileTicketComponent)).not.toExist();

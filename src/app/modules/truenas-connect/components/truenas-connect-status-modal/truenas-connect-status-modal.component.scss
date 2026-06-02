@@ -1,9 +1,12 @@
-// The shell's `title` input only accepts a string, so render the TrueNAS Connect
-// logo where the title text would sit (via a background image). The shell header
-// lays the title out flex:1 with the close (X) button after it, so the logo lands
-// on the left and the X on the right — one row, matching the TrueCommand header.
-// The header's own border-bottom is the separator: it spans the full dialog width
-// (edge to edge), unlike a tn-divider, which sits inside the content padding.
+// TEMP: reaches into a @truenas/ui-components internal class because the shell's
+// `title` input only accepts a string; remove once tn-dialog-shell exposes a
+// supported title template / projection slot.
+// We render the TrueNAS Connect logo where the title text would sit (via a
+// background image). The shell header lays the title out flex:1 with the close
+// (X) button after it, so the logo lands on the left and the X on the right —
+// one row, matching the TrueCommand header. The header's own border-bottom is the
+// separator: it spans the full dialog width (edge to edge), unlike a tn-divider,
+// which sits inside the content padding.
 :host ::ng-deep .tn-dialog__title {
   height: 24px;
   background-image: url('assets/images/truenas-connect-logo-horizontal.svg');

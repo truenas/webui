@@ -2,17 +2,18 @@
   <mat-toolbar class="topbar">
     <mat-toolbar-row>
       <!-- Sidenav toggle button -->
-      <button
-        mat-icon-button
+      <tn-icon-button
         id="sidenavToggle"
-        matTooltipPosition="right"
+        name="menu"
+        library="mdi"
+        size="lg"
         ixTest="toggle-sidenav"
-        [attr.aria-label]="'Toggle Sidenav' | translate"
-        [matTooltip]="tooltips.toggleCollapse | translate"
-        (click)="onSidenavIndicatorPressed()"
-      >
-        <tn-icon size="lg" name="menu" library="mdi"></tn-icon>
-      </button>
+        tooltipPosition="right"
+        [dense]="true"
+        [tooltip]="tooltips.toggleCollapse | translate"
+        [ariaLabel]="'Toggle Sidenav' | translate"
+        (onClick)="onSidenavIndicatorPressed()"
+      ></tn-icon-button>
 
       <ix-global-search-trigger></ix-global-search-trigger>
 

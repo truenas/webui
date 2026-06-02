@@ -30,7 +30,8 @@
 // which leaves it keyboard-focusable). The `pointer-events: none` is a
 // belt-and-braces guard so even a synthetic click from extensions/tests can't
 // fire it.
-// TODO: replace with a supported library input once available (NAS-XXXXXX).
+// TEMP: reaches into a @truenas/ui-components internal class; remove once
+// tn-dialog-shell exposes a supported `disableClose` / `showCloseButton` input.
 :host(.loading) ::ng-deep .tn-dialog__close {
   pointer-events: none;
   visibility: hidden;
