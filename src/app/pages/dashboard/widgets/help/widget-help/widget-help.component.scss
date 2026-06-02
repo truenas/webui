@@ -11,6 +11,8 @@
     display: flex;
     flex: 1;
     flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
 
     &.full {
       justify-content: space-between;
@@ -51,7 +53,7 @@
       }
 
       @media (max-width: 767px) {
-        .line-item .icon-wrapper a > span {
+        .line-item .icon-wrapper a>span {
           display: none;
         }
       }

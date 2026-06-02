@@ -104,6 +104,19 @@ export interface HarborAssistantSearchDvrStatusResponse {
   statuses: HarborAssistantSearchDvrRecordingStatus[];
 }
 
+export interface HarborAssistantCameraLiveSessionResponse {
+  device_id: string;
+  session_id?: string | null;
+  status: 'starting' | 'running' | 'stopped' | 'failed' | 'degraded' | string;
+  playlist_url?: string | null;
+  playlist_ready: boolean;
+  mode: string;
+  codec: string;
+  started_at?: string | null;
+  updated_at: string;
+  message?: string | null;
+}
+
 export interface HarborAssistantSearchDvrTimelineSegment {
   device_id: string;
   file_path: string;

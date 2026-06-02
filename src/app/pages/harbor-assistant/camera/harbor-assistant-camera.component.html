@@ -11,10 +11,19 @@
           <div class="workbench-header">
             <div>
               <h2>{{ selectedCameraLabel() }}</h2>
+              <p class="live-mode-line">{{ liveModeLabel() | translate }}</p>
             </div>
-            <button mat-stroked-button type="button" [disabled]="cameraLoading()" (click)="refreshCameraDvr()">
-              {{ cameraLoading() ? ('Refreshing' | translate) : ('Refresh cameras' | translate) }}
-            </button>
+            <div class="live-actions">
+              <button mat-flat-button type="button" [disabled]="!liveCanStart()" (click)="startLive()">
+                {{ hlsLiveStatus() === 'degraded' ? ('Retry live' | translate) : ('Play live' | translate) }}
+              </button>
+              <button mat-stroked-button type="button" [disabled]="!liveCanStop()" (click)="stopLive()">
+                {{ 'Stop live' | translate }}
+              </button>
+              <button mat-stroked-button type="button" [disabled]="cameraLoading()" (click)="refreshCameraDvr()">
+                {{ cameraLoading() ? ('Refreshing' | translate) : ('Refresh cameras' | translate) }}
+              </button>
+            </div>
           </div>
 
           @if (cameraError()) {
@@ -52,7 +61,17 @@
                   @if (liveFeedback()) {
                     <div class="live-feedback">{{ liveFeedback() | translate }}</div>
                   }
-                  @if (selectedLiveUrl(); as liveUrl) {
+                  @if (hlsLiveUrl()) {
+                    <video
+                      #liveVideo
+                      controls
+                      autoplay
+                      muted
+                      playsinline
+                      preload="auto"
+                      [attr.aria-label]="selectedCamera()?.name || selectedCameraId() || 'camera'"
+                    ></video>
+                  } @else if (selectedLiveUrl(); as liveUrl) {
                     <img
                       #liveImage
                       [src]="liveUrl"
@@ -72,6 +91,9 @@
                         </button>
                       </div>
                     </div>
+                  }
+                  @if (hlsLiveError(); as liveError) {
+                    <div class="live-feedback warning">{{ liveError | translate }}</div>
                   }
                 </div>
 
@@ -175,6 +197,9 @@
             <div class="empty-state">{{ 'No available cameras yet.' | translate }}</div>
           }
         </section>
+        <div class="live-secondary-slot">
+          <ng-content select="[camera-live-secondary]"></ng-content>
+        </div>
       </section>
     </mat-tab>
 

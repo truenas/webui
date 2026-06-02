@@ -1,113 +1,111 @@
-import { readFileSync } from 'node:fs';
+import fs from 'node:fs';
 
-const checks = [];
+const read = (path) => fs.readFileSync(path, 'utf8');
+const fail = (message) => {
+  console.error(message);
+  process.exitCode = 1;
+};
+const includes = (path, text) => read(path).includes(text);
 
-function read(path) {
-  return readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+const packageJson = JSON.parse(read('package.json'));
+const angularJson = JSON.parse(read('angular.json'));
+const buildConfig = angularJson.projects['truenas-scale-ui'].architect.build.configurations['harbornavi-k3'];
+
+if (!packageJson.scripts['build:harbornavi-k3']) {
+  fail('Missing build:harbornavi-k3 package script.');
 }
 
-function requireIncludes(path, needle, description) {
-  const source = read(path);
-  if (!source.includes(needle)) {
-    checks.push(`${path}: missing ${description}`);
+if (!buildConfig) {
+  fail('Missing Angular harbornavi-k3 build configuration.');
+} else {
+  if (buildConfig.tsConfig !== 'src/tsconfig.harbornavi.app.json') {
+    fail('HarborNavi build must use src/tsconfig.harbornavi.app.json.');
+  }
+
+  const replacements = new Map(buildConfig.fileReplacements.map((item) => [item.replace, item.with]));
+  const expected = new Map([
+    ['src/app/app.component.ts', 'src/app/app.component.harbornavi.ts'],
+    ['src/app/app.routes.ts', 'src/app/app.routes.harbornavi.ts'],
+    ['src/main.ts', 'src/main.harbornavi.ts'],
+    [
+      'src/app/pages/harbor-assistant/services/harbor-assistant-api-prefix.ts',
+      'src/app/pages/harbor-assistant/services/harbor-assistant-api-prefix.harbornavi.ts',
+    ],
+    [
+      'src/app/modules/page-header/page-title-header/page-header.component.ts',
+      'src/app/modules/page-header/page-title-header/page-header.component.harbornavi.ts',
+    ],
+    [
+      'src/app/pages/file-manager/folder-picker-dialog/folder-picker-dialog.component.ts',
+      'src/app/pages/file-manager/folder-picker-dialog/folder-picker-dialog.component.harbornavi.ts',
+    ],
+  ]);
+  for (const [replace, withPath] of expected) {
+    if (replacements.get(replace) !== withPath) {
+      fail(`Missing HarborNavi file replacement: ${replace} -> ${withPath}`);
+    }
   }
 }
 
-function requireNotIncludes(path, needle, description) {
-  const source = read(path);
-  if (source.includes(needle)) {
-    checks.push(`${path}: still contains ${description}`);
+const harbornaviRoutes = read('src/app/app.routes.harbornavi.ts');
+const harbornaviMain = read('src/main.harbornavi.ts');
+for (const forbidden of ['AuthGuard', 'WebSocketConnectionGuard', 'SigninComponent', 'PingService', 'ApiService', 'rootEffects', 'ServiceWorkerService', '/api/current', '192.168.3.82']) {
+  if (harbornaviRoutes.includes(forbidden) || harbornaviMain.includes(forbidden)) {
+    fail(`HarborNavi app profile must not depend on ${forbidden}.`);
   }
 }
 
-function requirePattern(path, pattern, description) {
-  const source = read(path);
-  if (!pattern.test(source)) {
-    checks.push(`${path}: missing ${description}`);
+if (!includes('src/app/pages/harbor-assistant/services/harbor-assistant-api-prefix.harbornavi.ts', '/api/beacon')) {
+  fail('HarborNavi API prefix must use /api/beacon.');
+}
+
+const assistantComponent = read('src/app/pages/harbor-assistant/harbor-assistant.component.ts');
+const assistantTemplate = read('src/app/pages/harbor-assistant/harbor-assistant.component.html');
+for (const required of [
+  "id: 'search'",
+  "id: 'camera'",
+  "id: 'messages'",
+  "id: 'home-assistant'",
+  "id: 'settings'",
+  'Event intelligence',
+  'Message connections',
+  'Home Assistant',
+]) {
+  if (!assistantComponent.includes(required) && !assistantTemplate.includes(required)) {
+    fail(`HarborNavi K3 Assistant must keep full product surface: ${required}`);
   }
 }
 
-const beaconSourceFiles = [
-  'src/app/pages/harbor-assistant/services/harbor-assistant-api.service.ts',
-  'src/app/pages/harbor-assistant/shared/harbor-assistant-content-api.service.ts',
-  'src/app/pages/harbor-assistant/shared/harbor-assistant-results.ts',
-];
-
-for (const path of beaconSourceFiles) {
-  requireIncludes(path, '/api/beacon', 'same-origin Beacon prefix');
-  requireNotIncludes(path, 'http://127.0.0.1:4174', 'direct Beacon loopback URL');
-  requireNotIncludes(path, 'http://localhost:4174', 'direct Beacon localhost URL');
-}
-
-requireIncludes(
-  'src/app/pages/harbor-assistant/utils/harborgate-urls.ts',
-  '/api/harbor-gate',
-  'same-origin HarborGate prefix',
-);
-requireNotIncludes(
-  'src/app/pages/harbor-assistant/utils/harborgate-urls.ts',
-  'http://127.0.0.1:8787',
-  'direct HarborGate loopback URL',
-);
-
-requirePattern(
-  'docker/nginx.conf',
-  /location\s+=\s+\/api\/beacon\s*\{[\s\S]*?proxy_pass\s+http:\/\/127\.0\.0\.1:4174;/,
-  'exact /api/beacon nginx proxy to HarborBeacon',
-);
-requirePattern(
-  'docker/nginx.conf',
-  /location\s+\/api\/beacon\/\s*\{[\s\S]*?proxy_pass\s+http:\/\/127\.0\.0\.1:4174;/,
-  'prefix /api/beacon/ nginx proxy to HarborBeacon',
-);
-requirePattern(
-  'docker/nginx.conf',
-  /location\s+=\s+\/api\/harbor-gate\s*\{[\s\S]*?proxy_pass\s+http:\/\/127\.0\.0\.1:8787;/,
-  'exact /api/harbor-gate nginx proxy to HarborGate',
-);
-requirePattern(
-  'docker/nginx.conf',
-  /location\s+\/api\/harbor-gate\/\s*\{[\s\S]*?proxy_pass\s+http:\/\/127\.0\.0\.1:8787;/,
-  'prefix /api/harbor-gate/ nginx proxy to HarborGate',
-);
-
-requireIncludes('proxy.config.json.template', '"/api/beacon"', 'dev proxy Beacon entry');
-requireIncludes('proxy.config.json.template', 'http://127.0.0.1:4174', 'dev proxy Beacon target');
-requireIncludes('proxy.config.json.template', '"/api/harbor-gate"', 'dev proxy HarborGate entry');
-requireIncludes('proxy.config.json.template', 'http://127.0.0.1:8787', 'dev proxy HarborGate target');
-
-requireIncludes(
-  'docs/harbor-assistant-iso-nginx-patch.md',
-  '/api/beacon/*        -> harboros-beacon.service on 127.0.0.1:4174',
-  'ISO Beacon service entry',
-);
-requireIncludes(
-  'docs/harbor-assistant-iso-nginx-patch.md',
-  '/api/harbor-gate/*   -> harboros-im-gate.service on 127.0.0.1:8787',
-  'ISO HarborGate service entry',
-);
-requireIncludes(
-  'docs/harbor-assistant-live-e2e-matrix.md',
-  'harborassistant-live-solidify-20260529',
-  'solidification artifact id in live evidence',
-);
-requireIncludes(
-  'docs/harbor-assistant-live-e2e-matrix.md',
-  'network blocker',
-  'network blocker row for deferred .82 live install',
-);
-requireIncludes(
-  'docs/harbor-assistant-webui-integration.md',
-  'The live hotfix path `/mnt/.ix-apps/harbor-webui-live/current` is rollback',
-  'hotfix path marked rollback-only',
-);
-
-if (checks.length) {
-  console.error('Harbor Assistant delivery check failed:');
-  for (const check of checks) {
-    console.error(`- ${check}`);
+const packaging = read('scripts/harbornavi-k3/build-deb.sh');
+for (const required of [
+  'Package: $package_name',
+  '/usr/share/harbornavi/webui',
+  '/etc/nginx/conf.d/harbornavi-webui.conf',
+  'location /api/beacon/',
+  'proxy_pass http://127.0.0.1:4174',
+  'location /api/harbor-gate/',
+  'proxy_pass http://127.0.0.1:8787',
+]) {
+  if (!packaging.includes(required)) {
+    fail(`HarborNavi package script missing: ${required}`);
   }
-  process.exit(1);
 }
 
-console.log('Harbor Assistant delivery paths are solidified.');
+for (const forbidden of ['/api/harbor-assistant', '192.168.3.82']) {
+  for (const path of [
+    'src/app/app.routes.harbornavi.ts',
+    'src/app/app.component.harbornavi.ts',
+    'src/app/pages/harbor-assistant/services/harbor-assistant-api-prefix.harbornavi.ts',
+    'src/app/pages/file-manager/folder-picker-dialog/folder-picker-dialog.component.harbornavi.ts',
+    'scripts/harbornavi-k3/build-deb.sh',
+    'docs/harbornavi-k3-webui.md',
+  ]) {
+    if (includes(path, forbidden)) {
+      fail(`${path} must not contain ${forbidden}.`);
+    }
+  }
+}
+
+if (!process.exitCode) {
+  console.log('Harbor Assistant HarborNavi/K3 delivery checks passed.');
+}

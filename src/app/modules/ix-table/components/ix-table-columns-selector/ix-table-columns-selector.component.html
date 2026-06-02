@@ -39,7 +39,9 @@
     }
   </div>
 
-  <div (click)="$event.stopPropagation()">
+  <mat-divider></mat-divider>
+
+  <div class="menu-reset-button" (click)="$event.stopPropagation()">
     <button
       mat-menu-item
       [ixTest]="['reset-columns-to-defaults']"

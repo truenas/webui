@@ -37,6 +37,13 @@
   scrollbar-gutter: stable;
 }
 
+.live-secondary-slot {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+  min-width: 0;
+}
+
 .playback-tab {
   align-items: start;
   display: grid;
@@ -165,6 +172,20 @@
   width: 100%;
 }
 
+.live-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.live-mode-line {
+  color: var(--fg2);
+  font-size: 0.86rem;
+  margin: 4px 0 0;
+}
+
 .live-panel {
   aspect-ratio: 16 / 9;
   background: #111820;
@@ -188,7 +209,8 @@
   box-shadow: 0 0 0 1px rgba(217, 148, 39, 0.28);
 }
 
-.live-panel img {
+.live-panel img,
+.live-panel video {
   display: block;
   height: 100%;
   object-fit: contain;
@@ -263,6 +285,12 @@
   position: absolute;
   top: 10px;
   z-index: 1;
+}
+
+.live-feedback.warning {
+  background: rgba(95, 62, 18, 0.86);
+  border-radius: 8px;
+  max-width: calc(100% - 20px);
 }
 
 @keyframes recording-pulse {
