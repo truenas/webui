@@ -67,21 +67,20 @@
   }
 </div>
 
-<div tnDialogAction align="end">
-  <button
-    mat-button
-   
-  >
-    {{ 'Close' | translate }}
-  </button>
+<div tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="close"
+    [label]="'Close' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
   @if (isRunning()) {
-    <button
-      mat-button
+    <tn-button
       color="warn"
-      (click)="onCancel()"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
+      ixTest="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="onCancel()"
+    ></tn-button>
   }
 </div>
 </tn-dialog-shell>

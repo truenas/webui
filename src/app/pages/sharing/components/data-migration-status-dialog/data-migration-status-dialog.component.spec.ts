@@ -1,8 +1,8 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
@@ -119,7 +119,7 @@ describe('DataMigrationStatusDialogComponent', () => {
       build({ ...baseJob, stats: { ...baseStats } });
       (spectator.inject(DialogService).confirm as jest.Mock).mockReturnValueOnce(of(false));
 
-      const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+      const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
       await cancelButton.click();
 
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith(
@@ -131,7 +131,7 @@ describe('DataMigrationStatusDialogComponent', () => {
     it('calls rewrite_job_cancel with the current tier_job_id when confirmed', async () => {
       build({ ...baseJob, stats: { ...baseStats } });
 
-      const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+      const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
       await cancelButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(

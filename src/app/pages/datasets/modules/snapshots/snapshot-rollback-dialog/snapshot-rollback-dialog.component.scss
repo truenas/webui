@@ -7,14 +7,12 @@
     display: flex;
     justify-content: center;
   }
+}
 
-  // The action container is a permanent direct child of the shell (so it can be
-  // projected into the footer), and only its content is conditional. While the
-  // snapshot is still loading the container is empty, so hide the footer bar to
-  // avoid rendering an empty bordered section.
-  ::ng-deep .tn-dialog__actions:has(.form-actions:empty) {
-    display: none;
-  }
+// While the snapshot is still loading the footer renders no actions; hide the
+// empty action bar (visibility is driven by the host's no-footer-actions class).
+:host(.no-footer-actions) ::ng-deep .tn-dialog__actions {
+  display: none;
 }
 
 .form-buttons {

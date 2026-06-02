@@ -1,7 +1,8 @@
 // The action container is always projected (so it reaches the footer), with its
 // content guarded by @if. Hide the footer bar when there are no reboot reasons
-// instead of rendering an empty action section.
-:host ::ng-deep .tn-dialog__actions:has(.form-actions:empty) {
+// (driven by the host's no-footer-actions class) instead of rendering an empty
+// action section.
+:host(.no-footer-actions) ::ng-deep .tn-dialog__actions {
   display: none;
 }
 

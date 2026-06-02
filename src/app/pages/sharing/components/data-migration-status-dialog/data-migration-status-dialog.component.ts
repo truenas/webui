@@ -4,10 +4,9 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
@@ -32,7 +31,7 @@ export interface DataMigrationStatusDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    MatButton,
+    TnButtonComponent,
     MatProgressBar,
     TranslateModule,
     NgClass,
@@ -45,7 +44,7 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
-  private dialogRef = inject(DialogRef<unknown, DataMigrationStatusDialogComponent>);
+  protected dialogRef = inject(DialogRef<unknown, DataMigrationStatusDialogComponent>);
   private dialogService = inject(DialogService);
   protected data = inject<DataMigrationStatusDialogData>(DIALOG_DATA);
 

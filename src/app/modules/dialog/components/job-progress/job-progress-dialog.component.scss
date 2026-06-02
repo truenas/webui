@@ -14,14 +14,14 @@
     .tn-dialog__close {
       display: none;
     }
-
-    // The action container is always projected (so the Abort button can reach
-    // the footer), but most jobs are not abortable. Hide the footer entirely
-    // when there is no abort button instead of rendering an empty action bar.
-    .tn-dialog__actions:has(.abort-action:empty) {
-      display: none;
-    }
   }
+}
+
+// The action container is always projected (so the Abort button can reach the
+// footer), but most jobs are not abortable. Hide the empty action bar via the
+// host's no-footer-actions class instead of rendering an empty bordered bar.
+:host(.no-footer-actions) ::ng-deep .tn-dialog__actions {
+  display: none;
 }
 
 // Minimize button sits in the top-right corner (where the shell close button

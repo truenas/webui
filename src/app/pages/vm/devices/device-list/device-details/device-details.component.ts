@@ -1,8 +1,7 @@
-import { DIALOG_DATA } from '@angular/cdk/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -15,13 +14,14 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   standalone: true,
   imports: [
     TnDialogShellComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
   ],
 })
 export class DeviceDetailsComponent {
   private translate = inject(TranslateService);
+  protected dialogRef = inject<DialogRef<unknown, DeviceDetailsComponent>>(DialogRef);
   protected device = inject<VmDevice>(DIALOG_DATA);
 
   attributes: [string, unknown][] = [];

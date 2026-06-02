@@ -21,6 +21,9 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
   templateUrl: './reboot-required-dialog.component.html',
   styleUrls: ['./reboot-required-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // The footer only renders actions when there are reboot reasons; hide the
+  // empty action bar otherwise (the action container stays projected).
+  host: { '[class.no-footer-actions]': '!thisNodeRebootReasons()?.length && !otherNodeRebootReasons()?.length' },
   imports: [
     TnDialogShellComponent,
     TnButtonComponent,
