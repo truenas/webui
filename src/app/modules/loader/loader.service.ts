@@ -37,7 +37,11 @@ export class LoaderService {
     }
 
     this.dialogRef = this.dialog.open<unknown, unknown, AppLoaderComponent>(AppLoaderComponent, {
-      disableClose: this.onBeforeClose !== null,
+      // The loader must never be dismissed by the user (backdrop click / ESC);
+      // it only closes programmatically when loading finishes. The optional
+      // confirmation flow listens to keydownEvents/backdropClick manually,
+      // which still emit while disableClose is true.
+      disableClose: true,
       panelClass: 'app-loader-overlay',
       width: '200px',
       height: '200px',
@@ -106,9 +110,10 @@ export class LoaderService {
       this.backdropSubscription = null;
     }
 
-    // If dialog is open, restore normal close behavior
+    // The loader still must not be user-dismissible once the confirmation
+    // handler is removed; it only closes programmatically.
     if (this.dialogRef) {
-      this.dialogRef.disableClose = false;
+      this.dialogRef.disableClose = true;
     }
   }
 
