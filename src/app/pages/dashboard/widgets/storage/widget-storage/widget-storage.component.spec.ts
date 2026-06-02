@@ -291,6 +291,36 @@ describe('WidgetStorageComponent', () => {
     });
   });
 
+  describe('Many Pools (skimpy layout)', () => {
+    // with more than 4 pools the widget switches to the compact "skimpy" layout.
+    // the "Last Scrub" row must still be rendered (regression: it used to be hidden).
+    beforeEach(() => {
+      pools$.next([
+        makeFakePool('pool1', 1, poolWithFinishedScrub.scan),
+        makeFakePool('pool2', 2, poolWithFinishedScrub.scan),
+        makeFakePool('pool3', 3, poolWithFinishedScrub.scan),
+        makeFakePool('pool4', 4, poolWithFinishedScrub.scan),
+        makeFakePool('pool5', 5, poolWithFinishedScrub.scan),
+      ]);
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+      });
+    });
+
+    it('still renders the "Last Scrub" row in every tile', () => {
+      const tiles = spectator.queryAll('.tile');
+      expect(tiles).toHaveLength(5);
+
+      tiles.forEach((tile) => {
+        const labels = Array.from(tile.querySelectorAll('li .label'))
+          .map((label) => label.textContent!.trim());
+        expect(labels).toContain('Last Scrub');
+      });
+    });
+  });
+
   describe('Live Updates', () => {
     beforeEach(() => {
       pools$.next([poolWithOngoingScrub]);

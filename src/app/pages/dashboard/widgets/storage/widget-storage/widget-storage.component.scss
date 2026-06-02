@@ -176,9 +176,14 @@ mat-grid-list[cols='2'] {
 
   .skimpy-tile {
     .tile-header-title {
-      font-size: 20px !important;
-      line-height: 1.8 !important;
+      font-size: 18px !important;
+      line-height: 1.1 !important;
       padding-top: 0;
+    }
+
+    // Reclaim vertical space so the "Last Scrub" row fits within the compact tile.
+    .tile-content {
+      padding-bottom: 0;
     }
   }
 

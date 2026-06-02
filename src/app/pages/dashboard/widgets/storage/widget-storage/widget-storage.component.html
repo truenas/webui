@@ -60,7 +60,7 @@
                       <span class="label"> {{ poolInfo.disksWithError.label }}: </span>
                       <span class="value"> {{ poolInfo.disksWithError.value }} </span>
                     </li>
-                    @if (!isThreeTilesInColumn && (isTwoTilesInRow || getColumnsInTile(poolInfo.name) === 1)) {
+                    @if (isTwoTilesInRow || getColumnsInTile(poolInfo.name) === 1) {
                       <li>
                         <span [class]="['icon', poolInfo.scan.level]">
                           <tn-icon
