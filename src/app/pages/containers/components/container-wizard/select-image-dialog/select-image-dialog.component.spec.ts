@@ -137,12 +137,6 @@ describe('SelectImageDialogComponent', () => {
       });
     });
 
-    it('closes the dialog when X icon is pressed', () => {
-      spectator.click('#ix-close-icon');
-
-      expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
-    });
-
     it('shows empty state when no images match search', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({

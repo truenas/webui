@@ -1,19 +1,4 @@
 <tn-dialog-shell [title]="'Select Image' | translate">
-<div class="header">
-  
-  <button
-    mat-icon-button
-    id="ix-close-icon"
-    [ixTest]="['close-container-form']"
-    [attr.aria-label]="'Close Container Form' | translate"
-    (click)="onClose()"
-    (keydown.enter)="onClose()"
-  >
-    <tn-icon name="close" library="mdi"></tn-icon>
-  </button>
-</div>
-
-
   <form [formGroup]="filterForm">
     <ix-fieldset [title]="'Filters' | translate">
       <ix-input
