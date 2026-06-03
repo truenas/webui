@@ -320,11 +320,11 @@ describe('WidgetStorageComponent', () => {
       });
     });
 
-    it('exposes the scan date via aria-label since it is hidden from view in the compact layout', () => {
-      const ariaLabels = spectator.queryAll('.tile li[aria-label]')
-        .map((row) => row.getAttribute('aria-label'));
+    it('exposes the scan date to screen readers via a visually-hidden label since it is hidden from view', () => {
+      const hiddenLabels = spectator.queryAll('.tile li .visually-hidden')
+        .map((row) => row.textContent!.trim());
 
-      expect(ariaLabels).toContain('Last Scrub: 2024-05-05 10:00:13');
+      expect(hiddenLabels).toContain('Last Scrub: 2024-05-05 10:00:13');
     });
   });
 
