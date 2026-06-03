@@ -60,7 +60,7 @@
                       <span class="label"> {{ poolInfo.disksWithError.label }}: </span>
                       <span class="value"> {{ poolInfo.disksWithError.value }} </span>
                     </li>
-                    @if (isTwoTilesInRow || getColumnsInTile(poolInfo.name) === 1) {
+                    @if (isTwoTilesInRow) {
                       <li>
                         <span [class]="['icon', poolInfo.scan.level]">
                           <tn-icon
@@ -80,7 +80,7 @@
                     <div class="divider"></div>
                     <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
                       <li>
-                        <span class="label"> {{ poolInfo.scan.label }}: </span>
+                        <span class="label" aria-hidden="true"> {{ poolInfo.scan.label }}: </span>
                         <span [class]="['icon', poolInfo.scan.level]">
                           <tn-icon
                             size="sm"
@@ -88,6 +88,9 @@
                             [tnTooltip]="poolInfo.scan.value"
                           ></tn-icon>
                         </span>
+                        <!-- The value is only surfaced via the icon tooltip for sighted users, so expose
+                             the full "label: value" to screen readers via a visually-hidden span. -->
+                        <span class="visually-hidden">{{ poolInfo.scan.label }}: {{ poolInfo.scan.value }}</span>
                       </li>
                       <li>
                         <span class="label"> {{ 'Free Space' | translate }}: </span>

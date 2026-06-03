@@ -245,6 +245,13 @@ describe('WidgetStorageComponent', () => {
         },
       );
     });
+
+    it('exposes the scan date to screen readers via a visually-hidden label in the multi-column layout', () => {
+      const hiddenLabels = spectator.queryAll('.tile li .visually-hidden')
+        .map((row) => row.textContent!.trim());
+
+      expect(hiddenLabels).toContain('Last Scrub: 2024-05-05 10:00:13');
+    });
   });
 
   describe('Multiple Pools - Scrub Status', () => {
