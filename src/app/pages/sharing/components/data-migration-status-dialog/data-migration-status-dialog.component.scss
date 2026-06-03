@@ -21,30 +21,13 @@ h1[mat-dialog-title] {
   // Render as an outline pill (transparent fill, colored border + text) to match
   // the service-state and tier-status badges, overriding the filled background
   // that the global `.fn-theme-*` helpers apply.
-  &.fn-theme-green {
-    background: transparent;
-    color: var(--green);
-  }
+  background: transparent;
 
-  &.fn-theme-orange {
-    background: transparent;
-    color: var(--orange);
-  }
-
-  &.fn-theme-red {
-    background: transparent;
-    color: var(--red);
-  }
-
-  &.fn-theme-primary {
-    background: transparent;
-    color: var(--primary);
-  }
-
-  &.fn-theme-grey {
-    background: transparent;
-    color: var(--grey, #989898);
-  }
+  &.fn-theme-green { color: var(--green); }
+  &.fn-theme-orange { color: var(--orange); }
+  &.fn-theme-red { color: var(--red); }
+  &.fn-theme-primary { color: var(--primary); }
+  &.fn-theme-grey { color: var(--fg2); }
 }
 
 .dataset-name {
