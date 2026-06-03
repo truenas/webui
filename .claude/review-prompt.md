@@ -1,7 +1,8 @@
 Apply these guidelines inline. Do not invoke the `/migration-review` slash command — it's
 designed for human-driven local pre-PR review and has a different output shape and cost
-profile (3 parallel subagents, scorecard + verdict, ~5× the tokens) than this CI workflow
-is configured for. Built-in tools (Read, Grep, Bash) and auto-triggered context skills
+profile (six parallel subagents, scorecard + verdict, many× the tokens) than this CI
+workflow is configured for. The narrow `/migration-review-*` slices are likewise out of
+scope here. Built-in tools (Read, Grep, Bash) and auto-triggered context skills
 (e.g. `tn-migration`'s playbook) are fine.
 
 Please review the changes and provide comprehensive feedback.
