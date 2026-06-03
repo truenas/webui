@@ -1,3 +1,5 @@
+@import 'mixins/tier-status';
+
 // Tighten the title's line box and center its items so the small status pill
 // lines up with the large title text (the default MDC title line-height is much
 // taller than the glyphs, which left the pill sitting high).
@@ -7,7 +9,6 @@ h1[mat-dialog-title] {
 }
 
 .status-badge {
-  align-self: center;
   border: 1px solid currentColor;
   border-radius: 25px;
   display: inline-block;
@@ -18,16 +19,9 @@ h1[mat-dialog-title] {
   padding: 1px 12px;
   white-space: nowrap;
 
-  // Render as an outline pill (transparent fill, colored border + text) to match
-  // the service-state and tier-status badges, overriding the filled background
-  // that the global `.fn-theme-*` helpers apply.
-  background: transparent;
-
-  &.fn-theme-green { color: var(--green); }
-  &.fn-theme-orange { color: var(--orange); }
-  &.fn-theme-red { color: var(--red); }
-  &.fn-theme-primary { color: var(--primary); }
-  &.fn-theme-grey { color: var(--fg2); }
+  // Outline pill: transparent fill with the status color on the text and border.
+  // The color mapping is shared with the tier-status indicator.
+  @include tier-status-colors;
 }
 
 .dataset-name {
