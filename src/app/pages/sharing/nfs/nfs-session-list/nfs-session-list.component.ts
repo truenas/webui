@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnTablePagerComponent } from '@truenas/ui-components';
 import { combineLatest, map, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
@@ -16,7 +17,6 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
@@ -43,7 +43,7 @@ import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/n
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
   ],

@@ -1,12 +1,7 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Event Data' | translate }}
-    </h3>
-
+<tn-card class="card" padding="small" [padContent]="true">
+  <div tnCardHeader class="card-header">
+    <h3 class="card-title">{{ 'Event Data' | translate }}</h3>
     <ix-copy-button [text]="yamlContent()" [jsonText]="eventData()"></ix-copy-button>
-  </mat-card-header>
-  <mat-card-content>
-    <pre>{{ yamlContent() }}</pre>
-  </mat-card-content>
-</mat-card>
+  </div>
+  <pre>{{ yamlContent() }}</pre>
+</tn-card>

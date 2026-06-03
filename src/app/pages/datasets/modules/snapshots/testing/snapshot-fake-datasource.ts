@@ -1,4 +1,3 @@
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
@@ -9,10 +8,8 @@ export const fakeZfsSnapshot: ZfsSnapshot = {
   snapshot_name: 'first-snapshot',
   properties: {
     creation: {
-      parsed: {
-        $date: 1634575914000,
-      },
-    } as ZfsProperty<string, ApiTimestamp>,
+      parsed: 1634575914,
+    } as ZfsProperty<string, number>,
     used: {
       parsed: 1634575914000,
     } as ZfsProperty<number>,
@@ -33,15 +30,13 @@ export const fakeZfsSnapshot: ZfsSnapshot = {
 export const fakeZfsSnapshotDataSource: ZfsSnapshot[] = [
   fakeZfsSnapshot,
   {
-    id: 2,
+    id: '2',
     name: 'test-dataset@second-snapshot',
     dataset: 'test-dataset',
     snapshot_name: 'second-snapshot',
     properties: {
       creation: {
-        parsed: {
-          $date: 1634575903000,
-        },
+        parsed: 1634575903,
       },
       used: {
         parsed: 1634575903000,

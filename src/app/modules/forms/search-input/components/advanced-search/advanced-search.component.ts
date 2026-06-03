@@ -1,13 +1,16 @@
+import { InteractivityChecker } from '@angular/cdk/a11y';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnInit, output, signal, Signal, viewChild, inject } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatCalendar } from '@angular/material/datepicker';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
-  autocompletion, closeBrackets, CompletionContext, startCompletion,
+  autocompletion, closeBrackets, closeCompletion, CompletionContext, completionStatus, startCompletion,
 } from '@codemirror/autocomplete';
 import { Diagnostic, linter } from '@codemirror/lint';
-import { EditorState, StateEffect, StateField } from '@codemirror/state';
+import {
+  EditorState, Prec, StateEffect, StateField,
+} from '@codemirror/state';
 import {
   EditorView, keymap, placeholder,
 } from '@codemirror/view';
@@ -24,6 +27,24 @@ import { SearchProperty } from 'app/modules/forms/search-input/types/search-prop
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 const setDiagnostics = StateEffect.define<Diagnostic[] | null>();
+
+// Cheap CSS pre-filter only — it over-matches (e.g. tabindex="-1", disabled
+// controls), so every candidate is still run through CDK's InteractivityChecker
+// before being treated as tabbable. Kept as a coarse selector to avoid walking
+// the whole subtree with '*' on every Tab keystroke.
+const focusableSelector = [
+  'a[href]',
+  'area[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  'iframe',
+  'audio[controls]',
+  'video[controls]',
+  '[contenteditable]:not([contenteditable="false"])',
+  '[tabindex]',
+].join(',');
 
 @Component({
   selector: 'ix-advanced-search',
@@ -46,6 +67,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
   private queryToApi = inject<QueryToApiService<T>>(QueryToApiService);
   private advancedSearchAutocomplete = inject<AdvancedSearchAutocompleteService<T>>(AdvancedSearchAutocompleteService);
   private cdr = inject(ChangeDetectorRef);
+  private interactivityChecker = inject(InteractivityChecker);
 
   readonly query = input<QueryFilters<T>>([]);
   readonly filterPresets = input<FilterPreset<T>[]>([]);
@@ -117,13 +139,35 @@ export class AdvancedSearchComponent<T> implements OnInit {
       icons: false,
     });
 
-    const customKeyMap = keymap.of([{
-      key: 'Enter',
-      run: () => {
-        this.runSearch.emit();
-        return true;
+    const customKeyMap = Prec.highest(keymap.of([
+      {
+        key: 'Enter',
+        run: () => {
+          this.runSearch.emit();
+          return true;
+        },
       },
-    }]);
+      {
+        key: 'Tab',
+        run: (view) => {
+          if (completionStatus(view.state) !== null) {
+            closeCompletion(view);
+          }
+          // Swallow Tab only when we actually moved focus; otherwise let the
+          // browser handle it so focus isn't stranded on the editor.
+          return this.moveFocusToNextFocusable();
+        },
+      },
+      {
+        key: 'Shift-Tab',
+        run: (view) => {
+          if (completionStatus(view.state) !== null) {
+            closeCompletion(view);
+          }
+          return this.moveFocusToPreviousFocusable();
+        },
+      },
+    ]));
 
     this.editorView = new EditorView({
       state: EditorState.create({
@@ -208,6 +252,51 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   private focusInput(): void {
     this.editorView.focus();
+  }
+
+  private moveFocusToNextFocusable(): boolean {
+    return this.moveFocusInDirection(1);
+  }
+
+  private moveFocusToPreviousFocusable(): boolean {
+    return this.moveFocusInDirection(-1);
+  }
+
+  /** Returns true if a focusable target was found and focused, false otherwise. */
+  private moveFocusInDirection(direction: 1 | -1): boolean {
+    const editorRoot = this.editorView.dom;
+    // Stay within the surrounding focus trap (dialog) so Tab from the CodeMirror
+    // editor doesn't escape into background content. Outside dialogs we fall back
+    // to the whole document — letting Tab walk freely is the expected behavior.
+    // Scope detection is attribute-based: it matches the [cdkTrapFocus] directive
+    // and role="dialog" hosts, but not traps installed programmatically via
+    // FocusTrapFactory (which set no such attribute) — those fall back to document.
+    const scope = editorRoot.closest<HTMLElement>(
+      '[cdkTrapFocus], [role="dialog"]',
+    ) ?? document.body;
+
+    // Narrow selector keeps this cheap on large pages — querying '*' and then
+    // filtering through isFocusable for every element walked the whole subtree
+    // on each Tab keystroke. isTabbable is still required because the selector
+    // can match elements with tabindex="-1" or disabled controls.
+    const candidates = scope.querySelectorAll<HTMLElement>(focusableSelector);
+    const tabbable: HTMLElement[] = [];
+    candidates.forEach((el) => {
+      if (!editorRoot.contains(el) && this.interactivityChecker.isTabbable(el)) {
+        tabbable.push(el);
+      }
+    });
+
+    const target = direction === 1
+      ? tabbable.find((el) => (editorRoot.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0)
+      : tabbable.findLast((el) => (editorRoot.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_PRECEDING) !== 0);
+
+    if (!target) {
+      return false;
+    }
+
+    target.focus();
+    return true;
   }
 
   private onInputChanged(): void {

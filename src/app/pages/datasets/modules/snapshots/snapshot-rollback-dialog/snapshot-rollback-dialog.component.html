@@ -1,26 +1,44 @@
 <h1 matDialogTitle>{{ 'Dataset Rollback From Snapshot' | translate }}</h1>
-@if (isLoading) {
+@if (isLoading()) {
   <div mat-dialog-content class="loading">
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>
-} @else {
-  @if (!wasDatasetRolledBack) {
+} @else if (snapshot) {
+  @if (!wasDatasetRolledBack()) {
     <form
       class="ix-form-container"
       [formGroup]="form"
       (submit)="onSubmit()"
     >
       <div mat-dialog-content>
-        <p
-          [innerHTML]="
-            'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
-              : {
-                  snapshot: publicSnapshot.snapshot_name,
-                  dataset: publicSnapshot.dataset,
-                  datetime: publicSnapshot.properties?.creation?.parsed?.$date | formatDateTime
-                }
-            "
-        ></p>
+        @if (creationMachineTime() !== undefined) {
+          <!--
+            Translators: {datetime} is a pre-formatted machine-time string (the
+            snapshot's creation time, already converted to the configured
+            machine timezone and formatted per the user's preferences). Do not
+            re-format it; just interpolate it where you want the timestamp.
+          -->
+          <p
+            [innerHTML]="
+              'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
+                : {
+                    snapshot: snapshot.snapshot_name,
+                    dataset: snapshot.dataset,
+                    datetime: creationMachineTime() | formatDateTime
+                  }
+              "
+          ></p>
+        } @else {
+          <p
+            [innerHTML]="
+              'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back?' | translate
+                : {
+                    snapshot: snapshot.snapshot_name,
+                    dataset: snapshot.dataset
+                  }
+              "
+          ></p>
+        }
 
         <ix-fieldset>
           <ix-radio-group
@@ -66,7 +84,7 @@
     </form>
   } @else {
     <p mat-dialog-content>
-      {{ 'Dataset rolled back to snapshot {name}.' | translate: { name: publicSnapshot.snapshot_name } }}
+      {{ 'Dataset rolled back to snapshot {name}.' | translate: { name: snapshot.snapshot_name } }}
     </p>
 
     <ix-form-actions mat-dialog-actions class="form-actions">

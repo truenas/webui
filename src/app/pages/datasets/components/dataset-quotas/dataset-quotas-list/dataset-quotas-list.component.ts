@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
 import { EMPTY, Observable, of } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
@@ -29,7 +29,6 @@ import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cel
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
@@ -70,7 +69,7 @@ interface QuotaData {
     IxTableHeadComponent,
     IxTableEmptyDirective,
     IxTableBodyComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
   ],
 })
 export class DatasetQuotasListComponent implements OnInit {

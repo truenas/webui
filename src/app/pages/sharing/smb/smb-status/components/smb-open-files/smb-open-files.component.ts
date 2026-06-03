@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject 
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnTablePagerComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
@@ -12,7 +13,6 @@ import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-ta
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 
@@ -29,7 +29,7 @@ import { createTable } from 'app/modules/ix-table/utils';
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
   ],
