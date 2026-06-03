@@ -40,7 +40,7 @@
       <input #folderInput type="file" hidden webkitdirectory (change)="onFolderSelected($event)" />
       <button
         mat-icon-button
-        [disabled]="isUploading() || !isUploadPermitted()"
+        [disabled]="isUploading() || !isUploadPermitted() || isCurrentPathReadOnly()"
         [matTooltip]="'Upload' | translate"
         [matMenuTriggerFor]="uploadMenu"
       >
@@ -94,11 +94,11 @@
         <tn-icon name="dots-horizontal" library="mdi"></tn-icon>
       </button>
       <mat-menu #moreActionsMenu="matMenu">
-        <button mat-menu-item [disabled]="!isUploadPermitted()" (click)="createFolder()">
+        <button mat-menu-item [disabled]="!isUploadPermitted() || isCurrentPathReadOnly()" (click)="createFolder()">
           <tn-icon name="folder-plus" library="mdi"></tn-icon>
           <span>{{ "New Folder" | translate }}</span>
         </button>
-        <button mat-menu-item [disabled]="!hasItemSelected()" (click)="moveSelected()">
+        <button mat-menu-item [disabled]="!hasItemSelected() || isCurrentPathReadOnly()" (click)="moveSelected()">
           <tn-icon name="folder-move" library="mdi"></tn-icon>
           <span>{{ "Move To" | translate }}</span>
         </button>
@@ -194,6 +194,12 @@
 
     <!-- Files Area -->
     <div class="files-area" (click)="onContainerClick()">
+      @if (isCurrentPathReadOnly()) {
+        <div class="read-only-banner">
+          <tn-icon name="alert-circle-outline" library="mdi" class="banner-icon"></tn-icon>
+          <span class="banner-message">{{ "This location is read-only. File uploads and modifications are disabled." | translate }}</span>
+        </div>
+      }
       @if (isLoading()) {
         <div class="loading-overlay">
           <mat-spinner diameter="40"></mat-spinner>
@@ -304,15 +310,15 @@
         <span>{{ "Quick Look" | translate }}</span>
       </button>
     }
-    <button mat-menu-item (click)="renameItem(contextMenuItem()!)">
+    <button mat-menu-item [disabled]="isCurrentPathReadOnly()" (click)="renameItem(contextMenuItem()!)">
       <tn-icon name="pencil" library="mdi"></tn-icon>
       <span>{{ "Rename" | translate }}</span>
     </button>
-    <button mat-menu-item (click)="copyItem(contextMenuItem()!)">
+    <button mat-menu-item [disabled]="isCurrentPathReadOnly()" (click)="copyItem(contextMenuItem()!)">
       <tn-icon name="content-copy" library="mdi"></tn-icon>
       <span>{{ "Copy" | translate }}</span>
     </button>
-    <button mat-menu-item (click)="moveSelected()">
+    <button mat-menu-item [disabled]="isCurrentPathReadOnly()" (click)="moveSelected()">
       <tn-icon name="folder-move" library="mdi"></tn-icon>
       <span>{{ "Move To" | translate }}</span>
     </button>
@@ -320,6 +326,7 @@
     <button
       mat-menu-item
       class="danger-item"
+      [disabled]="isCurrentPathReadOnly()"
       (click)="deleteItem(contextMenuItem()!)"
     >
       <tn-icon name="delete" library="mdi"></tn-icon>

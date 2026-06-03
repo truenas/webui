@@ -182,6 +182,28 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     return true;
   });
 
+  // Check if current path is inside a read-only USB mount
+  isCurrentPathReadOnly = computed(() => {
+    const path = this.currentPath();
+    if (!path.startsWith('/mnt/.usb')) {
+      return false;
+    }
+
+    for (const drive of this.usbDrives()) {
+      if (drive.partitions) {
+        for (const part of drive.partitions) {
+          if (part.mountpoint && path.startsWith(part.mountpoint) && part.readonly) {
+            return true;
+          }
+        }
+      }
+      if (drive.mountpoint && path.startsWith(drive.mountpoint) && drive.readonly) {
+        return true;
+      }
+    }
+    return false;
+  });
+
   // USB drives
   usbDrives = signal<UsbDrive[]>([]);
   isLoadingUsbDrives = signal<boolean>(false);
@@ -499,6 +521,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   }
 
   onFileSelected(event: Event): void {
+    if (this.isCurrentPathReadOnly()) return;
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
@@ -507,6 +530,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   }
 
   onFolderSelected(event: Event): void {
+    if (this.isCurrentPathReadOnly()) return;
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
@@ -709,6 +733,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   }
 
   renameItem(item: FileRecord): void {
+    if (this.isCurrentPathReadOnly()) return;
     const currentName = item.name;
 
     this.matDialog.open(InputDialogComponent, {
@@ -755,6 +780,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   }
 
   copyItem(item: FileRecord): void {
+    if (this.isCurrentPathReadOnly()) return;
     const defaultName = `${item.name}_copy`;
 
     this.matDialog.open(InputDialogComponent, {
@@ -793,6 +819,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   }
 
   deleteSelected(): void {
+    if (this.isCurrentPathReadOnly()) return;
     if (this.selectedItems().size === 0) return;
 
     const selectedPaths = Array.from(this.selectedItems());
@@ -821,6 +848,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   }
 
   deleteItem(item: FileRecord): void {
+    if (this.isCurrentPathReadOnly()) return;
     const isDirectory = item.type === FileType.Directory;
     const message = this.translate.instant('Are you sure you want to delete "{name}"?', { name: item.name });
 
@@ -971,6 +999,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   }
 
   createFolder(): void {
+    if (this.isCurrentPathReadOnly()) return;
     this.matDialog.open(InputDialogComponent, {
       data: {
         title: 'New Folder',
@@ -1004,6 +1033,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   }
 
   moveSelected(): void {
+    if (this.isCurrentPathReadOnly()) return;
     const selected = this.selectedItems();
     if (selected.size === 0) return;
 

@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=1f051c6124",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=69f25ffda0",
   "icons": [
     "app-account_circle",
     "app-alert-settings",
@@ -101,6 +101,7 @@
     "mdi-account-multiple",
     "mdi-alert",
     "mdi-alert-circle",
+    "mdi-alert-circle-outline",
     "mdi-alert-octagon",
     "mdi-application",
     "mdi-arrow-down",

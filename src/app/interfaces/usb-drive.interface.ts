@@ -4,6 +4,7 @@ export interface UsbDrivePartition {
   fstype: string | null;
   label: string | null;
   mountpoint: string | null;
+  readonly?: boolean;
 }
 
 export interface UsbDrive {
@@ -16,6 +17,7 @@ export interface UsbDrive {
   mountpoint: string | null;
   fstype: string | null;
   label: string | null;
+  readonly?: boolean;
   bus: number | null;
   dev: number | null;
   partitions: UsbDrivePartition[] | null;
