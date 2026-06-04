@@ -129,21 +129,22 @@ export class DialogService {
   }
 
   error(error: ErrorReport | ErrorReport[]): Observable<boolean> {
-    if (Array.isArray(error)) {
-      error = this.cleanErrors(error);
-      if (error.length > 1) {
+    let report = error;
+    if (Array.isArray(report)) {
+      const cleaned = this.cleanErrors(report);
+      if (cleaned.length > 1) {
         return this.tnDialog.open<MultiErrorDialog, ErrorReport[], boolean>(MultiErrorDialog, {
-          data: error,
-        }).closed as Observable<boolean>;
+          data: cleaned,
+        }).closed.pipe(map((result) => result ?? false));
       }
-      error = error[0];
+      report = cleaned[0];
     }
-    if (!error?.message) {
+    if (!report?.message) {
       return of(false);
     }
     return this.tnDialog.open<ErrorDialog, ErrorReport, boolean>(ErrorDialog, {
-      data: error,
-    }).closed as Observable<boolean>;
+      data: report,
+    }).closed.pipe(map((result) => result ?? false));
   }
 
   private cleanErrors(errorReports: ErrorReport[]): ErrorReport[] {
@@ -164,7 +165,7 @@ export class DialogService {
         icon: 'information',
         isHtml,
       },
-    }).closed as Observable<boolean>;
+    }).closed.pipe(map((result) => result ?? false));
   }
 
   warn(title: string, info: string, isHtml = false): Observable<boolean> {
@@ -175,13 +176,13 @@ export class DialogService {
         icon: 'alert',
         isHtml,
       },
-    }).closed as Observable<boolean>;
+    }).closed.pipe(map((result) => result ?? false));
   }
 
   generalDialog(conf: GeneralDialogConfig): Observable<boolean> {
     return this.tnDialog.open<GeneralDialog, GeneralDialogConfig, boolean>(GeneralDialog, {
       data: conf,
-    }).closed as Observable<boolean>;
+    }).closed.pipe(map((result) => result ?? false));
   }
 
   fullScreenDialog(options: Partial<FullScreenDialogOptions> = {}): Observable<void> {
