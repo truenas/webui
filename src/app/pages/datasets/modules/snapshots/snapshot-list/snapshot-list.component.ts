@@ -298,7 +298,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   doBatchDelete(data: ZfsSnapshotUi[]): void {
-    this.tnDialog.open(SnapshotBatchDeleteDialog, { data, disableClose: true })
+    this.tnDialog.open(SnapshotBatchDeleteDialog, { data })
       .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {

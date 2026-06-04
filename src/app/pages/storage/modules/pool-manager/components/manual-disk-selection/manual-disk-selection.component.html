@@ -14,15 +14,13 @@
           <h3>{{ 'VDEVs' | translate }}</h3>
           @if (!(hideAddVdevButton$ | async)) {
             <div class="header-actions">
-              <button
+              <tn-button
                 *ixRequiresRoles="requiredRoles"
-                mat-button
-                class="mat-button"
+                variant="outline"
                 ixTest="add"
-                (click)="addVdev()"
-              >
-                {{ 'Add' | translate }}
-              </button>
+                [label]="'Add' | translate"
+                (onClick)="addVdev()"
+              ></tn-button>
             </div>
           }
         </div>

@@ -1,7 +1,6 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
@@ -116,7 +115,7 @@ describe('ManualDiskSelectionComponent', () => {
     });
 
     it('adds a new vdev when Add button is clicked', async () => {
-      const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+      const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
 
       expect(spectator.inject(ManualDiskSelectionStore, true).addVdev).toHaveBeenCalled();
@@ -175,7 +174,7 @@ describe('ManualDiskSelectionComponent', () => {
       const vdevs = spectator.queryAll(ManualSelectionVdevComponent);
       expect(vdevs).toHaveLength(1);
 
-      const addButtonRemoved = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Add' }));
+      const addButtonRemoved = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Add' }));
       expect(addButtonRemoved).toBeNull();
     });
   });
