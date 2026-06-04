@@ -263,7 +263,6 @@ describe('InterfaceFormComponent', () => {
           data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
         },
       );
-      jest.spyOn(spectator.inject(TnDialog), 'closeAll');
     });
 
     it('saves a new link aggregation interface when form is submitted for LAG', async () => {

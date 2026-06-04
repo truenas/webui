@@ -107,7 +107,8 @@ describe('ExportDisconnectModalComponent', () => {
       mockProvider(DialogRef),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(false),
+          closed: of(false),
+          close: jest.fn(),
         }) as unknown as DialogRef<unknown, JobProgressDialogRef<unknown>>),
       }),
       mockProvider(LoaderService, {
@@ -607,7 +608,7 @@ describe('ExportDisconnectModalComponent', () => {
     describe('error handling', () => {
       it('shows an error dialog when there are unstoppable processes', async () => {
         const dialog = spectator.inject(DialogService);
-        jest.spyOn(dialog, 'jobDialog').mockReturnValue({
+        jest.spyOn(dialog, 'jobDialog').mockReturnValueOnce({
           afterClosed: () => throwError(() => {
             return new FailedJobError({
               error: 'Unstoppable processes',
@@ -630,7 +631,7 @@ describe('ExportDisconnectModalComponent', () => {
 
       it('shows services restart dialog when services need to be restarted', async () => {
         const dialog = spectator.inject(DialogService);
-        jest.spyOn(dialog, 'jobDialog').mockReturnValue({
+        jest.spyOn(dialog, 'jobDialog').mockReturnValueOnce({
           afterClosed: () => throwError(() => {
             return new FailedJobError({
               error: 'Control services error',
@@ -673,8 +674,9 @@ describe('ExportDisconnectModalComponent', () => {
           }) as Observable<Job>,
         } as JobProgressDialogRef<unknown>);
 
-        jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
-          afterClosed: () => of(true),
+        jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValueOnce({
+          closed: of(true),
+          close: jest.fn(),
         } as unknown as DialogRef<unknown, ServicesToBeRestartedDialogComponent>);
 
         await submitExportForm();
@@ -712,7 +714,12 @@ describe('ExportDisconnectModalComponent', () => {
           warn: jest.fn(),
         }),
         mockProvider(DialogRef),
-        mockProvider(TnDialog),
+        mockProvider(TnDialog, {
+          open: jest.fn(() => ({
+            closed: of(false),
+            close: jest.fn(),
+          }) as unknown as DialogRef<unknown, JobProgressDialogRef<unknown>>),
+        }),
         mockProvider(LoaderService, {
           withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
         }),

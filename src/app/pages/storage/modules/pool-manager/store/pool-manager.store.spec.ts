@@ -73,7 +73,7 @@ describe('PoolManagerStore', () => {
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(dialogReturnValue)),
+          closed: of(dialogReturnValue),
         })),
       }),
       GenerateVdevsService,

@@ -1,3 +1,4 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -125,8 +126,9 @@ describe('DiskListComponent', () => {
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(true)),
-        })),
+          closed: of(true),
+          close: jest.fn(),
+        }) as unknown as DialogRef),
       }),
       mockProvider(LicenseService, {
         hasSed$: of(true),

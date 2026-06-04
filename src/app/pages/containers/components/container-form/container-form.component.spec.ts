@@ -104,7 +104,7 @@ describe('ContainerFormComponent', () => {
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of({ result: createdContainer }),
+          afterClosed: () => of({ result: createdContainer }),
         })),
       }),
       mockProvider(Router, {
@@ -494,7 +494,7 @@ describe('ContainerFormComponent', () => {
         }),
         mockProvider(DialogService, {
           jobDialog: jest.fn(() => ({
-            closed: of({ result: createdContainer }),
+            afterClosed: () => of({ result: createdContainer }),
           })),
         }),
         mockProvider(Router, {

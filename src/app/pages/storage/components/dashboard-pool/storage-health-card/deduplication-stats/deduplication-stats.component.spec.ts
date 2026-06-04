@@ -1,3 +1,4 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -25,8 +26,9 @@ describe('DeduplicationStatsComponent', () => {
       mockProvider(PoolsDashboardStore),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of()),
-        })),
+          closed: of(undefined),
+          close: jest.fn(),
+        }) as unknown as DialogRef),
       }),
       mockAuth(),
     ],

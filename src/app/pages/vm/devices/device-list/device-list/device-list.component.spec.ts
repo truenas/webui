@@ -85,7 +85,7 @@ describe('DeviceListComponent', () => {
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of({ result: true }),
+          afterClosed: () => of({ result: true }),
         })),
       }),
       mockProvider(SnackbarService),
@@ -234,7 +234,7 @@ describe('DeviceListComponent', () => {
 
       // Mock successful job completion
       (dialogService.jobDialog as jest.Mock).mockReturnValue({
-        closed: of({ result: true }),
+        afterClosed: () => of({ result: true }),
       });
 
       // Trigger export

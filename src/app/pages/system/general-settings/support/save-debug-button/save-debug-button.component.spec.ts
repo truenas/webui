@@ -26,7 +26,7 @@ describe('SaveDebugButtonComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
-          closed: of(undefined),
+          afterClosed: () => of(undefined),
         })),
       }),
       mockProvider(DialogRef),

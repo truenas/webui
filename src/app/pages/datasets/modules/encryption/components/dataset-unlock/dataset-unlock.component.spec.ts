@@ -45,7 +45,7 @@ describe('DatasetUnlockComponent', () => {
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of(encryptionSummary),
+          afterClosed: () => of(encryptionSummary),
         })),
       }),
       mockProvider(TnDialog, {

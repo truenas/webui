@@ -89,7 +89,7 @@ describe('AppInfoCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
-          closed: of(null),
+          afterClosed: () => of(null),
         })),
       }),
       mockProvider(TnDialog, {

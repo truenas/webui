@@ -557,7 +557,7 @@ describe('DirectoryServicesComponent', () => {
 
     it('should open Leave Domain dialog when Leave button is clicked', async () => {
       const dialogRef: Partial<DialogRef> = {
-        afterClosed: () => of(false),
+        closed: of(false),
       };
       const dialogOpenSpy = jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue(dialogRef as DialogRef);
       await spectator.fixture.whenStable();
@@ -576,7 +576,7 @@ describe('DirectoryServicesComponent', () => {
       console.warn = jest.fn();
 
       const dialogRef: Partial<DialogRef> = {
-        afterClosed: () => of(true),
+        closed: of(true),
       };
       jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue(dialogRef as DialogRef);
       const apiCallSpy = jest.spyOn(spectator.inject(ApiService), 'call');

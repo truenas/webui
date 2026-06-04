@@ -1,6 +1,6 @@
 import { ComponentHarness, parallel } from '@angular/cdk/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 
@@ -48,7 +48,7 @@ export class SchedulerModalHarness extends ComponentHarness {
   }
 
   async pressDone(): Promise<void> {
-    const doneButton = await this.locatorFor(MatButtonHarness.with({ text: 'Done' }))();
+    const doneButton = await this.locatorFor(TnButtonHarness.with({ label: 'Done' }))();
     await doneButton.click();
   }
 }

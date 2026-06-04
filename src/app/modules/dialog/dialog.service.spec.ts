@@ -1,5 +1,8 @@
 import { Dialog } from '@angular/cdk/dialog';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
@@ -8,6 +11,13 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+@Component({
+  selector: 'ix-empty-dialog',
+  template: '',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class EmptyDialogComponent {}
 
 describe('DialogService', () => {
   let spectator: SpectatorService<DialogService>;
@@ -209,5 +219,42 @@ describe('DialogService', () => {
 
       expect(nextFn).toHaveBeenCalledWith(undefined);
     });
+  });
+});
+
+// Integration check: proves a dialog opened through the wrapped TnDialog actually
+// closes when closeAllDialogs() runs. This only holds because TnDialog and the
+// cdk Dialog resolve to the same root singleton; assert it end-to-end with the
+// real services rather than trusting that contract, since logout/websocket-drop
+// rely on it. Uses a trivial component to avoid real dialogs' rendering deps.
+// Standalone TestBed (not spectator) so the real Dialog/TnDialog are injected.
+describe('DialogService closeAllDialogs (real cdk Dialog/TnDialog)', () => {
+  let service: DialogService;
+  let cdkDialog: Dialog;
+  let tnDialog: TnDialog;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        DialogService,
+        mockProvider(TranslateService),
+        mockProvider(LoaderService),
+        mockProvider(SnackbarService),
+        mockProvider(ErrorHandlerService),
+      ],
+    });
+    service = TestBed.inject(DialogService);
+    cdkDialog = TestBed.inject(Dialog);
+    tnDialog = TestBed.inject(TnDialog);
+  });
+
+  afterEach(() => cdkDialog?.closeAll());
+
+  it('closes a dialog opened through TnDialog (same singleton as closeAllDialogs)', () => {
+    tnDialog.open(EmptyDialogComponent);
+    expect(cdkDialog.openDialogs).toHaveLength(1);
+
+    service.closeAllDialogs();
+    expect(cdkDialog.openDialogs).toHaveLength(0);
   });
 });

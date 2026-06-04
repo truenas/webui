@@ -18,7 +18,7 @@ describe('BlockingActionGuardService', () => {
   const mockIsFullAdmin$ = new BehaviorSubject(true);
 
   const mockDialogRef = {
-    afterClosed: jest.fn(() => of(true)),
+    closed: of(true),
     componentInstance: {},
   };
 
@@ -121,9 +121,6 @@ describe('BlockingActionGuardService', () => {
     // First navigation should show dialog
     await firstValueFrom(spectator.service.canActivateChild(routeSnapshot, stateSnapshot));
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledTimes(1);
-
-    // Simulate dialog closed
-    mockDialogRef.afterClosed.mockReturnValue(of(true));
 
     // Second navigation should NOT show dialog again (already checked this session)
     await firstValueFrom(spectator.service.canActivateChild(routeSnapshot, { url: '/storage' } as RouterStateSnapshot));

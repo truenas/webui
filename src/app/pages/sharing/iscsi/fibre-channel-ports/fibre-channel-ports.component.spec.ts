@@ -1,3 +1,4 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -89,8 +90,9 @@ describe('FibreChannelPortsComponent', () => {
       ]),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(true)),
-        })),
+          closed: of(true),
+          close: jest.fn(),
+        } as unknown as DialogRef)),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

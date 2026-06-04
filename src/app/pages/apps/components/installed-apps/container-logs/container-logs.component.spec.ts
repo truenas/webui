@@ -71,7 +71,7 @@ describe('ContainerLogsComponent', () => {
         mockProvider(Router),
         mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: jest.fn(() => of({ tail_lines: 500 } as LogsDetailsDialog['form']['value'])),
+            closed: of({ tail_lines: 500 } as LogsDetailsDialog['form']['value']),
           }) as unknown as DialogRef<unknown, LogsDetailsDialog>),
         }),
         mockProvider(ApiService, {
@@ -176,15 +176,11 @@ describe('ContainerLogsComponent', () => {
         mockProvider(Router),
         mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: jest.fn(() => {
-              if (cancel) {
-                return of(false);
-              }
-
-              return of({
-                tail_lines: 650,
-              } as LogsDetailsDialog['form']['value']);
-            }),
+            closed: cancel
+              ? of(false)
+              : of({
+                  tail_lines: 650,
+                } as LogsDetailsDialog['form']['value']),
           }) as unknown as DialogRef<unknown, LogsDetailsDialog>),
         }),
         mockProvider(ApiService, {

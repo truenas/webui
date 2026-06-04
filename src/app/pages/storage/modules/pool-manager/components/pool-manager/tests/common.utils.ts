@@ -137,7 +137,7 @@ export const commonProviders = [
   mockProvider(DialogService, {
     confirm: jest.fn(() => of(true)),
     jobDialog: jest.fn(() => ({
-      closed: of({
+      afterClosed: () => of({
         result: {},
       } as Job<Pool>),
     })),

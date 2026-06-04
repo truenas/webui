@@ -37,7 +37,7 @@ describe('ViewCertificateDialogComponent', () => {
   });
 
   it('shows a name of certificate in header', () => {
-    expect(spectator.query('h1')).toHaveText('truenas');
+    expect(spectator.query('.tn-dialog__title')).toHaveText('truenas');
   });
 
   it('shows certificate contents in a textarea', () => {

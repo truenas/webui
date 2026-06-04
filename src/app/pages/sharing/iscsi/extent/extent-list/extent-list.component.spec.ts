@@ -1,3 +1,4 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -71,8 +72,9 @@ describe('ExtentListComponent', () => {
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(null)),
-        })),
+          closed: of(null),
+          close: jest.fn(),
+        } as unknown as DialogRef)),
       }),
       provideMockStore({
         selectors: [

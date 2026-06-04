@@ -63,7 +63,7 @@ describe('CertificateSigningRequestsListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
         jobDialog: jest.fn(() => ({
-          closed: of(undefined),
+          afterClosed: () => of(fakeSuccessfulJob()),
         })),
       }),
       mockProvider(SlideIn, {

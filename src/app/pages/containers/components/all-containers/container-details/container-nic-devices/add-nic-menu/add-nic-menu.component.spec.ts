@@ -1,3 +1,4 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatMenuHarness } from '@angular/material/menu/testing';
@@ -36,8 +37,9 @@ describe('AddNicMenuComponent', () => {
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of({ useDefault: true, trust_guest_rx_filters: false })),
-        })),
+          closed: of({ useDefault: true, trust_guest_rx_filters: false }),
+          close: jest.fn(),
+        } as unknown as DialogRef)),
       }),
       mockProvider(ContainerDevicesStore, {
         devices: () => [
@@ -79,12 +81,13 @@ describe('AddNicMenuComponent', () => {
     await menu.open();
 
     (spectator.inject(TnDialog).open as jest.Mock) = jest.fn(() => ({
-      afterClosed: jest.fn(() => of({
+      closed: of({
         useDefault: true,
         type: ContainerNicDeviceType.Virtio,
         trust_guest_rx_filters: false,
-      })),
-    }));
+      }),
+      close: jest.fn(),
+    } as unknown as DialogRef));
 
     await menu.clickItem({ text: 'truenasbr0' });
 
@@ -111,11 +114,12 @@ describe('AddNicMenuComponent', () => {
     await menu.open();
 
     (spectator.inject(TnDialog).open as jest.Mock) = jest.fn(() => ({
-      afterClosed: jest.fn(() => of({
+      closed: of({
         useDefault: true,
         type: ContainerNicDeviceType.E1000,
-      })),
-    }));
+      }),
+      close: jest.fn(),
+    } as unknown as DialogRef));
 
     await menu.clickItem({ text: 'truenasbr0' });
 

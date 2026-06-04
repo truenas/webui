@@ -109,7 +109,7 @@ describe('UpdateComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
-          closed: of({}),
+          afterClosed: () => of({}),
         })),
       }),
       mockProvider(SystemGeneralService, {

@@ -4,6 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -85,7 +86,8 @@ describe('ExportDiskDialogComponent', () => {
       'Image Format': 'VMDK - VMware Virtual Machine Disk',
     });
 
-    spectator.click(spectator.query('button[ixTest="export"]'));
+    const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export' }));
+    await exportButton.click();
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       request: {
@@ -96,13 +98,13 @@ describe('ExportDiskDialogComponent', () => {
     });
   });
 
-  it('disables submit button when form is invalid', () => {
+  it('disables submit button when form is invalid', async () => {
     // Clear required fields to make the form invalid
     spectator.component.form.patchValue({ destinationDir: '', imageName: '' });
     spectator.detectChanges();
 
-    const submitButton = spectator.query('button[ixTest="export"]');
-    expect(submitButton).toBeDisabled();
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export' }));
+    expect(await submitButton.isDisabled()).toBe(true);
   });
 
   it('provides format options for image export', () => {

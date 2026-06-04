@@ -107,7 +107,7 @@ describe('InstalledAppsListComponent', () => {
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of({ result: [{ error: 'test error' }] }),
+          afterClosed: () => of({ result: [{ error: 'test error' }] }),
         })),
       }),
       mockProvider(TnDialog, {

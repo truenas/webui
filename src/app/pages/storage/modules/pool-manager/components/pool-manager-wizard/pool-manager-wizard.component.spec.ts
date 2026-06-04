@@ -133,7 +133,7 @@ describe('PoolManagerWizardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
-          closed: of(fakeSuccessfulJob(createdPool)),
+          afterClosed: () => of(fakeSuccessfulJob(createdPool)),
         })),
       }),
       mockProvider(TnDialog, {

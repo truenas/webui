@@ -1,3 +1,4 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
@@ -26,8 +27,9 @@ describe('InstallationMediaStepComponent', () => {
       mockProvider(CdkStepper),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of('/mnt/iso/new-windows.iso')),
-        })),
+          closed: of('/mnt/iso/new-windows.iso'),
+          close: jest.fn(),
+        } as unknown as DialogRef)),
       }),
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(),

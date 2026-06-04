@@ -31,7 +31,7 @@ export class LoaderService {
     });
   }
 
-  open(title: string = T('Please wait')): Observable<unknown> {
+  open(title: string = T('Please wait')): Observable<void> {
     if (this.dialogRef !== null) {
       return EMPTY;
     }
@@ -56,7 +56,7 @@ export class LoaderService {
       this.setupConfirmationHandlers();
     }
 
-    return this.dialogRef.closed;
+    return this.dialogRef.closed as Observable<void>;
   }
 
   close(): void {
@@ -125,7 +125,7 @@ export class LoaderService {
     this.handlersSetup = true;
 
     // Since disableClose is true, we need to manually listen for ESC and backdrop clicks.
-    // On cdk DialogRef these are observable properties (not methods like on DialogRef).
+    // On cdk DialogRef these are observable properties (not methods like on MatDialogRef).
     this.keydownSubscription = this.dialogRef.keydownEvents.pipe(
       filter((event) => event.key === 'Escape'),
     ).subscribe(() => {

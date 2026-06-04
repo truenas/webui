@@ -298,7 +298,7 @@ describe('AppWizardComponent', () => {
       mockProvider(SlideIn),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          closed: of({}),
+          afterClosed: () => of({}),
         })),
       }),
       mockProvider(UnsavedChangesService, {

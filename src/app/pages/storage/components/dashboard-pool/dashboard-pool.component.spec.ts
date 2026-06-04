@@ -1,3 +1,4 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, flush, tick } from '@angular/core/testing';
@@ -57,7 +58,7 @@ describe('DashboardPoolComponent', () => {
     ],
     providers: [
       mockProvider(TnDialog, {
-        open: jest.fn(() => ({ afterClosed: jest.fn(() => of()) })),
+        open: jest.fn(() => ({ closed: of(undefined), close: jest.fn() } as unknown as DialogRef)),
       }),
       mockProvider(SnackbarService),
       mockProvider(PoolsDashboardStore, {
