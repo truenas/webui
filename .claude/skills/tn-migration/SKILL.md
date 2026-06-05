@@ -89,7 +89,7 @@ the ticket and document it in the PR.
 | `<a mat-button [routerLink]>` | `<tn-button [routerLink]>` | ⚠ `tn-button` accepts `[routerLink]`/`[href]` but renders an internal `<button>`, not `<a>`. Verify middle-click "open in new tab," right-click context menu, and focus parity. The test-id prefix also shifts (`link-*` → `button-*`); see "Test IDs." |
 | `<button mat-icon-button>` | `<tn-icon-button>` | ⚠ Bare icon-only buttons MUST have `[ariaLabel]` — no accessible name otherwise. |
 | `<button mat-fab>` / `<button mat-mini-fab>` | *(no equivalent — hold)* | No FAB component. Rework to a primary action button or surface to lead. |
-| `<mat-button-toggle-group>` / `<mat-button-toggle>` | `<tn-button-toggle-group>` / `<tn-button-toggle>` | See **Recipe 7**. ⚠ No `[label]` input — must provide `[ariaLabel]` or `[ariaLabelledby]`. ⚠ Per-option test IDs are not auto-synthesized; add `[ixTest]` per `<tn-button-toggle>`. |
+| `<mat-button-toggle-group>` / `<mat-button-toggle>` | `<tn-button-toggle-group>` / `<tn-button-toggle>` | See **Recipe 7**. ⚠ No `[label]` input — must provide `[ariaLabel]` or `[ariaLabelledby]`. ⚠ Per-option test IDs are not auto-synthesized; set `[testId]` per `<tn-button-toggle>`. |
 | `[matRipple]` | *(remove)* | Ripple is built into tn-* components where appropriate. Drop the directive. |
 | `[matBadge]` / `[matBadgeHidden]` | *(no equivalent — hold)* | No badge component. Use `<tn-chip>` for static labels, or hold migration on the surface if notification-count semantics are needed. |
 
@@ -98,7 +98,7 @@ the ticket and document it in the PR.
 | Angular Material | @truenas/ui-components | Notes |
 |---|---|---|
 | `<mat-menu>` | `<tn-menu>` | `[items]` input takes `TnMenuItem[]`. See `ServiceActionsMenuService` for the composition pattern (Recipe 2). |
-| `<button mat-menu-item>` | `<tn-menu-item>` | ⚠ `[ixTest]` resolves to `menu-item-*`, not `button-*`. Fix mapping in `test.directive.ts` (`tn-menu-item → "button"`) to preserve legacy IDs; until then pass `testId="button-foo"` literal. See "Test IDs." |
+| `<button mat-menu-item>` | `<tn-menu-item>` | ⚠ Test IDs resolve to `menu-item-*`, not `button-*` (tn-menu-item declares the `menu-item` prefix). To preserve a legacy `button-foo`, pass `testId="button-foo"` — a per-item `testId` is written verbatim. Do NOT edit `test.directive.ts`. See "Test IDs." |
 | `[matMenuTriggerFor]` | `[tnMenuTriggerFor]` | `TnMenuTriggerDirective`; same usage shape. |
 | `[matTooltip]` | `[tnTooltip]` | `TnTooltipDirective`. ⚠ Tooltips are not accessible descriptions on their own — for form controls prefer the `[tooltip]` input on `ix-input`/`ix-checkbox`/etc., reserve `[tnTooltip]` for hover-only context (disabled-state hints, etc.). |
 
@@ -289,7 +289,7 @@ is a navigation link with a trailing icon, paired with typed right-side slots.
   [primaryAction]="addAction()"
   [secondaryAction]="openAction()"
 >
-  <a tnCardHeader class="card-title-link" [routerLink]="…" [ixTest]="[…]">
+  <a tnCardHeader class="card-title-link" [routerLink]="…" [tnTestId]="[…]" tnTestIdType="link">
     <h3 class="tn-card__title">{{ 'Title' | translate }}<tn-icon … /></h3>
   </a>
   <!-- body -->
@@ -459,7 +459,7 @@ host only:
     @if (slideInRef) {
       <tn-button
         *ixRequiresRoles="requiredRoles" color="primary"
-        [ixTest]="'save'" [label]="'Save' | translate"
+        [testId]="'save'" [label]="'Save' | translate"
         [disabled]="form.invalid || isFormLoading()" (onClick)="onSubmit()"
       ></tn-button>
     }
@@ -483,7 +483,7 @@ twice. Any *other* form actions stay ungated.
   @if (configForm(); as form) {
     <tn-button
       tnSidePanelAction color="primary"
-      [ixTest]="'save'" [label]="'Save' | translate"
+      [testId]="'save'" [label]="'Save' | translate"
       [disabled]="!form.canSubmit()" (onClick)="form.submit()"
     ></tn-button>
   }
@@ -570,7 +570,7 @@ What's available in 0.1.60:
   @for (option of controllerOptions; track option.value) {
     <tn-button-toggle
       [value]="option.value"
-      [ixTest]="['controller', option.value]"
+      [testId]="['controller', option.value]"
     >{{ option.label | translate }}</tn-button-toggle>
   }
 </tn-button-toggle-group>
@@ -587,49 +587,76 @@ What's available in 0.1.60:
   way; `crypto.randomUUID()` is another.
 - **Options are children, not an `[options]` array.** Use `@for` with `<tn-button-toggle>`
   children. The previous `IxButtonGroupComponent` auto-synthesized per-option test IDs
-  from `[name]` + `option.value`; with `tn-button-toggle` you set `[ixTest]` on each
-  toggle yourself (or pass `testId` as a string input).
-- **`tn-button-toggle` is not yet mapped in `test.directive.ts`.** If you add `[ixTest]`
-  to a toggle, also add the element-type case to `test.directive.ts` — otherwise the
-  directive throws `Unknown element type`.
+  from `[name]` + `option.value`; with `tn-button-toggle` you set `[testId]` on each toggle
+  yourself (a single token or an array base for the option). `tn-button-toggle` declares the
+  `button-toggle` prefix, so pass the bare semantic base — the library composes the rest. Do
+  NOT add `[ixTest]` or touch `test.directive.ts`.
 
-## Test IDs — do not drop them
+## Test IDs — use the library directive, do not drop values
 
-webui automated tests select on `data-test`. The library is configured once (already done
-in `main.ts`) to honor this:
+webui automated tests select on `data-test`. **The component library now owns test-id
+composition** via the `[tnTestId]` directive — this supersedes webui's homegrown `[ixTest]`
+directive, which the Epic is phasing out. As you migrate a component, move its test IDs onto
+the library mechanism; don't leave `[ixTest]` behind.
 
-- `{ provide: TN_TEST_ATTR, useValue: 'data-test' }` routes tn-component `testId` inputs
-  through `data-test`.
-- `test.directive.ts` maps `tn-button` → `button`, so `[ixTest]` on a `<tn-button>`
-  produces the same `button-*` value the old `mat-button` had.
+**How the library composes an ID.** Each tn-component hosts `TnTestIdDirective` internally and
+declares its own element-type prefix (`tnTestIdType`). You pass ONLY the semantic base through
+the component's `testId` input, and the library assembles `${type}-${base}`, kebab-cased:
+
+```html
+<!-- emits data-test="button-save": tn-button declares the "button" prefix -->
+<tn-button [testId]="'save'">Save</tn-button>
+
+<!-- plain element: declare the prefix yourself via tnTestIdType -->
+<li [tnTestId]="['username', option.value]" tnTestIdType="option"></li>
+```
+
+Verified prefixes: `tn-button`/`tn-icon-button` → `button`, `tn-card` title link → `link`,
+`tn-menu-item` → `menu-item`, `tn-select` → `select` (options `option`), `tn-checkbox` →
+`checkbox`, `tn-radio` → `radio`, `tn-slide-toggle` → `toggle`, `tn-input` → `input`
+(textarea `textarea`), `tn-button-toggle` → `button-toggle`. Exception: `tn-table`,
+`tn-tree`, `tn-selection-list`, `tn-calendar` are **not yet typed** — they write `testId`
+verbatim, so pass the full value (prefix included) on those.
+
+Two properties make this safe:
+- **Kebab-parity** with the legacy directive (mirrors lodash `kebabCase`), so a migrated
+  base resolves byte-identically (`sshPort` → `ssh-port`).
+- **Idempotent prefix** — a base that already starts with its prefix is not doubled
+  (`button-save` stays `button-save`). The migration is therefore order-independent, but
+  **pass the bare semantic base** (`'save'`, not `'button-save'`) — let the component supply
+  the prefix.
+
+**Attribute name (required once, at the app root).** `{ provide: TN_TEST_ATTR, useValue:
+'data-test' }` makes the library write `data-test` instead of its default `data-testid`.
+Without this provider every tn-component `testId` lands on the wrong attribute and every e2e
+selector misses. This provider is part of the webui-side rollout and may not be wired yet —
+`grep -rn 'TN_TEST_ATTR' src` and add it if absent before relying on tn-component test IDs.
+
+**Phasing out `[ixTest]`.** On a migrated element, `[ixTest]` is the wrong mechanism:
+- On a `<tn-*>` component, use its `[testId]` input — not `[ixTest]`.
+- On a surviving plain element, use `[tnTestId]` (+ `tnTestIdType` for a prefix).
+- **Do not edit `test.directive.ts` element-type mappings** — that legacy workaround is
+  obsolete now that the library owns prefixes. If a prefix must differ, set the component
+  `testId`/`tnTestIdType`.
 
 The trap: when an element disappears (a toolbar `<button>` becomes a `TnCardAction`, a
-`<button mat-menu-item>` becomes a `TnMenuItem`), it no longer carries an `[ixTest]`
-directive. **Reconstruct the ID as a string** and pass it via the component input — `testId`
-on `TnCardAction` / `TnMenuItem`, `headerMenuTriggerTestId` on `tn-card`. Match the exact
-value the old directive produced (it kebab-cases parts and prepends an element-type prefix
-like `button-`). `ServiceActionsMenuService.menuItemTestId()` is the reference for menu-item
-IDs — reuse it, don't hand-roll the string.
+`<button mat-menu-item>` becomes a `TnMenuItem`), it no longer carries a test-id directive.
+**Carry the value forward** via the component input — `testId` on `TnCardAction` /
+`TnMenuItem`, `headerMenuTriggerTestId` on `tn-card`. The resolved `data-test` must equal what
+`[ixTest]` produced before. `ServiceActionsMenuService.menuItemTestId()` is the reference for
+menu-item IDs — reuse it, don't hand-roll the string.
 
-**Element-prefix mutations to watch for.** The `[ixTest]` directive prefixes by element
-type, so changing the element type changes the resolved `data-test` value even when the
-`[ixTest]` input is identical:
+**Element-prefix mutations to watch for.** Because the prefix is owned by the element/component
+type, changing the type changes the resolved value even when the base is identical:
 
-- `<a mat-button [ixTest]="'foo'">` resolved to `link-foo`. `<tn-button [ixTest]="'foo'">`
-  resolves to `button-foo`. This is an intentional element-type change (anchor → button)
-  but it is RE-visible. If the legacy `link-*` selector is referenced anywhere, either
-  pass `testId="link-foo"` literally on the `tn-button` or coordinate the rename.
+- `<a mat-button [ixTest]="'foo'">` resolved to `link-foo`. `<tn-button [testId]="'foo'">`
+  resolves to `button-foo` (tn-button declares `button`). Intentional anchor → button change,
+  but RE-visible: if a legacy `link-*` selector is referenced anywhere, pin the full legacy
+  value verbatim on a typeless host or coordinate the rename.
 - `<button mat-menu-item [ixTest]="'foo'">` resolved to `button-foo`. `<tn-menu-item
-  [ixTest]="'foo'">` currently resolves to `menu-item-foo` because `test.directive.ts`
-  maps `tn-menu-item → "menu-item"`. **This is a regression we recommend fixing in
-  `test.directive.ts`** by mapping `tn-menu-item → "button"` (aligns with the
-  `tn-button → "button"` precedent and preserves every menu-item ID across the Epic).
-  Until that fix lands, pass `testId="button-foo"` as a string input on each
-  `tn-menu-item` to preserve the legacy value.
-
-When the prefix would change against your will, prefer fixing the mapping in
-`test.directive.ts` over a per-call workaround — one mapping change fixes the pattern for
-the whole Epic.
+  [testId]="'foo'">` resolves to `menu-item-foo` because `tn-menu-item` declares the
+  `menu-item` prefix. To preserve the legacy `button-foo`, pass `testId="button-foo"` on the
+  menu item — a per-item `testId` is written verbatim. Do NOT edit `test.directive.ts`.
 
 ## Spec / test updates
 
@@ -701,8 +728,11 @@ Before committing a migrated file, confirm:
 
 - [ ] No `mat-*` / `Mat*` left in the template or `imports` array (unless owned by another ticket).
 - [ ] No `@angular/material` imports left in the `.ts` (unless owned by another ticket).
-- [ ] Every old `[ixTest]` / `data-test` value still exists — on an element or via a
-      `testId`/`*TestId` input. None silently dropped.
+- [ ] Every old `[ixTest]` / `data-test` value still resolves — re-homed onto a tn-component
+      `testId` input or the `[tnTestId]` directive. None silently dropped or re-prefixed.
+- [ ] No `[ixTest]` left on a migrated `tn-*`/plain element — test IDs use the library
+      mechanism (`[testId]` / `[tnTestId]`), and the bare semantic base is passed (no
+      hand-crafted `button-`/`link-` prefix; the component/`tnTestIdType` owns it).
 - [ ] All visible strings still go through the `translate` pipe / `TranslateService`.
 - [ ] `ChangeDetectionStrategy.OnPush` retained; new state is signals/`computed`, not fields.
 - [ ] Dual-host forms: `slideInRef` is `{ optional: true }`, `?.` used on it, `closed`
