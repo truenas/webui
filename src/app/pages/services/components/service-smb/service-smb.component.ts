@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, output, DestroyRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
@@ -30,7 +30,7 @@ import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -67,7 +67,7 @@ interface BindIp {
     TranslateModule,
   ],
 })
-export class ServiceSmbComponent implements OnInit {
+export class ServiceSmbComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
@@ -78,10 +78,6 @@ export class ServiceSmbComponent implements OnInit {
   private truenasConnectService = inject(TruenasConnectService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
-  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef, { optional: true });
-  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
-  readonly closed = output<boolean>();
 
   readonly isFormLoading = signal(false);
   protected hasIncompatibleShares = signal(false);
@@ -116,9 +112,7 @@ export class ServiceSmbComponent implements OnInit {
    * incompatible shares, and SMB1 status.
    */
   constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+    super();
 
     effect(() => {
       const isEnabled = this.isSpotlightEnabled();
@@ -141,7 +135,7 @@ export class ServiceSmbComponent implements OnInit {
 
   protected isBasicMode = true;
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
     netbiosalias: [[] as string[], [
       this.validatorsService.customValidator(
@@ -173,13 +167,8 @@ export class ServiceSmbComponent implements OnInit {
 
   readonly requiredRoles = [Role.SharingSmbWrite];
 
-  private formStatus = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status)),
-    { initialValue: this.form.status },
-  );
-
   /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isFormLoading());
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
@@ -280,24 +269,6 @@ export class ServiceSmbComponent implements OnInit {
     }
     event.preventDefault(); // Prevents page scroll on Space
     this.openTruenasConnectModal();
-  }
-
-  private close(saved: boolean): void {
-    if (this.slideInRef) {
-      this.slideInRef.close({ response: saved });
-    } else {
-      this.closed.emit(saved);
-    }
-  }
-
-  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
-  submit(): void {
-    this.onSubmit();
-  }
-
-  /** Host hook (e.g. tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
   }
 
   protected onSubmit(): void {

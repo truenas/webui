@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, output, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -8,7 +8,7 @@ import { TnButtonComponent } from '@truenas/ui-components';
 import {
   combineLatest, finalize, forkJoin, Observable, of, tap,
 } from 'rxjs';
-import { map, startWith, take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
@@ -29,7 +29,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -59,7 +59,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TranslateModule,
   ],
 })
-export class ServiceNfsComponent implements OnInit {
+export class ServiceNfsComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -71,17 +71,13 @@ export class ServiceNfsComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
-  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef, { optional: true });
-  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
-  readonly closed = output<boolean>();
 
   readonly isFormLoading = signal(false);
   protected readonly isAddSpnDisabled = signal(true);
   protected readonly hasNfsStatus = signal(false);
   protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
 
-  protected form = this.fb.group({
+  protected readonly form = this.fb.group({
     allow_nonroot: [false],
     bindip: [[] as string[]],
     servers_auto: [true],
@@ -132,37 +128,8 @@ export class ServiceNfsComponent implements OnInit {
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
-  private formStatus = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status)),
-    { initialValue: this.form.status },
-  );
-
   /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isFormLoading());
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
-
-  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
-  submit(): void {
-    this.onSubmit();
-  }
-
-  /** Host hook (e.g. tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  private close(saved: boolean): void {
-    if (this.slideInRef) {
-      this.slideInRef.close({ response: saved });
-    } else {
-      this.closed.emit(saved);
-    }
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   ngOnInit(): void {
     this.isFormLoading.set(true);

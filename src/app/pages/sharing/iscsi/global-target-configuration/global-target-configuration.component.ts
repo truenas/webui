@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, computed, output, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule, FormGroup,
 } from '@angular/forms';
@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
 import {
-  forkJoin, of, startWith, take,
+  forkJoin, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -21,7 +21,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -49,7 +49,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     ModalHeaderComponent,
   ],
 })
-export class GlobalTargetConfigurationComponent implements OnInit {
+export class GlobalTargetConfigurationComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
@@ -60,16 +60,12 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
-  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef, { optional: true });
-  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
-  readonly closed = output<boolean>();
 
   readonly isLoading = signal(false);
   isHaSystem = false;
   private originalBasename: string | null = null;
 
-  form = this.fb.nonNullable.group({
+  protected readonly form = this.fb.nonNullable.group({
     basename: ['', Validators.required],
     isns_servers: [[] as string[]],
     pool_avail_threshold: [null as number | null],
@@ -95,37 +91,8 @@ export class GlobalTargetConfigurationComponent implements OnInit {
 
   readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
 
-  private formStatus = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status)),
-    { initialValue: this.form.status },
-  );
-
   /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isLoading());
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
-
-  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
-  submit(): void {
-    this.onSubmit();
-  }
-
-  /** Host hook (e.g. tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  private close(saved: boolean): void {
-    if (this.slideInRef) {
-      this.slideInRef.close({ response: saved });
-    } else {
-      this.closed.emit(saved);
-    }
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
     this.loadFormValues();

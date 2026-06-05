@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, computed, output, signal, inject, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
-import { of, startWith } from 'rxjs';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { WebSharePasskey, webSharePasskeyLabels } from 'app/enums/webshare-passkey.enum';
@@ -18,7 +18,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -41,7 +41,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     RequiresRolesDirective,
   ],
 })
-export class ServiceWebshareComponent implements OnInit {
+export class ServiceWebshareComponent extends SidePanelForm implements OnInit {
   readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
   private api = inject(ApiService);
@@ -50,14 +50,10 @@ export class ServiceWebshareComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
-  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
-  slideInRef = inject(SlideInRef<undefined, boolean>, { optional: true });
-  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
-  readonly closed = output<boolean>();
 
   readonly isFormLoading = signal(false);
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     search: [false],
     passkey: [WebSharePasskey.Disabled, Validators.required],
   });
@@ -65,37 +61,8 @@ export class ServiceWebshareComponent implements OnInit {
   readonly helptext = helptextServiceWebshare;
   readonly passkeyOptions$ = of(mapToOptions(webSharePasskeyLabels, this.translate));
 
-  private formStatus = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status)),
-    { initialValue: this.form.status },
-  );
-
   /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isFormLoading());
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
-
-  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
-  submit(): void {
-    this.onSubmit();
-  }
-
-  /** Host hook (e.g. tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  private close(saved: boolean): void {
-    if (this.slideInRef) {
-      this.slideInRef.close({ response: saved });
-    } else {
-      this.closed.emit(saved);
-    }
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   ngOnInit(): void {
     this.isFormLoading.set(true);

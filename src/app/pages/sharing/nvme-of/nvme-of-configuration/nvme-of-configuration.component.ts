@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
-import { finalize, forkJoin, of, startWith } from 'rxjs';
+import { finalize, forkJoin, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -16,7 +16,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -46,11 +46,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnTooltipDirective,
   ],
 })
-export class NvmeOfConfigurationComponent implements OnInit {
-  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
-  slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef, { optional: true });
-  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
-  readonly closed = output<boolean>();
+export class NvmeOfConfigurationComponent extends SidePanelForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -66,7 +62,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
 
-  protected form = this.formBuilder.nonNullable.group({
+  protected readonly form = this.formBuilder.nonNullable.group({
     basenqn: [''],
     ana: [false],
     rdma: [false],
@@ -86,37 +82,8 @@ export class NvmeOfConfigurationComponent implements OnInit {
     },
   ]);
 
-  private formStatus = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status)),
-    { initialValue: this.form.status },
-  );
-
   /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isLoading());
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
-
-  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
-  submit(): void {
-    this.onSubmit();
-  }
-
-  /** Host hook (e.g. tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  private close(saved: boolean): void {
-    if (this.slideInRef) {
-      this.slideInRef.close({ response: saved });
-    } else {
-      this.closed.emit(saved);
-    }
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
     this.loadConfiguration();
