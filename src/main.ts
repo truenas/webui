@@ -120,6 +120,9 @@ bootstrapApplication(AppComponent, {
       useFactory: getWindow,
     },
     provideTnTablePagerLabels(),
+    // webui targets `data-test` (thousands of existing selectors), so switch the
+    // ui-components library off its `data-testid` default for all `testId` inputs.
+    { provide: TN_TEST_ATTR, useValue: 'data-test' },
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();
