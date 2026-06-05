@@ -2,14 +2,13 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import {
   filter, map,
@@ -51,7 +50,7 @@ import { FailedJobError } from 'app/services/errors/error.classes';
     TnIconComponent,
     MatProgressBar,
     JobItemComponent,
-    MatButton,
+    TnButtonComponent,
     MatDivider,
     TranslateModule,
     AsyncPipe,

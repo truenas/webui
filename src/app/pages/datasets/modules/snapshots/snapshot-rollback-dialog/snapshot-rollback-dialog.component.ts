@@ -2,9 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatAnchor } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent, TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -46,8 +45,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormatDateTimePipe,
     RequiresRolesDirective,
     TestDirective,
-    RouterLink,
-    MatAnchor,
     TnBannerComponent,
   ],
 })
@@ -58,6 +55,7 @@ export class SnapshotRollbackDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private localeService = inject(LocaleService);
+  private router = inject(Router);
   protected dialogRef = inject(DialogRef);
   // `DIALOG_DATA` is whatever the caller passed to `dialog.open(...)` and
   // can be missing if invoked without data; type it honestly and guard in
@@ -202,5 +200,10 @@ export class SnapshotRollbackDialog implements OnInit {
         this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
+  }
+
+  goToStorage(): void {
+    this.dialogRef.close();
+    this.router.navigate(['/storage']);
   }
 }

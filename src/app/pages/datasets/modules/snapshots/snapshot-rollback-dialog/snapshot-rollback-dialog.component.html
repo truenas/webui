@@ -85,16 +85,12 @@
   } @else if (!isLoading() && snapshot) {
     <div class="form-buttons">
       <tn-button variant="outline" ixTest="close" [label]="'Close' | translate" (onClick)="dialogRef.close()"></tn-button>
-      <a
-        mat-button
-        type="submit"
+      <tn-button
         color="primary"
         ixTest="go-to-storage"
-        [routerLink]="['/storage']"
-        (click)="dialogRef.close()"
-      >
-        {{ 'Go to Storage' | translate }}
-      </a>
+        [label]="'Go to Storage' | translate"
+        (onClick)="goToStorage()"
+      ></tn-button>
     </div>
   }
 </div>

@@ -2,6 +2,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
@@ -53,6 +54,7 @@ describe('SnapshotRollbackDialog', () => {
     ],
     providers: [
       mockAuth(),
+      mockProvider(Router),
       { provide: DIALOG_DATA, useFactory: () => dialogSnapshot },
       mockProvider(DialogRef),
       mockProvider(DialogService),

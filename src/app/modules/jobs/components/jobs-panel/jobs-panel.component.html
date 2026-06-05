@@ -88,12 +88,11 @@
 
 
 <div tnDialogAction>
-  <button
-    mat-button
+  <tn-button
+    variant="outline"
     ixTest="history"
-    (click)="goToJobs()"
-  >
-    {{ 'View All Jobs' | translate }}
-  </button>
+    [label]="'View All Jobs' | translate"
+    (onClick)="goToJobs()"
+  ></tn-button>
 </div>
 </tn-dialog-shell>

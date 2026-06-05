@@ -1,8 +1,7 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -19,7 +18,7 @@ import { DownloadService } from 'app/services/download.service';
     TnDialogShellComponent,
     TestDirective,
     CopyButtonComponent,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
   ],
 })

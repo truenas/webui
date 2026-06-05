@@ -2,10 +2,10 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmDeviceType, VmDisplayType } from 'app/enums/vm.enum';
@@ -89,7 +89,7 @@ describe('DeviceDeleteModalComponent', () => {
               'Force Delete': filledValues.force,
             });
 
-            const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Device' }));
+            const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete Device' }));
             await submitButton.click();
 
             expect(api.call).toHaveBeenCalledWith('vm.device.delete', [
@@ -164,7 +164,7 @@ describe('DeviceDeleteModalComponent', () => {
               'Force Delete': filledValues.force,
             });
 
-            const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Device' }));
+            const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete Device' }));
             await submitButton.click();
 
             expect(api.call).toHaveBeenCalledWith('vm.device.delete', [
@@ -219,7 +219,7 @@ describe('DeviceDeleteModalComponent', () => {
             'Force Delete': filledValues.force,
           });
 
-          const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Device' }));
+          const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete Device' }));
           await submitButton.click();
 
           expect(api.call).toHaveBeenCalledWith('vm.device.delete', [

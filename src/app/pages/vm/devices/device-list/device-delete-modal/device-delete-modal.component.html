@@ -36,26 +36,19 @@
 </form>
 
 <div tnDialogAction class="device-delete-modal-actions">
-  <button
-    type="button"
-    mat-button
-    class="action-btn"
-    name="Cancel_button"
+  <tn-button
+    variant="outline"
     ixTest="cancel"
-    (click)="cancel()"
-  >
-    {{ 'Cancel' | translate }}
-  </button>
-  <button
+    [label]="'Cancel' | translate"
+    (onClick)="cancel()"
+  ></tn-button>
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    type="button"
-    mat-button
     color="warn"
     ixTest="delete-device"
+    [label]="'Delete Device' | translate"
     [disabled]="form.invalid"
-    (click)="onSubmit()"
-  >
-    {{ 'Delete Device' | translate }}
-  </button>
+    (onClick)="onSubmit()"
+  ></tn-button>
 </div>
 </tn-dialog-shell>

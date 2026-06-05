@@ -1,7 +1,7 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import {
@@ -51,7 +51,7 @@ describe('ViewCertificateDialogComponent', () => {
 
   it('downloads certificate using specified extension and mime type when Download button is pressed', async () => {
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Download' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Download' }));
     await button.click();
 
     const expectedBlob = new Blob(['---BEGIN CERTIFICATE---'], { type: 'application/x-x509-user-cert' });
