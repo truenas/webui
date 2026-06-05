@@ -4,7 +4,6 @@ import { TnDialog } from '@truenas/ui-components';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { BlockingActionGuardService } from 'app/modules/auth/blocking-action-guard.service';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PasswordChangeRequiredDialog } from 'app/pages/credentials/users/password-change-required-dialog/password-change-required-dialog.component';
 import { TwoFactorSetupDialog } from 'app/pages/credentials/users/two-factor-setup-dialog/two-factor-setup-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -36,9 +35,6 @@ describe('BlockingActionGuardService', () => {
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => mockDialogRef),
-      }),
-      mockProvider(DialogService, {
-        fullScreenDialog: jest.fn(() => of(undefined)),
       }),
     ],
   });
@@ -90,6 +86,24 @@ describe('BlockingActionGuardService', () => {
       panelClass: 'full-screen-modal',
       disableClose: true,
     });
+  });
+
+  it('awaits the 2FA dialog result when only 2FA is required', async () => {
+    mockIsAuthenticated$.next(true);
+    mockIsTwoFactorSetupRequired$.next(true);
+    mockIsPasswordChangeRequired$.next(false);
+
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValueOnce({
+      closed: of(false),
+      componentInstance: {},
+    } as ReturnType<TnDialog['open']>);
+
+    const isAllowed = await firstValueFrom(
+      spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/dashboard' } as RouterStateSnapshot),
+    );
+
+    // Proves the guard chains the dialog's `closed` result rather than short-circuiting to `true`.
+    expect(isAllowed).toBe(false);
   });
 
   it('shows two-factor warning when 2FA is enabled and user has not configured it', async () => {

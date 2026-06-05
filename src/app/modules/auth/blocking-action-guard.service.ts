@@ -115,14 +115,16 @@ export class BlockingActionGuardService implements CanActivateChild {
           }
         }
 
-        let passwordChangeRequired$: Observable<boolean> = of(true);
+        // When a password change is required, run that dialog first and only then
+        // chain the 2FA dialog. Otherwise fall straight through to the 2FA flow
+        // (which is `of(true)` when 2FA isn't required).
         if (isPasswordChangeRequired) {
-          passwordChangeRequired$ = this.openFullScreenDialog(PasswordChangeRequiredDialog).pipe(
+          return this.openFullScreenDialog(PasswordChangeRequiredDialog).pipe(
             switchMap(() => twoFactorDialog$),
           );
         }
 
-        return passwordChangeRequired$ ?? (twoFactorDialog$ ?? of(true));
+        return twoFactorDialog$;
       }),
     );
   }

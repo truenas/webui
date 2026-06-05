@@ -117,14 +117,19 @@ export class DialogService {
   ): Observable<boolean> | Observable<DialogWithSecondaryCheckboxResult> {
     type ConfirmData = ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox;
     type ConfirmResult = boolean | DialogWithSecondaryCheckboxResult;
+    // On dismiss (ESC/backdrop) the cdk dialog emits `undefined`. Normalize it to a
+    // fully-shaped "not confirmed" so each overload's return type stays honest:
+    // the secondary-checkbox variant must keep the `{ confirmed, secondaryCheckbox }`
+    // shape rather than collapsing to a bare `false`.
+    const dismissResult: ConfirmResult = 'secondaryCheckbox' in options
+      ? { confirmed: false, secondaryCheckbox: false }
+      : false;
     return this.tnDialog.open<ConfirmDialog, ConfirmData, ConfirmResult>(ConfirmDialog, {
       disableClose: options.disableClose || false,
       data: options,
       autoFocus: true,
     }).closed.pipe(
-      // The dialog can be dismissed without a result (ESC/backdrop); treat that
-      // as "not confirmed" so consumers reading `result.confirmed` don't crash.
-      map((result) => result ?? false),
+      map((result) => result ?? dismissResult),
     ) as Observable<boolean> | Observable<DialogWithSecondaryCheckboxResult>;
   }
 

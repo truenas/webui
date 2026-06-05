@@ -4,8 +4,12 @@ import { TestBed } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
-import { of, throwError } from 'rxjs';
+import { firstValueFrom, of, throwError } from 'rxjs';
+import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { ConfirmDialog } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
+import { ErrorDialog } from 'app/modules/dialog/components/error-dialog/error-dialog.component';
+import { MultiErrorDialog } from 'app/modules/dialog/components/multi-error-dialog/multi-error-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -48,6 +52,80 @@ describe('DialogService', () => {
       spectator.service.closeAllDialogs();
 
       expect(cdkDialog.closeAll).toHaveBeenCalled();
+    });
+  });
+
+  function mockDialogClosed(result: boolean | undefined): jest.SpyInstance {
+    return jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of(result),
+    } as ReturnType<TnDialog['open']>);
+  }
+
+  describe('error', () => {
+    it('returns false without opening a dialog when the report has no message', async () => {
+      const open = jest.spyOn(spectator.inject(TnDialog), 'open');
+
+      const result = await firstValueFrom(spectator.service.error({ title: 'No message' } as ErrorReport));
+
+      expect(result).toBe(false);
+      expect(open).not.toHaveBeenCalled();
+    });
+
+    it('opens ErrorDialog for a single error report', async () => {
+      const open = mockDialogClosed(true);
+
+      const result = await firstValueFrom(spectator.service.error({ message: 'Boom' } as ErrorReport));
+
+      expect(open).toHaveBeenCalledWith(ErrorDialog, { data: { message: 'Boom' } });
+      expect(result).toBe(true);
+    });
+
+    it('opens MultiErrorDialog when several reports have messages', async () => {
+      const open = mockDialogClosed(true);
+      const errors = [{ message: 'a' }, { message: 'b' }] as ErrorReport[];
+
+      await firstValueFrom(spectator.service.error(errors));
+
+      expect(open).toHaveBeenCalledWith(MultiErrorDialog, { data: errors });
+    });
+
+    it('opens a single ErrorDialog when only one report in the array has a message', async () => {
+      const open = mockDialogClosed(true);
+      const errors = [{ message: 'a' }, { title: 'no message' }] as ErrorReport[];
+
+      await firstValueFrom(spectator.service.error(errors));
+
+      expect(open).toHaveBeenCalledWith(ErrorDialog, { data: { message: 'a' } });
+    });
+
+    it('normalizes a dismissed (undefined) result to false', async () => {
+      mockDialogClosed(undefined);
+
+      const result = await firstValueFrom(spectator.service.error({ message: 'Boom' } as ErrorReport));
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('confirm dismiss normalization', () => {
+    it('normalizes dismissal to false for a plain confirm', async () => {
+      mockDialogClosed(undefined);
+
+      const result = await firstValueFrom(spectator.service.confirm({ message: ignoreTranslation('Sure?') }));
+
+      expect(result).toBe(false);
+    });
+
+    it('normalizes dismissal to the full result shape for a secondary-checkbox confirm', async () => {
+      const open = mockDialogClosed(undefined);
+
+      const result = await firstValueFrom(spectator.service.confirm({
+        message: ignoreTranslation('Sure?'),
+        secondaryCheckbox: true,
+      }));
+
+      expect(open).toHaveBeenCalledWith(ConfirmDialog, expect.anything());
+      expect(result).toEqual({ confirmed: false, secondaryCheckbox: false });
     });
   });
 
