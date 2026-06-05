@@ -1,26 +1,26 @@
 <div class="message-list-container">
   <div class="message-list-header">
     <div class="header-controls">
-      <ix-input
+      <tn-input
         class="filter-field"
         ixTest="websocket-debug-filter"
         [placeholder]="'Filter by method' | translate"
         [(ngModel)]="filterText"
         (ngModelChange)="applyFilter()">
-      </ix-input>
-      <mat-checkbox
+      </tn-input>
+      <tn-checkbox
         ixTest="websocket-debug-auto-scroll"
-        matTooltip="Auto-scroll to latest message"
-        [(ngModel)]="autoScroll">
-        Auto-scroll
-      </mat-checkbox>
-      <mat-checkbox
+        tnTooltip="Auto-scroll to latest message"
+        label="Auto-scroll"
+        [(ngModel)]="autoScroll"
+      ></tn-checkbox>
+      <tn-checkbox
         ixTest="websocket-debug-duplicate-notifications"
-        matTooltip="Show snackbar when duplicate API calls are detected"
-        [checked]="duplicateNotificationsEnabled$ | async"
-        (change)="toggleDuplicateNotifications()">
-        Duplicate alerts
-      </mat-checkbox>
+        tnTooltip="Show snackbar when duplicate API calls are detected"
+        label="Duplicate alerts"
+        [ngModel]="(duplicateNotificationsEnabled$ | async) ?? false"
+        (ngModelChange)="toggleDuplicateNotifications()"
+      ></tn-checkbox>
       <tn-icon-button
         name="delete-outline"
         library="mdi"
@@ -105,7 +105,12 @@
         
         @if (message.isExpanded) {
           <div class="message-expanded">
-            <pre>{{ message.message | json }}</pre>
+            <ix-code-editor
+              [ngModel]="message.message | json"
+              [ngModelOptions]="{ standalone: true }"
+              [language]="CodeEditorLanguage.Json"
+              [disabled]="true"
+            ></ix-code-editor>
           </div>
         }
       </div>

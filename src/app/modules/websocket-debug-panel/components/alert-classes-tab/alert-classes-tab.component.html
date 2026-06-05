@@ -1,22 +1,18 @@
 <div class="alert-classes-tab">
   <div class="enable-section">
-    <mat-checkbox
-      [checked]="autoCheck()"
-      (change)="onAutoCheckChange($event.checked)"
-    >
-      {{ 'Auto-check alert class sync on open' | translate }}
-    </mat-checkbox>
+    <tn-checkbox
+      [label]="'Auto-check alert class sync on open' | translate"
+      [(ngModel)]="autoCheckEnabled"
+    ></tn-checkbox>
   </div>
 
   <div class="actions">
-    <button
-      mat-button
+    <tn-button
       color="primary"
       [disabled]="loading() || !isAuthenticated()"
-      (click)="runComparison()"
-    >
-      {{ loading() ? ('Checking...' | translate) : ('Check Now' | translate) }}
-    </button>
+      [label]="loading() ? ('Checking...' | translate) : ('Check Now' | translate)"
+      (onClick)="runComparison()"
+    ></tn-button>
     @if (lastCheckedFormatted()) {
       <span class="last-checked">
         {{ 'Last checked:' | translate }} {{ lastCheckedFormatted() }}

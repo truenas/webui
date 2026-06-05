@@ -64,7 +64,10 @@ export class TestDirective {
       case 'tr':
         return 'row';
       case 'mat-slide-toggle':
+      case 'tn-slide-toggle':
         return 'toggle';
+      case 'tn-checkbox':
+        return 'checkbox';
       case 'mat-checkbox':
       case 'mat-option':
       case 'mat-select':
@@ -92,6 +95,8 @@ export class TestDirective {
         return 'button';
       case 'tn-menu-item':
         return 'menu-item';
+      case 'tn-input':
+        return 'input';
       case 'tn-select':
         return 'select';
       case 'div':

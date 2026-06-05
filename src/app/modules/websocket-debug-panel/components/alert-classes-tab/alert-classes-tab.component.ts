@@ -2,9 +2,9 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal, untracked,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertCategory } from 'app/interfaces/alert.interface';
@@ -22,8 +22,9 @@ interface AlertClassInfo {
   selector: 'ix-alert-classes-tab',
   standalone: true,
   imports: [
-    MatButton,
-    MatCheckbox,
+    FormsModule,
+    TnButtonComponent,
+    TnCheckboxComponent,
     TranslateModule,
   ],
   templateUrl: './alert-classes-tab.component.html',
@@ -51,7 +52,11 @@ export class AlertClassesTabComponent {
     });
   }
 
-  protected onAutoCheckChange(checked: boolean): void {
+  protected get autoCheckEnabled(): boolean {
+    return this.autoCheck();
+  }
+
+  protected set autoCheckEnabled(checked: boolean) {
     this.autoCheck.set(checked);
   }
 

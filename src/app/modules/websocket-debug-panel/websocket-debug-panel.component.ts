@@ -3,10 +3,11 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, NgZone, OnDestroy, OnInit, Renderer2,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatTabsModule } from '@angular/material/tabs';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import {
+  TnIconButtonComponent, TnTabsComponent, TnTabComponent, TnTabPanelComponent,
+} from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { EnclosureMockService } from 'app/services/enclosure-mock.service';
 import { AlertClassesTabComponent } from './components/alert-classes-tab/alert-classes-tab.component';
@@ -34,7 +35,9 @@ const retryIntervalMs = 100;
   standalone: true,
   imports: [
     AsyncPipe,
-    MatTabsModule,
+    TnTabsComponent,
+    TnTabComponent,
+    TnTabPanelComponent,
     TnIconButtonComponent,
     WebSocketTabComponent,
     MockConfigurationsTabComponent,

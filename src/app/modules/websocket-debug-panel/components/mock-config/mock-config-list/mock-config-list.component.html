@@ -24,15 +24,12 @@
         [disabled]="mockConfigs().length === 0"
         (click)="exportConfigs()"
       ></tn-icon-button>
-      <button
-        mat-button
+      <tn-button
         ixTest="add-mock-button"
         color="primary"
-        (click)="addNewConfig()"
-      >
-        <tn-icon name="plus" library="mdi"></tn-icon>
-        {{ 'Add Mock' | translate }}
-      </button>
+        [label]="'Add Mock' | translate"
+        (onClick)="addNewConfig()"
+      ></tn-button>
     </div>
   </div>
 
@@ -55,11 +52,11 @@
       <div class="config-list">
         @for (config of mockConfigs(); track config.id) {
           <div class="config-item" [class.enabled]="config.enabled">
-            <mat-slide-toggle
+            <tn-slide-toggle
               [checked]="config.enabled"
-              [matTooltip]="config.enabled ? ('Disable' | translate) : ('Enable' | translate)"
+              [tnTooltip]="config.enabled ? ('Disable' | translate) : ('Enable' | translate)"
               (change)="toggleConfig(config.id)"
-            ></mat-slide-toggle>
+            ></tn-slide-toggle>
 
             <div class="config-info">
               <div class="method-name">

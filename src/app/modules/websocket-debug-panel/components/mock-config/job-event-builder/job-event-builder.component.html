@@ -1,10 +1,12 @@
 <div class="job-events">
   <div class="events-header">
     <h4>{{ 'Events Timeline' | translate }}</h4>
-    <button mat-button ixTest="add-event-button" type="button" color="primary" (click)="addEvent()">
-      <tn-icon name="plus" library="mdi" size="sm"></tn-icon>
-      {{ 'Add Event' | translate }}
-    </button>
+    <tn-button
+      ixTest="add-event-button"
+      color="primary"
+      [label]="'Add Event' | translate"
+      (onClick)="addEvent()"
+    ></tn-button>
   </div>
 
   @if (events().length === 0) {
@@ -14,80 +16,81 @@
   <form [formGroup]="form">
     <div formArrayName="events">
       @for (eventControl of eventsFormArray.controls; track $index; let i = $index) {
-        <mat-card class="event-card" [formGroupName]="i">
-          <mat-card-content>
-            <div class="event-header">
-              <h5>{{ 'Event' | translate }} #{{ i + 1 }}</h5>
-              <tn-icon-button
-                name="delete"
-                library="mdi"
-                ixTest="remove-event-button"
-                type="button"
-                (click)="removeEvent(i)"
-              ></tn-icon-button>
-            </div>
+        <tn-card class="event-card" [formGroupName]="i">
+          <div class="event-header">
+            <h5>{{ 'Event' | translate }} #{{ i + 1 }}</h5>
+            <tn-icon-button
+              name="delete"
+              library="mdi"
+              ixTest="remove-event-button"
+              type="button"
+              (click)="removeEvent(i)"
+            ></tn-icon-button>
+          </div>
 
-            <div class="event-fields">
-              <div class="field-row">
-                <ix-input
+          <div class="event-fields">
+            <div class="field-row">
+              <tn-form-field [label]="'Delay (ms)' | translate" [required]="true">
+                <tn-input
                   ixTest="delay-input"
                   formControlName="delay"
-                  [label]="'Delay (ms)' | translate"
-                  [type]="'number'"
-                  [required]="true"
-                ></ix-input>
+                ></tn-input>
+              </tn-form-field>
 
-                <ix-select
+              <tn-form-field [label]="'State' | translate" [required]="true">
+                <tn-select
                   ixTest="state-select"
                   formControlName="state"
-                  [label]="'State' | translate"
-                  [options]="stateOptions$"
-                  [required]="true"
-                ></ix-select>
-              </div>
+                  [options]="stateOptions"
+                ></tn-select>
+              </tn-form-field>
+            </div>
 
-              <ix-input
+            <tn-form-field [label]="'Description' | translate" [required]="true">
+              <tn-input
                 ixTest="description-input"
                 formControlName="description"
-                [label]="'Description' | translate"
-                [required]="true"
-              ></ix-input>
+              ></tn-input>
+            </tn-form-field>
 
-              <div class="progress-fields">
-                <ix-input
+            <div class="progress-fields">
+              <tn-form-field [label]="'Progress %' | translate">
+                <tn-input
                   ixTest="progress-percent-input"
                   formControlName="progressPercent"
-                  [label]="'Progress %' | translate"
-                  [type]="'number'"
-                ></ix-input>
+                ></tn-input>
+              </tn-form-field>
 
-                <ix-input
+              <tn-form-field [label]="'Progress Description' | translate">
+                <tn-input
                   ixTest="progress-description-input"
                   formControlName="progressDescription"
-                  [label]="'Progress Description' | translate"
-                ></ix-input>
-              </div>
+                ></tn-input>
+              </tn-form-field>
+            </div>
 
-              @if (isResultVisible(i)) {
-                <ix-textarea
+            @if (isResultVisible(i)) {
+              <tn-form-field [label]="'Result (JSON)' | translate">
+                <tn-input
                   ixTest="result-textarea"
                   formControlName="result"
-                  [label]="'Result (JSON)' | translate"
+                  [multiline]="true"
                   [rows]="3"
-                ></ix-textarea>
-              }
+                ></tn-input>
+              </tn-form-field>
+            }
 
-              @if (getEventControl(i).get('state')?.value === 'FAILED') {
-                <ix-input
+            @if (getEventControl(i).get('state')?.value === 'FAILED') {
+              <tn-form-field [label]="'Error Message' | translate">
+                <tn-input
                   ixTest="error-input"
                   formControlName="error"
-                  [label]="'Error Message' | translate"
                   [placeholder]="'Error description' | translate"
-                ></ix-input>
-              }
-            </div>
-          </mat-card-content>
-        </mat-card>
+                ></tn-input>
+              </tn-form-field>
+            }
+          </div>
+        </tn-card>
       }
     </div>
   </form>
