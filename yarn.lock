@@ -4536,9 +4536,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.1.60":
-  version: 0.1.60
-  resolution: "@truenas/ui-components@npm:0.1.60"
+"@truenas/ui-components@npm:~0.1.64":
+  version: 0.1.64
+  resolution: "@truenas/ui-components@npm:0.1.64"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -4558,7 +4558,7 @@ __metadata:
     "@mdi/js": ^7.4.47
   bin:
     truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/eecfc8fee1c725e9ba444e732f4f2d8431ebe57a16bcabc743510f5d628ed4bdaa308dfba3338eeccd9331607ff91d565ac167d4d5083f2ad0f6b9c699ac90e1
+  checksum: 10/953ad27bd0028d8b19ad1ffee908efd1201d89c35eb1afc0ef511b8dc328f0509cd5e53b0bc69df9b5bd4c917d7a254e22184aa9c69a0a24f63b533efb43b663
   languageName: node
   linkType: hard
 
@@ -10233,9 +10233,9 @@ __metadata:
   linkType: hard
 
 "hono@npm:^4.11.4":
-  version: 4.12.18
-  resolution: "hono@npm:4.12.18"
-  checksum: 10/0adda91eeb68c921e073bcbedd8758f026cc47dbbe7824147cf0ee8ef03004b1891f4d4edc80f6ab4c6ab33ec1f2fac52c4f7098752f8acf6833bcb76efb39e4
+  version: 4.12.23
+  resolution: "hono@npm:4.12.23"
+  checksum: 10/721a7f0728fafe229ea84d5f0f3a2575b44dce5eb2047e49f4e7929257bb59511c80adefbe09637480ca3b65ad553510d7cd75c7dc696a916f141aefcbcb2667
   languageName: node
   linkType: hard
 
@@ -16007,7 +16007,7 @@ __metadata:
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.1.60"
+    "@truenas/ui-components": "npm:~0.1.64"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"
