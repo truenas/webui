@@ -48,7 +48,7 @@
         <tn-form-field
           [label]="'Error Code' | translate"
           [required]="true"
-          [hint]="'Standard JSON-RPC codes: -32700, -32600, -32601, -32602, -32603; -32001 = CallError' | translate">
+          [hint]="'Standard JSON-RPC codes: -32700 Parse error, -32600 Invalid request, -32601 Method not found, -32602 Invalid params, -32603 Internal error; -32001 = CallError. Custom codes allowed.' | translate">
           <tn-input
             ixTest="error-code-input"
             formControlName="errorCode"

@@ -105,9 +105,13 @@ export class MessageListComponent implements AfterViewInit {
 
   protected copyMessage(message: WebSocketDebugMessage): void {
     const messageContent = JSON.stringify(message.message, null, 2);
-    navigator.clipboard.writeText(messageContent).then(() => {
-      this.snackbar.success(ignoreTranslation('Message copied to clipboard'));
-    });
+    navigator.clipboard.writeText(messageContent)
+      .then(() => {
+        this.snackbar.success(ignoreTranslation('Message copied to clipboard'));
+      })
+      .catch(() => {
+        this.snackbar.error(ignoreTranslation('Failed to copy message to clipboard'));
+      });
   }
 
   protected toggleMessage(messageId: string): void {
