@@ -147,6 +147,7 @@ export class SmartAlertService {
       detailedHelp: enhancement.detailedHelp,
       documentationUrl: enhancement.documentationUrl,
       relatedMenuPath: enhancement.relatedMenuPath,
+      bannerMenuPath: enhancement.bannerMenuPath,
       customIcon: enhancement.customIcon,
       severityScore: enhancement.severityScore,
     };

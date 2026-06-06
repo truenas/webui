@@ -80,6 +80,15 @@ export class PageAlertsComponent {
   });
 
   /**
+   * Split the current route into path segments, stripping any query string and fragment
+   * so the last segment isn't polluted (e.g. `api-keys?userName=root` -> `api-keys`).
+   */
+  private getPathSegments(): string[] {
+    const path = this.router.url.split('?')[0].split('#')[0];
+    return path.split('/').filter((segment) => segment);
+  }
+
+  /**
    * Filter alerts relevant to the current page
    */
   protected pageAlerts = computed(() => {
@@ -87,22 +96,25 @@ export class PageAlertsComponent {
     this.currentRoute();
 
     const alerts = this.allAlerts();
-    const url = this.router.url;
     const duplicateInfo = this.duplicateInfoMap();
 
     // Parse current route into segments once
-    const pathSegments = url.split('/').filter((segment) => segment && !segment.startsWith('?'));
+    const pathSegments = this.getPathSegments();
 
     // Single pass: filter by route and group by key simultaneously
     const alertsByKey = new Map<string, (Alert & EnhancedAlert)[]>();
 
     for (const alert of alerts) {
-      // Skip dismissed or alerts without menu path
-      if (!alert.relatedMenuPath || alert.dismissed) continue;
+      // Scope the banner by bannerMenuPath when provided, otherwise fall back to relatedMenuPath.
+      // This lets the banner target a narrower route than the nav badge (e.g. API keys live under
+      // /credentials/users/api-keys but the badge stays on the Credentials menu).
+      const menuPath = alert.bannerMenuPath ?? alert.relatedMenuPath;
+
+      // Skip dismissed or alerts without a page scope
+      if (!menuPath || alert.dismissed) continue;
 
       // Match if current URL is at or below the alert's menu path.
       // Dataset routes use /datasets/:datasetId, so ['datasets'] must still match /datasets/tank.
-      const menuPath = alert.relatedMenuPath;
       const isMatch = menuPath.length <= pathSegments.length
         && menuPath.every((segment, index) => pathSegments[index] === segment);
 
@@ -170,8 +182,9 @@ export class PageAlertsComponent {
    * Filter out actions that navigate to current or parent route
    */
   protected getVisibleActions = computed(() => {
-    const url = this.router.url;
-    const pathSegments = url.split('/').filter((segment) => segment && !segment.startsWith('?'));
+    // Recompute when the route changes.
+    this.currentRoute();
+    const pathSegments = this.getPathSegments();
 
     return (alert: { actions?: SmartAlertAction[] }): SmartAlertAction[] => {
       if (!alert.actions) {
