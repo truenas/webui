@@ -284,6 +284,14 @@ export function resolveParityLock(
  * as a save-time topology error. When the category is still empty we fall back
  * to {@link resolveParityLock}, which keeps the NAS-140839/ER-72 relaxation
  * (special/dedup parity need not match the data vdev's redundancy).
+ *
+ * The lock pins to the *exact* {@link CreateVdevLayout} of the existing vdev
+ * (RAIDZ1 ≠ RAIDZ2), not just the broader mirror-vs-raidz family. This is the
+ * deliberately conservative choice: it can never produce a configuration the
+ * middleware rejects at save time, at the cost of disallowing raidz parity
+ * combinations ZFS might tolerate. `minMirrorWidth` stays at the 2-way floor —
+ * ZFS allows differing widths within a class, so the new mirror need not match
+ * the existing mirror's width.
  */
 export function parityLock$(
   pool$: Observable<Pool | null>,

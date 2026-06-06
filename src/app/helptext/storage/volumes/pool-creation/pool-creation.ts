@@ -41,8 +41,6 @@ export const helptextPoolCreation = {
 
   specialRedundancyMismatchWarning: T('The metadata VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.'),
   dedupRedundancyMismatchWarning: T('The dedup VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.'),
-  specialMixedLayoutWarning: T('Mixing layouts within the metadata class is not recommended.'),
-  dedupMixedLayoutWarning: T('Mixing layouts within the dedup class is not recommended.'),
 
   // SED Encryption
   sedInfoMessage: T('SED-capable (Self-Encrypting Drive) disks detected. Hardware-based encryption provides better performance and security.'),

@@ -1,5 +1,7 @@
+import { firstValueFrom, of } from 'rxjs';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import {
   PoolManagerTopology,
@@ -10,6 +12,7 @@ import {
   layoutParity,
   nonDraidEquivalent,
   nonDraidLayouts,
+  parityLock$,
   parseDraidVdevName,
   resolveParityLock,
   resolveTopologyLayout,
@@ -306,6 +309,52 @@ describe('resolveParityLock', () => {
     const lock = resolveParityLock(undefined, { layout: CreateVdevLayout.Stripe });
     expect(lock.allowedLayouts).toStrictEqual([...nonDraidLayouts]);
     expect(lock.minMirrorWidth).toBe(2);
+  });
+});
+
+describe('parityLock$', () => {
+  const dataRaidz1Topology = {
+    [VDevType.Data]: { layout: CreateVdevLayout.Raidz1 },
+  } as PoolManagerTopology;
+
+  it('locks to the existing special vdev layout when the category is populated', async () => {
+    const pool = {
+      topology: {
+        [VDevType.Special]: [{ type: TopologyItemType.Mirror, children: [{}, {}] }],
+      },
+    } as Pool;
+
+    const lock = await firstValueFrom(parityLock$(of(pool), of(dataRaidz1Topology), VDevType.Special));
+    expect(lock.allowedLayouts).toStrictEqual([CreateVdevLayout.Mirror]);
+    expect(lock.minMirrorWidth).toBe(2);
+  });
+
+  it('maps an existing dRAID dedup vdev to its raidz equivalent when locking', async () => {
+    const pool = {
+      topology: {
+        [VDevType.Dedup]: [{ type: TopologyItemType.Draid, name: 'draid2:4d:8c:0s-0', children: [] }],
+      },
+    } as Pool;
+
+    const lock = await firstValueFrom(parityLock$(of(pool), of(dataRaidz1Topology), VDevType.Dedup));
+    expect(lock.allowedLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
+  });
+
+  it('falls back to resolveParityLock when the category is empty', async () => {
+    const pool = { topology: { [VDevType.Special]: [] } } as unknown as Pool;
+
+    const lock = await firstValueFrom(parityLock$(of(pool), of(dataRaidz1Topology), VDevType.Special));
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz1, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(2);
+  });
+
+  it('falls back to resolveParityLock when no pool exists yet', async () => {
+    const lock = await firstValueFrom(parityLock$(of(null), of(dataRaidz1Topology), VDevType.Special));
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz1, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
   });
 });
 

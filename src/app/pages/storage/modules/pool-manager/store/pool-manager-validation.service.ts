@@ -28,7 +28,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import {
-  existingVdevLayout, isDraidLayout, layoutParity, resolveTopologyLayout,
+  isDraidLayout, layoutParity, resolveTopologyLayout,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { AppState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
@@ -47,19 +47,16 @@ const allocClassVdevs: readonly AllocClassVdev[] = [VDevType.Special, VDevType.D
 interface AllocClassRule {
   step: PoolCreationWizardStep;
   redundancyMismatchText: string;
-  mixedLayoutText: string;
 }
 
 const allocClassRules: Record<AllocClassVdev, AllocClassRule> = {
   [VDevType.Special]: {
     step: PoolCreationWizardStep.Metadata,
     redundancyMismatchText: helptextPoolCreation.specialRedundancyMismatchWarning,
-    mixedLayoutText: helptextPoolCreation.specialMixedLayoutWarning,
   },
   [VDevType.Dedup]: {
     step: PoolCreationWizardStep.Dedup,
     redundancyMismatchText: helptextPoolCreation.dedupRedundancyMismatchWarning,
-    mixedLayoutText: helptextPoolCreation.dedupMixedLayoutWarning,
   },
 };
 
@@ -141,7 +138,6 @@ export class PoolManagerValidationService {
           errors.push(...this.validateAddVdevs(topology));
         }
         errors.push(...this.validateRedundancyMismatch(topology, existingPool));
-        errors.push(...this.validateMixedAllocClassLayout(topology, existingPool));
         errors.push(...this.validateIncompleteCategories(topology));
 
         return uniqBy(errors, 'text')
@@ -507,48 +503,6 @@ export class PoolManagerValidationService {
         const rule = allocClassRules[vdevType];
         errors.push({
           text: this.translate.instant(rule.redundancyMismatchText),
-          severity: PoolCreationSeverity.Warning,
-          step: rule.step,
-        });
-      }
-    });
-
-    return errors;
-  }
-
-  /**
-   * NAS-140839 / ER-72 — adding a special/dedup vdev whose layout differs from
-   * the existing pool's special/dedup layout is allowed but warned about. The
-   * topology category carries a single layout, so mixing can only arise in the
-   * add-vdev flow against an already-populated pool category.
-   */
-  private validateMixedAllocClassLayout(
-    topology: PoolManagerTopology,
-    existingPool: Pool | null,
-  ): PoolCreationError[] {
-    const errors: PoolCreationError[] = [];
-    if (!existingPool) {
-      return errors;
-    }
-
-    allocClassVdevs.forEach((vdevType) => {
-      const category = topology[vdevType];
-      if (!category?.vdevs.length || !category.layout) {
-        return;
-      }
-      // Asymmetric skip: only suppress when the *new* category is Stripe —
-      // that case already gets validateAddVdevRedundancy's dedicated SPOF
-      // message and we don't want to double-warn. If the existing pool's
-      // class is Stripe and the new vdev is non-stripe, mixing within an
-      // existing Stripe class is itself a real concern, so we still warn.
-      if (category.layout === CreateVdevLayout.Stripe) {
-        return;
-      }
-      const existingLayout = existingVdevLayout(existingPool.topology?.[vdevType]);
-      if (existingLayout !== null && existingLayout !== category.layout) {
-        const rule = allocClassRules[vdevType];
-        errors.push({
-          text: this.translate.instant(rule.mixedLayoutText),
           severity: PoolCreationSeverity.Warning,
           step: rule.step,
         });
