@@ -208,9 +208,10 @@ export const nonDraidLayouts: readonly CreateVdevLayout[] = Object.values(Create
   .filter((layout) => !draidCreateLayouts.includes(layout));
 
 /**
- * Stable references for the two outcomes of {@link resolveParityLock} so that
- * callers can compare allowedLayouts by reference (parityLock$'s
- * distinctUntilChanged) without walking the array on every emission.
+ * Stable references for the two outcomes of {@link resolveParityLock}, so its
+ * common no-existing-vdev path returns a shared array rather than rebuilding it
+ * on every emission. (parityLock$ compares allowedLayouts by content, since its
+ * existing-vdev path produces a fresh single-element array each time.)
  */
 const layoutsWithoutStripe: readonly CreateVdevLayout[] = nonDraidLayouts
   .filter((layout) => layout !== CreateVdevLayout.Stripe);
@@ -272,22 +273,38 @@ export function resolveParityLock(
 }
 
 /**
- * Emits the parity lock for special/dedup categories. Shared by the metadata
- * and dedup wizard steps so both react to the same set of inputs (existing
- * pool data layout, wizard data layout) in the same way.
+ * Emits the layout lock for a special or dedup category. Shared by the metadata
+ * and dedup wizard steps so both react to the same inputs in the same way.
+ *
+ * ZFS rejects a pool whose special/dedup class mixes layout types ("You are not
+ * allowed to create a pool with different special vdev types"). So once the pool
+ * already has a vdev of this category, every additional vdev must use that same
+ * layout: we lock the dropdown to it (a single-option `allowedLayouts`) instead
+ * of letting the user pick a mismatching layout and only discover the conflict
+ * as a save-time topology error. When the category is still empty we fall back
+ * to {@link resolveParityLock}, which keeps the NAS-140839/ER-72 relaxation
+ * (special/dedup parity need not match the data vdev's redundancy).
  */
 export function parityLock$(
   pool$: Observable<Pool | null>,
   topology$: Observable<PoolManagerTopology>,
+  vdevType: VDevType.Special | VDevType.Dedup,
 ): Observable<ParityLock> {
   return combineLatest([pool$, topology$]).pipe(
-    map(([pool, topology]) => resolveParityLock(
-      pool?.topology[VDevType.Data],
-      { layout: topology[VDevType.Data].layout },
-    )),
+    map(([pool, topology]) => {
+      const existingLayout = existingVdevLayout(pool?.topology[vdevType]);
+      if (existingLayout !== null) {
+        return { allowedLayouts: [existingLayout], minMirrorWidth: 2 };
+      }
+      return resolveParityLock(
+        pool?.topology[VDevType.Data],
+        { layout: topology[VDevType.Data].layout },
+      );
+    }),
     distinctUntilChanged((a, b) => (
       a.minMirrorWidth === b.minMirrorWidth
-      && a.allowedLayouts === b.allowedLayouts
+      && a.allowedLayouts.length === b.allowedLayouts.length
+      && a.allowedLayouts.every((layout, index) => layout === b.allowedLayouts[index])
     )),
   );
 }

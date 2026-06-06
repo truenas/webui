@@ -57,7 +57,7 @@ export class DedupWizardStepComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    parityLock$(this.addVdevsStore.pool$, this.store.topology$)
+    parityLock$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Dedup)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((lock) => {
         this.allowedLayouts = lock.allowedLayouts;

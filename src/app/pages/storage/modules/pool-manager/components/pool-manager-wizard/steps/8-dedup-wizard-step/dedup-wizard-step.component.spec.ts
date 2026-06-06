@@ -134,7 +134,7 @@ describe('DedupWizardStepComponent', () => {
     });
   });
 
-  describe('when pool has existing dedup vdevs of a different layout', () => {
+  describe('when pool has an existing dedup vdev', () => {
     const createComponent = makeFactory({
       pool: {
         topology: {
@@ -146,12 +146,11 @@ describe('DedupWizardStepComponent', () => {
       dataLayout: CreateVdevLayout.Raidz1,
     });
 
-    it('does not lock to the existing category layout (mixing now warned, not blocked)', () => {
+    it('locks the layout to the existing dedup vdev layout (ZFS forbids mixing)', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
+      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror]);
       expect(layoutComponent.minMirrorWidth).toBe(2);
-      expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
 });

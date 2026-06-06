@@ -145,7 +145,7 @@ describe('MetadataWizardStepComponent', () => {
     });
   });
 
-  describe('when pool has existing special vdevs of a different layout', () => {
+  describe('when pool has an existing special vdev', () => {
     const createComponent = makeFactory({
       pool: {
         topology: {
@@ -157,12 +157,11 @@ describe('MetadataWizardStepComponent', () => {
       dataLayout: CreateVdevLayout.Raidz1,
     });
 
-    it('does not lock to the existing category layout (mixing now warned, not blocked)', () => {
+    it('locks the layout to the existing special vdev layout (ZFS forbids mixing)', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
+      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror]);
       expect(layoutComponent.minMirrorWidth).toBe(2);
-      expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
 });
