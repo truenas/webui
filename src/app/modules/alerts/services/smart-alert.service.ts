@@ -323,8 +323,11 @@ export class SmartAlertService {
       alert.formatted || alert.text,
       alert, // Pass full alert for conditional enhancement resolution
     );
-    if (enhancement?.relatedMenuPath) {
-      return '/' + enhancement.relatedMenuPath.join('/');
+    // Prefer the banner scope (where the alert's data actually lives) so the page is refreshed
+    // on the correct route, falling back to the nav-badge path when no banner override is set.
+    const menuPath = enhancement?.bannerMenuPath ?? enhancement?.relatedMenuPath;
+    if (menuPath) {
+      return '/' + menuPath.join('/');
     }
     return null;
   }

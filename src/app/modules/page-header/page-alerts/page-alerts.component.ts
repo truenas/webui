@@ -89,6 +89,15 @@ export class PageAlertsComponent {
   }
 
   /**
+   * Normalize a route array into bare path segments for comparison with getPathSegments().
+   * Registry action routes prefix their first element with a slash (e.g. `['/credentials', 'users']`),
+   * so a naive equality check against the slash-free URL segments would never match.
+   */
+  private normalizeRouteSegments(route: string[]): string[] {
+    return route.join('/').split('/').filter((segment) => segment);
+  }
+
+  /**
    * Filter alerts relevant to the current page
    */
   protected pageAlerts = computed(() => {
@@ -197,17 +206,19 @@ export class PageAlertsComponent {
           return true;
         }
 
+        const routeSegments = this.normalizeRouteSegments(action.route);
+
         // Filter out if action route is current route
-        const isSameRoute = action.route.length === pathSegments.length
-          && action.route.every((segment, index) => pathSegments[index] === segment);
+        const isSameRoute = routeSegments.length === pathSegments.length
+          && routeSegments.every((segment, index) => pathSegments[index] === segment);
 
         if (isSameRoute) {
           return false;
         }
 
         // Filter out if action route is parent of current route
-        const isParentRoute = action.route.length < pathSegments.length
-          && action.route.every((segment, index) => pathSegments[index] === segment);
+        const isParentRoute = routeSegments.length < pathSegments.length
+          && routeSegments.every((segment, index) => pathSegments[index] === segment);
 
         if (isParentRoute) {
           return false;
