@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, computed,
+  ChangeDetectionStrategy, Component, OnInit, computed,
   inject, DestroyRef, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -12,12 +12,17 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
+  TnCellDefDirective,
   TnEmptyComponent,
+  TnHeaderCellDefDirective,
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
   TnTooltipDirective,
   type TnCardAction,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import {
   map, BehaviorSubject, of,
@@ -33,29 +38,27 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import {
-  yesNoColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import {
+  ShareActionsCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+import {
+  ShareToggleCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
+import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
-import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
+import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { getFilesystemAclUnavailableReason, getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
@@ -79,17 +82,21 @@ import { selectService } from 'app/store/services/services.selectors';
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
     IxTablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
+    YesNoPipe,
     RouterLink,
     TnEmptyComponent,
     CardAlertBadgeComponent,
     ServiceSmbComponent,
+    ShareToggleCellComponent,
+    ShareActionsCellComponent,
+    TierStatusComponent,
   ],
 })
 export class SmbCardComponent implements OnInit {
@@ -105,8 +112,8 @@ export class SmbCardComponent implements OnInit {
   private poolStoreService = inject(poolStore);
   private authService = inject(AuthService);
   private actionsMenu = inject(ServiceActionsMenuService);
-  private cdr = inject(ChangeDetectorRef);
   private tierService = inject(SharingTierService);
+  private snackbar = inject(SnackbarService);
 
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
@@ -157,74 +164,79 @@ export class SmbCardComponent implements OnInit {
     requiredRoles: this.requiredRoles,
   });
 
-  columns = createTable<SmbShare>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Path'),
-      getValue: (row) => (row.options as ExternalSmbShareOptions)?.remote_path?.join(', ') || row.path,
-    }),
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'comment',
-    }),
-    toggleColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-      cssClass: 'tight-toggle',
-      onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
+  protected readonly actions: IconActionConfig<SmbShare>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      disabled: (row) => this.loadingMap$.pipe(map((ids) => Boolean(ids.get(row.id)))),
+      onClick: (row) => this.openForm(row),
+    },
+    {
+      iconName: tnIconMarker('share-variant', 'mdi'),
+      tooltip: this.translate.instant('Edit Share ACL'),
+      disabled: (row) => of(isShareUnavailable(row, this.activePoolPaths())),
+      disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
+      onClick: (row) => this.doShareAclEdit(row),
+    },
+    {
+      iconName: tnIconMarker('security', 'mdi'),
+      tooltip: this.translate.instant('Edit Filesystem ACL'),
+      disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths())),
+      disabledTooltip: (row: SmbShare) => this.translate.instant(
+        getFilesystemAclUnavailableReason(row, this.activePoolPaths()),
+      ),
+      onClick: (row) => this.doFilesystemAclEdit(row),
+    },
+    this.tierAction,
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
       requiredRoles: this.requiredRoles,
-      isDisabled: (row: SmbShare) => isShareUnavailable(row, this.activePoolPaths()),
-      getDisabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Audit Logging'),
-      getValue: (row) => Boolean(row.audit?.enable),
-    }),
-    storageTierColumn({
-      title: this.translate.instant('Storage Tier'),
-      hidden: true,
-    }),
-    actionsWithMenuColumn({
-      cssClass: 'tight-actions',
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          disabled: (row) => this.loadingMap$.pipe(map((ids) => Boolean(ids.get(row.id)))),
-          onClick: (row) => this.openForm(row),
-        },
-        {
-          iconName: tnIconMarker('share-variant', 'mdi'),
-          tooltip: this.translate.instant('Edit Share ACL'),
-          disabled: (row) => of(isShareUnavailable(row, this.activePoolPaths())),
-          disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
-          onClick: (row) => this.doShareAclEdit(row),
-        },
-        {
-          iconName: tnIconMarker('security', 'mdi'),
-          tooltip: this.translate.instant('Edit Filesystem ACL'),
-          disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths())),
-          disabledTooltip: (row: SmbShare) => this.translate.instant(
-            getFilesystemAclUnavailableReason(row, this.activePoolPaths()),
-          ),
-          onClick: (row) => this.doFilesystemAclEdit(row),
-        },
-        this.tierAction,
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'card-smb-share-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
+    },
+  ];
+
+  /**
+   * Column order matches the legacy ix-table columns. The `tier` column is only
+   * displayed when tiering is enabled — replacing the old `hidden`/`setColumns`
+   * mutation with reactive membership driven by `tierService.tierEnabled()`.
+   */
+  protected readonly displayedColumns = computed<string[]>(() => {
+    const columns = ['name', 'path', 'comment', 'enabled', 'audit'];
+    if (this.tierService.tierEnabled()) {
+      columns.push('tier');
+    }
+    columns.push('actions');
+    return columns;
   });
+
+  protected readonly trackBySmbId = (_index: number, row: SmbShare): number => row.id;
+
+  protected uniqueRowTag(row: SmbShare): string {
+    return convertStringToId('card-smb-share-' + row.name);
+  }
+
+  protected ariaLabel(row: SmbShare): string {
+    return [row.name, this.translate.instant('SMB Share')].join(' ');
+  }
+
+  protected getPathValue(row: SmbShare): string {
+    return (row.options as ExternalSmbShareOptions)?.remote_path?.join(', ') || row.path;
+  }
+
+  protected isToggleDisabled(row: SmbShare): boolean {
+    return isShareUnavailable(row, this.activePoolPaths());
+  }
+
+  protected getEnabledTooltip(row: SmbShare): string {
+    return this.isToggleDisabled(row)
+      ? this.translate.instant(getUnavailableReason(row, this.activePoolPaths()))
+      : '';
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<SmbShare>(event, this.displayedColumns()));
+  }
 
   ngOnInit(): void {
     const smbShares$ = this.api.call('sharing.smb.query').pipe(takeUntilDestroyed(this.destroyRef));
@@ -243,11 +255,11 @@ export class SmbCardComponent implements OnInit {
       },
     });
 
-    this.tierService.attachTierToShareList<SmbShare>({
+    // Prime the tier config so `displayedColumns` reactively reveals the tier
+    // column when tiering is enabled, and reload the list on tier-job ticks.
+    this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.tierService.wireTierJobRefresh({
       destroyRef: this.destroyRef,
-      cdr: this.cdr,
-      getColumns: () => this.columns,
-      setColumns: (columns) => { this.columns = columns; },
       reload: () => this.dataProvider.load(),
     });
   }
@@ -304,15 +316,20 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  private onChangeEnabledState(row: SmbShare): void {
-    const param = 'enabled';
+  protected onChangeEnabledState(row: SmbShare): void {
+    const enabled = !row.enabled;
 
-    this.api.call('sharing.smb.update', [row.id, { [param]: !row[param] }]).pipe(
+    this.api.call('sharing.smb.update', [row.id, { enabled }]).pipe(
       accumulateLoadingState(row.id, this.loadingMap$),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();
+        this.snackbar.success(
+          enabled
+            ? this.translate.instant('SMB share «{name}» enabled', { name: row.name })
+            : this.translate.instant('SMB share «{name}» disabled', { name: row.name }),
+        );
       },
       error: (error: unknown) => {
         this.dataProvider.load();
