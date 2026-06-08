@@ -68,8 +68,8 @@ describe('DatasetUnlockComponent', () => {
     const fileInput = await loader.getHarness(IxFileInputHarness.with({ label: 'Upload Key file' }));
     await fileInput.setValue([file]);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+    await unlockButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith({
@@ -91,8 +91,8 @@ describe('DatasetUnlockComponent', () => {
       },
     );
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+    await unlockButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'pool.dataset.encryption_summary',
