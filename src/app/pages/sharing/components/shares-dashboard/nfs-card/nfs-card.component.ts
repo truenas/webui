@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, computed,
+  ChangeDetectionStrategy, Component, OnInit, computed,
   inject, DestroyRef, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -12,12 +12,17 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
+  TnCellDefDirective,
   TnEmptyComponent,
+  TnHeaderCellDefDirective,
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
   TnTooltipDirective,
   type TnCardAction,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -29,26 +34,26 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import {
+  ShareActionsCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+import {
+  ShareToggleCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
+import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
-import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
+import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -70,10 +75,10 @@ import { selectService } from 'app/store/services/services.selectors';
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
     IxTablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
@@ -81,6 +86,9 @@ import { selectService } from 'app/store/services/services.selectors';
     TnEmptyComponent,
     CardAlertBadgeComponent,
     ServiceNfsComponent,
+    ShareToggleCellComponent,
+    ShareActionsCellComponent,
+    TierStatusComponent,
   ],
 })
 export class NfsCardComponent implements OnInit {
@@ -95,8 +103,8 @@ export class NfsCardComponent implements OnInit {
   private poolStoreService = inject(poolStore);
   private authService = inject(AuthService);
   private actionsMenu = inject(ServiceActionsMenuService);
-  private cdr = inject(ChangeDetectorRef);
   private tierService = inject(SharingTierService);
+  private snackbar = inject(SnackbarService);
 
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
@@ -146,49 +154,58 @@ export class NfsCardComponent implements OnInit {
     requiredRoles: this.requiredRoles,
   });
 
-  columns = createTable<NfsShare>([
-    textColumn({
-      title: this.translate.instant('Path'),
-      propertyName: 'path',
-    }),
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'comment',
-    }),
-    toggleColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-      cssClass: 'tight-toggle',
-      onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
+  protected readonly actions: IconActionConfig<NfsShare>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.openForm(row),
+    },
+    this.tierAction,
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
       requiredRoles: this.requiredRoles,
-      isDisabled: (row: NfsShare) => isShareUnavailable(row, this.activePoolPaths()),
-      getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
-    }),
-    storageTierColumn({
-      title: this.translate.instant('Storage Tier'),
-      hidden: true,
-    }),
-    actionsWithMenuColumn({
-      cssClass: 'tight-actions',
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.openForm(row),
-        },
-        this.tierAction,
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'card-nfs-share-' + row.path + '-' + row.comment,
-    ariaLabels: (row) => [row.path, this.translate.instant('NFS Share')],
+    },
+  ];
+
+  /**
+   * Column order matches the legacy ix-table columns. The `tier` column is only
+   * displayed when tiering is enabled — replacing the old `hidden`/`setColumns`
+   * mutation with reactive membership driven by `tierService.tierEnabled()`.
+   */
+  protected readonly displayedColumns = computed<string[]>(() => {
+    const columns = ['path', 'comment', 'enabled'];
+    if (this.tierService.tierEnabled()) {
+      columns.push('tier');
+    }
+    columns.push('actions');
+    return columns;
   });
+
+  protected readonly trackByNfsId = (_index: number, row: NfsShare): number => row.id;
+
+  protected uniqueRowTag(row: NfsShare): string {
+    return convertStringToId('card-nfs-share-' + row.path + '-' + row.comment);
+  }
+
+  protected ariaLabel(row: NfsShare): string {
+    return [row.path, this.translate.instant('NFS Share')].join(' ');
+  }
+
+  protected isToggleDisabled(row: NfsShare): boolean {
+    return isShareUnavailable(row, this.activePoolPaths());
+  }
+
+  protected getEnabledTooltip(row: NfsShare): string {
+    return this.isToggleDisabled(row)
+      ? this.translate.instant(getUnavailableReason(row, this.activePoolPaths()))
+      : '';
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<NfsShare>(event, this.displayedColumns()));
+  }
 
   ngOnInit(): void {
     const nfsShares$ = this.api.call('sharing.nfs.query').pipe(takeUntilDestroyed(this.destroyRef));
@@ -207,11 +224,11 @@ export class NfsCardComponent implements OnInit {
       },
     });
 
-    this.tierService.attachTierToShareList<NfsShare>({
+    // Prime the tier config so `displayedColumns` reactively reveals the tier
+    // column when tiering is enabled, and reload the list on tier-job ticks.
+    this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.tierService.wireTierJobRefresh({
       destroyRef: this.destroyRef,
-      cdr: this.cdr,
-      getColumns: () => this.columns,
-      setColumns: (columns) => { this.columns = columns; },
       reload: () => this.dataProvider.load(),
     });
   }
@@ -232,15 +249,20 @@ export class NfsCardComponent implements OnInit {
     });
   }
 
-  private onChangeEnabledState(row: NfsShare): void {
-    const param = 'enabled';
+  protected onChangeEnabledState(row: NfsShare): void {
+    const enabled = !row.enabled;
 
-    this.api.call('sharing.nfs.update', [row.id, { [param]: !row[param] }]).pipe(
+    this.api.call('sharing.nfs.update', [row.id, { enabled }]).pipe(
       accumulateLoadingState(row.id, this.loadingMap$),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();
+        this.snackbar.success(
+          enabled
+            ? this.translate.instant('NFS share «{path}» enabled', { path: row.path })
+            : this.translate.instant('NFS share «{path}» disabled', { path: row.path }),
+        );
       },
       error: (error: unknown) => {
         this.dataProvider.load();

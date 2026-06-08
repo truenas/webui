@@ -58,23 +58,58 @@
       [title]="'WebShare service provides web-based file access. Users can access these shares if they have the WebShare Enabled option set on their account.' | translate"
     ></tn-empty>
   } @else {
-    <ix-table
+    <tn-table
       class="table"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns"
+      [trackBy]="trackByWebShareId"
+      [loading]="!!(dataProvider.isLoading$ | async)"
+      (sortChange)="onSortChange($event)"
     >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      ></tbody>
-    </ix-table>
+      <ng-container [tnColumnDef]="'name'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span class="webshare-name-container">
+            <span
+              role="text"
+              [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+              [attr.aria-label]="'WebShare name: ' + row.name"
+            >{{ row.name }}</span>
+            @if (row.isHomeBase) {
+              <tn-icon
+                class="home-icon"
+                name="folder-account"
+                library="mdi"
+                [tnTooltip]="'Home Share' | translate"
+              ></tn-icon>
+            }
+          </span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'path'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.path ? (row.path | translate) : ''"
+          >{{ row.path }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'actions'" [width]="'120px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-share-actions-cell
+            mode="inline"
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-share-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
   }
 
   <ix-table-pager-show-more

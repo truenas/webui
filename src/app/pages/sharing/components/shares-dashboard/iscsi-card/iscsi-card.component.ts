@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
@@ -10,12 +10,17 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
+  TnCellDefDirective,
   TnEmptyComponent,
+  TnHeaderCellDefDirective,
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
   TnTooltipDirective,
   type TnCardAction,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import {
   filter, startWith, tap,
@@ -29,18 +34,16 @@ import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-aler
 import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ShareActionsCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
 import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.elements';
 import {
   ServiceActionsMenuService,
@@ -71,10 +74,10 @@ import { selectService } from 'app/store/services/services.selectors';
     TnIconComponent,
     TnTooltipDirective,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
     IxTablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
@@ -82,6 +85,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnEmptyComponent,
     CardAlertBadgeComponent,
     GlobalTargetConfigurationComponent,
+    ShareActionsCellComponent,
   ],
 })
 export class IscsiCardComponent implements OnInit {
@@ -92,7 +96,6 @@ export class IscsiCardComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private matDialog = inject(MatDialog);
   private iscsiService = inject(IscsiService);
-  private cdr = inject(ChangeDetectorRef);
   private license = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
@@ -150,58 +153,50 @@ export class IscsiCardComponent implements OnInit {
 
   dataProvider: AsyncDataProvider<IscsiTarget>;
 
-  columns = createTable<IscsiTarget>([
-    textColumn({
-      title: this.translate.instant('Target Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Target Alias'),
-      propertyName: 'alias',
-    }),
-    textColumn({
-      title: this.translate.instant('Mode'),
-      propertyName: 'mode',
-      hidden: true,
-      getValue: (row) => this.translate.instant(iscsiTargetModeNames.get(row.mode) || row.mode) || '-',
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.openForm(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'card-iscsi-target-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('iSCSI Target')],
+  protected readonly actions: IconActionConfig<IscsiTarget>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.openForm(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  /**
+   * The `mode` column is shown only when at least one target is not a plain
+   * iSCSI target (i.e. Fibre Channel is in play) — replacing the legacy
+   * `hidden`/effect column mutation with reactive `displayedColumns` membership.
+   */
+  protected readonly displayedColumns = computed<string[]>(() => {
+    const columns = ['name', 'alias'];
+    if (this.targets()?.some((target) => target.mode !== IscsiTargetMode.Iscsi)) {
+      columns.push('mode');
+    }
+    columns.push('actions');
+    return columns;
   });
 
-  constructor() {
-    effect(() => {
-      if (this.targets()?.some((target) => target.mode !== IscsiTargetMode.Iscsi)) {
-        this.columns = this.columns.map((column) => {
-          if (column.propertyName === 'mode') {
-            return {
-              ...column,
-              hidden: false,
-            };
-          }
+  protected readonly trackByIscsiId = (_index: number, row: IscsiTarget): number => row.id;
 
-          return column;
-        });
-        this.cdr.detectChanges();
-        this.cdr.markForCheck();
-      }
-    });
+  protected uniqueRowTag(row: IscsiTarget): string {
+    return convertStringToId('card-iscsi-target-' + row.name);
+  }
+
+  protected ariaLabel(row: IscsiTarget): string {
+    return [row.name, this.translate.instant('iSCSI Target')].join(' ');
+  }
+
+  protected getModeValue(row: IscsiTarget): string {
+    return this.translate.instant(iscsiTargetModeNames.get(row.mode) || row.mode) || '-';
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<IscsiTarget>(event, this.displayedColumns()));
   }
 
   ngOnInit(): void {

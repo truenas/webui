@@ -4,7 +4,9 @@ import { Signal, WritableSignal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnBannerHarness, TnButtonHarness, type TnMenuItem } from '@truenas/ui-components';
+import {
+  TnBannerHarness, TnButtonHarness, TnTableHarness, type TnMenuItem,
+} from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -137,12 +139,13 @@ describe('WebShareCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows table with WebShare entries', () => {
-    const rows = spectator.queryAll('ix-table tbody tr');
-    expect(rows).toHaveLength(2);
+  it('shows table with WebShare entries', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.getRowCount()).toBe(2);
 
-    expect(rows[0]).toHaveText('documents');
-    expect(rows[0]).toHaveText('/mnt/tank/documents');
+    const rows = await table.getAllRowTexts();
+    expect(rows[0]).toContain('documents');
+    expect(rows[0]).toContain('/mnt/tank/documents');
   });
 
   it('shows Open WebShare button when service is running', async () => {

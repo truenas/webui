@@ -31,32 +31,54 @@
       [title]="'Raw block storage using NVMe over Fabrics (e.g. NVMe/TCP), appearing as a local disk on the client. Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.' | translate"
     ></tn-empty>
   } @else {
-    <ix-table
+    <tn-table
       class="table"
-      [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
+      [dataSource]="(dataProvider().currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns"
+      [trackBy]="trackBySubsystemId"
+      [loading]="!!(dataProvider().isLoading$ | async)"
+      (sortChange)="onSortChange($event)"
     >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider()"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider()"
-        [isLoading]="!!(dataProvider().isLoading$ | async)"
-      >
-        <ng-template
-          let-subsystem
-          ix-table-cell
-          [columnIndex]="0"
-          [dataProvider]="dataProvider()"
-        >
-          <ix-subsystem-name-cell [subsystem]="subsystem"></ix-subsystem-name-cell>
+      <ng-container [tnColumnDef]="'name'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-subsystem-name-cell [subsystem]="row"></ix-subsystem-name-cell>
         </ng-template>
-      </tbody>
-    </ix-table>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'namespaces'">
+        <ng-template tnHeaderCellDef>{{ 'Namespaces' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span [ixTest]="[('Namespaces' | translate), uniqueRowTag(row), 'row-text']">{{ row.namespaces.length }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'ports'">
+        <ng-template tnHeaderCellDef>{{ 'Ports' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span [ixTest]="[('Ports' | translate), uniqueRowTag(row), 'row-text']">{{ row.ports.length }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'hosts'">
+        <ng-template tnHeaderCellDef>{{ 'Hosts' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span [ixTest]="[('Hosts' | translate), uniqueRowTag(row), 'row-text']">{{ row.hosts.length }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-share-actions-cell
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-share-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
 
     <ix-table-pager-show-more
       [pageSize]="4"

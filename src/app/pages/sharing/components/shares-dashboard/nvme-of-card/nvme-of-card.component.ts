@@ -10,12 +10,17 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
+  TnCellDefDirective,
   TnEmptyComponent,
+  TnHeaderCellDefDirective,
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
   TnTooltipDirective,
   type TnCardAction,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -26,21 +31,17 @@ import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-aler
 import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ShareActionsCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -69,19 +70,19 @@ import { selectService } from 'app/store/services/services.selectors';
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
     IxTablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
     RouterLink,
-    IxTableCellDirective,
     TnEmptyComponent,
     SubSystemNameCellComponent,
     CardAlertBadgeComponent,
     NvmeOfConfigurationComponent,
+    ShareActionsCellComponent,
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
@@ -166,48 +167,36 @@ export class NvmeOfCardComponent implements OnInit {
     return dataProvider;
   });
 
-  protected columns = createTable<NvmeOfSubsystemDetails>([
-    templateColumn({
-      title: this.translate.instant('Name'),
-    }),
-    textColumn({
-      title: this.translate.instant('Namespaces'),
-      getValue: (row: NvmeOfSubsystemDetails) => {
-        return row.namespaces.length;
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Ports'),
-      getValue: (row) => {
-        return row.ports.length;
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Hosts'),
-      getValue: (row) => {
-        return row.hosts.length;
-      },
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('eye', 'mdi'),
-          tooltip: this.translate.instant('View'),
-          onClick: (row) => this.router.navigate(['/sharing/nvme-of', row.name]),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'nvmeof-subsys-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('Subsystem')],
-  });
+  protected readonly actions: IconActionConfig<NvmeOfSubsystemDetails>[] = [
+    {
+      iconName: tnIconMarker('eye', 'mdi'),
+      tooltip: this.translate.instant('View'),
+      onClick: (row) => this.router.navigate(['/sharing/nvme-of', row.name]),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected readonly displayedColumns = ['name', 'namespaces', 'ports', 'hosts', 'actions'];
+
+  protected readonly trackBySubsystemId = (_index: number, row: NvmeOfSubsystemDetails): number => row.id;
+
+  protected uniqueRowTag(row: NvmeOfSubsystemDetails): string {
+    return convertStringToId('nvmeof-subsys-' + row.name);
+  }
+
+  protected ariaLabel(row: NvmeOfSubsystemDetails): string {
+    return [row.name, this.translate.instant('Subsystem')].join(' ');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider().setSorting(mapTnSortToTableSort<NvmeOfSubsystemDetails>(event, this.displayedColumns));
+  }
 
   ngOnInit(): void {
     this.nvmeOfStore.initialize();

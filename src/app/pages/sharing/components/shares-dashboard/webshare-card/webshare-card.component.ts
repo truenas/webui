@@ -12,12 +12,17 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
+  TnCellDefDirective,
   TnEmptyComponent,
+  TnHeaderCellDefDirective,
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
   TnTooltipDirective,
   type TnCardAction,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import {
   filter, switchMap, map, of, catchError, shareReplay, Subject, startWith,
@@ -34,23 +39,21 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import {
+  ShareActionsCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
-import { webShareNameColumn, WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
+import { WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { AppState } from 'app/store';
@@ -76,13 +79,14 @@ import { selectService } from 'app/store/services/services.selectors';
     TestDirective,
     TranslateModule,
     TnEmptyComponent,
-    IxTableComponent,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableEmptyDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
     IxTablePagerShowMoreComponent,
     CardAlertBadgeComponent,
     ServiceWebshareComponent,
+    ShareActionsCellComponent,
   ],
 })
 export class WebShareCardComponent implements OnInit {
@@ -177,45 +181,46 @@ export class WebShareCardComponent implements OnInit {
     this.configOpen.set(false);
   }
 
-  columns = createTable<WebShareTableRow>([
-    webShareNameColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Path'),
-      propertyName: 'path',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('open-in-new', 'mdi'),
-          tooltip: this.translate.instant('Open'),
-          onClick: (row) => this.openWebShareByName(row),
-          disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
-          dynamicTooltip: () => this.webShareService.canOpenWebShare$.pipe(
-            map((canOpen) => (canOpen
-              ? this.translate.instant('Open')
-              : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'))),
-          ),
-        },
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'card-webshare-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('WebShare')],
-  });
+  protected readonly actions: IconActionConfig<WebShareTableRow>[] = [
+    {
+      iconName: tnIconMarker('open-in-new', 'mdi'),
+      tooltip: this.translate.instant('Open'),
+      onClick: (row) => this.openWebShareByName(row),
+      disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
+      dynamicTooltip: () => this.webShareService.canOpenWebShare$.pipe(
+        map((canOpen) => (canOpen
+          ? this.translate.instant('Open')
+          : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'))),
+      ),
+    },
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected readonly displayedColumns = ['name', 'path', 'actions'];
+
+  protected readonly trackByWebShareId = (_index: number, row: WebShareTableRow): number => row.id;
+
+  protected uniqueRowTag(row: WebShareTableRow): string {
+    return convertStringToId('card-webshare-' + row.name);
+  }
+
+  protected ariaLabel(row: WebShareTableRow): string {
+    return [row.name, this.translate.instant('WebShare')].join(' ');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<WebShareTableRow>(event, this.displayedColumns));
+  }
 
   ngOnInit(): void {
     const webshares$ = this.webShares$.pipe(
