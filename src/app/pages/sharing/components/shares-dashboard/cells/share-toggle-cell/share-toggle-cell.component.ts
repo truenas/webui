@@ -17,6 +17,7 @@ import { Role } from 'app/enums/role.enum';
 @Component({
   selector: 'ix-share-toggle-cell',
   templateUrl: './share-toggle-cell.component.html',
+  styleUrls: ['./share-toggle-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
