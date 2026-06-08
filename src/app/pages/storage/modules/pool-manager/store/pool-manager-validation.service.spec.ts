@@ -381,7 +381,7 @@ describe('PoolManagerValidationService', () => {
     it('adds a warning when dRAID does not have spares added', async () => {
       const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
       expect(errors).toContainEqual({
-        text: 'At least one spare is recommended for dRAID. Spares cannot be added later.',
+        text: 'At least one distributed spare is recommended for dRAID. Distributed spares cannot be added after the pool is created.',
         severity: PoolCreationSeverity.Warning,
         step: PoolCreationWizardStep.Data,
       });
