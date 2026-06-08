@@ -50,14 +50,9 @@ export class ConfigurationPreviewComponent {
 
   protected topology$ = this.store.topology$.pipe(
     map((topology) => {
-      // Remove empty vdevs and spare vdevs if using DRAID layout
-      return omitBy(topology, (value, key) => {
-        if ((key as VDevType) === VDevType.Spare && this.store.isUsingDraidLayout(topology)) {
-          return true;
-        }
-
-        return value.vdevs.length === 0;
-      });
+      // Remove empty vdevs. Dedicated spares are allowed alongside dRAID data
+      // vdevs (NAS-140629), so they are shown in the preview when present.
+      return omitBy(topology, (value) => value.vdevs.length === 0);
     }),
   );
 
