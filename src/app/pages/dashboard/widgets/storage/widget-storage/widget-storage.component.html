@@ -44,21 +44,21 @@
                         <tn-icon size="sm" [name]="poolInfo.status.icon"></tn-icon>
                       </span>
                       <span class="label"> {{ poolInfo.status.label }}: </span>
-                      <span class="value"> {{ poolInfo.status.value }} </span>
+                      <span class="value" [tnTooltip]="poolInfo.status.value"> {{ poolInfo.status.value }} </span>
                     </li>
                     <li>
                       <span [class]="['icon', poolInfo.usedSpace.level]">
                         <tn-icon size="sm" [name]="poolInfo.usedSpace.icon"></tn-icon>
                       </span>
                       <span class="label">{{ poolInfo.usedSpace.label }}:</span>
-                      <span class="value">{{ poolInfo.usedSpace.value }}</span>
+                      <span class="value" [tnTooltip]="poolInfo.usedSpace.value">{{ poolInfo.usedSpace.value }}</span>
                     </li>
                     <li>
                       <span [class]="['icon', poolInfo.disksWithError.level]">
                         <tn-icon size="sm" [name]="poolInfo.disksWithError.icon"></tn-icon>
                       </span>
                       <span class="label"> {{ poolInfo.disksWithError.label }}: </span>
-                      <span class="value"> {{ poolInfo.disksWithError.value }} </span>
+                      <span class="value" [tnTooltip]="poolInfo.disksWithError.value"> {{ poolInfo.disksWithError.value }} </span>
                     </li>
                     @if (!isThreeTilesInColumn && (isTwoTilesInRow || getColumnsInTile(poolInfo.name) === 1)) {
                       <li>
@@ -73,6 +73,7 @@
                         @if (!isTwoTilesInRow && getColumnsInTile(poolInfo.name) === 1) {
                           <span
                             class="value"
+                            [tnTooltip]="poolInfo.scan.value"
                           >{{ poolInfo.scan.value }}</span>
                         }
                       </li>
@@ -93,11 +94,11 @@
                       </li>
                       <li>
                         <span class="label"> {{ 'Free Space' | translate }}: </span>
-                        <span class="value"> {{ poolInfo.freeSpace }} </span>
+                        <span class="value" [tnTooltip]="poolInfo.freeSpace"> {{ poolInfo.freeSpace }} </span>
                       </li>
                       <li>
                         <span class="label"> {{ 'Total Disks' | translate }}: </span>
-                        <span class="value"> {{ poolInfo.totalDisks }} </span>
+                        <span class="value" [tnTooltip]="poolInfo.totalDisks"> {{ poolInfo.totalDisks }} </span>
                       </li>
                     </ul>
                   }
