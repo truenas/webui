@@ -1,6 +1,8 @@
 @import '../../storage-tier-cell/tier-cell-host';
+@import '../card-service-toggle';
 
 @include tier-cell-host;
+@include card-service-toggle;
 
 .card-title-link {
   color: inherit;

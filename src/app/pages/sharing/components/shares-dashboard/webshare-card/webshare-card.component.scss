@@ -1,3 +1,7 @@
+@import '../card-service-toggle';
+
+@include card-service-toggle;
+
 .card-title-link {
   color: inherit;
   display: inline-flex;
