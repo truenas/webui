@@ -177,6 +177,8 @@ export class WebShareCardComponent implements OnInit {
     () => this.configOpen.set(true),
   ));
 
+  protected serviceControl = computed(() => this.actionsMenu.buildServiceControl(this.service(), this.hasAddRole()));
+
   protected onConfigClosed(): void {
     this.configOpen.set(false);
   }

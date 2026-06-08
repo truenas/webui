@@ -136,6 +136,72 @@ describe('ServiceActionsMenuService', () => {
 
       expect(openLocalConfig).toHaveBeenCalled();
     });
+
+    it('does not include the service on/off toggle (exposed as a header control instead)', () => {
+      const items = spectator.service.buildServiceCardMenu(
+        service({ service: ServiceName.Cifs, state: ServiceStatus.Running }),
+        true,
+        jest.fn(),
+      );
+
+      expect(items?.map((item) => item.id)).not.toContain('service-state-toggle');
+    });
+  });
+
+  describe('buildServiceControl', () => {
+    it('returns undefined when there is no service', () => {
+      expect(spectator.service.buildServiceControl(undefined, true)).toBeUndefined();
+    });
+
+    it('returns undefined when the user lacks the control role', () => {
+      expect(
+        spectator.service.buildServiceControl(service({ service: ServiceName.Cifs }), false),
+      ).toBeUndefined();
+    });
+
+    it('reflects the running state with an empty label and stable test id', () => {
+      const control = spectator.service.buildServiceControl(
+        service({ service: ServiceName.Cifs, state: ServiceStatus.Running }),
+        true,
+      );
+
+      expect(control).toMatchObject({ label: '', checked: true, testId: 'service-cifs' });
+    });
+
+    it('is unchecked when the service is stopped', () => {
+      const control = spectator.service.buildServiceControl(
+        service({ service: ServiceName.Cifs, state: ServiceStatus.Stopped }),
+        true,
+      );
+
+      expect(control?.checked).toBe(false);
+    });
+
+    it('stops a running service when toggled off', () => {
+      const control = spectator.service.buildServiceControl(
+        service({ service: ServiceName.Cifs, state: ServiceStatus.Running }),
+        true,
+      );
+      control?.handler(false);
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+        'service.control',
+        [ServiceOperation.Stop, ServiceName.Cifs, { silent: false }],
+      );
+    });
+
+    it('starts a stopped service when toggled on', () => {
+      const control = spectator.service.buildServiceControl(
+        service({ service: ServiceName.Cifs, state: ServiceStatus.Stopped }),
+        true,
+      );
+      control?.handler(true);
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+        'service.control',
+        [ServiceOperation.Start, ServiceName.Cifs, { silent: false }],
+      );
+    });
   });
 
   describe('buildUnsavedChangesGuard', () => {

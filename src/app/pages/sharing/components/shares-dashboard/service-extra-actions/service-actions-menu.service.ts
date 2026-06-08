@@ -2,7 +2,7 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import type { TnCardHeaderStatus, TnMenuItem } from '@truenas/ui-components';
+import type { TnCardControl, TnCardHeaderStatus, TnMenuItem } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { AuditService } from 'app/enums/audit.enum';
@@ -135,11 +135,13 @@ export class ServiceActionsMenuService {
   }
 
   /**
-   * Compose the full card-header menu with the `Config Service` item replaced
-   * by a card-local action (so the card can open the config form inside its
-   * own `tn-side-panel` viewChild rather than the global slide-in). All other
-   * items (toggle, sessions, logs) are sourced from the shared builders so
-   * test IDs and labels stay identical across cards.
+   * Compose the card-header menu with the `Config Service` item replaced by a
+   * card-local action (so the card can open the config form inside its own
+   * `tn-side-panel` viewChild rather than the global slide-in). The service
+   * on/off toggle is intentionally NOT included here — cards expose it as a
+   * `tn-card` header control via {@link buildServiceControl}. The remaining
+   * items (sessions, logs) are sourced from the shared builders so test IDs and
+   * labels stay identical across cards.
    */
   buildServiceCardMenu(
     service: Service | undefined,
@@ -156,11 +158,31 @@ export class ServiceActionsMenuService {
       action: openLocalConfig,
     };
     return [
-      this.buildToggleItem(service, hasControlRole),
       localConfigItem,
       this.buildSessionsItem(service),
       this.buildLogsItem(service),
     ].filter((item): item is TnMenuItem => item !== null);
+  }
+
+  /**
+   * Service on/off control for a card header (`tn-card` `[headerControl]`),
+   * exposing start/stop without opening the card menu. Returns `undefined` when
+   * there's no service or the user lacks the control role (so the toggle is
+   * hidden, matching the old menu item's role gating). The label is empty — the
+   * adjacent colored status badge is the visual indicator — and `tn-slide-toggle`
+   * still announces an accessible name. Toggling flips the current state via the
+   * same `changeServiceState` path the menu item used.
+   */
+  buildServiceControl(service: Service | undefined, hasControlRole: boolean): TnCardControl | undefined {
+    if (!service || !hasControlRole) {
+      return undefined;
+    }
+    return {
+      label: '',
+      checked: service.state === ServiceStatus.Running,
+      testId: `service-${kebabCase(service.service)}`,
+      handler: () => this.changeServiceState(service),
+    };
   }
 
   /**

@@ -168,7 +168,7 @@ describe('NfsCardComponent', () => {
     });
 
     it('updates NFS Enabled status once toggle is updated', async () => {
-      const toggle = await loader.getHarness(TnSlideToggleHarness);
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
 
       expect(await toggle.isChecked()).toBe(true);
 
@@ -182,7 +182,7 @@ describe('NfsCardComponent', () => {
     });
 
     it('should not disable toggle when share is on an active pool', async () => {
-      const toggle = await loader.getHarness(TnSlideToggleHarness);
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
       expect(await toggle.isDisabled()).toBe(false);
     });
   });
@@ -213,7 +213,7 @@ describe('NfsCardComponent', () => {
     });
 
     it('should disable toggle when share is on an exported pool', async () => {
-      const toggle = await loader.getHarness(TnSlideToggleHarness);
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
       expect(await toggle.isDisabled()).toBe(true);
     });
   });
@@ -244,7 +244,7 @@ describe('NfsCardComponent', () => {
     });
 
     it('should disable toggle when share is locked', async () => {
-      const toggle = await loader.getHarness(TnSlideToggleHarness);
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
       expect(await toggle.isDisabled()).toBe(true);
     });
   });
