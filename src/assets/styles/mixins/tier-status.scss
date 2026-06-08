@@ -1,0 +1,15 @@
+// Shared color mapping for tier-job status badges (data migration dialog,
+// tier-status indicator). The global `.fn-theme-*` helpers render a filled
+// background with contrasting text; tier-job badges want the theme color on the
+// text instead, over a transparent fill. Centralizing it here keeps every
+// consumer of `getTierJobStatusClass()` in sync — a new status color only needs
+// to be added in one place.
+@mixin tier-status-colors {
+  background: transparent;
+
+  &.fn-theme-green { color: var(--green); }
+  &.fn-theme-orange { color: var(--orange); }
+  &.fn-theme-red { color: var(--red); }
+  &.fn-theme-primary { color: var(--primary); }
+  &.fn-theme-grey { color: var(--fg2); }
+}
