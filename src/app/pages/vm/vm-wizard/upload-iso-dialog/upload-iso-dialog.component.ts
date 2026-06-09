@@ -20,7 +20,6 @@ import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-f
 import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
@@ -38,7 +37,6 @@ import { UploadService } from 'app/services/upload.service';
     IxFileInputComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     RequiresRolesDirective,
     TranslateModule,
     ExplorerCreateDatasetComponent,
