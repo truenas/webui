@@ -359,7 +359,7 @@ export class PoolManagerValidationService {
 
     if (!topologyCategory.draidSpareDisks) {
       errors.push({
-        text: this.translate.instant('At least one spare is recommended for dRAID. Spares cannot be added later.'),
+        text: this.translate.instant('At least one distributed spare is recommended for dRAID. Distributed spares cannot be added after the pool is created.'),
         severity: PoolCreationSeverity.Warning,
         step: PoolCreationWizardStep.Data,
       });

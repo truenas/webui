@@ -1,3 +1,5 @@
+@import 'mixins/tier-status';
+
 :host {
   display: inline-flex;
   align-items: center;
@@ -36,13 +38,8 @@
   font-size: 12px;
   white-space: nowrap;
 
-  &.fn-theme-primary {
-    color: var(--primary);
-  }
-
-  &.fn-theme-grey {
-    color: var(--fg2);
-  }
+  // Status color mapping shared with the data migration dialog badge.
+  @include tier-status-colors;
 
   &:focus-visible {
     outline: 2px solid var(--primary);
