@@ -128,7 +128,7 @@ jobs:
           path: coverage
           merge-multiple: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           name: webui
           token: ${{ env.CODECOV_TOKEN }}
