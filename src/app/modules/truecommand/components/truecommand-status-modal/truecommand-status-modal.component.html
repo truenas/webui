@@ -42,7 +42,7 @@
     tnDialogAction
     color="primary"
     class="tc-action-button"
-    ixTest="truecommand-settings"
+    testId="truecommand-settings"
     [label]="'Settings' | translate"
     (onClick)="data.parent.handleUpdate()"
   ></tn-button>
@@ -50,7 +50,7 @@
     tnDialogAction
     color="primary"
     class="tc-action-button"
-    ixTest="go-to-truecommand"
+    testId="go-to-truecommand"
     [disabled]="!tc.remote_url || tc.status !== TrueCommandStatus.Connected"
     [label]="'TrueCommand'"
     (onClick)="goToTrueCommand()"

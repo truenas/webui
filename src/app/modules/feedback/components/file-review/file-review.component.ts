@@ -20,7 +20,6 @@ import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -41,7 +40,6 @@ export const maxFileSizeBytes = 5 * MiB;
     IxCheckboxComponent,
     IxFileInputComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
   ],
   providers: [

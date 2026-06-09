@@ -14,7 +14,6 @@ import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
 import { jobsElements } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.elements';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -29,7 +28,6 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
     AsyncPipe,
     TranslateModule,
     UiSearchDirective,
-    TestDirective,
   ],
 })
 export class JobsIndicatorComponent implements OnInit {

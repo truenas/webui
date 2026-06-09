@@ -6,7 +6,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-truecommand-signup-modal',
@@ -16,7 +15,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     TnDialogShellComponent,
     TnButtonComponent,
-    TestDirective,
     RequiresRolesDirective,
     TranslateModule,
   ],

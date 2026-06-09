@@ -30,21 +30,21 @@
   <div tnDialogAction class="dialog-actions">
     @if (isLoading()) {
       <tn-button
-        ixTest="tnc-loading"
+        testId="tnc-loading"
         [disabled]="true"
         [label]="'Loading...' | translate"
       ></tn-button>
     } @else if (status() === TncStatus.Active) {
       <tn-button
         color="warn"
-        ixTest="tnc-disable-service"
+        testId="tnc-disable-service"
         [disabled]="isDisabling()"
         [label]="'Disable' | translate"
         (onClick)="disableService()"
       ></tn-button>
       <tn-button
         color="primary"
-        ixTest="tnc-open"
+        testId="tnc-open"
         [disabled]="isDisabling()"
         [label]="'Open TrueNAS Connect' | translate"
         (onClick)="open()"
@@ -52,7 +52,7 @@
     } @else if (status() === TncStatus.Waiting) {
       <tn-button
         color="primary"
-        ixTest="tnc-get-connected"
+        testId="tnc-get-connected"
         [disabled]="isConnecting()"
         [label]="isConnecting() ? ('Connecting...' | translate) : ('Get Connected' | translate)"
         (onClick)="connect()"
@@ -60,7 +60,7 @@
     } @else if (status() === TncStatus.Failed) {
       <tn-button
         color="primary"
-        ixTest="tnc-retry-connection"
+        testId="tnc-retry-connection"
         [disabled]="isRetrying()"
         [label]="isRetrying() ? ('Retrying...' | translate) : ('Retry Connection' | translate)"
         (onClick)="retryConnection()"

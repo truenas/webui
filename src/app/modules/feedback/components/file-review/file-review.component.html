@@ -46,7 +46,7 @@
 <ng-template #dialogActions>
   <tn-button
     color="primary"
-    ixTest="submit"
+    testId="submit"
     [label]="'Submit' | translate"
     [disabled]="form.invalid || isLoading()"
     (onClick)="onSubmit()"

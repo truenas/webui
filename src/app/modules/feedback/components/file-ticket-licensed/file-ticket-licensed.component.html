@@ -117,20 +117,20 @@
 
 <ng-template #dialogActions>
   <tn-button
-    ixTest="user-guide"
+    testId="user-guide"
     [label]="'User Guide' | translate"
     (onClick)="onUserGuidePressed()"
   ></tn-button>
 
   <tn-button
-    ixTest="eula"
+    testId="eula"
     [label]="'EULA' | translate"
     (onClick)="onEulaPressed()"
   ></tn-button>
 
   <tn-button
     color="primary"
-    ixTest="submit"
+    testId="submit"
     [label]="'Submit' | translate"
     [disabled]="form.invalid || isLoading()"
     (onClick)="onSubmit()"

@@ -3,14 +3,14 @@
 
   <tn-button
     tnDialogAction
-    ixTest="truecommand-signup"
+    testId="truecommand-signup"
     [label]="'Signup' | translate"
     (onClick)="onSignup()"
   ></tn-button>
 
   <tn-button
     tnDialogAction
-    ixTest="cancel-truecommand"
+    testId="cancel-truecommand"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close(false)"
   ></tn-button>
@@ -19,7 +19,7 @@
     *ixRequiresRoles="requiredRoles"
     tnDialogAction
     color="primary"
-    ixTest="truecommand-connect"
+    testId="truecommand-connect"
     [label]="'Connect' | translate"
     (onClick)="dialogRef.close(true)"
   ></tn-button>

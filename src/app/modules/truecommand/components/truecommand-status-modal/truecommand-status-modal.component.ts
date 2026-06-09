@@ -12,7 +12,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 
 @Component({
@@ -24,7 +23,6 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
     TnDialogShellComponent,
     TnIconComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
   ],
 })

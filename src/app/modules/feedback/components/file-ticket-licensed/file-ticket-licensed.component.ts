@@ -34,7 +34,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -51,7 +50,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
     IxCheckboxComponent,
     IxFileInputComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
   ],
   providers: [
