@@ -110,19 +110,25 @@ describe('TruecommandButtonComponent', () => {
 
   [
     {
-      status: TrueCommandStatus.Failed, apiKey: undefined, statusReason: 'Fake Status Reason', expectedButtonId: '#tc-status', expectedDialogType: 'form',
+      status: TrueCommandStatus.Failed, apiKey: undefined, enabled: false, statusReason: 'Fake Status Reason', expectedButtonId: '#tc-status', expectedDialogType: 'form',
     },
     {
-      status: TrueCommandStatus.Failed, apiKey: '123', statusReason: 'Fake Status Reason', expectedButtonId: '#tc-status', expectedDialogType: 'status',
+      status: TrueCommandStatus.Failed, apiKey: '123', enabled: true, statusReason: 'Fake Status Reason', expectedButtonId: '#tc-status', expectedDialogType: 'status',
     },
     {
-      status: TrueCommandStatus.Connected, apiKey: '123', statusReason: 'Fake Status Reason', expectedButtonId: '#tc-status', expectedDialogType: 'status',
+      status: TrueCommandStatus.Connected, apiKey: '123', enabled: true, statusReason: 'Fake Status Reason', expectedButtonId: '#tc-status', expectedDialogType: 'status',
+    },
+    {
+      // api_key is redacted by the middleware but TrueCommand is connected
+      status: TrueCommandStatus.Connected, apiKey: null, enabled: true, statusReason: 'Fake Status Reason', expectedButtonId: '#tc-status', expectedDialogType: 'status',
     },
   ].forEach(({
-    status, apiKey, statusReason, expectedButtonId, expectedDialogType,
+    status, apiKey, enabled, statusReason, expectedButtonId, expectedDialogType,
   }) => {
-    describe(`For status '${status}'`, () => {
-      const createComponent = createComponentWithData({ status, api_key: apiKey, status_reason: statusReason });
+    describe(`For status '${status}' (api_key: ${apiKey}, enabled: ${enabled})`, () => {
+      const createComponent = createComponentWithData({
+        status, api_key: apiKey, enabled, status_reason: statusReason,
+      });
 
       beforeEach(() => {
         spectator = createComponent();
