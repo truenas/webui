@@ -99,15 +99,24 @@ export class TruecommandButtonComponent implements OnInit {
   ngOnInit(): void {
     this.api.call('truecommand.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.tcStatus.set(config);
-      this.tcConnected = !!config.api_key;
+      this.tcConnected = this.isConnected(config);
     });
     this.api.subscribe('truecommand.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       this.tcStatus.set(event.fields);
-      this.tcConnected = !!event.fields.api_key;
+      this.tcConnected = this.isConnected(event.fields);
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {
         this.tcStatusDialogRef.componentInstance.update(event.fields);
       }
     });
+  }
+
+  private isConnected(config: TrueCommandConfig | null): boolean {
+    if (!config) {
+      return false;
+    }
+    // `api_key` may be redacted by the middleware, so rely on `enabled`
+    // and the connection status instead of the presence of the api key.
+    return !!config.api_key || (config.enabled && config.status !== TrueCommandStatus.Disabled);
   }
 
   handleUpdate(): void {

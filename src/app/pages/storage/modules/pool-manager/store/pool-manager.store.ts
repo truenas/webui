@@ -188,16 +188,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     },
   );
 
-  readonly usesDraidLayout$ = this.select(
-    this.topology$,
-    (topology) => this.isUsingDraidLayout(topology),
-  );
-
-  isUsingDraidLayout(topology: PoolManagerTopology): boolean {
-    const { layout } = topology[VDevType.Data];
-    return layout !== null && isDraidLayout(layout);
-  }
-
   readonly inventory$ = this.select(
     this.allowedDisks$,
     this.topology$,
@@ -361,10 +351,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     }
 
     this.updateTopologyCategory(type, { layout: newLayout });
-
-    if (isDraidLayout(newLayout)) {
-      this.resetTopologyCategory(VDevType.Spare);
-    }
   }
 
   setAutomaticTopologyCategory(type: VDevType, updates: TopologyCategoryUpdate): void {

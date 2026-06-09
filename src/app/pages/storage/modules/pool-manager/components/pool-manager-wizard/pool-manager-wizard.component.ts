@@ -112,8 +112,6 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
   );
 
-  usesDraidLayout$ = this.store.usesDraidLayout$;
-
   activeStep: PoolCreationWizardStep = PoolCreationWizardStep.General;
   hasEnclosureStep = false;
   state: PoolManagerState;
