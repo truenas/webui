@@ -6,7 +6,6 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import { take } from 'rxjs';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { terminalFontSizeUpdated } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -20,7 +19,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   imports: [
     TnIconButtonComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class TerminalFontSizeComponent implements OnInit {

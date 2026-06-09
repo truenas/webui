@@ -21,7 +21,6 @@ import { FeedbackService } from 'app/modules/feedback/services/feedback.service'
 import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -35,7 +34,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     MatDialogTitle,
     TnIconButtonComponent,
     MatDialogClose,
-    TestDirective,
     NgxSkeletonLoaderModule,
     IxButtonGroupComponent,
     ReactiveFormsModule,

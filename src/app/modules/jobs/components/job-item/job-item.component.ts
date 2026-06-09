@@ -14,7 +14,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-job-item',
@@ -30,7 +29,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     JobStateDisplayPipe,
     MapValuePipe,
     DecimalPipe,
-    TestDirective,
   ],
 })
 export class JobItemComponent {
