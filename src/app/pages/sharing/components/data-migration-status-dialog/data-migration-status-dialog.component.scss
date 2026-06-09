@@ -1,12 +1,27 @@
+@import 'mixins/tier-status';
+
+// Tighten the title's line box and center its items so the small status pill
+// lines up with the large title text (the default MDC title line-height is much
+// taller than the glyphs, which left the pill sitting high).
+h1[mat-dialog-title] {
+  align-items: center;
+  line-height: 1.2;
+}
+
 .status-badge {
   border: 1px solid currentColor;
-  border-radius: 4px;
+  border-radius: 25px;
   display: inline-block;
   font-size: 12px;
+  font-weight: 500;
   line-height: 1.5;
   margin-left: 8px;
-  padding: 0 8px;
-  vertical-align: middle;
+  padding: 1px 12px;
+  white-space: nowrap;
+
+  // Outline pill: transparent fill with the status color on the text and border.
+  // The color mapping is shared with the tier-status indicator.
+  @include tier-status-colors;
 }
 
 .dataset-name {
