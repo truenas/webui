@@ -20,7 +20,6 @@ import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeVirtualScrollNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-virtual-scroll-node-outlet.directive';
 import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export const defaultSize = 48;
 export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
@@ -43,7 +42,6 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
     AngularResizeEventModule,
     TreeVirtualScrollNodeOutletDirective,
     TreeNodeOutletDirective,
-    TestDirective,
     MatTooltip,
     TnIconButtonComponent,
     TranslateModule,

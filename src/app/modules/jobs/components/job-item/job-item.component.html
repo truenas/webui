@@ -100,7 +100,7 @@
     name="stop-circle"
     library="mdi"
     [class.job-icon-abort]="true"
-    [ixTest]="['abort', job().description, job().method]"
+    [testId]="['abort', job().description, job().method]"
     [matTooltip]="'Abort' | translate"
     (click)="abort()"
   ></tn-icon-button>
@@ -112,7 +112,7 @@
     name="clock-outline"
     library="mdi"
     [class.job-icon-waiting]="true"
-    [ixTest]="['waiting', job().description, job().method]"
+    [testId]="['waiting', job().description, job().method]"
     [disabled]="true"
   ></tn-icon-button>
 }
@@ -124,7 +124,7 @@
     library="mdi"
     matTooltipPosition="left"
     [class.job-icon-failed]="true"
-    [ixTest]="['failed', job().description, job().method]"
+    [testId]="['failed', job().description, job().method]"
     [matTooltip]="job().error"
     [disabled]="true"
   ></tn-icon-button>
@@ -136,7 +136,7 @@
     name="check-circle"
     library="mdi"
     [class.job-icon-success]="true"
-    [ixTest]="['success', job().description, job().method]"
+    [testId]="['success', job().description, job().method]"
     [disabled]="true"
   ></tn-icon-button>
 }

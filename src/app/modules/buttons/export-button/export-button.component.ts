@@ -16,7 +16,6 @@ import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -32,7 +31,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     TnButtonComponent,
     TnProgressBarComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class ExportButtonComponent<T, M extends ApiJobMethod> {

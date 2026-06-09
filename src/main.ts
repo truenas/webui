@@ -24,7 +24,7 @@ import { provideStore } from '@ngrx/store';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
-import { TnSpriteLoaderService } from '@truenas/ui-components';
+import { TN_TEST_ATTR, TnSpriteLoaderService } from '@truenas/ui-components';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
@@ -115,6 +115,9 @@ bootstrapApplication(AppComponent, {
       useFactory: getWindow,
     },
     provideTnTablePagerLabels(),
+    // webui targets `data-test` (thousands of existing selectors), so switch the
+    // ui-components library off its `data-testid` default for all `testId` inputs.
+    { provide: TN_TEST_ATTR, useValue: 'data-test' },
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();

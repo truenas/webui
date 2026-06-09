@@ -1,6 +1,7 @@
 {
   "0": "0",
   "{count, plural, one {1 disk in this VDEV is {worst}.} other {# disks in this VDEV are non-optimal (worst: {worst}).}}": "",
+  "Delete Cron Job": "",
   "Event = 'Close' AND Username = 'admin'": "",
   "Loading…": "",
   "Performance tier: {used} used, {available} available, {reserved} reserved for metadata": "",
@@ -1526,7 +1527,6 @@
   "Delete API Key": "Eliminar clave de API",
   "Delete application {name}": "Eliminar la aplicación {name}",
   "Delete associated SSH Keypair": "Eliminar el par de claves SSH asociado",
-  "Delete Catalog": "Eliminar catálogo",
   "Delete Certificate": "Eliminar certificado",
   "Delete Children": "Eliminar hijos",
   "Delete Cloud Backup Task <b>\"{name}\"</b>?": "¿Eliminar la tarea de respaldo en la nube <b>\"{name}\"</b>?",
