@@ -13,7 +13,7 @@
       >
         <span class="service-label" [id]="serviceLabelId">{{ 'Service' | translate }}</span>
         <tn-select
-          ixTest="audit-service"
+          testId="audit-service"
           [formControl]="serviceControl"
           [options]="serviceOptions"
         ></tn-select>
@@ -21,7 +21,7 @@
       @if (dataProvider().totalRows) {
         <div class="export-container">
           <tn-icon-button
-            ixTest="export-format-selector"
+            testId="export-format-selector"
             name="menu-down"
             library="mdi"
             [ariaLabel]="'Select Export Format' | translate"
@@ -31,7 +31,7 @@
             @for (format of exportFormats; track format) {
               <tn-menu-item
                 [label]="format"
-                [ixTest]="['format', format]"
+                [testId]="['format', format]"
                 [selected]="exportFormat() === format"
                 (itemClick)="onFormatChange(format)"
               ></tn-menu-item>
@@ -67,7 +67,7 @@
         (runSearch)="runSearchFromInput(searchInput)"
       ></ix-search-input>
       <tn-button
-        ixTest="search"
+        testId="search"
         color="primary"
         [label]="'Search' | translate"
         (onClick)="runSearchFromInput(searchInput)"

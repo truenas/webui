@@ -259,6 +259,24 @@ describe('PoolManagerStore', () => {
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({ topology: initialState.topology });
     });
 
+    it('setTopologyCategoryLayout – keeps configured dedicated spares when switching the data layout to dRAID', async () => {
+      const spareVdevs = [[{ devname: 'sda' }]] as DetailsDisk[][];
+      spectator.service.setManualTopologyCategory(VDevType.Spare, spareVdevs);
+
+      spectator.service.setTopologyCategoryLayout(VDevType.Data, CreateVdevLayout.Draid1);
+
+      let state = await firstValueFrom(spectator.service.state$);
+      expect(state.topology[VDevType.Data].layout).toBe(CreateVdevLayout.Draid1);
+      expect(state.topology[VDevType.Spare].vdevs).toEqual(spareVdevs);
+
+      // Changing the dRAID parity must not discard already-configured spares.
+      spectator.service.setTopologyCategoryLayout(VDevType.Data, CreateVdevLayout.Draid2);
+
+      state = await firstValueFrom(spectator.service.state$);
+      expect(state.topology[VDevType.Data].layout).toBe(CreateVdevLayout.Draid2);
+      expect(state.topology[VDevType.Spare].vdevs).toEqual(spareVdevs);
+    });
+
     it('resetTopology – completely resets pool topology', async () => {
       spectator.service.setManualTopologyCategory(VDevType.Data, [{}] as DetailsDisk[][]);
       spectator.service.setManualTopologyCategory(VDevType.Log, [{}] as DetailsDisk[][]);

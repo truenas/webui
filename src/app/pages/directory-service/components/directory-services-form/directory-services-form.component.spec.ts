@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
@@ -102,6 +102,44 @@ describe('DirectoryServicesConfigFormComponent', () => {
       });
 
       expect(spectator.query(IpaConfigComponent)).toBeTruthy();
+    });
+  });
+
+  describe('clearing stale credential validation errors', () => {
+    interface TestableComponent {
+      form: FormGroup;
+      onCredentialDataChanged: (data: unknown) => void;
+      onCredentialValidityChanged: (isValid: boolean) => void;
+    }
+
+    function setBindPasswordError(component: TestableComponent): void {
+      // FormErrorHandlerService maps credential errors (e.g. a wrong bind password) onto
+      // the main form's service_type control via getFieldsMap().
+      component.form.controls.service_type.setErrors({
+        manualValidateError: true,
+        manualValidateErrorMsg: 'The bind password is not correct.',
+        ixManualValidateError: { message: 'The bind password is not correct.' },
+      });
+    }
+
+    it('clears the manual error when the user edits the credential data', () => {
+      const component = spectator.component as unknown as TestableComponent;
+      setBindPasswordError(component);
+      expect(component.form.controls.service_type.errors).not.toBeNull();
+
+      component.onCredentialDataChanged({ username: 'Administrator', password: 'correct' });
+
+      expect(component.form.controls.service_type.errors).toBeNull();
+    });
+
+    it('clears the manual error when credential validity changes', () => {
+      const component = spectator.component as unknown as TestableComponent;
+      setBindPasswordError(component);
+      expect(component.form.controls.service_type.errors).not.toBeNull();
+
+      component.onCredentialValidityChanged(true);
+
+      expect(component.form.controls.service_type.errors).toBeNull();
     });
   });
 
