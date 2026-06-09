@@ -10,7 +10,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-modal-header',
@@ -24,7 +23,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatProgressBar,
     AsyncPipe,
     TranslateModule,
-    TestDirective,
   ],
   standalone: true,
 })

@@ -1,7 +1,7 @@
 @if (!jsonText() || !isValidJson()) {
   <tn-icon-button
     matTooltipPosition="above"
-    ixTest="copy-to-clipboard"
+    testId="copy-to-clipboard"
     name="content-copy"
     library="mdi"
     [matTooltip]="'Copy to Clipboard' | translate"
@@ -11,7 +11,7 @@
 
 @if (jsonText() && isValidJson()) {
   <tn-icon-button
-    ixTest="copy-to-clipboard-menu"
+    testId="copy-to-clipboard-menu"
     name="content-copy"
     library="mdi"
     [matTooltip]="'Copy to Clipboard' | translate"
