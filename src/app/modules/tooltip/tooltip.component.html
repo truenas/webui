@@ -15,7 +15,7 @@
           name="close"
           library="mdi"
           size="sm"
-          ixTest="tooltip-close"
+          testId="tooltip-close"
           (click)="popperTooltip.hide()"
         ></tn-icon>
       </div>
@@ -33,7 +33,7 @@
     library="mdi"
     size="sm"
     popperAppendTo="body"
-    [ixTest]="['tooltip', header()]"
+    [testId]="['tooltip', header()]"
     [popperTrigger]="clickTrigger"
     [popper]="popperTooltip"
     [popperShowOnStart]="false"
