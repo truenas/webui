@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
 import { FullScreenDialogOptions } from 'app/interfaces/dialog.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-full-screen-dialog',
@@ -13,7 +12,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     TnButtonComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class FullScreenDialog {

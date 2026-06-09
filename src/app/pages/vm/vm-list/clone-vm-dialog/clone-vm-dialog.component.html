@@ -8,14 +8,14 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close(false)"
   ></tn-button>
   <tn-button
     *ixRequiresRoles="requiredRoles"
     color="primary"
-    ixTest="clone"
+    testId="clone"
     [label]="'Clone' | translate"
     (onClick)="onClone()"
   ></tn-button>

@@ -12,7 +12,6 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 export interface ExportDiskDialogData {
@@ -39,7 +38,6 @@ interface ImageFormat {
     IxSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
     MatProgressBarModule,
   ],

@@ -2,7 +2,6 @@ import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface InfoDialogData {
   title: string;
@@ -21,7 +20,6 @@ export interface InfoDialogData {
     TnButtonComponent,
     TnIconComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class InfoDialog {

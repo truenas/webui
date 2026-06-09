@@ -9,7 +9,6 @@ import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface StopVmDialogData {
   forceAfterTimeout: boolean;
@@ -27,7 +26,6 @@ export interface StopVmDialogData {
     ReactiveFormsModule,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     RequiresRolesDirective,
     TranslateModule,
   ],

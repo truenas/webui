@@ -40,14 +40,14 @@
     @if (!options.hideCancel && options.cancelText) {
       <tn-button
         variant="outline"
-        ixTest="dialog-cancel"
+        testId="dialog-cancel"
         [label]="options.cancelText"
         (onClick)="onCancel()"
       ></tn-button>
     }
     @if (options.buttonText) {
       <tn-button
-        ixTest="dialog-confirm"
+        testId="dialog-confirm"
         [color]="options.buttonColor || 'primary'"
         [label]="options.buttonText"
         [disabled]="isDisabled()"

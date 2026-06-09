@@ -14,7 +14,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -35,7 +34,6 @@ export interface ExtendDialogParams {
     UnusedDiskSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
   ],
 })

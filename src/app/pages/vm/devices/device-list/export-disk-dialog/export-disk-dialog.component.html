@@ -36,12 +36,12 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close(false)"
   ></tn-button>
   <tn-button
-    ixTest="export"
+    testId="export"
     color="primary"
     [label]="'Export' | translate"
     [disabled]="!form.valid"

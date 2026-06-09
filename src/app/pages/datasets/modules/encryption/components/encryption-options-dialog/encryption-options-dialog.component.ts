@@ -30,7 +30,6 @@ import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -57,7 +56,6 @@ enum EncryptionType {
     AsyncPipe,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     RequiresRolesDirective,
   ],
 })

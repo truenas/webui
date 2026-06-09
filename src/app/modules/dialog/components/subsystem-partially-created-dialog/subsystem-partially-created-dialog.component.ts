@@ -4,7 +4,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface SubsystemPartiallyCreatedDialogData {
   subsystem: NvmeOfSubsystem;
@@ -22,7 +21,6 @@ export interface SubsystemPartiallyCreatedDialogData {
     TnButtonComponent,
     TnIconComponent,
     FormActionsComponent,
-    TestDirective,
     TranslateModule,
   ],
 })

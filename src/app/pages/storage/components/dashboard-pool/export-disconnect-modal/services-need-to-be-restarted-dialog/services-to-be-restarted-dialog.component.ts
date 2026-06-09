@@ -5,7 +5,6 @@ import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-component
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { ServicesToBeRestartedInfo } from 'app/interfaces/pool-export.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-services-to-be-restarted-dialog',
@@ -16,7 +15,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TnDialogShellComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
   ],
 })

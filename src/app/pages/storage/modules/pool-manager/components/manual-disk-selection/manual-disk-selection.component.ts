@@ -12,7 +12,6 @@ import { Role } from 'app/enums/role.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ManualSelectionVdev,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
@@ -50,7 +49,6 @@ export interface ManualDiskSelectionParams {
     MatDivider,
     RequiresRolesDirective,
     TnButtonComponent,
-    TestDirective,
     ManualSelectionVdevComponent,
     TranslateModule,
     AsyncPipe,

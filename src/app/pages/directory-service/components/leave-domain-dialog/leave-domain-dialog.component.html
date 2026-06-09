@@ -30,14 +30,14 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close()"
   ></tn-button>
   <tn-button
     *ixRequiresRoles="[Role.DirectoryServiceWrite]"
     color="primary"
-    ixTest="leave-domain"
+    testId="leave-domain"
     [label]="'Leave Domain' | translate"
     [disabled]="form.invalid"
     (onClick)="onSubmit()"

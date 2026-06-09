@@ -7,7 +7,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-subsystem-port-or-host-delete-dialog',
@@ -21,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
   ],
 })
 export class SubsystemPortOrHostDeleteDialogComponent {

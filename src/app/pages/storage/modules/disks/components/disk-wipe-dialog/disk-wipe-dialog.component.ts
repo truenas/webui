@@ -14,7 +14,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -31,7 +30,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     RequiresRolesDirective,
     TranslateModule,
   ],

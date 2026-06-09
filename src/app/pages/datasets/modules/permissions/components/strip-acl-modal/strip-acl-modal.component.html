@@ -9,7 +9,7 @@
   ></ix-checkbox>
 </div>
 <ix-form-actions tnDialogAction class="form-actions">
-  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
-  <tn-button color="warn" ixTest="strip-acl" [label]="'Strip ACLs' | translate" (onClick)="onStrip()"></tn-button>
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
+  <tn-button color="warn" testId="strip-acl" [label]="'Strip ACLs' | translate" (onClick)="onStrip()"></tn-button>
 </ix-form-actions>
 </tn-dialog-shell>

@@ -5,7 +5,6 @@ import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-component
 import { formatDistance } from 'date-fns';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-dockerhub-rate-info-dialog',
@@ -15,7 +14,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TnDialogShellComponent,
     TranslateModule,
     TnButtonComponent,
-    TestDirective,
   ],
 })
 export class DockerHubRateInfoDialog {

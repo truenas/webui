@@ -11,14 +11,14 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close(false)"
   ></tn-button>
   @if (disk?.passwd) {
     <tn-button
       variant="outline"
-      ixTest="clear-sed-password"
+      testId="clear-sed-password"
       [label]="'Clear SED Password' | translate"
       (onClick)="onClearPassword()"
     ></tn-button>
@@ -26,7 +26,7 @@
   <tn-button
     *ixRequiresRoles="requiredRoles"
     color="primary"
-    ixTest="save"
+    testId="save"
     [label]="'Save' | translate"
     [disabled]="passwordControl.invalid"
     (onClick)="onSubmit()"

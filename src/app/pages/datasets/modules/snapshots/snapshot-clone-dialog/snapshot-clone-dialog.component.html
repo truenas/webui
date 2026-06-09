@@ -19,14 +19,14 @@
   @if (!wasDatasetCloned) {
     <tn-button
       variant="outline"
-      ixTest="cancel"
+      testId="cancel"
       [label]="'Cancel' | translate"
       (onClick)="dialogRef.close()"
     ></tn-button>
     <tn-button
       *ixRequiresRoles="requiredRoles"
       color="primary"
-      ixTest="clone"
+      testId="clone"
       [label]="'Clone' | translate"
       [disabled]="form.invalid"
       (onClick)="onSubmit()"
@@ -34,13 +34,13 @@
   } @else {
     <tn-button
       variant="outline"
-      ixTest="close"
+      testId="close"
       [label]="'Close' | translate"
       (onClick)="dialogRef.close()"
     ></tn-button>
     <tn-button
       color="primary"
-      ixTest="go-to-datasets"
+      testId="go-to-datasets"
       [label]="'Go to Datasets' | translate"
       [routerLink]="['/datasets']"
       (onClick)="dialogRef.close()"

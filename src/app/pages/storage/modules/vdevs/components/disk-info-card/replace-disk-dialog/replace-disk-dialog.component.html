@@ -28,7 +28,7 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close(false)"
   ></tn-button>
@@ -36,7 +36,7 @@
   <tn-button
     *ixRequiresRoles="[Role.PoolWrite]"
     color="primary"
-    ixTest="replace"
+    testId="replace"
     [label]="'Replace Disk' | translate"
     (onClick)="onSubmit()"
   ></tn-button>

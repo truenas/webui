@@ -13,7 +13,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesState } from 'app/store/services/services.reducer';
@@ -36,7 +35,6 @@ export interface StartServiceDialogResult {
     FormActionsComponent,
     TranslateModule,
     FakeProgressBarComponent,
-    TestDirective,
   ],
 })
 export class StartServiceDialog implements OnInit {

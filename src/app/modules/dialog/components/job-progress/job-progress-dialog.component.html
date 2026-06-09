@@ -4,7 +4,7 @@
       name="minus"
       library="mdi"
       class="minimize-button"
-      ixTest="close"
+      testId="close"
       [attr.aria-label]="'Hide Job' | translate: { jobMethod: job.method }"
       (click)="minimize()"
     ></tn-icon-button>
@@ -75,7 +75,7 @@
     @if (hasAbortButton) {
       <tn-button
         variant="outline"
-        ixTest="abort"
+        testId="abort"
         [label]="isAbortingJob ? ('Aborting...' | translate) : ('Abort' | translate)"
         [disabled]="isAbortingJob"
         [ariaLabel]="'Abort Job' | translate"

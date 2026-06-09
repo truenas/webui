@@ -17,7 +17,7 @@
   </form>
 </div>
 <ix-form-actions tnDialogAction class="form-actions">
-  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
-  <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="roll-back" [label]="'Roll Back' | translate" [disabled]="form.invalid" (onClick)="onRollback()"></tn-button>
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
+  <tn-button *ixRequiresRoles="requiredRoles" color="primary" testId="roll-back" [label]="'Roll Back' | translate" [disabled]="form.invalid" (onClick)="onRollback()"></tn-button>
 </ix-form-actions>
 </tn-dialog-shell>

@@ -71,14 +71,14 @@
   <div tnDialogAction>
     <tn-button
       variant="outline"
-      ixTest="close-error-dialog"
+      testId="close-error-dialog"
       [label]="'Close' | translate"
       (onClick)="dialogRef.close(true)"
     ></tn-button>
 
     @if (error.logs) {
       <tn-button
-        ixTest="download-logs"
+        testId="download-logs"
         [label]="'Download Logs' | translate"
         (onClick)="downloadLogs()"
       ></tn-button>
@@ -86,7 +86,7 @@
 
     @for (action of error.actions; track action.label) {
       <tn-button
-        [ixTest]="'action-' + action.label"
+        [testId]="'action-' + action.label"
         [label]="action.label | translate"
         (onClick)="handleAction(action)"
       ></tn-button>

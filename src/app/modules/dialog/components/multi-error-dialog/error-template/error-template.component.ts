@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { Job } from 'app/interfaces/job.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -17,7 +16,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnIconComponent,
     TnButtonComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class ErrorTemplateComponent {

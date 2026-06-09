@@ -13,14 +13,14 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="helptext.cancelButton | translate"
     (onClick)="dialogRef.close(false)"
   ></tn-button>
   <tn-button
     *ixRequiresRoles="requiredRoles"
     color="primary"
-    ixTest="save"
+    testId="save"
     [label]="helptext.saveButton | translate"
     (onClick)="onSubmit()"
   ></tn-button>

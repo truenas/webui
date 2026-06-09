@@ -79,15 +79,15 @@
 <div tnDialogAction class="form-actions">
   @if (!isLoading() && snapshot && !wasDatasetRolledBack()) {
     <div class="form-buttons">
-      <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
-      <tn-button *ixRequiresRoles="requiredRoles" color="primary" ixTest="rollback" [label]="'Rollback' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
+      <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
+      <tn-button *ixRequiresRoles="requiredRoles" color="primary" testId="rollback" [label]="'Rollback' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
     </div>
   } @else if (!isLoading() && snapshot) {
     <div class="form-buttons">
-      <tn-button variant="outline" ixTest="close" [label]="'Close' | translate" (onClick)="dialogRef.close()"></tn-button>
+      <tn-button variant="outline" testId="close" [label]="'Close' | translate" (onClick)="dialogRef.close()"></tn-button>
       <tn-button
         color="primary"
-        ixTest="go-to-storage"
+        testId="go-to-storage"
         [label]="'Go to Storage' | translate"
         (onClick)="goToStorage()"
       ></tn-button>

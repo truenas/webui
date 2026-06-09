@@ -60,7 +60,7 @@
     @if (thisNodeRebootReasons()?.length || otherNodeRebootReasons()?.length) {
       <tn-button
         variant="outline"
-        ixTest="cancel"
+        testId="cancel"
         [label]="'Cancel' | translate"
         (onClick)="dialogRef.close()"
       ></tn-button>
@@ -68,7 +68,7 @@
       @if(thisNodeRebootReasons()?.length) {
         <tn-button
           color="primary"
-          ixTest="reboot-local"
+          testId="reboot-local"
           [label]="isHaLicensed() ? ('Reboot Active Controller' | translate) : ('Reboot Local' | translate)"
           [disabled]="form.invalid"
           (onClick)="rebootLocalNode()"
@@ -78,7 +78,7 @@
       @if (otherNodeRebootReasons()?.length) {
         <tn-button
           color="primary"
-          ixTest="reboot-remote"
+          testId="reboot-remote"
           [label]="isHaLicensed() ? ('Reboot Standby Controller' | translate) : ('Reboot Remote' | translate)"
           [disabled]="form.invalid"
           (onClick)="rebootRemoteNode()"

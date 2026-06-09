@@ -17,7 +17,7 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close()"
   ></tn-button>
@@ -25,7 +25,7 @@
   <tn-button
     *ixRequiresRoles="requiredRoles"
     color="primary"
-    ixTest="save"
+    testId="save"
     [label]="'Submit' | translate"
     [disabled]="form.invalid"
     (onClick)="onSubmit()"

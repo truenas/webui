@@ -82,7 +82,7 @@
 </div>
 
 <div tnDialogAction align="end">
-  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
-  <tn-button color="primary" ixTest="apply" [label]="'Apply' | translate" [disabled]="isSubmitting() || loadFailed()" (onClick)="onApply()"></tn-button>
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
+  <tn-button color="primary" testId="apply" [label]="'Apply' | translate" [disabled]="isSubmitting() || loadFailed()" (onClick)="onApply()"></tn-button>
 </div>
 </tn-dialog-shell>

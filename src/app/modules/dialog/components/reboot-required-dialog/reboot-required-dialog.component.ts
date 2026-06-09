@@ -10,7 +10,6 @@ import { failoverDisabledReasonLabels } from 'app/enums/failover-disabled-reason
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { RebootService } from 'app/services/reboot.service';
 import { AppState } from 'app/store';
 import { selectCanFailover, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -30,7 +29,6 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
     TranslateModule,
     ReactiveFormsModule,
     IxCheckboxComponent,
-    TestDirective,
     MapValuePipe,
     FormActionsComponent,
   ],

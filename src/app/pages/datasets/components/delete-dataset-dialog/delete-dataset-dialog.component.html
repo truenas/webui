@@ -71,7 +71,7 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close(false)"
   ></tn-button>
@@ -79,7 +79,7 @@
   <tn-button
     *ixRequiresRoles="requiredRoles"
     color="warn"
-    ixTest="delete-dataset"
+    testId="delete-dataset"
     [label]="(isZvol ? 'Delete Zvol' : 'Delete Dataset') | translate"
     [disabled]="form.invalid"
     (onClick)="onDelete()"

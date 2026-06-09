@@ -38,14 +38,14 @@
 <div tnDialogAction class="device-delete-modal-actions">
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="cancel()"
   ></tn-button>
   <tn-button
     *ixRequiresRoles="requiredRoles"
     color="warn"
-    ixTest="delete-device"
+    testId="delete-device"
     [label]="'Delete Device' | translate"
     [disabled]="form.invalid"
     (onClick)="onSubmit()"

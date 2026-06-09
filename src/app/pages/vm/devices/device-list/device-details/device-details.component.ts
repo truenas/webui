@@ -4,7 +4,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-device-details',
@@ -15,7 +14,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     TnDialogShellComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
   ],
 })

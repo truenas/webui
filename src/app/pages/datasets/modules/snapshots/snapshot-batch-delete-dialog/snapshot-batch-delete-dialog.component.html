@@ -63,7 +63,7 @@
   @if (!isJobCompleted) {
     <tn-button
       variant="outline"
-      ixTest="cancel"
+      testId="cancel"
       [label]="'Cancel' | translate"
       (onClick)="dialogRef.close()"
     ></tn-button>
@@ -74,7 +74,7 @@
       <tn-button
         *ixRequiresRoles="requiredRoles"
         color="warn"
-        ixTest="delete"
+        testId="delete"
         [label]="'Delete' | translate"
         [disabled]="form.invalid || hasClones || isDeleting()"
         (onClick)="onSubmit()"
@@ -83,13 +83,13 @@
   } @else {
     <tn-button
       variant="outline"
-      ixTest="close"
+      testId="close"
       [label]="'Close' | translate"
       (onClick)="dialogRef.close(true)"
     ></tn-button>
     <tn-button
       color="primary"
-      ixTest="go-to-storage"
+      testId="go-to-storage"
       [label]="'Go to Storage' | translate"
       [routerLink]="['/storage']"
       (onClick)="dialogRef.close(true)"

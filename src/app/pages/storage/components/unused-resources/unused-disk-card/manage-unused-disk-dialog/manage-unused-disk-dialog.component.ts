@@ -19,7 +19,6 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
 
 @Component({
@@ -35,7 +34,6 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
     IxRadioGroupComponent,
     IxSelectComponent,
     TnButtonComponent,
-    TestDirective,
     RequiresRolesDirective,
     TranslateModule,
   ],

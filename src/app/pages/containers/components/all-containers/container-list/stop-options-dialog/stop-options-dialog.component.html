@@ -11,14 +11,14 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close(false)"
   ></tn-button>
 
   <tn-button
     color="primary"
-    ixTest="continue"
+    testId="continue"
     [label]="(isRestart() ? 'Restart' : 'Stop') | translate"
     (onClick)="onSubmit()"
   ></tn-button>

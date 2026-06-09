@@ -6,7 +6,6 @@ import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-component
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-custom-transfers-dialog',
@@ -19,7 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     IxInputComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
   ],
 })

@@ -14,7 +14,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -30,7 +29,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     UnusedDiskSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     RequiresRolesDirective,
     FakeProgressBarComponent,
     TranslateModule,

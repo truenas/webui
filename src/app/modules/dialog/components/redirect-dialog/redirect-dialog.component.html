@@ -7,19 +7,19 @@
   <div tnDialogAction>
     <tn-button
       variant="outline"
-      ixTest="cancel"
+      testId="cancel"
       [label]="'Cancel' | translate"
       (onClick)="dialogRef.close(false)"
     ></tn-button>
     <tn-button
       variant="outline"
-      ixTest="copy-url"
+      testId="copy-url"
       [label]="'Copy URL' | translate"
       (onClick)="copyToClipboard()"
     ></tn-button>
     <tn-button
       color="primary"
-      ixTest="continue"
+      testId="continue"
       [label]="'Continue' | translate"
       (onClick)="dialogRef.close(true)"
     ></tn-button>

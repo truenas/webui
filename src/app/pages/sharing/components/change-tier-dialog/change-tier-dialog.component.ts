@@ -12,7 +12,6 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTierLabelKey } from 'app/pages/sharing/components/tier-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -34,7 +33,6 @@ export interface ChangeTierDialogData {
     TranslateModule,
     ReactiveFormsModule,
     IxCheckboxComponent,
-    TestDirective,
   ],
 })
 export class ChangeTierDialogComponent implements OnInit {

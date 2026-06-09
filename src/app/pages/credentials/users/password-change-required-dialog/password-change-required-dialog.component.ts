@@ -9,7 +9,6 @@ import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-component
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
 @Component({
@@ -25,7 +24,6 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
     FormActionsComponent,
     MatCard,
     MatToolbarRow,
-    TestDirective,
   ],
 })
 export class PasswordChangeRequiredDialog {

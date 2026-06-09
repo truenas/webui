@@ -47,14 +47,14 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="close"
+    testId="close"
     [label]="cancelMessage | translate"
     (onClick)="cancel()"
   ></tn-button>
   @if (!final) {
     <tn-button
       color="primary"
-      ixTest="continue"
+      testId="continue"
       [label]="buttonMessage | translate"
       (onClick)="submit()"
     ></tn-button>

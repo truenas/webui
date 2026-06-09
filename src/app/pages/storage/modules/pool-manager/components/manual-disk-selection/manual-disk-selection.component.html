@@ -17,7 +17,7 @@
               <tn-button
                 *ixRequiresRoles="requiredRoles"
                 variant="outline"
-                ixTest="add"
+                testId="add"
                 [label]="'Add' | translate"
                 (onClick)="addVdev()"
               ></tn-button>
@@ -47,14 +47,14 @@
         <div class="actions">
           <tn-button
             variant="outline"
-            ixTest="cancel"
+            testId="cancel"
             [label]="'Cancel' | translate"
             (onClick)="dialogRef.close(false)"
           ></tn-button>
           <tn-button
             *ixRequiresRoles="requiredRoles"
             color="primary"
-            ixTest="save-selection"
+            testId="save-selection"
             [label]="'Save Selection' | translate"
             [disabled]="isSaveDisabled$ | async"
             (onClick)="onSaveSelection()"

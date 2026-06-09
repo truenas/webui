@@ -5,7 +5,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { ErrorTemplateComponent } from 'app/modules/dialog/components/multi-error-dialog/error-template/error-template.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-multi-error-dialog',
@@ -18,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     ErrorTemplateComponent,
     MatDivider,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class MultiErrorDialog {

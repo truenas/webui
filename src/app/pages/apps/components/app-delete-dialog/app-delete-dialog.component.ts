@@ -7,7 +7,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 
 @Component({
@@ -22,7 +21,6 @@ import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/a
     FormActionsComponent,
     IxCheckboxComponent,
     IxInputComponent,
-    TestDirective,
     TranslateModule,
   ],
 })

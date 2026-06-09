@@ -32,14 +32,14 @@
 <div tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="do-not-restart"
+    testId="do-not-restart"
     [label]="'No' | translate"
     (onClick)="dialogRef.close(false)"
   ></tn-button>
   <tn-button
     *ixRequiresRoles="requiredRoles"
     color="primary"
-    ixTest="restart-service"
+    testId="restart-service"
     [label]="'Restart Service' | translate"
     (onClick)="dialogRef.close(true)"
   ></tn-button>

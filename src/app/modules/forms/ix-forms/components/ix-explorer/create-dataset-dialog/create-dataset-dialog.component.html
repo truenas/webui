@@ -13,14 +13,14 @@
   <ix-form-actions tnDialogAction class="form-actions">
     <tn-button
       variant="outline"
-      ixTest="cancel"
+      testId="cancel"
       [label]="'Cancel' | translate"
       (onClick)="dialogRef.close()"
     ></tn-button>
     <tn-button
       *ixRequiresRoles="requiredRoles"
       color="primary"
-      ixTest="create-dataset"
+      testId="create-dataset"
       [label]="'Create' | translate"
       [disabled]="form.invalid || (isLoading$ | async) || false"
       (onClick)="createDataset()"

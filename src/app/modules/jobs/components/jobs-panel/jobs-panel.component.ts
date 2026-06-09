@@ -33,7 +33,6 @@ import {
 } from 'app/modules/jobs/store/job.selectors';
 import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
@@ -54,7 +53,6 @@ import { FailedJobError } from 'app/services/errors/error.classes';
     MatDivider,
     TranslateModule,
     AsyncPipe,
-    TestDirective,
     JobStateDisplayPipe,
   ],
 })

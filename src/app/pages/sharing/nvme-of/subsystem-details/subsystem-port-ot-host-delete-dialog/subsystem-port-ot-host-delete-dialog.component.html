@@ -20,7 +20,7 @@
 </div>
 
 <ix-form-actions tnDialogAction class="form-actions">
-  <tn-button variant="outline" ixTest="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close({ confirmed: false })"></tn-button>
-  <tn-button *ixRequiresRoles="requiredRoles" color="warn" ixTest="delete" [label]="data.subsystemsInUse?.length > 0 ? ('Delete Anyway' | translate) : ('Delete' | translate)" (onClick)="delete()"></tn-button>
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close({ confirmed: false })"></tn-button>
+  <tn-button *ixRequiresRoles="requiredRoles" color="warn" testId="delete" [label]="data.subsystemsInUse?.length > 0 ? ('Delete Anyway' | translate) : ('Delete' | translate)" (onClick)="delete()"></tn-button>
 </ix-form-actions>
 </tn-dialog-shell>

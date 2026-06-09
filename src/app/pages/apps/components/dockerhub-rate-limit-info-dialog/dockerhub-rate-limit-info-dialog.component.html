@@ -8,7 +8,7 @@
   </div>
 
 <div tnDialogAction align="end">
-  <tn-button variant="outline" ixTest="close" [label]="'Close' | translate" (onClick)="dialogRef.close(true)"></tn-button>
-  <tn-button color="primary" ixTest="navigate-to-docker-registries" [label]="'Sign-in to Docker Hub' | translate" (onClick)="dialogRef.close(true)"></tn-button>
+  <tn-button variant="outline" testId="close" [label]="'Close' | translate" (onClick)="dialogRef.close(true)"></tn-button>
+  <tn-button color="primary" testId="navigate-to-docker-registries" [label]="'Sign-in to Docker Hub' | translate" (onClick)="dialogRef.close(true)"></tn-button>
 </div>
 </tn-dialog-shell>

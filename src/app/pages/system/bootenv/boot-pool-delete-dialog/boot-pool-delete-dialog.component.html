@@ -41,14 +41,14 @@
   @if (!isJobCompleted()) {
     <tn-button
       variant="outline"
-      ixTest="save"
+      testId="save"
       [label]="'Cancel' | translate"
       (onClick)="dialogRef.close()"
     ></tn-button>
     <tn-button
       *ixRequiresRoles="requiredRoles"
       color="warn"
-      ixTest="delete"
+      testId="delete"
       [label]="'Delete' | translate"
       [disabled]="form.invalid"
       (onClick)="onSubmit()"
@@ -56,7 +56,7 @@
   } @else {
     <tn-button
       variant="outline"
-      ixTest="close"
+      testId="close"
       [label]="'Close' | translate"
       (onClick)="dialogRef.close(true)"
     ></tn-button>

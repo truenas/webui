@@ -5,7 +5,6 @@ import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-component
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface SessionExpiringDialogOptions {
   title: string;
@@ -22,7 +21,6 @@ export interface SessionExpiringDialogOptions {
     TnDialogShellComponent,
     TnButtonComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class SessionExpiringDialog {

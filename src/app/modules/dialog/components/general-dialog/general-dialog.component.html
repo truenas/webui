@@ -16,7 +16,7 @@
     @if (!conf.hideCancel && conf.cancelBtnMsg) {
       <tn-button
         variant="outline"
-        ixTest="cancel"
+        testId="cancel"
         [label]="conf.cancelBtnMsg | translate"
         (onClick)="dialogRef.close(false)"
       ></tn-button>
@@ -24,7 +24,7 @@
     @if (conf.confirmBtnMsg) {
       <tn-button
         color="primary"
-        ixTest="close"
+        testId="close"
         [label]="conf.confirmBtnMsg | translate"
         (onClick)="dialogRef.close(true)"
       ></tn-button>

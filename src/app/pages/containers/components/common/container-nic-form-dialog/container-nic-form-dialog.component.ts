@@ -17,7 +17,6 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface ContainerNicFormDialogData {
   nic?: string; // NIC key for adding
@@ -30,7 +29,6 @@ export interface ContainerNicFormDialogData {
   standalone: true,
   imports: [
     TnDialogShellComponent,
-    TestDirective,
     ReactiveFormsModule,
     IxCheckboxComponent,
     IxInputComponent,

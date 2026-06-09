@@ -20,7 +20,6 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -38,7 +37,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     IxCheckboxComponent,
     RequiresRolesDirective,
   ],

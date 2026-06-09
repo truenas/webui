@@ -133,13 +133,13 @@ describe('DockerImageDeleteDialogComponent', () => {
     const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.setValue(true);
 
-    const deleteButton = await loader.getHarness(TnButtonHarness.with({ selector: '[ixTest="delete"]' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('Warning: 2 of 2 docker images could not be deleted.');
 
-    const closeButton = await loader.getHarness(TnButtonHarness.with({ selector: '[ixTest="close"]' }));
+    const closeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
     await closeButton.click();
   });
 });

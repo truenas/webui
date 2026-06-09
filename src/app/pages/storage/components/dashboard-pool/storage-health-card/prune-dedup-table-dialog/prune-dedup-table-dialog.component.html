@@ -38,14 +38,14 @@
 <ix-form-actions tnDialogAction class="actions">
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close(false)"
   ></tn-button>
 
   <tn-button
     color="primary"
-    ixTest="prune"
+    testId="prune"
     [label]="'Prune' | translate"
     (onClick)="submit()"
   ></tn-button>

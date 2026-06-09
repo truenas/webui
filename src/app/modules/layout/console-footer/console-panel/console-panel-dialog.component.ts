@@ -5,7 +5,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-console-panel-dialog',
@@ -17,7 +16,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TnButtonComponent,
     AsyncPipe,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class ConsolePanelDialog implements OnInit {

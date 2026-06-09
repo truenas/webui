@@ -13,7 +13,6 @@ import { toZonedTime } from 'date-fns-tz';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { SchedulerDateExamplesComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-date-examples/scheduler-date-examples.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-scheduler-preview-column',
@@ -21,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./scheduler-preview-column.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
     TnIconButtonComponent,
     MatCalendar,
     SchedulerDateExamplesComponent,

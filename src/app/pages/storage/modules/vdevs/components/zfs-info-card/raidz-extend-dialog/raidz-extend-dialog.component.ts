@@ -16,7 +16,6 @@ import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unus
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
@@ -38,7 +37,6 @@ export interface RaidzExtendDialogParams {
     UnusedDiskSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
     FileSizePipe,
   ],

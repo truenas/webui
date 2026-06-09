@@ -15,7 +15,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -40,7 +39,6 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
     FormActionsComponent,
     TnButtonComponent,
     ReactiveFormsModule,
-    TestDirective,
     TranslateModule,
     IxSelectComponent,
     IxInputComponent,

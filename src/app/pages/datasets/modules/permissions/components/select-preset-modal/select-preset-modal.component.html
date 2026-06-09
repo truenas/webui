@@ -26,13 +26,13 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     variant="outline"
-    ixTest="cancel"
+    testId="cancel"
     [label]="'Cancel' | translate"
     (onClick)="dialogRef.close()"
   ></tn-button>
   <tn-button
     color="primary"
-    ixTest="continue"
+    testId="continue"
     [label]="'Continue' | translate"
     [disabled]="form.invalid"
     (onClick)="onContinuePressed()"

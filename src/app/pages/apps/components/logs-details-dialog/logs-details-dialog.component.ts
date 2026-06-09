@@ -4,7 +4,6 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-logs-details-dialog',
@@ -16,7 +15,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     ReactiveFormsModule,
     IxInputComponent,
     TnButtonComponent,
-    TestDirective,
   ],
 })
 export class LogsDetailsDialog {

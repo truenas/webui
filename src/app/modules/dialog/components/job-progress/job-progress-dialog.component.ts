@@ -11,7 +11,6 @@ import {
 import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -57,7 +56,6 @@ export interface JobProgressDialogConfig<Result> {
     MatProgressBar,
     TranslateModule,
     DecimalPipe,
-    TestDirective,
   ],
 })
 export class JobProgressDialog<T> implements OnInit, AfterViewChecked {

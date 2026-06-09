@@ -6,13 +6,13 @@
 <ix-form-actions tnDialogAction>
   <tn-button
     color="warn"
-    ixTest="download-key"
+    testId="download-key"
     [label]="'Download Encryption Key' | translate"
     (onClick)="downloadKey()"
   ></tn-button>
   <tn-button
     color="primary"
-    ixTest="done"
+    testId="done"
     [label]="'Done' | translate"
     [disabled]="!wasDownloaded()"
     (onClick)="dialogRef.close(true)"

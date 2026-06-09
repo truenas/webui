@@ -6,7 +6,6 @@ import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-component
 import { helptextDownloadKey } from 'app/helptext/storage/volumes/download-key';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -24,7 +23,6 @@ export interface DownloadKeyDialogParams {
     TnDialogShellComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
   ],
 })

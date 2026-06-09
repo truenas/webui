@@ -16,7 +16,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -30,7 +29,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
     FormActionsComponent,
     TnButtonComponent,
     TranslateModule,
-    TestDirective,
     AsyncPipe,
   ],
 })
