@@ -4,7 +4,7 @@
       <tn-checkbox
         formControlName="enabled"
         class="enable-checkbox"
-        ixTest="enable-enclosure-mocking"
+        testId="enable-enclosure-mocking"
         [label]="'Enable Enclosure Mocking' | translate"
       ></tn-checkbox>
     </div>
@@ -45,7 +45,7 @@
     <div class="actions">
       <tn-button
         color="primary"
-        ixTest="apply-enclosure-mock"
+        testId="apply-enclosure-mock"
         [disabled]="form.invalid && form.value.enabled"
         [label]="'Apply' | translate"
         (onClick)="onApply()"

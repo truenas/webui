@@ -2,7 +2,7 @@
   <div class="events-header">
     <h4>{{ 'Events Timeline' | translate }}</h4>
     <tn-button
-      ixTest="add-event-button"
+      testId="add-event-button"
       color="primary"
       [label]="'Add Event' | translate"
       (onClick)="addEvent()"
@@ -22,7 +22,7 @@
             <tn-icon-button
               name="delete"
               library="mdi"
-              ixTest="remove-event-button"
+              testId="remove-event-button"
               type="button"
               (click)="removeEvent(i)"
             ></tn-icon-button>
@@ -32,14 +32,14 @@
             <div class="field-row">
               <tn-form-field [label]="'Delay (ms)' | translate" [required]="true">
                 <tn-input
-                  ixTest="delay-input"
+                  testId="delay-input"
                   formControlName="delay"
                 ></tn-input>
               </tn-form-field>
 
               <tn-form-field [label]="'State' | translate" [required]="true">
                 <tn-select
-                  ixTest="state-select"
+                  testId="state-select"
                   formControlName="state"
                   [options]="stateOptions"
                 ></tn-select>
@@ -48,7 +48,7 @@
 
             <tn-form-field [label]="'Description' | translate" [required]="true">
               <tn-input
-                ixTest="description-input"
+                testId="description-input"
                 formControlName="description"
               ></tn-input>
             </tn-form-field>
@@ -56,14 +56,14 @@
             <div class="progress-fields">
               <tn-form-field [label]="'Progress %' | translate">
                 <tn-input
-                  ixTest="progress-percent-input"
+                  testId="progress-percent-input"
                   formControlName="progressPercent"
                 ></tn-input>
               </tn-form-field>
 
               <tn-form-field [label]="'Progress Description' | translate">
                 <tn-input
-                  ixTest="progress-description-input"
+                  testId="progress-description-input"
                   formControlName="progressDescription"
                 ></tn-input>
               </tn-form-field>
@@ -72,7 +72,7 @@
             @if (isResultVisible(i)) {
               <tn-form-field [label]="'Result (JSON)' | translate">
                 <tn-input
-                  ixTest="result-textarea"
+                  testId="result-textarea"
                   formControlName="result"
                   [multiline]="true"
                   [rows]="3"
@@ -83,7 +83,7 @@
             @if (getEventControl(i).get('state')?.value === 'FAILED') {
               <tn-form-field [label]="'Error Message' | translate">
                 <tn-input
-                  ixTest="error-input"
+                  testId="error-input"
                   formControlName="error"
                   [placeholder]="'Error description' | translate"
                 ></tn-input>

@@ -3,19 +3,19 @@
     <div class="header-controls">
       <tn-input
         class="filter-field"
-        ixTest="websocket-debug-filter"
+        testId="websocket-debug-filter"
         [placeholder]="'Filter by method' | translate"
         [(ngModel)]="filterText"
         (ngModelChange)="applyFilter()">
       </tn-input>
       <tn-checkbox
-        ixTest="websocket-debug-auto-scroll"
+        testId="websocket-debug-auto-scroll"
         tnTooltip="Auto-scroll to latest message"
         label="Auto-scroll"
         [(ngModel)]="autoScroll"
       ></tn-checkbox>
       <tn-checkbox
-        ixTest="websocket-debug-duplicate-notifications"
+        testId="websocket-debug-duplicate-notifications"
         tnTooltip="Show snackbar when duplicate API calls are detected"
         label="Duplicate alerts"
         [ngModel]="(duplicateNotificationsEnabled$ | async) ?? false"
@@ -26,7 +26,7 @@
         library="mdi"
         tooltip="Clear messages"
         class="clear-button"
-        ixTest="websocket-debug-clear-messages"
+        testId="websocket-debug-clear-messages"
         (click)="clearMessages()"
       ></tn-icon-button>
     </div>
@@ -69,7 +69,7 @@
               library="mdi"
               tooltip="Create mock from response"
               class="mock-button"
-              ixTest="websocket-debug-create-mock"
+              testId="websocket-debug-create-mock"
               [attr.aria-label]="'Create mock from response'"
               (click)="createMockFromMessage(message); $event.stopPropagation()"
             ></tn-icon-button>
@@ -80,7 +80,7 @@
             library="mdi"
             tooltip="Copy message"
             class="copy-button"
-            ixTest="websocket-debug-copy-message"
+            testId="websocket-debug-copy-message"
             [attr.aria-label]="'Copy message'"
             (click)="copyMessage(message); $event.stopPropagation()"
           ></tn-icon-button>
@@ -88,7 +88,7 @@
           <tn-icon-button
             library="mdi"
             class="toggle-button"
-            ixTest="websocket-debug-toggle-message"
+            testId="websocket-debug-toggle-message"
             tooltip="Toggle message details"
             [name]="message.isExpanded ? 'chevron-down' : 'chevron-right'"
             [attr.aria-label]="message.isExpanded ? 'Collapse message details' : 'Expand message details'"

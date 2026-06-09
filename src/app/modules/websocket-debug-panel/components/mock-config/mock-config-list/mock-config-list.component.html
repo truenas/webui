@@ -12,20 +12,20 @@
       <tn-icon-button
         name="upload"
         library="mdi"
-        ixTest="import-button"
+        testId="import-button"
         [tooltip]="'Import' | translate"
         (click)="fileInput.click()"
       ></tn-icon-button>
       <tn-icon-button
         name="download"
         library="mdi"
-        ixTest="export-button"
+        testId="export-button"
         [tooltip]="'Export' | translate"
         [disabled]="mockConfigs().length === 0"
         (click)="exportConfigs()"
       ></tn-icon-button>
       <tn-button
-        ixTest="add-mock-button"
+        testId="add-mock-button"
         color="primary"
         [label]="'Add Mock' | translate"
         (onClick)="addNewConfig()"
@@ -72,14 +72,14 @@
               <tn-icon-button
                 name="pencil"
                 library="mdi"
-                ixTest="edit-config-button"
+                testId="edit-config-button"
                 [tooltip]="'Edit' | translate"
                 (click)="editConfig(config)"
               ></tn-icon-button>
               <tn-icon-button
                 name="delete"
                 library="mdi"
-                ixTest="delete-config-button"
+                testId="delete-config-button"
                 [tooltip]="'Delete' | translate"
                 (click)="deleteConfig(config.id)"
               ></tn-icon-button>

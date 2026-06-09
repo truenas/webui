@@ -3,7 +3,7 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <tn-form-field [label]="'Method Name' | translate" [required]="true">
         <tn-input
-          ixTest="method-name-input"
+          testId="method-name-input"
           formControlName="methodName"
           [placeholder]="'e.g., pool.create' | translate"
         ></tn-input>
@@ -13,14 +13,14 @@
         [label]="'Message Pattern (Optional)' | translate"
         [hint]="'Regex pattern to match against message content' | translate">
         <tn-input
-          ixTest="message-pattern-input"
+          testId="message-pattern-input"
           formControlName="messagePattern"
         ></tn-input>
       </tn-form-field>
 
       <tn-form-field [label]="'Response Type' | translate" [required]="true">
         <tn-select
-          ixTest="response-type-radio"
+          testId="response-type-radio"
           formControlName="responseType"
           [options]="responseTypeOptions"
         ></tn-select>
@@ -28,7 +28,7 @@
 
       @if (isErrorMode) {
         <tn-checkbox
-          ixTest="is-call-error-checkbox"
+          testId="is-call-error-checkbox"
           formControlName="isCallError"
           [label]="'Configure as CallError' | translate"
         ></tn-checkbox>
@@ -50,7 +50,7 @@
           [required]="true"
           [hint]="'Standard JSON-RPC codes: -32700 Parse error, -32600 Invalid request, -32601 Method not found, -32602 Invalid params, -32603 Internal error; -32001 = CallError. Custom codes allowed.' | translate">
           <tn-input
-            ixTest="error-code-input"
+            testId="error-code-input"
             formControlName="errorCode"
           ></tn-input>
         </tn-form-field>
@@ -59,7 +59,7 @@
           [required]="true"
           [hint]="'Human-readable error message' | translate">
           <tn-input
-            ixTest="error-message-input"
+            testId="error-message-input"
             formControlName="errorMessage"
           ></tn-input>
         </tn-form-field>
@@ -69,7 +69,7 @@
             [label]="'Error Name (errname)' | translate"
             [hint]="'Standard error name (e.g., EINVAL, EACCES)' | translate">
             <tn-select
-              ixTest="call-error-errname-select"
+              testId="call-error-errname-select"
               formControlName="callErrorErrname"
               [options]="errorNameOptions"
             ></tn-select>
@@ -78,7 +78,7 @@
             [label]="'Error Code (error)' | translate"
             [hint]="'Integer error code (e.g., 22 for EINVAL, 13 for EACCES)' | translate">
             <tn-input
-              ixTest="call-error-code-input"
+              testId="call-error-code-input"
               formControlName="callErrorCode"
             ></tn-input>
           </tn-form-field>
@@ -86,7 +86,7 @@
             [label]="'Error Reason' | translate"
             [hint]="'Human-readable reason for the error' | translate">
             <tn-input
-              ixTest="call-error-reason-input"
+              testId="call-error-reason-input"
               formControlName="callErrorReason"
             ></tn-input>
           </tn-form-field>
@@ -119,7 +119,7 @@
         [label]="'Response Delay (ms)' | translate"
         [hint]="'Delay in milliseconds before returning the response' | translate">
         <tn-input
-          ixTest="response-delay-input"
+          testId="response-delay-input"
           formControlName="responseDelay"
           [placeholder]="'0' | translate"
         ></tn-input>
@@ -137,13 +137,13 @@
 
   <div class="form-actions">
     <tn-button
-      ixTest="cancel-button"
+      testId="cancel-button"
       variant="outline"
       [label]="'Cancel' | translate"
       (onClick)="onCancel()"
     ></tn-button>
     <tn-button
-      ixTest="submit-button"
+      testId="submit-button"
       color="primary"
       [disabled]="form.invalid"
       [label]="isEditMode ? ('Update' | translate) : ('Create' | translate)"
