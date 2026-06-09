@@ -139,6 +139,7 @@ mat-grid-list[cols='2'] {
         white-space: nowrap;
 
         .label {
+          flex-shrink: 0;
           margin-right: 2px;
         }
 
