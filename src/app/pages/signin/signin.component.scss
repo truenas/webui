@@ -37,17 +37,24 @@ tn-card {
 
   color: var(--fg2);
   display: block;
+}
 
-  // TEMP: legacy mat-card carried `padding: 0 0 18px`; tn-card has no
-  // bottom-only padding control when [padContent] is false.
-  ::ng-deep .tn-card__content {
-    padding-bottom: 18px;
-  }
+// TEMP: until @truenas/ui-components ships a full-width input on tn-button.
+// Covers the submit buttons of both child forms.
+:host ::ng-deep .submit-button button {
+  width: 100%;
+}
+
+ix-disconnected-message {
+  // Replaces the legacy mat-card's 18px bottom inset on the disconnected card.
+  display: block;
+  padding-bottom: 18px;
 }
 
 .card-bottom {
   overflow: auto;
-  padding: 0 16px;
+  // 18px bottom replaces the legacy mat-card's bottom inset on the main card.
+  padding: 0 16px 18px;
 }
 
 .form-container {
@@ -149,7 +156,8 @@ tn-card {
 .logging-in {
   box-sizing: border-box;
   color: var(--fg2);
-  padding: 49px 16px 37px;
+  // 55px = legacy 37px + the removed mat-card's 18px bottom inset.
+  padding: 49px 16px 55px;
   text-align: center;
   width: 100%;
 }

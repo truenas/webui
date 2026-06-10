@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnIconComponent, TnProgressBarComponent } from '@truenas/ui-components';
 import { combineLatest, Observable, of } from 'rxjs';
@@ -70,6 +70,8 @@ export class SigninComponent implements OnInit {
     }),
     distinctUntilChanged(),
   );
+
+  protected hasLoadingIndicator = toSignal(this.hasLoadingIndicator$, { initialValue: false });
 
   constructor() {
     this.wsStatus.isFailoverRestart$

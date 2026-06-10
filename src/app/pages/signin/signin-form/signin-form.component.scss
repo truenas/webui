@@ -10,20 +10,10 @@
   }
 }
 
+// Inner-button full-width is handled by the shared TEMP block in signin.component.scss.
 .submit-button {
   margin-top: 16px;
   width: 100%;
-
-  // TEMP: until @truenas/ui-components ships a full-width input on tn-button.
-  ::ng-deep button {
-    width: 100%;
-  }
-}
-
-input {
-  &:disabled {
-    cursor: not-allowed;
-  }
 }
 
 .username-input {

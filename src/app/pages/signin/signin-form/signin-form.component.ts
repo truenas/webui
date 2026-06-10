@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, effect, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
@@ -29,7 +29,6 @@ import { TnInputNativeAttrsDirective } from 'app/pages/signin/tn-input-native-at
   templateUrl: './signin-form.component.html',
   styleUrls: ['./signin-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -48,18 +47,22 @@ export class SigninFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
-  private cdr = inject(ChangeDetectorRef);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
   disabled = input.required<boolean>();
 
-  hasTwoFactor = false;
-  showSecurityWarning = false;
+  protected hasTwoFactor = signal(false);
+  protected showSecurityWarning = signal(false);
 
-  protected isLastLoginAttemptFailed = false;
-  protected isLastOtpAttemptFailed = false;
-  protected lastLoginError: string;
+  protected isLastLoginAttemptFailed = signal(false);
+  protected isLastOtpAttemptFailed = signal(false);
+  protected lastLoginError = signal<TranslatedString | null>(null);
+
+  protected isPasswordVisible = signal(false);
+
+  protected readonly tnIconMarker = tnIconMarker;
+  protected readonly InputType = InputType;
 
   form = this.formBuilder.group({
     username: [''],
@@ -69,8 +72,6 @@ export class SigninFormComponent implements OnInit {
 
   protected isLoading = toSignal(this.signinStore.isLoading$);
   readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
-
-  protected isPasswordVisible = signal(false);
 
   protected readonly otpErrorMessages = {
     required: this.translate.instant('{field} is required', {
@@ -88,7 +89,7 @@ export class SigninFormComponent implements OnInit {
     });
 
     if (this.window.location.protocol !== 'https:') {
-      this.showSecurityWarning = true;
+      this.showSecurityWarning.set(true);
     }
 
     this.signinStore.isLoading$.pipe(
@@ -109,9 +110,8 @@ export class SigninFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
-        this.isLastLoginAttemptFailed = false;
-        this.isLastOtpAttemptFailed = false;
-        this.cdr.markForCheck();
+        this.isLastLoginAttemptFailed.set(false);
+        this.isLastOtpAttemptFailed.set(false);
       },
     });
   }
@@ -122,10 +122,9 @@ export class SigninFormComponent implements OnInit {
       return;
     }
     performance.mark('Login Start');
-    this.isLastLoginAttemptFailed = false;
+    this.isLastLoginAttemptFailed.set(false);
     this.signinStore.setLoadingState(true);
     const formValues = this.form.getRawValue();
-    this.cdr.markForCheck();
     this.authService.login(formValues.username, formValues.password).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
@@ -135,7 +134,6 @@ export class SigninFormComponent implements OnInit {
         } else {
           this.signinStore.setLoadingState(false);
           this.handleFailedLogin(loginResult, loginResponse);
-          this.cdr.markForCheck();
         }
       },
       error: (error: unknown) => {
@@ -146,10 +144,10 @@ export class SigninFormComponent implements OnInit {
   }
 
   protected handleFailedLogin(loginResult: LoginResult, loginResponse: LoginExResponse): void {
-    this.isLastLoginAttemptFailed = true;
+    this.isLastLoginAttemptFailed.set(true);
 
     if (loginResult === LoginResult.NoOtp) {
-      this.hasTwoFactor = true;
+      this.hasTwoFactor.set(true);
       this.form.controls.password.setValue('');
       return;
     }
@@ -159,11 +157,10 @@ export class SigninFormComponent implements OnInit {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
       }).join(', ');
 
-      this.lastLoginError = this.translate.instant(
+      this.lastLoginError.set(this.translate.instant(
         'Logging in at the current URL is not possible.<br>To login, please navigate to: {links}',
         { links },
-      );
-      this.cdr.markForCheck();
+      ));
       this.snackbar.error(this.translate.instant('Logging in at the current URL is not possible.'));
 
       return;
@@ -178,7 +175,7 @@ export class SigninFormComponent implements OnInit {
 
     this.form.patchValue({ otp: '' });
     this.form.controls.otp.updateValueAndValidity();
-    this.isLastOtpAttemptFailed = true;
+    this.isLastOtpAttemptFailed.set(true);
 
     this.handleError(errorMessage);
   }
@@ -190,7 +187,7 @@ export class SigninFormComponent implements OnInit {
   }
 
   protected cancelOtpLogin(): void {
-    this.hasTwoFactor = false;
+    this.hasTwoFactor.set(false);
     this.clearForm();
   }
 
@@ -207,7 +204,6 @@ export class SigninFormComponent implements OnInit {
         } else {
           this.handleFailedOtpLogin(loginResult);
           this.signinStore.setLoadingState(false);
-          this.cdr.markForCheck();
         }
       },
       error: (error: unknown) => {
@@ -217,18 +213,14 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  protected readonly tnIconMarker = tnIconMarker;
-  protected readonly InputType = InputType;
-
   protected togglePasswordVisibility(): void {
     this.isPasswordVisible.update((isVisible) => !isVisible);
   }
 
   protected handleError(errorMessage: TranslatedString): void {
     this.signinStore.setLoadingState(false);
-    this.lastLoginError = errorMessage;
-    this.isLastLoginAttemptFailed = true;
-    this.cdr.markForCheck();
+    this.lastLoginError.set(errorMessage);
+    this.isLastLoginAttemptFailed.set(true);
     this.snackbar.error(errorMessage);
   }
 }

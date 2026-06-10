@@ -1,6 +1,5 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
@@ -33,7 +32,6 @@ const adminUsername = 'truenas_admin';
     TnFormFieldComponent,
     TnInputComponent,
     TnInputNativeAttrsDirective,
-    AsyncPipe,
     TranslateModule,
   ],
 })
@@ -47,7 +45,7 @@ export class SetAdminPasswordFormComponent {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
-  isLoading$ = this.signinStore.isLoading$;
+  protected isLoading = toSignal(this.signinStore.isLoading$, { initialValue: false });
 
   protected isPasswordVisible = signal(false);
   protected isPassword2Visible = signal(false);

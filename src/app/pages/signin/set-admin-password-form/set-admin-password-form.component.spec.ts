@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -54,12 +54,33 @@ describe('SetAdminPasswordFormComponent', () => {
     }));
   }
 
+  it('shows a banner explaining the first-time setup', async () => {
+    const banner = await loader.getHarness(
+      TnBannerHarness.with({ textContains: /First-time setup/ }),
+    );
+    expect(await banner.getText()).toContain('No administrator account has been configured yet.');
+  });
+
   it('shows truenas_admin in readonly Username field', async () => {
     const username = await getField('username');
     expect(await username.getValue()).toBe('truenas_admin');
 
-    const nativeInput = spectator.query<HTMLInputElement>('tn-input[formcontrolname="username"] input');
+    // TEMP: no TnInputHarness.isReadonly() exists; this asserts the effect of
+    // TnInputNativeAttrsDirective on the native input. Remove with the directive.
+    const nativeInput = spectator.query<HTMLInputElement>('tn-input[formcontrolname="username"] input')!;
     expect(nativeInput.readOnly).toBe(true);
+  });
+
+  it('toggles password visibility via the suffix actions', async () => {
+    const password = await getField('password');
+    expect(await (await password.getSuffixIcon())!.getName()).toBe('mdi-eye-off');
+    await password.clickSuffixAction();
+    expect(await (await password.getSuffixIcon())!.getName()).toBe('mdi-eye');
+
+    const password2 = await getField('password2');
+    expect(await (await password2.getSuffixIcon())!.getName()).toBe('mdi-eye-off');
+    await password2.clickSuffixAction();
+    expect(await (await password2.getSuffixIcon())!.getName()).toBe('mdi-eye');
   });
 
   it('sets new admin password when form is submitted', async () => {

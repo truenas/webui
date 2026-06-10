@@ -7,18 +7,22 @@
     } @else if (isConnected$ | async) {
         @if (hasAuthToken && (isTokenWithinTimeline$ | async)) {
           <tn-card [padContent]="false">
+            <tn-progress-bar
+              class="session-progress"
+              [value]="0"
+              [mode]="hasLoadingIndicator() ? 'indeterminate' : 'determinate'"
+              [ariaLabel]="'Loading' | translate"
+            ></tn-progress-bar>
             <h3 class="logging-in">{{ 'Logging in...' | translate }}</h3>
           </tn-card>
         } @else {
           <tn-card [padContent]="false">
-            @if ((isConnected$ | async) || (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null)) {
-              <tn-progress-bar
-                class="session-progress"
-                [value]="0"
-                [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
-                [ariaLabel]="'Loading' | translate"
-              ></tn-progress-bar>
-            }
+            <tn-progress-bar
+              class="session-progress"
+              [value]="0"
+              [mode]="hasLoadingIndicator() ? 'indeterminate' : 'determinate'"
+              [ariaLabel]="'Loading' | translate"
+            ></tn-progress-bar>
             <div>
               <div class="logo-wrapper">
                 <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
