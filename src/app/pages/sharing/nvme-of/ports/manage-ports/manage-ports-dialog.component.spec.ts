@@ -1,9 +1,8 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -127,7 +126,7 @@ describe('ManagePortsDialog', () => {
   });
 
   it('opens a form to add a new port when Add New is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add New' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add New' }));
     await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PortFormComponent);

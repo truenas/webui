@@ -1,15 +1,14 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
 import { TwoFactorSetupDialog } from './two-factor-setup-dialog.component';
 
@@ -21,7 +20,7 @@ describe('FirstLoginDialogComponent', () => {
 
   const createComponent = createComponentFactory({
     component: TwoFactorSetupDialog,
-    declarations: [MockComponents(ChangePasswordFormComponent, TwoFactorComponent)],
+    declarations: [MockComponents(TwoFactorComponent)],
     providers: [
       mockProvider(AuthService, {
         userTwoFactorConfig$: mockTwoFactorConfig$.asObservable(),
@@ -46,13 +45,13 @@ describe('FirstLoginDialogComponent', () => {
   });
 
   it('shows the "Finish" button only when 2fa is configured', async () => {
-    let finishButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Finish' }));
+    let finishButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Finish' }));
     expect(finishButton).toBeNull();
 
     mockTwoFactorConfig$.next({ secret_configured: true });
     spectator.detectChanges();
 
-    finishButton = await loader.getHarness(MatButtonHarness.with({ text: 'Finish' }));
+    finishButton = await loader.getHarness(TnButtonHarness.with({ label: 'Finish' }));
     expect(finishButton).toExist();
 
     await finishButton.click();
@@ -63,7 +62,7 @@ describe('FirstLoginDialogComponent', () => {
     mockTwoFactorConfig$.next({ secret_configured: true });
     spectator.detectChanges();
 
-    const finishButton = await loader.getHarness(MatButtonHarness.with({ text: 'Finish' }));
+    const finishButton = await loader.getHarness(TnButtonHarness.with({ label: 'Finish' }));
     const dialogRef = spectator.inject(DialogRef);
 
     expect(finishButton).toExist();

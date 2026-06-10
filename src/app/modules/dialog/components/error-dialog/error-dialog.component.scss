@@ -27,12 +27,6 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   margin: 0;
 }
 
-.mat-mdc-dialog-actions {
-  display: block;
-  min-height: unset;
-  text-align: right;
-}
-
 .details-panel {
   border: 0;
   max-height: 0;

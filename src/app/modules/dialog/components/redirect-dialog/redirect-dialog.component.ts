@@ -1,8 +1,7 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, ElementRef, viewChild, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TnButtonComponent, TnDialogShellComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   RedirectDialogData,
 } from './redirect-dialog-data.interface';
@@ -16,7 +15,7 @@ import {
     TnDialogShellComponent,
     TnButtonComponent,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
   ],
 })
 export class RedirectDialog {

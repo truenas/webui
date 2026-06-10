@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -129,12 +129,10 @@ describe('SaveAsPresetModalComponent', () => {
     expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
-  it('removes a non-builtin preset when Remove icon is pressed', () => {
-    const preset = spectator.queryAll('.preset');
-    const removeButton = preset[2].querySelector('.preset-remove')!;
-    spectator.click(removeButton);
+  it('removes a non-builtin preset when Remove icon is pressed', async () => {
+    const removeButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'close-circle' }));
+    await removeButtons[2].click();
 
-    expect(removeButton).toHaveAttribute('aria-label', 'Remove preset');
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.acltemplate.delete', [4]);
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.by_path', expect.anything());
   });

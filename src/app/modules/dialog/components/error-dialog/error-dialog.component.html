@@ -17,8 +17,9 @@
 
     @if (error.details && error.details.length > 0) {
       <a
-        ixTest="view-details"
         class="more-info"
+        tnTestIdType="link"
+        [tnTestId]="'view-details'"
         (click)="toggleDetails()"
       >
         @if (isDetailsOpen()) {

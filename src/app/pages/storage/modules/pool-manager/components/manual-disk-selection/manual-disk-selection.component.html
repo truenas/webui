@@ -1,6 +1,5 @@
 <tn-dialog-shell testId="manual-disk-selection" [title]="'Manual Selection' | translate">
-<mat-card class="container">
-  <mat-card-content class="card-content">
+  <div class="container">
     <div class="inner-container">
       <div class="left-pane">
         <ix-manual-selection-disks
@@ -8,7 +7,7 @@
           [isSedEncryption]="data.isSedEncryption || false"
         ></ix-manual-selection-disks>
       </div>
-      <mat-divider class="divider" [vertical]="true"></mat-divider>
+      <tn-divider class="divider" [vertical]="true"></tn-divider>
       <div class="right-pane">
         <div class="header vdevs-header">
           <h3>{{ 'VDEVs' | translate }}</h3>
@@ -25,7 +24,7 @@
           }
         </div>
 
-        <mat-divider class="header-divider"></mat-divider>
+        <tn-divider class="header-divider"></tn-divider>
         <div class="vdevs-container">
           @if (!currentVdevs.length) {
             <div class="no-vdevs">
@@ -43,25 +42,24 @@
             }
           }
         </div>
-        <mat-divider class="divider actions-divider"></mat-divider>
-        <div class="actions">
-          <tn-button
-            variant="outline"
-            testId="cancel"
-            [label]="'Cancel' | translate"
-            (onClick)="dialogRef.close(false)"
-          ></tn-button>
-          <tn-button
-            *ixRequiresRoles="requiredRoles"
-            color="primary"
-            testId="save-selection"
-            [label]="'Save Selection' | translate"
-            [disabled]="isSaveDisabled$ | async"
-            (onClick)="onSaveSelection()"
-          ></tn-button>
-        </div>
       </div>
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      testId="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close(false)"
+    ></tn-button>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      testId="save-selection"
+      [label]="'Save Selection' | translate"
+      [disabled]="isSaveDisabled$ | async"
+      (onClick)="onSaveSelection()"
+    ></tn-button>
+  </div>
 </tn-dialog-shell>

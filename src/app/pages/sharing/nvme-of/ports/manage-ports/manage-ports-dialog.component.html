@@ -20,13 +20,11 @@
   </ix-table>
 
   <div class="controls">
-    <button
-      mat-button
-      [ixTest]="['add-new']"
-      (click)="onAdd()"
-    >
-      <tn-icon name="plus" library="mdi"></tn-icon>
-      {{ 'Add New' | translate }}
-    </button>
+    <tn-button
+      variant="outline"
+      [testId]="['add-new']"
+      [label]="'Add New' | translate"
+      (onClick)="onAdd()"
+    ></tn-button>
   </div>
 </tn-dialog-shell>

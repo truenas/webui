@@ -11,16 +11,14 @@
             <div class="preset-name">{{ preset.name }}</div>
             <div class="preset-type">{{ preset.acltype }}</div>
             @if (!preset.builtin) {
-              <button
-                ixTest="remove-preset"
-                type="button"
-                mat-icon-button
+              <tn-icon-button
+                testId="remove-preset"
                 class="preset-remove"
-                [attr.aria-label]="'Remove preset' | translate"
-                (click)="onRemovePreset(preset)"
-              >
-                <tn-icon name="close-circle" library="mdi"></tn-icon>
-              </button>
+                name="close-circle"
+                library="mdi"
+                [ariaLabel]="'Remove preset' | translate"
+                (onClick)="onRemovePreset(preset)"
+              ></tn-icon-button>
             }
           </div>
         }

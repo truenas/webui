@@ -1,8 +1,7 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnDividerComponent } from '@truenas/ui-components';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { ErrorTemplateComponent } from 'app/modules/dialog/components/multi-error-dialog/error-template/error-template.component';
 
@@ -15,7 +14,7 @@ import { ErrorTemplateComponent } from 'app/modules/dialog/components/multi-erro
     TnDialogShellComponent,
     TnButtonComponent,
     ErrorTemplateComponent,
-    MatDivider,
+    TnDividerComponent,
     TranslateModule,
   ],
 })

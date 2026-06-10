@@ -2,10 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnDividerComponent } from '@truenas/ui-components';
 import { combineLatest, filter, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -43,10 +41,8 @@ export interface ManualDiskSelectionParams {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    MatCard,
-    MatCardContent,
     ManualSelectionDisksComponent,
-    MatDivider,
+    TnDividerComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     ManualSelectionVdevComponent,

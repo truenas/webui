@@ -3,11 +3,12 @@ import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnIconComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { switchMap, tap } from 'rxjs';
 import { ErrorReport, ErrorReportAction, collapsibleDetailLabels } from 'app/interfaces/error-report.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -23,7 +24,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnIconComponent,
     CopyButtonComponent,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
   ],
 })
 export class ErrorDialog {

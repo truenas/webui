@@ -1,9 +1,9 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
+import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
@@ -92,12 +92,17 @@ describe('LicenseFingerprintDialog', () => {
       value: { writeText },
     });
 
-    const copyButton = await loader.getHarness(
-      MatButtonHarness.with({ selector: '[ixTest="copy-fingerprint"]' }),
-    );
+    const copyButton = await loader.getHarness(TnIconButtonHarness);
     await copyButton.click();
 
     expect(writeText).toHaveBeenCalledWith(base64);
+  });
+
+  it('closes the dialog when the Close button is clicked', async () => {
+    const closeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
+    await closeButton.click();
+
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });
 

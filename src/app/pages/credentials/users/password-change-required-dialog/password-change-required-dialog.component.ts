@@ -1,8 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
@@ -22,8 +20,6 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
     ChangePasswordFormComponent,
     TnButtonComponent,
     FormActionsComponent,
-    MatCard,
-    MatToolbarRow,
   ],
 })
 export class PasswordChangeRequiredDialog {

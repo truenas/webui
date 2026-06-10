@@ -4,7 +4,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -70,11 +69,6 @@ describe('CertificateSigningRequestsListComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef),
-      mockProvider(TnDialog, {
-        open: jest.fn(() => ({
-          closed: of({ force: false }),
-        })),
-      }),
       mockProvider(StorageService),
       mockAuth(),
     ],
