@@ -13,6 +13,9 @@
               [mode]="hasLoadingIndicator() ? 'indeterminate' : 'determinate'"
               [ariaLabel]="'Loading' | translate"
             ></tn-progress-bar>
+            <div class="logo-wrapper">
+              <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
+            </div>
             <h3 class="logging-in">{{ 'Logging in...' | translate }}</h3>
           </tn-card>
         } @else {
