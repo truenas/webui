@@ -1,18 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnIconButtonComponent, TnListComponent, TnListItemComponent,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map } from 'rxjs/operators';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { GaugeData } from 'app/modules/charts/view-chart-gauge/view-chart-gauge.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { CpuChartGaugeComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-chart-gauge/cpu-chart-gauge.component';
@@ -28,16 +25,12 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   styleUrl: './widget-cpu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
-    MatIconButton,
-    TestDirective,
-    MatTooltip,
+    TnCardComponent,
+    TnIconButtonComponent,
+    TnListComponent,
+    TnListItemComponent,
     RouterLink,
-    TnIconComponent,
     CpuChartGaugeComponent,
-    MatList,
-    MatListItem,
     NgxSkeletonLoaderModule,
     CpuCoreBarComponent,
     TranslateModule,
