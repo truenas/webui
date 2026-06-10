@@ -1,37 +1,37 @@
-<mat-card class="card">
-  <mat-card-content class="card-content">
+<tn-card class="card" [padContent]="false">
+  <div class="card-content">
     <div class="header">
       <h3>{{ 'Storage' | translate }}</h3>
 
-      <button
-        mat-icon-button
-        ixTest="storage-reports"
-        matTooltipPosition="above"
-        [attr.aria-label]="'Disk Reports' | translate"
-        [matTooltip]="'Disk Reports' | translate"
+      <tn-icon-button
+        name="chart-box"
+        library="mdi"
+        size="lg"
+        testId="storage-reports"
+        tooltipPosition="above"
+        [ariaLabel]="'Disk Reports' | translate"
+        [tooltip]="'Disk Reports' | translate"
         [routerLink]="['/reportsdashboard', 'disk']"
-      >
-        <tn-icon name="chart-box" library="mdi" size="lg"></tn-icon>
-      </button>
+      ></tn-icon-button>
     </div>
     <div [class]="['container', size()]">
       @if (isStale()) {
         <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
       } @else if (!isLoading()) {
-        <mat-grid-list
-          [cols]="isTwoTilesInRow ? 2 : 1"
-          [gutterSize]="isThreeTilesInColumn ? '7px' : '12px'"
-          [rowHeight]="poolsInfo().length ? (isThreeTilesInColumn ? '100px' : '153px') : '300px'"
+        <div
+          class="tiles-grid"
+          [class.two-cols]="isTwoTilesInRow"
+          [style.--tiles-gap]="isThreeTilesInColumn ? '7px' : '12px'"
+          [style.--tile-height]="poolsInfo().length ? (isThreeTilesInColumn ? '100px' : '153px') : '300px'"
         >
           @for (poolInfo of poolsInfo().slice(0, 6); track poolInfo.name) {
-            <mat-grid-tile class="grid-tile">
+            <div class="grid-tile">
               <div class="tile" [class.skimpy-tile]="isThreeTilesInColumn">
                 <div class="tile-header">
                   <h4 class="tile-header-title">
                     <span
-                      matTooltipPosition="above"
-                      [matTooltipPositionAtOrigin]="true"
-                      [matTooltip]="poolInfo.name"
+                      tnTooltipPosition="above"
+                      [tnTooltip]="poolInfo.name"
                     >
                       {{ poolInfo.name }}
                     </span>
@@ -121,34 +121,35 @@
                   }
                 </div>
               </div>
-            </mat-grid-tile>
+            </div>
           }
           @if (showCreatePool) {
-            <mat-grid-tile class="grid-tile">
+            <div class="grid-tile">
               <a
                 *ixRequiresRoles="requiredRoles"
                 class="create-new"
-                ixTest="create-pool"
+                tnTestIdType="link"
+                [tnTestId]="'create-pool'"
                 [routerLink]="['/storage', 'create']"
                 >
                 <tn-icon name="database" library="mdi" class="create-pool-icon"></tn-icon>
                 <span>{{ 'Create Pool' | translate }}</span>
               </a>
-            </mat-grid-tile>
+            </div>
           }
-        </mat-grid-list>
+        </div>
       } @else {
-        <mat-grid-list gutterSize="7px" rowHeight="100px" [cols]="2">
+        <div class="tiles-grid two-cols loading-grid">
           @for (tile of [0, 1, 2, 3, 4, 5]; track tile) {
-            <mat-grid-tile>
+            <div class="grid-cell">
               <ngx-skeleton-loader
                 class="skeleton"
                 [theme]="{ width: '100%', height: '100px', background: 'var(--alt-bg2)', opacity: 0.25, margin: 0 }"
               ></ngx-skeleton-loader>
-            </mat-grid-tile>
+            </div>
           }
-        </mat-grid-list>
+        </div>
       }
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>

@@ -1,5 +1,9 @@
 @import 'scss-imports/cssvars';
 
+.card-content {
+  padding: 0 16px;
+}
+
 :host ::ng-deep .container {
   &.full {
     .pool-info-top {

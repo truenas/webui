@@ -1,15 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import {
   combineLatest, filter, switchMap, tap,
 } from 'rxjs';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -26,11 +22,8 @@ import { PoolUsageGaugeComponent } from './common/pool-usage-gauge/pool-usage-ga
   styleUrls: ['./widget-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
-    MatIconButton,
-    TestDirective,
-    MatTooltip,
+    TnCardComponent,
+    TnIconButtonComponent,
     RouterLink,
     TnIconComponent,
     PoolUsageGaugeComponent,
