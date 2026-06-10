@@ -1,13 +1,9 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, TrackByFunction, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconAnchor } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatGridList, MatGridTile } from '@angular/material/grid-list';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { differenceInDays } from 'date-fns';
 import { Direction } from 'app/enums/direction.enum';
 import { DisplayableState, JobState } from 'app/enums/job-state.enum';
@@ -15,7 +11,6 @@ import { TaskState } from 'app/enums/task-state.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.definition';
@@ -47,15 +42,10 @@ interface BackupRow {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     TnIconComponent,
-    MatIconAnchor,
-    TestDirective,
-    MatTooltip,
+    TnIconButtonComponent,
     RouterLink,
-    MatGridList,
-    MatGridTile,
     BackupTaskTileComponent,
     BackupTaskEmptyComponent,
     BackupTaskActionsComponent,

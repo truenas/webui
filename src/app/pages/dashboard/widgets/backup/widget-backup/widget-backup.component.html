@@ -1,5 +1,5 @@
-<mat-card class="card">
-  <mat-card-content class="card-content">
+<tn-card class="card" [padContent]="false">
+  <div class="card-content">
     <div class="header">
       <div class="title">
         <h3>{{ name | translate }}</h3>
@@ -27,33 +27,33 @@
       </div>
 
       <div class="controls">
-        <a
-          mat-icon-button
-          ixTest="go-to-backups"
-          matTooltipPosition="above"
-          [attr.aria-label]="'Data Protection' | translate"
-          [matTooltip]="'Data Protection' | translate"
+        <tn-icon-button
+          name="open-in-new"
+          library="mdi"
+          size="lg"
+          testId="go-to-backups"
+          tooltipPosition="above"
+          [ariaLabel]="'Data Protection' | translate"
+          [tooltip]="'Data Protection' | translate"
           [routerLink]="['/data-protection']"
-        >
-          <tn-icon name="open-in-new" library="mdi" size="lg"></tn-icon>
-        </a>
+        ></tn-icon-button>
       </div>
     </div>
 
     <div [class]="['container', size()]">
       @if (backupsTiles.length) {
         <div class="container-content">
-          <mat-grid-list gutterSize="5px" [cols]="1" [rowHeight]="hasSendTasks ? 105 : 90">
+          <div class="tiles-grid" [style.--tile-height.px]="hasSendTasks ? 105 : 90">
             @for (tile of backupsTiles; track trackByTile($index, tile)) {
-              <mat-grid-tile>
+              <div class="tile-cell">
                 <ix-backup-task-tile
                   [tile]="tile"
                   [hasSendTasks]="hasSendTasks"
                   [backupActions]="backupActions"
                 ></ix-backup-task-tile>
-              </mat-grid-tile>
+              </div>
             }
-          </mat-grid-list>
+          </div>
           @if (!hasSendTasks) {
             <div class="banner">
               <ng-template *ngTemplateOutlet="backupActions"></ng-template>
@@ -72,8 +72,8 @@
         ></ix-backup-task-empty>
       }
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>
 
 <ng-template #backupActions>
   <ix-backup-task-actions
