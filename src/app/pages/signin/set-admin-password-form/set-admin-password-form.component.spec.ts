@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -65,7 +65,7 @@ describe('SetAdminPasswordFormComponent', () => {
       'Reenter Password': '12345678',
     });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sign In' }));
     await submitButton.click();
 
     const api = spectator.inject(ApiService);
@@ -89,7 +89,7 @@ describe('SetAdminPasswordFormComponent', () => {
       'Reenter Password': '12345678',
     });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sign In' }));
     await submitButton.click();
 
     const snackbar = spectator.inject(SnackbarService);

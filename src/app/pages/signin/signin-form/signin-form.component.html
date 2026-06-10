@@ -22,16 +22,14 @@
       <ix-insecure-connection></ix-insecure-connection>
     }
 
-    <button
+    <tn-button
       class="submit-button"
-      mat-button
       type="submit"
       color="primary"
-      ixTest="log-in"
+      [testId]="'log-in'"
+      [label]="'Log In' | translate"
       [disabled]="isFormDisabled()"
-    >
-      {{ 'Log In' | translate }}
-    </button>
+    ></tn-button>
     @if (isLastLoginAttemptFailed) {
       <div class="error">
         <p [innerHTML]="lastLoginError"></p>
@@ -56,24 +54,22 @@
     }
 
     <div>
-      <button
+      <tn-button
         class="submit-button"
-        mat-button
         type="submit"
         color="primary"
-        ixTest="log-in"
+        [testId]="'log-in'"
+        [label]="'Proceed' | translate"
         [disabled]="isFormDisabled()"
-      >
-        {{ 'Proceed' | translate }}
-      </button>
-      <button
+      ></tn-button>
+      <tn-button
         class="submit-button"
-        mat-button
         type="button"
-        ixTest="otp-log-in"
+        [testId]="'otp-log-in'"
+        [label]="'Cancel' | translate"
         [disabled]="isFormDisabled()"
-        (click)="cancelOtpLogin()"
-      >{{ 'Cancel' | translate }}</button>
+        (onClick)="cancelOtpLogin()"
+      ></tn-button>
     </div>
 
     @if (isLastOtpAttemptFailed) {

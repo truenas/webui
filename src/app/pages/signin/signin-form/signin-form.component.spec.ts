@@ -2,9 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AutofillMonitor } from '@angular/cdk/text-field';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -94,7 +94,7 @@ describe('SigninFormComponent', () => {
       Password: '12345678',
     });
 
-    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+    const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }));
     await loginButton.click();
 
     // Wait for async operations to complete
@@ -126,7 +126,7 @@ describe('SigninFormComponent', () => {
         Username: 'test',
         Password: 'test',
       });
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }));
       await loginButton.click();
 
       // Wait for async operations to complete
@@ -152,7 +152,7 @@ describe('SigninFormComponent', () => {
         Username: 'test',
         Password: 'wrong',
       });
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }));
       await loginButton.click();
 
       // Wait for async operations to complete
@@ -185,7 +185,7 @@ describe('SigninFormComponent', () => {
         Username: 'test',
         Password: 'test',
       });
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }));
       await loginButton.click();
 
       // Wait for async operations to complete
@@ -215,7 +215,7 @@ describe('SigninFormComponent', () => {
         Username: 'testuser',
         Password: 'testpass',
       });
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }));
       await loginButton.click();
 
       // Wait for async operations to complete
@@ -245,7 +245,7 @@ describe('SigninFormComponent', () => {
         Username: 'testuser',
         Password: 'testpass',
       });
-      await (await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }))).click();
+      await (await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }))).click();
 
       // Wait for the component to update and show OTP field
       spectator.detectChanges();
@@ -260,7 +260,7 @@ describe('SigninFormComponent', () => {
       }));
 
       await form.fillForm({ 'Two-Factor Authentication Code': '123456' });
-      await (await loader.getHarness(MatButtonHarness.with({ text: 'Proceed' }))).click();
+      await (await loader.getHarness(TnButtonHarness.with({ label: 'Proceed' }))).click();
 
       expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoAccess, true);
       expect(spectator.component.form.value.otp).toBe('');

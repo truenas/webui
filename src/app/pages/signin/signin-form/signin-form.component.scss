@@ -13,10 +13,14 @@
 .submit-button {
   margin-top: 16px;
   width: 100%;
+
+  // TEMP: until @truenas/ui-components ships a full-width input on tn-button.
+  ::ng-deep button {
+    width: 100%;
+  }
 }
 
-input,
-button {
+input {
   &:disabled {
     cursor: not-allowed;
   }

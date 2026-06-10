@@ -3,9 +3,8 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { TnButtonComponent, tnIconMarker } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
   distinctUntilChanged, firstValueFrom,
@@ -20,7 +19,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
@@ -35,10 +33,9 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
     FormsModule,
     ReactiveFormsModule,
     InsecureConnectionComponent,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
     IxInputComponent,
-    TestDirective,
   ],
 })
 export class SigninFormComponent implements OnInit {

@@ -4,8 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { switchMap } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -13,7 +13,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 
@@ -27,11 +26,10 @@ const adminUsername = 'truenas_admin';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    MatButton,
+    TnButtonComponent,
     AsyncPipe,
     TranslateModule,
     IxInputComponent,
-    TestDirective,
   ],
 })
 export class SetAdminPasswordFormComponent {
