@@ -65,7 +65,11 @@ ix-disconnected-message {
   align-items: center;
   background-color: var(--bg2);
 
-  background-image: url('assets/images/login_background.png');
+  // Fallback for browsers that don't support image-set
+  background-image: url('assets/images/signin/login-background-960w.jpg');
+  background-image: image-set(url('assets/images/signin/login-background-480w.avif') 1x,
+  url('assets/images/signin/login-background-960w.avif') 2x,
+  url('assets/images/signin/login-background-1440w.avif') 3x);
   background-size: cover;
   border-bottom: solid 1px var(--lines);
   display: flex;
