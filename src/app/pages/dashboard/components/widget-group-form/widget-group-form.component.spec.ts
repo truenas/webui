@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal, ViewContainerRef } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
-import { MockComponent, MockInstance } from 'ng-mocks';
+import { TnButtonComponent, TnButtonHarness } from '@truenas/ui-components';
+import { MockComponent, MockInstance, ngMocks } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
@@ -19,6 +19,11 @@ import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/wid
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SlotSize, WidgetType } from 'app/pages/dashboard/types/widget.interface';
+
+// Mocking WidgetEditorGroupComponent would otherwise mock its transitive
+// TnButtonComponent import, which trips the ng-mocks signal-viewChild bug
+// (https://github.com/help-me-mom/ng-mocks/issues/8634). Keep it real.
+ngMocks.globalKeep(TnButtonComponent, true);
 
 describe('WidgetGroupFormComponent', () => {
   let spectator: Spectator<WidgetGroupFormComponent>;
@@ -95,7 +100,7 @@ describe('WidgetGroupFormComponent', () => {
     });
 
     it('returns group object in slideInRef response when form is submitted', async () => {
-      const submitBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submitBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submitBtn.click();
       const ref = spectator.inject(SlideInRef);
       expect(ref.close).toHaveBeenCalledWith({
@@ -129,7 +134,7 @@ describe('WidgetGroupFormComponent', () => {
       const slotForm = spectator.query(WidgetGroupSlotFormComponent)!;
       slotForm.validityChange.emit([SlotPosition.First, { interface: { required: true } }]);
       spectator.detectChanges();
-      const submitBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submitBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await submitBtn.isDisabled()).toBe(true);
     });
 
@@ -142,7 +147,7 @@ describe('WidgetGroupFormComponent', () => {
         slotSize: SlotSize.Half,
       });
       spectator.detectChanges();
-      const submitBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submitBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submitBtn.click();
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({

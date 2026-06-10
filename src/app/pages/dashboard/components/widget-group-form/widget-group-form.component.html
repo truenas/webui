@@ -32,18 +32,17 @@
   }
 
   <ix-form-actions>
-    <button
-      mat-button
-      type="submit"
+    <tn-button
       color="primary"
-      [ixTest]="['add-widget-group-btn']"
+      [testId]="['add-widget-group-btn']"
+      [label]="'Save' | translate"
       [disabled]="settingsHasErrors() || layoutControl.invalid"
-    >{{ 'Save' | translate }}</button>
-    <button
-      mat-button
-      type="button"
-      [ixTest]="['cancel-add-widget-group-btn']"
-      (click)="slideInRef.close({ response: undefined })"
-    >{{ 'Cancel' | translate }}</button>
+      (onClick)="onSubmit()"
+    ></tn-button>
+    <tn-button
+      [testId]="['cancel-add-widget-group-btn']"
+      [label]="'Cancel' | translate"
+      (onClick)="slideInRef.close({ response: undefined })"
+    ></tn-button>
   </ix-form-actions>
 </form>
