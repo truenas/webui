@@ -1,19 +1,18 @@
 import { Component, ChangeDetectionStrategy, DestroyRef, input, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnIconButtonComponent, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective,
+} from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
+import { kebabCase } from 'lodash-es';
 import { AppState } from 'app/enums/app-state.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -26,14 +25,10 @@ import { RedirectService } from 'app/services/redirect.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     WithLoadingStateDirective,
-    MatIconButton,
-    TestDirective,
-    MatTooltip,
-    TnIconComponent,
+    TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuTriggerDirective,
     TranslateModule,
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem,
   ],
 })
 export class AppControlsComponent {
@@ -60,6 +55,16 @@ export class AppControlsComponent {
   otherPortals = computed(() => {
     const main = this.mainPortal();
     return this.portalEntries().filter((entry) => entry !== main);
+  });
+
+  // Test IDs preserve the values previously produced by [ixTest]="['apps-web-portal', portal.label]".
+  portalMenuItems = computed<TnMenuItem[]>(() => {
+    return this.otherPortals().map((portal) => ({
+      id: portal.label,
+      label: portal.label,
+      testId: `button-apps-web-portal-${kebabCase(portal.label)}`,
+      action: () => this.openPortal(portal.url),
+    }));
   });
 
   onRestartApp(app: App): void {

@@ -15,9 +15,13 @@
 }
 
 .card {
+  display: block;
   height: 100%;
 
-  ::ng-deep > ix-with-loading-state-loader {
+  // TEMP: the loading-state loader renders as a direct child of tn-card's content
+  // wrapper; .tn-card__content is not public API — replace once tn-card exposes
+  // a public content hook (tracked with the NAS-141021 library follow-ups).
+  ::ng-deep .tn-card__content > ix-with-loading-state-loader {
     align-items: center;
     box-sizing: border-box;
     display: flex;
@@ -38,6 +42,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 0 16px;
   }
 }
 
