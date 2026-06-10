@@ -57,9 +57,9 @@ describe('UserMenuComponent', () => {
     });
 
     it('should display correct username to the left of user icon in top bar', () => {
-      const button = spectator.query('button')!;
-      expect(button).toBeTruthy();
-      expect(button.textContent).toContain('root');
+      const username = spectator.query('.username');
+      expect(username).toBeTruthy();
+      expect(username?.textContent).toContain('root');
     });
   });
 

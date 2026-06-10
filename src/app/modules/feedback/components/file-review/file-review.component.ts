@@ -1,24 +1,25 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject } from '@angular/core';
+import { DialogRef } from '@angular/cdk/dialog';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, forwardRef, input, output, inject, viewChild, TemplateRef,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -33,20 +34,19 @@ export const maxFileSizeBytes = 5 * MiB;
   templateUrl: './file-review.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogContent,
     ReactiveFormsModule,
     IxStarRatingComponent,
     IxTextareaComponent,
     IxCheckboxComponent,
     IxFileInputComponent,
-    MatDialogActions,
-    FormActionsComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
+  providers: [
+    { provide: FeedbackForm, useExisting: forwardRef(() => FileReviewComponent) },
+  ],
 })
-export class FileReviewComponent {
+export class FileReviewComponent implements FeedbackForm {
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private imageValidator = inject(ImageValidatorService);
@@ -55,10 +55,12 @@ export class FileReviewComponent {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
+  readonly dialogRef = input.required<DialogRef<unknown, FeedbackDialog>>();
   readonly isLoading = input<boolean>();
 
   readonly isLoadingChange = output<boolean>();
+
+  readonly dialogActions = viewChild('dialogActions', { read: TemplateRef });
 
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 

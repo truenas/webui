@@ -1,19 +1,14 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef,
-  ElementRef, OnInit, signal, ViewChild, inject,
+  OnInit, signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatBadge } from '@angular/material/badge';
-import { MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent } from '@truenas/ui-components';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -34,9 +29,9 @@ import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
+import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
@@ -59,21 +54,17 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   imports: [
     MatToolbar,
     MatToolbarRow,
-    MatIconButton,
-    MatTooltip,
-    TnIconComponent,
+    TnIconButtonComponent,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
     HaStatusIconComponent,
     JobsIndicatorComponent,
-    MatBadge,
+    StatusBadgeComponent,
     UserMenuComponent,
     PowerMenuComponent,
-    AsyncPipe,
     TranslateModule,
     UiSearchDirective,
-    TestDirective,
     TruecommandButtonComponent,
     TruenasLogoComponent,
     TruenasConnectButtonComponent,
@@ -83,9 +74,6 @@ export class TopbarComponent implements OnInit {
   private router = inject(Router);
   private systemGeneralService = inject(SystemGeneralService);
   private tnDialog = inject(TnDialog);
-  // FeedbackDialog is still a MatDialog component (migrated separately), so it
-  // must be opened via MatDialog until that migration lands.
-  private matDialog = inject(MatDialog);
   private dialogService = inject(DialogService);
   private store$ = inject<Store<AlertSlice>>(Store);
   private appStore$ = inject<Store<AppState>>(Store);
@@ -96,7 +84,7 @@ export class TopbarComponent implements OnInit {
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   private destroyRef = inject(DestroyRef);
 
-  @ViewChild('alertIndicator', { read: ElementRef }) private alertIndicator: ElementRef<HTMLButtonElement>;
+  private alertIndicator = viewChild<TnIconButtonComponent>('alertIndicator');
 
   updateIsDone: Subscription;
 
@@ -116,12 +104,12 @@ export class TopbarComponent implements OnInit {
     return config?.tnc_base_url && config?.account_service_base_url && config?.leca_service_base_url;
   });
 
-  readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
+  protected readonly isAlertPanelOpen = toSignal(this.store$.select(selectIsAlertPanelOpen), { initialValue: false });
   protected readonly alertBadgeCount = toSignal(this.store$.select(
     selectImportantUnreadAlertsCount,
   ), { initialValue: 0 });
 
-  readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
+  protected readonly hasConsoleFooter = toSignal(this.store$.select(selectHasConsoleFooter), { initialValue: false });
 
   protected readonly alertSeverity = toSignal(this.store$.select(selectTopAlertSeverity), { initialValue: null });
   protected readonly alertTooltip = computed(() => {
@@ -130,6 +118,29 @@ export class TopbarComponent implements OnInit {
       case 'warning': return this.translate.instant(this.tooltips.alertsWarning);
       default: return this.translate.instant(this.tooltips.alerts);
     }
+  });
+
+  protected readonly alertIconClass = computed(() => {
+    switch (this.alertSeverity()) {
+      case 'critical': return 'alert-critical';
+      case 'warning': return 'alert-warning';
+      default: return '';
+    }
+  });
+
+  // When the bell icon is already coloured for its severity, the count badge goes
+  // neutral so the icon stays the primary indicator; otherwise it uses the accent.
+  protected readonly alertBadge = computed<StatusBadge | null>(() => {
+    const count = this.alertBadgeCount();
+    if (count === 0) {
+      return null;
+    }
+    const isSeverityColoured = this.alertSeverity() === 'critical' || this.alertSeverity() === 'warning';
+    return {
+      label: String(count),
+      background: isSeverityColoured ? 'var(--bg2)' : 'var(--primary)',
+      color: isSeverityColoured ? 'var(--fg2)' : 'var(--primary-txt)',
+    };
   });
 
   updateText = computed(() => {
@@ -208,7 +219,7 @@ export class TopbarComponent implements OnInit {
   }
 
   focusAlertIndicator(): void {
-    this.alertIndicator?.nativeElement?.focus();
+    this.alertIndicator()?.focus();
   }
 
   onSidenavIndicatorPressed(): void {
@@ -237,7 +248,7 @@ export class TopbarComponent implements OnInit {
   }
 
   onFeedbackIndicatorPressed(): void {
-    this.matDialog.open(FeedbackDialog);
+    this.tnDialog.open(FeedbackDialog);
   }
 
   private checkRebootInfo(): Observable<unknown> {

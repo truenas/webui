@@ -1,8 +1,8 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -19,7 +19,7 @@ describe('TruecommandSignupModalComponent', () => {
       mockWindow({
         open: jest.fn(),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockAuth(),
     ],
   });
@@ -30,24 +30,24 @@ describe('TruecommandSignupModalComponent', () => {
   });
 
   it('has Connect button that closes dialog with true', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Connect' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Connect' }));
     await button.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('has Signup button that opens registration form and closes dialog', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Signup' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Signup' }));
     await button.click();
 
     expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith('https://portal.truenas.com');
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(false);
   });
 
   it('has Cancel button that closes dialog', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
     await button.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(false);
   });
 });

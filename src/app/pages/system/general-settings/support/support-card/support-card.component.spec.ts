@@ -68,6 +68,7 @@ describe('SupportCardComponent', () => {
       mockAuth(),
       mockProvider(TnDialog),
       mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(DialogService),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -234,13 +235,13 @@ describe('SupportCardComponent', () => {
 
     describe('Header action buttons', () => {
       it('opens FeedbackDialog when File Ticket button is clicked', async () => {
-        const matDialog = spectator.inject(MatDialog);
-        jest.spyOn(matDialog, 'open');
+        const tnDialog = spectator.inject(TnDialog);
+        jest.spyOn(tnDialog, 'open');
 
         const fileTicketButton = await loader.getHarness(MatButtonHarness.with({ text: 'File Ticket' }));
         await fileTicketButton.click();
 
-        expect(matDialog.open).toHaveBeenCalledWith(FeedbackDialog, { data: FeedbackType.Bug });
+        expect(tnDialog.open).toHaveBeenCalledWith(FeedbackDialog, { data: FeedbackType.Bug });
       });
 
       it('opens LicenseComponent when Update License button is clicked', async () => {

@@ -1,11 +1,9 @@
 import { Overlay } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatBadgeHarness } from '@angular/material/badge/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnDialog, TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
@@ -55,12 +53,10 @@ describe('JobsIndicatorComponent', () => {
   });
 
   it('shows an icon with a badge for number of running jobs', async () => {
-    const iconButton = await loader.getHarness(MatButtonHarness);
-    const icon = await iconButton.getHarness(TnIconHarness);
-    expect(await icon.getName()).toBe('clipboard-text');
+    const iconButton = await loader.getHarness(TnIconButtonHarness);
+    expect(await iconButton.getName()).toBe('clipboard-text');
 
-    const badge = await loader.getHarness(MatBadgeHarness);
-    expect(await badge.getText()).toBe('4');
+    expect(spectator.query('ix-status-badge .label')).toHaveText('4');
   });
 
   it('opens JobsPanelComponent when isJobPanelOpen$ changes to true.', () => {

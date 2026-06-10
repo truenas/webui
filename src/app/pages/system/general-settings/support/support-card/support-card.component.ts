@@ -5,7 +5,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
@@ -75,9 +74,6 @@ export class SupportCardComponent implements OnInit {
   protected api = inject(ApiService);
   private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);
-  // FeedbackDialog is still a MatDialog component (migrated separately), so it
-  // must be opened via MatDialog until that migration lands.
-  private matDialog = inject(MatDialog);
   private slideIn = inject(SlideIn);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
@@ -179,7 +175,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   feedbackDialog(): void {
-    this.matDialog.open(FeedbackDialog, { data: FeedbackType.Bug });
+    this.tnDialog.open(FeedbackDialog, { data: FeedbackType.Bug });
   }
 
   openProactive(): void {

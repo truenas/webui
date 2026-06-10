@@ -2,20 +2,16 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnIconComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import {
   EMPTY, catchError, finalize, of, switchMap, Observable,
 } from 'rxjs';
 import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
 import { TruenasConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -23,14 +19,11 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 @Component({
   selector: 'ix-truenas-connect-status-modal',
   imports: [
-    MatDivider,
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TnIconComponent,
-    MatButton,
-    MatDialogActions,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     TruenasConnectSpinnerComponent,
     TruenasConnectStatusDisplayComponent,
   ],
@@ -48,13 +41,25 @@ export class TruenasConnectStatusModalComponent {
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
   readonly TncStatus = TncStatus;
 
-  protected isLoading = signal(false);
   protected isConnecting = signal(false);
   protected isDisabling = signal(false);
   protected isRetrying = signal(false);
 
+  // While `tnc.config()` is undefined (e.g. the modal was opened before the
+  // service finished its first `tn_connect.config` round-trip, which happens
+  // when callers outside the topbar — webshare, service-smb, etc. — open the
+  // modal without their own load guard), surface a spinner instead of an
+  // actionable "Get Connected" button derived from a missing status.
+  protected isLoading = computed(() => this.tnc.config() === undefined);
+
   protected status = computed(() => {
-    switch (this.tnc.config()?.status) {
+    const raw = this.tnc.config()?.status;
+    // Config not loaded yet — the template shows the spinner branch instead,
+    // so this fallback is only reached for type narrowing on the switch below.
+    if (raw === undefined) {
+      return TncStatus.Waiting;
+    }
+    switch (raw) {
       case TruenasConnectStatus.Configured:
         return TncStatus.Active;
       case TruenasConnectStatus.ClaimTokenMissing:
@@ -73,8 +78,13 @@ export class TruenasConnectStatusModalComponent {
       case TruenasConnectStatus.CertRenewalFailure:
         return TncStatus.Failed;
       case TruenasConnectStatus.Disabled:
+        // Surface the actionable "Get Connected" CTA rather than a dead-end "disabled" message.
+        return TncStatus.Waiting;
       default:
-        // Show "Get Connected" button for disabled state instead of dead-end "disabled" message
+        // Exhaustive guard — a new TruenasConnectStatus enum member will fail this
+        // `satisfies never` check at compile time, forcing us to revisit the mapping
+        // above. At runtime we still fall back to the safe "Get Connected" state.
+        raw satisfies never;
         return TncStatus.Waiting;
     }
   });
