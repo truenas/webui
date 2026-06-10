@@ -7,12 +7,14 @@
   width: 100%;
 }
 
-mat-card {
+.card {
+  display: block;
   height: 100%;
   width: 100%;
 
   .card-content {
     height: 100%;
+    padding: 0 16px;
     width: 100%;
 
     .header {

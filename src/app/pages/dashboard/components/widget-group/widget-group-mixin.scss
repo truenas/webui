@@ -43,5 +43,11 @@
       height: 100%;
       margin: 0;
     }
+
+    ::ng-deep tn-card {
+      display: block;
+      height: 100%;
+      margin: 0;
+    }
   }
 }
