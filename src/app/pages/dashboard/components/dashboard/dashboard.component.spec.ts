@@ -2,10 +2,9 @@ import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgTemplateOutlet } from '@angular/common';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
@@ -79,7 +78,7 @@ describe('DashboardComponent', () => {
   });
 
   async function enterConfiguration(): Promise<void> {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
   }
 
@@ -121,8 +120,8 @@ describe('DashboardComponent', () => {
     });
 
     it('opens slide in to edit a widget when edit icon is pressed', async () => {
-      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
-      await editIcon.click();
+      const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'pencil' }));
+      await editButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         WidgetGroupFormComponent,
@@ -139,8 +138,8 @@ describe('DashboardComponent', () => {
       jest.spyOn(spectator.inject(SlideIn), 'open')
         .mockReturnValue(SlideInResult.success(updatedGroup));
 
-      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
-      await editIcon.click();
+      const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'pencil' }));
+      await editButton.click();
 
       const groups = spectator.queryAll(WidgetGroupComponent);
       expect(groups).toHaveLength(4);
@@ -151,8 +150,8 @@ describe('DashboardComponent', () => {
     });
 
     it('removes a widget when delete button is pressed', async () => {
-      const deleteIcon = await loader.getHarness(TnIconHarness.with({ name: 'delete' }));
-      await deleteIcon.click();
+      const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'delete' }));
+      await deleteButton.click();
 
       // Wait for animation to complete
       await new Promise<void>((resolve) => {
@@ -168,7 +167,7 @@ describe('DashboardComponent', () => {
     });
 
     it('adds a new widget and opens a slide in when Add is pressed', async () => {
-      const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+      const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
@@ -178,12 +177,12 @@ describe('DashboardComponent', () => {
     });
 
     it('resets configuration to defaults with confirmation when Reset is pressed', async () => {
-      const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
+      const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Reset' }));
       await resetButton.click();
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Default cards restored');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -192,8 +191,8 @@ describe('DashboardComponent', () => {
     });
 
     it('saves new configuration when Save is pressed', async () => {
-      const deleteIcon = await loader.getHarness(TnIconHarness.with({ name: 'delete' }));
-      await deleteIcon.click();
+      const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'delete' }));
+      await deleteButton.click();
 
       // Wait for animation to complete
       await new Promise<void>((resolve) => {
@@ -201,7 +200,7 @@ describe('DashboardComponent', () => {
       });
       spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(DashboardStore, true).save).toHaveBeenCalledWith([groupB, groupC, groupD]);
@@ -209,10 +208,10 @@ describe('DashboardComponent', () => {
     });
 
     it('reverts to loaded configuration when Cancel button is pressed', async () => {
-      const deleteIcon = await loader.getHarness(TnIconHarness.with({ name: 'delete' }));
-      await deleteIcon.click();
+      const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'delete' }));
+      await deleteButton.click();
 
-      const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+      const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
       await cancelButton.click();
 
       const groups = spectator.queryAll(WidgetGroupComponent);
@@ -221,8 +220,8 @@ describe('DashboardComponent', () => {
     });
 
     it('reverts to loaded configuration when Escape is pressed', async () => {
-      const deleteIcon = await loader.getHarness(TnIconHarness.with({ name: 'delete' }));
-      await deleteIcon.click();
+      const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'delete' }));
+      await deleteButton.click();
 
       spectator.dispatchKeyboardEvent(spectator.debugElement, 'keydown', 'Escape');
 
@@ -238,8 +237,8 @@ describe('DashboardComponent', () => {
     });
 
     it('moves widget up when widget is moved down via button on mobile', async () => {
-      const moveIcons = await loader.getAllHarnesses(TnIconHarness.with({ name: 'menu-up' }));
-      await moveIcons[1].click();
+      const moveButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'menu-up' }));
+      await moveButtons[1].click();
 
       const groups = spectator.queryAll(WidgetGroupComponent);
       expect(groups[0].group).toEqual(groupB);
@@ -249,8 +248,8 @@ describe('DashboardComponent', () => {
     });
 
     it('moves widget down when widget is moved down via button on mobile', async () => {
-      const moveIcon = await loader.getHarness(TnIconHarness.with({ name: 'menu-down' }));
-      await moveIcon.click();
+      const moveButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
+      await moveButton.click();
 
       const groups = spectator.queryAll(WidgetGroupComponent);
       expect(groups[0].group).toEqual(groupB);

@@ -1,59 +1,48 @@
 <ix-page-header [pageTitle]="'Dashboard' | translate" [loading]="!!isLoading()">
   @if (!isEditing()) {
-    <button
-      mat-button
+    <tn-button
       color="primary"
-      ixTest="configure-dashboard"
+      [testId]="'configure-dashboard'"
+      [label]="'Configure' | translate"
       [ixUiSearch]="searchableElements.elements.configure"
       [disabled]="isLoading()"
-      (click)="onConfigure()"
-    >
-      {{ 'Configure' | translate }}
-    </button>
+      (onClick)="onConfigure()"
+    ></tn-button>
   }
 </ix-page-header>
 
 @if (isEditing()) {
   <div class="edit-mode-buttons">
     @if (customLayout()) {
-      <button
-        mat-button
-        type="button"
-        ixTest="reset"
+      <tn-button
+        [testId]="'reset'"
+        [label]="'Reset' | translate"
         [disabled]="isLoading()"
-        [matTooltip]="'Restore default set of cards' | translate"
-        (click)="onReset()"
-      >
-        {{ 'Reset' | translate }}
-      </button>
+        [tnTooltip]="'Restore default set of cards' | translate"
+        (onClick)="onReset()"
+      ></tn-button>
     }
 
-    <button
-      mat-button
+    <tn-button
       class="add-button"
-      ixTest="add-group"
+      [testId]="'add-group'"
+      [label]="'Add' | translate"
       [disabled]="isLoading()"
-      (click)="onAddGroup()"
-    >
-      {{ 'Add' | translate }}
-    </button>
-    <button
-      mat-button
+      (onClick)="onAddGroup()"
+    ></tn-button>
+    <tn-button
       color="primary"
-      ixTest="save"
+      [testId]="'save'"
+      [label]="'Save' | translate"
       [disabled]="isLoading()"
-      (click)="onSave()"
-    >
-      {{ 'Save' | translate }}
-    </button>
-    <button
-      mat-button
-      ixTest="cancel"
+      (onClick)="onSave()"
+    ></tn-button>
+    <tn-button
+      [testId]="'cancel'"
+      [label]="'Cancel' | translate"
       [disabled]="isLoading()"
-      (click)="onCancelConfigure()"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
+      (onClick)="onCancelConfigure()"
+    ></tn-button>
   </div>
 }
 
@@ -106,7 +95,12 @@
         </div>
       }
     } @else {
-      <ix-empty [conf]="emptyDashboardConf"></ix-empty>
+      <tn-empty
+        icon="view-dashboard"
+        iconLibrary="mdi"
+        [title]="'Your dashboard is currently empty!' | translate"
+        [description]="'Start adding cards to personalize it. Click on the &quot;Configure&quot; button to enter edit mode.' | translate"
+      ></tn-empty>
     }
   </div>
 }

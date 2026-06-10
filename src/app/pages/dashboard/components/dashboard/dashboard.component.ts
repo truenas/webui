@@ -3,24 +3,18 @@ import {
 } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { TnButtonComponent, TnEmptyComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
 import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EmptyType } from 'app/enums/empty-type.enum';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
@@ -40,16 +34,15 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
+    TnEmptyComponent,
+    TnTooltipDirective,
     UiSearchDirective,
     NgxSkeletonLoaderModule,
     WidgetGroupControlsComponent,
     DisableFocusableElementsDirective,
     WidgetGroupComponent,
-    EmptyComponent,
     TranslateModule,
-    MatTooltip,
     CdkDrag,
     CdkDropList,
     AnimateOutDirective,
@@ -81,14 +74,6 @@ export class DashboardComponent implements OnInit {
   readonly customLayout = computed(() => {
     return !isEqual(this.renderedGroups(), getDefaultWidgets(this.isHaLicensed()));
   });
-
-  emptyDashboardConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    icon: tnIconMarker('view-dashboard', 'mdi'),
-    title: this.translate.instant('Your dashboard is currently empty!'),
-    message: this.translate.instant('Start adding cards to personalize it. Click on the "Configure" button to enter edit mode.'),
-  };
 
   ngOnInit(): void {
     performance.mark('Dashboard Start');
