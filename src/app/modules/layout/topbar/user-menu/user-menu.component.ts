@@ -1,6 +1,5 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -36,7 +35,6 @@ import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.ac
     MatMenuItem,
     RouterLink,
     MatDivider,
-    AsyncPipe,
     TranslateModule,
     UiSearchDirective,
     TestDirective,
@@ -54,16 +52,19 @@ export class UserMenuComponent {
   protected searchableElements = userMenuElements;
   protected readonly AccountAttribute = AccountAttribute;
 
-  protected loggedInUser$ = this.authService.user$.pipe(filter(Boolean));
-  protected isTwoFactorEnabledGlobally$ = this.authService.user$.pipe(
-    switchMap((user) => {
-      if (!user) {
-        return of(false);
-      }
-      return this.authService.getGlobalTwoFactorConfig().pipe(
-        map((config) => config.enabled),
-      );
-    }),
+  protected readonly loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
+  protected readonly isTwoFactorEnabledGlobally = toSignal(
+    this.authService.user$.pipe(
+      switchMap((user) => {
+        if (!user) {
+          return of(false);
+        }
+        return this.authService.getGlobalTwoFactorConfig().pipe(
+          map((config) => config.enabled),
+        );
+      }),
+    ),
+    { initialValue: false },
   );
 
   openChangePasswordDialog(): void {

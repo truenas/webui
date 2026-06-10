@@ -1,6 +1,5 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -25,7 +24,6 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
   imports: [
     TnIconButtonComponent,
     MatBadge,
-    AsyncPipe,
     TranslateModule,
     UiSearchDirective,
   ],
@@ -37,7 +35,7 @@ export class JobsIndicatorComponent implements OnInit {
 
   tooltips = helptextTopbar.tooltips;
 
-  jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
+  protected readonly jobBadgeCount = toSignal(this.store$.select(selectRunningJobsCount), { initialValue: 0 });
   isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);
   protected readonly searchableElements = jobsElements;
 

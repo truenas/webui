@@ -1,8 +1,7 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,7 +21,6 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconButtonComponent,
-    AsyncPipe,
   ],
 })
 export class HaStatusIconComponent implements OnInit {
@@ -31,7 +29,7 @@ export class HaStatusIconComponent implements OnInit {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly isFailoverLicensed$ = this.store$.select(selectIsHaLicensed);
+  protected readonly isFailoverLicensed = toSignal(this.store$.select(selectIsHaLicensed), { initialValue: false });
 
   private readonly failoverDisabledReasons = signal<FailoverDisabledReason[]>([]);
 

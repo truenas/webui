@@ -4,7 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnIconComponent,
+  TnButtonComponent, TnDialogShellComponent, TnIconComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   EMPTY, catchError, finalize, of, switchMap, Observable,
@@ -12,7 +12,6 @@ import {
 import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
 import { TruenasConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -24,7 +23,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
     TnButtonComponent,
     TnIconComponent,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     TruenasConnectSpinnerComponent,
     TruenasConnectStatusDisplayComponent,
   ],

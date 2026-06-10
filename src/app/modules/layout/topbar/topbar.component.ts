@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef,
   OnInit, signal, viewChild, inject,
@@ -65,7 +64,6 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     MatBadge,
     UserMenuComponent,
     PowerMenuComponent,
-    AsyncPipe,
     TranslateModule,
     UiSearchDirective,
     TruecommandButtonComponent,
@@ -107,12 +105,12 @@ export class TopbarComponent implements OnInit {
     return config?.tnc_base_url && config?.account_service_base_url && config?.leca_service_base_url;
   });
 
-  readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
+  protected readonly isAlertPanelOpen = toSignal(this.store$.select(selectIsAlertPanelOpen), { initialValue: false });
   protected readonly alertBadgeCount = toSignal(this.store$.select(
     selectImportantUnreadAlertsCount,
   ), { initialValue: 0 });
 
-  readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
+  protected readonly hasConsoleFooter = toSignal(this.store$.select(selectHasConsoleFooter), { initialValue: false });
 
   protected readonly alertSeverity = toSignal(this.store$.select(selectTopAlertSeverity), { initialValue: null });
   protected readonly alertTooltip = computed(() => {

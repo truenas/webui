@@ -14,7 +14,7 @@
           [ariaLabelledby]="feedbackTypeLabelId"
         >
           @for (option of feedbackTypeOptions(); track option.value) {
-            <tn-button-toggle [value]="option.value">{{ option.label }}</tn-button-toggle>
+            <tn-button-toggle [value]="option.value" [testId]="option.value">{{ option.label }}</tn-button-toggle>
           }
         </tn-button-toggle-group>
       </div>

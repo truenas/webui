@@ -1,4 +1,4 @@
-@if ((isFailoverLicensed$ | async) && statusText()) {
+@if (isFailoverLicensed() && statusText()) {
   <tn-icon-button
     id="ha"
     class="topbar-button-right"

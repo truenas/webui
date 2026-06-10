@@ -65,6 +65,7 @@
   outline-width: 0;
 }
 
+// TEMP: until @truenas/ui-components exposes a focus-style hook on tn-icon-button (NAS-141021 follow-up).
 // Converted tn-icon-buttons render their own inner <button>, which the scoped
 // rule above can't reach. Give them the same branded topbar focus instead of
 // the library's default outline.

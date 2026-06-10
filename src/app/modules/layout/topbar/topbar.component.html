@@ -1,4 +1,7 @@
 <nav [attr.aria-label]="'Top bar' | translate">
+  <!-- HOLD (NAS-141021): @truenas/ui-components has no <tn-toolbar> equivalent for a
+       page-level bar yet, so the mat-toolbar/mat-toolbar-row wrapper is intentionally
+       retained until the library ships a replacement. -->
   <mat-toolbar class="topbar">
     <mat-toolbar-row>
       <!-- Sidenav toggle button -->
@@ -19,7 +22,7 @@
 
       <ix-truenas-logo></ix-truenas-logo>
 
-      <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter$ | async">
+      <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter()">
         <tn-icon-button
           class="topbar-button-right"
           name="emoticon"
@@ -72,7 +75,10 @@
         <ix-ha-status-icon></ix-ha-status-icon>
         <ix-jobs-indicator></ix-jobs-indicator>
 
-        <!-- Alert toggle button -->
+        <!-- Alert toggle button.
+             HOLD (NAS-141021): matBadge stays on the migrated tn-icon-button because
+             @truenas/ui-components has no notification-count badge yet (tn-chip only
+             covers static labels). Revisit once the library ships a badge. -->
         <tn-icon-button
           #alertIndicator
           matBadgeSize="small"
@@ -87,7 +93,7 @@
           [iconClass]="alertIconClass()"
           [matBadge]="alertBadgeCount()"
           [matBadgeHidden]="alertBadgeCount() === 0"
-          [ariaExpanded]="!!(isAlertPanelOpen$ | async)"
+          [ariaExpanded]="isAlertPanelOpen()"
           [tooltip]="alertTooltip()"
           [ariaLabel]="alertTooltip()"
           [ixUiSearch]="searchableElements.elements.alerts"
