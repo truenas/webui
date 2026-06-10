@@ -1,15 +1,16 @@
 @if (collapsible() && !expanded()) {
-  <button
-    mat-stroked-button
-    [ixTest]="dataTest('show-more')"
-    (click)="showMore()"
-  >{{ 'View All' | translate }}</button>
+  <tn-button
+    variant="outline"
+    [label]="'View All' | translate"
+    [testId]="dataTest('show-more')"
+    (onClick)="showMore()"
+  ></tn-button>
 }
 @if (collapsible() && expanded()) {
-  <button
-    mat-stroked-button
-    [ixTest]="dataTest('show-less')"
-    (click)="showLess()"
-  >{{ 'Collapse' | translate }}</button>
+  <tn-button
+    variant="outline"
+    [label]="'Collapse' | translate"
+    [testId]="dataTest('show-less')"
+    (onClick)="showLess()"
+  ></tn-button>
 }
-

@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, input, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-table-pager-show-more',
@@ -16,9 +15,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     '[class.clickable]': '!!routerLink().length',
   },
   imports: [
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class IxTablePagerShowMoreComponent<T> implements OnInit {

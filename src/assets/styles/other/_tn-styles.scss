@@ -946,3 +946,13 @@ mat-form-field {
 .multi-error-dialog.mat-mdc-dialog-content {
   overflow: auto !important;
 }
+
+// `tn-side-panel` renders its overlay inline (position: fixed; z-index: 1000) rather than
+// through the CDK overlay container, which is also z-index: 1000. Because the panel appears
+// later in the DOM, the tie resolves in its favor, so any CDK overlay opened while the panel
+// is open (e.g. the unsaved-changes confirm dialog from its closeGuard, ix-select dropdowns,
+// menus, tooltips) renders BEHIND the panel backdrop — darkened and click-blocked.
+// Drop the panel one below the CDK modal layer so those overlays stack above it as intended.
+.tn-side-panel__overlay {
+  z-index: 999 !important;
+}
