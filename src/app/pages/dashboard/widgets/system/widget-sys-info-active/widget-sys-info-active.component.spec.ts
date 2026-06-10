@@ -1,10 +1,9 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -107,14 +106,14 @@ describe('WidgetSysInfoActiveComponent', () => {
     expect(spectator.query('.header h3')).toHaveText('System Information');
   });
 
-  it('checks system info rows', async () => {
-    const matListItems = await loader.getAllHarnesses(MatListItemHarness);
-    const items = await parallel(() => matListItems.map((item) => item.getFullText()));
+  it('checks system info rows', () => {
+    const items = spectator.queryAll('tn-list-item')
+      .map((item) => item.textContent!.replace(/\s+/g, ' ').trim());
     expect(items).toEqual([
       'Platform: TRUENAS-M40-HA',
       'Edition: Enterprise',
       'Version: 25.10.0-MASTER-20250126-184805',
-      'Support License: Gold Contract  Expires on 2025-01-01',
+      'Support License: Gold Contract Expires on 2025-01-01',
       'System Serial: AA-00001',
       'Uptime: 23 hours 12 minutes as of 10:34',
     ]);
@@ -142,11 +141,11 @@ describe('WidgetSysInfoActiveComponent', () => {
 
   it('checks update button text', async () => {
     updateAvailable$.next(false);
-    const checkUpdateButton = await loader.getHarness(MatButtonHarness.with({ text: /Check for Updates/ }));
+    const checkUpdateButton = await loader.getHarness(TnButtonHarness.with({ label: /Check for Updates/ }));
     expect(await checkUpdateButton.host()).toExist();
 
     updateAvailable$.next(true);
-    const updateButton = await loader.getHarness(MatButtonHarness.with({ text: /Updates Available/ }));
+    const updateButton = await loader.getHarness(TnButtonHarness.with({ label: /Updates Available/ }));
     expect(await updateButton.host()).toExist();
   });
 

@@ -1,5 +1,5 @@
-<mat-card [class]="['card', size()]">
-  <mat-card-content class="card-content">
+<tn-card [class]="['card', size()]" [padContent]="false">
+  <div class="card-content">
     <div [class]="['container', size()]">
       <div class="content-left fn-theme-contrast-lighter">
         <div class="product-logo-container">
@@ -20,7 +20,7 @@
         @if (systemInfo()?.system_serial && isIxHardware()) {
           <div class="hostname">
             @if (isLoaded()) {
-              <span [matTooltip]="'Hostname: {hostname}' | translate: { hostname: systemInfo()?.hostname }">
+              <span [tnTooltip]="'Hostname: {hostname}' | translate: { hostname: systemInfo()?.hostname }">
                 {{ systemInfo()?.hostname }}
               </span>
             }
@@ -29,25 +29,26 @@
 
         <div class="card-action-container">
           @if (isUpdateRunning()) {
-            <button
-              mat-button
+            <tn-button
               color="primary"
-              [ixTest]="['widget-sysinfo', 'update-running']"
+              [testId]="['widget-sysinfo', 'update-running']"
+              [label]="'Update in Progress' | translate"
               [disabled]="true"
-            >{{ 'Update in Progress' | translate }}</button>
-          } @else {
-            <button
-              mat-button
+            ></tn-button>
+          } @else if (updateAvailable()) {
+            <tn-button
               color="primary"
-              [ixTest]="['widget-sysinfo', 'update']"
+              [testId]="['widget-sysinfo', 'update']"
+              [label]="'Updates Available' | translate"
               [routerLink]="['/system', 'update']"
-            >
-              @if (updateAvailable()) {
-                {{ 'Updates Available' | translate }}
-              } @else {
-                {{ 'Check for Updates' | translate }}
-              }
-            </button>
+            ></tn-button>
+          } @else {
+            <tn-button
+              color="primary"
+              [testId]="['widget-sysinfo', 'update']"
+              [label]="'Check for Updates' | translate"
+              [routerLink]="['/system', 'update']"
+            ></tn-button>
           }
         </div>
       </div>
@@ -56,18 +57,19 @@
         <div class="header">
           <h3>{{ 'System Information' | translate }}</h3>
 
-          <button
-            mat-icon-button
-            ixTest="system-go-to-reports"
-            [attr.aria-label]="'System Reports' | translate"
+          <tn-icon-button
+            name="chart-box"
+            library="mdi"
+            size="lg"
+            testId="system-go-to-reports"
+            [ariaLabel]="'System Reports' | translate"
+            [tooltip]="'System Reports' | translate"
             [routerLink]="['/reportsdashboard', 'system']"
-          >
-            <tn-icon name="chart-box" library="mdi" size="lg" [tnTooltip]="'System Reports' | translate"></tn-icon>
-          </button>
+          ></tn-icon-button>
         </div>
 
-        <mat-list>
-          <mat-list-item>
+        <tn-list>
+          <tn-list-item>
             <strong>{{ 'Platform' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
@@ -80,9 +82,9 @@
             } @else {
               <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
-          </mat-list-item>
+          </tn-list-item>
 
-          <mat-list-item>
+          <tn-list-item>
             <strong>{{ 'Edition' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
@@ -95,13 +97,13 @@
             } @else {
               <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
-          </mat-list-item>
+          </tn-list-item>
 
-          <mat-list-item>
+          <tn-list-item>
             <strong>{{ 'Version' | translate }}:</strong>
             @if (isLoaded()) {
               <div class="copy-version">
-                <div class="copy-version-text" [matTooltip]="version()">
+                <div class="copy-version-text" [tnTooltip]="version()">
                   <span>
                     {{ version() }}
                     {{ rendered() }}
@@ -112,10 +114,10 @@
             } @else {
               <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
-          </mat-list-item>
+          </tn-list-item>
 
           @if (systemInfo()?.license) {
-            <mat-list-item>
+            <tn-list-item>
               <div class="license-info">
                 <div class="title">{{ 'Support License' | translate }}:</div>
                 <div class="info">
@@ -138,18 +140,18 @@
                   }
                 </div>
               </div>
-            </mat-list-item>
+            </tn-list-item>
           }
 
           @if (systemInfo()?.system_serial && isIxHardware()) {
-            <mat-list-item>
+            <tn-list-item>
               <strong>{{ 'System Serial' | translate }}:</strong>
               <span>
                 {{ systemInfo()?.system_serial }}
               </span>
-            </mat-list-item>
+            </tn-list-item>
           } @else {
-            <mat-list-item>
+            <tn-list-item>
               <strong>{{ 'Hostname' | translate }}:</strong>
               @if (isLoaded()) {
                 <span>
@@ -158,10 +160,10 @@
               } @else {
                 <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
               }
-            </mat-list-item>
+            </tn-list-item>
           }
 
-          <mat-list-item>
+          <tn-list-item>
             <strong>{{ 'Uptime' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
@@ -170,18 +172,18 @@
             } @else {
               <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
             }
-          </mat-list-item>
+          </tn-list-item>
 
           @if (!isEnterprise()) {
-            <mat-list-item class="use-enterprise">
+            <tn-list-item class="use-enterprise">
               <ix-use-enterprise-marketing-link></ix-use-enterprise-marketing-link>
-            </mat-list-item>
+            </tn-list-item>
           }
-        </mat-list>
+        </tn-list>
       </div>
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>
 
 <ng-template #skeletonLoader>
   <ngx-skeleton-loader

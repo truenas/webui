@@ -3,6 +3,10 @@
 .card {
   height: 100%;
 
+  .card-content {
+    padding: 0 16px;
+  }
+
   .header {
     padding-bottom: 0;
   }

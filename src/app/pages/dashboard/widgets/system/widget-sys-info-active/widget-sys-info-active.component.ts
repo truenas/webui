@@ -1,21 +1,19 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  tnIconMarker, TnButtonComponent, TnCardComponent, TnIconButtonComponent, TnIconComponent,
+  TnListComponent, TnListItemComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map } from 'rxjs';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UseEnterpriseMarketingLinkComponent } from 'app/modules/use-enterprise-marketing-link/use-enterprise-marketing-link.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -37,18 +35,15 @@ import {
   styleUrls: ['../common/widget-sys-info.scss', './widget-sys-info-active.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
+    TnButtonComponent,
+    TnIconButtonComponent,
+    TnListComponent,
+    TnListItemComponent,
     TnIconComponent,
     TnTooltipDirective,
     ProductImageComponent,
-    MatButton,
-    TestDirective,
     RouterLink,
-    MatIconButton,
-    MatTooltip,
-    MatList,
-    MatListItem,
     NgxSkeletonLoaderModule,
     NgTemplateOutlet,
     CopyButtonComponent,

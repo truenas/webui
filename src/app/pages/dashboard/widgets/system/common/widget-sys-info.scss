@@ -2,18 +2,20 @@
 
 .card {
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  display: block;
   height: 100%;
 
-  button {
-    min-height: var(--mdc-text-button-container-height);
+  tn-button {
     white-space: normal;
   }
 }
 
 :host ::ng-deep {
-  mat-list-item .mat-mdc-list-item-unscoped-content {
+  // TEMP: .tn-list-item__* are not public API — replace when tn-list-item
+  // exposes a public content-layout hook (tracked with NAS-141021 follow-ups).
+  tn-list-item .tn-list-item__primary-text {
+    align-items: center;
+    display: flex;
     gap: 8px;
   }
 
@@ -57,13 +59,13 @@
         padding-bottom: 6px;
       }
 
-      mat-list-item {
+      tn-list-item {
         display: none;
 
         &:nth-child(1),
         &:nth-child(2),
         &:nth-child(5) {
-          display: flex;
+          display: block;
         }
       }
 
@@ -92,7 +94,7 @@
           order: 1;
         }
 
-        .content-right mat-list mat-list-item:nth-child(3),
+        .content-right tn-list tn-list-item:nth-child(3),
         .product-image,
         .product-logo-container {
           display: none;
@@ -111,8 +113,7 @@
   display: flex;
   flex-direction: row;
   height: 100%;
-  padding-bottom: 0;
-  padding-right: 0;
+  padding: 0 0 0 16px;
 
   .container {
     padding: 0;
