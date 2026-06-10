@@ -7,7 +7,9 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnButtonToggleGroupHarness, TnButtonToggleHarness, TnDialogHarness,
+} from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -20,7 +22,6 @@ import {
 } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -28,9 +29,23 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 
 describe('FeedbackDialogComponent', () => {
   let spectator: Spectator<FeedbackDialog>;
-  let typeButtonGroup: IxButtonGroupHarness | null;
+  let typeButtonGroup: TnButtonToggleGroupHarness | null;
   let loader: HarnessLoader;
   let store$: MockStore;
+
+  // The checked toggle renders a leading checkmark glyph as part of its text.
+  const stripCheckmark = (label: string): string => label.replace('✓', '').trim();
+
+  async function getTypeOptions(): Promise<string[]> {
+    const toggles = await typeButtonGroup!.getToggles();
+    const labels = await Promise.all(toggles.map((toggle) => toggle.getLabelText()));
+    return labels.map(stripCheckmark);
+  }
+
+  async function selectType(label: string): Promise<void> {
+    const toggle = await loader.getHarness(TnButtonToggleHarness.with({ label: new RegExp(label) }));
+    await toggle.check();
+  }
 
   const isReviewAllowed$ = new BehaviorSubject(false);
   const isEnterprise$ = new BehaviorSubject(false);
@@ -74,7 +89,7 @@ describe('FeedbackDialogComponent', () => {
     store$ = spectator.inject(MockStore);
     isReviewAllowed$.next(true);
     isEnterprise$.next(false);
-    typeButtonGroup = await loader.getHarness(IxButtonGroupHarness);
+    typeButtonGroup = await loader.getHarness(TnButtonToggleGroupHarness);
   }
 
   describe('dialog without data provider', () => {
@@ -88,19 +103,28 @@ describe('FeedbackDialogComponent', () => {
       expect(await dialog.getTitle()).toBe('Send Feedback');
     });
 
+    it('keeps the legacy close-button test id', () => {
+      // tn-dialog-shell scopes its close button as button-close-<testId>, matching
+      // the pre-migration test id so existing Release Engineering selectors hold.
+      // (The library writes data-testid by default; main.ts maps it to data-test in the app.)
+      const closeButton = spectator.query('.tn-dialog__close');
+      const testId = closeButton?.getAttribute('data-test') ?? closeButton?.getAttribute('data-testid');
+      expect(testId).toBe('button-close-feedback-dialog');
+    });
+
     describe('type selector', () => {
       it('shows Review and Bug on enterprise system with reviews enabled', async () => {
         isReviewAllowed$.next(true);
         isEnterprise$.next(true);
 
-        expect(await typeButtonGroup!.getOptions()).toEqual(['Rate this page', 'Report a bug']);
+        expect(await getTypeOptions()).toEqual(['Rate this page', 'Report a bug']);
       });
 
       it('hides type selector when only one option is available (enterprise with reviews disabled)', async () => {
         isReviewAllowed$.next(false);
         isEnterprise$.next(true);
 
-        typeButtonGroup = await loader.getHarnessOrNull(IxButtonGroupHarness.with({ label: 'I would like to' }));
+        typeButtonGroup = await loader.getHarnessOrNull(TnButtonToggleGroupHarness);
         expect(typeButtonGroup).toBeNull();
       });
 
@@ -108,7 +132,7 @@ describe('FeedbackDialogComponent', () => {
         isReviewAllowed$.next(true);
         isEnterprise$.next(false);
 
-        expect(await typeButtonGroup!.getOptions()).toEqual([
+        expect(await getTypeOptions()).toEqual([
           'Rate this page',
           'Report a bug',
         ]);
@@ -118,7 +142,7 @@ describe('FeedbackDialogComponent', () => {
     describe('forms', () => {
       it('shows FileReview system when Review is selected', async () => {
         isReviewAllowed$.next(true);
-        await typeButtonGroup!.setValue('Rate this page');
+        await selectType('Rate this page');
         spectator.detectChanges();
 
         const visibleForm = spectator.query(FileReviewComponent);
@@ -136,7 +160,7 @@ describe('FeedbackDialogComponent', () => {
       });
 
       it('shows FileTicket form when Bug is selected on a non-enterprise system', async () => {
-        await typeButtonGroup!.setValue('Report a bug');
+        await selectType('Report a bug');
         spectator.detectChanges();
 
         const visibleForm = spectator.query(FileTicketComponent);
@@ -157,7 +181,7 @@ describe('FeedbackDialogComponent', () => {
         store$.refreshState();
         spectator.detectChanges();
 
-        await typeButtonGroup!.setValue('Report a bug');
+        await selectType('Report a bug');
         spectator.detectChanges();
 
         const visibleForm = spectator.query(FileTicketLicensedComponent);
@@ -179,7 +203,7 @@ describe('FeedbackDialogComponent', () => {
         store$.refreshState();
         spectator.detectChanges();
 
-        await typeButtonGroup!.setValue('Report a bug');
+        await selectType('Report a bug');
         spectator.detectChanges();
 
         const visibleForm = spectator.query(FileTicketComponent);
@@ -209,7 +233,8 @@ describe('FeedbackDialogComponent', () => {
     store$.refreshState();
     spectator.detectChanges();
 
-    expect(await typeButtonGroup!.getValue()).toBe('Report a bug');
+    const checkedToggle = await typeButtonGroup!.getCheckedToggle();
+    expect(stripCheckmark(await checkedToggle!.getLabelText())).toBe('Report a bug');
     expect(spectator.query(FileTicketComponent)).toExist();
   });
 });

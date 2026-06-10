@@ -7,12 +7,10 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonToggleComponent, TnButtonToggleGroupComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import {
-  Observable, of,
-} from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { generateUuid } from 'app/helpers/uuid.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
@@ -20,7 +18,6 @@ import { FileTicketLicensedComponent } from 'app/modules/feedback/components/fil
 import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackType, feedbackTypesLabels } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { AppState } from 'app/store';
@@ -36,9 +33,10 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   },
   imports: [
     TnDialogShellComponent,
+    TnButtonToggleGroupComponent,
+    TnButtonToggleComponent,
     FakeProgressBarComponent,
     NgxSkeletonLoaderModule,
-    IxButtonGroupComponent,
     ReactiveFormsModule,
     FileReviewComponent,
     FileTicketLicensedComponent,
@@ -59,12 +57,11 @@ export class FeedbackDialog implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly isLoadingTypes = signal(false);
   protected typeControl = new FormControl(undefined as FeedbackType | undefined);
-  // Holds an Observable because `ix-button-group`'s `options` input is typed
-  // `Observable<Option[]>` and consumes it via `| async`. The signal layer
-  // lets us reassign the stream after the allowed types resolve and have
-  // OnPush change detection pick it up without a manual markForCheck.
-  protected readonly feedbackTypeOptions = signal<Observable<Option[]>>(
-    of(mapToOptions(feedbackTypesLabels, this.translate)),
+  protected readonly feedbackTypeLabelId = `feedback-type-label-${generateUuid()}`;
+  // Reassigned once the allowed types resolve; the signal lets OnPush change
+  // detection pick up the new options without a manual markForCheck.
+  protected readonly feedbackTypeOptions = signal<Option[]>(
+    mapToOptions(feedbackTypesLabels, this.translate),
   );
 
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -116,10 +113,10 @@ export class FeedbackDialog implements OnInit {
 
         this.allowedTypes.set(allowed);
 
-        this.feedbackTypeOptions.set(of(allowed.map((type) => ({
+        this.feedbackTypeOptions.set(allowed.map((type) => ({
           label: this.translate.instant(feedbackTypesLabels.get(type) || type),
           value: type,
-        }))));
+        })));
 
         this.pickType();
 

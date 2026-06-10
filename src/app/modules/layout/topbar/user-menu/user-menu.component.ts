@@ -4,11 +4,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { filter, map, of, switchMap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
@@ -30,7 +29,7 @@ import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.ac
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconButtonComponent,
-    MatTooltip,
+    TnTestIdDirective,
     MatMenuTrigger,
     TnIconComponent,
     MatMenu,

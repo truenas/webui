@@ -5,29 +5,20 @@
   align-items: center;
   display: flex;
 
+  // Projected into tn-icon-button beside the icon, so the name + icon read as one button.
   .username {
     @include line-clamp(2);
-    background: transparent;
-    border: 0;
     color: inherit;
-    cursor: pointer;
-    display: inline-block;
-    font-family: inherit;
     font-size: 14px;
-    margin-left: 0.5rem;
+    margin-right: 0.5rem;
     max-width: 105px;
-    min-width: auto;
+    // Render the name before the icon in tn-icon-button's flex row, keeping the
+    // original name-then-icon order.
+    order: -1;
     overflow: hidden;
-    padding: 0;
     text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap;
-
-    &:focus-visible {
-      background: var(--focus-bg);
-      box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
-      outline: none;
-    }
 
     @media(max-width: $breakpoint-md) {
       display: none;

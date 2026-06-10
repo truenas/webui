@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Send Feedback' | translate">
+<tn-dialog-shell testId="feedback-dialog" [title]="'Send Feedback' | translate">
   <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
 
   @if (isLoadingTypes()) {
@@ -7,13 +7,17 @@
     </div>
   } @else {
     @if (allowedTypes().length > 1) {
-      <ix-button-group
-        [formControl]="typeControl"
-        [label]="'I would like to' | translate"
-        [options]="feedbackTypeOptions()"
-        [inlineFields]="true"
-        [attr.aria-label]="'Feedback Type' | translate"
-      ></ix-button-group>
+      <div class="feedback-type">
+        <span class="feedback-type__label" [id]="feedbackTypeLabelId">{{ 'I would like to' | translate }}</span>
+        <tn-button-toggle-group
+          [formControl]="typeControl"
+          [ariaLabelledby]="feedbackTypeLabelId"
+        >
+          @for (option of feedbackTypeOptions(); track option.value) {
+            <tn-button-toggle [value]="option.value">{{ option.label }}</tn-button-toggle>
+          }
+        </tn-button-toggle-group>
+      </div>
     }
     @if (isReview) {
       <ix-file-review

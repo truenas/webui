@@ -1,19 +1,7 @@
 @if ((loggedInUser$ | async); as user) {
   <div class="user-menu-wrapper">
-    @if (user.pw_name) {
-      <!-- Username is a real button so it stays clickable, focusable, and announced
-           as a menu trigger by assistive tech, matching the icon-button below. -->
-      <button
-        type="button"
-        class="username"
-        ixTest="user-menu-name"
-        [attr.aria-label]="('Open user menu for' | translate) + ' ' + user.pw_name"
-        [matTooltip]="user.pw_name"
-        [matMenuTriggerFor]="userMenu"
-      >
-        {{ user.pw_name }}
-      </button>
-    }
+    <!-- Single trigger: the icon button projects the username text beside its icon,
+         so the name and icon are one focusable, accessible menu trigger. -->
     <tn-icon-button
       class="topbar-button-right"
       name="account-circle"
@@ -21,10 +9,19 @@
       size="lg"
       testId="user-menu"
       [dense]="true"
+      [ariaLabel]="('Open user menu for' | translate) + ' ' + user.pw_name"
       [tooltip]="tooltips.settings | translate"
       [matMenuTriggerFor]="userMenu"
       [ixUiSearch]="searchableElements.elements.userMenu"
-    ></tn-icon-button>
+    >
+      @if (user.pw_name) {
+        <span
+          class="username"
+          tnTestIdType="button"
+          [tnTestId]="'user-menu-name'"
+        >{{ user.pw_name }}</span>
+      }
+    </tn-icon-button>
 
     <mat-menu #userMenu="matMenu">
       @if (user.account_attributes?.includes(AccountAttribute.Local)) {
