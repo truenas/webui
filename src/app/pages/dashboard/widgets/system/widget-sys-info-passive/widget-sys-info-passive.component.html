@@ -40,7 +40,12 @@
           @if (isHaLicensed() && !isUpdateRunning()) {
             <ng-container *ixRequiresRoles="requiredRoles">
               @if (!isHaEnabled()) {
-                <tn-icon class="failover-warning-icon" name="alert" library="mdi"></tn-icon>
+                <tn-icon
+                  class="failover-warning-icon"
+                  name="alert"
+                  library="mdi"
+                  [ariaLabel]="'HA is Disabled' | translate"
+                ></tn-icon>
               }
               <tn-button
                 tnTooltipPosition="above"
@@ -48,6 +53,7 @@
                 class="simple-failover-btn"
                 [testId]="'initiate-failover'"
                 [label]="'Initiate Failover' | translate"
+                [ariaLabel]="isHaEnabled() ? undefined : ('Initiate Failover — HA is Disabled' | translate)"
                 [tnTooltip]="'HA is Disabled' | translate"
                 [tnTooltipDisabled]="isHaEnabled()"
                 [disabled]="!canFailover()"

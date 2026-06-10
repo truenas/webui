@@ -107,6 +107,7 @@ describe('WidgetSysInfoActiveComponent', () => {
   });
 
   it('checks system info rows', () => {
+    // TODO: replace with TnListItemHarness once @truenas/ui-components ships one.
     const items = spectator.queryAll('tn-list-item')
       .map((item) => item.textContent!.replace(/\s+/g, ' ').trim());
     expect(items).toEqual([

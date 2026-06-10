@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import {
   combineLatest, filter, switchMap, tap,
 } from 'rxjs';
@@ -25,7 +25,6 @@ import { PoolUsageGaugeComponent } from './common/pool-usage-gauge/pool-usage-ga
     TnCardComponent,
     TnIconButtonComponent,
     RouterLink,
-    TnIconComponent,
     PoolUsageGaugeComponent,
     PoolStatusComponent,
     DisksWithZfsErrorsComponent,

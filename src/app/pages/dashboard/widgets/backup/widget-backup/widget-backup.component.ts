@@ -3,7 +3,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnIn
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { differenceInDays } from 'date-fns';
 import { Direction } from 'app/enums/direction.enum';
 import { DisplayableState, JobState } from 'app/enums/job-state.enum';
@@ -44,7 +46,8 @@ interface BackupRow {
   imports: [
     TnCardComponent,
     TnIconComponent,
-    TnIconButtonComponent,
+    TnTestIdDirective,
+    TnTooltipDirective,
     RouterLink,
     BackupTaskTileComponent,
     BackupTaskEmptyComponent,

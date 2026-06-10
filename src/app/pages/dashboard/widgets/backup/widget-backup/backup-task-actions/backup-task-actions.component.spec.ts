@@ -1,3 +1,4 @@
+import { byText } from '@ngneat/spectator';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { BackupTaskActionsComponent } from './backup-task-actions.component';
@@ -31,7 +32,7 @@ describe('BackupTaskActionsComponent', () => {
     spectator.setInput('allCount', 1);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addCloudSyncTask, 'emit');
-    spectator.click(spectator.queryAll('a.backup-action')[0]);
+    spectator.click(spectator.query(byText('to cloud', { selector: 'a.backup-action' }))!);
     expect(spy).toHaveBeenCalled();
   });
 
@@ -39,7 +40,7 @@ describe('BackupTaskActionsComponent', () => {
     spectator.setInput('allCount', 1);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addReplicationTask, 'emit');
-    spectator.click(spectator.queryAll('a.backup-action')[1]);
+    spectator.click(spectator.query(byText('to another TrueNAS', { selector: 'a.backup-action' }))!);
     expect(spy).toHaveBeenCalled();
   });
 });

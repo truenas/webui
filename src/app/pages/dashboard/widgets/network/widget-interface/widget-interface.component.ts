@@ -19,7 +19,6 @@ import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/
 import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state/map-loaded-value.utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -38,7 +37,6 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
   imports: [
     TnCardComponent,
     TnIconButtonComponent,
-    TestDirective,
     RouterLink,
     TnIconComponent,
     TnTooltipDirective,

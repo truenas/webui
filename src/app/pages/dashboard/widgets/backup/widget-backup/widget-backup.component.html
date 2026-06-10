@@ -27,16 +27,17 @@
       </div>
 
       <div class="controls">
-        <tn-icon-button
-          name="open-in-new"
-          library="mdi"
-          size="lg"
-          testId="go-to-backups"
-          tooltipPosition="above"
-          [ariaLabel]="'Data Protection' | translate"
-          [tooltip]="'Data Protection' | translate"
+        <a
+          class="reports-link"
+          tnTestIdType="link"
+          tnTooltipPosition="above"
+          [tnTestId]="'go-to-backups'"
+          [attr.aria-label]="'Data Protection' | translate"
+          [tnTooltip]="'Data Protection' | translate"
           [routerLink]="['/data-protection']"
-        ></tn-icon-button>
+        >
+          <tn-icon name="open-in-new" library="mdi" size="lg"></tn-icon>
+        </a>
       </div>
     </div>
 
