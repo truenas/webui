@@ -2,9 +2,8 @@ import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { DecimalPipe } from '@angular/common';
 import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnIconButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnIconButtonComponent, TnProgressBarComponent } from '@truenas/ui-components';
 import {
   Observable, Subscription, map,
 } from 'rxjs';
@@ -53,7 +52,7 @@ export interface JobProgressDialogConfig<Result> {
     TnDialogShellComponent,
     TnButtonComponent,
     TnIconButtonComponent,
-    MatProgressBar,
+    TnProgressBarComponent,
     TranslateModule,
     DecimalPipe,
   ],

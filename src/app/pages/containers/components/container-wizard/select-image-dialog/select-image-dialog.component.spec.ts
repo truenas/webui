@@ -7,7 +7,7 @@ import {
   mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import {
   mockCall,
   mockApi,
@@ -55,8 +55,9 @@ describe('SelectImageDialogComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows the header', () => {
-      expect(spectator.query('.tn-dialog__title')).toHaveText('Select Image');
+    it('shows the header', async () => {
+      const dialog = await loader.getHarness(TnDialogHarness);
+      expect(await dialog.getTitle()).toBe('Select Image');
     });
 
     it('loads image choices', () => {

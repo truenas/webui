@@ -3,10 +3,9 @@ import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnProgressBarComponent } from '@truenas/ui-components';
 import { BehaviorSubject, tap } from 'rxjs';
 import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -28,7 +27,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     TnDialogShellComponent,
     TnButtonComponent,
-    MatProgressBar,
+    TnProgressBarComponent,
     FormsModule,
     ReactiveFormsModule,
     IxInputComponent,

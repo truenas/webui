@@ -4,7 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -63,8 +63,9 @@ describe('ManageUnusedDiskDialogComponent', () => {
     expect(options).toEqual(['DEV', 'TEST']);
   });
 
-  it('shows a title', () => {
-    expect(spectator.query('.tn-dialog__title')).toHaveText('Add To Pool');
+  it('shows a title', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('Add To Pool');
   });
 
   it('shows the list of Unassigned Disks', () => {

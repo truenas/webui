@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -46,9 +46,9 @@ describe('AssociatedTargetFormComponent', () => {
     api = spectator.inject(ApiService);
   });
 
-  it('shows the dialog title with target name', () => {
-    const title = spectator.query('.tn-dialog__title');
-    expect(title).toHaveText('Associate Target 1');
+  it('shows the dialog title with target name', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('Associate Target 1');
   });
 
   it('submits form with correct values', async () => {

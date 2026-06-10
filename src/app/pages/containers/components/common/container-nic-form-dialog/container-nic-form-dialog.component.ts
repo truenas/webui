@@ -43,7 +43,7 @@ export class ContainerNicFormDialog {
   private fb = inject(FormBuilder);
   private ixValidator = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  protected matDialogRef = inject<DialogRef<unknown, ContainerNicFormDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ContainerNicFormDialog>>(DialogRef);
   private dialogData = inject<ContainerNicFormDialogData>(DIALOG_DATA);
 
   protected readonly isEditMode = computed(() => !!this.dialogData.device);
@@ -144,7 +144,7 @@ export class ContainerNicFormDialog {
         result.mac = this.form.value.mac;
       }
 
-      this.matDialogRef.close(result);
+      this.dialogRef.close(result);
     } else {
       // For E1000: explicitly exclude trust_guest_rx_filters
       const result: {
@@ -162,7 +162,7 @@ export class ContainerNicFormDialog {
         result.mac = this.form.value.mac;
       }
 
-      this.matDialogRef.close(result);
+      this.dialogRef.close(result);
     }
   }
 }

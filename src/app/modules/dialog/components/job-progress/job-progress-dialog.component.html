@@ -27,22 +27,20 @@
             </small>
           }
         </div>
-        <mat-progress-bar
-          color="primary"
+        <tn-progress-bar
           class="job-progress job-running"
           [value]="progressTotalPercent"
           [mode]="progressTotalPercent ? 'determinate' : 'indeterminate'"
-        ></mat-progress-bar>
+        ></tn-progress-bar>
       </div>
     }
 
     @if (!isJobStateDeterminate) {
       <div>
-        <mat-progress-bar
-          color="primary"
+        <tn-progress-bar
           class="job-progress job-ended"
           [mode]="'indeterminate'"
-        ></mat-progress-bar>
+        ></tn-progress-bar>
       </div>
     }
 
@@ -55,12 +53,11 @@
 
     @if (!description && !job) {
       <div>
-        <mat-progress-bar
-          color="primary"
+        <tn-progress-bar
           mode="indeterminate"
           class="job-progress"
         >
-        </mat-progress-bar>
+        </tn-progress-bar>
       </div>
     }
   </div>

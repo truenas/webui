@@ -1,9 +1,8 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialogHarness, TnIconButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness, TnIconButtonHarness, TnProgressBarComponent } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -78,9 +77,9 @@ describe('JobProgressDialogComponent', () => {
 
   it('shows a progress bar with a percentage once job is active', async () => {
     await setupTest();
-    const progressBar = await loader.getHarness(MatProgressBarHarness);
+    const progressBar = spectator.query(TnProgressBarComponent);
 
-    expect(await progressBar.getValue()).toBe(50);
+    expect(progressBar.value()).toBe(50);
   });
 
   it('should update job description and progress when job updates', async () => {
@@ -94,8 +93,8 @@ describe('JobProgressDialogComponent', () => {
       } as Job),
     });
 
-    const progressBar = await loader.getHarness(MatProgressBarHarness);
-    expect(await progressBar.getValue()).toBe(74);
+    const progressBar = spectator.query(TnProgressBarComponent);
+    expect(progressBar.value()).toBe(74);
     expect(spectator.query('.job-description')).toHaveExactText('Confabulating bits');
   });
 

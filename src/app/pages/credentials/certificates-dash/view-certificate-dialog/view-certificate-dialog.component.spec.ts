@@ -1,7 +1,8 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import {
@@ -12,6 +13,7 @@ import { ViewCertificateDialog } from './view-certificate-dialog.component';
 
 describe('ViewCertificateDialogComponent', () => {
   let spectator: Spectator<ViewCertificateDialog>;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: ViewCertificateDialog,
     declarations: [
@@ -34,10 +36,12 @@ describe('ViewCertificateDialogComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows a name of certificate in header', () => {
-    expect(spectator.query('.tn-dialog__title')).toHaveText('truenas');
+  it('shows a name of certificate in header', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('truenas');
   });
 
   it('shows certificate contents in a textarea', () => {
@@ -50,7 +54,6 @@ describe('ViewCertificateDialogComponent', () => {
   });
 
   it('downloads certificate using specified extension and mime type when Download button is pressed', async () => {
-    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     const button = await loader.getHarness(TnButtonHarness.with({ label: 'Download' }));
     await button.click();
 

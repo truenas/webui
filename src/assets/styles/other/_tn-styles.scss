@@ -953,6 +953,11 @@ mat-form-field {
 // bordered/padded area between the header and footer. `:empty` ignores the
 // ng-content comment anchor but still matches when there is real text/content,
 // so dialogs with actual body content are unaffected.
+// TEMP: until @truenas/ui-components ships a tn-dialog-shell hide-empty-content/actions
+// input, both rules below reach into the shell's internal classes. Tracked under NAS-141021.
+// (Per-component `:host(.no-footer-actions) ::ng-deep .tn-dialog__actions` overrides exist
+// where the action container is always projected with an `@if`-guarded body — it is never
+// truly `:empty` there — so the two approaches coexist intentionally until the library input lands.)
 .tn-dialog__content:empty {
   display: none;
 }

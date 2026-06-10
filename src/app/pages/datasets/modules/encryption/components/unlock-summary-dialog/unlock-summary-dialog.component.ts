@@ -1,13 +1,11 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnDividerComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DatasetUnlockComponent,
 } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
@@ -20,8 +18,8 @@ import {
   imports: [
     TnDialogShellComponent,
     TranslateModule,
-    MatDivider,
-    TestDirective,
+    TnDividerComponent,
+    TnTestIdDirective,
     TnIconComponent,
     FormActionsComponent,
     TnButtonComponent,

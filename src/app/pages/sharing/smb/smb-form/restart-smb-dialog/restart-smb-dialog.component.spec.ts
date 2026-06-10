@@ -2,7 +2,7 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness, TnIconHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RestartSmbDialog } from './restart-smb-dialog.component';
 
@@ -23,14 +23,16 @@ describe('RestartSmbDialog', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows restart message and prompt', () => {
-    expect(spectator.query('.tn-dialog__content')).toContainText(
+  it('shows restart message and prompt', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    const content = await dialog.getContentText();
+    expect(content).toContain(
       'Changes to the SMB share configuration may not fully apply to existing SMB client sessions until the SMB service restarts.',
     );
-    expect(spectator.query('.tn-dialog__content')).toContainText(
+    expect(content).toContain(
       'Do you want to restart the SMB service now?',
     );
-    expect(spectator.query('.tn-dialog__content')).toContainText(
+    expect(content).toContain(
       'CAUTION: Restarting the SMB service causes a short service interruption for all connected SMB clients.',
     );
   });

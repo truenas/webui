@@ -214,7 +214,7 @@ describe('JobsPanelComponent', () => {
 
     expect(spectator.query('div[mat-subheader]')).toHaveText('Recently Completed Jobs');
     expect(spectator.query('.finished-jobs-list')).toExist();
-    expect(spectator.query('mat-divider.list-divider')).toExist();
+    expect(spectator.query('tn-divider.list-divider')).toExist();
   });
 
   it('displays finished jobs in the recently completed section', () => {

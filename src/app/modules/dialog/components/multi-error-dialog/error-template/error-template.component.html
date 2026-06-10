@@ -24,7 +24,7 @@
       class="stack-trace-panel"
       [class.open]="!isCloseMoreInfo"
     >
-      <div #errorBtText class="textarea scrolled-down" id="err-bt-text" readonly matInput>
+      <div #errorBtText class="textarea scrolled-down" id="err-bt-text" readonly>
         {{ 'Error' | translate }}: {{ stackTrace() }}
       </div>
     </div>

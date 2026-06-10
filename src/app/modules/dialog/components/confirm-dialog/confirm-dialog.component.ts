@@ -1,14 +1,12 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent, TnCheckboxLabelDirective, TnDialogShellComponent } from '@truenas/ui-components';
 import {
   ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult,
 } from 'app/interfaces/dialog.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 type ConfirmDialogResult = boolean | DialogWithSecondaryCheckboxResult;
 
@@ -20,12 +18,12 @@ type ConfirmDialogResult = boolean | DialogWithSecondaryCheckboxResult;
   imports: [
     TnDialogShellComponent,
     TnButtonComponent,
-    MatCheckbox,
+    TnCheckboxComponent,
+    TnCheckboxLabelDirective,
     ReactiveFormsModule,
     FormsModule,
     FormActionsComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class ConfirmDialog {
@@ -59,8 +57,8 @@ export class ConfirmDialog {
     }
   }
 
-  toggleSubmit(data: MatCheckboxChange): void {
-    this.isSubmitEnabled = data.checked;
+  toggleSubmit(checked: boolean): void {
+    this.isSubmitEnabled = checked;
   }
 
   onSecondaryCheckboxChange(): void {

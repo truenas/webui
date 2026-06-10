@@ -5,6 +5,7 @@
 
   // The icon + title are rendered as a body heading below, so hide the empty
   // dialog shell header (the shell title is text-only and can't show the icon).
+  // TEMP: until @truenas/ui-components ships a tn-dialog-shell custom/icon title input. Tracked under NAS-141021.
   ::ng-deep .tn-dialog__header {
     display: none;
   }

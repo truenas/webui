@@ -2,9 +2,8 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnProgressBarComponent } from '@truenas/ui-components';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
@@ -18,7 +17,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   imports: [
     TnDialogShellComponent,
     TnButtonComponent,
-    MatProgressBar,
+    TnProgressBarComponent,
     DecimalPipe,
     TranslateModule,
   ],

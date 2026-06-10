@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -64,10 +64,10 @@ describe('ReplaceDiskDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows a name of the disk that is about to be replaced', () => {
-    const title = spectator.query('.tn-dialog__title');
+  it('shows a name of the disk that is about to be replaced', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
 
-    expect(title).toHaveText('Replacing disk sda');
+    expect(await dialog.getTitle()).toBe('Replacing disk sda');
   });
 
   it('replaces a disk when the form is submitted', async () => {

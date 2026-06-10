@@ -6,7 +6,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
-import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnDialogHarness } from '@truenas/ui-components';
 import { Observable, of, throwError } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import {
@@ -156,8 +156,9 @@ describe('ExportDisconnectModalComponent', () => {
     spectator.fixture.destroy();
   });
 
-  it('should display the pool name in the title', () => {
-    expect(spectator.query('.tn-dialog__title')).toContainText('Disconnect Pool: fakePool');
+  it('should display the pool name in the title', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toContain('Disconnect Pool: fakePool');
   });
 
   it('should start with Export option selected by default', () => {

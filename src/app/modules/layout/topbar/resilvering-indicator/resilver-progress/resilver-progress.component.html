@@ -2,12 +2,11 @@
   <div class="resilver-progress-dialog">
     @if (state !== PoolScanState.Finished) {
       <div>
-        <mat-progress-bar
+        <tn-progress-bar
           class="example-margin"
-          color="primary"
           mode="indeterminate"
           [value]="progressTotalPercent"
-        ></mat-progress-bar>
+        ></tn-progress-bar>
         <label> {{ progressTotalPercent | number: '1.2-2' }}% </label>
       </div>
     }

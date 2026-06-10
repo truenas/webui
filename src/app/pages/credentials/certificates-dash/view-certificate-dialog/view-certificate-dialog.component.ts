@@ -1,9 +1,8 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
@@ -16,7 +15,7 @@ import { DownloadService } from 'app/services/download.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    TestDirective,
+    TnTestIdDirective,
     CopyButtonComponent,
     TnButtonComponent,
     TranslateModule,

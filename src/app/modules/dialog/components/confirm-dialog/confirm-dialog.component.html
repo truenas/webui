@@ -6,15 +6,14 @@
 
     @if (options.secondaryCheckbox) {
       <span>
-        <mat-checkbox
-          color="primary"
+        <tn-checkbox
           class="confirm-checkbox secondary-checkbox"
-          ixTest="secondary-confirmation"
+          testId="secondary-confirmation"
           [(ngModel)]="isSecondaryCheckboxChecked"
           (ngModelChange)="onSecondaryCheckboxChange()"
         >
-          <span id="confirm-label">{{ options.secondaryCheckboxText }}</span>
-        </mat-checkbox>
+          <span tnCheckboxLabel id="confirm-label">{{ options.secondaryCheckboxText }}</span>
+        </tn-checkbox>
       </span>
     }
 
@@ -27,15 +26,12 @@
 
   <ix-form-actions tnDialogAction class="form-actions">
     @if (!options.hideCheckbox && options.confirmationCheckboxText) {
-      <mat-checkbox
-        color="primary"
-        name="confirm_checkbox"
+      <tn-checkbox
         class="confirm-checkbox"
-        ixTest="confirm"
+        testId="confirm"
+        [label]="options.confirmationCheckboxText"
         (change)="toggleSubmit($event)"
-      >
-        {{ options.confirmationCheckboxText }}
-      </mat-checkbox>
+      ></tn-checkbox>
     }
     @if (!options.hideCancel && options.cancelText) {
       <tn-button

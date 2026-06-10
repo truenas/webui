@@ -2,9 +2,8 @@ import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness } from '@truenas/ui-components';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { ConfirmDialog } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
 
@@ -58,7 +57,7 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('shows a confirmation checkbox', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: options.confirmationCheckboxText }));
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: options.confirmationCheckboxText }));
       expect(checkbox).toBeTruthy();
     });
 
@@ -69,7 +68,7 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('closes dialog with true when confirmation checkbox is ticked and Submit button is pressed', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: options.confirmationCheckboxText }));
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: options.confirmationCheckboxText }));
       await checkbox.check();
 
       const button = await loader.getHarness(TnButtonHarness.with({ label: options.buttonText }));
@@ -96,7 +95,7 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('does not show a confirmation checkbox if hideCheckbox is true', async () => {
-      const checkbox = await loader.getHarnessOrNull(MatCheckboxHarness.with({
+      const checkbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({
         label: options.confirmationCheckboxText,
       }));
       expect(checkbox).toBeNull();
@@ -134,17 +133,17 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('shows a secondary checkbox', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({
         label: secondaryCheckboxOptions.secondaryCheckboxText,
       }));
       expect(checkbox).toBeTruthy();
     });
 
     it('closes dialog with an object when confirmation checkbox is ticked and Submit button is pressed', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: options.confirmationCheckboxText }));
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: options.confirmationCheckboxText }));
       await checkbox.check();
 
-      const secondaryCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+      const secondaryCheckbox = await loader.getHarness(TnCheckboxHarness.with({
         label: secondaryCheckboxOptions.secondaryCheckboxText,
       }));
       await secondaryCheckbox.check();
@@ -213,7 +212,7 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('closes dialog with an object even when `secondaryCheckbox` is false, but present in options', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: options.confirmationCheckboxText }));
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: options.confirmationCheckboxText }));
       await checkbox.check();
 
       const button = await loader.getHarness(TnButtonHarness.with({ label: options.buttonText }));
@@ -251,7 +250,7 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('shows secondary message when secondary checkbox is checked', async () => {
-      const secondaryCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+      const secondaryCheckbox = await loader.getHarness(TnCheckboxHarness.with({
         label: secondaryCheckboxOptions.secondaryCheckboxText,
       }));
       await secondaryCheckbox.check();
@@ -265,7 +264,7 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('hides secondary message when secondary checkbox is unchecked after being checked', async () => {
-      const secondaryCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+      const secondaryCheckbox = await loader.getHarness(TnCheckboxHarness.with({
         label: secondaryCheckboxOptions.secondaryCheckboxText,
       }));
 

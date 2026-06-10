@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -38,8 +38,9 @@ describe('AppDeleteDialogComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('shows dialog title', () => {
-    expect(spectator.query('.tn-dialog__title')).toHaveText('Delete application ix-test-app');
+  it('shows dialog title', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('Delete application ix-test-app');
   });
 
   it('closes dialog with form values when dialog is submitted', async () => {

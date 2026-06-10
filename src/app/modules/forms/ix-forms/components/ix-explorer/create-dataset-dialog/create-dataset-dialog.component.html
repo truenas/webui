@@ -1,6 +1,6 @@
 <tn-dialog-shell testId="create-dataset" [title]="'Create Dataset' | translate">
   @if (isLoading$ | async) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <tn-progress-bar mode="indeterminate"></tn-progress-bar>
   }
   <form [formGroup]="form">
     <ix-input

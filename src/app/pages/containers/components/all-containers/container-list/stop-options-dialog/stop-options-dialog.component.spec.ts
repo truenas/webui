@@ -2,7 +2,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   StopOptionsDialog, StopOptionsOperation,
@@ -33,13 +33,15 @@ describe('StopOptionsDialogComponent', () => {
 
   it('shows labels and text related to stopping a container when operation is Stop', async () => {
     setupTest(StopOptionsOperation.Stop);
-    expect(spectator.query('.tn-dialog__title')).toHaveText('Stop Options');
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('Stop Options');
     expect(await loader.getHarness(TnButtonHarness.with({ label: 'Stop' }))).toBeTruthy();
   });
 
   it('shows labels and text related to restarting a container when operation is Restart', async () => {
     setupTest(StopOptionsOperation.Restart);
-    expect(spectator.query('.tn-dialog__title')).toHaveText('Restart Options');
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('Restart Options');
     expect(await loader.getHarness(TnButtonHarness.with({ label: 'Restart' }))).toBeTruthy();
   });
 

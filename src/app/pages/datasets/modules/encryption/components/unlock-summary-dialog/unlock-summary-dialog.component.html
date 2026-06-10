@@ -3,13 +3,13 @@
   <div class="message-content">
     @if (errorDatasets.length > 0) {
       <div class="errors-content">
-        <mat-divider></mat-divider>
+        <tn-divider></tn-divider>
         <p>{{ errorsMessage | translate }}</p>
         @for (dataset of errorDatasets; track dataset) {
           <div class="row">
             <strong>{{ dataset.name }}</strong>
             <div>
-              <a ixTest="unlock-summary-details" (click)="showError(dataset)">
+              <a tnTestIdType="link" [tnTestId]="'unlock-summary-details'" (click)="showError(dataset)">
                 <u>{{ 'details' | translate }}</u>
               </a>
               <tn-icon name="close-circle" library="mdi" class="red-icon"></tn-icon>
@@ -20,7 +20,7 @@
     }
     @if (skippedDatasets.length > 0) {
       <div class="skipped-content">
-        <mat-divider></mat-divider>
+        <tn-divider></tn-divider>
         <p>{{ skippedMessage | translate }}</p>
         @for (dataset of skippedDatasets; track dataset) {
           <div class="row">
@@ -32,7 +32,7 @@
     }
     @if (unlockDatasets.length > 0) {
       <div class="unlock-content">
-        <mat-divider></mat-divider>
+        <tn-divider></tn-divider>
         <p>{{ unlockMessage | translate }}</p>
         @for (dataset of unlockDatasets; track dataset) {
           <div class="row">

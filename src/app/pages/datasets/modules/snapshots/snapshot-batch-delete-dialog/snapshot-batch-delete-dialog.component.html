@@ -11,32 +11,25 @@
       </strong>
     </p>
 
-    <mat-accordion multi displayMode="flat">
-      @for (dataset of dialogData.datasets; track dataset) {
-        <mat-expansion-panel
-          expanded
-          class="mat-elevation-z0"
-          >
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <strong>{{ dataset }}</strong>
-              <span>
-                ({{
-                '{ n, plural, one {# snapshot} other {# snapshots} }' | translate: { n: dialogData.snapshots[dataset].length }
-                }})
-              </span>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <ul>
-            @for (snapshot of dialogData.snapshots[dataset]; track snapshot) {
-              <li>
-                {{ snapshot }}
-              </li>
-            }
-          </ul>
-        </mat-expansion-panel>
-      }
-    </mat-accordion>
+    @for (dataset of dialogData.datasets; track dataset) {
+      <tn-expansion-panel [expanded]="true" [bordered]="false">
+        <div slot="title">
+          <strong>{{ dataset }}</strong>
+          <span>
+            ({{
+            '{ n, plural, one {# snapshot} other {# snapshots} }' | translate: { n: dialogData.snapshots[dataset].length }
+            }})
+          </span>
+        </div>
+        <ul>
+          @for (snapshot of dialogData.snapshots[dataset]; track snapshot) {
+            <li>
+              {{ snapshot }}
+            </li>
+          }
+        </ul>
+      </tn-expansion-panel>
+    }
 
     <ix-checkbox
       formControlName="confirm"
@@ -68,8 +61,8 @@
       (onClick)="dialogRef.close()"
     ></tn-button>
     <div
-      [matTooltip]="'Snapshots must not have dependent clones' | translate"
-      [matTooltipDisabled]="!hasClones"
+      [tnTooltip]="'Snapshots must not have dependent clones' | translate"
+      [tnTooltipDisabled]="!hasClones"
     >
       <tn-button
         *ixRequiresRoles="requiredRoles"
