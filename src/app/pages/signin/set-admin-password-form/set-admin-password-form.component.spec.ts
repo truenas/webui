@@ -2,14 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -20,7 +18,6 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 describe('SetAdminPasswordFormComponent', () => {
   let spectator: Spectator<SetAdminPasswordFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: SetAdminPasswordFormComponent,
     imports: [
@@ -46,24 +43,28 @@ describe('SetAdminPasswordFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
-  it('shows truenas_admin in readonly Username field', async () => {
-    const username = await form.getControl('Username') as IxInputHarness;
+  async function getField(controlName: string): Promise<TnInputHarness> {
+    return loader.getHarness(TnInputHarness.with({
+      selector: `[formcontrolname="${controlName}"]`,
+    }));
+  }
 
+  it('shows truenas_admin in readonly Username field', async () => {
+    const username = await getField('username');
     expect(await username.getValue()).toBe('truenas_admin');
-    expect(await username.isReadonly()).toBe(true);
+
+    const nativeInput = spectator.query<HTMLInputElement>('tn-input[formcontrolname="username"] input');
+    expect(nativeInput.readOnly).toBe(true);
   });
 
   it('sets new admin password when form is submitted', async () => {
-    await form.fillForm({
-      Password: '12345678',
-      'Reenter Password': '12345678',
-    });
+    await (await getField('password')).setValue('12345678');
+    await (await getField('password2')).setValue('12345678');
 
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sign In' }));
     await submitButton.click();
@@ -84,10 +85,8 @@ describe('SetAdminPasswordFormComponent', () => {
       loginResponse: { response_type: LoginExResponseType.Success } as LoginExResponse,
     }));
 
-    await form.fillForm({
-      Password: '12345678',
-      'Reenter Password': '12345678',
-    });
+    await (await getField('password')).setValue('12345678');
+    await (await getField('password2')).setValue('12345678');
 
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sign In' }));
     await submitButton.click();

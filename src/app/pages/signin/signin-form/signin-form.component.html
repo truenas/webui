@@ -1,25 +1,35 @@
 <form novalidate role="form" aria-label="Sign In Form" [formGroup]="form" (submit)="hasTwoFactor ? loginWithOtp() : login()">
   @if (!hasTwoFactor) {
-    <ix-input
-      formControlName="username"
-      autocomplete="username"
-      name="username"
-      class="username-input"
-      [prefixIcon]="tnIconMarker('account', 'mdi')"
-      [label]="'Username' | translate"
-    ></ix-input>
+    <tn-form-field class="username-input" [label]="'Username' | translate">
+      <tn-input
+        formControlName="username"
+        [testId]="'username'"
+        [prefixIcon]="tnIconMarker('account', 'mdi')"
+        [ixNativeAttrs]="{ name: 'username', autocomplete: 'username' }"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="password"
-      type="password"
-      name="password"
-      autocomplete="current-password"
-      [prefixIcon]="tnIconMarker('lock', 'mdi')"
-      [label]="'Password' | translate"
-    ></ix-input>
+    <tn-form-field class="password-input" [label]="'Password' | translate">
+      <tn-input
+        formControlName="password"
+        ixSuffixActionTestId="button-toggle-password-password"
+        [testId]="'password'"
+        [inputType]="isPasswordVisible() ? InputType.PlainText : InputType.Password"
+        [prefixIcon]="tnIconMarker('lock', 'mdi')"
+        [suffixIcon]="isPasswordVisible() ? tnIconMarker('eye', 'mdi') : tnIconMarker('eye-off', 'mdi')"
+        [suffixIconAriaLabel]="isPasswordVisible() ? ('Hide Password' | translate) : ('Show Password' | translate)"
+        [ixNativeAttrs]="{ name: 'password', autocomplete: 'current-password' }"
+        (onSuffixAction)="togglePasswordVisibility()"
+      ></tn-input>
+    </tn-form-field>
 
     @if (showSecurityWarning) {
-      <ix-insecure-connection></ix-insecure-connection>
+      <tn-banner
+        type="warning"
+        [bordered]="true"
+        [heading]="'Connection is insecure' | translate"
+        [message]="'You are using an insecure connection. Switch to HTTPS for secure access.' | translate"
+      ></tn-banner>
     }
 
     <tn-button
@@ -37,21 +47,27 @@
     }
   }
   @if (hasTwoFactor) {
-    <p>
-      {{ '2FA has been configured for this account. Enter the OTP to continue.' | translate }}
-    </p>
+    <tn-banner
+      class="otp-banner"
+      type="info"
+      [bordered]="true"
+      [heading]="'Enter one-time password' | translate"
+      [message]="'2FA has been configured for this account. Enter the OTP to continue.' | translate"
+    ></tn-banner>
 
-    <ix-input
-      formControlName="otp"
-      autocomplete="one-time-code"
-      [prefixIcon]="tnIconMarker('cellphone-link', 'mdi')"
+    <tn-form-field
+      class="otp-input"
       [label]="'Two-Factor Authentication Code' | translate"
       [required]="true"
-    ></ix-input>
-
-    @if (showSecurityWarning) {
-      <ix-insecure-connection></ix-insecure-connection>
-    }
+      [errorMessages]="otpErrorMessages"
+    >
+      <tn-input
+        formControlName="otp"
+        [testId]="'otp'"
+        [prefixIcon]="tnIconMarker('cellphone-link', 'mdi')"
+        [ixNativeAttrs]="{ name: 'otp', autocomplete: 'one-time-code' }"
+      ></tn-input>
+    </tn-form-field>
 
     <div>
       <tn-button

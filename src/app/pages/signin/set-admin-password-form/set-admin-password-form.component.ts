@@ -1,20 +1,22 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent, tnIconMarker,
+} from '@truenas/ui-components';
 import { switchMap } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
+import { TnInputNativeAttrsDirective } from 'app/pages/signin/tn-input-native-attrs.directive';
 
 const adminUsername = 'truenas_admin';
 
@@ -27,9 +29,11 @@ const adminUsername = 'truenas_admin';
     FormsModule,
     ReactiveFormsModule,
     TnButtonComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnInputNativeAttrsDirective,
     AsyncPipe,
     TranslateModule,
-    IxInputComponent,
   ],
 })
 export class SetAdminPasswordFormComponent {
@@ -43,6 +47,25 @@ export class SetAdminPasswordFormComponent {
   private destroyRef = inject(DestroyRef);
 
   isLoading$ = this.signinStore.isLoading$;
+
+  protected isPasswordVisible = signal(false);
+  protected isPassword2Visible = signal(false);
+
+  protected readonly tnIconMarker = tnIconMarker;
+  protected readonly InputType = InputType;
+
+  protected readonly passwordErrorMessages = {
+    required: this.translate.instant('{field} is required', {
+      field: this.translate.instant('Password'),
+    }),
+  };
+
+  protected readonly password2ErrorMessages = {
+    required: this.translate.instant('{field} is required', {
+      field: this.translate.instant('Reenter Password'),
+    }),
+    matchOther: this.translate.instant('Passwords do not match'),
+  };
 
   form = this.formBuilder.nonNullable.group({
     username: [adminUsername, Validators.required],

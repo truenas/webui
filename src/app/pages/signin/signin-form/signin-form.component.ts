@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, effect, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, tnIconMarker } from '@truenas/ui-components';
+import {
+  InputType, TnBannerComponent, TnButtonComponent, TnFormFieldComponent, TnInputComponent, tnIconMarker,
+} from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
   distinctUntilChanged, firstValueFrom,
@@ -16,12 +18,11 @@ import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoginExResponse, LoginRedirectResponse } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
+import { TnInputNativeAttrsDirective } from 'app/pages/signin/tn-input-native-attrs.directive';
 
 @Component({
   selector: 'ix-signin-form',
@@ -32,10 +33,12 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    InsecureConnectionComponent,
+    TnBannerComponent,
     TnButtonComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnInputNativeAttrsDirective,
     TranslateModule,
-    IxInputComponent,
   ],
 })
 export class SigninFormComponent implements OnInit {
@@ -66,6 +69,14 @@ export class SigninFormComponent implements OnInit {
 
   protected isLoading = toSignal(this.signinStore.isLoading$);
   readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
+
+  protected isPasswordVisible = signal(false);
+
+  protected readonly otpErrorMessages = {
+    required: this.translate.instant('{field} is required', {
+      field: this.translate.instant('Two-Factor Authentication Code'),
+    }),
+  };
 
   constructor() {
     effect(() => {
@@ -207,6 +218,11 @@ export class SigninFormComponent implements OnInit {
   }
 
   protected readonly tnIconMarker = tnIconMarker;
+  protected readonly InputType = InputType;
+
+  protected togglePasswordVisibility(): void {
+    this.isPasswordVisible.update((isVisible) => !isVisible);
+  }
 
   protected handleError(errorMessage: TranslatedString): void {
     this.signinStore.setLoadingState(false);
