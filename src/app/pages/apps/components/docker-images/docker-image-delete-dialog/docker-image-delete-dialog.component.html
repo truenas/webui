@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Delete' | translate">
+<tn-dialog-shell testId="docker-image-delete" [title]="'Delete' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   @if (isJobCompleted) {
     <p>

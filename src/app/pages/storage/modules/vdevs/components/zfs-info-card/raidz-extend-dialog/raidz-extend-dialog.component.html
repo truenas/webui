@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Extend Vdev' | translate">
+<tn-dialog-shell testId="raidz-extend" [title]="'Extend Vdev' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit($event)">
   <div>{{ 'Only disks that are at least {size} are shown.' | translate: { size: minimumSize() | ixFileSize } }}</div>
 

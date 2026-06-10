@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Logs' | translate">
+<tn-dialog-shell testId="show-logs" [title]="'Logs' | translate">
   @if (job.logs_excerpt) {
     <div class="logs">
       <pre><code>{{ job.logs_excerpt }}</code></pre>

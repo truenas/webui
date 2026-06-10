@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Add To Pool' | translate">
+<tn-dialog-shell testId="manage-unused-disk" [title]="'Add To Pool' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div>
     @if (noPoolsDisks.length) {

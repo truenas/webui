@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Delete Cron Job' | translate">
+<tn-dialog-shell testId="cron-delete" [title]="'Delete Cron Job' | translate">
 <div>
   <p class="message" [innerHtml]="deleteMessage | translate: { name: cronjob.user + ' ' + cronjob.command + ' ' + cronjob.description }"></p>
 </div>

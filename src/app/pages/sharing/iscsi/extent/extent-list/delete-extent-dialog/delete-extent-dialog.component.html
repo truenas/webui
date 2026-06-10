@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Delete iSCSI extent {name}?' | translate: { name: extent.name }">
+<tn-dialog-shell testId="delete-extent" [title]="'Delete iSCSI extent {name}?' | translate: { name: extent.name }">
 <div>
   <form [formGroup]="form">
     @if (isFile) {

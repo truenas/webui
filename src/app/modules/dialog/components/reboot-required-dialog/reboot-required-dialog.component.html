@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Reboot Required' | translate">
+<tn-dialog-shell testId="reboot-required" [title]="'Reboot Required' | translate">
   @if (isHaLicensed() && !canFailover()) {
     <div class="failover-reasons">
       <p class="dialog-message error">

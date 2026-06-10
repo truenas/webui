@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Edit Encryption Options for {dataset}' | translate: { dataset: data.dataset.id }">
+<tn-dialog-shell testId="encryption-options" [title]="'Edit Encryption Options for {dataset}' | translate: { dataset: data.dataset.id }">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   @if (canInherit) {
     <ix-checkbox

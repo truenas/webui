@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Console' | translate">
+<tn-dialog-shell testId="console-panel" [title]="'Console' | translate">
   <div id="console-box">
     <pre #messageContainer class="messages">{{ lines$ | async }}</pre>
   </div>

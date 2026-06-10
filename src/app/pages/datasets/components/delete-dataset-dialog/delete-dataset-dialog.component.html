@@ -1,4 +1,4 @@
-<tn-dialog-shell
+<tn-dialog-shell testId="delete-dataset"
   [title]="(isZvol ? 'Delete zvol {name}' : 'Delete dataset {name}') | translate: { name: dataset.name }"
 >
 <form class="ix-form-container" [formGroup]="form" (submit)="onDelete()">

@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Replacing disk {name}' | translate: { name: data.diskName }">
+<tn-dialog-shell testId="replace-disk" [title]="'Replacing disk {name}' | translate: { name: data.diskName }">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-unused-disk-select
     formControlName="replacement"

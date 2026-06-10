@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Delete application {name}' | translate: { name: data.name }">
+<tn-dialog-shell testId="app-delete" [title]="'Delete application {name}' | translate: { name: data.name }">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <p [innerHTML]="deleteMessage()"></p>
 

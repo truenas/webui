@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Pool Options for {pool}' | translate: { pool: pool.name }">
+<tn-dialog-shell testId="autotrim" [title]="'Pool Options for {pool}' | translate: { pool: pool.name }">
 <form class="ix-form-container" (submit)="onSubmit($event)">
   <ix-checkbox
     [formControl]="autotrimControl"

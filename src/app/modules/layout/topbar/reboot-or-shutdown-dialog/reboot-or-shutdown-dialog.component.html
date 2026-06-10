@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="title">
+<tn-dialog-shell testId="reboot-or-shutdown" [title]="title">
   @if (isEnterprise()) {
     <ix-select
       [formControl]="form.controls.reason"

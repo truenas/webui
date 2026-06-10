@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Lock Dataset' | translate">
+<tn-dialog-shell testId="lock-dataset" [title]="'Lock Dataset' | translate">
 <form class="ix-form-container" (submit)="onSubmit($event)">
   <p>
     {{ 'Lock Dataset {datasetName}?' | translate: { datasetName: dataset.name } }}

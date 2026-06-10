@@ -1,4 +1,4 @@
-<tn-dialog-shell [title]="'Export Disk to Image' | translate">
+<tn-dialog-shell testId="export-disk" [title]="'Export Disk to Image' | translate">
 <form [formGroup]="form">
     <div class="info-message">
       <p>{{ 'This operation will export the VM disk contents to a portable image file. The exported image can be imported into other TrueNAS systems or virtualization platforms like VMware, VirtualBox, or QEMU/KVM. Export time varies based on disk size and storage pool performance.' | translate }}</p>
