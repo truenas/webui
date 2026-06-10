@@ -5,7 +5,7 @@ import { TnIconComponent } from '@truenas/ui-components';
 
 export type StatusBadge
   = { icon: string; background: string; spinning?: boolean }
-    | { label: string; background: string };
+    | { label: string; background: string; color?: string };
 
 @Component({
   selector: 'ix-status-badge',
@@ -31,6 +31,8 @@ export class StatusBadgeComponent {
     const value = this.badge();
     return StatusBadgeComponent.isIconBadge(value) ? null : value;
   });
+
+  protected labelColor = computed(() => this.labelBadge()?.color);
 
   protected isSpinning = computed(() => {
     const value = this.badge();
