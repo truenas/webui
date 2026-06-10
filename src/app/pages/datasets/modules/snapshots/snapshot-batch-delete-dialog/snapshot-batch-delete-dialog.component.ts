@@ -81,6 +81,11 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   }
 
   onSubmit(): void {
+    // Guard against accidental submission (e.g. a stray form submit): only an
+    // explicit, valid confirmation with no dependent clones may delete.
+    if (this.form.invalid || this.hasClones || this.isDeleting()) {
+      return;
+    }
     this.isDeleting.set(true);
     const snapshots = this.snapshots.map((item) => [item.name]);
     const params: CoreBulkQuery = ['pool.snapshot.delete', snapshots];
