@@ -16,6 +16,32 @@ describe('categoryCapacity', () => {
 
     expect(categoryCapacity(category)).toEqual(11 * GiB);
   });
+
+  it('calculates dRAID capacity when spare count is 0', () => {
+    const category = {
+      layout: CreateVdevLayout.Draid1,
+      draidDataDisks: 2,
+      draidSpareDisks: 0,
+      vdevs: [
+        [{ size: 3 * GiB }, { size: 5 * GiB }, { size: 5 * GiB }],
+      ],
+    } as PoolManagerTopologyCategory;
+
+    expect(categoryCapacity(category) / GiB).toBeCloseTo(6);
+  });
+
+  it('returns 0 for an incomplete dRAID config with no data disks selected', () => {
+    const category = {
+      layout: CreateVdevLayout.Draid1,
+      draidDataDisks: null,
+      draidSpareDisks: 0,
+      vdevs: [
+        [{ size: 15 * GiB }],
+      ],
+    } as PoolManagerTopologyCategory;
+
+    expect(categoryCapacity(category)).toBe(0);
+  });
 });
 
 describe('vdevCapacity', () => {
