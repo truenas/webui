@@ -1,8 +1,9 @@
 @for (slotIndex of slotRange(); track slotIndex) {
   <button
     tabindex="0"
+    tnTestIdType="button"
     [attr.aria-label]="'Slot {n}' | translate: { n: slotIndex + 1 }"
-    [ixTest]="['slot', slotIndex]"
+    [tnTestId]="['slot', slotIndex]"
     [class]="['slot', 'slot' + slotIndex]"
     [class.selected]="slotIndex === selectedSlot() && slotRange().length > 1"
     [class.empty]="!slots()[slotIndex]"

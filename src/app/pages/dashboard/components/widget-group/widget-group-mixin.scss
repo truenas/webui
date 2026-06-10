@@ -39,11 +39,6 @@
     height: 100%;
     overflow: auto;
 
-    ::ng-deep mat-card {
-      height: 100%;
-      margin: 0;
-    }
-
     ::ng-deep tn-card {
       display: block;
       height: 100%;

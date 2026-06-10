@@ -33,7 +33,7 @@ describe('BackupTaskEmptyComponent', () => {
     spectator.setInput('isLoading', false);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addCloudSyncTask, 'emit');
-    spectator.click(spectator.query('[ixTest="cloud-sync"]')!);
+    spectator.click(spectator.queryAll('a.action')[0]);
     expect(spy).toHaveBeenCalled();
   });
 
@@ -41,7 +41,7 @@ describe('BackupTaskEmptyComponent', () => {
     spectator.setInput('isLoading', false);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addReplicationTask, 'emit');
-    spectator.click(spectator.query('[ixTest="replication"]')!);
+    spectator.click(spectator.queryAll('a.action')[1]);
     expect(spy).toHaveBeenCalled();
   });
 
@@ -49,7 +49,7 @@ describe('BackupTaskEmptyComponent', () => {
     spectator.setInput('isLoading', false);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addRsyncTask, 'emit');
-    spectator.click(spectator.query('[ixTest="rsync"]')!);
+    spectator.click(spectator.queryAll('a.action')[2]);
     expect(spy).toHaveBeenCalled();
   });
 });
