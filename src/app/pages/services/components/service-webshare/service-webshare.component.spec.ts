@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -68,7 +68,7 @@ describe('ServiceWebshareComponent', () => {
     const passkeySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Passkey' }));
     await passkeySelect.setValue('Required');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Required }]);
@@ -80,7 +80,7 @@ describe('ServiceWebshareComponent', () => {
     const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable TrueSearch' }));
     await searchCheckbox.setValue(false);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Enabled }]);
@@ -109,7 +109,7 @@ describe('ServiceWebshareComponent', () => {
     spectator.component.ngOnInit();
     spectator.detectChanges();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(SlideInRef).close).not.toHaveBeenCalled();
@@ -120,7 +120,7 @@ describe('ServiceWebshareComponent', () => {
     const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable TrueSearch' }));
     expect(await searchCheckbox.getValue()).toBe(true);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: true, passkey: WebSharePasskey.Enabled }]);
@@ -152,7 +152,7 @@ describe('ServiceWebshareComponent', () => {
   });
 
   it('has save button accessible', async () => {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     expect(saveButton).toBeTruthy();
   });
 });

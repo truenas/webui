@@ -54,6 +54,11 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
+    // Align @truenas/ui-components with webui's long-standing data-test attribute convention
+    // (see the [ixTest] directive). Library default is data-testid; this single provider
+    // routes every component-level testId input and TnTestIdDirective binding through data-test
+    // so existing automated tests keep matching their selectors.
+    { provide: TN_TEST_ATTR, useValue: 'data-test' },
     importProvidersFrom(
       BrowserModule,
       TranslateModule.forRoot({
@@ -114,10 +119,13 @@ bootstrapApplication(AppComponent, {
       provide: WINDOW,
       useFactory: getWindow,
     },
+    {
+      // webui targets `data-test` (thousands of existing selectors), so switch the
+      // ui-components library off its `data-testid` default for all `testId` inputs.
+      provide: TN_TEST_ATTR,
+      useValue: 'data-test',
+    },
     provideTnTablePagerLabels(),
-    // webui targets `data-test` (thousands of existing selectors), so switch the
-    // ui-components library off its `data-testid` default for all `testId` inputs.
-    { provide: TN_TEST_ATTR, useValue: 'data-test' },
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();

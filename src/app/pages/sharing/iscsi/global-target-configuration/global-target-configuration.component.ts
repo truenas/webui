@@ -3,12 +3,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule, FormGroup,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
-  forkJoin, of, take,
+  forkJoin, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -22,7 +21,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,8 +36,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './global-target-configuration.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -46,13 +43,13 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
     ModalHeaderComponent,
   ],
 })
-export class GlobalTargetConfigurationComponent implements OnInit {
+export class GlobalTargetConfigurationComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
@@ -63,13 +60,12 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
-  protected isLoading = signal(false);
+  readonly isLoading = signal(false);
   isHaSystem = false;
   private originalBasename: string | null = null;
 
-  form = this.fb.nonNullable.group({
+  protected readonly form = this.fb.nonNullable.group({
     basename: ['', Validators.required],
     isns_servers: [[] as string[]],
     pool_avail_threshold: [null as number | null],
@@ -93,13 +89,10 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     iser: helptextIscsi.config.iserTooltip,
   };
 
-  protected readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
+  readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
     this.loadFormValues();
@@ -118,7 +111,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-          this.slideInRef.close({ response: true });
+          this.close(true);
           this.snackbar.success(this.translate.instant('Settings saved.'));
         },
         error: (error: unknown) => {

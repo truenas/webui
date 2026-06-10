@@ -3669,7 +3669,11 @@
     "anchorRouterLink": [
       "/sharing"
     ],
-    "routerLink": null,
+    "routerLink": [
+      "/sharing",
+      "iscsi",
+      "targets"
+    ],
     "anchor": "iscsi-wizard",
     "triggerAnchor": null,
     "section": "ui"

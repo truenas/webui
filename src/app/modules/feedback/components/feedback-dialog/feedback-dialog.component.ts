@@ -1,24 +1,23 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
+import { NgTemplateOutlet } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, TemplateRef, computed, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnButtonToggleComponent, TnButtonToggleGroupComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import {
-  Observable, of,
-} from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { generateUuid } from 'app/helpers/uuid.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
 import { FileTicketLicensedComponent } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
+import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackType, feedbackTypesLabels } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { AppState } from 'app/store';
@@ -29,17 +28,20 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './feedback-dialog.component.html',
   styleUrls: ['./feedback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.loading]': 'isLoading()',
+  },
   imports: [
+    TnDialogShellComponent,
+    TnButtonToggleGroupComponent,
+    TnButtonToggleComponent,
     FakeProgressBarComponent,
-    MatDialogTitle,
-    TnIconButtonComponent,
-    MatDialogClose,
     NgxSkeletonLoaderModule,
-    IxButtonGroupComponent,
     ReactiveFormsModule,
     FileReviewComponent,
     FileTicketLicensedComponent,
     FileTicketComponent,
+    NgTemplateOutlet,
     TranslateModule,
     CastPipe,
   ],
@@ -47,18 +49,32 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class FeedbackDialog implements OnInit {
   private feedbackService = inject(FeedbackService);
   private translate = inject(TranslateService);
-  private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
-  protected dialogRef = inject<MatDialogRef<FeedbackDialog>>(MatDialogRef);
-  private requestedType = inject<FeedbackType>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, FeedbackDialog>>(DialogRef);
+  private requestedType = inject<FeedbackType | null>(DIALOG_DATA, { optional: true });
   private destroyRef = inject(DestroyRef);
 
-  protected isLoading = false;
-  protected isLoadingTypes = false;
+  protected readonly isLoading = signal(false);
+  protected readonly isLoadingTypes = signal(false);
   protected typeControl = new FormControl(undefined as FeedbackType | undefined);
-  protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypesLabels, this.translate));
+  protected readonly feedbackTypeLabelId = `feedback-type-label-${generateUuid()}`;
+  // Reassigned once the allowed types resolve; the signal lets OnPush change
+  // detection pick up the new options without a manual markForCheck.
+  protected readonly feedbackTypeOptions = signal<Option[]>(
+    mapToOptions(feedbackTypesLabels, this.translate),
+  );
+
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  protected allowedTypes: FeedbackType[] = [];
+  protected readonly allowedTypes = signal<FeedbackType[]>([]);
+
+  // Only one feedback form is rendered at a time; each provides the FeedbackForm
+  // token, so a single query resolves to whichever is active.
+  private activeForm = viewChild(FeedbackForm);
+
+  // Action buttons live in the active form component; project them into the shell footer.
+  protected readonly actionsTemplate = computed<TemplateRef<unknown> | undefined>(() => {
+    return this.activeForm()?.dialogActions();
+  });
 
   get isReview(): boolean {
     return this.typeControl.value === FeedbackType.Review;
@@ -69,7 +85,7 @@ export class FeedbackDialog implements OnInit {
   }
 
   onIsLoadingChange(isLoading: boolean): void {
-    this.isLoading = isLoading;
+    this.isLoading.set(isLoading);
 
     if (isLoading) {
       this.typeControl.disable();
@@ -78,46 +94,43 @@ export class FeedbackDialog implements OnInit {
       this.typeControl.enable();
       this.dialogRef.disableClose = false;
     }
-
-    this.cdr.markForCheck();
   }
 
   private loadFeedbackTypes(): void {
-    this.isLoading = true;
-    this.isLoadingTypes = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
+    this.isLoadingTypes.set(true);
 
     this.feedbackService.checkIfReviewAllowed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isReviewAllowed) => {
-        this.allowedTypes = [];
+        const allowed: FeedbackType[] = [];
 
         if (isReviewAllowed) {
-          this.allowedTypes.push(FeedbackType.Review);
+          allowed.push(FeedbackType.Review);
         }
 
-        this.allowedTypes.push(FeedbackType.Bug);
+        allowed.push(FeedbackType.Bug);
 
-        const allowedOptions = this.allowedTypes.map((type) => ({
+        this.allowedTypes.set(allowed);
+
+        this.feedbackTypeOptions.set(allowed.map((type) => ({
           label: this.translate.instant(feedbackTypesLabels.get(type) || type),
           value: type,
-        }));
-
-        this.feedbackTypeOptions$ = of(allowedOptions);
+        })));
 
         this.pickType();
 
-        this.isLoading = false;
-        this.isLoadingTypes = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
+        this.isLoadingTypes.set(false);
       });
   }
 
   private pickType(): void {
-    if (this.requestedType && this.allowedTypes.includes(this.requestedType)) {
+    const allowed = this.allowedTypes();
+    if (this.requestedType && allowed.includes(this.requestedType)) {
       this.typeControl.setValue(this.requestedType);
     } else {
-      this.typeControl.setValue(this.allowedTypes[0]);
+      this.typeControl.setValue(allowed[0]);
     }
   }
 }

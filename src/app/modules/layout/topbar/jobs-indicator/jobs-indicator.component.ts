@@ -1,13 +1,9 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatBadge } from '@angular/material/badge';
-import { MatIconButton } from '@angular/material/button';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -15,8 +11,8 @@ import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-
 import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
 import { jobsElements } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.elements';
+import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -26,14 +22,10 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
   templateUrl: './jobs-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
-    MatBadge,
-    MatTooltip,
-    TnIconComponent,
-    AsyncPipe,
+    TnIconButtonComponent,
+    StatusBadgeComponent,
     TranslateModule,
     UiSearchDirective,
-    TestDirective,
   ],
 })
 export class JobsIndicatorComponent implements OnInit {
@@ -43,7 +35,12 @@ export class JobsIndicatorComponent implements OnInit {
 
   tooltips = helptextTopbar.tooltips;
 
-  jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
+  protected readonly jobBadgeCount = toSignal(this.store$.select(selectRunningJobsCount), { initialValue: 0 });
+  protected readonly jobBadge = computed<StatusBadge | null>(() => {
+    const count = this.jobBadgeCount();
+    return count === 0 ? null : { label: String(count), background: 'var(--red)', color: 'var(--red-txt)' };
+  });
+
   isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);
   protected readonly searchableElements = jobsElements;
 
