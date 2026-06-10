@@ -1,7 +1,4 @@
 <nav [attr.aria-label]="'Top bar' | translate">
-  <!-- HOLD (NAS-141021): @truenas/ui-components has no <tn-toolbar> equivalent for a
-       page-level bar yet, so the mat-toolbar/mat-toolbar-row wrapper is intentionally
-       retained until the library ships a replacement. -->
   <mat-toolbar class="topbar">
     <mat-toolbar-row>
       <!-- Sidenav toggle button -->
@@ -75,13 +72,9 @@
         <ix-ha-status-icon></ix-ha-status-icon>
         <ix-jobs-indicator></ix-jobs-indicator>
 
-        <!-- Alert toggle button.
-             HOLD (NAS-141021): matBadge stays on the migrated tn-icon-button because
-             @truenas/ui-components has no notification-count badge yet (tn-chip only
-             covers static labels). Revisit once the library ships a badge. -->
+        <!-- Alert toggle button -->
         <tn-icon-button
           #alertIndicator
-          matBadgeSize="small"
           class="topbar-button-right"
           name="bell"
           library="mdi"
@@ -91,14 +84,16 @@
           [class.severity-critical]="alertSeverity() === 'critical'"
           [class.severity-warning]="alertSeverity() === 'warning'"
           [iconClass]="alertIconClass()"
-          [matBadge]="alertBadgeCount()"
-          [matBadgeHidden]="alertBadgeCount() === 0"
           [ariaExpanded]="isAlertPanelOpen()"
           [tooltip]="alertTooltip()"
           [ariaLabel]="alertTooltip()"
           [ixUiSearch]="searchableElements.elements.alerts"
           (onClick)="onAlertIndicatorPressed()"
-        ></tn-icon-button>
+        >
+          @if (alertBadge(); as badge) {
+            <ix-status-badge [badge]="badge"></ix-status-badge>
+          }
+        </tn-icon-button>
 
         <ix-user-menu></ix-user-menu>
         <ix-power-menu></ix-power-menu>

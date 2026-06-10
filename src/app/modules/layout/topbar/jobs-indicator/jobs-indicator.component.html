@@ -1,9 +1,4 @@
-<!-- HOLD (NAS-141021): matBadge stays on the migrated tn-icon-button because
-     @truenas/ui-components has no notification-count badge yet (tn-chip only
-     covers static labels). Revisit once the library ships a badge. -->
 <tn-icon-button
-  matBadgeSize="small"
-  matBadgeColor="warn"
   id="task-manager"
   class="topbar-button-right"
   name="clipboard-text"
@@ -11,9 +6,11 @@
   size="lg"
   testId="jobs-manager"
   [dense]="true"
-  [matBadge]="jobBadgeCount()"
-  [matBadgeHidden]="jobBadgeCount() === 0"
   [tooltip]="tooltips.taskManager | translate"
   [ixUiSearch]="searchableElements.elements.jobs"
   (onClick)="onIndicatorPressed()"
-></tn-icon-button>
+>
+  @if (jobBadge(); as badge) {
+    <ix-status-badge [badge]="badge"></ix-status-badge>
+  }
+</tn-icon-button>

@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatBadge } from '@angular/material/badge';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,6 +11,7 @@ import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-
 import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
 import { jobsElements } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.elements';
+import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -23,7 +23,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconButtonComponent,
-    MatBadge,
+    StatusBadgeComponent,
     TranslateModule,
     UiSearchDirective,
   ],
@@ -36,6 +36,11 @@ export class JobsIndicatorComponent implements OnInit {
   tooltips = helptextTopbar.tooltips;
 
   protected readonly jobBadgeCount = toSignal(this.store$.select(selectRunningJobsCount), { initialValue: 0 });
+  protected readonly jobBadge = computed<StatusBadge | null>(() => {
+    const count = this.jobBadgeCount();
+    return count === 0 ? null : { label: String(count), background: 'var(--red)' };
+  });
+
   isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);
   protected readonly searchableElements = jobsElements;
 

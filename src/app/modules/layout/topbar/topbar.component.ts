@@ -3,7 +3,6 @@ import {
   OnInit, signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatBadge } from '@angular/material/badge';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
@@ -30,6 +29,7 @@ import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
+import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
@@ -61,7 +61,7 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     ResilveringIndicatorComponent,
     HaStatusIconComponent,
     JobsIndicatorComponent,
-    MatBadge,
+    StatusBadgeComponent,
     UserMenuComponent,
     PowerMenuComponent,
     TranslateModule,
@@ -127,6 +127,21 @@ export class TopbarComponent implements OnInit {
       case 'warning': return 'alert-warning';
       default: return '';
     }
+  });
+
+  // When the bell icon is already coloured for its severity, the count badge goes
+  // neutral so the icon stays the primary indicator; otherwise it uses the accent.
+  protected readonly alertBadge = computed<StatusBadge | null>(() => {
+    const count = this.alertBadgeCount();
+    if (count === 0) {
+      return null;
+    }
+    const isSeverityColoured = this.alertSeverity() === 'critical' || this.alertSeverity() === 'warning';
+    return {
+      label: String(count),
+      background: isSeverityColoured ? 'var(--bg2)' : 'var(--primary)',
+      color: isSeverityColoured ? 'var(--fg2)' : '#fff',
+    };
   });
 
   updateText = computed(() => {

@@ -23,11 +23,6 @@
       }
     </tn-icon-button>
 
-    <!-- HOLD (NAS-141021): the trigger is migrated to tn-icon-button, but the menu body
-         stays on mat-menu/mat-menu-item (so [matMenuTriggerFor] also stays). [tnMenuTriggerFor]
-         requires a tn-menu reference, so the trigger can only swap once the menu items —
-         which carry routerLink, *ixRequiresRoles and ixUiSearch — migrate to tn-menu in a
-         follow-up. -->
     <mat-menu #userMenu="matMenu">
       @if (user.account_attributes?.includes(AccountAttribute.Local)) {
         <button

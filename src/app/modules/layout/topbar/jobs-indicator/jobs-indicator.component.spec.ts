@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatBadgeHarness } from '@angular/material/badge/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -54,8 +53,7 @@ describe('JobsIndicatorComponent', () => {
     const iconButton = await loader.getHarness(TnIconButtonHarness);
     expect(await iconButton.getName()).toBe('clipboard-text');
 
-    const badge = await loader.getHarness(MatBadgeHarness);
-    expect(await badge.getText()).toBe('4');
+    expect(spectator.query('ix-status-badge .label')).toHaveText('4');
   });
 
   it('opens JobsPanelComponent when isJobPanelOpen$ changes to true.', () => {

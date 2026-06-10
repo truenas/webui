@@ -65,10 +65,9 @@
   outline-width: 0;
 }
 
-// TEMP: until @truenas/ui-components exposes a focus-style hook on tn-icon-button (NAS-141021 follow-up).
-// Converted tn-icon-buttons render their own inner <button>, which the scoped
-// rule above can't reach. Give them the same branded topbar focus instead of
-// the library's default outline.
+// tn-icon-button renders its own inner <button>, which the scoped rule above
+// can't reach. Override the library's default focus outline with the branded
+// inset shadow (a plain outline gets clipped by the bar).
 :host ::ng-deep .tn-icon-button:focus-visible {
   background: var(--focus-bg);
   box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
@@ -76,38 +75,11 @@
 }
 
 :host ::ng-deep .topbar-button-right {
-  &.mat-badge.mat-badge-small.mat-badge-overlap.mat-badge-after {
-    .mat-badge-content {
-      left: unset;
-      margin: 0;
-      right: 0;
-      top: 0;
-      z-index: 1;
-    }
-  }
-
-  /*
-   * The TrueCommand / TrueNAS Connect status badges are projected into the
-   * tn-icon-button and anchor to its inner button, whereas the Material badges
-   * (jobs / alerts) anchor to this outer host at top/right 0. Pin the status
-   * badges to the same corner so every topbar badge lines up at the same size.
-   */
+  // The status / count badges are projected into the tn-icon-button and anchor
+  // to its inner button. Pin them to the corner so every topbar badge lines up.
   ix-status-badge {
     top: 0;
     right: 0;
-  }
-
-  /*
-   * When the bell icon is already colored red/orange, keep the badge neutral
-   * so the icon remains the primary severity indicator.
-   * !important is required to override Material's inline badge styles.
-   */
-  &.severity-critical,
-  &.severity-warning {
-    .mat-badge-content {
-      background: var(--bg2) !important;
-      color: var(--fg2) !important;
-    }
   }
 }
 
@@ -130,9 +102,7 @@ ix-truenas-logo {
   }
 
   button tn-icon,
-  button span,
-  .mat-icon-button,
-  .mat-icon-button tn-icon.logo {
+  button span {
     color: var(--topbar-txt) !important;
   }
 
