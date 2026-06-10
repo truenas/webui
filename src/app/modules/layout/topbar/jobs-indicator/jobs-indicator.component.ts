@@ -38,7 +38,7 @@ export class JobsIndicatorComponent implements OnInit {
   protected readonly jobBadgeCount = toSignal(this.store$.select(selectRunningJobsCount), { initialValue: 0 });
   protected readonly jobBadge = computed<StatusBadge | null>(() => {
     const count = this.jobBadgeCount();
-    return count === 0 ? null : { label: String(count), background: 'var(--red)' };
+    return count === 0 ? null : { label: String(count), background: 'var(--red)', color: 'var(--red-txt)' };
   });
 
   isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);

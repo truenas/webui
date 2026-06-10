@@ -7,7 +7,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnIconButtonComponent, TnIconButtonHarness, TnIconComponent, TnIconHarness, TnSpriteLoaderService,
+  TnIconButtonHarness, TnIconComponent, TnIconHarness, TnSpriteLoaderService,
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -338,15 +338,12 @@ describe('TopbarComponent', () => {
     // Guards against TnIconButtonComponent losing its public `focus()` method
     // in a future library version — the call site uses `?.` and would silently
     // become a no-op, breaking keyboard focus restoration after the alert
-    // panel closes.
-    it('focuses the alert indicator button via the library component', () => {
-      // `alertIndicator` is a private viewChild; reach it through a permissive
-      // type rather than bracket access to satisfy @typescript-eslint/dot-notation.
-      const indicator = (spectator.component as unknown as {
-        alertIndicator: () => TnIconButtonComponent | undefined;
-      }).alertIndicator();
-      expect(indicator).toBeDefined();
-      const focusSpy = jest.spyOn(indicator!, 'focus');
+    // panel closes. Asserts the public outcome (the rendered button is focused)
+    // rather than spying the private viewChild instance.
+    it('focuses the rendered alert indicator button', () => {
+      const alertButton = spectator.query<HTMLButtonElement>('button[aria-label="Alerts"]');
+      expect(alertButton).not.toBeNull();
+      const focusSpy = jest.spyOn(alertButton!, 'focus');
 
       spectator.component.focusAlertIndicator();
 

@@ -140,7 +140,7 @@ export class TopbarComponent implements OnInit {
     return {
       label: String(count),
       background: isSeverityColoured ? 'var(--bg2)' : 'var(--primary)',
-      color: isSeverityColoured ? 'var(--fg2)' : '#fff',
+      color: isSeverityColoured ? 'var(--fg2)' : 'var(--primary-txt)',
     };
   });
 
