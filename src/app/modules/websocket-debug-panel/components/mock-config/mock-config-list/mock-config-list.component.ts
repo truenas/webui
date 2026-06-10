@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnIconComponent, TnIconButtonComponent, TnButtonComponent, TnSlideToggleComponent, TnTooltipDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MockConfigFormComponent } from 'app/modules/websocket-debug-panel/components/mock-config/mock-config-form/mock-config-form.component';
@@ -30,6 +31,7 @@ const maxObjectKeysPreview = 3;
     TnButtonComponent,
     TnSlideToggleComponent,
     TnTooltipDirective,
+    TnTestIdDirective,
     TranslateModule,
     TnIconComponent,
     TnIconButtonComponent,

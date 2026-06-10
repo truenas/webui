@@ -18,7 +18,7 @@
         testId="websocket-debug-duplicate-notifications"
         tnTooltip="Show snackbar when duplicate API calls are detected"
         label="Duplicate alerts"
-        [ngModel]="(duplicateNotificationsEnabled$ | async) ?? false"
+        [ngModel]="duplicateNotificationsEnabled()"
         (ngModelChange)="toggleDuplicateNotifications()"
       ></tn-checkbox>
       <tn-icon-button
@@ -27,6 +27,7 @@
         tooltip="Clear messages"
         class="clear-button"
         testId="websocket-debug-clear-messages"
+        [ariaLabel]="'Clear messages'"
         (click)="clearMessages()"
       ></tn-icon-button>
     </div>

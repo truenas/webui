@@ -1,4 +1,4 @@
-@if (isPanelOpen$ | async; as isOpen) {
+@if (isPanelOpen(); as isOpen) {
   <div
     class="websocket-debug-panel"
     [class.open]="isOpen"
@@ -24,7 +24,7 @@
 
       <tn-tabs
         class="panel-tabs"
-        [selectedIndex]="(selectedTabIndex$ | async) ?? 0"
+        [selectedIndex]="selectedTabIndex()"
         (selectedIndexChange)="onTabChange($event)">
         <tn-tab [label]="'Messages' | translate"></tn-tab>
         <tn-tab [label]="'Mock Configurations' | translate"></tn-tab>

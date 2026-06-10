@@ -1,8 +1,8 @@
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef, inject, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -34,7 +34,6 @@ interface JsonRpcSuccessResponse {
   selector: 'ix-message-list',
   standalone: true,
   imports: [
-    AsyncPipe,
     JsonPipe,
     FormsModule,
     TnCheckboxComponent,
@@ -56,8 +55,12 @@ export class MessageListComponent implements AfterViewInit {
   private snackbar = inject(SnackbarService);
 
   @ViewChild('messageViewport', { read: ElementRef }) protected messageViewport?: ElementRef<HTMLDivElement>;
-  messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
-  protected duplicateNotificationsEnabled$ = this.store$.select(selectDuplicateNotificationsEnabled);
+  protected messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
+  protected readonly duplicateNotificationsEnabled = toSignal(
+    this.store$.select(selectDuplicateNotificationsEnabled),
+    { initialValue: false },
+  );
+
   autoScroll = true;
   protected hasMessages = false;
   protected readonly CodeEditorLanguage = CodeEditorLanguage;

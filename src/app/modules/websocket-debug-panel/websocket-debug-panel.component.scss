@@ -104,16 +104,20 @@
     --tn-alt-bg1: var(--bg2);
   }
 
-  .tn-tab--active {
+  // TEMP: @truenas/ui-components exposes no active-tab colour token nor border/padding
+  // inputs on tn-tab-panel, so we reach into library internals (.tn-tab--active,
+  // .tn-tab-panel, .tn-tab-panel__content). Replace with supported inputs once they ship.
+  // Follow-up: NAS-141021.
+  ::ng-deep .tn-tab--active {
     color: var(--fg1);
   }
 
   // Full-bleed panel content (no library border/padding) so child tabs fill the panel
-  .tn-tab-panel {
+  ::ng-deep .tn-tab-panel {
     border: none;
   }
 
-  .tn-tab-panel__content {
+  ::ng-deep .tn-tab-panel__content {
     padding: 0;
   }
 }

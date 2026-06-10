@@ -1,6 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, inject, input, output, OnDestroy,
+  ChangeDetectionStrategy, Component, OnInit, inject, input, output, DestroyRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors,
 } from '@angular/forms';
@@ -9,8 +10,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { generateUuid } from 'app/helpers/uuid.helper';
@@ -41,7 +40,7 @@ import { PrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/web
   styleUrls: ['./mock-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MockConfigFormComponent implements OnInit, OnDestroy {
+export class MockConfigFormComponent implements OnInit {
   readonly config = input<MockConfig | null>(null);
   readonly prefilledData = input<PrefilledMockConfig | null>(null);
   readonly submitted = output<MockConfig>();
@@ -49,7 +48,7 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
 
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
-  private readonly destroy$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
   protected readonly responseTypeOptions: TnSelectOption<'success' | 'error'>[] = [
@@ -147,7 +146,7 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
 
     // Toggle validators based on response type
     this.form.controls.responseType.valueChanges
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         if (this.isErrorMode) {
           this.form.controls.responseResult.clearValidators();
@@ -165,7 +164,7 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
 
     // Watch for error code changes to auto-toggle CallError mode
     this.form.controls.errorCode.valueChanges
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((code) => {
         const isCallErr = this.toNumber(code) === (JsonRpcErrorCode.CallError as number);
         if (isCallErr !== this.form.controls.isCallError.value) {
@@ -175,7 +174,7 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
 
     // Watch for isCallError changes to update error code and generate defaults
     this.form.controls.isCallError.valueChanges
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isCallError) => {
         if (isCallError) {
           if (this.toNumber(this.form.controls.errorCode.value) !== (JsonRpcErrorCode.CallError as number)) {
@@ -206,7 +205,7 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
 
     // Watch for errname changes to auto-set appropriate error code and reason
     this.form.controls.callErrorErrname.valueChanges
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((errname) => {
         if (!errname) return;
         // Map error names to their typical error codes and default reasons
@@ -431,10 +430,5 @@ middlewared.service_exception.CallError: [EINVAL] Invalid argument provided`,
       ],
     };
     return JSON.stringify(defaultTrace, null, 2);
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }

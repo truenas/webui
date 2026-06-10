@@ -712,17 +712,4 @@ describe('MockConfigFormComponent', () => {
       expect(delayControl.hasError('min')).toBe(false);
     });
   });
-
-  describe('ngOnDestroy', () => {
-    it('should complete destroy$ subject on component destroy', () => {
-      const destroySubject$ = spectator.component['destroy$'];
-      const nextSpy = jest.spyOn(destroySubject$, 'next');
-      const completeSpy = jest.spyOn(destroySubject$, 'complete');
-
-      spectator.component.ngOnDestroy();
-
-      expect(nextSpy).toHaveBeenCalled();
-      expect(completeSpy).toHaveBeenCalled();
-    });
-  });
 });

@@ -17,16 +17,16 @@
     <div formArrayName="events">
       @for (eventControl of eventsFormArray.controls; track $index; let i = $index) {
         <tn-card class="event-card" [formGroupName]="i">
-          <div class="event-header">
-            <h5>{{ 'Event' | translate }} #{{ i + 1 }}</h5>
-            <tn-icon-button
-              name="delete"
-              library="mdi"
-              testId="remove-event-button"
-              type="button"
-              (click)="removeEvent(i)"
-            ></tn-icon-button>
-          </div>
+          <h5 tnCardHeader class="tn-card__title">{{ 'Event' | translate }} #{{ i + 1 }}</h5>
+          <tn-icon-button
+            tnCardHeader
+            name="delete"
+            library="mdi"
+            testId="remove-event-button"
+            type="button"
+            [ariaLabel]="'Remove event' | translate"
+            (click)="removeEvent(i)"
+          ></tn-icon-button>
 
           <div class="event-fields">
             <div class="field-row">

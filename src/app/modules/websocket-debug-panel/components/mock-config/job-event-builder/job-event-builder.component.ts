@@ -7,8 +7,8 @@ import {
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnFormFieldComponent, TnIconButtonComponent, TnInputComponent,
-  TnSelectComponent, TnSelectOption,
+  TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnFormFieldComponent, TnIconButtonComponent,
+  TnInputComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { debounceTime } from 'rxjs/operators';
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
@@ -20,6 +20,7 @@ import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websoc
   imports: [
     ReactiveFormsModule,
     TnCardComponent,
+    TnCardHeaderDirective,
     TnButtonComponent,
     TnFormFieldComponent,
     TnInputComponent,
