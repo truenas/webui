@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent, tnIconMarker,
+  InputType, TnBannerComponent, TnButtonComponent, TnFormFieldComponent, TnInputComponent, tnIconMarker,
 } from '@truenas/ui-components';
 import { switchMap } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -28,6 +28,7 @@ const adminUsername = 'truenas_admin';
   imports: [
     FormsModule,
     ReactiveFormsModule,
+    TnBannerComponent,
     TnButtonComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -62,7 +63,7 @@ export class SetAdminPasswordFormComponent {
 
   protected readonly password2ErrorMessages = {
     required: this.translate.instant('{field} is required', {
-      field: this.translate.instant('Reenter Password'),
+      field: this.translate.instant('Confirm Password'),
     }),
     matchOther: this.translate.instant('Passwords do not match'),
   };
