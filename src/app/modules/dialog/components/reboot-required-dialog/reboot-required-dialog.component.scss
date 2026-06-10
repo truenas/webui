@@ -1,12 +1,3 @@
-// The action container is always projected (so it reaches the footer), with its
-// content guarded by @if. Hide the footer bar when there are no reboot reasons
-// (driven by the host's no-footer-actions class) instead of rendering an empty
-// action section.
-// TEMP: until @truenas/ui-components ships a tn-dialog-shell hide-empty-actions input. Tracked under NAS-141021.
-:host(.no-footer-actions) ::ng-deep .tn-dialog__actions {
-  display: none;
-}
-
 .dialog-message {
   margin-bottom: 5px;
   margin-top: 0;

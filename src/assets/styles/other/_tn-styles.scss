@@ -947,27 +947,6 @@ mat-form-field {
   overflow: auto !important;
 }
 
-// Some dialogs have a fully conditional body (content shown only in certain
-// states) or only footer actions. When nothing is projected into the TnDialog
-// body, hide the empty content section so it doesn't render as an empty
-// bordered/padded area between the header and footer. `:empty` ignores the
-// ng-content comment anchor but still matches when there is real text/content,
-// so dialogs with actual body content are unaffected.
-// TEMP: until @truenas/ui-components ships a tn-dialog-shell hide-empty-content/actions
-// input, both rules below reach into the shell's internal classes. Tracked under NAS-141021.
-// (Per-component `:host(.no-footer-actions) ::ng-deep .tn-dialog__actions` overrides exist
-// where the action container is always projected with an `@if`-guarded body — it is never
-// truly `:empty` there — so the two approaches coexist intentionally until the library input lands.)
-.tn-dialog__content:empty {
-  display: none;
-}
-
-// Likewise, hide the footer when no actions are projected, so dialogs without
-// footer buttons don't render an empty bordered action bar.
-.tn-dialog__actions:empty {
-  display: none;
-}
-
 // The app loader opens via the bare CDK dialog (not MatDialog), so the dialog
 // container has no surface and shows a stray focus outline. The surface is on
 // ix-app-loader; just remove the container outline and let it fill the panel.

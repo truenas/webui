@@ -28,10 +28,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './snapshot-rollback-dialog.component.html',
   styleUrls: ['./snapshot-rollback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // The footer renders no actions while the snapshot is still loading; hide the
-  // empty action bar (the action container must stay projected, so we drive
-  // visibility from component state rather than the rendered content).
-  host: { '[class.no-footer-actions]': 'isLoading() || !snapshot' },
   imports: [
     TnDialogShellComponent,
     TranslateModule,

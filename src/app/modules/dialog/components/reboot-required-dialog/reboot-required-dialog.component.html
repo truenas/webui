@@ -1,4 +1,8 @@
-<tn-dialog-shell testId="reboot-required" [title]="'Reboot Required' | translate">
+<tn-dialog-shell
+  testId="reboot-required"
+  [title]="'Reboot Required' | translate"
+  [hideActions]="!thisNodeRebootReasons()?.length && !otherNodeRebootReasons()?.length"
+>
   @if (isHaLicensed() && !canFailover()) {
     <div class="failover-reasons">
       <p class="dialog-message error">

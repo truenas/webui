@@ -45,9 +45,6 @@ export interface JobProgressDialogConfig<Result> {
   templateUrl: './job-progress-dialog.component.html',
   styleUrls: ['./job-progress-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // Only abortable jobs render a footer action; hide the empty action bar
-  // otherwise (the action container must stay projected into the footer).
-  host: { '[class.no-footer-actions]': '!hasAbortButton' },
   imports: [
     TnDialogShellComponent,
     TnButtonComponent,

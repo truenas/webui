@@ -9,13 +9,6 @@
   }
 }
 
-// While the snapshot is still loading the footer renders no actions; hide the
-// empty action bar (visibility is driven by the host's no-footer-actions class).
-// TEMP: until @truenas/ui-components ships a tn-dialog-shell hide-empty-actions input. Tracked under NAS-141021.
-:host(.no-footer-actions) ::ng-deep .tn-dialog__actions {
-  display: none;
-}
-
 .form-buttons {
   display: flex;
   gap: 8px;

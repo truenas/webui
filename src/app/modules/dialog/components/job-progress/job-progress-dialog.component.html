@@ -1,4 +1,9 @@
-<tn-dialog-shell testId="job-progress" [title]="(title || ('Loading' | translate)) || ''">
+<tn-dialog-shell
+  testId="job-progress"
+  [title]="(title || ('Loading' | translate)) || ''"
+  [showCloseButton]="false"
+  [hideActions]="!hasAbortButton"
+>
   @if (showMinimizeButton) {
     <tn-icon-button
       name="minus"
@@ -65,8 +70,8 @@
   <!--
     The footer must be a direct child of tn-dialog-shell: ng-content [select]
     does not project from inside @if blocks, so the conditional lives inside the
-    action container. The empty container is hidden via scss when there is no
-    abort button (see :has(.abort-action:empty)).
+    action container. When there is no abort button the shell hides the empty
+    footer via [hideActions] (set on tn-dialog-shell above).
   -->
   <div tnDialogAction class="abort-action">
     @if (hasAbortButton) {
