@@ -4,6 +4,7 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import {
   FormControl, ReactiveFormsModule,
 } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
 import {
   createHostFactory, SpectatorHost,
 } from '@ngneat/spectator/jest';
@@ -188,6 +189,26 @@ describe('IxSelectComponent', () => {
       const tooltips = spectator.queryAll(TooltipComponent);
       expect(tooltips).toHaveLength(1);
       expect(tooltips[0].message()).toBe('Not really green.');
+    });
+
+    it('keeps option hover tooltips enabled while the panel is open and disables them when it closes', async () => {
+      spectator.setHostInput('options', of([
+        { label: 'GBR', value: 'Great Britain', hoverTooltip: 'United Kingdom' },
+      ]));
+
+      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
+      await select.open();
+
+      const tooltips = spectator.queryAll(MatTooltip);
+      expect(tooltips).toHaveLength(1);
+      expect(tooltips[0].disabled).toBe(false);
+
+      await select.close();
+      spectator.detectChanges();
+
+      // Once the panel closes the hover tooltip must be disabled so its overlay
+      // is torn down instead of reflowing to the viewport origin (0,0).
+      expect(tooltips[0].disabled).toBe(true);
     });
   });
 
