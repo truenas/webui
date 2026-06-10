@@ -73,10 +73,8 @@ describe('SigninFormComponent', () => {
   });
 
 
-  async function fillField(controlName: string, value: string): Promise<void> {
-    const input = await loader.getHarness(TnInputHarness.with({
-      selector: `[formcontrolname="${controlName}"]`,
-    }));
+  async function fillField(name: string, value: string): Promise<void> {
+    const input = await loader.getHarness(TnInputHarness.with({ name }));
     await input.setValue(value);
   }
 
@@ -88,9 +86,7 @@ describe('SigninFormComponent', () => {
   });
 
   it('toggles password visibility via the suffix action', async () => {
-    const password = await loader.getHarness(TnInputHarness.with({
-      selector: '[formcontrolname="password"]',
-    }));
+    const password = await loader.getHarness(TnInputHarness.with({ name: 'password' }));
     expect(await (await password.getSuffixIcon())!.getName()).toBe('mdi-eye-off');
 
     await password.clickSuffixAction();

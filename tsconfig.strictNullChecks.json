@@ -614,7 +614,6 @@
     "./src/app/types/ngx-translate-core.d.ts",
     "./src/app/pages/signin/disconnected-message/disconnected-message.component.spec.ts",
     "./src/app/pages/signin/disconnected-message/disconnected-message.component.ts",
-    "./src/app/pages/signin/tn-input-native-attrs.directive.ts",
     "./src/environments/environment.interface.ts",
     "./src/environments/environment.prod.ts",
     "./src/polyfills.ts"

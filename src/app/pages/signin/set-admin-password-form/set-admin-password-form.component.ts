@@ -15,7 +15,6 @@ import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/pa
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { TnInputNativeAttrsDirective } from 'app/pages/signin/tn-input-native-attrs.directive';
 
 const adminUsername = 'truenas_admin';
 
@@ -31,7 +30,6 @@ const adminUsername = 'truenas_admin';
     TnButtonComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TnInputNativeAttrsDirective,
     TranslateModule,
   ],
 })
@@ -67,7 +65,9 @@ export class SetAdminPasswordFormComponent {
   };
 
   form = this.formBuilder.nonNullable.group({
-    username: [adminUsername, Validators.required],
+    // No required validator: the field is readonly and always prefilled, and a
+    // validator here would now render an inferred required asterisk in tn-form-field.
+    username: [adminUsername],
     password: ['', Validators.required],
     password2: ['', [
       Validators.required,

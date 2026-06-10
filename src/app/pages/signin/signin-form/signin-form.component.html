@@ -9,24 +9,26 @@
     <tn-form-field class="username-input" [label]="'Username' | translate">
       <tn-input
         formControlName="username"
+        name="username"
+        autocomplete="username"
         [testId]="'username'"
         [ariaLabel]="'Username' | translate"
         [prefixIcon]="tnIconMarker('account', 'mdi')"
-        [ixNativeAttrs]="{ name: 'username', autocomplete: 'username' }"
       ></tn-input>
     </tn-form-field>
 
     <tn-form-field class="password-input" [label]="'Password' | translate">
       <tn-input
         formControlName="password"
-        ixSuffixActionTestId="button-toggle-password-password"
+        name="password"
+        autocomplete="current-password"
+        suffixActionTestId="toggle-password-password"
         [testId]="'password'"
         [ariaLabel]="'Password' | translate"
         [inputType]="isPasswordVisible() ? InputType.PlainText : InputType.Password"
         [prefixIcon]="tnIconMarker('lock', 'mdi')"
         [suffixIcon]="isPasswordVisible() ? tnIconMarker('eye', 'mdi') : tnIconMarker('eye-off', 'mdi')"
         [suffixIconAriaLabel]="isPasswordVisible() ? ('Hide Password' | translate) : ('Show Password' | translate)"
-        [ixNativeAttrs]="{ name: 'password', autocomplete: 'current-password' }"
         (onSuffixAction)="togglePasswordVisibility()"
       ></tn-input>
     </tn-form-field>
@@ -66,15 +68,16 @@
     <tn-form-field
       class="otp-input"
       [label]="'Two-Factor Authentication Code' | translate"
-      [required]="true"
       [errorMessages]="otpErrorMessages"
     >
       <tn-input
         formControlName="otp"
+        name="otp"
+        autocomplete="one-time-code"
         [testId]="'otp'"
         [ariaLabel]="'Two-Factor Authentication Code' | translate"
+        [required]="true"
         [prefixIcon]="tnIconMarker('cellphone-link', 'mdi')"
-        [ixNativeAttrs]="{ name: 'otp', autocomplete: 'one-time-code', 'aria-required': 'true' }"
       ></tn-input>
     </tn-form-field>
 

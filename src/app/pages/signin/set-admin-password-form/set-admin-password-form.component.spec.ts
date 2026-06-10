@@ -48,10 +48,8 @@ describe('SetAdminPasswordFormComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  async function getField(controlName: string): Promise<TnInputHarness> {
-    return loader.getHarness(TnInputHarness.with({
-      selector: `[formcontrolname="${controlName}"]`,
-    }));
+  async function getField(name: string): Promise<TnInputHarness> {
+    return loader.getHarness(TnInputHarness.with({ name }));
   }
 
   it('shows a banner explaining the first-time setup', async () => {
@@ -64,11 +62,7 @@ describe('SetAdminPasswordFormComponent', () => {
   it('shows truenas_admin in readonly Username field', async () => {
     const username = await getField('username');
     expect(await username.getValue()).toBe('truenas_admin');
-
-    // TEMP: no TnInputHarness.isReadonly() exists; this asserts the effect of
-    // TnInputNativeAttrsDirective on the native input. Remove with the directive.
-    const nativeInput = spectator.query<HTMLInputElement>('tn-input[formcontrolname="username"] input')!;
-    expect(nativeInput.readOnly).toBe(true);
+    expect(await username.isReadonly()).toBe(true);
   });
 
   it('toggles password visibility via the suffix actions', async () => {

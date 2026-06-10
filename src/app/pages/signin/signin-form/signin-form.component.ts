@@ -22,7 +22,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { TnInputNativeAttrsDirective } from 'app/pages/signin/tn-input-native-attrs.directive';
 
 @Component({
   selector: 'ix-signin-form',
@@ -36,7 +35,6 @@ import { TnInputNativeAttrsDirective } from 'app/pages/signin/tn-input-native-at
     TnButtonComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TnInputNativeAttrsDirective,
     TranslateModule,
   ],
 })
