@@ -1,11 +1,8 @@
 import { Component, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonComponent, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -39,11 +36,9 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
   styleUrls: ['./widget-interface.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
-    MatIconButton,
+    TnCardComponent,
+    TnIconButtonComponent,
     TestDirective,
-    MatTooltip,
     RouterLink,
     TnIconComponent,
     TnTooltipDirective,

@@ -23,13 +23,16 @@ $ip-label-opacity: 0.6;
 }
 
 .card {
+  display: block;
   height: 100%;
   width: 100%;
 
   .card-content {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 0 16px;
     width: 100%;
   }
 }
