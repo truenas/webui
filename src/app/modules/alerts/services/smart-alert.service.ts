@@ -7,6 +7,7 @@ import {
 } from 'rxjs';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert, SmartAlertAction, SmartAlertActionType, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { isRoutePlaceholder, routePlaceholders } from 'app/modules/alerts/constants/route-placeholders.const';
@@ -66,7 +67,7 @@ export class SmartAlertService {
     const extractedFragment = enhancement.extractFragment?.(alertMessage);
 
     // Filter out navigation actions that would navigate to the current page
-    const currentUrl = this.router.url.split('?')[0].split('#')[0]; // Remove query params and fragments
+    const currentUrl = stripQueryAndFragment(this.router.url);
     const filteredActions = enhancement.actions?.filter((action) => {
       if (action.type === SmartAlertActionType.Navigate && action.route) {
         const targetUrl = '/' + action.route.join('/');
@@ -162,7 +163,7 @@ export class SmartAlertService {
         case SmartAlertActionType.Navigate:
           if (action.route) {
             const targetUrl = ('/' + action.route.join('/')).replace(/\/+/g, '/'); // Normalize multiple slashes
-            const currentUrl = this.router.url.split('?')[0].split('#')[0];
+            const currentUrl = stripQueryAndFragment(this.router.url);
             const isAlreadyOnPage = targetUrl === currentUrl;
 
             // Use UiSearch system when fragment is present for highlighting
@@ -263,7 +264,7 @@ export class SmartAlertService {
     const taskName = this.extractTaskName(alert);
     const confirmationMessage = this.translate.instant('Run «{name}» now?', { name: taskName });
     const relatedRoute = this.getRelatedRouteForAlert(alert);
-    const currentUrl = this.router.url.split('?')[0].split('#')[0];
+    const currentUrl = stripQueryAndFragment(this.router.url);
     const navigation$ = relatedRoute && currentUrl !== relatedRoute
       ? from(this.router.navigateByUrl(relatedRoute))
       : of(true);
@@ -340,7 +341,7 @@ export class SmartAlertService {
       return;
     }
 
-    const currentUrl = this.router.url.split('?')[0].split('#')[0];
+    const currentUrl = stripQueryAndFragment(this.router.url);
     if (currentUrl === relatedRoute) {
       // User is on the task page, reload the route to refresh the data
       // This uses the "navigate away and back" pattern which is necessary because:
