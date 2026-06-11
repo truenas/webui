@@ -1,11 +1,12 @@
 <tn-dialog-shell testId="stop-options" [title]="(isRestart() ? 'Restart Options' : 'Stop Options') | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-select
-    formControlName="stopMethod"
-    [label]="'Stop Method' | translate"
-    [required]="true"
-    [options]="stopMethodOptions$"
-  ></ix-select>
+  <tn-form-field [label]="'Stop Method' | translate">
+    <tn-select
+      testId="stop-method"
+      formControlName="stopMethod"
+      [options]="(stopMethodOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   </form>
 <ix-form-actions tnDialogAction>

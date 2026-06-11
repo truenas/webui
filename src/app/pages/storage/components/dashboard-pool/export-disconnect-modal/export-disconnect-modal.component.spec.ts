@@ -6,7 +6,9 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
-import { TnButtonHarness, TnDialog, TnDialogHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnDialog, TnDialogHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { Observable, of, throwError } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import {
@@ -21,7 +23,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -520,11 +521,12 @@ describe('ExportDisconnectModalComponent', () => {
 
 
   async function submitExportForm(): Promise<void> {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Delete saved configurations from TrueNAS?': true,
-      'Confirm Export Pool': true,
-    });
+    const cascade = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Delete saved configurations from TrueNAS?' }),
+    );
+    await cascade.check();
+    const confirm = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm Export Pool' }));
+    await confirm.check();
 
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Disconnect' }));
     await submitButton.click();
@@ -538,12 +540,14 @@ describe('ExportDisconnectModalComponent', () => {
     await spectator.fixture.whenStable();
     spectator.detectChanges();
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Remove all related configurations': true,
-      'Confirm Delete Pool': true,
-      'Enter fakePool below to confirm': 'fakePool',
-    });
+    const cascade = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Remove all related configurations' }),
+    );
+    await cascade.check();
+    const confirm = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm Delete Pool' }));
+    await confirm.check();
+    const nameInput = await loader.getHarness(TnInputHarness);
+    await nameInput.setValue('fakePool');
 
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Disconnect' }));
     await submitButton.click();
@@ -551,13 +555,13 @@ describe('ExportDisconnectModalComponent', () => {
 
   describe('form interactions', () => {
     it('shows initial state of checkboxes for export', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const cascade = await loader.getHarness(
+        TnCheckboxHarness.with({ label: 'Delete saved configurations from TrueNAS?' }),
+      );
+      const confirm = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm Export Pool' }));
 
-      expect(values).toEqual({
-        'Delete saved configurations from TrueNAS?': true,
-        'Confirm Export Pool': false,
-      });
+      expect(await cascade.isChecked()).toBe(true);
+      expect(await confirm.isChecked()).toBe(false);
     });
 
     it('shows additional name input field for delete option', async () => {
@@ -568,14 +572,15 @@ describe('ExportDisconnectModalComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const cascade = await loader.getHarness(
+        TnCheckboxHarness.with({ label: 'Remove all related configurations' }),
+      );
+      const confirm = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm Delete Pool' }));
+      const nameInput = await loader.getHarness(TnInputHarness);
 
-      expect(values).toEqual({
-        'Remove all related configurations': true,
-        'Confirm Delete Pool': false,
-        'Enter fakePool below to confirm': '',
-      });
+      expect(await cascade.isChecked()).toBe(true);
+      expect(await confirm.isChecked()).toBe(false);
+      expect(await nameInput.getValue()).toBe('');
     });
 
     it('sends correct export payload when export form is submitted', async () => {

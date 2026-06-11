@@ -1,10 +1,14 @@
 <tn-dialog-shell testId="truecommand-connect" [title]="title | translate">
   <form class="ix-form-container truecommand-connect-modal-form-content" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <ix-input
-      formControlName="api_key"
+    <tn-form-field
       [label]="helptext.updateDialog.apiKey | translate"
       [tooltip]="helptext.updateDialog.apiTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input
+        testId="api-key"
+        formControlName="api_key"
+      ></tn-input>
+    </tn-form-field>
 
     <tn-checkbox
       testId="enabled"

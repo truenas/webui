@@ -1,11 +1,12 @@
 <tn-dialog-shell testId="select-pool" [title]="'Choose a pool for Apps' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-select
-    formControlName="pool"
-    [label]="'Pool' | translate"
-    [required]="true"
-    [options]="pools$"
-  ></ix-select>
+  <tn-form-field [label]="'Pool' | translate">
+    <tn-select
+      testId="pool"
+      formControlName="pool"
+      [options]="(pools$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   @if (showMigrateCheckbox) {
     <tn-checkbox

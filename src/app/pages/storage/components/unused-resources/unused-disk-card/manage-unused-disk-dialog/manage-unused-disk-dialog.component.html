@@ -38,12 +38,13 @@
       </ix-radio-group>
 
       @if (isExistingMode) {
-        <ix-select
-          formControlName="pool"
-          [label]="'Existing Pool' | translate"
-          [required]="true"
-          [options]="poolOptions$"
-        ></ix-select>
+        <tn-form-field [label]="'Existing Pool' | translate">
+          <tn-select
+            testId="pool"
+            formControlName="pool"
+            [options]="(poolOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
       }
     </ix-fieldset>
   </div>

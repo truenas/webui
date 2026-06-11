@@ -1,11 +1,12 @@
 <tn-dialog-shell testId="reboot-or-shutdown" [title]="title">
   @if (isEnterprise()) {
-    <ix-select
-      [formControl]="form.controls.reason"
-      [label]="'Reason' | translate"
-      [options]="reasonOptions$"
-      [required]="true"
-    ></ix-select>
+    <tn-form-field [label]="'Reason' | translate">
+      <tn-select
+        testId="reason"
+        [formControl]="form.controls.reason"
+        [options]="(reasonOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
     @if(form.controls.customReason.enabled) {
       <ix-input

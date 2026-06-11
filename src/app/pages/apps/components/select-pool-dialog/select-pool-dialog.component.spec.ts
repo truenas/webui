@@ -4,14 +4,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -19,7 +17,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 describe('SelectPoolDialogComponent', () => {
   let spectator: Spectator<SelectPoolDialog>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const createComponent = createComponentFactory({
     component: SelectPoolDialog,
@@ -42,19 +39,19 @@ describe('SelectPoolDialogComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   it('loads pools available in system and shows them in the dropdown', async () => {
-    const poolSelect = await form.getControl('Pool') as IxSelectHarness;
-    expect(await poolSelect.getOptionLabels()).toEqual(['pool1', 'pool2']);
+    const poolSelect = await loader.getHarness(TnSelectHarness);
+    expect(await poolSelect.getOptions()).toEqual(['pool1', 'pool2']);
   });
 
   it('sets a pool for applications when form is submitted', async () => {
-    await form.fillForm({ Pool: 'pool2' });
+    const poolSelect = await loader.getHarness(TnSelectHarness);
+    await poolSelect.selectOption('pool2');
 
     const chooseButton = await loader.getHarness(TnButtonHarness.with({ label: 'Choose' }));
     await chooseButton.click();
@@ -108,13 +105,12 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
     });
 
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    const form = await loader.getHarness(IxFormHarness);
 
     let checkbox = await loader.getAllHarnesses(TnCheckboxHarness.with({ label: /Migrate existing/ }));
     expect(checkbox).toHaveLength(0);
 
-    const poolSelect = await form.getControl('Pool') as IxSelectHarness;
-    await poolSelect.setValue('pool2');
+    const poolSelect = await loader.getHarness(TnSelectHarness);
+    await poolSelect.selectOption('pool2');
     spectator.detectChanges();
 
     checkbox = await loader.getAllHarnesses(TnCheckboxHarness.with({ label: /Migrate existing/ }));
@@ -132,10 +128,9 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
     });
 
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    const form = await loader.getHarness(IxFormHarness);
 
-    const poolSelect = await form.getControl('Pool') as IxSelectHarness;
-    await poolSelect.setValue('pool1');
+    const poolSelect = await loader.getHarness(TnSelectHarness);
+    await poolSelect.selectOption('pool1');
     spectator.detectChanges();
 
     const checkbox = await loader.getAllHarnesses(TnCheckboxHarness.with({ label: /Migrate existing/ }));
@@ -155,10 +150,9 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
     });
 
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    const form = await loader.getHarness(IxFormHarness);
 
-    const poolSelect = await form.getControl('Pool') as IxSelectHarness;
-    await poolSelect.setValue('pool2');
+    const poolSelect = await loader.getHarness(TnSelectHarness);
+    await poolSelect.selectOption('pool2');
     spectator.detectChanges();
 
     const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: /Migrate existing/ }));

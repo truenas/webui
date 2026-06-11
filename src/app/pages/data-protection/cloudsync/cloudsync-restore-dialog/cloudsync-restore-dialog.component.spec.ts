@@ -3,12 +3,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   TransferModeExplanationComponent,
@@ -46,13 +46,14 @@ describe('CloudSyncRestoreDialogComponent', () => {
   });
 
   it('restores a cloudsync task when dialog form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
+    const descriptionInput = await loader.getHarness(TnInputHarness);
+    await descriptionInput.setValue('Reverse task');
 
-    await form.fillForm({
-      Description: 'Reverse task',
-      'Transfer Mode': 'SYNC',
-      'Directory/Files': '/mnt/dir',
-    });
+    const transferModeSelect = await loader.getHarness(TnSelectHarness);
+    await transferModeSelect.selectOption(/SYNC/);
+
+    const pathExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Directory/Files' }));
+    await pathExplorer.setValue('/mnt/dir');
 
     const save = await loader.getHarness(TnButtonHarness.with({ label: 'Restore' }));
     await save.click();

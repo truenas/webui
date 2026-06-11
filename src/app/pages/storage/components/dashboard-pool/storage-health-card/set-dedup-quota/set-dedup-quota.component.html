@@ -1,20 +1,22 @@
 <tn-dialog-shell testId="set-dedup-quota" [title]="'Deduplication Quota for {pool}' | translate: { pool: pool.name }">
 <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
-  <ix-select
-    formControlName="quotaType"
-    [label]="'Quota' | translate"
-    [options]="quotaTypeOptions$"
-    [required]="true"
-  ></ix-select>
+  <tn-form-field [label]="'Quota' | translate">
+    <tn-select
+      testId="quota-type"
+      formControlName="quotaType"
+      [options]="(quotaTypeOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   @if (hasCustomQuota) {
-    <ix-input
-      formControlName="quotaValue"
-      [label]="'Custom Quota' | translate"
-      [format]="formatter.memorySizeFormatting"
-      [parse]="formatter.memorySizeParsing"
-      [required]="true"
-    ></ix-input>
+    <tn-form-field [label]="'Custom Quota' | translate">
+      <tn-input
+        testId="quota-value"
+        formControlName="quotaValue"
+        inputType="size"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
   }
 
 </form>

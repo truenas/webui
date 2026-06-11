@@ -62,7 +62,9 @@
 
   <p [innerHtml]="deleteDatasetHelptext.prompt | translate: { value: dataset.name }"></p>
 
-  <ix-input formControlName="confirmDatasetName"></ix-input>
+  <tn-form-field>
+    <tn-input testId="confirm-dataset-name" formControlName="confirmDatasetName"></tn-input>
+  </tn-form-field>
   <tn-checkbox
     testId="confirm"
     formControlName="confirm"

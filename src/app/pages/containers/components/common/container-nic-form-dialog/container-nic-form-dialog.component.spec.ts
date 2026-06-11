@@ -2,8 +2,9 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness } from '@truenas/ui-components';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnDialogHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 
 describe('ContainerNicFormDialogComponent', () => {
@@ -49,7 +50,7 @@ describe('ContainerNicFormDialogComponent', () => {
   it('returns mac value', async () => {
     const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use Default Mac Address' }));
     await checkbox.uncheck();
-    const input = await loader.getHarness(IxInputHarness.with({ label: 'Mac Address' }));
+    const input = await loader.getHarness(TnInputHarness);
     await input.setValue('aa:bb:cc:dd:ee:ff');
     const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await button.isDisabled()).toBeFalsy();
@@ -65,7 +66,7 @@ describe('ContainerNicFormDialogComponent', () => {
   it('doesnt allow invalid mac value', async () => {
     const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use Default Mac Address' }));
     await checkbox.uncheck();
-    const input = await loader.getHarness(IxInputHarness.with({ label: 'Mac Address' }));
+    const input = await loader.getHarness(TnInputHarness);
     await input.setValue('aa:bb:cc:dd:ff');
     const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await button.isDisabled()).toBeTruthy();

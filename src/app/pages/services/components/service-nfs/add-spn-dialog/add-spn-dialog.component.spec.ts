@@ -3,10 +3,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
@@ -35,12 +34,11 @@ describe('AddSpnDialogComponent', () => {
   });
 
   it('submit credentials', async () => {
-    const form = await loader.getHarness(IxFormHarness);
+    const nameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
+    await nameInput.setValue('username');
 
-    await form.fillForm({
-      Name: 'username',
-      Password: 'password',
-    });
+    const passwordInput = await loader.getHarness(TnInputHarness.with({ name: 'password' }));
+    await passwordInput.setValue('password');
 
     const save = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));
     await save.click();

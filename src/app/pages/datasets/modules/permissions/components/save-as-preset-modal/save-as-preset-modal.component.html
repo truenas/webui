@@ -27,10 +27,9 @@
 
     <div class="save-content">
       <h4 class="label">{{ 'Save ACL as preset' | translate }}:</h4>
-      <ix-input
-        formControlName="presetName"
-        [label]="'Preset Name' | translate"
-      ></ix-input>
+      <tn-form-field [label]="'Preset Name' | translate">
+        <tn-input testId="preset-name" formControlName="presetName"></tn-input>
+      </tn-form-field>
     </div>
   </div>
 </form>

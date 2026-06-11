@@ -3,9 +3,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnDialogHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 
@@ -41,7 +42,7 @@ describe('AppDeleteDialogComponent', () => {
   });
 
   it('closes dialog with form values when dialog is submitted', async () => {
-    const confirmInput = await loader.getHarness(IxInputHarness);
+    const confirmInput = await loader.getHarness(TnInputHarness);
     await confirmInput.setValue('ix-test-app');
 
     const removeVolumesCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Remove iXVolumes' }));
@@ -63,7 +64,7 @@ describe('AppDeleteDialogComponent', () => {
   it('shows force remove volumes checkbox when Remove iXVolumes is selected', async () => {
     expect(await loader.getAllHarnesses(TnCheckboxHarness.with({ label: 'Force-remove iXVolumes' }))).toHaveLength(0);
 
-    const confirmInput = await loader.getHarness(IxInputHarness);
+    const confirmInput = await loader.getHarness(TnInputHarness);
     await confirmInput.setValue('ix-test-app');
 
     const removeVolumesCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Remove iXVolumes' }));
@@ -93,7 +94,7 @@ describe('AppDeleteDialogComponent', () => {
   });
 
   it('prevents submission when app name confirmation is incorrect', async () => {
-    const confirmInput = await loader.getHarness(IxInputHarness);
+    const confirmInput = await loader.getHarness(TnInputHarness);
     await confirmInput.setValue('wrong-name');
 
     const removeVolumesCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Remove iXVolumes' }));

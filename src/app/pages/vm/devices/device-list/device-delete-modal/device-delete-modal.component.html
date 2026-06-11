@@ -15,10 +15,12 @@
       ></tn-checkbox>
 
       @if (form.value.zvol) {
-        <ix-input
-          formControlName="zvolConfirm"
-          [label]="zvolConfirmLabelText"
-        ></ix-input>
+        <tn-form-field [label]="zvolConfirmLabelText">
+          <tn-input
+            testId="zvol-confirm"
+            formControlName="zvolConfirm"
+          ></tn-input>
+        </tn-form-field>
       }
     }
 

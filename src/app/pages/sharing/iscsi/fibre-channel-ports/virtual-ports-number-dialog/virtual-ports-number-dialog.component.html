@@ -1,11 +1,13 @@
 <tn-dialog-shell testId="virtual-ports-number" [title]="'Change Number Of Virtual Ports' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
-  <ix-input
-    formControlName="virtualPorts"
-    type="number"
-    [required]="true"
-    [label]="'Virtual Ports' | translate"
-  ></ix-input>
+  <tn-form-field [label]="'Virtual Ports' | translate">
+    <tn-input
+      testId="virtual-ports"
+      formControlName="virtualPorts"
+      inputType="number"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 </form>
 <ix-form-actions tnDialogAction>
   <tn-button

@@ -3,8 +3,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
-import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 
@@ -36,7 +35,7 @@ describe('OneTimePasswordCreatedDialogComponent', () => {
     expect(spectator.query('p')).toHaveText('Success! One-Time Password has been created.');
     expect(spectator.query('p strong')).toHaveText('This is the only time the password is shown.');
 
-    const textArea = await loader.getHarness(IxTextareaHarness.with({ label: 'One-Time Password' }));
+    const textArea = await loader.getHarness(TnInputHarness);
     expect(await textArea.getValue()).toBe('some-one-time-password');
   });
 

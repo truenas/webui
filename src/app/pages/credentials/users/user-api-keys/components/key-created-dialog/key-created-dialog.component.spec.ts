@@ -3,8 +3,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
-import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { KeyCreatedDialog } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 
@@ -36,7 +35,7 @@ describe('KeyCreatedDialogComponent', () => {
     expect(spectator.query('p')).toHaveText('Success! The API key has been created or reset.');
     expect(spectator.query('p strong')).toHaveText('This is the only time the key is shown.');
 
-    const textArea = await loader.getHarness(IxTextareaHarness.with({ label: 'API Key' }));
+    const textArea = await loader.getHarness(TnInputHarness);
     expect(await textArea.getValue()).toBe('my-key');
   });
 

@@ -3,12 +3,14 @@
     <tn-progress-bar mode="indeterminate"></tn-progress-bar>
   }
   <form [formGroup]="form">
-    <ix-input
-      class="dataset-name"
-      formControlName="name"
-      [label]="'Name' | translate"
-      [required]="true"
-    ></ix-input>
+    <tn-form-field [label]="'Name' | translate">
+      <tn-input
+        class="dataset-name"
+        testId="name"
+        formControlName="name"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
   </form>
   <ix-form-actions tnDialogAction class="form-actions">
     <tn-button

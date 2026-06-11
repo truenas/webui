@@ -6,30 +6,50 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div>
     <ix-fieldset>
-      <ix-input
-        formControlName="defaultGateway"
+      <tn-form-field
         [label]="'New IPv4 Default Gateway' | translate"
-        [required]="true"
         [tooltip]="helptext.ipv4gatewayTooltip | translate"
-      ></ix-input>
-      
-      <ix-input
-        formControlName="dns1"
+      >
+        <tn-input
+          testId="default-gateway"
+          name="defaultGateway"
+          formControlName="defaultGateway"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
         [label]="'Primary DNS Server' | translate"
         [tooltip]="'Primary DNS server address (optional)' | translate"
-      ></ix-input>
-      
-      <ix-input
-        formControlName="dns2"
+      >
+        <tn-input
+          testId="dns1"
+          name="dns1"
+          formControlName="dns1"
+        ></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
         [label]="'Secondary DNS Server' | translate"
         [tooltip]="'Secondary DNS server address (optional)' | translate"
-      ></ix-input>
-      
-      <ix-input
-        formControlName="dns3"
+      >
+        <tn-input
+          testId="dns2"
+          name="dns2"
+          formControlName="dns2"
+        ></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
         [label]="'Tertiary DNS Server' | translate"
         [tooltip]="'Tertiary DNS server address (optional)' | translate"
-      ></ix-input>
+      >
+        <tn-input
+          testId="dns3"
+          name="dns3"
+          formControlName="dns3"
+        ></tn-input>
+      </tn-form-field>
     </ix-fieldset>
   </div>
 </form>

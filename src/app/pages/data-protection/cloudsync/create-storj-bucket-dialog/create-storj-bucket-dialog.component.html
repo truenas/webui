@@ -2,11 +2,13 @@
 <form [formGroup]="form" (submit)="onSubmit()">
   <div>
     <p>{{ 'Add a new bucket to your Storj account.' | translate }}</p>
-    <ix-input
-      formControlName="bucket"
-      [required]="true"
-      [label]="'Bucket Name' | translate"
-    ></ix-input>
+    <tn-form-field [label]="'Bucket Name' | translate">
+      <tn-input
+        testId="bucket"
+        formControlName="bucket"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
   </div>
 </form>
 

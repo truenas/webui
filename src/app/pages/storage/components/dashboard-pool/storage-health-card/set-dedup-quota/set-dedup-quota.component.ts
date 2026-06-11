@@ -1,19 +1,19 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { Pool, UpdatePool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -36,12 +36,14 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
+    AsyncPipe,
     FormActionsComponent,
     TnButtonComponent,
     ReactiveFormsModule,
     TranslateModule,
-    IxSelectComponent,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
   ],
 })
 export class SetDedupQuotaComponent {
@@ -52,7 +54,6 @@ export class SetDedupQuotaComponent {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   protected dialogRef = inject<DialogRef<unknown, SetDedupQuotaComponent>>(DialogRef);
-  protected formatter = inject(IxFormatterService);
   protected pool = inject<Pool>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 

@@ -5,12 +5,13 @@
     [formGroup]="form"
     (submit)="onSubmit()"
   >
-    <ix-input
-      formControlName="dataset_dst"
-      [label]="'Dataset' | translate"
-      [required]="true"
-      [tooltip]="tooltips.dataset_dst | translate"
-    ></ix-input>
+    <tn-form-field [label]="'Dataset' | translate" [tooltip]="tooltips.dataset_dst | translate">
+      <tn-input
+        testId="dataset-dst"
+        formControlName="dataset_dst"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
   </form>
 } @else {
   <p>{{ 'Dataset {name} was created.' | translate: { name: datasetName } }}</p>

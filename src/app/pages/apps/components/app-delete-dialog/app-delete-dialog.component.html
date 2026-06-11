@@ -3,7 +3,13 @@
   <p [innerHTML]="deleteMessage()"></p>
 
   <p [innerHtml]="deleteAppHelpText()"></p>
-  <ix-input formControlName="confirmAppName"></ix-input>
+  <tn-form-field>
+    <tn-input
+      testId="confirm-app-name"
+      formControlName="confirmAppName"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
   
   @if (data.showRemoveVolumes) {
     <tn-checkbox

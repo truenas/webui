@@ -26,12 +26,14 @@
       >
     </mat-slider>
   } @else {
-    <ix-input
-      formControlName="days"
-      type="number"
-      [label]="'Age (in days)' | translate"
-      [required]="true"
-    ></ix-input>
+    <tn-form-field [label]="'Age (in days)' | translate">
+      <tn-input
+        testId="days"
+        formControlName="days"
+        inputType="number"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
   }
 
 </form>

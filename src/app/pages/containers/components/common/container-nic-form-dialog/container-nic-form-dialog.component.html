@@ -3,12 +3,13 @@
 >
 <div>
   <form [formGroup]="form">
-    <ix-select
-      formControlName="type"
-      [label]="'NIC Type' | translate"
-      [required]="true"
-      [options]="nicTypeOptions"
-    ></ix-select>
+    <tn-form-field [label]="'NIC Type' | translate">
+      <tn-select
+        testId="type"
+        formControlName="type"
+        [options]="(nicTypeOptions | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
     @if (!isEditMode()) {
       <tn-checkbox
@@ -18,12 +19,16 @@
       ></tn-checkbox>
     }
     @if (isEditMode() || !useDefault()) {
-      <ix-input
-        formControlName="mac"
-        [required]="!isEditMode()"
+      <tn-form-field
         [label]="'Mac Address' | translate"
         [tooltip]="isEditMode() ? ('Leave empty to use default MAC address' | translate) : null"
-      ></ix-input>
+      >
+        <tn-input
+          testId="mac"
+          formControlName="mac"
+          [required]="!isEditMode()"
+        ></tn-input>
+      </tn-form-field>
     }
 
     @if (isVirtio()) {

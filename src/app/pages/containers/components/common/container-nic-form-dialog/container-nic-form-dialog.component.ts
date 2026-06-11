@@ -7,14 +7,15 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   map, Observable, of, startWith,
 } from 'rxjs';
 import { ContainerNicDeviceType, containerNicDeviceTypeLabels } from 'app/enums/container.enum';
 import { ContainerNicDevice } from 'app/interfaces/container.interface';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 
 export interface ContainerNicFormDialogData {
@@ -30,8 +31,9 @@ export interface ContainerNicFormDialogData {
     TnDialogShellComponent,
     TnCheckboxComponent,
     ReactiveFormsModule,
-    IxInputComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     AsyncPipe,
     TnButtonComponent,
     TranslateModule,

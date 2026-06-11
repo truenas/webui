@@ -16,20 +16,27 @@
       [tooltip]="'Select the directory where the disk image will be exported' | translate"
     ></ix-explorer>
 
-    <ix-input
-      formControlName="imageName"
+    <tn-form-field
       [label]="'Image Name' | translate"
-      [required]="true"
       [tooltip]="'Enter the name for the exported image file. The appropriate extension will be added automatically based on the selected format.' | translate"
-    ></ix-input>
+    >
+      <tn-input
+        testId="image-name"
+        formControlName="imageName"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="format"
+    <tn-form-field
       [label]="'Image Format' | translate"
-      [required]="true"
-      [options]="formatOptions$"
       [tooltip]="'Select the format for the exported disk image' | translate"
-    ></ix-select>
+    >
+      <tn-select
+        testId="format"
+        formControlName="format"
+        [options]="(formatOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
   </form>
 
 

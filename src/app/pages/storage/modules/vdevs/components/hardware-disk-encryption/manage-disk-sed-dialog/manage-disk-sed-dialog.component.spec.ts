@@ -3,12 +3,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ManageDiskSedDialog } from './manage-disk-sed-dialog.component';
@@ -16,7 +15,7 @@ import { ManageDiskSedDialog } from './manage-disk-sed-dialog.component';
 describe('ManageDiskSedDialogComponent', () => {
   let spectator: Spectator<ManageDiskSedDialog>;
   let loader: HarnessLoader;
-  let passwordInput: IxInputHarness;
+  let passwordInput: TnInputHarness;
   const createComponent = createComponentFactory({
     component: ManageDiskSedDialog,
     imports: [
@@ -46,7 +45,7 @@ describe('ManageDiskSedDialogComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    passwordInput = await loader.getHarness(IxInputHarness);
+    passwordInput = await loader.getHarness(TnInputHarness);
   });
 
   it('loads and shows if password is currently set for the current disk', async () => {

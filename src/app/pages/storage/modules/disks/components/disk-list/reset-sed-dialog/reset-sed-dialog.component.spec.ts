@@ -2,10 +2,9 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -69,10 +68,8 @@ describe('ResetSedDialog', () => {
   });
 
   it('calls disk.reset_sed with correct payload when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Physical Security ID (PSID)': 'TESTPSID12345678',
-    });
+    const psidInput = await loader.getHarness(TnInputHarness);
+    await psidInput.setValue('TESTPSID12345678');
 
     const understand = await loader.getHarness(
       TnCheckboxHarness.with({ label: 'I understand this will permanently destroy all data on this disk' }),
@@ -96,10 +93,8 @@ describe('ResetSedDialog', () => {
   });
 
   it('disables submit button when confirmation checkbox is not checked', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Physical Security ID (PSID)': 'TESTPSID12345678',
-    });
+    const psidInput = await loader.getHarness(TnInputHarness);
+    await psidInput.setValue('TESTPSID12345678');
 
     const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Perform SED Reset' }));
     expect(await resetButton.isDisabled()).toBe(true);

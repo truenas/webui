@@ -1,12 +1,13 @@
 <tn-dialog-shell testId="custom-transfers" [title]="'Custom Transfers' | translate">
 <form class="ix-form-container">
-  <ix-input
-    type="number"
-    [formControl]="transfers"
-    [label]="helptext.transfersLabel | translate"
-    [tooltip]="helptext.transfersTooltip | translate"
-    [required]="true"
-  ></ix-input>
+  <tn-form-field [label]="helptext.transfersLabel | translate" [tooltip]="helptext.transfersTooltip | translate">
+    <tn-input
+      testId="transfers"
+      inputType="number"
+      [formControl]="transfers"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
   </form>
 <ix-form-actions tnDialogAction>

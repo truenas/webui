@@ -3,9 +3,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import {
   RebootOrShutdownDialog,
 } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
@@ -74,8 +73,8 @@ describe('RebootOrShutdownDialogComponent', () => {
     });
 
     it('closes dialog with shutdown reason when it is selected from the list', async () => {
-      const select = await loader.getHarness(IxSelectHarness);
-      await select.setValue('System Update');
+      const select = await loader.getHarness(TnSelectHarness);
+      await select.selectOption(/System Update/);
 
       const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
       await confirmCheckbox.check();
@@ -87,8 +86,8 @@ describe('RebootOrShutdownDialogComponent', () => {
     });
 
     it('allows user to enter custom reason', async () => {
-      const select = await loader.getHarness(IxSelectHarness);
-      await select.setValue('Custom Reason');
+      const select = await loader.getHarness(TnSelectHarness);
+      await select.selectOption(/Custom Reason/);
 
       const customReasonInput = await loader.getHarness(IxInputHarness.with({ label: 'Custom Reason' }));
       await customReasonInput.setValue('House on fire');
@@ -151,7 +150,7 @@ describe('RebootOrShutdownDialog – non-enterprise', () => {
   });
 
   it('should not render select/input and allow submission when only confirm is checked', async () => {
-    const select = spectator.query('ix-select');
+    const select = spectator.query('tn-select');
     expect(select).toBeNull();
 
     const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));

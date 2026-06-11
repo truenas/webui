@@ -5,13 +5,14 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { Pool, PruneDedupTableParams } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -37,7 +38,8 @@ export const pruneByLabels = new Map<PruneBy, string>([
   imports: [
     TnDialogShellComponent,
     FormActionsComponent,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     TnButtonComponent,
     ReactiveFormsModule,
     TestDirective,

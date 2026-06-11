@@ -13,18 +13,24 @@
     {{ 'Leaving the domain requires sufficient privileges. Enter your credentials below.' | translate }}
   </p>
 
-  <ix-input
-    formControlName="username"
-    [required]="true"
-    [label]="'Username' | translate"
-  ></ix-input>
+  <tn-form-field [label]="'Username' | translate">
+    <tn-input
+      testId="username"
+      name="username"
+      formControlName="username"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="password"
-    [required]="true"
-    [label]="'Password' | translate"
-    [type]="'password'"
-  ></ix-input>
+  <tn-form-field [label]="'Password' | translate">
+    <tn-input
+      testId="password"
+      name="password"
+      formControlName="password"
+      inputType="password"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
   </form>
 <ix-form-actions tnDialogAction>

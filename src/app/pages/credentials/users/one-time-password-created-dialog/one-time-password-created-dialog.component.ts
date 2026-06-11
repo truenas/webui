@@ -5,9 +5,10 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 
 @Component({
@@ -21,7 +22,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
     FormActionsComponent,
     TnButtonComponent,
     TranslateModule,
-    IxTextareaComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
   ],
 })
 export class OneTimePasswordCreatedDialog {

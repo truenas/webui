@@ -3,8 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { CustomTransfersDialog } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 
 describe('CustomTransfersDialogComponent', () => {
@@ -26,8 +25,8 @@ describe('CustomTransfersDialogComponent', () => {
   });
 
   it('selects transfers when save is pressed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ Transfers: 10 });
+    const transfersInput = await loader.getHarness(TnInputHarness);
+    await transfersInput.setValue('10');
 
     const save = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await save.click();

@@ -1,11 +1,13 @@
 <tn-dialog-shell testId="logs-details" [title]="'Logs Details' | translate">
 <form class="ix-form-container" [formGroup]="form">
-  <ix-input
-    formControlName="tail_lines"
-    type="number"
-    [label]="'Tail Lines' | translate"
-    [required]="true"
-  ></ix-input>
+  <tn-form-field [label]="'Tail Lines' | translate">
+    <tn-input
+      testId="tail-lines"
+      formControlName="tail_lines"
+      inputType="number"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 </form>
 
 <div tnDialogAction align="end">

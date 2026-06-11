@@ -3,12 +3,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatSliderHarness } from '@angular/material/slider/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -67,7 +66,7 @@ describe('PruneDedupTableDialogComponent', () => {
     const pruneByRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Prune By' }));
     await pruneByRadio.setValue('Age');
 
-    const daysInput = await loader.getHarness(IxInputHarness.with({ label: 'Age (in days)' }));
+    const daysInput = await loader.getHarness(TnInputHarness);
     await daysInput.setValue('10');
 
     const pruneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Prune' }));

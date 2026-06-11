@@ -3,12 +3,14 @@
   <p>{{ 'Successfully unlocking the disk will automatically update the database.' | translate }}</p>
 
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-    <ix-input
-      formControlName="password"
-      type="password"
-      [label]="'Password' | translate"
-      [required]="true"
-    ></ix-input>
+    <tn-form-field [label]="'Password' | translate">
+      <tn-input
+        testId="password"
+        formControlName="password"
+        inputType="password"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
   </form>
 </div>
 

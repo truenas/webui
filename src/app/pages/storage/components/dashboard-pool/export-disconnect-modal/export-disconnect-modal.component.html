@@ -210,10 +210,12 @@
           }
 
           @if (isDeleteSelected && form.value.destroy) {
-            <ix-input
-              formControlName="nameInput"
-              [label]="helptext.exportDialog.enterName | translate: { pool: pool.name }"
-            ></ix-input>
+            <tn-form-field [label]="helptext.exportDialog.enterName | translate: { pool: pool.name }">
+              <tn-input
+                testId="name-input"
+                formControlName="nameInput"
+              ></tn-input>
+            </tn-form-field>
           }
         </ix-fieldset>
       </div>

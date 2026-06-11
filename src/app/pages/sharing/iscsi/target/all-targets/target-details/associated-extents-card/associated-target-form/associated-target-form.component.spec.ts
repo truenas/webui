@@ -3,18 +3,18 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialogHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AssociatedTargetFormComponent } from './associated-target-form.component';
 
 describe('AssociatedTargetFormComponent', () => {
   let spectator: Spectator<AssociatedTargetFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let api: ApiService;
 
   const dialogData = {
@@ -39,10 +39,9 @@ describe('AssociatedTargetFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     api = spectator.inject(ApiService);
   });
 
@@ -52,10 +51,11 @@ describe('AssociatedTargetFormComponent', () => {
   });
 
   it('submits form with correct values', async () => {
-    await form.fillForm({
-      'LUN ID': 0,
-      Extent: 'Extent 1',
-    });
+    const lunIdInput = await loader.getHarness(TnInputHarness);
+    await lunIdInput.setValue('0');
+
+    const extentSelect = await loader.getHarness(TnSelectHarness);
+    await extentSelect.selectOption(/Extent 1/);
 
     const associateButton = await loader.getHarness(TnButtonHarness.with({ label: 'Associate' }));
     await associateButton.click();

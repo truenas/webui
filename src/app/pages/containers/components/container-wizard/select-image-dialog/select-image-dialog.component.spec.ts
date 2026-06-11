@@ -7,14 +7,13 @@ import {
   mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness, TnInputHarness } from '@truenas/ui-components';
 import {
   mockCall,
   mockApi,
 } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
 import { ContainerImageRegistryResponse } from 'app/interfaces/container.interface';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SelectImageDialog } from 'app/pages/containers/components/container-wizard/select-image-dialog/select-image-dialog.component';
 
@@ -90,10 +89,8 @@ describe('SelectImageDialogComponent', () => {
     });
 
     it('shows the rows when search string is entered', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Search Images': 'ALPINE',
-      });
+      const searchInput = await loader.getHarness(TnInputHarness);
+      await searchInput.setValue('ALPINE');
 
       const rows = spectator.queryAll('tr').slice(1).map((row) => {
         return Array.from(row.querySelectorAll('td')).map((item) => item.textContent!.trim());
@@ -139,20 +136,16 @@ describe('SelectImageDialogComponent', () => {
     });
 
     it('shows empty state when no images match search', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Search Images': 'nonexistent',
-      });
+      const searchInput = await loader.getHarness(TnInputHarness);
+      await searchInput.setValue('nonexistent');
 
       const rows = spectator.queryAll('tr').slice(1);
       expect(rows).toHaveLength(0);
     });
 
     it('filters images case-insensitively', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Search Images': 'AlMaLiNuX',
-      });
+      const searchInput = await loader.getHarness(TnInputHarness);
+      await searchInput.setValue('AlMaLiNuX');
 
       const rows = spectator.queryAll('tr').slice(1).map((row) => {
         return Array.from(row.querySelectorAll('td')).map((item) => item.textContent!.trim());

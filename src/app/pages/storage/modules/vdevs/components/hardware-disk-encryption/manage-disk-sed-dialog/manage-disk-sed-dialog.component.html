@@ -1,11 +1,12 @@
 <tn-dialog-shell testId="manage-disk-sed" [title]="'Manage SED Password' | translate">
 <form class="ix-form-container" (submit)="onSubmit($event)">
-  <ix-input
-    type="password"
-    [formControl]="passwordControl"
-    [label]="'SED Password' | translate"
-    [tooltip]="helptext.passwordTooltip | translate"
-  ></ix-input>
+  <tn-form-field [label]="'SED Password' | translate" [tooltip]="helptext.passwordTooltip | translate">
+    <tn-input
+      testId="sed-password"
+      inputType="password"
+      [formControl]="passwordControl"
+    ></tn-input>
+  </tn-form-field>
 
 </form>
 <ix-form-actions tnDialogAction>

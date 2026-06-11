@@ -1,13 +1,16 @@
 <tn-dialog-shell testId="app-rollback" [title]="'Roll Back' | translate">
 <div>
   <form [formGroup]="form">
-    <ix-select
-      formControlName="app_version"
+    <tn-form-field
       [label]="'Version' | translate"
-      [required]="true"
-      [options]="versionOptions$"
       [tooltip]="'Enter the version to roll back to.' | translate"
-    ></ix-select>
+    >
+      <tn-select
+        testId="app-version"
+        formControlName="app_version"
+        [options]="(versionOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
     <tn-checkbox
       testId="rollback-snapshot"

@@ -19,12 +19,14 @@
   <p class="disk-name">{{ 'Disk:' | translate }} <strong>{{ data.diskName }}</strong></p>
 
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-    <ix-input
-      formControlName="psid"
-      [label]="'Physical Security ID (PSID)' | translate"
-      [placeholder]="'Enter PSID from drive label (e.g., ABCD1234EFGH5678)' | translate"
-      [required]="true"
-    ></ix-input>
+    <tn-form-field [label]="'Physical Security ID (PSID)' | translate">
+      <tn-input
+        testId="psid"
+        formControlName="psid"
+        [placeholder]="'Enter PSID from drive label (e.g., ABCD1234EFGH5678)' | translate"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
 
     <tn-checkbox
       testId="confirm"

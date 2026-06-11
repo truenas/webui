@@ -1,11 +1,12 @@
 <tn-dialog-shell testId="replication-restore" [title]="'Restore Replication Task' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-input
-    formControlName="name"
-    [label]="'Name' | translate"
-    [required]="true"
-    [tooltip]="helptext.nameTooltip | translate"
-  ></ix-input>
+  <tn-form-field [label]="'Name' | translate" [tooltip]="helptext.nameTooltip | translate">
+    <tn-input
+      testId="name"
+      formControlName="name"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
   <ix-explorer
     formControlName="target_dataset"

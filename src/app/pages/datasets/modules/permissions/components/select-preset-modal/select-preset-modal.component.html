@@ -15,11 +15,13 @@
     }
     <!-- TODO: Add [required]="true" once FormsModule is removed -->
     @if (form.value.usePreset) {
-      <ix-select
-        formControlName="presetName"
-        [label]="'Preset' | translate"
-        [options]="presetOptions$"
-      ></ix-select>
+      <tn-form-field [label]="'Preset' | translate">
+        <tn-select
+          testId="preset-name"
+          formControlName="presetName"
+          [options]="(presetOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     }
   </form>
 </div>

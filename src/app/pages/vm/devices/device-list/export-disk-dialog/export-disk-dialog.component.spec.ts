@@ -4,12 +4,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { FilesystemService } from 'app/services/filesystem.service';
 import {
@@ -45,8 +43,6 @@ describe('ExportDiskDialogComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxExplorerComponent,
-      IxInputComponent,
-      IxSelectComponent,
       TranslateModule.forRoot(),
     ],
     providers: [
@@ -75,16 +71,24 @@ describe('ExportDiskDialogComponent', () => {
   it('initializes form with default values', async () => {
     const values = await form.getValues();
     expect(values['Destination Directory']).toBe('');
-    expect(values['Image Name']).toContain('test-vm_disk_');
-    expect(values['Image Format']).toBe('QCOW2 - QEMU Copy On Write');
+
+    const imageNameInput = await loader.getHarness(TnInputHarness);
+    expect(await imageNameInput.getValue()).toContain('test-vm_disk_');
+
+    const formatSelect = await loader.getHarness(TnSelectHarness);
+    expect(await formatSelect.getDisplayText()).toBe('QCOW2 - QEMU Copy On Write');
   });
 
   it('closes dialog with export data when form is submitted', async () => {
     await form.fillForm({
       'Destination Directory': '/mnt/tank/exports',
-      'Image Name': 'my-vm-disk',
-      'Image Format': 'VMDK - VMware Virtual Machine Disk',
     });
+
+    const imageNameInput = await loader.getHarness(TnInputHarness);
+    await imageNameInput.setValue('my-vm-disk');
+
+    const formatSelect = await loader.getHarness(TnSelectHarness);
+    await formatSelect.selectOption(/VMDK - VMware Virtual Machine Disk/);
 
     const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export' }));
     await exportButton.click();

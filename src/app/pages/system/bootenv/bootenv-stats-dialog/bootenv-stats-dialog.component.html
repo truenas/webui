@@ -36,12 +36,14 @@
         }
       </span>
     </div>
-    <ix-input
-      formControlName="interval"
-      type="number"
-      [label]="'Scrub interval (in days)' | translate"
-      [required]="true"
-    ></ix-input>
+    <tn-form-field [label]="'Scrub interval (in days)' | translate">
+      <tn-input
+        testId="interval"
+        formControlName="interval"
+        inputType="number"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
   </form>
 }
 <ix-form-actions tnDialogAction>

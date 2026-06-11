@@ -1,9 +1,11 @@
 <tn-dialog-shell testId="clone-vm" [title]="'Clone' | translate">
 <div>
-  <ix-input
-    [label]="'Enter a Name (optional)' | translate"
-    [formControl]="nameControl"
-  ></ix-input>
+  <tn-form-field [label]="'Enter a Name (optional)' | translate">
+    <tn-input
+      testId="name"
+      [formControl]="nameControl"
+    ></tn-input>
+  </tn-form-field>
 </div>
 <ix-form-actions tnDialogAction>
   <tn-button

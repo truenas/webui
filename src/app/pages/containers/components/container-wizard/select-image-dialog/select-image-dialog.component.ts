@@ -1,10 +1,13 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { catchError, Observable, of } from 'rxjs';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -13,8 +16,6 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -27,14 +28,16 @@ export type ContainerImageWithId = ContainerImage & {
 @Component({
   selector: 'ix-select-image-dialog',
   imports: [
+    AsyncPipe,
     TnDialogShellComponent,
     MatTableModule,
     IxFieldsetComponent,
-    IxSelectComponent,
     ReactiveFormsModule,
     TranslateModule,
-    IxInputComponent,
     TnButtonComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     TestDirective,
     EmptyComponent,
   ],

@@ -3,13 +3,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, AclTemplateByPath, PosixAclItem } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
@@ -110,7 +109,7 @@ describe('SaveAsPresetModalComponent', () => {
       acl: [] as PosixAclItem[],
       acltype: AclType.Posix1e,
     } as Acl));
-    const actionsInput = await loader.getHarness(IxInputHarness);
+    const actionsInput = await loader.getHarness(TnInputHarness);
     await actionsInput.setValue('New Preset');
     spectator.component.acl = {
       acl: [] as PosixAclItem[],

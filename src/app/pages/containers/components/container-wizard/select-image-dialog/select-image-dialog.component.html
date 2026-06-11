@@ -1,28 +1,36 @@
 <tn-dialog-shell testId="select-image" [title]="'Select Image' | translate">
   <form [formGroup]="filterForm">
     <ix-fieldset [title]="'Filters' | translate">
-      <ix-input
-        formControlName="searchQuery"
-        [label]="'Search Images' | translate"
-      ></ix-input>
+      <tn-form-field [label]="'Search Images' | translate">
+        <tn-input
+          testId="search-query"
+          formControlName="searchQuery"
+        ></tn-input>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="os"
-        [label]="'OS' | translate"
-        [options]="osOptions$"
-      ></ix-select>
+      <tn-form-field [label]="'OS' | translate">
+        <tn-select
+          testId="os"
+          formControlName="os"
+          [options]="(osOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="variant"
-        [label]="'Variant' | translate"
-        [options]="variantOptions$"
-      ></ix-select>
+      <tn-form-field [label]="'Variant' | translate">
+        <tn-select
+          testId="variant"
+          formControlName="variant"
+          [options]="(variantOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="release"
-        [label]="'Release' | translate"
-        [options]="releaseOptions$"
-      ></ix-select>
+      <tn-form-field [label]="'Release' | translate">
+        <tn-select
+          testId="release"
+          formControlName="release"
+          [options]="(releaseOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     </ix-fieldset>
 
     <div class="table-wrapper">

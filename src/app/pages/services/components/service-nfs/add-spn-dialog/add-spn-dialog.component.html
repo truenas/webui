@@ -1,17 +1,23 @@
 <tn-dialog-shell testId="add-spn" [title]="'Add Kerberos SPN Entry' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-input
-    formControlName="username"
-    [label]="'Name' | translate"
-    [required]="true"
-  ></ix-input>
+  <tn-form-field [label]="'Name' | translate">
+    <tn-input
+      testId="username"
+      name="username"
+      formControlName="username"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="password"
-    type="password"
-    [label]="'Password' | translate"
-    [required]="true"
-  ></ix-input>
+  <tn-form-field [label]="'Password' | translate">
+    <tn-input
+      testId="password"
+      name="password"
+      formControlName="password"
+      inputType="password"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
 </form>
 <ix-form-actions tnDialogAction>

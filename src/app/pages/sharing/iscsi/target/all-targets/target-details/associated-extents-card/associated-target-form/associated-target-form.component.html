@@ -2,20 +2,21 @@
 
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
     <ix-fieldset>
-      <ix-input
-        formControlName="lunid"
-        type="number"
-        [label]="'LUN ID' | translate"
-        [tooltip]="tooltips.lunid | translate"
-      ></ix-input>
+      <tn-form-field [label]="'LUN ID' | translate" [tooltip]="tooltips.lunid | translate">
+        <tn-input
+          testId="lunid"
+          formControlName="lunid"
+          inputType="number"
+        ></tn-input>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="extent"
-        [label]="'Extent' | translate"
-        [tooltip]="tooltips.extent | translate"
-        [options]="extents$"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field [label]="'Extent' | translate" [tooltip]="tooltips.extent | translate">
+        <tn-select
+          testId="extent"
+          formControlName="extent"
+          [options]="(extents$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     </ix-fieldset>
   </form>
   <ix-form-actions tnDialogAction class="form-actions">

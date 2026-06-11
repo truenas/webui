@@ -1,16 +1,18 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { ContainerStopParams } from 'app/interfaces/container.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 
 export enum StopOptionsOperation {
   Restart,
@@ -29,12 +31,14 @@ enum StopMethod {
   styleUrls: ['./stop-options-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     TnDialogShellComponent,
     FormActionsComponent,
     TnButtonComponent,
     ReactiveFormsModule,
     TranslateModule,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
   ],
 })
 export class StopOptionsDialog {

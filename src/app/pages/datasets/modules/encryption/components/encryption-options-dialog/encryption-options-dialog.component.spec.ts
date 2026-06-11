@@ -3,14 +3,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { EncryptionOptionsDialog } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
@@ -80,6 +79,11 @@ describe('EncryptionOptionsDialogComponent', () => {
     await (checked ? checkbox.check() : checkbox.uncheck());
   }
 
+  async function selectEncryptionType(option: string): Promise<void> {
+    const encryptionTypeSelect = await loader.getHarness(TnSelectHarness);
+    await encryptionTypeSelect.selectOption(option);
+  }
+
   it('loads dataset pbkdf2iters when dialog is opened', async () => {
     await setupTest();
     expect(api.call)
@@ -141,8 +145,8 @@ describe('EncryptionOptionsDialogComponent', () => {
     await setupTest();
 
     const key = 'k'.repeat(64);
+    await selectEncryptionType('Key');
     await form.fillForm({
-      'Encryption Type': 'Key',
       Key: 'k'.repeat(64),
     });
     await setCheckbox('Confirm', true);
@@ -160,7 +164,7 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('allows key to be generated for when encryption type is key', async () => {
     await setupTest();
 
-    await form.fillForm({ 'Encryption Type': 'Key' });
+    await selectEncryptionType('Key');
     await setCheckbox('Generate Key', true);
     await setCheckbox('Confirm', true);
 
@@ -177,8 +181,8 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('allows to set encryption to passphrase', async () => {
     await setupTest();
 
+    await selectEncryptionType('Passphrase');
     await form.fillForm({
-      'Encryption Type': 'Passphrase',
       Passphrase: '12345678',
       'Confirm Passphrase': '12345678',
       pbkdf2iters: '1300001',
@@ -198,16 +202,14 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('allows saving when switching from passphrase to key with mismatched passphrase fields', async () => {
     await setupTest();
 
-    await form.fillForm(
-      {
-        'Encryption Type': 'Passphrase',
-        Passphrase: '12345678',
-      },
-    );
+    await selectEncryptionType('Passphrase');
+    await form.fillForm({
+      Passphrase: '12345678',
+    });
 
     const key = 'k'.repeat(64);
+    await selectEncryptionType('Key');
     await form.fillForm({
-      'Encryption Type': 'Key',
       Key: key,
     });
     await setCheckbox('Confirm', true);
@@ -239,8 +241,8 @@ describe('EncryptionOptionsDialogComponent', () => {
       },
     } as EncryptionOptionsDialogData);
 
-    const encryptionTypeDropdown = await loader.getHarness(IxSelectHarness.with({ label: 'Encryption Type' }));
-    expect(await encryptionTypeDropdown.getValue()).toBe('Key');
+    const encryptionTypeDropdown = await loader.getHarness(TnSelectHarness);
+    expect(await encryptionTypeDropdown.getDisplayText()).toBe('Key');
     expect(await encryptionTypeDropdown.isDisabled()).toBe(true);
   });
 
@@ -254,8 +256,8 @@ describe('EncryptionOptionsDialogComponent', () => {
       },
     } as EncryptionOptionsDialogData);
 
-    const encryptionTypeDropdown = await loader.getHarness(IxSelectHarness.with({ label: 'Encryption Type' }));
-    expect(await encryptionTypeDropdown.getValue()).toBe('Passphrase');
+    const encryptionTypeDropdown = await loader.getHarness(TnSelectHarness);
+    expect(await encryptionTypeDropdown.getDisplayText()).toBe('Passphrase');
     expect(await encryptionTypeDropdown.isDisabled()).toBe(true);
   });
 });

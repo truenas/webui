@@ -9,13 +9,13 @@
   }
 
   @if (!(isInheriting$ | async)) {
-    <ix-select
-      formControlName="encryption_type"
-      [label]="'Encryption Type' | translate"
-      [tooltip]="tooltips.encryption_type | translate"
-      [options]="encryptionTypeOptions$"
-      [required]="true"
-    ></ix-select>
+    <tn-form-field [label]="'Encryption Type' | translate" [tooltip]="tooltips.encryption_type | translate">
+      <tn-select
+        testId="encryption-type"
+        formControlName="encryption_type"
+        [options]="(encryptionTypeOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
     @if (isKey$ | async) {
       <tn-checkbox
         testId="generate-key"

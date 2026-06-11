@@ -57,12 +57,13 @@
               </div>
 
               @if (hasMultipleVersionOptions(bulkItem.key)) {
-                <ix-select
-                  [formControlName]="bulkItem.key"
-                  [label]="'Version to be updated to' | translate"
-                  [required]="true"
-                  [options]="optionsMap.get(bulkItem.key)"
-                ></ix-select>
+                <tn-form-field [label]="'Version to be updated to' | translate">
+                  <tn-select
+                    [testId]="['app-version', bulkItem.key]"
+                    [formControlName]="bulkItem.key"
+                    [options]="(optionsMap.get(bulkItem.key) | async) ?? []"
+                  ></tn-select>
+                </tn-form-field>
               }
             }
           }
