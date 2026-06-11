@@ -137,16 +137,17 @@ describe('RebootOrShutdownDialog – non-enterprise', () => {
   });
 
   it('does not show "Confirm is required" warning initially', () => {
-    expect(spectator.query('ix-errors mat-error')).not.toExist();
+    expect(spectator.query('.tn-checkbox__error')).not.toExist();
   });
 
   it('shows "Confirm is required" warning only after checking and unchecking confirm', async () => {
     const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
     await checkbox.check();
-    expect(spectator.query('ix-errors mat-error')).not.toExist();
+    expect(spectator.query('.tn-checkbox__error')).not.toExist();
 
     await checkbox.uncheck();
-    expect(spectator.query('ix-errors mat-error')).toExist();
+    spectator.detectChanges();
+    expect(spectator.query('.tn-checkbox__error')).toExist();
   });
 
   it('should not render select/input and allow submission when only confirm is checked', async () => {

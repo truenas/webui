@@ -22,6 +22,7 @@
     [formControl]="form.controls.confirm"
     [label]="'Confirm' | translate"
     [required]="true"
+    [error]="form.controls.confirm.touched && form.controls.confirm.invalid ? ('Confirm is required' | translate) : null"
   ></tn-checkbox>
 
   <ix-form-actions tnDialogAction>

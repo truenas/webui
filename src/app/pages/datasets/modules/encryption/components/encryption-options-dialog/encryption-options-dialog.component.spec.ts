@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -75,6 +75,11 @@ describe('EncryptionOptionsDialogComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   }
 
+  async function setCheckbox(label: string, checked: boolean): Promise<void> {
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label }));
+    await (checked ? checkbox.check() : checkbox.uncheck());
+  }
+
   it('loads dataset pbkdf2iters when dialog is opened', async () => {
     await setupTest();
     expect(api.call)
@@ -88,10 +93,8 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('allows to inherit when there is an encrypted parent', async () => {
     await setupTest();
 
-    await form.fillForm({
-      'Inherit encryption properties from parent': true,
-      Confirm: true,
-    });
+    await setCheckbox('Inherit encryption properties from parent', true);
+    await setCheckbox('Confirm', true);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -112,10 +115,8 @@ describe('EncryptionOptionsDialogComponent', () => {
       },
     } as EncryptionOptionsDialogData);
 
-    await form.fillForm({
-      'Inherit encryption properties from parent': true,
-      Confirm: true,
-    });
+    await setCheckbox('Inherit encryption properties from parent', true);
+    await setCheckbox('Confirm', true);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -127,25 +128,24 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('hides other controls when Inherit checkbox is ticked', async () => {
     await setupTest();
 
-    await form.fillForm({
-      'Inherit encryption properties from parent': true,
-    });
+    await setCheckbox('Inherit encryption properties from parent', true);
 
+    // Inherit/Confirm are tn-checkbox (outside IxFormHarness); ticking Inherit
+    // hides the encryption-type controls, leaving only the Algorithm select.
     const labels = await form.getLabels();
-    expect(labels).toEqual(['Inherit encryption properties from parent', 'Algorithm', 'Confirm']);
+    expect(labels).toEqual(['Algorithm']);
+    expect(await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).toBeTruthy();
   });
 
   it('allows to set encryption to key', async () => {
     await setupTest();
 
     const key = 'k'.repeat(64);
-    await form.fillForm(
-      {
-        'Encryption Type': 'Key',
-        Key: 'k'.repeat(64),
-        Confirm: true,
-      },
-    );
+    await form.fillForm({
+      'Encryption Type': 'Key',
+      Key: 'k'.repeat(64),
+    });
+    await setCheckbox('Confirm', true);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -160,13 +160,9 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('allows key to be generated for when encryption type is key', async () => {
     await setupTest();
 
-    await form.fillForm(
-      {
-        'Encryption Type': 'Key',
-        'Generate Key': true,
-        Confirm: true,
-      },
-    );
+    await form.fillForm({ 'Encryption Type': 'Key' });
+    await setCheckbox('Generate Key', true);
+    await setCheckbox('Confirm', true);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -181,15 +177,13 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('allows to set encryption to passphrase', async () => {
     await setupTest();
 
-    await form.fillForm(
-      {
-        'Encryption Type': 'Passphrase',
-        Passphrase: '12345678',
-        'Confirm Passphrase': '12345678',
-        pbkdf2iters: '1300001',
-        Confirm: true,
-      },
-    );
+    await form.fillForm({
+      'Encryption Type': 'Passphrase',
+      Passphrase: '12345678',
+      'Confirm Passphrase': '12345678',
+      pbkdf2iters: '1300001',
+    });
+    await setCheckbox('Confirm', true);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -212,13 +206,11 @@ describe('EncryptionOptionsDialogComponent', () => {
     );
 
     const key = 'k'.repeat(64);
-    await form.fillForm(
-      {
-        'Encryption Type': 'Key',
-        Key: key,
-        Confirm: true,
-      },
-    );
+    await form.fillForm({
+      'Encryption Type': 'Key',
+      Key: key,
+    });
+    await setCheckbox('Confirm', true);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     expect(await saveButton.isDisabled()).toBe(false);

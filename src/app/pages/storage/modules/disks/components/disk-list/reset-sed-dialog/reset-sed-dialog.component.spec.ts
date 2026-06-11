@@ -2,7 +2,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -72,8 +72,12 @@ describe('ResetSedDialog', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Physical Security ID (PSID)': 'TESTPSID12345678',
-      'I understand this will permanently destroy all data on this disk': true,
     });
+
+    const understand = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'I understand this will permanently destroy all data on this disk' }),
+    );
+    await understand.check();
 
     const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Perform SED Reset' }));
     await resetButton.click();

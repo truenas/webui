@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
@@ -87,11 +87,16 @@ describe('DeleteVmDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
+  async function setCheckbox(label: string, checked: boolean): Promise<void> {
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label }));
+    await (checked ? checkbox.check() : checkbox.uncheck());
+  }
+
   it('deletes a VM when dialog is submitted', async () => {
+    await setCheckbox('Delete Virtual Machine Data?', true);
+    await setCheckbox('Force Delete?', true);
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Delete Virtual Machine Data?': true,
-      'Force Delete?': true,
       'Enter test below to confirm.': 'test',
     });
 
@@ -111,10 +116,7 @@ describe('DeleteVmDialogComponent', () => {
     expect(spectator.query('.devices-section')).not.toExist();
 
     // Check the checkbox
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Delete Virtual Machine Data?': true,
-    });
+    await setCheckbox('Delete Virtual Machine Data?', true);
     spectator.detectChanges();
 
     // Now devices section should be visible
@@ -124,21 +126,18 @@ describe('DeleteVmDialogComponent', () => {
   });
 
   it('hides devices list when "Delete Virtual Machine Data?" is unchecked', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-
     // Check then uncheck
-    await form.fillForm({ 'Delete Virtual Machine Data?': true });
+    await setCheckbox('Delete Virtual Machine Data?', true);
     spectator.detectChanges();
     expect(spectator.query('.devices-section')).toExist();
 
-    await form.fillForm({ 'Delete Virtual Machine Data?': false });
+    await setCheckbox('Delete Virtual Machine Data?', false);
     spectator.detectChanges();
     expect(spectator.query('.devices-section')).not.toExist();
   });
 
   it('displays correct device labels and filters out non-DISK/RAW devices', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'Delete Virtual Machine Data?': true });
+    await setCheckbox('Delete Virtual Machine Data?', true);
     spectator.detectChanges();
 
     const deviceItems = spectator.queryAll('.devices-list li');
@@ -154,8 +153,7 @@ describe('DeleteVmDialogComponent', () => {
     (spectator.component as any).devices.set([]);
     spectator.detectChanges();
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'Delete Virtual Machine Data?': true });
+    await setCheckbox('Delete Virtual Machine Data?', true);
     spectator.detectChanges();
 
     // Devices section should not be shown because there are no DISK/RAW devices

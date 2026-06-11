@@ -73,8 +73,10 @@ describe('ReplaceDiskDialogComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Member Disk': 'sdb (10 GiB)',
-      Force: true,
     });
+
+    const force = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
+    await force.check();
 
     const replaceButton = await loader.getHarness(TnButtonHarness.with({ label: 'Replace Disk' }));
     await replaceButton.click();
