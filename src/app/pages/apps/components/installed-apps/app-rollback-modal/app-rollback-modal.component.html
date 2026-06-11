@@ -12,12 +12,13 @@
       ></tn-select>
     </tn-form-field>
 
-    <tn-checkbox
-      testId="rollback-snapshot"
-      formControlName="rollback_snapshot"
-      [label]="'Roll back snapshots' | translate"
-      [tooltip]="'Roll back snapshots of ix_volumes' | translate"
-    ></tn-checkbox>
+    <tn-form-field [tooltip]="'Roll back snapshots of ix_volumes' | translate">
+      <tn-checkbox
+        testId="rollback-snapshot"
+        formControlName="rollback_snapshot"
+        [label]="'Roll back snapshots' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   </form>
 </div>
 <ix-form-actions tnDialogAction class="form-actions">

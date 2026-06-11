@@ -1,11 +1,12 @@
 <tn-dialog-shell testId="stop-vm" [title]="'Stop {vmName}?' | translate: { vmName: vm.name }">
 <div>
-  <tn-checkbox
-    testId="force-after-timeout"
-    [formControl]="forceAfterTimeoutCheckbox"
-    [label]="'Force Stop After Timeout' | translate"
-    [tooltip]="helptext.stop_dialog.forceTooltip | translate"
-  ></tn-checkbox>
+  <tn-form-field [tooltip]="helptext.stop_dialog.forceTooltip | translate">
+    <tn-checkbox
+      testId="force-after-timeout"
+      [formControl]="forceAfterTimeoutCheckbox"
+      [label]="'Force Stop After Timeout' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 </div>
 
 <ix-form-actions tnDialogAction>

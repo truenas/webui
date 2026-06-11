@@ -1,11 +1,12 @@
 <tn-dialog-shell testId="autotrim" [title]="'Pool Options for {pool}' | translate: { pool: pool.name }">
 <form class="ix-form-container" (submit)="onSubmit($event)">
-  <tn-checkbox
-    testId="autotrim"
-    [formControl]="autotrimControl"
-    [label]="'Auto TRIM' | translate"
-    [tooltip]="helptext.autotrimTooltip | translate"
-  ></tn-checkbox>
+  <tn-form-field [tooltip]="helptext.autotrimTooltip | translate">
+    <tn-checkbox
+      testId="autotrim"
+      [formControl]="autotrimControl"
+      [label]="'Auto TRIM' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
 </form>
 <ix-form-actions tnDialogAction>

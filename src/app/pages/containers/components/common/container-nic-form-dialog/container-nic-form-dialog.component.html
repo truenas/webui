@@ -21,7 +21,7 @@
     @if (isEditMode() || !useDefault()) {
       <tn-form-field
         [label]="'Mac Address' | translate"
-        [tooltip]="isEditMode() ? ('Leave empty to use default MAC address' | translate) : null"
+        [tooltip]="isEditMode() ? ('Leave empty to use default MAC address' | translate) : ''"
       >
         <tn-input
           testId="mac"
@@ -32,12 +32,13 @@
     }
 
     @if (isVirtio()) {
-      <tn-checkbox
-        testId="trust-guest-rx-filters"
-        formControlName="trust_guest_rx_filters"
-        [label]="'Trust Guest RX Filters' | translate"
-        [tooltip]="'Whether to trust guest OS receive filter settings for better performance.' | translate"
-      ></tn-checkbox>
+      <tn-form-field [tooltip]="'Whether to trust guest OS receive filter settings for better performance.' | translate">
+        <tn-checkbox
+          testId="trust-guest-rx-filters"
+          formControlName="trust_guest_rx_filters"
+          [label]="'Trust Guest RX Filters' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
     }
   </form>
 </div>

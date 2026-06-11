@@ -8,12 +8,13 @@
       [tooltip]="helptextSystemBootenv.memberDiskTooltip | translate"
       [required]="true"
     ></ix-unused-disk-select>
-    <tn-checkbox
-      testId="expand"
-      [formControlName]="expand.fcName"
-      [label]="expand.label | translate"
-      [tooltip]="expand.tooltip | translate"
-    ></tn-checkbox>
+    <tn-form-field [tooltip]="expand.tooltip | translate">
+      <tn-checkbox
+        testId="expand"
+        [formControlName]="expand.fcName"
+        [label]="expand.label | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   </ix-fieldset>
 
 </form>

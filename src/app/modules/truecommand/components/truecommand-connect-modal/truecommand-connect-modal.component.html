@@ -10,12 +10,13 @@
       ></tn-input>
     </tn-form-field>
 
-    <tn-checkbox
-      testId="enabled"
-      formControlName="enabled"
-      [label]="helptext.updateDialog.enabledLabel | translate"
-      [tooltip]="helptext.updateDialog.enabledTooltip | translate"
-    ></tn-checkbox>
+    <tn-form-field label="llllll" [tooltip]="helptext.updateDialog.enabledTooltip | translate">
+      <tn-checkbox
+        testId="enabled"
+        formControlName="enabled"
+        [label]="helptext.updateDialog.enabledLabel | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   </form>
 
   <tn-button

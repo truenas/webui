@@ -38,12 +38,13 @@
       [label]="'Confirm' | translate"
       [required]="true"
     ></tn-checkbox>
-    <tn-checkbox
-      testId="force"
-      formControlName="force"
-      [label]="'Force' | translate"
-      [tooltip]="forceCheckboxTooltip | translate"
-    ></tn-checkbox>
+    <tn-form-field [tooltip]="forceCheckboxTooltip | translate">
+      <tn-checkbox
+        testId="force"
+        formControlName="force"
+        [label]="'Force' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
 </form>
 <ix-form-actions tnDialogAction>

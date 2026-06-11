@@ -17,12 +17,13 @@
       ></tn-select>
     </tn-form-field>
     @if (isKey$ | async) {
-      <tn-checkbox
-        testId="generate-key"
-        formControlName="generate_key"
-        [label]="'Generate Key' | translate"
-        [tooltip]="tooltips.generate_key | translate"
-      ></tn-checkbox>
+      <tn-form-field [tooltip]="tooltips.generate_key | translate">
+        <tn-checkbox
+          testId="generate-key"
+          formControlName="generate_key"
+          [label]="'Generate Key' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
 
       @if (!(isSetToGenerateKey$ | async)) {
         <ix-textarea

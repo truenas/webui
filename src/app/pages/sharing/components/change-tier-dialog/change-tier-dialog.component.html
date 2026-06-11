@@ -59,12 +59,13 @@
   </div>
 
   <form [formGroup]="form">
-    <tn-checkbox
-      testId="move-existing-data"
-      formControlName="moveExistingData"
-      [label]="'Move existing data' | translate"
-      [tooltip]="'When checked, existing data will be migrated to the new storage tier. This may take some time depending on the amount of data.' | translate"
-    ></tn-checkbox>
+    <tn-form-field [tooltip]="'When checked, existing data will be migrated to the new storage tier. This may take some time depending on the amount of data.' | translate">
+      <tn-checkbox
+        testId="move-existing-data"
+        formControlName="moveExistingData"
+        [label]="'Move existing data' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
     @if (form.value.moveExistingData) {
       @if (estimatedRewriteSize(); as size) {

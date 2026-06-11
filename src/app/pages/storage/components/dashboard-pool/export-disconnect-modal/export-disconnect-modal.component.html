@@ -178,12 +178,13 @@
 
         <ix-fieldset>
           @if (isExportSelected) {
-            <tn-checkbox
-              testId="cascade"
-              formControlName="cascade"
-              [label]="helptext.exportDialog.cascade.label | translate"
-              [tooltip]="helptext.exportDialog.cascade.tooltip | translate"
-            ></tn-checkbox>
+            <tn-form-field [tooltip]="helptext.exportDialog.cascade.tooltip | translate">
+              <tn-checkbox
+                testId="cascade"
+                formControlName="cascade"
+                [label]="helptext.exportDialog.cascade.label | translate"
+              ></tn-checkbox>
+            </tn-form-field>
 
             <tn-checkbox
               testId="confirm"
@@ -194,12 +195,13 @@
           }
 
           @if (isDeleteSelected) {
-            <tn-checkbox
-              testId="cascade"
-              formControlName="cascade"
-              [label]="'Remove all related configurations' | translate"
-              [tooltip]="helptext.exportDialog.cascade.tooltip | translate"
-            ></tn-checkbox>
+            <tn-form-field [tooltip]="helptext.exportDialog.cascade.tooltip | translate">
+              <tn-checkbox
+                testId="cascade"
+                formControlName="cascade"
+                [label]="'Remove all related configurations' | translate"
+              ></tn-checkbox>
+            </tn-form-field>
 
             <tn-checkbox
               testId="confirm"
