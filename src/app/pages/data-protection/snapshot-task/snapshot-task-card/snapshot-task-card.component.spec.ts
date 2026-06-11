@@ -1,13 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuHarness } from '@angular/material/menu/testing';
-import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockPipe } from 'ng-mocks';
+import {
+  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -16,12 +15,7 @@ import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxCellScheduleComponent,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -30,13 +24,14 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
-import { TaskService } from 'app/services/task.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('SnapshotTaskCardComponent', () => {
   let spectator: Spectator<SnapshotTaskCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+
+  const rowMenuTrigger = '[data-test="button-snapshot-task-apps-test2-pending-more-action"]';
 
   beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
   afterEach(() => restoreDate());
@@ -83,14 +78,6 @@ describe('SnapshotTaskCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SnapshotTaskCardComponent,
-    overrideComponents: [
-      [
-        IxCellScheduleComponent, {
-          remove: { imports: [ScheduleDescriptionPipe] },
-          add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'At 00:00, every day'))] },
-        },
-      ],
-    ],
     providers: [
       mockAuth(),
       provideMockStore({
@@ -126,35 +113,33 @@ describe('SnapshotTaskCardComponent', () => {
         })),
       }),
       mockProvider(LocaleService),
-      mockProvider(TaskService, {
-        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
-      }),
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
     ],
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    spectator.click(rowMenuTrigger);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Pool/Dataset', 'Keep for', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['APPS/test2', '2 week(s)', 'At 00:00, every day', 'Disabled', '1 min. ago', '', 'Pending', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    expect(await table.getHeaderTexts()).toEqual(['Pool/Dataset', 'State', 'Enabled', '']);
+    expect(await table.getAllRowTexts()).toEqual([
+      ['APPS/test2', 'Pending', '', ''],
+    ]);
   });
 
   it('shows form to edit an existing Snapshot Task when Edit button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: /^Edit$/ });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
       data: snapshotTasks[0],
@@ -163,7 +148,7 @@ describe('SnapshotTaskCardComponent', () => {
   });
 
   it('shows form to create new Snapshot Task when Add button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
@@ -173,9 +158,8 @@ describe('SnapshotTaskCardComponent', () => {
   });
 
   it('deletes a Snapshot Task with confirmation when Delete button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
@@ -190,8 +174,8 @@ describe('SnapshotTaskCardComponent', () => {
     expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 
-  it('updates Snapshot Task Enabled status once mat-toggle is updated', async () => {
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 5);
+  it('updates Snapshot Task Enabled status once toggle is updated', async () => {
+    const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
 
     expect(await toggle.isChecked()).toBe(false);
 

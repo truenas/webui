@@ -1,50 +1,50 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnCardComponent,
+  TnCardHeaderDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnIconComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTooltipDirective,
+  type TnCardAction,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import {
   catchError, EMPTY, filter, of, switchMap, tap,
 } from 'rxjs';
-import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import {
-  relativeDateColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import {
-  stateButtonColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import {
-  toggleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -54,6 +54,12 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import {
+  ShareActionsCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+import {
+  ShareToggleCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -63,22 +69,24 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./replication-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderDirective,
     TestDirective,
     RouterLink,
     TnIconComponent,
-    MatTooltip,
-    RequiresRolesDirective,
-    MatButton,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTooltipDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    IxTablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
-    EmptyComponent,
+    TnEmptyComponent,
     CardAlertBadgeComponent,
+    ShareToggleCellComponent,
+    ShareActionsCellComponent,
+    TaskStateCellComponent,
   ],
 })
 export class ReplicationTaskCardComponent implements OnInit {
@@ -93,82 +101,84 @@ export class ReplicationTaskCardComponent implements OnInit {
   private download = inject(DownloadService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
   dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, JobState>();
   replicationTasks: ReplicationTask[] = [];
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
-  protected readonly emptyConfig = replicationTaskEmptyConfig;
   protected readonly cardMenuPath = ['data-protection', 'replication'];
 
-  columns = createTable<ReplicationTask>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Last Snapshot'),
-      getValue: (task) => {
-        return task.state.last_snapshot
-          ? task.state.last_snapshot
-          : this.translate.instant('No snapshots sent yet');
-      },
-    }),
-    toggleColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-      onRowToggle: (row: ReplicationTask) => this.onChangeEnabledState(row),
-      requiredRoles: this.requiredRoles,
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      getValue: (row) => row.state.state,
-      getJob: (row) => row.job || null,
-      cssClass: 'state-button',
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Last Run'),
-      getValue: (row) => row.state?.datetime?.$date,
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.editReplicationTask(row),
-        },
-        {
-          iconName: tnIconMarker('play-circle', 'mdi'),
-          tooltip: this.translate.instant('Run job'),
-          hidden: (row) => of(row.job?.state === JobState.Running),
-          onClick: (row) => this.runNow(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('restore', 'mdi'),
-          tooltip: this.translate.instant('Restore'),
-          onClick: (row) => this.restore(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('download', 'mdi'),
-          tooltip: this.translate.instant('Download encryption keys'),
-          hidden: (row) => of(!row.has_encrypted_dataset_keys),
-          onClick: (row) => this.downloadKeys(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'replication-task-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
+  private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
+
+  protected addAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasAddRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Add'),
+      testId: 'button-replication-task-add',
+      handler: () => this.addReplicationTask(),
+    };
   });
+
+  protected readonly displayedColumns = ['name', 'state', 'enabled', 'actions'];
+
+  protected readonly actions: IconActionConfig<ReplicationTask>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.editReplicationTask(row),
+    },
+    {
+      iconName: tnIconMarker('play-circle', 'mdi'),
+      tooltip: this.translate.instant('Run job'),
+      hidden: (row) => of(row.job?.state === JobState.Running),
+      onClick: (row) => this.runNow(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('restore', 'mdi'),
+      tooltip: this.translate.instant('Restore'),
+      onClick: (row) => this.restore(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('download', 'mdi'),
+      tooltip: this.translate.instant('Download encryption keys'),
+      hidden: (row) => of(!row.has_encrypted_dataset_keys),
+      onClick: (row) => this.downloadKeys(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected readonly trackByTaskId = (_index: number, row: ReplicationTask): number => row.id;
+
+  protected uniqueRowTag(row: ReplicationTask): string {
+    return convertStringToId('replication-task-' + row.name);
+  }
+
+  protected ariaLabel(row: ReplicationTask): string {
+    return [row.name, this.translate.instant('Replication Task')].join(' ');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<ReplicationTask>(event, this.displayedColumns));
+  }
+
+  private setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 0,
+      direction: SortDirection.Asc,
+      propertyName: 'name',
+    });
+  }
 
   ngOnInit(): void {
     const replicationTasks$ = this.api.call('replication.query', [[], {
@@ -178,6 +188,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
+    this.setDefaultSort();
     this.getReplicationTasks();
   }
 
@@ -258,7 +269,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       ).subscribe();
   }
 
-  private onChangeEnabledState(replicationTask: ReplicationTask): void {
+  protected onChangeEnabledState(replicationTask: ReplicationTask): void {
     this.api
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))

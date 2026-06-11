@@ -1,53 +1,94 @@
-<mat-card>
-  <mat-toolbar-row>
-    <h3 class="card-title">
-      <a
-        [ixTest]="['cloud-backup-task', 'open']"
-        [routerLink]="['/data-protection', 'cloud-backup']"
-        [matTooltip]="'Open TrueCloud Backup Tasks list in full page' | translate"
-      >
-        {{ 'TrueCloud Backup Tasks' | translate }}
-        <tn-icon
-          name="open-in-new"
-          library="mdi"
-          class="title-icon"
-          [attr.aria-label]="'Open TrueCloud Backup Tasks list in full page' | translate"
-        ></tn-icon>
-      </a>
-      <ix-card-alert-badge [menuPath]="cardMenuPath" />
-    </h3>
-    <div class="actions">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['cloud-backup', 'add']"
-        [attr.aria-label]="'Add TrueCloud Backup Task' | translate"
-        (click)="openForm()"
-      >
-        {{ 'Add' | translate }}
-      </button>
-    </div>
-  </mat-toolbar-row>
+<tn-card
+  padding="small"
+  [primaryAction]="addAction()"
+>
+  <h3 tnCardHeader class="card-title">
+    <a
+      [ixTest]="['cloud-backup-task', 'open']"
+      [routerLink]="['/data-protection', 'cloud-backup']"
+      [tnTooltip]="'Open TrueCloud Backup Tasks list in full page' | translate"
+    >
+      {{ 'TrueCloud Backup Tasks' | translate }}
+      <tn-icon
+        name="open-in-new"
+        library="mdi"
+        class="title-icon"
+        [attr.aria-label]="'Open TrueCloud Backup Tasks list in full page' | translate"
+      ></tn-icon>
+    </a>
+    <ix-card-alert-badge [menuPath]="cardMenuPath" />
+  </h3>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
+    <tn-empty
+      icon="true-cloud"
+      iconLibrary="custom"
+      iconSize="56px"
+      [title]="'Back up to the decentralized network provided by Storj in partnership with TrueNAS.' | translate"
+    ></tn-empty>
   } @else {
-    <ix-table
+    <tn-table
       class="table"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns"
+      [trackBy]="trackByTaskId"
+      [loading]="!!(dataProvider.isLoading$ | async)"
+      (sortChange)="onSortChange($event)"
     >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      ></tbody>
-    </ix-table>
+      <ng-container [tnColumnDef]="'description'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.description ? (row.description | translate) : ''"
+          >{{ row.description }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'state'" [width]="'120px'">
+        <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-task-state-cell
+            [state]="row.job?.state"
+            [job]="row.job"
+            [testId]="[('State' | translate), uniqueRowTag(row), 'row-state']"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-task-state-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'enabled'" [width]="'70px'">
+        <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-share-toggle-cell
+            [title]="'Enabled' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+            [checked]="!!row.enabled"
+            [requiredRoles]="requiredRoles"
+            (toggled)="onChangeEnabledState(row)"
+          ></ix-share-toggle-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-share-actions-cell
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-share-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
+
+    <ix-table-pager-show-more
+      [pageSize]="4"
+      [dataProvider]="dataProvider"
+      [ixTestOverride]="['cloud-backup-task']"
+      [routerLink]="['/data-protection', 'cloud-backup']"
+    ></ix-table-pager-show-more>
   }
-</mat-card>
+</tn-card>

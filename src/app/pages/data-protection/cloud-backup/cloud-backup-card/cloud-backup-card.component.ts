@@ -1,18 +1,27 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnCardComponent,
+  TnCardHeaderDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnIconComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTooltipDirective,
+  type TnCardAction,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
-import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -20,30 +29,29 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import {
-  toggleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
+import {
+  ShareActionsCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+import {
+  ShareToggleCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -52,22 +60,24 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrl: './cloud-backup-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderDirective,
     TestDirective,
     RouterLink,
     TnIconComponent,
-    MatTooltip,
-    RequiresRolesDirective,
-    MatButton,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTooltipDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    IxTablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
-    EmptyComponent,
+    TnEmptyComponent,
     CardAlertBadgeComponent,
+    ShareToggleCellComponent,
+    ShareActionsCellComponent,
+    TaskStateCellComponent,
   ],
 })
 export class CloudBackupCardComponent implements OnInit {
@@ -82,84 +92,83 @@ export class CloudBackupCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
   cloudBackups: CloudBackup[] = [];
   dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;
-  protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
   protected readonly cardMenuPath = ['data-protection', 'cloud-backup'];
   updatedCount = signal(0);
 
-  columns = createTable<CloudBackup>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'description',
-    }),
-    toggleColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-      onRowToggle: (row) => this.onChangeEnabledState(row),
-      requiredRoles: this.requiredRoles,
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Snapshot'),
-      propertyName: 'snapshot',
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      getValue: (row) => row?.job?.state,
-      getJob: (row) => row.job,
-      cssClass: 'state-button',
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Last Run'),
-      getValue: (row) => row.job?.time_finished?.$date,
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.openForm(row),
-        },
-        {
-          iconName: tnIconMarker('play-circle', 'mdi'),
-          tooltip: this.translate.instant('Run job'),
-          hidden: (row) => of(row.job?.state === JobState.Running),
-          onClick: (row) => this.runNow(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('eye', 'mdi'),
-          tooltip: this.translate.instant('View Details'),
-          onClick: (row) => this.router.navigate(['/data-protection', 'cloud-backup'], { fragment: row.id.toString() }),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'cloud-backup-' + row.description,
-    ariaLabels: (row) => [row.description, this.translate.instant('Cloud Backup')],
+  private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
+
+  protected addAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasAddRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Add'),
+      testId: 'button-cloud-backup-add',
+      handler: () => this.openForm(),
+    };
   });
+
+  protected readonly displayedColumns = ['description', 'state', 'enabled', 'actions'];
+
+  protected readonly actions: IconActionConfig<CloudBackup>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.openForm(row),
+    },
+    {
+      iconName: tnIconMarker('play-circle', 'mdi'),
+      tooltip: this.translate.instant('Run job'),
+      hidden: (row) => of(row.job?.state === JobState.Running),
+      onClick: (row) => this.runNow(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('eye', 'mdi'),
+      tooltip: this.translate.instant('View Details'),
+      onClick: (row) => this.router.navigate(['/data-protection', 'cloud-backup'], { fragment: row.id.toString() }),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected readonly trackByTaskId = (_index: number, row: CloudBackup): number => row.id;
+
+  protected uniqueRowTag(row: CloudBackup): string {
+    return convertStringToId('cloud-backup-' + row.description);
+  }
+
+  protected ariaLabel(row: CloudBackup): string {
+    return [row.description, this.translate.instant('Cloud Backup')].join(' ');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<CloudBackup>(event, this.displayedColumns));
+  }
 
   ngOnInit(): void {
     const cloudBackups$ = this.api.call('cloud_backup.query').pipe(
       tap((cloudBackups) => this.cloudBackups = cloudBackups),
     );
     this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
+    this.setDefaultSort();
     this.getCloudBackups();
   }
 
   setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 1,
+      active: 0,
       direction: SortDirection.Asc,
       propertyName: 'description',
     });
@@ -215,7 +224,7 @@ export class CloudBackupCardComponent implements OnInit {
     ).subscribe(() => this.getCloudBackups());
   }
 
-  private onChangeEnabledState(cloudBackup: CloudBackup): void {
+  protected onChangeEnabledState(cloudBackup: CloudBackup): void {
     this.updatedCount.update((count) => count + 1);
     this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled }])

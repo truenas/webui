@@ -1,0 +1,20 @@
+@if (state(); as currentState) {
+  <button
+    type="button"
+    tnTooltipPosition="above"
+    [class]="'state-button ' + stateClass()"
+    [ixTest]="testId()"
+    [tnTooltip]="tooltip()"
+    [attr.aria-label]="ariaLabel()"
+    (click)="$event.stopPropagation(); onButtonClick()"
+  >
+    {{ currentState | jobStateDisplay }}
+    @if (warnings().length > 0) {
+      <span class="label-warning-icon">
+        <tn-icon name="alert" library="mdi" customSize="14px"></tn-icon>
+      </span>
+    }
+  </button>
+} @else {
+  {{ 'N/A' | translate }}
+}

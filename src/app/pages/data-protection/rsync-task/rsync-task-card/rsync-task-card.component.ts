@@ -1,19 +1,28 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnCardComponent,
+  TnCardHeaderDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnIconComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTooltipDirective,
+  type TnCardAction,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
-import { rsyncTaskEmptyConfig } from 'app/constants/empty-configs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
@@ -21,33 +30,31 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTask, RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import {
-  scheduleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
-import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
+import {
+  ShareActionsCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+import {
+  ShareToggleCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 
 @Component({
@@ -56,22 +63,24 @@ import { AppState } from 'app/store';
   styleUrls: ['./rsync-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderDirective,
     TestDirective,
     RouterLink,
     TnIconComponent,
-    MatTooltip,
-    RequiresRolesDirective,
-    MatButton,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTooltipDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    IxTablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
-    EmptyComponent,
+    TnEmptyComponent,
     CardAlertBadgeComponent,
+    ShareToggleCellComponent,
+    ShareActionsCellComponent,
+    TaskStateCellComponent,
   ],
 })
 export class RsyncTaskCardComponent implements OnInit {
@@ -80,82 +89,77 @@ export class RsyncTaskCardComponent implements OnInit {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private loader = inject(LoaderService);
-  private taskService = inject(TaskService);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
-  protected readonly emptyConfig = rsyncTaskEmptyConfig;
   protected readonly cardMenuPath = ['data-protection', 'rsync'];
+
+  private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
+
+  protected addAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasAddRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Add'),
+      testId: 'button-rsync-task-add',
+      handler: () => this.openForm(),
+    };
+  });
 
   rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;
   jobStates = new Map<number, JobState>();
 
-  columns = createTable<RsyncTaskUi>([
-    textColumn({
-      title: this.translate.instant('Path'),
-      propertyName: 'path',
-    }),
-    textColumn({
-      title: this.translate.instant('Remote Host'),
-      propertyName: 'remotehost',
-    }),
-    scheduleColumn({
-      title: this.translate.instant('Frequency'),
-      getValue: (row) => row.schedule,
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Next Run'),
-      getValue: (row) => (row.enabled
-        ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
-        : this.translate.instant('Disabled')),
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Last Run'),
-      getValue: (row) => row.job?.time_finished?.$date,
-    }),
-    toggleColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
+  protected readonly displayedColumns = ['path', 'state', 'enabled', 'actions'];
+
+  protected readonly actions: IconActionConfig<RsyncTaskUi>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.openForm(row),
+    },
+    {
+      iconName: tnIconMarker('play-circle', 'mdi'),
+      tooltip: this.translate.instant('Run job'),
       requiredRoles: this.requiredRoles,
-      onRowToggle: (row: RsyncTaskUi) => this.onChangeEnabledState(row),
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      getValue: (row) => row.state.state,
-      getJob: (row) => row.job,
-      cssClass: 'state-button',
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.openForm(row),
-        },
-        {
-          iconName: tnIconMarker('play-circle', 'mdi'),
-          tooltip: this.translate.instant('Run job'),
-          requiredRoles: this.requiredRoles,
-          hidden: (row) => of(row.job?.state === JobState.Running),
-          onClick: (row) => this.runNow(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.doDelete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'card-rsync-task-' + row.path + '-' + row.remotehost,
-    ariaLabels: (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')],
-  });
+      hidden: (row) => of(row.job?.state === JobState.Running),
+      onClick: (row) => this.runNow(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => this.doDelete(row),
+    },
+  ];
+
+  protected readonly trackByTaskId = (_index: number, row: RsyncTaskUi): number => row.id;
+
+  protected uniqueRowTag(row: RsyncTaskUi): string {
+    return convertStringToId('card-rsync-task-' + row.path + '-' + row.remotehost);
+  }
+
+  protected ariaLabel(row: RsyncTaskUi): string {
+    return [row.path, row.remotehost, this.translate.instant('Rsync Task')].join(' ');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<RsyncTaskUi>(event, this.displayedColumns));
+  }
+
+  private setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 0,
+      direction: SortDirection.Asc,
+      propertyName: 'path',
+    });
+  }
 
   ngOnInit(): void {
     const rsyncTasks$ = this.api.call('rsynctask.query').pipe(
@@ -164,6 +168,7 @@ export class RsyncTaskCardComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<RsyncTaskUi>(rsyncTasks$);
+    this.setDefaultSort();
     this.getRsyncTasks();
   }
 
@@ -246,7 +251,7 @@ export class RsyncTaskCardComponent implements OnInit {
     });
   }
 
-  private onChangeEnabledState(rsyncTask: RsyncTaskUi): void {
+  protected onChangeEnabledState(rsyncTask: RsyncTaskUi): void {
     this.api
       .call('rsynctask.update', [rsyncTask.id, { enabled: !rsyncTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))

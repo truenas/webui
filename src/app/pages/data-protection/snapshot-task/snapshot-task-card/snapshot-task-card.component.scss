@@ -7,19 +7,8 @@
   }
 }
 
-ix-table {
-  height: 100%;
-}
-
 .footer-actions {
   display: flex;
   gap: 8px;
   padding: 10px;
-}
-
-:host ::ng-deep {
-  .state-button {
-    text-overflow: inherit !important;
-    width: 78px;
-  }
 }
