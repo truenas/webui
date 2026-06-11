@@ -975,3 +975,11 @@ tn-form-field {
   margin-bottom: 12px;
   padding: 8px 0;
 }
+
+// ix-checkbox rendered inside a mat-checkbox touch target (~36px row), so
+// consecutive checkboxes had clear separation. tn-checkbox is a compact row
+// with no spacing — restore breathing room between checkboxes / adjacent fields.
+tn-checkbox {
+  display: block;
+  padding: 6px 0;
+}
