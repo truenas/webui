@@ -1,25 +1,27 @@
-@if ((loggedInUser$ | async); as user) {
+@if (loggedInUser(); as user) {
   <div class="user-menu-wrapper">
-    <button
-      name="Settings"
-      mat-icon-button
+    <!-- Single trigger: the icon button projects the username text beside its icon,
+         so the name and icon are one focusable, accessible menu trigger. -->
+    <tn-icon-button
       class="topbar-button-right"
-      ixTest="user-menu"
-      [matTooltip]="tooltips.settings | translate"
-      [ixUiSearch]="searchableElements.elements.userMenu"
+      name="account-circle"
+      library="mdi"
+      size="lg"
+      testId="user-menu"
+      [dense]="true"
+      [ariaLabel]="('Open user menu for' | translate) + ' ' + user.pw_name"
+      [tooltip]="tooltips.settings | translate"
       [matMenuTriggerFor]="userMenu"
+      [ixUiSearch]="searchableElements.elements.userMenu"
     >
       @if (user.pw_name) {
         <span
           class="username"
-          [matTooltip]="user.pw_name"
-          [matMenuTriggerFor]="userMenu"
-        >
-          {{ user.pw_name }}
-        </span>
+          tnTestIdType="button"
+          [tnTestId]="'user-menu-name'"
+        >{{ user.pw_name }}</span>
       }
-      <tn-icon size="lg" name="account-circle" library="mdi"></tn-icon>
-    </button>
+    </tn-icon-button>
 
     <mat-menu #userMenu="matMenu">
       @if (user.account_attributes?.includes(AccountAttribute.Local)) {
@@ -35,7 +37,7 @@
         </button>
       }
 
-      @if (isTwoFactorEnabledGlobally$ | async) {
+      @if (isTwoFactorEnabledGlobally()) {
         <button
           name="settings-2fa"
           mat-menu-item

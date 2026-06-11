@@ -10,6 +10,7 @@
 
   <div class="input-container" [class.disabled]="disabledState">
     <mat-select
+      #matSelect="matSelect"
       [required]="required()"
       [compareWith]="compareWith()"
       [disabled]="disabledState"
@@ -64,6 +65,7 @@
             [disabled]="option.disabled"
             [ixTest]="[controlDirective.name, option.label]"
             [matTooltip]="option.hoverTooltip ? (option.hoverTooltip | translate) : ''"
+            [matTooltipDisabled]="!matSelect.panelOpen"
             [attr.aria-label]="option.label | translate"
           >
             @if (multiple()) {

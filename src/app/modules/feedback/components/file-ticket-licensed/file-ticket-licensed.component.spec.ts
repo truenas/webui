@@ -1,12 +1,13 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { NgTemplateOutlet } from '@angular/common';
 import { ReactiveFormsModule, ValidationErrors } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
-  createComponentFactory, createSpyObject, mockProvider, Spectator,
+  createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -21,17 +22,18 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 
 describe('FileTicketLicensedFormComponent', () => {
-  let spectator: Spectator<FileTicketLicensedComponent>;
+  let spectator: SpectatorHost<FileTicketLicensedComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let submitButton: MatButtonHarness;
+  let submitButton: TnButtonHarness;
   let feedbackService: FeedbackService;
-  const dialogRef = createSpyObject(MatDialogRef);
+  const dialogRef = createSpyObject(DialogRef);
 
-  const createComponent = createComponentFactory({
+  const createHost = createHostFactory({
     component: FileTicketLicensedComponent,
     imports: [
       ReactiveFormsModule,
+      NgTemplateOutlet,
     ],
     declarations: [],
     providers: [
@@ -55,12 +57,15 @@ describe('FileTicketLicensedFormComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent({
-      props: { dialogRef },
-    });
+    // The dialog projects the form's actions into the shell footer; render that template here.
+    spectator = createHost(
+      `<ix-file-ticket-licensed #ticket [dialogRef]="dialogRef"></ix-file-ticket-licensed>
+       <ng-container [ngTemplateOutlet]="ticket.dialogActions() ?? null"></ng-container>`,
+      { hostProps: { dialogRef } },
+    );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
+    submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));
     feedbackService = spectator.inject(FeedbackService);
   });
 
@@ -81,14 +86,14 @@ describe('FileTicketLicensedFormComponent', () => {
   it('opens window when User Guide is pressed', async () => {
     const window = spectator.inject<Window>(WINDOW);
     jest.spyOn(window, 'open');
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'User Guide' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'User Guide' }));
     await button.click();
 
     expect(window.open).toHaveBeenCalledWith('https://www.truenas.com/docs/hub/');
   });
 
   it('redirects to eula page when EULA is pressed', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'EULA' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'EULA' }));
     await button.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['system', 'support', 'eula']);

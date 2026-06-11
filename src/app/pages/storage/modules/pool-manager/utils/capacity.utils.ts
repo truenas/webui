@@ -8,8 +8,8 @@ export function categoryCapacity(topologyCategory: PoolManagerTopologyCategory):
     return sum + vdevCapacity({
       vdev,
       layout: topologyCategory.layout,
-      draidDataDisks: topologyCategory.draidDataDisks || undefined,
-      draidSpareDisks: topologyCategory.draidSpareDisks || undefined,
+      draidDataDisks: topologyCategory.draidDataDisks ?? undefined,
+      draidSpareDisks: topologyCategory.draidSpareDisks ?? undefined,
     });
   }, 0);
 }
@@ -83,7 +83,11 @@ function dRaidCapacity(values: {
   size: number;
   spares: number;
 }): number {
-  return (values.children - values.spares)
+  const capacity = (values.children - values.spares)
     * (values.dataPerGroup / (values.dataPerGroup + values.parity))
     * values.size;
+
+  // Configuration may be incomplete (e.g. data disks not yet selected),
+  // which would make the estimate NaN. Treat that as no estimate.
+  return Number.isFinite(capacity) ? capacity : 0;
 }

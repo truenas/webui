@@ -20,7 +20,6 @@ import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provide
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { auditDisplayedColumns, AuditListComponent } from 'app/pages/audit/components/audit-list/audit-list.component';
@@ -41,7 +40,6 @@ const messageTimestampColumnIndex = auditDisplayedColumns.indexOf('message_times
   imports: [
     PageHeaderComponent,
     RouterLink,
-    TestDirective,
     TnButtonComponent,
     TnButtonToggleGroupComponent,
     TnButtonToggleComponent,

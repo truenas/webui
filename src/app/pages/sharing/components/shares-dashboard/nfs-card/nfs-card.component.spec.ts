@@ -1,11 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuHarness } from '@angular/material/menu/testing';
-import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -17,7 +18,6 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
@@ -25,9 +25,9 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -36,7 +36,11 @@ import { selectServices } from 'app/store/services/services.selectors';
 describe('NfsCardComponent', () => {
   let spectator: Spectator<NfsCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+
+  // The "⋮" row-action trigger test id, derived from the row's uniqueRowTag
+  // (path + comment, normalized: /mnt/x + sweet -> card-nfs-share-mnt-x-sweet).
+  const rowMenuTrigger = '[data-test="button-card-nfs-share-mnt-x-sweet-more-action"]';
 
   const nfsShares = [
     {
@@ -68,7 +72,6 @@ describe('NfsCardComponent', () => {
   const commonDeclarations = [
     MockComponents(
       ServiceStateButtonComponent,
-      ServiceExtraActionsComponent,
     ),
   ];
 
@@ -90,6 +93,7 @@ describe('NfsCardComponent', () => {
     mockProvider(SlideIn, {
       open: jest.fn(() => SlideInResult.empty()),
     }),
+    mockProvider(SnackbarService),
     provideMockStore({
       initialState: {
         alerts: {
@@ -119,34 +123,37 @@ describe('NfsCardComponent', () => {
       mockApi([
         mockCall('sharing.nfs.query', nfsShares),
         mockCall('sharing.nfs.delete'),
-        mockCall('sharing.nfs.update'),
+        // Return a truthy share so accumulateLoadingState's `!!value` filter
+        // lets the success handler (reload + toast) run.
+        mockCall('sharing.nfs.update', { id: 10 } as NfsShare),
         mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
       ]),
       mockSharingTierService({ enabled: false }),
     ],
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    spectator.click(rowMenuTrigger);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   describe('with active pool shares', () => {
     beforeEach(async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      table = await loader.getHarness(IxTableHarness);
+      table = await loader.getHarness(TnTableHarness);
     });
 
     it('should show table rows', async () => {
-      const expectedRows = [
-        ['Path', 'Description', 'Enabled', ''],
+      expect(await table.getHeaderTexts()).toEqual(['Path', 'Description', 'Enabled', '']);
+      expect(await table.getAllRowTexts()).toEqual([
         ['/mnt/x', 'sweet', '', ''],
-      ];
-
-      const cells = await table.getCellTexts();
-      expect(cells).toEqual(expectedRows);
+      ]);
     });
 
     it('shows form to edit an existing NFS Share when Edit button is pressed', async () => {
-      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-      await menu.open();
-      await menu.clickItem({ text: 'Edit' });
+      const menu = await openRowMenu();
+      await menu.clickItem({ label: /^Edit$/ });
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent, {
         data: { existingNfsShare: expect.objectContaining(nfsShares[0]) },
@@ -154,15 +161,14 @@ describe('NfsCardComponent', () => {
     });
 
     it('shows confirmation to delete NFS Share when Delete button is pressed', async () => {
-      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-      await menu.open();
-      await menu.clickItem({ text: 'Delete' });
+      const menu = await openRowMenu();
+      await menu.clickItem({ label: 'Delete' });
 
       expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalled();
     });
 
-    it('updates NFS Enabled status once mat-toggle is updated', async () => {
-      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 2);
+    it('updates NFS Enabled status once toggle is updated', async () => {
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
 
       expect(await toggle.isChecked()).toBe(true);
 
@@ -172,10 +178,11 @@ describe('NfsCardComponent', () => {
         'sharing.nfs.update',
         [10, { enabled: false }],
       );
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('NFS share «/mnt/x» disabled');
     });
 
     it('should not disable toggle when share is on an active pool', async () => {
-      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 2);
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
       expect(await toggle.isDisabled()).toBe(false);
     });
   });
@@ -193,7 +200,7 @@ describe('NfsCardComponent', () => {
             path: '/mnt/exported/data',
           }] as NfsShare[]),
           mockCall('sharing.nfs.delete'),
-          mockCall('sharing.nfs.update'),
+          mockCall('sharing.nfs.update', { id: 10 } as NfsShare),
           mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
         ]),
       ],
@@ -202,11 +209,11 @@ describe('NfsCardComponent', () => {
     beforeEach(async () => {
       spectator = createExportedComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      table = await loader.getHarness(IxTableHarness);
+      table = await loader.getHarness(TnTableHarness);
     });
 
     it('should disable toggle when share is on an exported pool', async () => {
-      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 2);
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
       expect(await toggle.isDisabled()).toBe(true);
     });
   });
@@ -224,7 +231,7 @@ describe('NfsCardComponent', () => {
             locked: true,
           }] as NfsShare[]),
           mockCall('sharing.nfs.delete'),
-          mockCall('sharing.nfs.update'),
+          mockCall('sharing.nfs.update', { id: 10 } as NfsShare),
           mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
         ]),
       ],
@@ -233,11 +240,11 @@ describe('NfsCardComponent', () => {
     beforeEach(async () => {
       spectator = createLockedComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      table = await loader.getHarness(IxTableHarness);
+      table = await loader.getHarness(TnTableHarness);
     });
 
     it('should disable toggle when share is locked', async () => {
-      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 2);
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
       expect(await toggle.isDisabled()).toBe(true);
     });
   });

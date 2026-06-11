@@ -1,0 +1,38 @@
+<div class="actions">
+  @if (mode() === 'inline' || visibleActions().length === 1) {
+    @for (action of visibleActions(); track action) {
+      @let isDisabled = action.disabled ? (action.disabled(row()) | async) : false;
+      @let tooltip = action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : (action.tooltip || '');
+      <tn-icon-button
+        *ixRequiresRoles="(action.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
+        [name]="action.iconName"
+        [testId]="[uniqueRowTag(), action.iconName, 'row-action']"
+        [ariaLabel]="(tooltip || '') + ' ' + ariaLabel()"
+        [tooltip]="isDisabled ? getDisabledTooltip(action) : (tooltip || '')"
+        [disabled]="!!isDisabled"
+        (onClick)="onActionClick($event, action)"
+      ></tn-icon-button>
+    }
+  } @else if (visibleActions().length > 1) {
+    <tn-icon-button
+      name="dots-vertical"
+      library="mdi"
+      [testId]="[uniqueRowTag(), 'more-action']"
+      [ariaLabel]="'Show Actions' | translate"
+      [tooltip]="'Show Actions' | translate"
+      [tnMenuTriggerFor]="actionMenu"
+    ></tn-icon-button>
+    <tn-menu #actionMenu>
+      @for (action of visibleActions(); track action) {
+        @let isDisabled = action.disabled ? (action.disabled(row()) | async) : false;
+        <tn-menu-item
+          *ixRequiresRoles="(action.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
+          [icon]="action.iconName"
+          [testId]="menuItemTestId(action)"
+          [disabled]="!!isDisabled"
+          (itemClick)="onActionClick(null, action)"
+        >{{ action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip }}</tn-menu-item>
+      }
+    </tn-menu>
+  }
+</div>

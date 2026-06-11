@@ -4510,7 +4510,7 @@ __metadata:
 
 "@truenas/common-typescript@github:truenas/tn-common-typescript#master":
   version: 1.0.0
-  resolution: "@truenas/common-typescript@https://github.com/truenas/tn-common-typescript.git#commit=fc0c205dd2b4e6984cd4bc63f401879b94a7655d"
+  resolution: "@truenas/common-typescript@https://github.com/truenas/tn-common-typescript.git#commit=c1d4ea151b72550552864e1f430f1d532e7ace18"
   dependencies:
     "@eslint/compat": "npm:~1.4.1"
     "@eslint/js": "npm:~9.39.1"
@@ -4532,13 +4532,13 @@ __metadata:
     typescript-eslint: "npm:~8.46.3"
   peerDependencies:
     jest: "*"
-  checksum: 10/92fce61541034d18f3d2f8b3cce108057e6e2c613248aeffcfee1f790395334b6dc0ccd30a83b19baae70d1d5c9cf419d2e10f85d8bce2104c0b3f23112602f2
+  checksum: 10/3c127ea8acbd8bfbb0b0e3424571f2f1973f3717fd438710e3c23f853669b0d5848b54bf908d08c146704e175eec7632d97e54bcda17edcdd67d01c4d09585d8
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.1.64":
-  version: 0.1.64
-  resolution: "@truenas/ui-components@npm:0.1.64"
+"@truenas/ui-components@npm:~0.1.75":
+  version: 0.1.75
+  resolution: "@truenas/ui-components@npm:0.1.75"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -4558,7 +4558,7 @@ __metadata:
     "@mdi/js": ^7.4.47
   bin:
     truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/953ad27bd0028d8b19ad1ffee908efd1201d89c35eb1afc0ef511b8dc328f0509cd5e53b0bc69df9b5bd4c917d7a254e22184aa9c69a0a24f63b533efb43b663
+  checksum: 10/a296dd258834ecc6325224eccf03bea4e39acca3fe59ac2596778a0c46ba2da9064eb033f57c51921ccfeba5c1c61fbcc309a34d9b67c0d02a5cf5bf04bbee57
   languageName: node
   linkType: hard
 
@@ -16007,7 +16007,7 @@ __metadata:
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.1.64"
+    "@truenas/ui-components": "npm:~0.1.75"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"

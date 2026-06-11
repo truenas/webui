@@ -1,11 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -31,7 +30,7 @@ import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -51,8 +50,6 @@ interface BindIp {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -65,12 +62,12 @@ interface BindIp {
     IxListItemComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
   ],
 })
-export class ServiceSmbComponent implements OnInit {
+export class ServiceSmbComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
@@ -81,9 +78,8 @@ export class ServiceSmbComponent implements OnInit {
   private truenasConnectService = inject(TruenasConnectService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
-  protected isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
   protected hasIncompatibleShares = signal(false);
   protected isSmb1Enabled = signal(false);
   protected readonly minimumProtocolOptions$ = of(mapToOptions(smbMinProtocolLabels, this.translate));
@@ -116,9 +112,7 @@ export class ServiceSmbComponent implements OnInit {
    * incompatible shares, and SMB1 status.
    */
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+    super();
 
     effect(() => {
       const isEnabled = this.isSpotlightEnabled();
@@ -141,7 +135,7 @@ export class ServiceSmbComponent implements OnInit {
 
   protected isBasicMode = true;
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
     netbiosalias: [[] as string[], [
       this.validatorsService.customValidator(
@@ -171,7 +165,11 @@ export class ServiceSmbComponent implements OnInit {
     stateful_failover: [false, []],
   });
 
-  protected readonly requiredRoles = [Role.SharingSmbWrite];
+  readonly requiredRoles = [Role.SharingSmbWrite];
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
     netbiosname: helptextServiceSmb.netbiosnameTooltip,
@@ -288,7 +286,7 @@ export class ServiceSmbComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
