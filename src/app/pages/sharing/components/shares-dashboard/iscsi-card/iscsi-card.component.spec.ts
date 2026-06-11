@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnDialog } from '@truenas/ui-components';
+import { TnDialog, TnMenuHarness, TnMenuTesting, TnTableHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -15,7 +14,6 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
@@ -23,9 +21,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
-import {
-  ServiceExtraActionsComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import {
   ServiceStateButtonComponent,
 } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -37,7 +32,10 @@ import { selectServices } from 'app/store/services/services.selectors';
 describe('IscsiCardComponent', () => {
   let spectator: Spectator<IscsiCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+
+  // The "⋮" row-action trigger test id, derived from the row's uniqueRowTag.
+  const rowMenuTrigger = '[data-test="button-card-iscsi-target-grow-more-action"]';
 
   const iscsiShares = [
     {
@@ -70,7 +68,6 @@ describe('IscsiCardComponent', () => {
     declarations: [
       MockComponents(
         ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
       ),
     ],
     providers: [
@@ -118,27 +115,28 @@ describe('IscsiCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
+
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    spectator.click(rowMenuTrigger);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
 
   it('should render title', () => {
     expect(spectator.query('h3')).toHaveText('Block (iSCSI/FC) Shares Targets');
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Target Name', 'Target Alias', 'Mode', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Target Name', 'Target Alias', 'Mode', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['grow', 'kokok', 'Both', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
   it('shows form to edit an existing iSCSI Share when Edit button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: /^Edit$/ });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(TargetFormComponent, {
       data: expect.objectContaining(iscsiShares[0]),
@@ -147,9 +145,8 @@ describe('IscsiCardComponent', () => {
   });
 
   it('shows confirmation to delete iSCSI Share when Delete button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
       DeleteTargetDialog,

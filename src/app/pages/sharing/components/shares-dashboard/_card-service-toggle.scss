@@ -1,0 +1,11 @@
+// Host-side styling for the `tn-card` service on/off header toggle, matching the
+// vertical nudge the `Enabled` row toggle gets (see share-toggle-cell). The
+// toggle is rendered inside `tn-card`'s `.tn-card__control` wrapper, so reaching
+// it requires `::ng-deep`. Shared as a mixin so every share card stays in sync
+// instead of duplicating the block.
+@mixin card-service-toggle() {
+  :host ::ng-deep .tn-card__control tn-slide-toggle {
+    display: block;
+    margin-bottom: -6px;
+  }
+}

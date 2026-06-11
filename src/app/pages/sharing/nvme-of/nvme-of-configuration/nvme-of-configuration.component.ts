@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { finalize, forkJoin, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -18,7 +16,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -39,19 +37,16 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxFieldsetComponent,
     IxInputComponent,
     IxRadioGroupComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
     TestDirective,
-    MatTooltip,
+    TnTooltipDirective,
   ],
 })
-export class NvmeOfConfigurationComponent implements OnInit {
-  slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
+export class NvmeOfConfigurationComponent extends SidePanelForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -61,13 +56,13 @@ export class NvmeOfConfigurationComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
 
-  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
-  protected isLoading = signal(false);
+  readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+  readonly isLoading = signal(false);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
 
-  protected form = this.formBuilder.nonNullable.group({
+  protected readonly form = this.formBuilder.nonNullable.group({
     basenqn: [''],
     ana: [false],
     rdma: [false],
@@ -87,11 +82,8 @@ export class NvmeOfConfigurationComponent implements OnInit {
     },
   ]);
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
     this.loadConfiguration();
@@ -137,9 +129,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbar.success(this.translate.instant('Global configuration updated.'));
-      this.slideInRef.close({
-        response: true,
-      });
+      this.close(true);
     });
   }
 }
