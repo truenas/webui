@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, isDevMode, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -6,8 +6,9 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { Alert } from 'app/interfaces/alert.interface';
-import { AlertWithDuplicates, EnhancedAlert, SmartAlertAction } from 'app/interfaces/smart-alert.interface';
+import { AlertWithDuplicates, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 import { maxAlertMessageLength } from 'app/modules/alerts/constants/alert-display.constants';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
@@ -84,17 +85,7 @@ export class PageAlertsComponent {
    * so the last segment isn't polluted (e.g. `api-keys?userName=root` -> `api-keys`).
    */
   private getPathSegments(): string[] {
-    const path = this.router.url.split('?')[0].split('#')[0];
-    return path.split('/').filter((segment) => segment);
-  }
-
-  /**
-   * Normalize a route array into bare path segments for comparison with getPathSegments().
-   * Registry action routes prefix their first element with a slash (e.g. `['/credentials', 'users']`),
-   * so a naive equality check against the slash-free URL segments would never match.
-   */
-  private normalizeRouteSegments(route: string[]): string[] {
-    return route.join('/').split('/').filter((segment) => segment);
+    return stripQueryAndFragment(this.router.url).split('/').filter((segment) => segment);
   }
 
   /**
@@ -186,59 +177,6 @@ export class PageAlertsComponent {
    * Check if there are any page alerts to show
    */
   protected hasAlerts = computed(() => this.pageAlerts().length > 0);
-
-  /**
-   * Filter out actions that navigate to current or parent route
-   */
-  protected getVisibleActions = computed(() => {
-    // Recompute when the route changes.
-    this.currentRoute();
-    const pathSegments = this.getPathSegments();
-
-    return (alert: { actions?: SmartAlertAction[] }): SmartAlertAction[] => {
-      if (!alert.actions) {
-        return [];
-      }
-
-      return alert.actions.filter((action) => {
-        // Keep non-navigation actions
-        if (!action.route) {
-          return true;
-        }
-
-        const routeSegments = this.normalizeRouteSegments(action.route);
-
-        // Filter out if action route is current route
-        const isSameRoute = routeSegments.length === pathSegments.length
-          && routeSegments.every((segment, index) => pathSegments[index] === segment);
-
-        if (isSameRoute) {
-          return false;
-        }
-
-        // Filter out if action route is parent of current route
-        const isParentRoute = routeSegments.length < pathSegments.length
-          && routeSegments.every((segment, index) => pathSegments[index] === segment);
-
-        if (isParentRoute) {
-          return false;
-        }
-
-        return true;
-      });
-    };
-  });
-
-  /**
-   * Execute alert action
-   */
-  protected onActionClick(handler: (() => void) | undefined): void {
-    if (handler) {
-      handler();
-    } else if (isDevMode()) {
-      console.warn('[PageAlerts] Alert action clicked but handler is undefined');
-    }
-  }
 
   /**
    * Dismiss an alert (and all its duplicates with the same key)
