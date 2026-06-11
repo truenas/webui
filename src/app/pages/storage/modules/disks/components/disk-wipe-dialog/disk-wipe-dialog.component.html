@@ -6,13 +6,13 @@
   </div>
 }
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-select
-    formControlName="wipe_method"
-    [label]="'Method' | translate"
-    [tooltip]="tooltips.wipe_method | translate"
-    [options]="wipeMethods$"
-    [hideEmpty]="true"
-  ></ix-select>
+  <tn-form-field [label]="'Method' | translate" [tooltip]="tooltips.wipe_method | translate">
+    <tn-select
+      testId="wipe-method"
+      formControlName="wipe_method"
+      [options]="(wipeMethods$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
 </form>
 <ix-form-actions tnDialogAction>

@@ -3,13 +3,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DiskWipeDialog,
@@ -46,10 +45,8 @@ describe('DiskWipeDialogComponent', () => {
   });
 
   it('wipes disk with selected method when dialog is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Method: 'Full with zeros',
-    });
+    const methodSelect = await loader.getHarness(TnSelectHarness);
+    await methodSelect.selectOption(/Full with zeros/);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Wipe' }));
     await saveButton.click();

@@ -1,9 +1,12 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -12,7 +15,6 @@ import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -24,10 +26,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./disk-wipe-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     TnDialogShellComponent,
     WarningComponent,
     ReactiveFormsModule,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,

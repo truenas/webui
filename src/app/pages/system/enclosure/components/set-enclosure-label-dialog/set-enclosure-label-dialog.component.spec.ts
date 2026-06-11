@@ -3,10 +3,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SetEnclosureLabelDialog, SetEnclosureLabelDialogData,
@@ -43,7 +42,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
   });
 
   it('saves new label it is entered and dialog is submitted', async () => {
-    const labelInput = await loader.getHarness(IxInputHarness.with({ label: 'Enclosure Label' }));
+    const labelInput = await loader.getHarness(TnInputHarness);
     await labelInput.setValue('New label');
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));

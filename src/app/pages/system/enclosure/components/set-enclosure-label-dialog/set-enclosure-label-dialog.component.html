@@ -1,10 +1,12 @@
 <tn-dialog-shell testId="set-enclosure-label" [title]="'Change Enclosure Label' | translate">
 <form [formGroup]="form" (submit)="onSubmit()">
-  <ix-input
-    formControlName="label"
-    [label]="enclosureLabel | translate"
-    [required]="!form.value.resetToDefault"
-  ></ix-input>
+  <tn-form-field [label]="enclosureLabel | translate">
+    <tn-input
+      testId="label"
+      formControlName="label"
+      [required]="!form.value.resetToDefault"
+    ></tn-input>
+  </tn-form-field>
 
   <tn-checkbox
     testId="reset-to-default"
