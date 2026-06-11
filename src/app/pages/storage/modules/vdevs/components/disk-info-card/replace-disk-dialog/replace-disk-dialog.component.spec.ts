@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -12,7 +12,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -97,14 +96,14 @@ describe('ReplaceDiskDialogComponent', () => {
 
   it('shows additional settings to preserve disk settings and description', async () => {
     const preserveSettings = await loader.getHarness(
-      IxCheckboxHarness.with({ label: 'Preserve Power Management settings' }),
+      TnCheckboxHarness.with({ label: 'Preserve Power Management settings' }),
     );
-    await preserveSettings.setValue(false);
+    await preserveSettings.uncheck();
 
     const preserveDescription = await loader.getHarness(
-      IxCheckboxHarness.with({ label: 'Preserve disk description' }),
+      TnCheckboxHarness.with({ label: 'Preserve disk description' }),
     );
-    await preserveDescription.setValue(false);
+    await preserveDescription.uncheck();
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({

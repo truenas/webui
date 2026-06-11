@@ -5,11 +5,10 @@ import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { AppState } from 'app/store';
@@ -27,7 +26,7 @@ const customReasonValue = 'CUSTOM_REASON_VALUE';
     TnButtonComponent,
     TranslateModule,
     ReactiveFormsModule,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
     IxSelectComponent,
     IxInputComponent,
     FormActionsComponent,

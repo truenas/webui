@@ -8,7 +8,6 @@ import {
   TnDialog,
   TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
-import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -27,7 +26,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
@@ -66,12 +64,6 @@ describe('SmbCardComponent', () => {
   };
 
   const commonImports = [IxTablePagerShowMoreComponent];
-
-  const commonDeclarations = [
-    MockComponents(
-      ServiceStateButtonComponent,
-    ),
-  ];
 
   const commonProviders = [
     mockAuth(),
@@ -115,7 +107,6 @@ describe('SmbCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SmbCardComponent,
     imports: commonImports,
-    declarations: commonDeclarations,
     providers: [
       ...commonProviders,
       mockApi([
@@ -221,7 +212,6 @@ describe('SmbCardComponent', () => {
     const createExportedComponent = createComponentFactory({
       component: SmbCardComponent,
       imports: commonImports,
-      declarations: commonDeclarations,
       providers: [
         ...commonProviders,
         mockApi([
@@ -263,7 +253,6 @@ describe('SmbCardComponent', () => {
     const createLockedComponent = createComponentFactory({
       component: SmbCardComponent,
       imports: commonImports,
-      declarations: commonDeclarations,
       providers: [
         ...commonProviders,
         mockApi([

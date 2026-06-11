@@ -5,7 +5,6 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnDialog, TnMenuHarness, TnMenuTesting, TnTableHarness } from '@truenas/ui-components';
-import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -18,7 +17,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -49,11 +47,6 @@ describe('NvmeOfCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: NvmeOfCardComponent,
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-      ),
-    ],
     providers: [
       mockAuth(),
       mockProvider(SlideIn, {

@@ -32,16 +32,18 @@
   </div>
 
   @if (!isJobCompleted) {
-    <ix-checkbox
+    <tn-checkbox
+      testId="confirm"
       formControlName="confirm"
       [label]="'Confirm' | translate"
       [required]="true"
-    ></ix-checkbox>
-    <ix-checkbox
+    ></tn-checkbox>
+    <tn-checkbox
+      testId="force"
       formControlName="force"
       [label]="'Force' | translate"
       [tooltip]="forceCheckboxTooltip | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
   }
 </form>
 <ix-form-actions tnDialogAction>

@@ -3,11 +3,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 
 describe('StopVmDialogComponent', () => {
@@ -39,8 +38,8 @@ describe('StopVmDialogComponent', () => {
   });
 
   it('stops a VM when dialog is submitted', async () => {
-    const forceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Force Stop After Timeout' }));
-    await forceCheckbox.setValue(true);
+    const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force Stop After Timeout' }));
+    await forceCheckbox.check();
 
     const stopButton = await loader.getHarness(TnButtonHarness.with({ label: 'Stop' }));
     await stopButton.click();

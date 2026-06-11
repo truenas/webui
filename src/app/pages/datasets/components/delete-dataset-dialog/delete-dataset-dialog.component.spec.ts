@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -13,7 +13,6 @@ import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -75,8 +74,8 @@ describe('DeleteDatasetDialogComponent', () => {
     const confirmInput = await loader.getHarness(IxInputHarness);
     await confirmInput.setValue('Lab 1');
 
-    const confirmCheckbox = await loader.getHarness(IxCheckboxHarness);
-    await confirmCheckbox.setValue(true);
+    const confirmCheckbox = await loader.getHarness(TnCheckboxHarness);
+    await confirmCheckbox.check();
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete Dataset' }));
     await deleteButton.click();

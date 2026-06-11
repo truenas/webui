@@ -3,12 +3,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { RebootService } from 'app/services/reboot.service';
 import { selectCanFailover, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -88,8 +87,8 @@ describe('RebootRequiredDialogComponent', () => {
   });
 
   it('reboots another node and closes dialog when Reboot Standby Controller is pressed', async () => {
-    const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
-    await confirmCheckbox.setValue(true);
+    const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.check();
 
     const rebootRemoteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Reboot Standby Controller' }));
     await rebootRemoteButton.click();
@@ -99,8 +98,8 @@ describe('RebootRequiredDialogComponent', () => {
   });
 
   it('reboots local node with translated reason when Reboot Active Controller is pressed', async () => {
-    const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
-    await confirmCheckbox.setValue(true);
+    const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.check();
 
     const rebootLocalButton = await loader.getHarness(TnButtonHarness.with({ label: 'Reboot Active Controller' }));
     await rebootLocalButton.click();

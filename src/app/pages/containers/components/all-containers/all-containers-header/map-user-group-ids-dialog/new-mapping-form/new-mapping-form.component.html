@@ -15,11 +15,12 @@
     }
 
     <div class="checkbox-with-tooltip">
-      <ix-checkbox
+      <tn-checkbox
+        testId="map-directly"
         formControlName="mapDirectly"
         class="default-checkbox"
         [label]="isUserType() ? ('Map to the same UID in the container' | translate) : ('Map to the same GID in the container' | translate)"
-      ></ix-checkbox>
+      ></tn-checkbox>
       <tn-icon
         name="help_outline"
         class="help-icon-inline"

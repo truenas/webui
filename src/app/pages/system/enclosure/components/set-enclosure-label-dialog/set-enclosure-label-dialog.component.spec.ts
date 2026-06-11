@@ -3,10 +3,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -55,8 +54,8 @@ describe('SetEnclosureLabelDialogComponent', () => {
   });
 
   it('resets enclosure label to a default when Reset checkbox is ticked and form is saved', async () => {
-    const resetCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Reset to default' }));
-    await resetCheckbox.setValue(true);
+    const resetCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Reset to default' }));
+    await resetCheckbox.check();
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();

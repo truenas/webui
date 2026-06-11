@@ -8,11 +8,10 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnCheckboxComponent, TnIconComponent } from '@truenas/ui-components';
 import { Observable, switchMap } from 'rxjs';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import { directIdMapping } from 'app/interfaces/user.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -38,7 +37,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormsModule,
     ReactiveFormsModule,
     TranslateModule,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
     IxInputComponent,
     TnIconComponent,
     MatButton,

@@ -1,11 +1,12 @@
 <tn-dialog-shell testId="delete-vm" [title]="'Delete Virtual Machine' | translate">
 <div>
   <form [formGroup]="form">
-    <ix-checkbox
+    <tn-checkbox
+      testId="zvols"
       formControlName="zvols"
       [label]="'Delete Virtual Machine Data?' | translate"
       [tooltip]="helptext.delete_dialog.zvolsTooltip | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
 
     @if (form.value.zvols && devices().length) {
       <div class="devices-section" role="region" aria-labelledby="devices-heading" aria-live="polite">
@@ -18,11 +19,12 @@
       </div>
     }
 
-    <ix-checkbox
+    <tn-checkbox
+      testId="force"
       formControlName="force"
       [label]="'Force Delete?' | translate"
       [tooltip]="helptext.delete_dialog.forceTooltip | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
     <ix-input
       formControlName="confirmName"
       [label]="'Enter <b>{value}</b> below to confirm.' | translate: { value: vm.name }"

@@ -88,6 +88,13 @@ export class AppUpdateDialog {
     this.updateVersionInfo();
   }
 
+  // The option value is the version map key, but the legacy ixTest discriminator
+  // keyed each option by its human version (`option-versions-<human_version>`).
+  // Keep that test-id parity for automation.
+  protected versionOptionTestId = (option: TnSelectOption<string>): string => {
+    return this.versionOptions.get(option.value)?.latest_human_version ?? option.value;
+  };
+
   getVersionLabel(libraryVersion: string, humanVersion: string): string {
     return formatVersionWithRevision(libraryVersion, humanVersion);
   }

@@ -4,14 +4,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -95,7 +94,7 @@ describe('SnapshotRollbackDialog', () => {
     await form.fillForm({
       'Stop Rollback if Snapshots Exist:': 'Newer Intermediate, Child, and Clone',
     });
-    await (await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }))).setValue(true);
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).check();
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
@@ -113,7 +112,7 @@ describe('SnapshotRollbackDialog', () => {
     await form.fillForm({
       'Stop Rollback if Snapshots Exist:': 'Newer Clone',
     });
-    await (await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }))).setValue(true);
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).check();
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
@@ -188,7 +187,7 @@ describe('SnapshotRollbackDialog', () => {
     await form.fillForm({
       'Stop Rollback if Snapshots Exist:': 'No Safety Check (CAUTION)',
     });
-    await (await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }))).setValue(true);
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).check();
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();

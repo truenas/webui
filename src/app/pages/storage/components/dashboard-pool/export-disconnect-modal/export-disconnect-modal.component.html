@@ -178,31 +178,35 @@
 
         <ix-fieldset>
           @if (isExportSelected) {
-            <ix-checkbox
+            <tn-checkbox
+              testId="cascade"
               formControlName="cascade"
               [label]="helptext.exportDialog.cascade.label | translate"
               [tooltip]="helptext.exportDialog.cascade.tooltip | translate"
-            ></ix-checkbox>
+            ></tn-checkbox>
 
-            <ix-checkbox
+            <tn-checkbox
+              testId="confirm"
               formControlName="confirm"
               [label]="'Confirm Export Pool' | translate"
               [required]="true"
-            ></ix-checkbox>
+            ></tn-checkbox>
           }
 
           @if (isDeleteSelected) {
-            <ix-checkbox
+            <tn-checkbox
+              testId="cascade"
               formControlName="cascade"
               [label]="'Remove all related configurations' | translate"
               [tooltip]="helptext.exportDialog.cascade.tooltip | translate"
-            ></ix-checkbox>
+            ></tn-checkbox>
 
-            <ix-checkbox
+            <tn-checkbox
+              testId="confirm"
               formControlName="confirm"
               [label]="'Confirm Delete Pool' | translate"
               [required]="true"
-            ></ix-checkbox>
+            ></tn-checkbox>
           }
 
           @if (isDeleteSelected && form.value.destroy) {

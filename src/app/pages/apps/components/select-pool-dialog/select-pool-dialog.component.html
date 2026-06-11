@@ -8,10 +8,11 @@
   ></ix-select>
 
   @if (showMigrateCheckbox) {
-    <ix-checkbox
+    <tn-checkbox
+      testId="migrate-applications"
       formControlName="migrateApplications"
       [label]="'Migrate existing applications' | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
   }
 
   </form>

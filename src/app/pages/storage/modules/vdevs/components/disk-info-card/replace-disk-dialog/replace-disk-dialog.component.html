@@ -8,21 +8,24 @@
     [tooltip]="helptext.dialogFormFields.disk.tooltip | translate"
   ></ix-unused-disk-select>
 
-  <ix-checkbox
+  <tn-checkbox
+    testId="preserve-settings"
     formControlName="preserve_settings"
     [label]="'Preserve Power Management settings' | translate"
-  ></ix-checkbox>
+  ></tn-checkbox>
 
-  <ix-checkbox
+  <tn-checkbox
+    testId="preserve-description"
     formControlName="preserve_description"
     [label]="'Preserve disk description' | translate"
-  ></ix-checkbox>
+  ></tn-checkbox>
 
-  <ix-checkbox
+  <tn-checkbox
+    testId="force"
     formControlName="force"
     [label]="'Force' | translate"
     [tooltip]="helptext.dialogFormFields.force.tooltip | translate"
-  ></ix-checkbox>
+  ></tn-checkbox>
 
 </form>
 <ix-form-actions tnDialogAction>

@@ -3,8 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import {
@@ -78,8 +77,8 @@ describe('RebootOrShutdownDialogComponent', () => {
       const select = await loader.getHarness(IxSelectHarness);
       await select.setValue('System Update');
 
-      const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
-      await confirmCheckbox.setValue(true);
+      const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
+      await confirmCheckbox.check();
 
       const shutdownButton = await loader.getHarness(TnButtonHarness.with({ label: 'Shut Down' }));
       await shutdownButton.click();
@@ -94,8 +93,8 @@ describe('RebootOrShutdownDialogComponent', () => {
       const customReasonInput = await loader.getHarness(IxInputHarness.with({ label: 'Custom Reason' }));
       await customReasonInput.setValue('House on fire');
 
-      const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
-      await confirmCheckbox.setValue(true);
+      const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
+      await confirmCheckbox.check();
 
       const shutdownButton = await loader.getHarness(TnButtonHarness.with({ label: 'Shut Down' }));
       await shutdownButton.click();
@@ -142,11 +141,11 @@ describe('RebootOrShutdownDialog – non-enterprise', () => {
   });
 
   it('shows "Confirm is required" warning only after checking and unchecking confirm', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
-    await checkbox.setValue(true);
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
+    await checkbox.check();
     expect(spectator.query('ix-errors mat-error')).not.toExist();
 
-    await checkbox.setValue(false);
+    await checkbox.uncheck();
     expect(spectator.query('ix-errors mat-error')).toExist();
   });
 
@@ -154,8 +153,8 @@ describe('RebootOrShutdownDialog – non-enterprise', () => {
     const select = spectator.query('ix-select');
     expect(select).toBeNull();
 
-    const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
-    await checkbox.setValue(true);
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
+    await checkbox.check();
 
     const submit = await loader.getHarness(TnButtonHarness.with({ label: /Restart|Shut Down/ }));
     await submit.click();

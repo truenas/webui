@@ -59,11 +59,12 @@
   </div>
 
   <form [formGroup]="form">
-    <ix-checkbox
+    <tn-checkbox
+      testId="move-existing-data"
       formControlName="moveExistingData"
       [label]="'Move existing data' | translate"
       [tooltip]="'When checked, existing data will be migrated to the new storage tier. This may take some time depending on the amount of data.' | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
 
     @if (form.value.moveExistingData) {
       @if (estimatedRewriteSize(); as size) {

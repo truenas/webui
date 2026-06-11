@@ -39,6 +39,7 @@
           class="form-element"
           testId="versions"
           [options]="versionSelectOptions"
+          [optionTestIdKey]="versionOptionTestId"
           [(ngModel)]="selectedVersionKey"
           (ngModelChange)="onVersionOptionChanged()"
         ></tn-select>

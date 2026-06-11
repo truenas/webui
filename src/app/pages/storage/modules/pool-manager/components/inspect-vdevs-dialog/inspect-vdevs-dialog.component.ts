@@ -1,6 +1,5 @@
 import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
@@ -27,8 +26,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    MatCard,
-    MatCardContent,
     MatNavList,
     MatListItem,
     MatDivider,

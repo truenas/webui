@@ -63,10 +63,11 @@
   <p [innerHtml]="deleteDatasetHelptext.prompt | translate: { value: dataset.name }"></p>
 
   <ix-input formControlName="confirmDatasetName"></ix-input>
-  <ix-checkbox
+  <tn-checkbox
+    testId="confirm"
     formControlName="confirm"
     [label]="'Confirm' | translate"
-  ></ix-checkbox>
+  ></tn-checkbox>
 </form>
 <ix-form-actions tnDialogAction>
   <tn-button

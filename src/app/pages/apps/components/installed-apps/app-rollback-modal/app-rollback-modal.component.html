@@ -9,11 +9,12 @@
       [tooltip]="'Enter the version to roll back to.' | translate"
     ></ix-select>
 
-    <ix-checkbox
+    <tn-checkbox
+      testId="rollback-snapshot"
       formControlName="rollback_snapshot"
       [label]="'Roll back snapshots' | translate"
       [tooltip]="'Roll back snapshots of ix_volumes' | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
   </form>
 </div>
 <ix-form-actions tnDialogAction class="form-actions">

@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -75,7 +75,6 @@ describe('TruecommandConnectModalComponent', () => {
       expectedTitle: 'Connect to TrueCommand Cloud',
       expectedFormValue: {
         'API Key': '',
-        Enable: true,
       },
       expectedSubmitButtonText: 'Connect',
     },
@@ -88,7 +87,6 @@ describe('TruecommandConnectModalComponent', () => {
       expectedTitle: 'Update TrueCommand Settings',
       expectedFormValue: {
         'API Key': '1234567890123456',
-        Enable: true,
       },
       expectedSubmitButtonText: 'Save',
     },
@@ -114,6 +112,9 @@ describe('TruecommandConnectModalComponent', () => {
         const values = await form.getValues();
 
         expect(values).toEqual(expectedFormValue);
+
+        const enableCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable' }));
+        expect(await enableCheckbox.isChecked()).toBe(true);
       });
 
       it(`submit button has text ${expectedSubmitButtonText}`, async () => {
@@ -162,8 +163,9 @@ describe('TruecommandConnectModalComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         'API Key': '1234567890123456',
-        Enable: true,
       });
+      const enableCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable' }));
+      await enableCheckbox.check();
 
       const submitButton = await loader.getHarness(TnButtonHarness.with({ label: expectedSubmitButtonText }));
       expect(await submitButton.isDisabled()).toBeFalsy();
@@ -184,8 +186,9 @@ describe('TruecommandConnectModalComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         'API Key': '1234567890123456',
-        Enable: true,
       });
+      const enableCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable' }));
+      await enableCheckbox.check();
 
       spectator.dispatchFakeEvent(spectator.query('form')!, 'submit');
 
@@ -227,8 +230,9 @@ describe('TruecommandConnectModalComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         'API Key': 'qwertyuiopasdfgh',
-        Enable: false,
       });
+      const enableCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable' }));
+      await enableCheckbox.uncheck();
 
       const submitButton = await loader.getHarness(TnButtonHarness.with({ label: expectedSubmitButtonText }));
       expect(await submitButton.isDisabled()).toBeFalsy();

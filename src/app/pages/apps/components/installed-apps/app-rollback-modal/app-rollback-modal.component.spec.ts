@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockJob, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -59,8 +59,10 @@ describe('AppRollbackModalComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       Version: '0.9.8',
-      'Roll back snapshots': true,
     });
+
+    const snapshotCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Roll back snapshots' }));
+    await snapshotCheckbox.check();
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Roll Back' }));
     await rollbackButton.click();

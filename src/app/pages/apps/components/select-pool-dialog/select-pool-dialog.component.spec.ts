@@ -2,10 +2,9 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -111,14 +110,14 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     const form = await loader.getHarness(IxFormHarness);
 
-    let checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Migrate existing/ }));
+    let checkbox = await loader.getAllHarnesses(TnCheckboxHarness.with({ label: /Migrate existing/ }));
     expect(checkbox).toHaveLength(0);
 
     const poolSelect = await form.getControl('Pool') as IxSelectHarness;
     await poolSelect.setValue('pool2');
     spectator.detectChanges();
 
-    checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Migrate existing/ }));
+    checkbox = await loader.getAllHarnesses(TnCheckboxHarness.with({ label: /Migrate existing/ }));
     expect(checkbox).toHaveLength(1);
   });
 
@@ -139,7 +138,7 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
     await poolSelect.setValue('pool1');
     spectator.detectChanges();
 
-    const checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Migrate existing/ }));
+    const checkbox = await loader.getAllHarnesses(TnCheckboxHarness.with({ label: /Migrate existing/ }));
     expect(checkbox).toHaveLength(0);
   });
 
@@ -162,7 +161,7 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
     await poolSelect.setValue('pool2');
     spectator.detectChanges();
 
-    const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: /Migrate existing/ }));
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: /Migrate existing/ }));
     await checkbox.check();
 
     const chooseButton = await loader.getHarness(TnButtonHarness.with({ label: 'Choose' }));

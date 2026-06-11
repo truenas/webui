@@ -3,11 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { directIdMapping, User } from 'app/interfaces/user.interface';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ViewType } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/mapping.types';
@@ -67,8 +67,8 @@ describe('NewMappingFormComponent', () => {
   });
 
   it('has "Map directly" checkbox checked by default', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness);
-    expect(await checkbox.getValue()).toBe(true);
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    expect(await checkbox.isChecked()).toBe(true);
   });
 
   it('hides Container UID input when "Map directly" is checked', async () => {
@@ -77,8 +77,8 @@ describe('NewMappingFormComponent', () => {
   });
 
   it('shows Container UID input when "Map directly" is unchecked', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness);
-    await checkbox.setValue(false);
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.uncheck();
 
     const input = await loader.getHarness(IxInputHarness.with({ label: 'Container UID' }));
     expect(input).toBeTruthy();
@@ -97,8 +97,8 @@ describe('NewMappingFormComponent', () => {
   it('submits form with custom UID when "Map directly" is unchecked', async () => {
     spectator.component.form.patchValue({ hostUidOrGid: 'testuser' });
 
-    const checkbox = await loader.getHarness(IxCheckboxHarness);
-    await checkbox.setValue(false);
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.uncheck();
 
     const input = await loader.getHarness(IxInputHarness.with({ label: 'Container UID' }));
     await input.setValue('2000');
@@ -149,8 +149,8 @@ describe('NewMappingFormComponent', () => {
   it('requires Container UID when "Map directly" is unchecked', async () => {
     spectator.component.form.patchValue({ hostUidOrGid: 'testuser' });
 
-    const checkbox = await loader.getHarness(IxCheckboxHarness);
-    await checkbox.setValue(false);
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.uncheck();
 
     spectator.detectChanges();
     await spectator.fixture.whenStable();

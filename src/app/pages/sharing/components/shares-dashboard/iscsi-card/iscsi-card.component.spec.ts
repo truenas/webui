@@ -4,7 +4,6 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnDialog, TnMenuHarness, TnMenuTesting, TnTableHarness } from '@truenas/ui-components';
-import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -21,9 +20,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
-import {
-  ServiceStateButtonComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { LicenseService } from 'app/services/license.service';
@@ -64,11 +60,6 @@ describe('IscsiCardComponent', () => {
   const createComponent = createComponentFactory({
     component: IscsiCardComponent,
     imports: [IxTablePagerShowMoreComponent,
-    ],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-      ),
     ],
     providers: [
       mockAuth(),

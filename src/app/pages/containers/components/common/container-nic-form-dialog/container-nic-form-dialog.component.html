@@ -11,10 +11,11 @@
     ></ix-select>
 
     @if (!isEditMode()) {
-      <ix-checkbox
+      <tn-checkbox
+        testId="use-default"
         formControlName="use_default"
         [label]="'Use Default Mac Address' | translate"
-      ></ix-checkbox>
+      ></tn-checkbox>
     }
     @if (isEditMode() || !useDefault()) {
       <ix-input
@@ -26,11 +27,12 @@
     }
 
     @if (isVirtio()) {
-      <ix-checkbox
+      <tn-checkbox
+        testId="trust-guest-rx-filters"
         formControlName="trust_guest_rx_filters"
         [label]="'Trust Guest RX Filters' | translate"
         [tooltip]="'Whether to trust guest OS receive filter settings for better performance.' | translate"
-      ></ix-checkbox>
+      ></tn-checkbox>
     }
   </form>
 </div>

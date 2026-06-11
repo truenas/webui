@@ -31,11 +31,12 @@
       </tn-expansion-panel>
     }
 
-    <ix-checkbox
+    <tn-checkbox
+      testId="confirm"
       formControlName="confirm"
       [label]="'Confirm' | translate"
       [required]="true"
-    ></ix-checkbox>
+    ></tn-checkbox>
   </form>
 } @else {
   @if (jobErrors.length) {

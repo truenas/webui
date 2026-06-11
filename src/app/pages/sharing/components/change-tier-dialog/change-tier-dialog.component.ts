@@ -5,12 +5,11 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { forkJoin, tap } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTierLabelKey } from 'app/pages/sharing/components/tier-status.utils';
@@ -32,7 +31,7 @@ export interface ChangeTierDialogData {
     TnButtonComponent,
     TranslateModule,
     ReactiveFormsModule,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
   ],
 })
 export class ChangeTierDialogComponent implements OnInit {
