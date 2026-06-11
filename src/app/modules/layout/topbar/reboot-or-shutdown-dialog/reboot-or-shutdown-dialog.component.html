@@ -1,6 +1,6 @@
 <tn-dialog-shell testId="reboot-or-shutdown" [title]="title">
   @if (isEnterprise()) {
-    <tn-form-field [label]="'Reason' | translate">
+    <tn-form-field [label]="'Reason' | translate" [required]="true">
       <tn-select
         testId="reason"
         [formControl]="form.controls.reason"

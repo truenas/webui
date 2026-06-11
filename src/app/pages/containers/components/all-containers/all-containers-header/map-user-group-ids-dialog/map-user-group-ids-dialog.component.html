@@ -9,9 +9,9 @@
     class="help-icon"
     tabindex="0"
     role="button"
-    matTooltipClass="tooltip-wide tooltip-multiline"
+    tnTooltipClass="tooltip-wide tooltip-multiline"
     [attr.aria-label]="'Help' | translate"
-    [matTooltip]="idMapHintText"
+    [tnTooltip]="idMapHintText"
     (keydown.enter)="$event.preventDefault()"
     (keydown.space)="$event.preventDefault()"
   ></tn-icon>
@@ -26,7 +26,7 @@
 
   @if (isLoading()) {
     <div class="loading-container">
-      <mat-spinner diameter="50"></mat-spinner>
+      <tn-spinner [diameter]="50"></tn-spinner>
     </div>
   } @else {
     <div class="table-wrapper">
@@ -62,7 +62,7 @@
               mat-icon-button
               type="button"
               [ixTest]="['clear-mapping', mapping.description]"
-              [matTooltip]="'Clear mapping' | translate"
+              [tnTooltip]="'Clear mapping' | translate"
               (click)="onClearMapping(mapping)"
             >
               <tn-icon name="mdi-delete"></tn-icon>

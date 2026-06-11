@@ -2,11 +2,11 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  TnSliderComponent, TnSliderThumbDirective,
   InputType,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -46,8 +46,8 @@ export const pruneByLabels = new Map<PruneBy, string>([
     TestDirective,
     TranslateModule,
     IxRadioGroupComponent,
-    MatSlider,
-    MatSliderThumb,
+    TnSliderComponent,
+    TnSliderThumbDirective,
     IxLabelComponent,
   ],
 })
@@ -97,9 +97,5 @@ export class PruneDedupTableDialog {
         this.snackbar.success(this.translate.instant('Deduplication table pruned'));
         this.dialogRef.close(true);
       });
-  }
-
-  protected formatSliderAsPercentage(value: number): string {
-    return `${value}%`;
   }
 }

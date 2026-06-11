@@ -1,6 +1,6 @@
 <tn-dialog-shell testId="select-pool" [title]="'Choose a pool for Apps' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <tn-form-field [label]="'Pool' | translate">
+  <tn-form-field [label]="'Pool' | translate" [required]="true">
     <tn-select
       testId="pool"
       formControlName="pool"

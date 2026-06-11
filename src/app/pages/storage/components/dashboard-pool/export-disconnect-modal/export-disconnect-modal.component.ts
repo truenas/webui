@@ -4,15 +4,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import {
-  MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
-} from '@angular/material/expansion';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnDialog, TnDialogShellComponent, TnFormFieldComponent,
-  TnIconComponent, TnInputComponent,
+  TnButtonComponent, TnCheckboxComponent, TnDialog, TnDialogShellComponent, TnExpansionPanelComponent,
+  TnFormFieldComponent, TnIconComponent, TnInputComponent, TnProgressBarComponent,
 } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -54,7 +50,7 @@ export enum DisconnectOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    MatProgressBar,
+    TnProgressBarComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     TnCheckboxComponent,
@@ -62,9 +58,7 @@ export enum DisconnectOption {
     TnInputComponent,
     FormActionsComponent,
     TnButtonComponent,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
+    TnExpansionPanelComponent,
     RequiresRolesDirective,
     TranslateModule,
     TnIconComponent,

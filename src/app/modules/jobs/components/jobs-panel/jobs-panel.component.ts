@@ -2,12 +2,17 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnDividerComponent, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnDialogShellComponent,
+  TnDividerComponent,
+  TnIconComponent,
+  TnProgressBarComponent,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import {
   filter, map,
@@ -44,9 +49,9 @@ import { FailedJobError } from 'app/services/errors/error.classes';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    MatTooltip,
+    TnTooltipDirective,
     TnIconComponent,
-    MatProgressBar,
+    TnProgressBarComponent,
     JobItemComponent,
     TnButtonComponent,
     TnDividerComponent,

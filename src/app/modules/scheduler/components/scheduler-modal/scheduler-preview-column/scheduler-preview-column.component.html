@@ -17,6 +17,8 @@
 </section>
 
 <div class="calendar">
+  <!-- TEMP (NAS-141021): held on mat-calendar — tn-calendar (0.2.4) has no [dateClass]
+       equivalent to mark scheduled days. Migrate once the library exposes it. -->
   <mat-calendar #calendar [dateClass]="getSelectedDateClass"></mat-calendar>
 </div>
 

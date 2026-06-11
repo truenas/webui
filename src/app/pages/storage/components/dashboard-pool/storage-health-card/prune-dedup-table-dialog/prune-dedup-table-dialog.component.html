@@ -9,22 +9,21 @@
 
   @if (isPruningByPercentage) {
     <ix-label [label]="'Percentage' | translate" [required]="true"></ix-label>
-    <mat-slider
+    <tn-slider
       class="percentage-slider"
-      ixTest="percentage"
-      showTickMarks
-      discrete
-      [displayWith]="formatSliderAsPercentage"
+      testId="slider-percentage"
+      labelSuffix="%"
+      labelType="handle"
       [min]="1"
       [max]="100"
       [step]="1"
     >
       <input
-        matSliderThumb
+        tnSliderThumb
         ixTest="slider-thumb"
         formControlName="percentage"
       >
-    </mat-slider>
+    </tn-slider>
   } @else {
     <tn-form-field [label]="'Age (in days)' | translate">
       <tn-input

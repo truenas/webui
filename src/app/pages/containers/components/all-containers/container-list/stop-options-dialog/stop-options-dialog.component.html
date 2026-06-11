@@ -1,6 +1,6 @@
 <tn-dialog-shell testId="stop-options" [title]="(isRestart() ? 'Restart Options' : 'Stop Options') | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <tn-form-field [label]="'Stop Method' | translate">
+  <tn-form-field [label]="'Stop Method' | translate" [required]="true">
     <tn-select
       testId="stop-method"
       formControlName="stopMethod"

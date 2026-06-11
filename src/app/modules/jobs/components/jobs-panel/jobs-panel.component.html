@@ -4,28 +4,28 @@
     <div class="badges">
       <div
         class="job-badge running"
-        [matTooltip]="'Active' | translate"
+        [tnTooltip]="'Active' | translate"
       >
         <span class="job-badge-count">{{ runningJobsCount$ | async }}</span>
         <tn-icon name="sync" library="mdi" class="job-icon-running"></tn-icon>
       </div>
       <div
         class="job-badge waiting"
-        [matTooltip]="JobState.Waiting | jobStateDisplay"
+        [tnTooltip]="JobState.Waiting | jobStateDisplay"
       >
         <span class="job-badge-count">{{ waitingJobsCount$ | async }}</span>
         <tn-icon name="clock-outline" library="mdi" class="job-icon-waiting"></tn-icon>
       </div>
       <div
         class="job-badge success"
-        [matTooltip]="JobState.Success | jobStateDisplay"
+        [tnTooltip]="JobState.Success | jobStateDisplay"
       >
         <span class="job-badge-count">{{ successJobsCount$ | async }}</span>
         <tn-icon name="check-circle" library="mdi" class="job-icon-success"></tn-icon>
       </div>
       <div
         class="job-badge failed"
-        [matTooltip]="JobState.Failed | jobStateDisplay"
+        [tnTooltip]="JobState.Failed | jobStateDisplay"
       >
         <span class="job-badge-count">{{ failedJobsCount$ | async }}</span>
         <tn-icon name="close-circle" library="mdi" class="job-icon-failed"></tn-icon>
@@ -35,11 +35,10 @@
 
   @if (isLoading$ | async) {
     <div>
-      <mat-progress-bar
+      <tn-progress-bar
         class="loading-indicator"
-        color="primary"
         mode="indeterminate"
-      ></mat-progress-bar>
+      ></tn-progress-bar>
     </div>
   } @else {
     @let jobs = ongoingJobs$ | async;

@@ -1,9 +1,9 @@
 import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { MatDivider } from '@angular/material/divider';
-import { MatNavList, MatListItem } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnDialogShellComponent, TnDividerComponent, TnListComponent, TnListItemComponent,
+} from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-vdev/manual-selection-vdev.component';
@@ -26,9 +26,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    MatNavList,
-    MatListItem,
-    MatDivider,
+    TnListComponent,
+    TnListItemComponent,
+    TnDividerComponent,
     ManualSelectionVdevComponent,
     TranslateModule,
   ],

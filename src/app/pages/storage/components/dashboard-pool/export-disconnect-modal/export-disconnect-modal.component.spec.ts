@@ -7,7 +7,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnDialog, TnDialogHarness, TnInputHarness,
+  TnButtonHarness, TnCheckboxHarness, TnDialog, TnDialogHarness, TnExpansionPanelHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { Observable, of, throwError } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
@@ -470,14 +470,15 @@ describe('ExportDisconnectModalComponent', () => {
   });
 
   describe('pool summary', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       // Expand the pool summary panel to make content visible
-      const panels = spectator.queryAll('mat-expansion-panel-header');
-      const summaryPanel = panels.find((panel) => panel.textContent?.includes('services and processes depend on this pool'));
-      if (summaryPanel) {
-        spectator.click(summaryPanel);
-        spectator.detectChanges();
+      const panels = await loader.getAllHarnesses(TnExpansionPanelHarness);
+      for (const panel of panels) {
+        if ((await panel.getTitle()).includes('services and processes depend on this pool')) {
+          await panel.expand();
+        }
       }
+      spectator.detectChanges();
     });
 
     it('should display pool summary when attachments or processes exist', () => {

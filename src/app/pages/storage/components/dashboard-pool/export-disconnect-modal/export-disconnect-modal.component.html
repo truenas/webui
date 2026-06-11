@@ -1,6 +1,6 @@
 <tn-dialog-shell testId="export-disconnect" [title]="'Disconnect Pool: {pool}' | translate: { pool: pool.name }">
 @if (isFormLoading) {
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <tn-progress-bar mode="indeterminate"></tn-progress-bar>
 }
 
 <form
@@ -55,15 +55,13 @@
         </div>
 
         @if (isLastPoolInHaSystem()) {
-          <mat-expansion-panel class="expansion-panel ha-warning-panel" [expanded]="true">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <div class="warning-icon">
-                  <tn-icon name="alert" library="mdi" customSize="15px"></tn-icon>
-                </div>
-                {{ 'Critical: High Availability should be disabled' | translate }}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
+          <tn-expansion-panel class="expansion-panel ha-warning-panel" elevation="none" padding="small" [expanded]="true" [background]="false">
+            <div slot="title">
+              <div class="warning-icon">
+                <tn-icon name="alert" library="mdi" customSize="15px"></tn-icon>
+              </div>
+              {{ 'Critical: High Availability should be disabled' | translate }}
+            </div>
 
             <div class="expansion-content">
               <div class="ha-warning">
@@ -74,16 +72,14 @@
                 <p>{{ 'Please ensure you understand the implications before proceeding.' | translate }}</p>
               </div>
             </div>
-          </mat-expansion-panel>
+          </tn-expansion-panel>
         }
 
         @if (showSysDatasetWarning) {
-          <mat-expansion-panel class="expansion-panel">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                {{ 'System dataset will be moved off this pool' | translate }}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
+          <tn-expansion-panel class="expansion-panel" elevation="none" padding="small" [background]="false">
+            <div slot="title">
+              {{ 'System dataset will be moved off this pool' | translate }}
+            </div>
 
             <div class="expansion-content">
               <p class="warning">
@@ -94,32 +90,28 @@
                 <span [innerHTML]="helptext.exportDialog.warningSysDataset | translate"></span>
               </div>
             </div>
-          </mat-expansion-panel>
+          </tn-expansion-panel>
         }
 
         @if (showUnknownStatusDetachWarning) {
-          <mat-expansion-panel class="expansion-panel">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                {{ 'Pool status is unknown' | translate }}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
+          <tn-expansion-panel class="expansion-panel" elevation="none" padding="small" [background]="false">
+            <div slot="title">
+              {{ 'Pool status is unknown' | translate }}
+            </div>
 
             <div class="expansion-content">
               <div class="warning unknown-status-warning">
                 <span [innerHTML]="helptext.exportDialog.unknownState | translate: { pool: pool.name }"></span>
               </div>
             </div>
-          </mat-expansion-panel>
+          </tn-expansion-panel>
         }
 
         @if (attachments.length || process.knownProcesses.length || process.unknownProcesses.length) {
-          <mat-expansion-panel class="expansion-panel">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                {{ '{count} services and processes depend on this pool' | translate: { count: dependencyCount } }}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
+          <tn-expansion-panel class="expansion-panel" elevation="none" padding="small" [background]="false">
+            <div slot="title">
+              {{ '{count} services and processes depend on this pool' | translate: { count: dependencyCount } }}
+            </div>
 
             <div class="expansion-content">
               @if (attachments.length) {
@@ -173,7 +165,7 @@
                 </div>
               }
             </div>
-          </mat-expansion-panel>
+          </tn-expansion-panel>
         }
 
         <ix-fieldset>

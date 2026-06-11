@@ -4,16 +4,6 @@
   display: block;
   max-width: 800px;
   width: 100%;
-
-  &::ng-deep {
-    .mat-expanded .mat-expansion-panel-header span.mat-expansion-indicator {
-      top: 5px;
-    }
-
-    mat-panel-title {
-      font-family: var(--font-family-header);
-    }
-  }
 }
 
 .warnings-section .warning {
@@ -130,16 +120,10 @@
   margin-bottom: 16px;
 
   &.ha-warning-panel {
-    ::ng-deep {
-      .mat-expansion-panel-header {
-        border: 1px solid var(--red);
-      }
-
-      .warning-icon {
-        align-items: center;
-        display: flex;
-        margin-right: 5px;
-      }
+    .warning-icon {
+      align-items: center;
+      display: flex;
+      margin-right: 5px;
     }
 
     .ha-warning {
@@ -156,25 +140,6 @@
           font-weight: 600;
         }
       }
-    }
-  }
-
-  &::ng-deep {
-    .mat-expansion-panel-header {
-      background-color: var(--bg1);
-      font-weight: 500;
-      padding: 0 16px 3px;
-
-      &:hover,
-      &:focus {
-        background-color: var(--bg1) !important;
-      }
-    }
-
-    .mat-expansion-panel-body {
-      background-color: var(--bg1);
-      margin-top: 8px;
-      padding: 8px 16px;
     }
   }
 

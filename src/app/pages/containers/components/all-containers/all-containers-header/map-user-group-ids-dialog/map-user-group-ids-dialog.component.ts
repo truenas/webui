@@ -5,7 +5,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import {
   MatCell,
   MatCellDef,
@@ -18,9 +17,10 @@ import {
   MatRowDef,
   MatTable,
 } from '@angular/material/table';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnDialogShellComponent, TnIconComponent, TnSpinnerComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import {
   finalize, map, Observable, of,
 } from 'rxjs';
@@ -56,8 +56,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnDialogShellComponent,
     FakeProgressBarComponent,
     TnIconComponent,
+    TnSpinnerComponent,
+    TnTooltipDirective,
     MatIconButton,
-    MatProgressSpinner,
     TranslateModule,
     TestDirective,
     EmptyComponent,
@@ -72,7 +73,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatRowDef,
     MatTable,
     ReactiveFormsModule,
-    MatTooltip,
     MatHeaderCellDef,
     NewMappingFormComponent,
     IxButtonGroupComponent,

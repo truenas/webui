@@ -11,7 +11,7 @@
   }
 
   @if (!(isInheriting$ | async)) {
-    <tn-form-field [label]="'Encryption Type' | translate" [tooltip]="tooltips.encryption_type | translate">
+    <tn-form-field [label]="'Encryption Type' | translate" [tooltip]="tooltips.encryption_type | translate" [required]="true">
       <tn-select
         testId="encryption-type"
         formControlName="encryption_type"

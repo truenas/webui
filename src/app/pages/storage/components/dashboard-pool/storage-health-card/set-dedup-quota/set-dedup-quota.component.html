@@ -1,6 +1,6 @@
 <tn-dialog-shell testId="set-dedup-quota" [title]="'Deduplication Quota for {pool}' | translate: { pool: pool.name }">
 <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
-  <tn-form-field [label]="'Quota' | translate">
+  <tn-form-field [label]="'Quota' | translate" [required]="true">
     <tn-select
       testId="quota-type"
       formControlName="quotaType"

@@ -5,7 +5,7 @@
 >
 @if (isLoading()) {
   <div class="loading">
-    <mat-spinner [diameter]="40"></mat-spinner>
+    <tn-spinner [diameter]="40"></tn-spinner>
   </div>
 } @else if (snapshot) {
   @if (!wasDatasetRolledBack()) {

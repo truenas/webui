@@ -19,12 +19,11 @@
     ></tbody>
   </ix-table>
 
-  <div class="controls">
-    <tn-button
-      variant="outline"
-      [testId]="['add-new']"
-      [label]="'Add New' | translate"
-      (onClick)="onAdd()"
-    ></tn-button>
-  </div>
+  <tn-button
+    tnDialogAction
+    variant="outline"
+    [testId]="['add-new']"
+    [label]="'Add New' | translate"
+    (onClick)="onAdd()"
+  ></tn-button>
 </tn-dialog-shell>

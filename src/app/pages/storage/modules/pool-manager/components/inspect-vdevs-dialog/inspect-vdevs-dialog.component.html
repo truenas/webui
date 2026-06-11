@@ -1,23 +1,24 @@
 <tn-dialog-shell testId="inspect-vdevs" [title]="'Inspect VDEVs' | translate">
 <div class="inner-container">
   <div class="left-pane">
-    <mat-nav-list>
+    <tn-list>
       @for (type of presentTypes; track type) {
-        <mat-list-item
+        <tn-list-item
           class="vdev-type"
+          [clickable]="true"
           [class.selected]="type === selectedType"
-          (click)="selectType(type)"
-        >{{ getTypeLabel(type) | translate }}</mat-list-item>
+          (itemClick)="selectType(type)"
+        >{{ getTypeLabel(type) | translate }}</tn-list-item>
       }
-    </mat-nav-list>
+    </tn-list>
   </div>
-  <mat-divider class="divider" [vertical]="true"></mat-divider>
+  <tn-divider class="divider" [vertical]="true"></tn-divider>
   <div class="right-pane">
     <div class="header vdevs-header">
       <h3>{{ '{type} VDEVs' | translate: { type: (getTypeLabel(selectedType) | translate) } }}</h3>
     </div>
 
-    <mat-divider class="header-divider"></mat-divider>
+    <tn-divider class="header-divider"></tn-divider>
     <div class="vdevs-container">
       @for (vdev of vdevs; track vdev) {
         <ix-manual-selection-vdev

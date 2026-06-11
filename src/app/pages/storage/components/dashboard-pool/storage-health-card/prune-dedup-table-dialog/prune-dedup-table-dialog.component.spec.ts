@@ -1,7 +1,6 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatSliderHarness } from '@angular/material/slider/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -49,9 +48,10 @@ describe('PruneDedupTableDialogComponent', () => {
     const pruneByRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Prune By' }));
     await pruneByRadio.setValue('Percentage');
 
-    const percentageSlider = await loader.getHarness(MatSliderHarness);
-    const sliderThumb = await percentageSlider.getEndThumb();
-    await sliderThumb.setValue(50);
+    const sliderThumb = spectator.query('input[tnSliderThumb]') as HTMLInputElement;
+    sliderThumb.value = '50';
+    sliderThumb.dispatchEvent(new Event('input'));
+    spectator.detectChanges();
 
     const pruneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Prune' }));
     await pruneButton.click();

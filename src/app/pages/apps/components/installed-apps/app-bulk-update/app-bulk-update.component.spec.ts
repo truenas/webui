@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnExpansionPanelHarness } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -129,8 +129,8 @@ describe('AppBulkUpdateComponent', () => {
   });
 
   it('checks for the correct payload and success toast', async () => {
-    const expandHeader = spectator.query('mat-expansion-panel-header')!;
-    expandHeader.dispatchEvent(new Event('click'));
+    const panels = await loader.getAllHarnesses(TnExpansionPanelHarness);
+    await panels[0].expand();
     spectator.detectChanges();
     const jobArguments: CoreBulkQuery = ['app.upgrade', [
       ['test-app-one', { app_version: '15.3.36' }],
@@ -154,9 +154,9 @@ describe('AppBulkUpdateComponent', () => {
   });
 
   describe('getVersionInfo', () => {
-    it('returns version info using upgrade summary when panel is expanded', () => {
-      const expandHeader = spectator.query('mat-expansion-panel-header')!;
-      expandHeader.dispatchEvent(new Event('click'));
+    it('returns version info using upgrade summary when panel is expanded', async () => {
+      const panels = await loader.getAllHarnesses(TnExpansionPanelHarness);
+      await panels[0].expand();
       spectator.detectChanges();
 
       const result = spectator.component.getVersionInfo(fakeAppOne, 'test-app-one');

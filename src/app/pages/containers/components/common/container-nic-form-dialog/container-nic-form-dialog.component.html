@@ -3,7 +3,7 @@
 >
 <div>
   <form [formGroup]="form">
-    <tn-form-field [label]="'NIC Type' | translate">
+    <tn-form-field [label]="'NIC Type' | translate" [required]="true">
       <tn-select
         testId="type"
         formControlName="type"

@@ -38,7 +38,7 @@
       </ix-radio-group>
 
       @if (isExistingMode) {
-        <tn-form-field [label]="'Existing Pool' | translate">
+        <tn-form-field [label]="'Existing Pool' | translate" [required]="true">
           <tn-select
             testId="pool"
             formControlName="pool"

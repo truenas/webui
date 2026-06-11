@@ -5,13 +5,11 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import {
-  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
-} from '@angular/material/expansion';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnIconComponent, TnSelectComponent,
+  TnButtonComponent, TnDialogShellComponent, TnExpansionPanelComponent, TnFormFieldComponent,
+  TnIconComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -44,11 +42,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnDialogShellComponent,
     ReactiveFormsModule,
     TranslateModule,
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
+    TnExpansionPanelComponent,
     FakeProgressBarComponent,
-    MatExpansionPanelTitle,
     BulkListItemComponent,
     TnIconComponent,
     ImgFallbackModule,

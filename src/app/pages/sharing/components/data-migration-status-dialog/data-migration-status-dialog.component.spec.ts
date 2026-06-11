@@ -72,7 +72,7 @@ describe('DataMigrationStatusDialogComponent', () => {
     it('renders progressPercent as 50 when half the bytes have been transferred', () => {
       build({ ...baseJob, stats: { ...baseStats } });
 
-      const bar = spectator.query('mat-progress-bar')!;
+      const bar = spectator.query('tn-progress-bar')!;
       expect(bar.getAttribute('aria-valuenow') || bar.getAttribute('ng-reflect-value')).toBe('50');
     });
 
