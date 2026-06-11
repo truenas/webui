@@ -18,9 +18,14 @@
     @if (error.details && error.details.length > 0) {
       <a
         class="more-info"
+        role="button"
+        tabindex="0"
         tnTestIdType="link"
         [tnTestId]="'view-details'"
+        [attr.aria-expanded]="isDetailsOpen()"
         (click)="toggleDetails()"
+        (keydown.enter)="toggleDetails()"
+        (keydown.space)="$event.preventDefault(); toggleDetails()"
       >
         @if (isDetailsOpen()) {
           <tn-icon name="minus-circle-outline" library="mdi"></tn-icon>
@@ -42,12 +47,28 @@
                 <td class="detail-value">
                   @if (isCollapsibleDetail(detail.label)) {
                     @if (!isDetailExpanded(detail.label)) {
-                      <a class="trace-toggle" (click)="toggleDetailExpanded(detail.label)">
+                      <a
+                        class="trace-toggle"
+                        role="button"
+                        tabindex="0"
+                        [attr.aria-expanded]="false"
+                        (click)="toggleDetailExpanded(detail.label)"
+                        (keydown.enter)="toggleDetailExpanded(detail.label)"
+                        (keydown.space)="$event.preventDefault(); toggleDetailExpanded(detail.label)"
+                      >
                         <tn-icon name="eye" library="mdi" customSize="18px"></tn-icon>
                         <span>{{ 'Show' | translate }}</span>
                       </a>
                     } @else {
-                      <a class="trace-toggle" (click)="toggleDetailExpanded(detail.label)">
+                      <a
+                        class="trace-toggle"
+                        role="button"
+                        tabindex="0"
+                        [attr.aria-expanded]="true"
+                        (click)="toggleDetailExpanded(detail.label)"
+                        (keydown.enter)="toggleDetailExpanded(detail.label)"
+                        (keydown.space)="$event.preventDefault(); toggleDetailExpanded(detail.label)"
+                      >
                         <tn-icon name="eye-off" library="mdi" customSize="18px"></tn-icon>
                         <span>{{ 'Hide' | translate }}</span>
                       </a>

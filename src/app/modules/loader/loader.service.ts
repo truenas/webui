@@ -4,7 +4,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import {
   defer, EMPTY, finalize, MonoTypeOperatorFunction, Observable, Subscription,
 } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { AppLoaderComponent } from 'app/modules/loader/components/app-loader/app-loader.component';
 import { FocusService } from 'app/services/focus.service';
 
@@ -140,7 +140,9 @@ export class LoaderService {
   private handleConfirmationClose(): void {
     // Check if handler is still active (not removed)
     if (this.onBeforeClose && this.handlersSetup) {
-      this.onBeforeClose().subscribe((shouldClose) => {
+      // take(1): the confirmation is one-shot, so a caller returning a
+      // long-lived or multi-emitting observable can't leak or fire close() twice.
+      this.onBeforeClose().pipe(take(1)).subscribe((shouldClose) => {
         if (shouldClose) {
           this.close();
         }

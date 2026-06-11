@@ -13,6 +13,12 @@ export class JobProgressDialogRef<T> {
     private readonly dialogRef: DialogRef<void, JobProgressDialog<T>>,
   ) {}
 
+  /**
+   * Despite the name (kept for call-site compatibility with the previous
+   * MatDialogRef-based API), this does NOT emit on dialog close. It emits once
+   * when the underlying job settles: `next` on jobSuccess, `error` on jobAborted
+   * (AbortedJobError) or jobFailure.
+   */
   afterClosed(): Observable<Job<T>> {
     const componentInstance = this.dialogRef.componentInstance;
     if (!componentInstance) {

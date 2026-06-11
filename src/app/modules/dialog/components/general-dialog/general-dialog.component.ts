@@ -16,7 +16,7 @@ export interface GeneralDialogConfig {
  * General Dialog Component
  *
  * - able to be used as simple dialog to display text content, alert dialog with icon,
- * confirm dialog with single checkbox, able to display text as html or not
+ * able to display text as html or not
  * - use interface GeneralDialogConfig for general config
  */
 @Component({
