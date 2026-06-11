@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  InputType,
 } from '@truenas/ui-components';
 
 @Component({
@@ -20,6 +21,7 @@ import {
   ],
 })
 export class LogsDetailsDialog {
+  protected readonly InputType = InputType;
   protected dialogRef = inject<DialogRef<unknown, LogsDetailsDialog>>(DialogRef);
   private fb = inject(FormBuilder);
 

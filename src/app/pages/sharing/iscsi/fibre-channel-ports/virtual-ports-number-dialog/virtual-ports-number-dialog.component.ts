@@ -6,6 +6,7 @@ import { FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  InputType,
 } from '@truenas/ui-components';
 import { FibreChannelHost } from 'app/interfaces/fibre-channel.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -28,6 +29,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class VirtualPortsNumberDialog {
+  protected readonly InputType = InputType;
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   protected dialogRef = inject<DialogRef<unknown, VirtualPortsNumberDialog>>(DialogRef);

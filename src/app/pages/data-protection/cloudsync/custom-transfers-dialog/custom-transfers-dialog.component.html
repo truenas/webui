@@ -3,7 +3,7 @@
   <tn-form-field [label]="helptext.transfersLabel | translate" [tooltip]="helptext.transfersTooltip | translate">
     <tn-input
       testId="transfers"
-      inputType="number"
+      [inputType]="InputType.Number"
       [formControl]="transfers"
       [required]="true"
     ></tn-input>

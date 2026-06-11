@@ -6,6 +6,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  InputType,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -39,6 +40,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class AssociatedTargetFormComponent {
+  protected readonly InputType = InputType;
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);

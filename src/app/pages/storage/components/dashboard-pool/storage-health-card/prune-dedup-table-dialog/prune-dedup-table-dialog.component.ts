@@ -7,6 +7,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  InputType,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -51,6 +52,7 @@ export const pruneByLabels = new Map<PruneBy, string>([
   ],
 })
 export class PruneDedupTableDialog {
+  protected readonly InputType = InputType;
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private dialog = inject(DialogService);

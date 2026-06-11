@@ -4,6 +4,7 @@ import { Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  InputType,
 } from '@truenas/ui-components';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -24,6 +25,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
   ],
 })
 export class CustomTransfersDialog {
+  protected readonly InputType = InputType;
   protected dialogRef = inject<DialogRef<unknown, CustomTransfersDialog>>(DialogRef);
 
   readonly helptext = helptextCloudSync;

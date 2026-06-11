@@ -3,7 +3,7 @@
   <tn-form-field [label]="'SED Password' | translate" [tooltip]="helptext.passwordTooltip | translate">
     <tn-input
       testId="sed-password"
-      inputType="password"
+      [inputType]="InputType.Password"
       [formControl]="passwordControl"
     ></tn-input>
   </tn-form-field>

@@ -5,6 +5,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  InputType,
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
@@ -34,6 +35,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class LeaveDomainDialog {
+  protected readonly InputType = InputType;
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(FormBuilder);
   private dialogService = inject(DialogService);
