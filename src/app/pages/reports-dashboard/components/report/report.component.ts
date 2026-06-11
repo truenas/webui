@@ -1,13 +1,9 @@
 import { KeyValuePipe } from '@angular/common';
 import { Component, OnChanges, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, input, viewChild, DOCUMENT, inject, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   add, Duration, isToday, sub,
 } from 'date-fns';
@@ -54,14 +50,12 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   styleUrls: ['./report.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
-    MatCardTitle,
-    MatButton,
-    MatTooltip,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnButtonComponent,
+    TnIconButtonComponent,
+    TnTooltipDirective,
     TestDirective,
-    TnIconComponent,
-    MatCardContent,
     LineChartComponent,
     IxDateComponent,
     EmptyComponent,

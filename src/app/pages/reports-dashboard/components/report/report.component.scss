@@ -1,23 +1,12 @@
 @import 'mixins/loader';
 @import 'scss-imports/variables';
 
-.mat-mdc-card-content {
-  flex-wrap: wrap;
-  height: 100%;
-  margin: 0;
-}
-
 .toolbar {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   padding-top: 8px;
-
-  .title {
-    display: flex;
-    flex-grow: 1;
-  }
 }
 
 .card-container {
@@ -32,11 +21,15 @@
 
 .card-content {
   display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  margin: 0;
 
   .chart-wrapper-outer {
     flex-grow: 1;
     max-width: calc(90vw - 550px);
     min-width: 50%;
+    padding-top: 2vh;
 
     @media (max-width: $breakpoint-md) {
       max-width: 100%;
@@ -277,10 +270,6 @@ span.disk-detail-subtitle {
   padding-bottom: 5px;
 }
 
-.disk-detail-temps-bar .mat-mdc-progress-bar-buffer {
-  opacity: 0 !important;
-}
-
 .disk-detail-temp {
   max-height: 24px;
 }
@@ -310,10 +299,6 @@ span.disk-detail-subtitle {
 
 .disk-detail-temp-label.hot span.value {
   color: #c00;
-}
-
-.disk-detail-temp-label.hot .mat-mdc-progress-bar-element {
-  border: solid 7px #c00;
 }
 
 .disk-detail-temp-label span.temp-units {
@@ -371,7 +356,7 @@ div.line-chart-tools {
   gap: 8px;
   justify-content: flex-end;
 
-  .mat-icon-button {
+  tn-icon-button {
     align-items: center;
     display: inline-flex;
     font-size: 18px;
@@ -563,7 +548,7 @@ p.value {
   margin: 0 0 0 4px;
 }
 
-.mat-mdc-card-title {
+.title {
   font-size: initial;
   margin: 0;
 
@@ -582,7 +567,7 @@ p.value {
   position: relative;
 
   /* Children get the padding so dividers fit the full width of card */
-  .mat-mdc-card {
+  tn-card {
     padding-left: 0;
     padding-right: 0;
 
@@ -592,8 +577,7 @@ p.value {
     }
   }
 
-  .mat-mdc-card-footer,
-  .mat-toolbar-row,
+  .toolbar,
   .legend-wrapper,
   .chart-wrapper {
     margin: 0;
@@ -641,10 +625,6 @@ p.value {
       width: 100%;
     }
   }
-}
-
-.report .mat-mdc-card-footer {
-  width: 100%;
 }
 
 .report .legend-group .report-analytics {

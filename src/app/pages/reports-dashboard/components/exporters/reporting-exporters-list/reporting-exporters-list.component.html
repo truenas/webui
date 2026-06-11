@@ -1,41 +1,34 @@
-<mat-card>
+<tn-card [padContent]="false">
+  <h3 tnCardHeader class="tn-card__title">{{ 'Reporting Exporters' | translate }}</h3>
+  <div tnCardHeader class="actions action-icon">
+    <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      testId="add-reporting-exporter"
+      [label]="'Add' | translate"
+      [ixUiSearch]="searchableElements.elements.add"
+      (onClick)="doAdd()"
+    ></tn-button>
+  </div>
+
   <ix-fake-progress-bar [loading]="!!(isLoading$ | async)"></ix-fake-progress-bar>
-  <mat-toolbar-row>
-    <h3>{{ 'Reporting Exporters' | translate }}</h3>
-    <div class="actions action-icon">
-      <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        color="primary"
-        ixTest="add-reporting-exporter"
-        [ixUiSearch]="searchableElements.elements.add"
-        (click)="doAdd()"
-      >
-        {{ 'Add' | translate }}
-      </button>
-    </div>
-  </mat-toolbar-row>
-  <mat-card-content>
-    <ix-table
-      [ixUiSearch]="searchableElements.elements.exporters"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
-    >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(isLoading$ | async)"
-      ></tbody>
-    </ix-table>
-    <tn-table-pager
+  <ix-table
+    [ixUiSearch]="searchableElements.elements.exporters"
+    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns"
       [dataProvider]="dataProvider"
-    ></tn-table-pager>
-  </mat-card-content>
-</mat-card>
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="!!(isLoading$ | async)"
+    ></tbody>
+  </ix-table>
+  <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+</tn-card>

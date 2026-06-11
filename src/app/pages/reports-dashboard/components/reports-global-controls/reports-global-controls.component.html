@@ -23,77 +23,16 @@
       [label]="'Auto Refresh' | translate"
     ></ix-slide-toggle>
 
-    @if (activeTab) {
-      <button
-        mat-button
-        color="primary"
-        class="menu-toggle"
-        ixTest="category-menu"
-        [matMenuTriggerFor]="categoryMenu"
-        [ixUiSearch]="searchableElements.elements.selectReporting"
-      >
-        {{ activeTab.label | translate }}
-        <tn-icon name="menu-down" library="mdi" class="menu-caret"></tn-icon>
-      </button>
-    }
-
-    <mat-menu #categoryMenu="matMenu" overlapTrigger="false" class="reports-menu">
-      <div>
-        @for (tab of allTabs; track tab) {
-          @switch (tab.value) {
-            @case (ReportType.Cpu) {
-              <div [ixUiSearch]="searchableElements.elements.cpu">
-                <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
-              </div>
-            }
-            @case (ReportType.Disk) {
-              <div [ixUiSearch]="searchableElements.elements.disk">
-                <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
-              </div>
-            }
-            @case (ReportType.Memory) {
-              <div [ixUiSearch]="searchableElements.elements.memory">
-                <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
-              </div>
-            }
-            @case (ReportType.Network) {
-              <div [ixUiSearch]="searchableElements.elements.network">
-                <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
-              </div>
-            }
-            @case (ReportType.System) {
-              <div [ixUiSearch]="searchableElements.elements.system">
-                <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
-              </div>
-            }
-            @case (ReportType.Ups) {
-              <div [ixUiSearch]="searchableElements.elements.ups">
-                <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
-              </div>
-            }
-            @case (ReportType.Zfs) {
-              <div [ixUiSearch]="searchableElements.elements.zfs">
-                <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
-              </div>
-            }
-          }
-        }
-      </div>
-      <ng-template #matMenuItem let-tab="tab">
-        @if (typeTab(tab); as tab) {
-          <button
-            mat-menu-item
-            [ixTest]="['category', tab.label]"
-            [class.selected]="isActiveTab(tab)"
-            [routerLink]="['/reportsdashboard', tab.value]"
-          >{{ tab.label | translate }}</button>
-        }
-      </ng-template>
-    </mat-menu>
-    <button
-      mat-button
-      ixTest="exporters-nav"
+    <ix-select
+      formControlName="tab"
+      [label]="'Category' | translate"
+      [options]="tabOptions$"
+      [ixUiSearch]="searchableElements.elements.selectReporting"
+    ></ix-select>
+    <tn-button
+      testId="exporters-nav"
+      [label]="'Exporters' | translate"
       [routerLink]="['/reportsdashboard','exporters']"
-    >{{ 'Exporters' | translate }}</button>
+    ></tn-button>
   </form>
 }

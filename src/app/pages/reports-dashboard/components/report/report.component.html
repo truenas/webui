@@ -1,76 +1,72 @@
 <div class="report" ngClass.xs="double-height xs">
   <div class="card-container">
-    <mat-card class="card" [class.loading]="!isReady">
+    <tn-card class="card" [class.loading]="!isReady" [padContent]="false">
       @if (isReady) {
-        <mat-toolbar-row class="mat-card-toolbar toolbar">
-          <mat-card-title class="title">
-            <h3 class="mat-card-title-text">{{ reportTitle | translate }}</h3>
-          </mat-card-title>
+        <div class="toolbar" tnCardHeader>
+          <h3 class="tn-card__title">{{ reportTitle | translate }}</h3>
           <!-- Controls/Tools -->
-          <div class="line-chart-tools-wrapper">
-            @if (localControls() && !report().errorConf) {
-              <div class="line-chart-tools">
-                <div class="steps-group" aria-label="Steps">
-                  <button
-                    mat-button
-                    [disabled]="stepBackDisabled"
-                    [matTooltip]="'Step Back' | translate"
-                    [matTooltipShowDelay]="1000"
-                    [ixTest]="['steps', 'back']"
-                    (click)="stepBack()"
-                  >
-                    <tn-icon name="rewind" library="mdi"></tn-icon>
-                  </button>
-                  <button
-                    mat-button
-                    [disabled]="stepForwardDisabled"
-                    [matTooltip]="'Step Forward' | translate"
-                    [matTooltipShowDelay]="1000"
-                    [ixTest]="['steps', 'forward']"
-                    (click)="stepForward()"
-                  >
-                    <tn-icon name="fast-forward" library="mdi"></tn-icon>
-                  </button>
-                </div>
-
-                <div class="zoom-group" aria-label="Zoom Level">
-                  <button
-                    mat-button
-                    [disabled]="zoomLevelIndex === zoomLevelMin"
-                    [matTooltip]="'Zoom Out' | translate"
-                    [ixTest]="['zoom', 'out']"
-                    (click)="timeZoomOut()"
-                    ><tn-icon name="magnify-minus" library="mdi"></tn-icon>
-                  </button>
-
-                  <button
-                    mat-button
-                    [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
-                    [matTooltip]="'Reset Zoom' | translate"
-                    [ixTest]="['zoom', 'reset']"
-                    (click)="timeZoomReset()"
-                  >
-                    {{ currentZoomLevel | mapValue: zoomLevelLabels | translate }}
-                  </button>
-
-                  <button
-                    mat-button
-                    [disabled]="zoomLevelIndex === zoomLevelMax"
-                    [matTooltip]="'Zoom In' | translate"
-                    [ixTest]="['zoom', 'in']"
-                    (click)="timeZoomIn()"
-                    >
-                      <tn-icon name="magnify-plus" library="mdi"></tn-icon>
-                  </button>
+          <div class="tn-card__header-right">
+            <div class="line-chart-tools-wrapper">
+              @if (localControls() && !report().errorConf) {
+                <div class="line-chart-tools">
+                  <div class="steps-group" aria-label="Steps">
+                    <tn-icon-button
+                      name="rewind"
+                      library="mdi"
+                      [disabled]="stepBackDisabled"
+                      [tooltip]="'Step Back' | translate"
+                      [ariaLabel]="'Step Back' | translate"
+                      [testId]="['steps', 'back']"
+                      (onClick)="stepBack()"
+                    ></tn-icon-button>
+                    <tn-icon-button
+                      name="fast-forward"
+                      library="mdi"
+                      [disabled]="stepForwardDisabled"
+                      [tooltip]="'Step Forward' | translate"
+                      [ariaLabel]="'Step Forward' | translate"
+                      [testId]="['steps', 'forward']"
+                      (onClick)="stepForward()"
+                    ></tn-icon-button>
                   </div>
-                </div>
-              }
-            </div>
-          </mat-toolbar-row>
-        }
 
+                  <div class="zoom-group" aria-label="Zoom Level">
+                    <tn-icon-button
+                      name="magnify-minus"
+                      library="mdi"
+                      [disabled]="zoomLevelIndex === zoomLevelMin"
+                      [tooltip]="'Zoom Out' | translate"
+                      [ariaLabel]="'Zoom Out' | translate"
+                      [testId]="['zoom', 'out']"
+                      (onClick)="timeZoomOut()"
+                    ></tn-icon-button>
+
+                    <tn-button
+                      [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
+                      [tnTooltip]="'Reset Zoom' | translate"
+                      [label]="currentZoomLevel | mapValue: zoomLevelLabels | translate"
+                      [testId]="['zoom', 'reset']"
+                      (onClick)="timeZoomReset()"
+                    ></tn-button>
+
+                    <tn-icon-button
+                      name="magnify-plus"
+                      library="mdi"
+                      [disabled]="zoomLevelIndex === zoomLevelMax"
+                      [tooltip]="'Zoom In' | translate"
+                      [ariaLabel]="'Zoom In' | translate"
+                      [testId]="['zoom', 'in']"
+                      (onClick)="timeZoomIn()"
+                    ></tn-icon-button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+        </div>
+      }
       @if (isReady && !report().errorConf) {
-        <mat-card-content class="card-content">
+        <div class="card-content">
           <div class="chart-wrapper-outer">
             <div class="chart-wrapper">
               <ix-linechart
@@ -177,14 +173,14 @@
               </h4>
             }
           </section>
-        </mat-card-content>
+        </div>
       }
 
       @if (isReady && report()?.errorConf) {
-        <mat-card-content>
+        <div class="card-content">
           <ix-empty [conf]="report().errorConf"></ix-empty>
-        </mat-card-content>
+        </div>
       }
-    </mat-card>
+    </tn-card>
   </div>
 </div>

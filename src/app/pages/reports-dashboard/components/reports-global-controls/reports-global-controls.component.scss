@@ -1,9 +1,5 @@
 :host {
   color: var(--fg2);
-
-  .menu-toggle {
-    color: var(--fg2);
-  }
 }
 
 .reports-toolbar ::ng-deep {
@@ -31,14 +27,6 @@
 
     .input-container {
       width: 180px;
-    }
-  }
-}
-
-.reports-menu ::ng-deep {
-  .mat-mdc-menu-item {
-    &.selected {
-      background-color: var(--primary);
     }
   }
 }

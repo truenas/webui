@@ -1,8 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   createComponentFactory,
   mockProvider,
@@ -10,6 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
@@ -24,6 +23,7 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 describe('ReportsGlobalControlsComponent', () => {
   let spectator: Spectator<ReportsGlobalControlsComponent>;
   let loader: HarnessLoader;
+  let rootLoader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: ReportsGlobalControlsComponent,
     providers: [
@@ -53,6 +53,7 @@ describe('ReportsGlobalControlsComponent', () => {
           },
         ],
       }),
+      mockProvider(Router),
       mockProvider(ActivatedRoute, {
         routeConfig: {
           path: ReportType.Disk,
@@ -69,25 +70,26 @@ describe('ReportsGlobalControlsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    rootLoader = TnMenuTesting.rootLoader(spectator.fixture);
   });
 
   describe('report selector', () => {
     it('shows a list of available reports', async () => {
-      const reportMenu = await loader.getHarness(MatMenuHarness);
+      const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Disk' }));
+      await trigger.click();
 
-      await reportMenu.open();
-      const menuItems = await reportMenu.getItems();
+      const reportMenu = await rootLoader.getHarness(TnMenuHarness);
+      const labels = await reportMenu.getItemLabels();
 
-      expect(menuItems).toHaveLength(3);
-      expect(await menuItems[0].getText()).toBe('Disk');
-      expect(await menuItems[1].getText()).toBe('CPU');
-      expect(await menuItems[2].getText()).toBe('UPS');
+      expect(labels).toEqual(['Disk', 'CPU', 'UPS']);
     });
 
     it('marks currently selected menu item based on current route', async () => {
-      const reportMenu = await loader.getHarness(MatMenuHarness);
+      const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Disk' }));
+      await trigger.click();
 
-      expect(await reportMenu.getTriggerText()).toBe('Disk');
+      const reportMenu = await rootLoader.getHarness(TnMenuHarness);
+      expect(await reportMenu.getSelectedItemLabel()).toBe('Disk');
     });
   });
 
@@ -151,7 +153,7 @@ describe('ReportsGlobalControlsComponent', () => {
   });
 
   it('shows Exporters button', async () => {
-    const exportersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Exporters' }));
+    const exportersButton = await loader.getHarness(TnButtonHarness.with({ label: 'Exporters' }));
 
     expect(exportersButton).toBeTruthy();
   });

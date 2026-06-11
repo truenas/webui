@@ -1,8 +1,8 @@
 import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from '@angular/cdk/scrolling';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDestroy, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
+import { TnCardComponent } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
@@ -29,7 +29,7 @@ import { ReportsService } from './reports.service';
     CdkFixedSizeVirtualScroll,
     CdkVirtualForOf,
     ReportComponent,
-    MatCard,
+    TnCardComponent,
   ],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
