@@ -964,3 +964,14 @@ mat-form-field {
   height: 100%;
   outline: none;
 }
+
+// ix-input / ix-select wrapped their controls with this vertical rhythm
+// (margin: 12px 0; padding: 8px 0). tn-form-field has no default spacing, so
+// dialogs migrated to tn-form-field render their fields flush against each other
+// and against adjacent checkboxes. Restore the original ix-* field spacing.
+tn-form-field {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  padding: 8px 0;
+}
