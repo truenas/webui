@@ -1,11 +1,10 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatFormField } from '@angular/material/form-field';
-import { MatOption, MatSelect } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnIconComponent, TnSelectComponent, TnSelectOption,
+} from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -14,7 +13,6 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { extractAppVersion, formatVersionWithRevision, resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 
 type Version = Pick<AppUpgradeSummary, 'latest_version' | 'latest_human_version' | 'latest_app_version' | 'available_versions_for_upgrade'>;
@@ -27,12 +25,8 @@ type Version = Pick<AppUpgradeSummary, 'latest_version' | 'latest_human_version'
   imports: [
     TnDialogShellComponent,
     ImgFallbackModule,
-    MatFormField,
-    MatSelect,
-    TestDirective,
+    TnSelectComponent,
     FormsModule,
-    KeyValuePipe,
-    MatOption,
     TranslateModule,
     FormActionsComponent,
     TnButtonComponent,
@@ -48,6 +42,7 @@ export class AppUpdateDialog {
   protected imagePlaceholder = appImagePlaceholder;
   protected helptext = helptextApps;
   protected versionOptions = new Map<string, Version>();
+  protected versionSelectOptions: TnSelectOption<string>[] = [];
   protected selectedVersionKey: string;
   protected selectedVersion: Version | undefined;
   protected latestAppVersion!: string;
@@ -78,6 +73,11 @@ export class AppUpdateDialog {
       });
     }
 
+    this.versionSelectOptions = Array.from(this.versionOptions, ([key, version]) => ({
+      value: key,
+      label: this.getVersionLabel(key, version.latest_human_version),
+    }));
+
     this.selectedVersionKey = Array.from(this.versionOptions.keys())[0];
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
     this.updateVersionInfo();
@@ -86,10 +86,6 @@ export class AppUpdateDialog {
   onVersionOptionChanged(): void {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
     this.updateVersionInfo();
-  }
-
-  originalOrder(): number {
-    return 0;
   }
 
   getVersionLabel(libraryVersion: string, humanVersion: string): string {

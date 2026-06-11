@@ -4,10 +4,11 @@
     {{ 'Lock Dataset {datasetName}?' | translate: { datasetName: dataset.name } }}
   </p>
 
-  <ix-checkbox
+  <tn-checkbox
+    testId="force"
     [formControl]="forceCheckbox"
     [label]="'Force unmount' | translate"
-  ></ix-checkbox>
+  ></tn-checkbox>
 </form>
 <ix-form-actions tnDialogAction>
   <tn-button

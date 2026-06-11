@@ -1,14 +1,12 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiTarget, IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -51,11 +49,10 @@ describe('DeleteTargetDialogComponent', () => {
   });
 
   it('deletes the target when delete button is clicked', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Delete 2 associated extents': true,
-      'Force Delete': false,
-    });
+    const extentsCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete 2 associated extents' }));
+    await extentsCheckbox.check();
+    const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force Delete' }));
+    await forceCheckbox.uncheck();
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
@@ -72,7 +69,7 @@ describe('DeleteTargetDialogComponent', () => {
   });
 
   it('shows extents checkbox when there are associated extents', async () => {
-    const extentsCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Delete 2 associated extents' }));
+    const extentsCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete 2 associated extents' }));
     expect(extentsCheckbox).toBeTruthy();
   });
 

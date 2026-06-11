@@ -3,11 +3,10 @@ import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatCalendar } from '@angular/material/datepicker';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { MockComponent, MockInstance } from 'ng-mocks';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -59,12 +58,12 @@ describe('SchedulerModalComponent', () => {
     const hours = await loader.getHarness(IxInputHarness.with({ label: 'Hours' }));
     const days = await loader.getHarness(IxInputHarness.with({ label: 'Days of Month' }));
 
-    const monthCheckboxes = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.months' }));
+    const monthCheckboxes = await loader.getAllHarnesses(TnCheckboxHarness.with({ ancestor: '.months' }));
     const months = await parallel(() => monthCheckboxes.map(async (month) => {
       return await month.isChecked() ? month.getLabelText() : undefined;
     }));
 
-    const daysOfWeekCheckboxes = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
+    const daysOfWeekCheckboxes = await loader.getAllHarnesses(TnCheckboxHarness.with({ ancestor: '.weekdays' }));
     const daysOfWeek = await parallel(() => daysOfWeekCheckboxes.map(async (month) => {
       return await month.isChecked() ? month.getLabelText() : undefined;
     }));
@@ -141,10 +140,10 @@ describe('SchedulerModalComponent', () => {
       const days = await loader.getHarness(IxInputHarness.with({ label: 'Days of Month' }));
       await days.setValue('2-5');
 
-      const months = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.months' }));
+      const months = await loader.getAllHarnesses(TnCheckboxHarness.with({ ancestor: '.months' }));
       await months[0].uncheck();
 
-      const daysOfWeek = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
+      const daysOfWeek = await loader.getAllHarnesses(TnCheckboxHarness.with({ ancestor: '.weekdays' }));
       await daysOfWeek[0].check();
 
       const previewColumn = spectator.query(SchedulerPreviewColumnComponent)!;
@@ -152,7 +151,7 @@ describe('SchedulerModalComponent', () => {
     });
 
     it('sets day of week portion of crontab to * when all days are selected', async () => {
-      const weekdays = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
+      const weekdays = await loader.getAllHarnesses(TnCheckboxHarness.with({ ancestor: '.weekdays' }));
       await parallel(() => weekdays.map((weekday) => weekday.check()));
 
       const previewColumn = spectator.query(SchedulerPreviewColumnComponent)!;
@@ -160,7 +159,7 @@ describe('SchedulerModalComponent', () => {
     });
 
     it('sets month portion of crontab to * when all months are selected', async () => {
-      const months = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.months' }));
+      const months = await loader.getAllHarnesses(TnCheckboxHarness.with({ ancestor: '.months' }));
       await parallel(() => months.map((month) => month.check()));
 
       const previewColumn = spectator.query(SchedulerPreviewColumnComponent)!;
@@ -168,7 +167,7 @@ describe('SchedulerModalComponent', () => {
     });
 
     it('shows an explanation about how DOW and DOM conditions work when both of them are restricted', async () => {
-      const daysOfWeek = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
+      const daysOfWeek = await loader.getAllHarnesses(TnCheckboxHarness.with({ ancestor: '.weekdays' }));
       await daysOfWeek[0].check();
 
       const days = await loader.getHarness(IxInputHarness.with({ label: 'Days of Month' }));

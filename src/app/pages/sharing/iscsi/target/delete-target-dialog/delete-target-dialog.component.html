@@ -14,15 +14,17 @@
 
   <form [formGroup]="form">
     @if (targetExtents().length > 0) {
-      <ix-checkbox
+      <tn-checkbox
         formControlName="delete_extents"
+        testId="delete-extents"
         [label]="'Delete {n} associated {n, plural, one {extent} other {extents}}' | translate: { n: targetExtents().length }"
-      ></ix-checkbox>
+      ></tn-checkbox>
     }
-    <ix-checkbox
+    <tn-checkbox
       formControlName="force"
+      testId="force"
       [label]="'Force Delete' | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
   </form>
 </div>
 <ix-form-actions tnDialogAction>

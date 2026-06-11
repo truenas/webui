@@ -6,23 +6,26 @@
   <ix-input formControlName="confirmAppName"></ix-input>
   
   @if (data.showRemoveVolumes) {
-    <ix-checkbox
+    <tn-checkbox
+      testId="remove-volumes"
       formControlName="removeVolumes"
       [label]="'Remove iXVolumes' | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
 
     @if (data.showRemoveVolumes && form.value.removeVolumes) {
-      <ix-checkbox
+      <tn-checkbox
+        testId="force-remove-volumes"
         formControlName="forceRemoveVolumes"
         [label]="'Force-remove iXVolumes' | translate"
-      ></ix-checkbox>
+      ></tn-checkbox>
     }
   }
 
-  <ix-checkbox
+  <tn-checkbox
+    testId="remove-images"
     formControlName="removeImages"
     [label]="'Remove Images' | translate"
-  ></ix-checkbox>
+  ></tn-checkbox>
 
   </form>
 <ix-form-actions tnDialogAction>

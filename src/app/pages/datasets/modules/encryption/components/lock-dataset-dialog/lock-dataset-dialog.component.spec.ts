@@ -3,14 +3,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LockDatasetDialog } from './lock-dataset-dialog.component';
 
@@ -49,8 +48,8 @@ describe('LockDatasetDialogComponent', () => {
   });
 
   it('locks a dataset when form is submitted', async () => {
-    const forceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Force unmount' }));
-    await forceCheckbox.setValue(true);
+    const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force unmount' }));
+    await forceCheckbox.check();
 
     const lockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Lock' }));
     await lockButton.click();

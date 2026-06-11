@@ -2,8 +2,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
-import { MatSelectHarness } from '@angular/material/select/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnSelectHarness } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
@@ -98,7 +98,7 @@ describe('AppUpdateDialog', () => {
     });
 
     it('shows version dropdown when multiple versions are available', () => {
-      const versionDropdown = spectator.query('.resource mat-select');
+      const versionDropdown = spectator.query('.resource tn-select');
       expect(versionDropdown).toBeTruthy();
     });
 
@@ -109,9 +109,8 @@ describe('AppUpdateDialog', () => {
       expect(versionRows[0].textContent).toContain('Revision');
 
       // Select version 1.0.3 which has app version 8.7.1 via the dropdown
-      const select = await loader.getHarness(MatSelectHarness);
-      await select.open();
-      await select.clickOptions({ text: /Revision: 1.0.3/ });
+      const select = await loader.getHarness(TnSelectHarness);
+      await select.selectOption(/Revision: 1.0.3/);
       spectator.detectChanges();
 
       versionRows = spectator.queryAll('.version-row');
@@ -197,7 +196,7 @@ describe('AppUpdateDialog', () => {
     });
 
     it('hides version dropdown when only one version is available', () => {
-      const versionDropdown = spectator.query('.resource mat-select');
+      const versionDropdown = spectator.query('.resource tn-select');
       expect(versionDropdown).not.toBeTruthy();
     });
   });

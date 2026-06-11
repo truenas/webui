@@ -5,11 +5,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent } from '@truenas/ui-components';
 import * as cronParser from 'cron-parser';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
 import { of } from 'rxjs';
@@ -24,7 +23,6 @@ import {
   CrontabPartValidatorService,
 } from 'app/modules/scheduler/services/crontab-part-validator.service';
 import { getDefaultCrontabPresets } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -40,8 +38,7 @@ import { SchedulerPreviewColumnComponent } from './scheduler-preview-column/sche
     IxSelectComponent,
     TooltipComponent,
     IxInputComponent,
-    MatCheckbox,
-    TestDirective,
+    TnCheckboxComponent,
     TnButtonComponent,
     SchedulerPreviewColumnComponent,
     TranslateModule,

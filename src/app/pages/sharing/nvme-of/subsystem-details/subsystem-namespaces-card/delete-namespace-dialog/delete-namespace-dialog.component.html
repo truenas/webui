@@ -5,10 +5,11 @@
   </p>
 
   @if (isFile) {
-    <ix-checkbox
+    <tn-checkbox
+      testId="remove-file"
       [formControl]="removeFileControl"
       [label]="('Also delete the underlying file – {name}' | translate: { name: namespace.device_path })"
-    ></ix-checkbox>
+    ></tn-checkbox>
   } @else {
     <p>
       {{ 'Underlying Zvol will not be deleted.' | translate }}

@@ -3,13 +3,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   StripAclModalComponent, StripAclModalData,
@@ -69,9 +68,9 @@ describe('StripAclModalComponent', () => {
 
   it('strips ACL with traverse when "Remove ACL from children" checkbox is ticked', async () => {
     const traverseCheckbox = await loader.getHarness(
-      IxCheckboxHarness.with({ label: helptextAcl.stripAclDialog.traverseCheckbox }),
+      TnCheckboxHarness.with({ label: helptextAcl.stripAclDialog.traverseCheckbox }),
     );
-    await traverseCheckbox.setValue(true);
+    await traverseCheckbox.check();
 
     const stripButton = await loader.getHarness(TnButtonHarness.with({ label: 'Strip ACLs' }));
     await stripButton.click();

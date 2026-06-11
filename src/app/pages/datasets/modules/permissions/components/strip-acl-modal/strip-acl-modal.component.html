@@ -2,11 +2,12 @@
 <div class="modal-body">
   <p>{{ helptext.stripAclDialog.message | translate }}</p>
 
-  <ix-checkbox
+  <tn-checkbox
     class="traverse-checkbox"
+    testId="traverse"
     [formControl]="traverseCheckbox"
     [label]="helptext.stripAclDialog.traverseCheckbox | translate"
-  ></ix-checkbox>
+  ></tn-checkbox>
 </div>
 <ix-form-actions tnDialogAction class="form-actions">
   <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>

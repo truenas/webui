@@ -2,15 +2,17 @@
 <div>
   <form [formGroup]="form">
     @if (isFile) {
-      <ix-checkbox
+      <tn-checkbox
         formControlName="remove"
+        testId="remove"
         [label]="'Remove file?' | translate"
-      ></ix-checkbox>
+      ></tn-checkbox>
     }
-    <ix-checkbox
+    <tn-checkbox
       formControlName="force"
+      testId="force"
       [label]="'Force' | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
   </form>
 </div>
 <ix-form-actions tnDialogAction class="form-actions">

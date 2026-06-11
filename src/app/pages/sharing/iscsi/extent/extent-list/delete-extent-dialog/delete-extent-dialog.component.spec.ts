@@ -3,13 +3,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DeleteExtentDialog,
@@ -45,10 +44,8 @@ describe('DeleteExtentDialogComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Force: true,
-    });
+    const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
+    await forceCheckbox.check();
 
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await submitButton.click();
@@ -72,11 +69,10 @@ describe('DeleteExtentDialogComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Remove file?': true,
-      Force: true,
-    });
+    const removeCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Remove file?' }));
+    await removeCheckbox.check();
+    const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
+    await forceCheckbox.check();
 
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await submitButton.click();

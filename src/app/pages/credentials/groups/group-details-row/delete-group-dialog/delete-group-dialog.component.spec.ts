@@ -3,12 +3,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -52,8 +51,8 @@ describe('DeleteGroupDialogComponent', () => {
       'Are you sure you want to delete group "vip"?',
     );
 
-    const deleteUsersCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Delete 3 users with this primary group?' }));
-    await deleteUsersCheckbox.setValue(true);
+    const deleteUsersCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete 3 users with this primary group?' }));
+    await deleteUsersCheckbox.check();
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();

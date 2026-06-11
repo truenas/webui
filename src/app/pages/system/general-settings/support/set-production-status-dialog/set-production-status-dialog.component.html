@@ -2,10 +2,11 @@
 <div>
   <p>{{ 'Set production status as active' | translate }}</p>
 
-  <ix-checkbox
+  <tn-checkbox
+    testId="send-initial-debug"
     [formControl]="sendInitialDebugCheckbox"
     [label]="'Send initial debug' | translate"
-  ></ix-checkbox>
+  ></tn-checkbox>
 </div>
 
 <ix-form-actions tnDialogAction class="form-actions">

@@ -3,11 +3,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeleteNamespaceDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/delete-namespace-dialog/delete-namespace-dialog.component';
 
@@ -44,7 +43,7 @@ describe('DeleteNamespaceDialogComponent', () => {
     expect(message).toHaveText('Are you sure you want to delete this namespace?');
     expect(message).toHaveText('Underlying Zvol will not be deleted.');
 
-    expect(await loader.getHarnessOrNull(IxCheckboxHarness)).toBeNull();
+    expect(await loader.getHarnessOrNull(TnCheckboxHarness)).toBeNull();
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
@@ -60,9 +59,9 @@ describe('DeleteNamespaceDialogComponent', () => {
       device_path: '/mnt/file1',
     } as NvmeOfNamespace);
 
-    const checkbox = await loader.getHarness(IxCheckboxHarness);
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
     expect(await checkbox.getLabelText()).toBe('Also delete the underlying file – /mnt/file1');
-    await checkbox.setValue(true);
+    await checkbox.check();
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();

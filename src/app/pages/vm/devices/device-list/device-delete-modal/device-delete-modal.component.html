@@ -8,10 +8,11 @@
     ></p>
 
     @if (device.attributes.dtype === VmDeviceType.Disk) {
-      <ix-checkbox
+      <tn-checkbox
+        testId="zvol"
         formControlName="zvol"
         [label]="'Delete zvol device' | translate"
-      ></ix-checkbox>
+      ></tn-checkbox>
 
       @if (form.value.zvol) {
         <ix-input
@@ -22,16 +23,18 @@
     }
 
     @if (device.attributes.dtype === VmDeviceType.Raw) {
-      <ix-checkbox
+      <tn-checkbox
+        testId="raw-file"
         formControlName="raw_file"
         [label]="'Delete raw file' | translate"
-      ></ix-checkbox>
+      ></tn-checkbox>
     }
 
-    <ix-checkbox
+    <tn-checkbox
+      testId="force"
       formControlName="force"
       [label]="'Force Delete' | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
   </div>
 </form>
 

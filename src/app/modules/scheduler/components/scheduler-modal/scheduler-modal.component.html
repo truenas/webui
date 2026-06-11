@@ -64,14 +64,12 @@
 
       <div class="weekdays" formGroupName="weekdays">
         @for (weekday of weekdays; track weekday) {
-          <mat-checkbox
-            color="primary"
+          <tn-checkbox
             class="weekend"
-            [ixTest]="['scheduler', weekday.label]"
+            [testId]="weekday.label"
+            [label]="weekday.label | translate"
             [formControlName]="weekday.value"
-          >
-            {{ weekday.label | translate }}
-          </mat-checkbox>
+          ></tn-checkbox>
         }
       </div>
     </section>
@@ -81,14 +79,12 @@
 
       <div class="months" formArrayName="months">
         @for (month of months; track month) {
-          <mat-checkbox
-            color="primary"
+          <tn-checkbox
             class="month"
-            [ixTest]="['scheduler', month.label]"
+            [testId]="month.label"
+            [label]="month.label | translate"
             [formControlName]="month.value"
-          >
-            {{ month.label | translate }}
-          </mat-checkbox>
+          ></tn-checkbox>
         }
       </div>
     </section>
