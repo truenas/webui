@@ -12,26 +12,32 @@
   </tn-form-field>
   
   @if (data.showRemoveVolumes) {
-    <tn-checkbox
-      testId="remove-volumes"
-      formControlName="removeVolumes"
-      [label]="'Remove iXVolumes' | translate"
-    ></tn-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="remove-volumes"
+        formControlName="removeVolumes"
+        [label]="'Remove iXVolumes' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
     @if (data.showRemoveVolumes && form.value.removeVolumes) {
-      <tn-checkbox
-        testId="force-remove-volumes"
-        formControlName="forceRemoveVolumes"
-        [label]="'Force-remove iXVolumes' | translate"
-      ></tn-checkbox>
+      <tn-form-field>
+        <tn-checkbox
+          testId="force-remove-volumes"
+          formControlName="forceRemoveVolumes"
+          [label]="'Force-remove iXVolumes' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
     }
   }
 
-  <tn-checkbox
-    testId="remove-images"
-    formControlName="removeImages"
-    [label]="'Remove Images' | translate"
-  ></tn-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="remove-images"
+      formControlName="removeImages"
+      [label]="'Remove Images' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
   </form>
 <ix-form-actions tnDialogAction>

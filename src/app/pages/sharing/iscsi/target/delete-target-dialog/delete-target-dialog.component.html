@@ -14,17 +14,21 @@
 
   <form [formGroup]="form">
     @if (targetExtents().length > 0) {
-      <tn-checkbox
-        formControlName="delete_extents"
-        testId="delete-extents"
-        [label]="'Delete {n} associated {n, plural, one {extent} other {extents}}' | translate: { n: targetExtents().length }"
-      ></tn-checkbox>
+      <tn-form-field>
+        <tn-checkbox
+          formControlName="delete_extents"
+          testId="delete-extents"
+          [label]="'Delete {n} associated {n, plural, one {extent} other {extents}}' | translate: { n: targetExtents().length }"
+        ></tn-checkbox>
+      </tn-form-field>
     }
-    <tn-checkbox
-      formControlName="force"
-      testId="force"
-      [label]="'Force Delete' | translate"
-    ></tn-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="force"
+        testId="force"
+        [label]="'Force Delete' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   </form>
 </div>
 <ix-form-actions tnDialogAction>

@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
@@ -21,7 +21,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     TnDialogShellComponent,
     ReactiveFormsModule,
-    TnCheckboxComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,

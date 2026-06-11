@@ -65,11 +65,13 @@
   <tn-form-field>
     <tn-input testId="confirm-dataset-name" formControlName="confirmDatasetName"></tn-input>
   </tn-form-field>
-  <tn-checkbox
-    testId="confirm"
-    formControlName="confirm"
-    [label]="'Confirm' | translate"
-  ></tn-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="confirm"
+      formControlName="confirm"
+      [label]="'Confirm' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 </form>
 <ix-form-actions tnDialogAction>
   <tn-button

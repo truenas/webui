@@ -9,11 +9,13 @@
   </tn-form-field>
 
   @if (showMigrateCheckbox) {
-    <tn-checkbox
-      testId="migrate-applications"
-      formControlName="migrateApplications"
-      [label]="'Migrate existing applications' | translate"
-    ></tn-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="migrate-applications"
+        formControlName="migrateApplications"
+        [label]="'Migrate existing applications' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
 
   </form>

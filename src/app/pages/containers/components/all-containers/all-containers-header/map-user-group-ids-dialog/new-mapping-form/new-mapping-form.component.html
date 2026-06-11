@@ -14,24 +14,14 @@
       ></ix-group-combobox>
     }
 
-    <div class="checkbox-with-tooltip">
+    <tn-form-field [tooltip]="helptext.mapDirectlyTooltip | translate">
       <tn-checkbox
         testId="map-directly"
         formControlName="mapDirectly"
         class="default-checkbox"
         [label]="isUserType() ? ('Map to the same UID in the container' | translate) : ('Map to the same GID in the container' | translate)"
       ></tn-checkbox>
-      <tn-icon
-        name="help_outline"
-        class="help-icon-inline"
-        tabindex="0"
-        role="button"
-        [attr.aria-label]="'Help' | translate"
-        [matTooltip]="helptext.mapDirectlyTooltip | translate"
-        (keydown.enter)="$event.preventDefault()"
-        (keydown.space)="$event.preventDefault()"
-      ></tn-icon>
-    </div>
+    </tn-form-field>
 
     @if (!form.value.mapDirectly) {
       <ix-input

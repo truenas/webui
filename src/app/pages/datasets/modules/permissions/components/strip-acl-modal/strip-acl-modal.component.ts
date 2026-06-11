@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -21,7 +21,7 @@ export interface StripAclModalData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    TnCheckboxComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
     ReactiveFormsModule,
     FormActionsComponent,
     TnButtonComponent,

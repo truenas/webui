@@ -12,11 +12,13 @@
     </tn-form-field>
 
     @if (!isEditMode()) {
-      <tn-checkbox
-        testId="use-default"
-        formControlName="use_default"
-        [label]="'Use Default Mac Address' | translate"
-      ></tn-checkbox>
+      <tn-form-field>
+        <tn-checkbox
+          testId="use-default"
+          formControlName="use_default"
+          [label]="'Use Default Mac Address' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
     }
     @if (isEditMode() || !useDefault()) {
       <tn-form-field

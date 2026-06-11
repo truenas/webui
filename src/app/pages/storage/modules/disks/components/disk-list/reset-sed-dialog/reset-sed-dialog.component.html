@@ -28,12 +28,14 @@
       ></tn-input>
     </tn-form-field>
 
-    <tn-checkbox
-      testId="confirm"
-      formControlName="confirm"
-      [label]="'I understand this will permanently destroy all data on this disk' | translate"
-      [required]="true"
-    ></tn-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="confirm"
+        formControlName="confirm"
+        [label]="'I understand this will permanently destroy all data on this disk' | translate"
+        [required]="true"
+      ></tn-checkbox>
+    </tn-form-field>
   </form>
 
   <div class="psid-info-box">

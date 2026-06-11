@@ -1,11 +1,13 @@
 <tn-dialog-shell testId="encryption-options" [title]="'Edit Encryption Options for {dataset}' | translate: { dataset: data.dataset.id }">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   @if (canInherit) {
-    <tn-checkbox
-      testId="inherit-encryption"
-      formControlName="inherit_encryption"
-      [label]="'Inherit encryption properties from parent' | translate"
-    ></tn-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="inherit-encryption"
+        formControlName="inherit_encryption"
+        [label]="'Inherit encryption properties from parent' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
 
   @if (!(isInheriting$ | async)) {
@@ -59,11 +61,13 @@
     [label]="'Algorithm' | translate"
   ></ix-input>
 
-  <tn-checkbox
-    testId="confirm"
-    formControlName="confirm"
-    [label]="'Confirm' | translate"
-  ></tn-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="confirm"
+      formControlName="confirm"
+      [label]="'Confirm' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 </form>
 <ix-form-actions tnDialogAction>
   <tn-button

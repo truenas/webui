@@ -1,11 +1,13 @@
 <tn-dialog-shell testId="subsystem-delete" [title]="'Delete Subsystem' | translate">
 <div>
   <p class="message">{{ 'Are you sure you want to delete subsystem {subsys}?' | translate: { subsys: subsystem.name } }}</p>
-  <tn-checkbox
-    testId="force"
-    [label]="'Force' | translate"
-    [formControl]="force"
-  ></tn-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="force"
+      [label]="'Force' | translate"
+      [formControl]="force"
+    ></tn-checkbox>
+  </tn-form-field>
 </div>
 <ix-form-actions tnDialogAction class="form-actions">
   <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close({ confirmed: false })"></tn-button>

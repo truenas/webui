@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -23,7 +23,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   imports: [
     TnDialogShellComponent,
     ReactiveFormsModule,
-    TnCheckboxComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,

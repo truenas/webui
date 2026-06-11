@@ -17,14 +17,16 @@
     }
   }
 
-  <tn-checkbox
-    testId="confirm"
-    class="confirm"
-    [formControl]="form.controls.confirm"
-    [label]="'Confirm' | translate"
-    [required]="true"
-    [error]="form.controls.confirm.touched && form.controls.confirm.invalid ? ('Confirm is required' | translate) : null"
-  ></tn-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="confirm"
+      class="confirm"
+      [formControl]="form.controls.confirm"
+      [label]="'Confirm' | translate"
+      [required]="true"
+      [error]="form.controls.confirm.touched && form.controls.confirm.invalid ? ('Confirm is required' | translate) : null"
+    ></tn-checkbox>
+  </tn-form-field>
 
   <ix-form-actions tnDialogAction>
     <tn-button
@@ -38,7 +40,7 @@
       color="primary"
       testId="submit"
       [label]="buttonText"
-      [disabled]="!form.controls.confirm.value || (isEnterprise() && form.invalid)"
+      [disabled]="!form.controls.confirm.value || (!!isEnterprise() && form.invalid)"
       (onClick)="onSubmit()"
     ></tn-button>
   </ix-form-actions>

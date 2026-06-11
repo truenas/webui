@@ -186,12 +186,14 @@
               ></tn-checkbox>
             </tn-form-field>
 
-            <tn-checkbox
-              testId="confirm"
-              formControlName="confirm"
-              [label]="'Confirm Export Pool' | translate"
-              [required]="true"
-            ></tn-checkbox>
+            <tn-form-field>
+              <tn-checkbox
+                testId="confirm"
+                formControlName="confirm"
+                [label]="'Confirm Export Pool' | translate"
+                [required]="true"
+              ></tn-checkbox>
+            </tn-form-field>
           }
 
           @if (isDeleteSelected) {
@@ -203,12 +205,14 @@
               ></tn-checkbox>
             </tn-form-field>
 
-            <tn-checkbox
-              testId="confirm"
-              formControlName="confirm"
-              [label]="'Confirm Delete Pool' | translate"
-              [required]="true"
-            ></tn-checkbox>
+            <tn-form-field>
+              <tn-checkbox
+                testId="confirm"
+                formControlName="confirm"
+                [label]="'Confirm Delete Pool' | translate"
+                [required]="true"
+              ></tn-checkbox>
+            </tn-form-field>
           }
 
           @if (isDeleteSelected && form.value.destroy) {

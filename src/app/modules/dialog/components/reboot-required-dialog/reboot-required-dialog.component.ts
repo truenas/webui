@@ -4,7 +4,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { failoverDisabledReasonLabels } from 'app/enums/failover-disabled-reason.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -24,7 +24,7 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
     TnButtonComponent,
     TranslateModule,
     ReactiveFormsModule,
-    TnCheckboxComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
     MapValuePipe,
     FormActionsComponent,
   ],

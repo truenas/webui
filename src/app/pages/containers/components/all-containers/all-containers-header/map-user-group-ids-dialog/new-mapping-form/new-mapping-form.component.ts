@@ -6,9 +6,8 @@ import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCheckboxComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnCheckboxComponent, TnFormFieldComponent } from '@truenas/ui-components';
 import { Observable, switchMap } from 'rxjs';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import { directIdMapping } from 'app/interfaces/user.interface';
@@ -38,10 +37,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     ReactiveFormsModule,
     TranslateModule,
     TnCheckboxComponent,
+    TnFormFieldComponent,
     IxInputComponent,
-    TnIconComponent,
     MatButton,
-    MatTooltip,
     TestDirective,
     IxFieldsetComponent,
   ],

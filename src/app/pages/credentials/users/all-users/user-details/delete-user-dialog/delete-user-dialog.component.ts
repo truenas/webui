@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
@@ -21,7 +21,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    TnCheckboxComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
     ReactiveFormsModule,
     FormActionsComponent,
     TnButtonComponent,

@@ -8,11 +8,13 @@
     ></p>
 
     @if (device.attributes.dtype === VmDeviceType.Disk) {
-      <tn-checkbox
-        testId="zvol"
-        formControlName="zvol"
-        [label]="'Delete zvol device' | translate"
-      ></tn-checkbox>
+      <tn-form-field>
+        <tn-checkbox
+          testId="zvol"
+          formControlName="zvol"
+          [label]="'Delete zvol device' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
 
       @if (form.value.zvol) {
         <tn-form-field [label]="zvolConfirmLabelText">
@@ -25,18 +27,22 @@
     }
 
     @if (device.attributes.dtype === VmDeviceType.Raw) {
-      <tn-checkbox
-        testId="raw-file"
-        formControlName="raw_file"
-        [label]="'Delete raw file' | translate"
-      ></tn-checkbox>
+      <tn-form-field>
+        <tn-checkbox
+          testId="raw-file"
+          formControlName="raw_file"
+          [label]="'Delete raw file' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
     }
 
-    <tn-checkbox
-      testId="force"
-      formControlName="force"
-      [label]="'Force Delete' | translate"
-    ></tn-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="force"
+        formControlName="force"
+        [label]="'Force Delete' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   </div>
 </form>
 

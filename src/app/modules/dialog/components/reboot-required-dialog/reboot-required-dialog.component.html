@@ -52,13 +52,15 @@
   }
 
   @if (thisNodeRebootReasons()?.length || otherNodeRebootReasons()?.length) {
-    <tn-checkbox
-      testId="confirm"
-      class="confirm"
-      [formControl]="form.controls.confirm"
-      [label]="'Confirm' | translate"
-      [required]="true"
-    ></tn-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="confirm"
+        class="confirm"
+        [formControl]="form.controls.confirm"
+        [label]="'Confirm' | translate"
+        [required]="true"
+      ></tn-checkbox>
+    </tn-form-field>
   }
 
   <ix-form-actions tnDialogAction class="form-actions">

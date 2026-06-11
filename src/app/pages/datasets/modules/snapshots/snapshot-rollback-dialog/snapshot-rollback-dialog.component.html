@@ -62,12 +62,14 @@
         ></tn-banner>
       </div>
 
-      <tn-checkbox
-        testId="force"
-        [formControlName]="force.fcName"
-        [label]="force.label"
-        [required]="force.required"
-      ></tn-checkbox>
+      <tn-form-field>
+        <tn-checkbox
+          testId="force"
+          [formControlName]="force.fcName"
+          [label]="force.label"
+          [required]="force.required"
+        ></tn-checkbox>
+      </tn-form-field>
     </form>
   } @else {
     <p>

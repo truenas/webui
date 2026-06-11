@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, signal, TrackByFunction
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -26,7 +26,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnDialogShellComponent,
     ReactiveFormsModule,
     BulkListItemComponent,
-    TnCheckboxComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     FormActionsComponent,

@@ -2,11 +2,13 @@
 <form class="ix-form-container" (submit)="$event.preventDefault(); onSubmit()">
   <div [innerHtml]="helptext.message | translate"></div>
 
-  <tn-checkbox
-    testId="export-seed"
-    [formControl]="exportSeedCheckbox"
-    [label]="'Export Password Secret Seed' | translate"
-  ></tn-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="export-seed"
+      [formControl]="exportSeedCheckbox"
+      [label]="'Export Password Secret Seed' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
   <div [innerHtml]="helptext.warning | translate"></div>
 
