@@ -1,19 +1,18 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnBannerComponent, TnButtonComponent, TnFormFieldComponent, TnInputComponent, tnIconMarker,
+} from '@truenas/ui-components';
 import { switchMap } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 
@@ -27,11 +26,11 @@ const adminUsername = 'truenas_admin';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    MatButton,
-    AsyncPipe,
+    TnBannerComponent,
+    TnButtonComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     TranslateModule,
-    IxInputComponent,
-    TestDirective,
   ],
 })
 export class SetAdminPasswordFormComponent {
@@ -44,10 +43,31 @@ export class SetAdminPasswordFormComponent {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
-  isLoading$ = this.signinStore.isLoading$;
+  protected isLoading = toSignal(this.signinStore.isLoading$, { initialValue: false });
+
+  protected isPasswordVisible = signal(false);
+  protected isPassword2Visible = signal(false);
+
+  protected readonly tnIconMarker = tnIconMarker;
+  protected readonly InputType = InputType;
+
+  protected readonly passwordErrorMessages = {
+    required: this.translate.instant('{field} is required', {
+      field: this.translate.instant('Password'),
+    }),
+  };
+
+  protected readonly password2ErrorMessages = {
+    required: this.translate.instant('{field} is required', {
+      field: this.translate.instant('Confirm Password'),
+    }),
+    matchOther: this.translate.instant('Passwords do not match'),
+  };
 
   form = this.formBuilder.nonNullable.group({
-    username: [adminUsername, Validators.required],
+    // No required validator: the field is readonly and always prefilled, and a
+    // validator here would now render an inferred required asterisk in tn-form-field.
+    username: [adminUsername],
     password: ['', Validators.required],
     password2: ['', [
       Validators.required,
