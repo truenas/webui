@@ -14,19 +14,18 @@
 </div>
 
 <ix-form-actions mat-dialog-actions>
-  <button mat-button type="button" ixTest="cancel" matDialogClose>
-    {{ 'Cancel' | translate }}
-  </button>
+  <tn-button
+    [testId]="'cancel'"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
 
-  <button
+  <tn-button
     *ixRequiresRoles="[Role.DiskWrite]"
-    mat-button
-    type="submit"
     color="primary"
-    ixTest="unlock"
+    [testId]="'unlock'"
+    [label]="'Unlock' | translate"
     [disabled]="form.invalid"
-    (click)="onSubmit()"
-  >
-    {{ 'Unlock' | translate }}
-  </button>
+    (onClick)="onSubmit()"
+  ></tn-button>
 </ix-form-actions>

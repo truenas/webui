@@ -15,19 +15,19 @@
   ></ix-select>
 
   <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" matDialogClose>
-      {{ 'Cancel' | translate }}
-    </button>
+    <tn-button
+      [testId]="'cancel'"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
 
-    <button
+    <tn-button
       *ixRequiresRoles="[Role.DiskWrite]"
-      mat-button
       type="submit"
       color="primary"
-      ixTest="wipe"
+      [testId]="'wipe'"
+      [label]="'Wipe' | translate"
       [disabled]="form.invalid"
-    >
-      {{ 'Wipe' | translate }}
-    </button>
+    ></tn-button>
   </ix-form-actions>
 </form>

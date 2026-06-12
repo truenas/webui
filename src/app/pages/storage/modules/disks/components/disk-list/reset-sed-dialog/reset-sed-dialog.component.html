@@ -52,19 +52,18 @@
 </div>
 
 <ix-form-actions mat-dialog-actions>
-  <button mat-button type="button" ixTest="cancel" matDialogClose>
-    {{ 'Cancel' | translate }}
-  </button>
+  <tn-button
+    [testId]="'cancel'"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
 
-  <button
+  <tn-button
     *ixRequiresRoles="[Role.DiskWrite]"
-    mat-button
-    type="submit"
     color="warn"
-    ixTest="reset-sed"
+    [testId]="'reset-sed'"
+    [label]="'Perform SED Reset' | translate"
     [disabled]="form.invalid"
-    (click)="onSubmit()"
-  >
-    {{ 'Perform SED Reset' | translate }}
-  </button>
+    (onClick)="onSubmit()"
+  ></tn-button>
 </ix-form-actions>
