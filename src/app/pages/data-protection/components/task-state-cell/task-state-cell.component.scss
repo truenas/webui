@@ -19,11 +19,3 @@
   &.state-orange { color: var(--orange); }
   &.state-yellow { color: var(--yellow); }
 }
-
-.label-warning-icon {
-  display: inline-flex;
-
-  tn-icon {
-    margin: 0;
-  }
-}

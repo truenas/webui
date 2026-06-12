@@ -1,7 +1,9 @@
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { JobState } from 'app/enums/job-state.enum';
+import { of } from 'rxjs';
+import { DisplayableState, JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,12 +18,14 @@ describe('TaskStateCellComponent', () => {
     component: TaskStateCellComponent,
     providers: [
       provideMockStore(),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({ afterClosed: () => of(undefined) })) as unknown as DialogService['jobDialog'],
+      }),
       mockProvider(MatDialog, { open: jest.fn() }),
     ],
   });
 
-  function setup(props: Partial<{ state: JobState | null; job: Job | null }>): void {
+  function setup(props: Partial<{ state: DisplayableState | null; job: Job | null }>): void {
     spectator = createComponent({
       props: {
         state: props.state ?? null,
@@ -60,5 +64,21 @@ describe('TaskStateCellComponent', () => {
     spectator.click('button.state-button');
 
     expect(spectator.inject(DialogService).warn).toHaveBeenCalled();
+  });
+
+  it('opens the running-job dialog when the job is running', () => {
+    setup({ state: JobState.Running, job: { id: 1, state: JobState.Running } as Job });
+
+    spectator.click('button.state-button');
+
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+  });
+
+  it('shows an info dialog when the task is on hold', () => {
+    setup({ state: TaskState.Hold });
+
+    spectator.click('button.state-button');
+
+    expect(spectator.inject(DialogService).info).toHaveBeenCalledWith('Task is on hold', '');
   });
 });

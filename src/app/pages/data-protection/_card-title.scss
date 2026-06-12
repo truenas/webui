@@ -1,0 +1,13 @@
+// Shared title styling for the data-protection task cards' projected `tnCardHeader`
+// `<h3 class="card-title">` (anchor + open-in-new icon). Keeps the five cards in sync.
+@mixin card-title {
+  .card-title {
+    align-items: center;
+    display: flex;
+    margin: 0;
+
+    tn-icon {
+      margin-left: 5px;
+    }
+  }
+}

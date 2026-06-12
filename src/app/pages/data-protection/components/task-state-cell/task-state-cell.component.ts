@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
+import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import {
   catchError, EMPTY, filter, Observable,
 } from 'rxjs';
@@ -39,7 +39,6 @@ import { FailedJobError } from 'app/services/errors/error.classes';
   styleUrls: ['./task-state-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnIconComponent,
     TnTooltipDirective,
     TranslateModule,
     TnTestIdDirective,
@@ -58,7 +57,6 @@ export class TaskStateCellComponent {
   readonly state = input.required<DisplayableState | null | undefined>();
   /** Backing job, used for logs / the running-job dialog. */
   readonly job = input<Job | null>(null);
-  readonly warnings = input<unknown[]>([]);
   readonly testId = input.required<string[]>();
   readonly ariaLabel = input.required<string>();
 
@@ -71,10 +69,6 @@ export class TaskStateCellComponent {
   });
 
   protected readonly stateClass = computed(() => {
-    if (this.warnings()?.length > 0) {
-      return 'state-orange';
-    }
-
     switch (this.state()) {
       case TaskState.Pending:
       case JobState.Aborted:
@@ -110,9 +104,8 @@ export class TaskStateCellComponent {
       return;
     }
 
-    if (this.warnings()?.length > 0) {
-      const list = (this.warnings() as string[]).map((warning) => warning + '\n').join('');
-      this.dialogService.error({ title: state, message: `<pre>${list}</pre>` });
+    if (state === TaskState.Hold) {
+      this.dialogService.info(this.translate.instant('Task is on hold'), '');
       return;
     }
 

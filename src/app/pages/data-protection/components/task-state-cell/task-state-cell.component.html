@@ -10,11 +10,6 @@
     (click)="$event.stopPropagation(); onButtonClick()"
   >
     {{ currentState | jobStateDisplay }}
-    @if (warnings().length > 0) {
-      <span class="label-warning-icon">
-        <tn-icon name="alert" library="mdi" customSize="14px"></tn-icon>
-      </span>
-    }
   </button>
 } @else {
   {{ 'N/A' | translate }}
