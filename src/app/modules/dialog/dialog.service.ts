@@ -37,6 +37,7 @@ import {
   SubsystemPartiallyCreatedDialogComponent, SubsystemPartiallyCreatedDialogData,
 } from 'app/modules/dialog/components/subsystem-partially-created-dialog/subsystem-partially-created-dialog.component';
 import { UpdateDialog, UpdateDialogData } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
+import { topbarDialogPositionStrategy } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -218,7 +219,7 @@ export class DialogService {
    * The dialog is anchored to the top-right of the screen below the topbar.
    */
   update(data: UpdateDialogData): DialogRef<unknown, UpdateDialog> {
-    const positionStrategy = this.overlay.position().global().top('48px').right('16px');
+    const positionStrategy = topbarDialogPositionStrategy(this.overlay);
     return this.tnDialog.open<UpdateDialog, UpdateDialogData>(UpdateDialog, {
       width: '400px',
       hasBackdrop: true,

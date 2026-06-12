@@ -969,7 +969,9 @@ mat-form-field {
 // (margin: 12px 0; padding: 8px 0). tn-form-field has no default spacing, so
 // dialogs migrated to tn-form-field render their fields flush against each other
 // and against adjacent checkboxes. Restore the original ix-* field spacing.
-tn-form-field {
+// Scoped to `tn-dialog-shell` so it only touches migrated dialogs and leaves the
+// vertical rhythm of non-dialog forms (signin, feedback, etc.) untouched.
+tn-dialog-shell tn-form-field {
   display: block;
   margin-top: 12px;
   margin-bottom: 12px;

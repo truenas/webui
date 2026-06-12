@@ -12,6 +12,7 @@ import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
 import { jobsElements } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.elements';
 import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
+import { topbarDialogPositionStrategy } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -65,7 +66,7 @@ export class JobsIndicatorComponent implements OnInit {
         width: '420px',
         hasBackdrop: true,
         panelClass: 'topbar-panel',
-        positionStrategy: this.overlay.position().global().top('48px').right('16px'),
+        positionStrategy: topbarDialogPositionStrategy(this.overlay),
       });
 
       jobsPanelRef.closed
