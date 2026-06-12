@@ -27,7 +27,7 @@
         [label]="'Force Delete?' | translate"
       ></tn-checkbox>
     </tn-form-field>
-    <tn-form-field [label]="'Enter <b>{value}</b> below to confirm.' | translate: { value: vm.name }">
+    <tn-form-field [label]="'Enter **{value}** below to confirm.' | translate: { value: vm.name }">
       <tn-input
         testId="confirm-name"
         formControlName="confirmName"

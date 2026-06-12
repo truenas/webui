@@ -87,7 +87,7 @@ export class DeviceDeleteModalComponent implements OnInit {
 
     this.form.updateValueAndValidity();
 
-    this.zvolConfirmLabelText = this.translate.instant('Enter <strong>{zvolName}</strong> below to confirm.', { zvolName });
+    this.zvolConfirmLabelText = this.translate.instant('Enter **{zvolName}** below to confirm.', { zvolName });
   }
 
   ngOnInit(): void {
