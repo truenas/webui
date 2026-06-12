@@ -14,6 +14,8 @@
 
   .slot {
     appearance: none;
+    // Matches .tn-card's border radius so the selection/focus outline hugs the card.
+    border-radius: 8px;
     // Mirror the body/group-container context widgets render in on the live
     // dashboard — otherwise UA button defaults (white bg, black text) leak
     // through the rounded tn-card corners and into inherited text color.
