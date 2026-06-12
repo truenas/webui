@@ -3,11 +3,9 @@
   padding: 16px;
 }
 
-:host ::ng-deep {
-  .container {
-    &.quarter {
-      padding-bottom: 0;
-      padding-top: 0;
-    }
-  }
+// Scoped (not ::ng-deep) so it actually beats the legacy "> div" padding rule above —
+// the old :host ::ng-deep form lost that specificity contest and never applied.
+.card-content > .container.quarter {
+  padding-bottom: 0;
+  padding-top: 0;
 }
