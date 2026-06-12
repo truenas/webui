@@ -1,15 +1,23 @@
-<ix-modal-header
-  [title]="'Card Editor' | translate"
-></ix-modal-header>
-<form class="ix-form-container" (submit)="$event.preventDefault(); onSubmit()">
+<form class="ix-form-container" (submit)="$event.preventDefault(); submit()">
   <ix-fieldset>
     <div class="form-row">
-      <ix-icon-group
-        class="layout-control"
-        [formControl]="layoutControl"
-        [options]="layoutOptions"
-        [label]="'Layout' | translate"
-      ></ix-icon-group>
+      <div class="layout-control">
+        <span id="widget-group-layout-label" class="layout-label">{{ 'Layout' | translate }}</span>
+        <tn-button-toggle-group
+          ariaLabelledby="widget-group-layout-label"
+          [formControl]="layoutControl"
+        >
+          @for (option of layoutOptions; track option.value) {
+            <tn-button-toggle
+              [value]="option.value"
+              [testId]="option.label"
+              [ariaLabel]="option.label | translate"
+            >
+              <tn-icon [name]="option.icon"></tn-icon>
+            </tn-button-toggle>
+          }
+        </tn-button-toggle-group>
+      </div>
     </div>
   </ix-fieldset>
 
@@ -30,19 +38,4 @@
       (settingsChange)="updateSlotSettings($event)"
     ></ix-widget-group-slot-form>
   }
-
-  <ix-form-actions>
-    <tn-button
-      color="primary"
-      [testId]="['add-widget-group-btn']"
-      [label]="'Save' | translate"
-      [disabled]="settingsHasErrors() || layoutControl.invalid"
-      (onClick)="onSubmit()"
-    ></tn-button>
-    <tn-button
-      [testId]="['cancel-add-widget-group-btn']"
-      [label]="'Cancel' | translate"
-      (onClick)="slideInRef.close({ response: undefined })"
-    ></tn-button>
-  </ix-form-actions>
 </form>

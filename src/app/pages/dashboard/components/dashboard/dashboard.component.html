@@ -105,4 +105,35 @@
   </div>
 }
 
-
+<tn-side-panel
+  width="800px"
+  testId="widget-group-editor"
+  [title]="'Card Editor' | translate"
+  [closeGuard]="editorCloseGuard"
+  [(open)]="editorOpen"
+>
+  @if (editorOpen()) {
+    <ix-widget-group-form
+      [initialGroup]="editedGroup()"
+      (saved)="onEditorSaved($event)"
+    ></ix-widget-group-form>
+  }
+  @if (editorForm()) {
+    <tn-button
+      tnSidePanelAction
+      [testId]="'cancel-add-widget-group-btn'"
+      [label]="'Cancel' | translate"
+      (onClick)="onEditorCancel()"
+    ></tn-button>
+  }
+  @if (editorForm(); as form) {
+    <tn-button
+      tnSidePanelAction
+      color="primary"
+      [testId]="'add-widget-group-btn'"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

@@ -1,9 +1,10 @@
 <form [formGroup]="form">
-  <ix-select
-    class="half-width"
-    formControlName="poolId"
-    [label]="'Pool' | translate"
-    [options]="poolOptions$"
-    [required]="true"
-  ></ix-select>
+  <tn-form-field class="half-width" [label]="'Pool' | translate" [required]="true">
+    <tn-select
+      formControlName="poolId"
+      [testId]="'pool-id'"
+      [ariaLabel]="'Pool' | translate"
+      [options]="poolOptions()"
+    ></tn-select>
+  </tn-form-field>
 </form>

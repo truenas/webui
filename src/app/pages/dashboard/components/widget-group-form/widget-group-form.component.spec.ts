@@ -4,14 +4,10 @@ import { signal, ViewContainerRef } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
-import { TnButtonComponent, TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonComponent, TnButtonToggleGroupHarness } from '@truenas/ui-components';
 import { MockComponent, MockInstance, ngMocks } from 'ng-mocks';
-import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WidgetEditorGroupComponent } from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
@@ -29,13 +25,6 @@ describe('WidgetGroupFormComponent', () => {
   let spectator: Spectator<WidgetGroupFormComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<WidgetGroup, unknown> = {
-    close: jest.fn(),
-    getData: jest.fn(() => ({ layout: WidgetGroupLayout.Full, slots: [] })),
-    swap: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-  };
-
   const createComponent = createComponentFactory({
     component: WidgetGroupFormComponent,
     imports: [
@@ -47,8 +36,6 @@ describe('WidgetGroupFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideInRef, slideInRef),
-      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(SnackbarService),
     ],
@@ -66,51 +53,50 @@ describe('WidgetGroupFormComponent', () => {
     });
 
     it('checks layout selector', async () => {
-      const layoutSelector = await loader.getHarness(IxIconGroupHarness.with({ label: 'Layout' }));
+      const layoutSelector = await loader.getHarness(TnButtonToggleGroupHarness);
       const editor = spectator.query(WidgetEditorGroupComponent)!;
-      expect(await layoutSelector.getValue()).toEqual(WidgetGroupLayout.Full);
+
+      const toggles = await layoutSelector.getToggles();
+      expect(toggles).toHaveLength(5);
+      expect(await toggles[0].isChecked()).toBe(true);
       expect(editor.group).toEqual({ layout: WidgetGroupLayout.Full, slots: [{ type: null }] });
-      await layoutSelector.setValue(WidgetGroupLayout.Halves);
-      expect(await layoutSelector.getValue()).toEqual(WidgetGroupLayout.Halves);
+
+      await toggles[1].check();
+
+      expect(await toggles[1].isChecked()).toBe(true);
       expect(editor.group).toEqual({ layout: WidgetGroupLayout.Halves, slots: [{ type: null }, { type: null }] });
     });
   });
 
   describe('returns group object based on form values', () => {
+    let savedSpy: jest.Mock;
+
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          {
-            provide: SlideInRef,
-            useValue: {
-              getData: () => ({
-                layout: WidgetGroupLayout.Halves,
-                slots: [
-                  { type: WidgetType.Ipv4Address, settings: { interface: '1' } },
-                  { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
-                ],
-              }) as WidgetGroup,
-              close: jest.fn(),
-              requireConfirmationWhen: () => of(false),
-            } as SlideInRef<WidgetGroup, unknown>,
-          },
-        ],
+        props: {
+          initialGroup: {
+            layout: WidgetGroupLayout.Halves,
+            slots: [
+              { type: WidgetType.Ipv4Address, settings: { interface: '1' } },
+              { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
+            ],
+          } as WidgetGroup,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      savedSpy = jest.fn();
+      spectator.component.saved.subscribe(savedSpy);
     });
 
-    it('returns group object in slideInRef response when form is submitted', async () => {
-      const submitBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await submitBtn.click();
-      const ref = spectator.inject(SlideInRef);
-      expect(ref.close).toHaveBeenCalledWith({
-        response: {
-          layout: WidgetGroupLayout.Halves,
-          slots: [
-            { type: WidgetType.Ipv4Address, settings: { interface: '1' } },
-            { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
-          ],
-        },
+    it('emits saved with the group object when the form is submitted', () => {
+      spectator.component.submit();
+
+      expect(savedSpy).toHaveBeenCalledWith({
+        layout: WidgetGroupLayout.Halves,
+        slots: [
+          { type: WidgetType.Ipv4Address, settings: { interface: '1' } },
+          { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
+        ],
       });
     });
 
@@ -130,15 +116,18 @@ describe('WidgetGroupFormComponent', () => {
       });
     });
 
-    it('disables button when slot has validation errors', async () => {
+    it('blocks submission when slot has validation errors', () => {
       const slotForm = spectator.query(WidgetGroupSlotFormComponent)!;
       slotForm.validityChange.emit([SlotPosition.First, { interface: { required: true } }]);
       spectator.detectChanges();
-      const submitBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(await submitBtn.isDisabled()).toBe(true);
+
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      spectator.component.submit();
+      expect(savedSpy).not.toHaveBeenCalled();
     });
 
-    it('updates settings', async () => {
+    it('updates settings', () => {
       const slotForm = spectator.query(WidgetGroupSlotFormComponent)!;
       slotForm.settingsChange.emit({
         slotPosition: SlotPosition.First,
@@ -147,17 +136,14 @@ describe('WidgetGroupFormComponent', () => {
         slotSize: SlotSize.Half,
       });
       spectator.detectChanges();
-      const submitBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await submitBtn.click();
+      spectator.component.submit();
 
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-        response: {
-          layout: WidgetGroupLayout.Halves,
-          slots: [
-            { type: WidgetType.Ipv4Address, settings: { interface: '5' } },
-            { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
-          ],
-        } as WidgetGroup,
+      expect(savedSpy).toHaveBeenCalledWith({
+        layout: WidgetGroupLayout.Halves,
+        slots: [
+          { type: WidgetType.Ipv4Address, settings: { interface: '5' } },
+          { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
+        ] as WidgetGroup['slots'],
       });
     });
   });

@@ -13,23 +13,24 @@ import {
   ViewContainerRef,
   WritableSignal,
   computed,
+  effect,
   inject,
   input,
   output,
   runInInjectionContext,
-  signal, viewChild,
+  signal, untracked, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, ValidationErrors, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import {
   Observable, Subscription, combineLatest, map, of, switchMap,
 } from 'rxjs';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SimpleWidget } from 'app/pages/dashboard/types/simple-widget.interface';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
@@ -47,7 +48,8 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     TranslateModule,
   ],
 })
@@ -72,7 +74,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
 
   readonly settingsContainer = viewChild.required('settingsContainer', { read: ViewContainerRef });
 
-  widgetCategoriesOptions = computed<Observable<Option[]>>(() => {
+  widgetCategoriesOptions = computed<Option[]>(() => {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
     const uniqCategories = new Set(layoutSupportedWidgets.map((widget) => widget.category));
 
@@ -86,18 +88,18 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
         value: category,
       };
     });
-    return of([{ label: widgetCategoryLabels.get(WidgetCategory.Empty), value: WidgetCategory.Empty }, ...options]);
+    return [{ label: widgetCategoryLabels.get(WidgetCategory.Empty), value: WidgetCategory.Empty }, ...options];
   });
 
   validityChange = output<[SlotPosition, ValidationErrors]>();
   settingsChange = output<WidgetGroupSlot<object>>();
 
-  widgetTypesOptions = computed<Observable<SelectOption[]>>(() => {
+  widgetTypesOptions = computed<SelectOption[]>(() => {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
     const category = this.selectedCategory();
     const categoryWidgets = layoutSupportedWidgets.filter((widget) => widget.category === category);
     if (!categoryWidgets.length) {
-      return of([]);
+      return [];
     }
     const uniqTypes = new Set(categoryWidgets.map((widget) => widget.type));
 
@@ -116,11 +118,23 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
       // If both items have the same enabled status, sort by name in ascending order
       return a.label.localeCompare(b.label);
     });
-    if (!this.form.controls.type.value || !Array.from(uniqTypes).includes(this.form.controls.type.value)) {
-      const firstSupported = typeOptions.find((option) => !option.disabled)?.value;
-      this.form.controls.type.setValue(firstSupported || null);
+    return typeOptions;
+  });
+
+  // When the available types change and the current selection is no longer valid,
+  // fall back to the first supported type. Kept outside `widgetTypesOptions` —
+  // writing to the form (and through it to tn-select's value signal) is not
+  // allowed during a computed evaluation.
+  private fallbackTypeSelection = effect(() => {
+    const typeOptions = this.widgetTypesOptions();
+    if (!typeOptions.length) {
+      return;
     }
-    return of(typeOptions);
+    const currentType = untracked(() => this.form.controls.type.value);
+    if (!currentType || !typeOptions.some((option) => option.value === currentType)) {
+      const firstSupported = typeOptions.find((option) => !option.disabled)?.value as WidgetType | undefined;
+      untracked(() => this.form.controls.type.setValue(firstSupported || null));
+    }
   });
 
   getLayoutSupportedWidgets: Signal<SimpleWidget[]>;

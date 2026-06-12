@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnSelectHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
@@ -44,13 +44,13 @@ describe('WidgetPoolSettingsComponent', () => {
   });
 
   it('checks pre-select first option when no settings', async () => {
-    const pool = await loader.getHarness(IxSelectHarness.with({ label: 'Pool' }));
-    const selectedPool = await pool.getValue();
+    const pool = await loader.getHarness(TnSelectHarness);
+    const selectedPool = await pool.getDisplayText();
     expect(selectedPool).toBe('Pool 1');
   });
 
   it('checks pool options', async () => {
-    const pool = await loader.getHarness(IxSelectHarness.with({ label: 'Pool' }));
-    expect(await pool.getOptionLabels()).toEqual(['Pool 1', 'Pool 2', 'Pool 3']);
+    const pool = await loader.getHarness(TnSelectHarness);
+    expect(await pool.getOptions()).toEqual(['Pool 1', 'Pool 2', 'Pool 3']);
   });
 });

@@ -2,10 +2,13 @@ import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgTemplateOutlet } from '@angular/common';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
+import {
+  TnButtonComponent, TnButtonHarness, TnIconButtonComponent, TnIconButtonHarness,
+} from '@truenas/ui-components';
+import { MockComponent, MockInstance, ngMocks } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
 import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
@@ -15,9 +18,8 @@ import {
 import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
   WidgetGroupControlsComponent,
@@ -28,6 +30,13 @@ import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
+
+// Mocking WidgetGroupFormComponent would otherwise mock its transitive tn-component
+// imports, which trips the ng-mocks signal-query bug
+// (https://github.com/help-me-mom/ng-mocks/issues/8634). Keep the ones the dashboard
+// itself renders real.
+ngMocks.globalKeep(TnButtonComponent, true);
+ngMocks.globalKeep(TnIconButtonComponent, true);
 
 describe('DashboardComponent', () => {
   const groupA: WidgetGroup = { layout: WidgetGroupLayout.Full, slots: [] };
@@ -47,6 +56,7 @@ describe('DashboardComponent', () => {
       WidgetGroupControlsComponent,
       MockComponent(PageHeaderComponent),
       MockComponent(WidgetGroupComponent),
+      MockComponent(WidgetGroupFormComponent),
       NewFeatureIndicatorDirective,
       DisableFocusableElementsDirective,
       AnimateOutDirective,
@@ -64,15 +74,18 @@ describe('DashboardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.success(groupA)),
-      }),
       mockProvider(SnackbarService),
+      mockProvider(UnsavedChangesService, {
+        showConfirmDialog: jest.fn(() => of(true)),
+      }),
       provideMockStore(),
     ],
   });
 
   beforeEach(() => {
+    // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
+    MockInstance(WidgetGroupFormComponent, 'widgetGroupSlotForm', signal(undefined));
+    MockInstance(WidgetGroupFormComponent, 'canSubmit', signal(true));
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -119,27 +132,27 @@ describe('DashboardComponent', () => {
       expect(containers[0]).toHaveClass('editing');
     });
 
-    it('opens slide in to edit a widget when edit icon is pressed', async () => {
+    it('opens the card editor panel to edit a widget when edit icon is pressed', async () => {
       const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'pencil' }));
       await editButton.click();
+      spectator.detectChanges();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-        WidgetGroupFormComponent,
-        {
-          wide: true,
-          data: groupA,
-        },
-      );
+      const editorForm = spectator.query(WidgetGroupFormComponent)!;
+      expect(editorForm).toBeTruthy();
+      // ng-mocks exposes the mocked signal input as a plain property.
+      expect(editorForm.initialGroup).toEqual(groupA);
     });
 
-    it('updates a widget group after group is edited in WidgetGroupComponent', async () => {
+    it('updates a widget group after the editor emits saved', async () => {
       const updatedGroup = { ...groupA, layout: WidgetGroupLayout.Halves };
-
-      jest.spyOn(spectator.inject(SlideIn), 'open')
-        .mockReturnValue(SlideInResult.success(updatedGroup));
 
       const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'pencil' }));
       await editButton.click();
+      spectator.detectChanges();
+
+      const editorForm = spectator.query(WidgetGroupFormComponent)!;
+      editorForm.saved.emit(updatedGroup);
+      spectator.detectChanges();
 
       const groups = spectator.queryAll(WidgetGroupComponent);
       expect(groups).toHaveLength(4);
@@ -147,6 +160,9 @@ describe('DashboardComponent', () => {
       expect(groups[1].group).toEqual(groupB);
       expect(groups[2].group).toEqual(groupC);
       expect(groups[3].group).toEqual(groupD);
+
+      // Panel closes after save.
+      expect(spectator.query(WidgetGroupFormComponent)).toBeNull();
     });
 
     it('removes a widget when delete button is pressed', async () => {
@@ -166,14 +182,18 @@ describe('DashboardComponent', () => {
       expect(groups[2].group).toEqual(groupD);
     });
 
-    it('adds a new widget and opens a slide in when Add is pressed', async () => {
+    it('adds a new widget group when the editor emits saved after Add is pressed', async () => {
       const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
+      spectator.detectChanges();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-        WidgetGroupFormComponent,
-        { wide: true },
-      );
+      const editorForm = spectator.query(WidgetGroupFormComponent)!;
+      expect(editorForm.initialGroup).toBeUndefined();
+
+      editorForm.saved.emit(groupA);
+      spectator.detectChanges();
+
+      expect(spectator.queryAll(WidgetGroupComponent)).toHaveLength(5);
     });
 
     it('resets configuration to defaults with confirmation when Reset is pressed', async () => {

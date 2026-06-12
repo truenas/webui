@@ -1,9 +1,10 @@
 <form [formGroup]="form">
-  <ix-select
-    class="half-width"
-    formControlName="interface"
-    [label]="'Interface' | translate"
-    [options]="networkInterfaceOptions$"
-    [required]="true"
-  ></ix-select>
+  <tn-form-field class="half-width" [label]="'Interface' | translate" [required]="true">
+    <tn-select
+      formControlName="interface"
+      [testId]="'interface'"
+      [ariaLabel]="'Interface' | translate"
+      [options]="networkInterfaceOptions()"
+    ></tn-select>
+  </tn-form-field>
 </form>
