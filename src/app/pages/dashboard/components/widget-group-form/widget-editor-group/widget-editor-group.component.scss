@@ -34,7 +34,9 @@
       outline: 2px solid var(--primary);
     }
 
-    &:focus {
+    // :focus-visible (not :focus) so pointer clicks show the blue selection
+    // outline immediately; keyboard navigation still gets the focus ring.
+    &:focus-visible {
       outline: 2px solid var(--fg2);
     }
 
