@@ -1,7 +1,8 @@
 @import 'scss-imports/cssvars';
 
-.card-content {
-  padding: 0 16px;
+// Replicates the legacy global "mat-card-content > div" padding from _material-reduction.scss.
+.card-content > div {
+  padding: 16px;
 }
 
 :host ::ng-deep .container {

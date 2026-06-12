@@ -14,7 +14,6 @@
 
   .card-content {
     height: 100%;
-    padding: 0 16px;
     width: 100%;
 
     .header {
@@ -57,4 +56,9 @@
       }
     }
   }
+}
+
+// Replicates the legacy global "mat-card-content > div" padding from _material-reduction.scss.
+.card-content > div {
+  padding: 16px;
 }

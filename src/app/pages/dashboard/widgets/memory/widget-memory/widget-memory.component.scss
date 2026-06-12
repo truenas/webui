@@ -10,7 +10,6 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 0 10px 0 16px;
 
   .header {
     padding-bottom: 0;
@@ -248,4 +247,9 @@
       display: none;
     }
   }
+}
+
+// Replicates the legacy global "mat-card-content > div" padding from _material-reduction.scss.
+.card-content > div {
+  padding: 16px;
 }
