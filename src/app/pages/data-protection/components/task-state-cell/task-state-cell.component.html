@@ -2,8 +2,9 @@
   <button
     type="button"
     tnTooltipPosition="above"
+    tnTestIdType="button"
     [class]="'state-button ' + stateClass()"
-    [ixTest]="testId()"
+    [tnTestId]="testId()"
     [tnTooltip]="tooltip()"
     [attr.aria-label]="ariaLabel()"
     (click)="$event.stopPropagation(); onButtonClick()"

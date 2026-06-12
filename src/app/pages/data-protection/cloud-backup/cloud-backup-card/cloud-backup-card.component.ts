@@ -15,6 +15,7 @@ import {
   TnIconComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   type TnCardAction,
   type TnSortEvent,
@@ -39,7 +40,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import {
@@ -62,7 +62,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     TnCardComponent,
     TnCardHeaderDirective,
-    TestDirective,
+    TnTestIdDirective,
     RouterLink,
     TnIconComponent,
     TnTooltipDirective,
@@ -109,7 +109,7 @@ export class CloudBackupCardComponent implements OnInit {
     }
     return {
       label: this.translate.instant('Add'),
-      testId: 'button-cloud-backup-add',
+      testId: 'cloud-backup-add',
       handler: () => this.openForm(),
     };
   });

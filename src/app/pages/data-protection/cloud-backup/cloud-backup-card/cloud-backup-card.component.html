@@ -4,7 +4,8 @@
 >
   <h3 tnCardHeader class="card-title">
     <a
-      [ixTest]="['cloud-backup-task', 'open']"
+      tnTestIdType="link"
+      [tnTestId]="['cloud-backup-task', 'open']"
       [routerLink]="['/data-protection', 'cloud-backup']"
       [tnTooltip]="'Open TrueCloud Backup Tasks list in full page' | translate"
     >
@@ -39,7 +40,8 @@
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.description ? (row.description | translate) : ''"
           >{{ row.description }}</span>
         </ng-template>

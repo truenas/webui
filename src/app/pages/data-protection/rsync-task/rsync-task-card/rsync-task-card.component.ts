@@ -16,6 +16,7 @@ import {
   TnIconComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   type TnCardAction,
   type TnSortEvent,
@@ -39,10 +40,8 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   TaskStateCellComponent,
@@ -65,7 +64,7 @@ import { AppState } from 'app/store';
   imports: [
     TnCardComponent,
     TnCardHeaderDirective,
-    TestDirective,
+    TnTestIdDirective,
     RouterLink,
     TnIconComponent,
     TnTooltipDirective,
@@ -88,7 +87,6 @@ export class RsyncTaskCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private loader = inject(LoaderService);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
@@ -107,7 +105,7 @@ export class RsyncTaskCardComponent implements OnInit {
     }
     return {
       label: this.translate.instant('Add'),
-      testId: 'button-rsync-task-add',
+      testId: 'rsync-task-add',
       handler: () => this.openForm(),
     };
   });

@@ -16,6 +16,7 @@ import {
   TnIconComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   type TnCardAction,
   type TnSortEvent,
@@ -37,7 +38,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   TaskStateCellComponent,
@@ -61,7 +61,7 @@ import { SnapshotTaskService } from 'app/services/snapshot-task.service';
   imports: [
     TnCardComponent,
     TnCardHeaderDirective,
-    TestDirective,
+    TnTestIdDirective,
     RouterLink,
     TnIconComponent,
     TnTooltipDirective,
@@ -105,7 +105,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     }
     return {
       label: this.translate.instant('Add'),
-      testId: 'button-snapshot-task-add',
+      testId: 'snapshot-task-add',
       handler: () => this.openForm(),
     };
   });

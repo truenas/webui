@@ -4,7 +4,8 @@
 >
   <h3 tnCardHeader class="card-title">
     <a
-      [ixTest]="['snapshot-task', 'open-in-new']"
+      tnTestIdType="link"
+      [tnTestId]="['snapshot-task', 'open-in-new']"
       [routerLink]="['/data-protection', 'snapshot']"
       [tnTooltip]="'Open Periodic Snapshot Tasks list in full page' | translate"
     >
@@ -39,7 +40,8 @@
         <ng-template tnHeaderCellDef>{{ 'Pool/Dataset' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Pool/Dataset' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Pool/Dataset' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.dataset ? (row.dataset | translate) : ''"
           >{{ row.dataset }}</span>
         </ng-template>
@@ -90,6 +92,12 @@
       [routerLink]="['/data-protection', 'snapshot']"
     ></ix-table-pager-show-more>
 
+    <!--
+      Two router-linked outline buttons kept hand-rolled: the card's typed footer
+      slots (primaryAction / secondaryAction / footerLink) expose only
+      handler: () => void — not [routerLink] — and host at most one filled + one
+      outline + one link, so they can't carry both native-anchor links.
+    -->
     <div class="footer-actions">
       <tn-button
         variant="outline"

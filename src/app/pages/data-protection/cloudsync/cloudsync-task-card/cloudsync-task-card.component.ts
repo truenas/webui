@@ -17,6 +17,7 @@ import {
   TnIconComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   type TnCardAction,
   type TnSortEvent,
@@ -40,10 +41,8 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
@@ -70,7 +69,7 @@ import { AppState } from 'app/store';
   imports: [
     TnCardComponent,
     TnCardHeaderDirective,
-    TestDirective,
+    TnTestIdDirective,
     RouterLink,
     TnIconComponent,
     TnTooltipDirective,
@@ -93,7 +92,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
   private taskService = inject(TaskService);
@@ -119,7 +117,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     }
     return {
       label: this.translate.instant('Add'),
-      testId: 'button-cloudsync-task-add',
+      testId: 'cloudsync-task-add',
       handler: () => this.onAdd(),
     };
   });

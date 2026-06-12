@@ -16,6 +16,7 @@ import {
   TnIconComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   type TnCardAction,
   type TnSortEvent,
@@ -37,10 +38,8 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   TaskStateCellComponent,
@@ -71,7 +70,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     TnCardComponent,
     TnCardHeaderDirective,
-    TestDirective,
+    TnTestIdDirective,
     RouterLink,
     TnIconComponent,
     TnTooltipDirective,
@@ -95,7 +94,6 @@ export class ReplicationTaskCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
   private matDialog = inject(MatDialog);
   private download = inject(DownloadService);
@@ -117,7 +115,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     }
     return {
       label: this.translate.instant('Add'),
-      testId: 'button-replication-task-add',
+      testId: 'replication-task-add',
       handler: () => this.addReplicationTask(),
     };
   });

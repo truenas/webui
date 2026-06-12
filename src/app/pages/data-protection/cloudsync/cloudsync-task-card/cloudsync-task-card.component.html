@@ -4,7 +4,8 @@
 >
   <h3 tnCardHeader class="card-title">
     <a
-      [ixTest]="['cloudsync-task', 'open-in-new']"
+      tnTestIdType="link"
+      [tnTestId]="['cloudsync-task', 'open-in-new']"
       [routerLink]="['/data-protection', 'cloudsync']"
       [tnTooltip]="'Open Cloud Sync Tasks list in full page' | translate"
     >
@@ -39,7 +40,8 @@
         <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.description ? (row.description | translate) : ''"
           >{{ row.description }}</span>
         </ng-template>

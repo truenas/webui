@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import {
   catchError, EMPTY, filter, Observable,
 } from 'rxjs';
@@ -19,17 +19,19 @@ import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/s
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailedJobError } from 'app/services/errors/error.classes';
 
 /**
  * tn-table replacement for the ix-table `stateButtonColumn` cell renderer. The
  * library has no multi-colour status pill (`tn-button` only does filled/outline,
- * `tn-chip` only primary/secondary/accent), so the pill is a plain `<button>`
- * styled locally — it carries no Angular Material. Presentational inputs only;
- * the live job state arrives via the bound `[state]`/`[job]` inputs (the host
- * card updates the row), and the running-job dialog stream is built on demand.
+ * `tn-chip` only primary/secondary/accent), so the pill markup is a plain
+ * `<button>` styled locally rather than a `tn-*` element. The running-job log
+ * viewer is still opened through `MatDialog` (as in the original
+ * `ix-cell-state-button` cell), pending the dialog migration (NAS-141022).
+ * Presentational inputs only; the live job state arrives via the bound
+ * `[state]`/`[job]` inputs (the host card updates the row), and the running-job
+ * dialog stream is built on demand.
  */
 @Component({
   selector: 'ix-task-state-cell',
@@ -40,7 +42,7 @@ import { FailedJobError } from 'app/services/errors/error.classes';
     TnIconComponent,
     TnTooltipDirective,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     JobStateDisplayPipe,
   ],
 })
