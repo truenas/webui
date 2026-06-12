@@ -14,7 +14,12 @@
 
   .slot {
     appearance: none;
+    // Mirror the body/group-container context widgets render in on the live
+    // dashboard — otherwise UA button defaults (white bg, black text) leak
+    // through the rounded tn-card corners and into inherited text color.
+    background: var(--bg1);
     border-style: none;
+    color: var(--fg1);
     cursor: pointer;
     height: 100%;
     outline-color: transparent;
