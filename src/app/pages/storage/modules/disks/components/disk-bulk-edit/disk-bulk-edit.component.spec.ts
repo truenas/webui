@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -109,7 +109,7 @@ describe('DiskBulkEditComponent', () => {
     };
     await form.fillForm(changeValue);
     const saveButton = await loader.getHarness(
-      MatButtonHarness.with({ text: 'Save' }),
+      TnButtonHarness.with({ label: 'Save' }),
     );
     await saveButton.click();
     const req: CoreBulkQuery = [
@@ -168,7 +168,7 @@ describe('DiskBulkEditComponent', () => {
     };
     await form.fillForm(changeValue);
     const saveButton = await loader.getHarness(
-      MatButtonHarness.with({ text: 'Save' }),
+      TnButtonHarness.with({ label: 'Save' }),
     );
     await saveButton.click();
 
@@ -191,7 +191,7 @@ describe('DiskBulkEditComponent', () => {
     });
 
     const saveButton = await loader.getHarness(
-      MatButtonHarness.with({ text: 'Save' }),
+      TnButtonHarness.with({ label: 'Save' }),
     );
     await saveButton.click();
 
