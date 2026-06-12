@@ -6,7 +6,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
-  TnSliderComponent, TnSliderThumbDirective,
+  TnSliderComponent, TnSliderThumbDirective, TnTestIdDirective,
   InputType,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -17,7 +17,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -43,7 +42,7 @@ export const pruneByLabels = new Map<PruneBy, string>([
     TnInputComponent,
     TnButtonComponent,
     ReactiveFormsModule,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
     IxRadioGroupComponent,
     TnSliderComponent,

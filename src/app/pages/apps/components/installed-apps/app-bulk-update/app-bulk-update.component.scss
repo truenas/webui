@@ -170,10 +170,12 @@
   }
 }
 
-// The panel projects its header via [slot=title] rather than the `title` input,
-// so the library's --title-* colour classes never apply and the expand/collapse
-// chevron falls back to the static --tn-fg1 (#fff), which only suits a dark
-// theme. Force webui's theme-aware foreground so the toggle is always visible.
+// TEMP: The panel projects its header via [slot=title] rather than the `title`
+// input, so the library's --title-* colour classes never apply and the
+// expand/collapse chevron falls back to the static --tn-fg1 (#fff), which only
+// suits a dark theme. Force webui's theme-aware foreground so the toggle is
+// always visible. Remove once @truenas/ui-components exposes a theme-aware
+// indicator colour for projected-title panels. Tracked under NAS-141021.
 :host ::ng-deep .tn-expansion-panel__indicator {
   color: var(--fg1);
 }
