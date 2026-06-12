@@ -1,6 +1,10 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonComponent, TnCardComponent, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnIconButtonComponent, TnIconButtonHarness, TnIconComponent,
+} from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { Ng2FittextDirective } from 'ng2-fittext';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
@@ -50,6 +54,7 @@ ngMocks.globalKeep(TnButtonComponent, true);
 
 describe('WidgetPoolComponent', () => {
   let spectator: Spectator<WidgetPoolComponent>;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: WidgetPoolComponent,
     imports: [
@@ -126,6 +131,7 @@ describe('WidgetPoolComponent', () => {
         }),
       ],
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
   it('should get pool if pool name is available instead of pool id', () => {
@@ -146,8 +152,10 @@ describe('WidgetPoolComponent', () => {
     expect(spectator.query(LastScanErrorsComponent)).toBeTruthy();
   });
 
-  it('should have a disk reports button', () => {
+  it('should have a disk reports button', async () => {
     setupComponent();
-    expect(spectator.query('button[aria-label="Disk Reports"]')).toBeTruthy();
+    const reportsButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'chart-box' }));
+    expect(reportsButton).toBeTruthy();
+    expect(spectator.query(TnIconButtonComponent)?.ariaLabel()).toBe('Disk Reports');
   });
 });

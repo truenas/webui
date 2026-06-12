@@ -3,7 +3,7 @@
     name="menu-up"
     library="mdi"
     [ariaLabel]="'Move card up' | translate"
-    [testId]="['move-up', 'widget' + index()]"
+    [testId]="['move-up', 'widget', index()]"
     [disabled]="!canMoveUp()"
     (onClick)="moveUp.emit()"
   ></tn-icon-button>
@@ -11,7 +11,7 @@
     name="menu-down"
     library="mdi"
     [ariaLabel]="'Move card down' | translate"
-    [testId]="['move-down', 'widget' + index()]"
+    [testId]="['move-down', 'widget', index()]"
     [disabled]="!canMoveDown()"
     (onClick)="moveDown.emit()"
   ></tn-icon-button>
@@ -26,14 +26,14 @@
     name="pencil"
     library="mdi"
     [ariaLabel]="'Edit group' | translate"
-    [testId]="['edit-group', 'widget' + index()]"
+    [testId]="['edit-group', 'widget', index()]"
     (onClick)="edit.emit()"
   ></tn-icon-button>
   <tn-icon-button
     name="delete"
     library="mdi"
     [ariaLabel]="'Delete group' | translate"
-    [testId]="['delete-group', 'widget' + index()]"
+    [testId]="['delete-group', 'widget', index()]"
     (onClick)="delete.emit()"
   ></tn-icon-button>
 </div>

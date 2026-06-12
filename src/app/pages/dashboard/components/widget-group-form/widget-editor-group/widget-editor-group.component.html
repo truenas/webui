@@ -1,9 +1,10 @@
 @for (slotIndex of slotRange(); track slotIndex) {
+  <!-- Slot 0 keeps the bare legacy ID: the old [ixTest] dropped falsy segments. -->
   <button
     tabindex="0"
     tnTestIdType="button"
     [attr.aria-label]="'Slot {n}' | translate: { n: slotIndex + 1 }"
-    [tnTestId]="['slot', slotIndex]"
+    [tnTestId]="slotIndex === 0 ? 'slot' : ['slot', slotIndex]"
     [class]="['slot', 'slot' + slotIndex]"
     [class.selected]="slotIndex === selectedSlot() && slotRange().length > 1"
     [class.empty]="!slots()[slotIndex]"

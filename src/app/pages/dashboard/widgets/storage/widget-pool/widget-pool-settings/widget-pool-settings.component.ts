@@ -3,7 +3,8 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
+import { TnFormFieldComponent, TnSelectComponent, TnSelectOption } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { filter, map } from 'rxjs';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
@@ -42,6 +43,9 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
   );
 
   protected poolOptions = toSignal(this.poolOptions$, { initialValue: [] });
+
+  // Legacy [ixTest] discriminated options by kebab-cased label (pool name), not value (pool id).
+  protected poolOptionTestId = (option: TnSelectOption): string => kebabCase(option.label);
 
   private firstOption = toSignal(this.poolOptions$.pipe(map((opts) => opts[0]?.value)));
 
