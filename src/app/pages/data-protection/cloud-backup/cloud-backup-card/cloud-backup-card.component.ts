@@ -94,7 +94,7 @@ export class CloudBackupCardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
 
-  cloudBackups: CloudBackup[] = [];
+  private cloudBackups: CloudBackup[] = [];
   dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;

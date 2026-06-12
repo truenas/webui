@@ -103,7 +103,7 @@ export class ReplicationTaskCardComponent implements OnInit {
 
   dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, JobState>();
-  replicationTasks: ReplicationTask[] = [];
+  private replicationTasks: ReplicationTask[] = [];
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly cardMenuPath = ['data-protection', 'replication'];
 
@@ -190,7 +190,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     this.getReplicationTasks();
   }
 
-  getReplicationTasks(): void {
+  private getReplicationTasks(): void {
     this.dataProvider.load();
   }
 

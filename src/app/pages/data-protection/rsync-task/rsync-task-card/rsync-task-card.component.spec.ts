@@ -14,6 +14,7 @@ import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';

@@ -167,7 +167,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     });
   }
 
-  protected getSnapshotTasks(): void {
+  private getSnapshotTasks(): void {
     this.dataProvider.load();
   }
 

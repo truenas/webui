@@ -105,7 +105,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly cardMenuPath = ['data-protection', 'cloudsync'];
 
-  cloudSyncTasks: CloudSyncTaskUi[] = [];
+  private cloudSyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   jobStates = new Map<number, JobState>();
 
@@ -215,7 +215,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  getCloudSyncTasks(): void {
+  private getCloudSyncTasks(): void {
     this.dataProvider.load();
   }
 

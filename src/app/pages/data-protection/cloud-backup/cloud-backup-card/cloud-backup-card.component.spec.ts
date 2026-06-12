@@ -13,6 +13,7 @@ import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
@@ -242,7 +243,7 @@ describe('CloudBackupCardComponent', () => {
     );
   });
 
-  it('sends only one update request when multiple mat-toggle is updated', async () => {
+  it('sends only one update request when multiple toggles are updated', async () => {
     jest.spyOn(spectator.component.dataProvider, 'load').mockImplementation();
     jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce((method) => {
       if (method === 'cloud_backup.update') {

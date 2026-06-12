@@ -110,7 +110,7 @@ export class RsyncTaskCardComponent implements OnInit {
     };
   });
 
-  rsyncTasks: RsyncTaskUi[] = [];
+  private rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;
   jobStates = new Map<number, JobState>();
 
