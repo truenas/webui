@@ -1,4 +1,6 @@
-<div class="wrapper">
-  <h3>{{ name | translate }}</h3>
-  <ix-cpu-core-bar class="bar" [hideTemperature]="true"></ix-cpu-core-bar>
-</div>
+<tn-card class="card" [padContent]="false">
+  <div class="wrapper">
+    <h3>{{ name | translate }}</h3>
+    <ix-cpu-core-bar class="bar" [hideTemperature]="true"></ix-cpu-core-bar>
+  </div>
+</tn-card>
