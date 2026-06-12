@@ -1,12 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SortDirection } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
@@ -25,7 +24,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
-import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
 import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -68,7 +66,6 @@ describe('InstalledAppsListComponent', () => {
   const createComponent = createRoutingFactory({
     component: InstalledAppsListComponent,
     imports: [
-      MatTableModule,
       FakeProgressBarComponent,
       ImgFallbackDirective,
       NgxPopperjsContentComponent,
@@ -134,7 +131,9 @@ describe('InstalledAppsListComponent', () => {
         mockJob('core.bulk'),
       ]),
       mockAuth(),
-      mockProvider(AppsStatsService),
+      mockProvider(AppsStatsService, {
+        getStatsForApp: jest.fn(() => of(null)),
+      }),
     ],
     params: { appId: 'webdav', train: 'community' },
   });
@@ -145,12 +144,15 @@ describe('InstalledAppsListComponent', () => {
     applicationsService = spectator.inject(ApplicationsService);
   });
 
-  it('shows a list of apps', () => {
-    const appRows = spectator.queryAll(AppRowComponent);
+  async function selectAllApps(): Promise<void> {
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleSelectAll();
+    spectator.detectChanges();
+  }
 
-    expect(appRows).toHaveLength(2);
-    expect(appRows[0].app()).toEqual(apps[0]);
-    expect(appRows[1].app()).toEqual(apps[1]);
+  it('shows a list of apps', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.getRowCount()).toBe(2);
   });
 
   it('shows an empty list when there are no search results', () => {
@@ -159,53 +161,53 @@ describe('InstalledAppsListComponent', () => {
     spectator.query(BasicSearchComponent)!.queryChange.emit('test-app-3');
     spectator.detectChanges();
 
-    const appRows = spectator.queryAll(AppRowComponent);
-    expect(appRows).toHaveLength(0);
-
+    expect(spectator.query('tn-table')).not.toExist();
     expect(spectator.query(EmptyComponent)).toExist();
   });
 
-  it('shows details', () => {
+  it('shows details', async () => {
     const locationSpy = jest.spyOn(spectator.inject(Location), 'replaceState');
-    spectator.click(spectator.query('ix-app-row')!);
+    const table = await loader.getHarness(TnTableHarness);
+    await table.clickRow(0);
+
     expect(locationSpy).toHaveBeenCalledWith('/apps/installed/test-catalog-train/ix-test-app-1');
     expect(spectator.component.selectedApp).toEqual(apps[0]);
   });
 
-  it('starts application', () => {
-    spectator.query(AppRowComponent)!.startApp.emit();
-    expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app-1');
+  it('starts application', async () => {
+    const startButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'play-circle' }));
+    await startButton.click();
+    expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app-2');
   });
 
-  it('stops application', () => {
-    spectator.query(AppRowComponent)!.stopApp.emit();
+  it('stops application', async () => {
+    const stopButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'stop-circle' }));
+    await stopButton.click();
     expect(applicationsService.stopApplication).toHaveBeenCalledWith('test-app-1');
   });
 
-  it('restarts application', () => {
-    spectator.query(AppRowComponent)!.restartApp.emit();
+  it('restarts application', async () => {
+    const restartButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'restart' }));
+    await restartButton.click();
     expect(applicationsService.restartApplication).toHaveBeenCalledWith('test-app-1');
   });
 
   it('starts several applications', async () => {
-    const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
-    await selectAll.check();
+    await selectAllApps();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStart.emit();
 
     expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app-2');
   });
 
   it('stops several applications', async () => {
-    const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
-    await selectAll.check();
+    await selectAllApps();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStop.emit();
 
     expect(applicationsService.stopApplication).toHaveBeenCalledWith('test-app-1');
   });
 
   it('updates several applications', async () => {
-    const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
-    await selectAll.check();
+    await selectAllApps();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: apps });
@@ -216,8 +218,7 @@ describe('InstalledAppsListComponent', () => {
       afterClosed: () => of({ removeVolumes: true, removeImages: true }),
     } as MatDialogRef<unknown>);
 
-    const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
-    await selectAll.check();
+    await selectAllApps();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkDelete.emit();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppDeleteDialog, {

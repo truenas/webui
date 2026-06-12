@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -80,7 +79,7 @@ describe('DockerImagesListComponent', () => {
   });
 
   it('opens form when "Pull Image" button is pressed', async () => {
-    const pullImageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Pull Image' }));
+    const pullImageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Pull Image' }));
     await pullImageButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PullImageFormComponent);

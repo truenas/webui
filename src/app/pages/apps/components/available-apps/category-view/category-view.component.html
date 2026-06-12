@@ -24,11 +24,11 @@
   </div>
 
   <div class="view-all">
-    <button
-      mat-flat-button
-      [ixTest]="['back-to-discover-page']"
+    <tn-button
+      [testId]="['back-to-discover-page']"
+      [label]="'Back to Discover Page' | translate"
       [routerLink]="['/apps', 'available']"
-    >{{ 'Back to Discover Page' | translate }}</button>
+    ></tn-button>
   </div>
 }
 

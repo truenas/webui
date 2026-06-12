@@ -31,7 +31,8 @@ import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
 import {
-  TN_TEST_ATTR, TnIconButtonComponent, TnIconComponent, TnIconTesting, TnTablePagerComponent,
+  TN_TEST_ATTR, TnButtonComponent, TnIconButtonComponent, TnIconComponent, TnIconTesting,
+  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTablePagerComponent,
 } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
@@ -108,8 +109,12 @@ defineGlobalsInjections({
     MatCheckboxModule,
     MatSlideToggleModule,
     MatMenuModule,
+    TnButtonComponent,
     TnIconComponent,
     TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,

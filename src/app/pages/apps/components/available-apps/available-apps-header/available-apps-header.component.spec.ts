@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { byText } from '@ngneat/spectator';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -81,7 +81,7 @@ describe('AvailableAppsHeaderComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const filtersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Filters' }));
+    const filtersButton = await loader.getHarness(TnButtonHarness.with({ label: 'Filters' }));
     await filtersButton.click();
 
     searchInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Search' }));

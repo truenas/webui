@@ -70,13 +70,11 @@
 
   @if ((appSection.totalApps > appsFilterStore.appsPerCategory) && (showViewMoreButton$ | async)) {
     <div class="view-all">
-      <button
-        mat-flat-button
-        [ixTest]="[appSection.title, 'view-all']"
+      <tn-button
+        [testId]="[appSection.title, 'view-all']"
+        [label]="('View All' | translate) + ' ' + (appSection.title | translate)"
         [routerLink]="['/apps', 'available', appSection.category]"
-      >
-        {{ 'View All' | translate }} {{ appSection.title | translate }}
-      </button>
+      ></tn-button>
     </div>
   }
 </ng-template>

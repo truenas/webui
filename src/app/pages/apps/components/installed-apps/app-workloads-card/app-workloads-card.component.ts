@@ -1,14 +1,9 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, computed, inject } from '@angular/core';
-import { MatIconAnchor, MatIconButton } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -17,7 +12,6 @@ import {
   App, AppContainerDetails, appContainerStateLabels,
 } from 'app/interfaces/app.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import {
   VolumeMountsDialog,
@@ -29,25 +23,19 @@ import {
   styleUrls: ['./app-workloads-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
     TranslateModule,
-    MatTooltip,
+    TnTooltipDirective,
     RequiresRolesDirective,
-    TestDirective,
-    TnIconComponent,
     MapValuePipe,
-    MatIconButton,
-    MatCardContent,
+    TnIconButtonComponent,
     DecimalPipe,
     TooltipComponent,
-    RouterLink,
-    MatIconAnchor,
   ],
 })
 export class AppWorkloadsCardComponent {
   private matDialog = inject(MatDialog);
+  protected router = inject(Router);
 
   readonly app = input.required<App>();
 

@@ -5,10 +5,20 @@
   gap: 4px;
 
   .icon {
-    color: var(--yellow);
     display: inline-flex;
-    height: 18px;
     line-height: 1;
-    width: 18px;
+
+    // Force a consistent rendered size for both the check and alert glyphs,
+    // independent of whether tn-icon resolves them via sprite (sized by box) or
+    // font (sized by font-size).
+    ::ng-deep .tn-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+    }
+  }
+
+  .icon--update {
+    color: var(--yellow);
   }
 }

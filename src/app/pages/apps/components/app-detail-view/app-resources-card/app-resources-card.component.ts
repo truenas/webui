@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map, throttleTime } from 'rxjs';
 import { MemoryUpdate } from 'app/interfaces/reporting.interface';
@@ -18,6 +19,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
+    TnCardComponent,
     NgxSkeletonLoaderModule,
     FileSizePipe,
     AsyncPipe,

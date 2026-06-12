@@ -1,7 +1,4 @@
-@import 'mixins/cards';
-
 .card {
-  @include details-card();
   margin: 0;
 
   .details-item .label {
@@ -73,4 +70,12 @@
     flex: 1 0 auto;
     justify-content: flex-end;
   }
+}
+
+// TEMP: tn-card's header/footer dividers use the unmapped --tn-lines token,
+// which falls back to a light colour that looks wrong in the dark theme.
+// Point them at webui's --lines until the design tokens are bridged.
+:host ::ng-deep .tn-card__header,
+:host ::ng-deep .tn-card__footer {
+  border-color: var(--lines);
 }

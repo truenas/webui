@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -461,7 +461,7 @@ describe('AppWizardComponent', () => {
         'Update Strategy': 'Kill existing containers before creating new ones',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
       await saveButton.click();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

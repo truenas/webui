@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ViewContainerRef } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -50,7 +50,7 @@ describe('InstallAppButtonComponent', () => {
     });
 
     it('shows agreement warning then pool dialog when Setup Pool To Install clicked', async () => {
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Setup Pool To Install' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Setup Pool To Install' }));
       await button.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -71,14 +71,14 @@ describe('InstallAppButtonComponent', () => {
       const authService = spectator.inject(AuthService);
       Object.defineProperty(authService, 'user$', { value: of({ attributes: { appsAgreement: false } }) });
 
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
+      const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
       await installButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     });
 
     it('navigates to installation form when Install clicked', async () => {
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
+      const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
       await installButton.click();
 
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'stable', 'SETI@home', 'install']);
@@ -87,7 +87,7 @@ describe('InstallAppButtonComponent', () => {
     it('shows Install Another Instance when app is installed', async () => {
       spectator.setInput('app', { ...application, installed: true });
 
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Install Another Instance' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Install Another Instance' }));
       expect(button).toBeTruthy();
 
       await button.click();

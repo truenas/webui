@@ -1,13 +1,13 @@
 import { AsyncPipe, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import {
   ActivatedRoute,
   Router,
   RouterLink,
 } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   BehaviorSubject,
@@ -34,7 +34,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
     TestDirective,
     AppCardComponent,
     TranslateModule,
-    MatButton,
+    TnButtonComponent,
     TitleCasePipe,
     RouterLink,
   ],

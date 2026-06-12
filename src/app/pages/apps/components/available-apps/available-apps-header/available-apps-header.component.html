@@ -6,25 +6,26 @@
     [placeholder]="'Search' | translate"
   ></ix-input>
   <div class="actions">
-    <a
-      mat-button
-      ixTest="show-all"
+    <tn-button
+      class="ghost-button"
+      testId="show-all"
+      [label]="'Show All' | translate"
       [routerLink]="['/apps/available', AppExtraCategory.All]"
-    >
-      {{ 'Show All' | translate }}
-    </a>
-    <button
-      mat-button
-      ixTest="filter"
-      (click)="changeFiltersVisible()"
-    >
-      {{ 'Filters' | translate }}
-      @if (showFilters) {
-        <tn-icon name="chevron-up" library="mdi"></tn-icon>
-      } @else {
-        <tn-icon name="chevron-down" library="mdi"></tn-icon>
-      }
-    </button>
+    ></tn-button>
+    <span class="filters-button">
+      <tn-button
+        class="ghost-button"
+        testId="filter"
+        [label]="'Filters' | translate"
+        (onClick)="changeFiltersVisible()"
+      ></tn-button>
+      <tn-icon
+        class="filters-caret"
+        library="mdi"
+        aria-hidden="true"
+        [name]="showFilters ? 'chevron-up' : 'chevron-down'"
+      ></tn-icon>
+    </span>
   </div>
   @if (showFilters) {
     <div class="filters-container">

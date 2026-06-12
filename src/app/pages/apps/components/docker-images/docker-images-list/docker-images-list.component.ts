@@ -3,10 +3,9 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import { tnIconMarker, TnButtonComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   filter, map, take, tap,
 } from 'rxjs/operators';
@@ -28,7 +27,6 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
@@ -49,13 +47,11 @@ export interface ContainerImageUi extends ContainerImage {
     TranslateModule,
     PageHeaderComponent,
     BasicSearchComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
-    TnIconComponent,
     AsyncPipe,
     IxTableBodyComponent,
     TnTablePagerComponent,

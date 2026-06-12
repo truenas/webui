@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -17,8 +17,13 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 describe('AppSettingsButtonComponent', () => {
   let spectator: Spectator<AppSettingsButtonComponent>;
   let loader: HarnessLoader;
-  let menu: MatMenuHarness;
   const viewContainerRef: ViewContainerRef | null = null;
+
+  async function openMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Configuration' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
 
   const createComponent = createComponentFactory({
     component: AppSettingsButtonComponent,
@@ -48,26 +53,25 @@ describe('AppSettingsButtonComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     Object.defineProperty(spectator.component, 'viewContainerRef', {
       value: viewContainerRef,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    menu = await loader.getHarness(MatMenuHarness);
   });
 
   it('shows Choose Pool modal once Settings button -> Choose Pool clicked', async () => {
-    await menu.open();
-    await menu.clickItem({ text: 'Choose Pool' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Choose Pool' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialog, { viewContainerRef });
     expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {
-    await menu.open();
-    await menu.clickItem({ text: 'Unset Pool' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Unset Pool' });
 
     expect(spectator.inject(DialogService).confirm)
       .toHaveBeenCalledWith(expect.objectContaining({

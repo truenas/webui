@@ -3,13 +3,13 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, ViewContainerRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnIconComponent, TnMenuComponent, TnMenuItemComponent,
+  TnMenuTriggerDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import {
   filter, forkJoin, switchMap,
 } from 'rxjs';
@@ -20,7 +20,6 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
@@ -33,17 +32,15 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   styleUrls: ['./app-settings-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    TestDirective,
-    UiSearchDirective,
-    MatMenuTrigger,
-    TranslateModule,
+    TnButtonComponent,
     TnIconComponent,
-    MatMenu,
+    UiSearchDirective,
+    TnMenuTriggerDirective,
+    TranslateModule,
+    TnMenuComponent,
     RequiresRolesDirective,
-    MatMenuItem,
-    RouterLink,
-    MatTooltipModule,
+    TnMenuItemComponent,
+    TnTooltipDirective,
     AsyncPipe,
   ],
 })
@@ -57,6 +54,7 @@ export class AppSettingsButtonComponent {
   protected appsStore = inject(AppsStore);
   private viewContainerRef = inject(ViewContainerRef);
   private destroyRef = inject(DestroyRef);
+  protected router = inject(Router);
 
   readonly searchableElements = appSettingsButtonElements;
   protected readonly updateDockerRoles = [Role.DockerWrite];

@@ -7,16 +7,14 @@
     (columnsChange)="columnsChange($event)"
   ></ix-table-columns-selector>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="primary"
-    ixTest="add-docker-registry"
+    testId="add-docker-registry"
     [ixUiSearch]="searchableElements.elements.addRegistry"
-    (click)="onAdd()"
-  >
-    {{ 'Add Registry' | translate }}
-  </button>
+    [label]="'Add Registry' | translate"
+    (onClick)="onAdd()"
+  ></tn-button>
 </ix-page-header>
 
 <ix-table

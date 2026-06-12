@@ -1,26 +1,30 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, output, viewChild,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
-import { MatColumnDef } from '@angular/material/table';
+import { Sort } from '@angular/material/sort';
 import {
   ActivatedRoute, Router,
 } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
-  combineLatest, filter, forkJoin, map, Observable, switchMap,
+  TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent, TnIconComponent,
+  TnSortEvent, TnTableColumnDirective, TnTableComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
+import { ImgFallbackModule } from 'ngx-img-fallback';
+import {
+  combineLatest, filter, forkJoin, map, Observable, shareReplay, switchMap,
 } from 'rxjs';
+import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -32,14 +36,17 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
+import { AppActionRequiredBadgeComponent } from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
 import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
-import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
+import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
 import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/installed-apps.constants';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
@@ -71,14 +78,20 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     BasicSearchComponent,
     TnIconComponent,
     TnTooltipDirective,
-    MatSort,
     AsyncPipe,
-    MatCheckbox,
-    MatColumnDef,
-    MatSortHeader,
-    AppRowComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnIconButtonComponent,
+    RequiresRolesDirective,
+    ImgFallbackModule,
+    AppStateCellComponent,
+    AppUpdateCellComponent,
+    AppActionRequiredBadgeComponent,
+    FileSizePipe,
+    NetworkSpeedPipe,
     EmptyComponent,
-    TestDirective,
     TranslateModule,
   ],
 })
@@ -113,10 +126,26 @@ export class InstalledAppsListComponent implements OnInit {
   selectedApp: App | undefined;
   searchQuery = toSignal(this.installedAppsStore.searchQuery$, { requireSync: true });
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
-  selection = new SelectionModel<string>(true, []);
+  checkedApps: App[] = [];
   sortingInfo = toSignal(this.installedAppsStore.sortingInfo$, { requireSync: true });
 
+  protected readonly table = viewChild(TnTableComponent);
+
   readonly sortableField = SortableField;
+  protected readonly requiredRoles = [Role.AppsWrite];
+  protected readonly imagePlaceholder = appImagePlaceholder;
+  protected readonly trackByAppId = (_: number, app: App): string => app.id;
+
+  protected readonly displayedColumns = [
+    SortableField.Application,
+    SortableField.State,
+    'cpu',
+    'ram',
+    'io',
+    'network',
+    SortableField.Updates,
+    'controls',
+  ];
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -128,17 +157,22 @@ export class InstalledAppsListComponent implements OnInit {
     return this.filteredApps?.some((app) => app.id === this.selectedApp?.id);
   }
 
-  get filteredApps(): App[] {
-    return this.dataSource
-      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
-  }
+  private filteredAppsCache: { source: App[]; query: string; result: App[] } | null = null;
 
-  get allAppsChecked(): boolean {
-    return this.selection.selected.length === this.filteredApps.length;
+  get filteredApps(): App[] {
+    const source = this.dataSource;
+    const query = this.searchQuery();
+    if (this.filteredAppsCache?.source === source && this.filteredAppsCache.query === query) {
+      return this.filteredAppsCache.result;
+    }
+    const result = source
+      .filter((app) => app?.name?.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+    this.filteredAppsCache = { source, query, result };
+    return result;
   }
 
   get hasCheckedApps(): boolean {
-    return this.checkedAppsNames.length > 0;
+    return this.checkedApps.length > 0;
   }
 
   get appsUpdateAvailable(): number {
@@ -151,30 +185,67 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   get checkedAppsNames(): string[] {
-    return this.selection.selected;
-  }
-
-  get checkedApps(): App[] {
-    return this.checkedAppsNames
-      .map((id) => this.dataSource.find((app) => app.id === id))
-      .filter((app): app is App => !!app);
+    return this.checkedApps.map((app) => app.id);
   }
 
   get activeCheckedApps(): App[] {
-    return this.dataSource.filter(
-      (app) => [AppState.Running, AppState.Deploying].includes(app.state) && this.selection.isSelected(app.id),
+    return this.checkedApps.filter(
+      (app) => [AppState.Running, AppState.Deploying].includes(app.state),
     );
   }
 
   get stoppedCheckedApps(): App[] {
-    return this.dataSource.filter(
-      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state) && this.selection.isSelected(app.id),
+    return this.checkedApps.filter(
+      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state),
     );
   }
 
   ngOnInit(): void {
     this.loadInstalledApps();
     this.listenForStatusUpdates();
+  }
+
+  protected onSelectionChange(apps: App[]): void {
+    this.checkedApps = apps;
+    this.cdr.markForCheck();
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.setDatasourceWithSort({ active: event.column, direction: event.direction } as Sort);
+    this.cdr.markForCheck();
+  }
+
+  private clearSelection(): void {
+    const table = this.table();
+    if (table) {
+      [...this.checkedApps].forEach((app) => table.toggleRowSelection(app));
+    }
+    this.checkedApps = [];
+    this.cdr.markForCheck();
+  }
+
+  protected isAppStopped(app: App): boolean {
+    return app.state === AppState.Stopped || app.state === AppState.Crashed;
+  }
+
+  protected hasStats(app: App, stats: AppStats | null | undefined): stats is AppStats {
+    return app.state === AppState.Running && !!stats;
+  }
+
+  protected inProgress(app: App): boolean {
+    return app.state === AppState.Deploying;
+  }
+
+  protected incomingTrafficBits(stats: AppStats): number {
+    return stats.networks.reduce((sum, networkStats) => sum + this.bytesToBits(networkStats.rx_bytes), 0);
+  }
+
+  protected outgoingTrafficBits(stats: AppStats): number {
+    return stats.networks.reduce((sum, networkStats) => sum + this.bytesToBits(networkStats.tx_bytes), 0);
+  }
+
+  private bytesToBits(bytes: number): number {
+    return bytes == null ? 0 : bytes * 8;
   }
 
   viewDetails(app: App): void {
@@ -200,13 +271,6 @@ export class InstalledAppsListComponent implements OnInit {
     }
   }
 
-  toggleAppsChecked(checked: boolean): void {
-    if (checked) {
-      this.filteredApps.forEach((app) => this.selection.select(app.id));
-    } else {
-      this.selection.clear();
-    }
-  }
 
   private showLoadStatus(
     type: EmptyType.FirstUse | EmptyType.NoPageData | EmptyType.Errors | EmptyType.NoSearchResults,
@@ -369,24 +433,24 @@ export class InstalledAppsListComponent implements OnInit {
   onBulkStart(): void {
     this.stoppedCheckedApps.forEach((app) => this.start(app.name));
     this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
-    this.toggleAppsChecked(false);
+    this.clearSelection();
   }
 
   onBulkStop(): void {
     this.activeCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
-    this.toggleAppsChecked(false);
+    this.clearSelection();
   }
 
   onBulkUpdate(updateAll = false): void {
     const apps = this.dataSource.filter((app) => (
-      updateAll ? app.upgrade_available : this.selection.isSelected(app.id)
+      updateAll ? app.upgrade_available : this.checkedApps.some((checked) => checked.id === app.id)
     ));
     this.matDialog.open(AppBulkUpdateComponent, { data: apps })
       .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.toggleAppsChecked(false);
+        this.clearSelection();
       });
   }
 
@@ -465,7 +529,7 @@ export class InstalledAppsListComponent implements OnInit {
       this.dialogService.error({ title: helptextApps.bulkActions.title, message: errorMessages });
     }
 
-    this.toggleAppsChecked(false);
+    this.clearSelection();
   }
 
   private getErrorMessages(results: CoreBulkResponse[]): string {
@@ -527,7 +591,14 @@ export class InstalledAppsListComponent implements OnInit {
       });
   }
 
+  private readonly statsCache = new Map<string, Observable<AppStats>>();
+
   getAppStats(name: string): Observable<AppStats> {
-    return this.appsStats.getStatsForApp(name);
+    let stats$ = this.statsCache.get(name);
+    if (!stats$) {
+      stats$ = this.appsStats.getStatsForApp(name).pipe(shareReplay({ bufferSize: 1, refCount: false }));
+      this.statsCache.set(name, stats$);
+    }
+    return stats$;
   }
 }

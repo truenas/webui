@@ -4,10 +4,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatAnchor, MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { tnIconMarker, TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   BehaviorSubject,
@@ -39,10 +38,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     ReactiveFormsModule,
     IxInputComponent,
-    MatButton,
-    MatAnchor,
-    IxChipsComponent,
+    TnButtonComponent,
     TnIconComponent,
+    IxChipsComponent,
     TranslateModule,
     NgxSkeletonLoaderModule,
     AsyncPipe,

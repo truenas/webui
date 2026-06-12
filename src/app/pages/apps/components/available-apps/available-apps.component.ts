@@ -3,12 +3,12 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import {
   Router, NavigationSkipped,
   RouterLink,
 } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   Observable, combineLatest, filter, map,
@@ -41,7 +41,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
     NgxSkeletonLoaderModule,
     AppCardComponent,
     TestDirective,
-    MatButton,
+    TnButtonComponent,
     UiSearchDirective,
     RouterLink,
   ],

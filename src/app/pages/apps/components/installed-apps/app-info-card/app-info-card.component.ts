@@ -1,17 +1,14 @@
 import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, output, signal, WritableSignal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import {
-  MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardAction, TnCardComponent, TnCardHeaderDirective, TnIconButtonComponent,
+  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
@@ -25,6 +22,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { App } from 'app/interfaces/app.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
@@ -49,23 +47,19 @@ import { RedirectService } from 'app/services/redirect.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatButton,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    TestDirective,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnButtonComponent,
+    TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     RequiresRolesDirective,
-    MatCardContent,
+    TestDirective,
     ImgFallbackModule,
     OrNotAvailablePipe,
-    MatCardActions,
     CleanLinkPipe,
-    MatTooltip,
-    TnIconComponent,
+    TnTooltipDirective,
     RouterLink,
   ],
 })
@@ -83,13 +77,38 @@ export class AppInfoCardComponent {
   private slideIn = inject(SlideIn);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
   readonly app = input.required<App>();
   readonly startApp = output();
   readonly stopApp = output();
   protected readonly requiredRoles = [Role.AppsWrite];
+  private readonly hasRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
+
+  protected readonly rollbackAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasRole() || !this.isRollbackPossible()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Roll Back'),
+      testId: `${this.app().name}-rollback`,
+      handler: () => this.rollbackApp(),
+    };
+  });
+
+  protected readonly deleteAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Delete'),
+      testId: `${this.app().name}-delete`,
+      handler: () => this.deleteButtonPressed(),
+    };
+  });
+
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
   protected rollbackUpdateButtonSetEffect = effect(() => {
