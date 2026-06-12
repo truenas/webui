@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Group } from 'app/interfaces/group.interface';
@@ -87,7 +86,7 @@ describe('NewMappingFormComponent', () => {
   it('submits form with direct mapping when "Map directly" is checked', async () => {
     spectator.component.form.patchValue({ hostUidOrGid: 'testuser' });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ text: 'Set' }));
     await submitButton.click();
 
     expect(api.call).toHaveBeenCalledWith('user.query', [[['username', '=', 'testuser']]]);
@@ -103,7 +102,7 @@ describe('NewMappingFormComponent', () => {
     const input = await loader.getHarness(IxInputHarness.with({ label: 'Container UID' }));
     await input.setValue('2000');
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ text: 'Set' }));
     await submitButton.click();
 
     expect(api.call).toHaveBeenCalledWith('user.query', [[['username', '=', 'testuser']]]);
@@ -114,7 +113,7 @@ describe('NewMappingFormComponent', () => {
     spectator.setInput('type', ViewType.Groups);
     spectator.component.form.patchValue({ hostUidOrGid: 'testgroup' });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ text: 'Set' }));
     await submitButton.click();
 
     expect(api.call).toHaveBeenCalledWith('group.query', [[['group', '=', 'testgroup']]]);
@@ -127,14 +126,14 @@ describe('NewMappingFormComponent', () => {
 
     spectator.component.form.patchValue({ hostUidOrGid: 'testuser' });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ text: 'Set' }));
     await submitButton.click();
 
     expect(emitSpy).toHaveBeenCalled();
   });
 
   it('disables submit button when form is invalid', async () => {
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ text: 'Set' }));
     expect(await submitButton.isDisabled()).toBe(true);
   });
 
@@ -142,7 +141,7 @@ describe('NewMappingFormComponent', () => {
     spectator.component.form.patchValue({ hostUidOrGid: 'testuser' });
     spectator.detectChanges();
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ text: 'Set' }));
     expect(await submitButton.isDisabled()).toBe(false);
   });
 
@@ -155,7 +154,7 @@ describe('NewMappingFormComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ text: 'Set' }));
     expect(await submitButton.isDisabled()).toBe(true);
 
     const input = await loader.getHarness(IxInputHarness.with({ label: 'Container UID' }));

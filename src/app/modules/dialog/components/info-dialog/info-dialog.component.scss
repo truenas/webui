@@ -3,12 +3,9 @@
   min-width: 330px;
   max-width: 480px;
 
-  // The icon + title are rendered as a body heading below, so hide the empty
-  // dialog shell header (the shell title is text-only and can't show the icon).
-  // TEMP: until @truenas/ui-components ships a tn-dialog-shell custom/icon title input. Tracked under NAS-141021.
-  ::ng-deep .tn-dialog__header {
-    display: none;
-  }
+  // The empty shell header is collapsed globally via the
+  // `ix-info-dialog .tn-dialog__header` rule in _tn-styles.scss — the
+  // component-scoped ::ng-deep did not pierce into tn-dialog-shell reliably.
 }
 
 .info-panel {

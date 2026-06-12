@@ -975,3 +975,26 @@ tn-form-field {
   margin-bottom: 12px;
   padding: 8px 0;
 }
+
+// A required tn-input / tn-select with no label renders its `*` asterisk inline,
+// which flips .tn-form-field-wrapper to display:flex. A bare input/select is not
+// flex-grow by default, so it collapses to its intrinsic width (e.g. the app
+// delete-confirmation field). Keep the control full-width next to the asterisk.
+.tn-form-field-wrapper--inline > tn-input,
+.tn-form-field-wrapper--inline > tn-select {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+// The error / info / warn dialogs render their icon + title as a body heading,
+// because tn-dialog-shell's title is text-only and can't show an icon. The shell
+// still renders an (otherwise empty) header bar with a close button, leaving a
+// stray strip above the content. Collapse it. A global tag-scoped rule is used
+// because the components' own `:host ::ng-deep .tn-dialog__header` does not
+// reliably pierce into the projected tn-dialog-shell.
+// TEMP: until @truenas/ui-components ships an icon/custom title for
+// tn-dialog-shell. Tracked under NAS-141021.
+ix-error-dialog .tn-dialog__header,
+ix-info-dialog .tn-dialog__header {
+  display: none;
+}

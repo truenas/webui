@@ -151,3 +151,29 @@
     }
   }
 }
+
+// The logo lives in the panel's [slot=title], i.e. projected into
+// <tn-expansion-panel> (itself projected into <tn-dialog-shell>). Scoped rules
+// don't reach across that projection boundary, so neither the size constraint
+// nor the spacing applies — the <img> renders at natural size with no margin.
+// Pierce encapsulation and restore both here. max-height/max-width with auto
+// dimensions keeps aspect ratio (no stretching or cropping).
+:host ::ng-deep .bulk-list .logo {
+  margin-left: 16px;
+  pointer-events: none;
+  user-select: none;
+
+  img {
+    max-height: 32px;
+    max-width: 64px;
+    object-fit: contain;
+  }
+}
+
+// The panel projects its header via [slot=title] rather than the `title` input,
+// so the library's --title-* colour classes never apply and the expand/collapse
+// chevron falls back to the static --tn-fg1 (#fff), which only suits a dark
+// theme. Force webui's theme-aware foreground so the toggle is always visible.
+:host ::ng-deep .tn-expansion-panel__indicator {
+  color: var(--fg1);
+}

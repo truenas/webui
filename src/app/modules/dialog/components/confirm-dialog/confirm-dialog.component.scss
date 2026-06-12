@@ -6,14 +6,11 @@
   max-width: 480px;
 }
 
-.confirm-checkbox {
-  margin-left: -10px;
-  margin-right: auto;
-  padding-right: 10px;
-}
-
 .secondary-checkbox {
-  margin-top: 5px;
+  display: block;
+  // Comfortable gap below the message without the oversized rhythm a
+  // tn-form-field wrapper would add (12px margin + 8px padding + subscript).
+  margin-top: 16px;
 }
 
 #confirm-label:hover {

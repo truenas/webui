@@ -7,7 +7,7 @@
     @if (options.secondaryCheckbox) {
       <span>
         <tn-checkbox
-          class="confirm-checkbox secondary-checkbox"
+          class="secondary-checkbox"
           testId="secondary-confirmation"
           [(ngModel)]="isSecondaryCheckboxChecked"
           (ngModelChange)="onSecondaryCheckboxChange()"
@@ -27,7 +27,6 @@
   <ix-form-actions tnDialogAction class="form-actions">
     @if (!options.hideCheckbox && options.confirmationCheckboxText) {
       <tn-checkbox
-        class="confirm-checkbox"
         testId="confirm"
         [label]="options.confirmationCheckboxText"
         (change)="toggleSubmit($event)"

@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
 
 :host {
@@ -5,12 +7,15 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   min-width: 300px;
   max-width: 560px;
 
-  // The icon + title are rendered as a body heading, so hide the empty dialog
-  // shell header (the shell title is text-only and can't show the icon).
-  // TEMP: until @truenas/ui-components ships a tn-dialog-shell custom/icon title input. Tracked under NAS-141021.
-  ::ng-deep .tn-dialog__header {
-    display: none;
+  // Give the dialog a comfortable width on tablet+ so short errors don't render
+  // in a cramped, narrow box. The 300px base keeps it from overflowing phones.
+  @media (min-width: $breakpoint-tablet) {
+    min-width: 480px;
   }
+
+  // The empty shell header is collapsed globally via the
+  // `ix-error-dialog .tn-dialog__header` rule in _tn-styles.scss — the
+  // component-scoped ::ng-deep did not pierce into tn-dialog-shell reliably.
 }
 
 .err-content {

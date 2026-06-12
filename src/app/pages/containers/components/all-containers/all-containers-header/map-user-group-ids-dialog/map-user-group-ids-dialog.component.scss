@@ -71,8 +71,12 @@ ix-fake-progress-bar {
   }
 }
 
+// tnTooltipClass is fed straight into the CDK overlay panelClass array, which
+// rejects a space-separated value ("contains HTML space characters"). Keep it a
+// single class and fold the old `.tooltip-multiline` rule (white-space) in here.
 ::ng-deep .tooltip-wide {
   max-width: 500px !important;
   font-size: 13px;
   line-height: 1.4;
+  white-space: pre-line;
 }
