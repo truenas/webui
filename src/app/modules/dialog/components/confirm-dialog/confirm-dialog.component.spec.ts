@@ -164,6 +164,20 @@ describe('ConfirmDialogComponent', () => {
         secondaryCheckbox: false,
       });
     });
+
+    it('reports secondaryCheckbox as false on cancel even when the secondary checkbox is checked', async () => {
+      const secondaryCheckbox = await loader.getHarness(TnCheckboxHarness.with({
+        label: secondaryCheckboxOptions.secondaryCheckboxText,
+      }));
+      await secondaryCheckbox.check();
+
+      const button = await loader.getHarness(TnButtonHarness.with({ label: options.cancelText }));
+      await button.click();
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
+        confirmed: false,
+        secondaryCheckbox: false,
+      });
+    });
   });
 
   describe('default title', () => {

@@ -74,10 +74,15 @@ export class ConfirmDialog {
   }
 
   onCancel(): void {
+    // A not-confirmed result carries no meaningful checkbox state, so report
+    // `secondaryCheckbox: false`. This matches the ESC/backdrop dismiss path
+    // (DialogService.confirm normalizes a dismiss to the same shape), so Cancel
+    // and dismiss produce an identical "not confirmed" result and no caller can
+    // accidentally read a stale checkbox value off a cancelled dialog.
     const result: ConfirmDialogResult = this.withSecondaryCheckbox
       ? {
           confirmed: false,
-          secondaryCheckbox: this.isSecondaryCheckboxChecked,
+          secondaryCheckbox: false,
         }
       : false;
 
