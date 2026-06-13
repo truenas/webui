@@ -5,6 +5,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
@@ -22,7 +23,7 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import {
-  catchError, EMPTY, filter, of, switchMap, tap,
+  catchError, EMPTY, Subscription, filter, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -38,6 +39,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -100,10 +102,12 @@ export class ReplicationTaskCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
+  private store$ = inject<Store<JobSlice>>(Store);
 
   dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, JobState>();
   private replicationTasks: ReplicationTask[] = [];
+  private jobSubscriptions = new Subscription();
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly cardMenuPath = ['data-protection', 'replication'];
 
@@ -179,10 +183,12 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.destroyRef.onDestroy(() => this.jobSubscriptions.unsubscribe());
     const replicationTasks$ = this.api.call('replication.query', [[], {
       extra: { check_dataset_encryption_keys: true },
     }]).pipe(
       tap((replicationTasks) => this.replicationTasks = replicationTasks),
+      tap((replicationTasks) => this.setupJobSubscriptions(replicationTasks)),
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
@@ -192,6 +198,37 @@ export class ReplicationTaskCardComponent implements OnInit {
 
   private getReplicationTasks(): void {
     this.dataProvider.load();
+  }
+
+  /**
+   * Watch the job store so the (presentational) status pill repaints on
+   * background job progress. Reloads re-run the source, so drop the previous
+   * batch of subscriptions first to avoid leaking one per task on every reload.
+   */
+  private setupJobSubscriptions(replicationTasks: ReplicationTask[]): void {
+    this.jobSubscriptions.unsubscribe();
+    this.jobSubscriptions = new Subscription();
+    replicationTasks.forEach((task) => {
+      if (task.job) {
+        this.jobSubscriptions.add(
+          this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean))
+            .subscribe((job: Job) => {
+              this.jobStates.set(job.id, job.state);
+              this.applyJobUpdate(job);
+            }),
+        );
+      }
+    });
+  }
+
+  private applyJobUpdate(job: Job): void {
+    this.replicationTasks = this.replicationTasks.map((task) => {
+      if (task.job?.id === job.id) {
+        return { ...task, job, state: { state: job.state } };
+      }
+      return task;
+    });
+    this.dataProvider.setRows(this.replicationTasks);
   }
 
   protected doDelete(replicationTask: ReplicationTask): void {

@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
@@ -138,6 +138,22 @@ describe('CloudBackupCardComponent', () => {
       ['test one', 'Completed', '', ''],
       ['test two', 'Completed', '', ''],
     ]);
+  });
+
+  it('repaints rows through the data provider when a backing job changes in the background', () => {
+    const emissions: CloudBackup[][] = [];
+    const subscription = spectator.component.dataProvider.currentPage$.subscribe((rows) => emissions.push(rows));
+    const emissionsBefore = emissions.length;
+
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectJobs, [{ state: JobState.Failed } as Job]);
+    store$.refreshState();
+
+    // The status pill is presentational now, so a fresh array must be pushed through
+    // the provider (an in-place mutation would leave OnPush from repainting).
+    expect(emissions.length).toBeGreaterThan(emissionsBefore);
+    expect(emissions.at(-1)?.[0].job?.state).toBe(JobState.Failed);
+    subscription.unsubscribe();
   });
 
   it('shows form to edit an existing Cloud Backup when Edit button is pressed', async () => {

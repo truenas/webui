@@ -22,7 +22,7 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import {
-  catchError, EMPTY, filter, map, of, switchMap, tap,
+  catchError, EMPTY, Subscription, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -113,6 +113,7 @@ export class RsyncTaskCardComponent implements OnInit {
   private rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;
   jobStates = new Map<number, JobState>();
+  private jobSubscriptions = new Subscription();
 
   protected readonly displayedColumns = ['path', 'state', 'enabled', 'actions'];
 
@@ -160,6 +161,7 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.destroyRef.onDestroy(() => this.jobSubscriptions.unsubscribe());
     const rsyncTasks$ = this.api.call('rsynctask.query').pipe(
       map((rsyncTasks: RsyncTaskUi[]) => this.transformRsyncTasks(rsyncTasks)),
       tap((rsyncTasks) => this.rsyncTasks = rsyncTasks),
@@ -225,6 +227,10 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   private transformRsyncTasks(rsyncTasks: RsyncTaskUi[]): RsyncTaskUi[] {
+    // Reloads re-run this transform, so drop the previous batch of job
+    // subscriptions first to avoid leaking one per task on every reload.
+    this.jobSubscriptions.unsubscribe();
+    this.jobSubscriptions = new Subscription();
     return rsyncTasks.map((rsyncTask: RsyncTaskUi) => {
       // make sure we deep-copy `state` and `job` so we aren't overriding the originals
       // when we mutate `task`.
@@ -237,11 +243,15 @@ export class RsyncTaskCardComponent implements OnInit {
         task.state = { state: task.locked ? TaskState.Locked : TaskState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-          .subscribe((job: Job) => {
-            this.jobStates.set(job.id, job.state);
-            this.applyJobUpdate(job);
-          });
+        // Watch the job store so the presentational status pill repaints on
+        // background job progress.
+        this.jobSubscriptions.add(
+          this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean))
+            .subscribe((job: Job) => {
+              this.jobStates.set(job.id, job.state);
+              this.applyJobUpdate(job);
+            }),
+        );
       }
 
       return task;

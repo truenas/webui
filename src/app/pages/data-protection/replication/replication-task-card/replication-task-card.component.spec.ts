@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
@@ -12,9 +12,12 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -48,6 +51,10 @@ describe('ReplicationTaskCardComponent', () => {
       ],
       has_encrypted_dataset_keys: true,
       name: 'APPS/test2 - APPS/test3',
+      job: {
+        id: 1,
+        state: JobState.Success,
+      },
       state: {
         state: 'FINISHED',
         last_snapshot: 'APPS/test2@auto-2023-09-19_00-00',
@@ -83,6 +90,10 @@ describe('ReplicationTaskCardComponent', () => {
           {
             selector: selectSystemConfigState,
             value: {},
+          },
+          {
+            selector: selectJobs,
+            value: [{ id: 1, state: JobState.Success } as Job],
           },
         ],
       }),
@@ -127,6 +138,22 @@ describe('ReplicationTaskCardComponent', () => {
     expect(await table.getAllRowTexts()).toEqual([
       ['APPS/test2 - APPS/test3', 'Completed', '', ''],
     ]);
+  });
+
+  it('repaints the row through the data provider when the backing job changes in the background', () => {
+    const emissions: ReplicationTask[][] = [];
+    const subscription = spectator.component.dataProvider.currentPage$.subscribe((rows) => emissions.push(rows));
+    const emissionsBefore = emissions.length;
+
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectJobs, [{ id: 1, state: JobState.Failed } as Job]);
+    store$.refreshState();
+
+    // The status pill is presentational now, so a fresh array must be pushed through
+    // the provider (an in-place mutation would leave OnPush from repainting).
+    expect(emissions.length).toBeGreaterThan(emissionsBefore);
+    expect(emissions.at(-1)?.[0].state.state).toBe(JobState.Failed);
+    subscription.unsubscribe();
   });
 
   it('shows form to edit an existing Replication Task when Edit button is pressed', async () => {

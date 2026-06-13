@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,7 +23,7 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import {
-  EMPTY, catchError, filter, map, of, switchMap, tap,
+  EMPTY, Subscription, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -93,7 +93,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private slideIn = inject(SlideIn);
-  private cdr = inject(ChangeDetectorRef);
   private taskService = inject(TaskService);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
@@ -108,6 +107,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   private cloudSyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   jobStates = new Map<number, JobState>();
+  private jobSubscriptions = new Subscription();
 
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
@@ -187,14 +187,15 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.destroyRef.onDestroy(() => this.jobSubscriptions.unsubscribe());
     const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
       map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
         cloudSyncTasks,
         this.taskService,
         this.translate,
       )),
-      tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
       tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
+      tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
@@ -202,14 +203,23 @@ export class CloudSyncTaskCardComponent implements OnInit {
     this.getCloudSyncTasks();
   }
 
+  /**
+   * Watch the job store so the (presentational) status pill repaints on
+   * background job progress. Reloads re-run the source, so drop the previous
+   * batch of subscriptions first to avoid leaking one per task on every reload.
+   */
   private setupJobSubscriptions(cloudSyncTasks: CloudSyncTaskUi[]): void {
+    this.jobSubscriptions.unsubscribe();
+    this.jobSubscriptions = new Subscription();
     cloudSyncTasks.forEach((task) => {
       if (task.job) {
-        this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-          .subscribe((job: Job) => {
-            this.jobStates.set(job.id, job.state);
-            this.applyJobUpdate(job);
-          });
+        this.jobSubscriptions.add(
+          this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean))
+            .subscribe((job: Job) => {
+              this.jobStates.set(job.id, job.state);
+              this.applyJobUpdate(job);
+            }),
+        );
       }
     });
   }
@@ -305,7 +315,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }));
         this.updateRowStateAndJob(row, JobState.Aborted, null);
-        this.cdr.markForCheck();
       });
   }
 

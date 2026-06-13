@@ -1,9 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
@@ -21,7 +22,7 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import {
-  filter, of, switchMap, tap,
+  Subscription, filter, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -38,6 +39,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -81,7 +83,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CloudBackupCardComponent implements OnInit {
-  private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private slideIn = inject(SlideIn);
@@ -93,8 +94,10 @@ export class CloudBackupCardComponent implements OnInit {
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
+  private store$ = inject<Store<JobSlice>>(Store);
 
   private cloudBackups: CloudBackup[] = [];
+  private jobSubscriptions = new Subscription();
   dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;
@@ -158,12 +161,42 @@ export class CloudBackupCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.destroyRef.onDestroy(() => this.jobSubscriptions.unsubscribe());
     const cloudBackups$ = this.api.call('cloud_backup.query').pipe(
       tap((cloudBackups) => this.cloudBackups = cloudBackups),
+      tap((cloudBackups) => this.setupJobSubscriptions(cloudBackups)),
     );
     this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
     this.setDefaultSort();
     this.getCloudBackups();
+  }
+
+  /**
+   * Watch the job store so the (presentational) status pill repaints on
+   * background job progress. Reloads re-run the source, so drop the previous
+   * batch of subscriptions first to avoid leaking one per task on every reload.
+   */
+  private setupJobSubscriptions(cloudBackups: CloudBackup[]): void {
+    this.jobSubscriptions.unsubscribe();
+    this.jobSubscriptions = new Subscription();
+    cloudBackups.forEach((task) => {
+      if (task.job) {
+        this.jobSubscriptions.add(
+          this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean))
+            .subscribe((job: Job) => this.applyJobUpdate(job)),
+        );
+      }
+    });
+  }
+
+  private applyJobUpdate(job: Job): void {
+    this.cloudBackups = this.cloudBackups.map((task) => {
+      if (task.job?.id === job.id) {
+        return { ...task, job };
+      }
+      return task;
+    });
+    this.dataProvider.setRows(this.cloudBackups);
   }
 
   setDefaultSort(): void {
@@ -197,7 +230,6 @@ export class CloudBackupCardComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» completed successfully.', { name: row.description }));
         }
         this.updateRowJob(row, job);
-        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
