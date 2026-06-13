@@ -23,7 +23,7 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import {
-  EMPTY, Subscription, catchError, filter, map, of, switchMap, tap,
+  EMPTY, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -40,7 +40,6 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -51,6 +50,7 @@ import { CloudSyncDataTransformer } from 'app/pages/data-protection/cloudsync/ut
 import {
   TaskStateCellComponent,
 } from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
+import { TaskCardJobRepainter } from 'app/pages/data-protection/utils/task-card-job-repainter';
 import {
   ShareActionsCellComponent,
 } from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
@@ -106,8 +106,15 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   private cloudSyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
-  private jobStates = new Map<number, JobState>();
-  private jobSubscriptions = new Subscription();
+  private jobs = new TaskCardJobRepainter<CloudSyncTaskUi>(
+    this.store$,
+    () => this.cloudSyncTasks,
+    (rows) => {
+      this.cloudSyncTasks = rows;
+      this.dataProvider.setRows(rows);
+    },
+    (row, job) => ({ ...row, job, state: { state: job.state } }),
+  );
 
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
@@ -187,56 +194,23 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.destroyRef.onDestroy(() => this.jobSubscriptions.unsubscribe());
+    this.destroyRef.onDestroy(() => this.jobs.destroy());
     const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
       map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
         cloudSyncTasks,
         this.taskService,
         this.translate,
       )),
+      // Publish the rows before watching: the job store emits synchronously on
+      // subscribe, so the first repaint can fire before `watch` returns and must
+      // see the freshly-loaded rows.
       tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
-      tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
+      tap((cloudSyncTasks) => this.jobs.watch(cloudSyncTasks)),
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.setDefaultSort();
     this.getCloudSyncTasks();
-  }
-
-  /**
-   * Watch the job store so the (presentational) status pill repaints on
-   * background job progress. Reloads re-run the source, so drop the previous
-   * batch of subscriptions first to avoid leaking one per task on every reload.
-   */
-  private setupJobSubscriptions(cloudSyncTasks: CloudSyncTaskUi[]): void {
-    this.jobSubscriptions.unsubscribe();
-    this.jobSubscriptions = new Subscription();
-    cloudSyncTasks.forEach((task) => {
-      if (task.job) {
-        this.jobSubscriptions.add(
-          this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean))
-            .subscribe((job: Job) => {
-              this.jobStates.set(job.id, job.state);
-              this.applyJobUpdate(job);
-            }),
-        );
-      }
-    });
-  }
-
-  /**
-   * Repaint the row for a background job update. The status pill is purely
-   * presentational now, so an in-place mutation would not be picked up by
-   * OnPush — push a fresh array through `setRows` like the explicit actions do.
-   */
-  private applyJobUpdate(job: Job): void {
-    this.cloudSyncTasks = this.cloudSyncTasks.map((task) => {
-      if (task.job?.id === job.id) {
-        return { ...task, job: { ...job }, state: { state: job.state } };
-      }
-      return task;
-    });
-    this.dataProvider.setRows(this.cloudSyncTasks);
   }
 
   private getCloudSyncTasks(): void {
@@ -289,10 +263,10 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» completed successfully.', { name: row.description }));
       }
       this.updateRowStateAndJob(row, job.state, job);
-      if (this.jobStates.get(job.id) !== job.state) {
+      if (this.jobs.jobStates.get(job.id) !== job.state) {
         this.getCloudSyncTasks();
       }
-      this.jobStates.set(job.id, job.state);
+      this.jobs.jobStates.set(job.id, job.state);
     });
   }
 
@@ -339,10 +313,10 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» dry run completed successfully.', { name: row.description }));
       }
       this.updateRowStateAndJob(row, job.state, job);
-      if (this.jobStates.get(job.id) !== job.state) {
+      if (this.jobs.jobStates.get(job.id) !== job.state) {
         this.getCloudSyncTasks();
       }
-      this.jobStates.set(job.id, job.state);
+      this.jobs.jobStates.set(job.id, job.state);
     });
   }
 

@@ -131,7 +131,10 @@ export class SnapshotTaskCardComponent implements OnInit {
   protected readonly trackByTaskId = (_index: number, row: PeriodicSnapshotTaskUi): number => row.id;
 
   protected uniqueRowTag(row: PeriodicSnapshotTaskUi): string {
-    return convertStringToId('snapshot-task-' + row.dataset + '-' + row.state.state);
+    // Key on the dataset only — `state.state` is mutable, so including it would
+    // change the generated data-test id whenever the task's state changes and
+    // break e2e selectors that target the row.
+    return convertStringToId('snapshot-task-' + row.dataset);
   }
 
   protected ariaLabel(row: PeriodicSnapshotTaskUi): string {

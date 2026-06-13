@@ -31,7 +31,7 @@ describe('SnapshotTaskCardComponent', () => {
   let loader: HarnessLoader;
   let table: TnTableHarness;
 
-  const rowMenuTrigger = '[data-test="button-snapshot-task-apps-test2-pending-more-action"]';
+  const rowMenuTrigger = '[data-test="button-snapshot-task-apps-test2-more-action"]';
 
   beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
   afterEach(() => restoreDate());

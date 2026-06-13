@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
@@ -15,6 +15,7 @@ import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
@@ -131,6 +132,22 @@ describe('RsyncTaskCardComponent', () => {
     expect(await table.getAllRowTexts()).toEqual([
       ['/mnt/APPS', 'Failed', '', ''],
     ]);
+  });
+
+  it('repaints the row through the data provider when the backing job changes in the background', () => {
+    const emissions: RsyncTaskUi[][] = [];
+    const subscription = spectator.component.dataProvider.currentPage$.subscribe((rows) => emissions.push(rows));
+    const emissionsBefore = emissions.length;
+
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectJobs, [{ id: 1, state: JobState.Success } as Job]);
+    store$.refreshState();
+
+    // The status pill is presentational now, so a fresh array must be pushed through
+    // the provider (an in-place mutation would leave OnPush from repainting).
+    expect(emissions.length).toBeGreaterThan(emissionsBefore);
+    expect(emissions.at(-1)?.[0].state).toEqual({ state: JobState.Success });
+    subscription.unsubscribe();
   });
 
   it('shows form to edit an existing Rsync Task when Edit button is pressed', async () => {

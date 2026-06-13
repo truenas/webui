@@ -23,7 +23,7 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import {
-  catchError, EMPTY, Subscription, filter, of, switchMap, tap,
+  catchError, EMPTY, filter, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -39,7 +39,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
-import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
+import { JobSlice } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -55,6 +55,7 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { TaskCardJobRepainter } from 'app/pages/data-protection/utils/task-card-job-repainter';
 import {
   ShareActionsCellComponent,
 } from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
@@ -105,9 +106,17 @@ export class ReplicationTaskCardComponent implements OnInit {
   private store$ = inject<Store<JobSlice>>(Store);
 
   dataProvider: AsyncDataProvider<ReplicationTask>;
-  private jobStates = new Map<number, JobState>();
   private replicationTasks: ReplicationTask[] = [];
-  private jobSubscriptions = new Subscription();
+  private jobs = new TaskCardJobRepainter<ReplicationTask>(
+    this.store$,
+    () => this.replicationTasks,
+    (rows) => {
+      this.replicationTasks = rows;
+      this.dataProvider.setRows(rows);
+    },
+    (row, job) => ({ ...row, job, state: { state: job.state } }),
+  );
+
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly cardMenuPath = ['data-protection', 'replication'];
 
@@ -183,12 +192,15 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.destroyRef.onDestroy(() => this.jobSubscriptions.unsubscribe());
+    this.destroyRef.onDestroy(() => this.jobs.destroy());
     const replicationTasks$ = this.api.call('replication.query', [[], {
       extra: { check_dataset_encryption_keys: true },
     }]).pipe(
+      // Publish the rows before watching: the job store emits synchronously on
+      // subscribe, so the first repaint can fire before `watch` returns and must
+      // see the freshly-loaded rows.
       tap((replicationTasks) => this.replicationTasks = replicationTasks),
-      tap((replicationTasks) => this.setupJobSubscriptions(replicationTasks)),
+      tap((replicationTasks) => this.jobs.watch(replicationTasks)),
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
@@ -198,37 +210,6 @@ export class ReplicationTaskCardComponent implements OnInit {
 
   private getReplicationTasks(): void {
     this.dataProvider.load();
-  }
-
-  /**
-   * Watch the job store so the (presentational) status pill repaints on
-   * background job progress. Reloads re-run the source, so drop the previous
-   * batch of subscriptions first to avoid leaking one per task on every reload.
-   */
-  private setupJobSubscriptions(replicationTasks: ReplicationTask[]): void {
-    this.jobSubscriptions.unsubscribe();
-    this.jobSubscriptions = new Subscription();
-    replicationTasks.forEach((task) => {
-      if (task.job) {
-        this.jobSubscriptions.add(
-          this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean))
-            .subscribe((job: Job) => {
-              this.jobStates.set(job.id, job.state);
-              this.applyJobUpdate(job);
-            }),
-        );
-      }
-    });
-  }
-
-  private applyJobUpdate(job: Job): void {
-    this.replicationTasks = this.replicationTasks.map((task) => {
-      if (task.job?.id === job.id) {
-        return { ...task, job, state: { state: job.state } };
-      }
-      return task;
-    });
-    this.dataProvider.setRows(this.replicationTasks);
   }
 
   protected doDelete(replicationTask: ReplicationTask): void {
@@ -275,10 +256,10 @@ export class ReplicationTaskCardComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((job: Job) => {
       this.updateRowStateAndJob(row, job.state, job);
-      if (this.jobStates.get(job.id) !== job.state) {
+      if (this.jobs.jobStates.get(job.id) !== job.state) {
         this.getReplicationTasks();
       }
-      this.jobStates.set(job.id, job.state);
+      this.jobs.jobStates.set(job.id, job.state);
     });
   }
 

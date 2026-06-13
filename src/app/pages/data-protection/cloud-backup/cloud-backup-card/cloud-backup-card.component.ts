@@ -22,7 +22,7 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import {
-  Subscription, filter, of, switchMap, tap,
+  filter, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -39,7 +39,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
-import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
+import { JobSlice } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -48,6 +48,7 @@ import {
   TaskStateCellComponent,
 } from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
+import { TaskCardJobRepainter } from 'app/pages/data-protection/utils/task-card-job-repainter';
 import {
   ShareActionsCellComponent,
 } from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
@@ -97,7 +98,16 @@ export class CloudBackupCardComponent implements OnInit {
   private store$ = inject<Store<JobSlice>>(Store);
 
   private cloudBackups: CloudBackup[] = [];
-  private jobSubscriptions = new Subscription();
+  private jobs = new TaskCardJobRepainter<CloudBackup>(
+    this.store$,
+    () => this.cloudBackups,
+    (rows) => {
+      this.cloudBackups = rows;
+      this.dataProvider.setRows(rows);
+    },
+    (row, job) => ({ ...row, job }),
+  );
+
   dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;
@@ -161,42 +171,17 @@ export class CloudBackupCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.destroyRef.onDestroy(() => this.jobSubscriptions.unsubscribe());
+    this.destroyRef.onDestroy(() => this.jobs.destroy());
     const cloudBackups$ = this.api.call('cloud_backup.query').pipe(
+      // Publish the rows before watching: the job store emits synchronously on
+      // subscribe, so the first repaint can fire before `watch` returns and must
+      // see the freshly-loaded rows.
       tap((cloudBackups) => this.cloudBackups = cloudBackups),
-      tap((cloudBackups) => this.setupJobSubscriptions(cloudBackups)),
+      tap((cloudBackups) => this.jobs.watch(cloudBackups)),
     );
     this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
     this.setDefaultSort();
     this.getCloudBackups();
-  }
-
-  /**
-   * Watch the job store so the (presentational) status pill repaints on
-   * background job progress. Reloads re-run the source, so drop the previous
-   * batch of subscriptions first to avoid leaking one per task on every reload.
-   */
-  private setupJobSubscriptions(cloudBackups: CloudBackup[]): void {
-    this.jobSubscriptions.unsubscribe();
-    this.jobSubscriptions = new Subscription();
-    cloudBackups.forEach((task) => {
-      if (task.job) {
-        this.jobSubscriptions.add(
-          this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean))
-            .subscribe((job: Job) => this.applyJobUpdate(job)),
-        );
-      }
-    });
-  }
-
-  private applyJobUpdate(job: Job): void {
-    this.cloudBackups = this.cloudBackups.map((task) => {
-      if (task.job?.id === job.id) {
-        return { ...task, job };
-      }
-      return task;
-    });
-    this.dataProvider.setRows(this.cloudBackups);
   }
 
   setDefaultSort(): void {
