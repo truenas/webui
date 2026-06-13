@@ -239,14 +239,28 @@ export class RsyncTaskCardComponent implements OnInit {
         task.state = { state: task.job.state };
         this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
           .subscribe((job: Job) => {
-            task.state = { state: job.state };
-            task.job = job;
             this.jobStates.set(job.id, job.state);
+            this.applyJobUpdate(job);
           });
       }
 
       return task;
     });
+  }
+
+  /**
+   * Repaint the row for a background job update. The status pill is purely
+   * presentational now, so an in-place mutation would not be picked up by
+   * OnPush — push a fresh array through `setRows` like `runNow` already does.
+   */
+  private applyJobUpdate(job: Job): void {
+    this.rsyncTasks = this.rsyncTasks.map((task) => {
+      if (task.job?.id === job.id) {
+        return { ...task, job, state: { state: job.state } };
+      }
+      return task;
+    });
+    this.dataProvider.setRows(this.rsyncTasks);
   }
 
   protected onChangeEnabledState(rsyncTask: RsyncTaskUi): void {

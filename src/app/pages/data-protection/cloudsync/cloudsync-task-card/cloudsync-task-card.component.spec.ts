@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
@@ -164,6 +164,22 @@ describe('CloudSyncTaskCardComponent', () => {
     expect(await table.getAllRowTexts()).toEqual([
       ['custom-cloudsync', 'Completed', '', ''],
     ]);
+  });
+
+  it('repaints the row through the data provider when the backing job changes in the background', () => {
+    const emissions: CloudSyncTaskUi[][] = [];
+    const subscription = spectator.component.dataProvider.currentPage$.subscribe((rows) => emissions.push(rows));
+    const emissionsBefore = emissions.length;
+
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectJobs, [{ id: 1, state: JobState.Failed } as Job]);
+    store$.refreshState();
+
+    // The status pill is presentational now, so a fresh array must be pushed through
+    // the provider (an in-place mutation would leave OnPush from repainting).
+    expect(emissions.length).toBeGreaterThan(emissionsBefore);
+    expect(emissions.at(-1)?.[0].state).toEqual({ state: JobState.Failed });
+    subscription.unsubscribe();
   });
 
   it('shows form to edit an existing CloudSync Task when Edit button is pressed', async () => {

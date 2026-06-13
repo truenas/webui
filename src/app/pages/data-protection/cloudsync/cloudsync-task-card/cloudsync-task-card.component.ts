@@ -203,16 +203,30 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   private setupJobSubscriptions(cloudSyncTasks: CloudSyncTaskUi[]): void {
-    cloudSyncTasks.forEach((transformed) => {
-      if (transformed.job) {
-        this.store$.select(selectJob(transformed.job.id)).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
+    cloudSyncTasks.forEach((task) => {
+      if (task.job) {
+        this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
           .subscribe((job: Job) => {
-            transformed.job = { ...job };
-            transformed.state = { state: job.state };
             this.jobStates.set(job.id, job.state);
+            this.applyJobUpdate(job);
           });
       }
     });
+  }
+
+  /**
+   * Repaint the row for a background job update. The status pill is purely
+   * presentational now, so an in-place mutation would not be picked up by
+   * OnPush — push a fresh array through `setRows` like the explicit actions do.
+   */
+  private applyJobUpdate(job: Job): void {
+    this.cloudSyncTasks = this.cloudSyncTasks.map((task) => {
+      if (task.job?.id === job.id) {
+        return { ...task, job: { ...job }, state: { state: job.state } };
+      }
+      return task;
+    });
+    this.dataProvider.setRows(this.cloudSyncTasks);
   }
 
   private getCloudSyncTasks(): void {

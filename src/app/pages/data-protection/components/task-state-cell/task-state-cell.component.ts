@@ -61,8 +61,9 @@ export class TaskStateCellComponent {
   readonly ariaLabel = input.required<string>();
 
   protected readonly tooltip = computed(() => {
-    const job = this.job();
-    if (job?.logs_path && job?.logs_excerpt) {
+    // Mirror `onButtonClick`: the logs dialog opens whenever an excerpt exists,
+    // so the tooltip must promise "Show Logs" under the same condition.
+    if (this.job()?.logs_excerpt) {
       return this.translate.instant('Show Logs');
     }
     return this.translate.instant('No logs available');
