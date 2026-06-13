@@ -6,7 +6,7 @@
     [class]="'state-button ' + stateClass()"
     [tnTestId]="testId()"
     [tnTooltip]="tooltip()"
-    [attr.aria-label]="ariaLabel()"
+    [attr.aria-label]="accessibleName()"
     (click)="$event.stopPropagation(); onButtonClick()"
   >
     {{ currentState | jobStateDisplay }}

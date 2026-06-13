@@ -38,10 +38,10 @@ import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/ut
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -82,7 +82,7 @@ import { selectService } from 'app/store/services/services.selectors';
     SubSystemNameCellComponent,
     CardAlertBadgeComponent,
     NvmeOfConfigurationComponent,
-    ShareActionsCellComponent,
+    TableActionsCellComponent,
   ],
 })
 export class NvmeOfCardComponent implements OnInit {

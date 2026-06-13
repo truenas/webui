@@ -52,9 +52,9 @@ describe('TaskStateCellComponent', () => {
     expect(spectator.element).toHaveText('N/A');
   });
 
-  it('exposes an accessible name on the pill so state is not conveyed by colour alone', () => {
+  it('folds the state into the accessible name so status is not conveyed by colour alone', () => {
     setup({ state: JobState.Success });
-    expect(spectator.query('button.state-button')).toHaveAttribute('aria-label', 'My Task');
+    expect(spectator.query('button.state-button')).toHaveAttribute('aria-label', 'My Task, Completed');
   });
 
   it('shows the failed-job error modal when the job carries an error', () => {

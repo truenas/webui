@@ -76,12 +76,12 @@
       <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
         <ng-template tnHeaderCellDef></ng-template>
         <ng-template let-row tnCellDef>
-          <ix-share-actions-cell
+          <ix-table-actions-cell
             [actions]="actions"
             [row]="row"
             [uniqueRowTag]="uniqueRowTag(row)"
             [ariaLabel]="ariaLabel(row)"
-          ></ix-share-actions-cell>
+          ></ix-table-actions-cell>
         </ng-template>
       </ng-container>
     </tn-table>

@@ -44,6 +44,7 @@ import { FailedJobError } from 'app/services/errors/error.classes';
     TnTestIdDirective,
     JobStateDisplayPipe,
   ],
+  providers: [JobStateDisplayPipe],
 })
 export class TaskStateCellComponent {
   private matDialog = inject(MatDialog);
@@ -52,6 +53,7 @@ export class TaskStateCellComponent {
   private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<JobSlice>>(Store);
   private destroyRef = inject(DestroyRef);
+  private stateDisplay = inject(JobStateDisplayPipe);
 
   /** Displayable state shown in the pill (e.g. the task's job state). */
   readonly state = input.required<DisplayableState | null | undefined>();
@@ -59,6 +61,17 @@ export class TaskStateCellComponent {
   readonly job = input<Job | null>(null);
   readonly testId = input.required<string[]>();
   readonly ariaLabel = input.required<string>();
+
+  /**
+   * Accessible name for the pill. The visible label text would otherwise be
+   * overridden by `aria-label`, so the state word is folded into the name —
+   * without it a screen reader announces the row but not its state, conveying
+   * status by colour alone.
+   */
+  protected readonly accessibleName = computed(() => {
+    const stateText = this.stateDisplay.transform(this.state());
+    return stateText ? `${this.ariaLabel()}, ${stateText}` : this.ariaLabel();
+  });
 
   protected readonly tooltip = computed(() => {
     // Mirror `onButtonClick`: the logs dialog opens whenever an excerpt exists,

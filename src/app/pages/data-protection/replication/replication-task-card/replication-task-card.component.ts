@@ -42,6 +42,12 @@ import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/ut
 import { JobSlice } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import {
+  TableToggleCellComponent,
+} from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   TaskStateCellComponent,
@@ -56,12 +62,6 @@ import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { TaskCardJobRepainter } from 'app/pages/data-protection/utils/task-card-job-repainter';
-import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
-import {
-  ShareToggleCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -86,8 +86,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AsyncPipe,
     TnEmptyComponent,
     CardAlertBadgeComponent,
-    ShareToggleCellComponent,
-    ShareActionsCellComponent,
+    TableToggleCellComponent,
+    TableActionsCellComponent,
     TaskStateCellComponent,
   ],
 })

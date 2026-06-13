@@ -41,18 +41,18 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import {
+  TableToggleCellComponent,
+} from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   TaskStateCellComponent,
 } from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { TaskCardJobRepainter } from 'app/pages/data-protection/utils/task-card-job-repainter';
-import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
-import {
-  ShareToggleCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 
@@ -77,8 +77,8 @@ import { AppState } from 'app/store';
     AsyncPipe,
     TnEmptyComponent,
     CardAlertBadgeComponent,
-    ShareToggleCellComponent,
-    ShareActionsCellComponent,
+    TableToggleCellComponent,
+    TableActionsCellComponent,
     TaskStateCellComponent,
   ],
 })

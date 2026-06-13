@@ -42,6 +42,12 @@ import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/ut
 import { JobSlice } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import {
+  TableToggleCellComponent,
+} from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import {
@@ -49,12 +55,6 @@ import {
 } from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
 import { TaskCardJobRepainter } from 'app/pages/data-protection/utils/task-card-job-repainter';
-import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
-import {
-  ShareToggleCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -78,8 +78,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AsyncPipe,
     TnEmptyComponent,
     CardAlertBadgeComponent,
-    ShareToggleCellComponent,
-    ShareActionsCellComponent,
+    TableToggleCellComponent,
+    TableActionsCellComponent,
     TaskStateCellComponent,
   ],
 })
@@ -178,13 +178,14 @@ export class CloudBackupCardComponent implements OnInit {
       // see the freshly-loaded rows.
       tap((cloudBackups) => this.cloudBackups = cloudBackups),
       tap((cloudBackups) => this.jobs.watch(cloudBackups)),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
     this.setDefaultSort();
     this.getCloudBackups();
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,

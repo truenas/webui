@@ -42,6 +42,12 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import {
+  TableToggleCellComponent,
+} from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
@@ -51,12 +57,6 @@ import {
   TaskStateCellComponent,
 } from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { TaskCardJobRepainter } from 'app/pages/data-protection/utils/task-card-job-repainter';
-import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
-import {
-  ShareToggleCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
@@ -78,8 +78,8 @@ import { AppState } from 'app/store';
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     IxTablePagerShowMoreComponent,
-    ShareToggleCellComponent,
-    ShareActionsCellComponent,
+    TableToggleCellComponent,
+    TableActionsCellComponent,
     TaskStateCellComponent,
     TranslateModule,
     AsyncPipe,

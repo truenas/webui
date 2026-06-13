@@ -17,7 +17,8 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 /**
  * tn-table replacement for the ix-table `actionsWithMenuColumn`/`actionsColumn`
  * cell renderers. Built entirely on tn-* primitives (`tn-icon-button`,
- * `tn-menu`) so share cards carry no Material in their action column.
+ * `tn-menu`) so dashboard card tables carry no Material in their action column.
+ * Shared across the sharing and data-protection card tables.
  *
  * - `mode = 'menu'` (default): one visible action renders as a single icon
  *   button; more than one collapses behind a "⋮" trigger (parity with
@@ -30,9 +31,9 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
  * `composeTestId` — matching the legacy `ixTest` output for icon buttons.
  */
 @Component({
-  selector: 'ix-share-actions-cell',
-  templateUrl: './share-actions-cell.component.html',
-  styleUrls: ['./share-actions-cell.component.scss'],
+  selector: 'ix-table-actions-cell',
+  templateUrl: './table-actions-cell.component.html',
+  styleUrls: ['./table-actions-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
@@ -44,7 +45,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
     TnMenuTriggerDirective,
   ],
 })
-export class ShareActionsCellComponent<T = unknown> {
+export class TableActionsCellComponent<T = unknown> {
   private destroyRef = inject(DestroyRef);
 
   readonly actions = input.required<IconActionConfig<T>[]>();
