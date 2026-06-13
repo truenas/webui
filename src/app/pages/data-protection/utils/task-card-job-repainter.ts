@@ -43,6 +43,15 @@ export class TaskCardJobRepainter<T extends TaskWithJob> {
     this.subscriptions.unsubscribe();
     this.subscriptions = new Subscription();
     const watchedJobIds = new Set<number>();
+
+    // `selectJob` emits synchronously on subscribe, so subscribing each task in
+    // turn would fire one full-list `setRows` per task — O(N²) row rebuilds
+    // (plus N data-provider emissions) before the first paint on every reload.
+    // Collect those synchronous values and apply them in a single `setRows`
+    // below; later (asynchronous) progress emits repaint individually.
+    const initialJobs = new Map<number, Job>();
+    let initializing = true;
+
     tasks.forEach((task) => {
       if (!task.job) {
         return;
@@ -50,11 +59,29 @@ export class TaskCardJobRepainter<T extends TaskWithJob> {
       watchedJobIds.add(task.job.id);
       this.subscriptions.add(
         this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean)).subscribe((job) => {
+          if (initializing) {
+            this.jobStates.set(job.id, job.state);
+            initialJobs.set(job.id, job);
+            return;
+          }
+          // A burst of progress emits keeps the same state; only repaint when
+          // the state actually moves, since that is all the pill renders.
+          if (this.jobStates.get(job.id) === job.state) {
+            return;
+          }
           this.jobStates.set(job.id, job.state);
           this.setRows(this.getRows().map((row) => (row.job?.id === job.id ? this.mergeJob(row, job) : row)));
         }),
       );
     });
+
+    initializing = false;
+    if (initialJobs.size) {
+      this.setRows(this.getRows().map((row) => {
+        const job = row.job ? initialJobs.get(row.job.id) : null;
+        return job ? this.mergeJob(row, job) : row;
+      }));
+    }
 
     // Drop last-seen state for jobs no longer backing any row. Each manual run
     // mints a fresh job id, so without this the map would grow one entry per run

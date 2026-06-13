@@ -94,6 +94,62 @@ describe('TaskCardJobRepainter', () => {
     expect(mergeSpy).not.toHaveBeenCalled();
   });
 
+  it('batches the synchronous initial pass into a single republish regardless of task count', () => {
+    const setRows = jest.fn((next: TestRow[]) => {
+      rows = next;
+    });
+    repainter.destroy();
+    repainter = new TaskCardJobRepainter<TestRow>(
+      store$,
+      () => rows,
+      setRows,
+      (row, job) => ({ ...row, job, state: { state: job.state } }),
+    );
+
+    rows = [
+      { id: 1, job: { id: 10, state: JobState.Running } as Job },
+      { id: 2, job: { id: 20, state: JobState.Running } as Job },
+      { id: 3, job: { id: 30, state: JobState.Running } as Job },
+    ];
+    setJobs([
+      { id: 10, state: JobState.Running } as Job,
+      { id: 20, state: JobState.Running } as Job,
+      { id: 30, state: JobState.Running } as Job,
+    ]);
+
+    repainter.watch(rows);
+
+    // One republish for the whole list, not one per job-backed task.
+    expect(setRows).toHaveBeenCalledTimes(1);
+    expect(rows.every((row) => row.state?.state === JobState.Running)).toBe(true);
+  });
+
+  it('does not republish when an ongoing emit repeats the last seen state', () => {
+    const mergeSpy = jest.fn((row: TestRow, job: Job) => ({ ...row, job, state: { state: job.state } }));
+    repainter.destroy();
+    repainter = new TaskCardJobRepainter<TestRow>(
+      store$,
+      () => rows,
+      (next) => {
+        rows = next;
+      },
+      mergeSpy,
+    );
+
+    rows = [{ id: 1, job: { id: 10, state: JobState.Running } as Job }];
+    setJobs([{ id: 10, state: JobState.Running } as Job]);
+    repainter.watch(rows);
+    mergeSpy.mockClear();
+
+    // A progress-only emit keeps the same state and must not repaint.
+    setJobs([{ id: 10, state: JobState.Running, progress: { percent: 50 } } as Job]);
+    expect(mergeSpy).not.toHaveBeenCalled();
+
+    // A genuine state change does repaint.
+    setJobs([{ id: 10, state: JobState.Success } as Job]);
+    expect(mergeSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('repaintRow applies the transform to the matching row and republishes the list', () => {
     const row1 = { id: 1, job: { id: 10, state: JobState.Running } as Job };
     const row2 = { id: 2, job: { id: 20, state: JobState.Running } as Job };

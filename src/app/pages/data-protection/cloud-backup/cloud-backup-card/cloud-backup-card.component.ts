@@ -215,6 +215,10 @@ export class CloudBackupCardComponent implements OnInit {
         if (job.state === JobState.Success) {
           this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» completed successfully.', { name: row.description }));
         }
+        // Unlike the sibling cards, cloud backup intentionally does not
+        // `jobs.reconcile(...)` to reload on completion — it mirrors
+        // cloud-backup-list and relies on live `jobs.watch` → `selectJob`
+        // updates flowing into the row instead of refetching the whole list.
         this.updateRowJob(row, job);
       },
       error: (error: unknown) => {
