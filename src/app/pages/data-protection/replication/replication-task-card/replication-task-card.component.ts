@@ -105,7 +105,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   private store$ = inject<Store<JobSlice>>(Store);
 
   dataProvider: AsyncDataProvider<ReplicationTask>;
-  jobStates = new Map<number, JobState>();
+  private jobStates = new Map<number, JobState>();
   private replicationTasks: ReplicationTask[] = [];
   private jobSubscriptions = new Subscription();
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];

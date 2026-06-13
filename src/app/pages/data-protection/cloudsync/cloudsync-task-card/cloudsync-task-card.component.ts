@@ -106,7 +106,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   private cloudSyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
-  jobStates = new Map<number, JobState>();
+  private jobStates = new Map<number, JobState>();
   private jobSubscriptions = new Subscription();
 
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
@@ -375,7 +375,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job | null): void {
-    this.dataProvider.setRows(this.cloudSyncTasks.map((task) => {
+    this.cloudSyncTasks = this.cloudSyncTasks.map((task) => {
       if (task.id === row.id) {
         return {
           ...task,
@@ -384,6 +384,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         };
       }
       return task;
-    }));
+    });
+    this.dataProvider.setRows(this.cloudSyncTasks);
   }
 }

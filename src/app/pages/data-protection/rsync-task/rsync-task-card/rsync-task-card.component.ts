@@ -112,7 +112,7 @@ export class RsyncTaskCardComponent implements OnInit {
 
   private rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;
-  jobStates = new Map<number, JobState>();
+  private jobStates = new Map<number, JobState>();
   private jobSubscriptions = new Subscription();
 
   protected readonly displayedColumns = ['path', 'state', 'enabled', 'actions'];

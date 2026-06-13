@@ -42,7 +42,7 @@
           <span
             tnTestIdType="text"
             [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
-            [tnTooltip]="row.description ? (row.description | translate) : ''"
+            [tnTooltip]="row.description || ''"
           >{{ row.description }}</span>
         </ng-template>
       </ng-container>

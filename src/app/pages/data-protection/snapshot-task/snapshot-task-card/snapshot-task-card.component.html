@@ -42,7 +42,7 @@
           <span
             tnTestIdType="text"
             [tnTestId]="[('Pool/Dataset' | translate), uniqueRowTag(row), 'row-text']"
-            [tnTooltip]="row.dataset ? (row.dataset | translate) : ''"
+            [tnTooltip]="row.dataset || ''"
           >{{ row.dataset }}</span>
         </ng-template>
       </ng-container>

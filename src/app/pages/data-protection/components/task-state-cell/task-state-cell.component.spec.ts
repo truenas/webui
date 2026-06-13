@@ -10,6 +10,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   TaskStateCellComponent,
 } from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 
 describe('TaskStateCellComponent', () => {
   let spectator: Spectator<TaskStateCellComponent>;
@@ -22,6 +24,7 @@ describe('TaskStateCellComponent', () => {
         jobDialog: jest.fn(() => ({ afterClosed: () => of(undefined) })) as unknown as DialogService['jobDialog'],
       }),
       mockProvider(MatDialog, { open: jest.fn() }),
+      mockProvider(ErrorHandlerService),
     ],
   });
 
@@ -47,6 +50,21 @@ describe('TaskStateCellComponent', () => {
     setup({ state: null });
     expect(spectator.query('button.state-button')).not.toExist();
     expect(spectator.element).toHaveText('N/A');
+  });
+
+  it('exposes an accessible name on the pill so state is not conveyed by colour alone', () => {
+    setup({ state: JobState.Success });
+    expect(spectator.query('button.state-button')).toHaveAttribute('aria-label', 'My Task');
+  });
+
+  it('shows the failed-job error modal when the job carries an error', () => {
+    const job = { id: 1, state: JobState.Failed, error: 'boom' } as Job;
+    setup({ state: JobState.Failed, job });
+
+    spectator.click('button.state-button');
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal)
+      .toHaveBeenCalledWith(new FailedJobError(job));
   });
 
   it('opens the logs dialog when the job has logs', () => {
