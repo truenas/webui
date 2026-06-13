@@ -263,10 +263,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» completed successfully.', { name: row.description }));
       }
       this.updateRowStateAndJob(row, job.state, job);
-      if (this.jobs.jobStates.get(job.id) !== job.state) {
-        this.getCloudSyncTasks();
-      }
-      this.jobs.jobStates.set(job.id, job.state);
+      this.jobs.reconcile(job, () => this.getCloudSyncTasks());
     });
   }
 
@@ -313,10 +310,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» dry run completed successfully.', { name: row.description }));
       }
       this.updateRowStateAndJob(row, job.state, job);
-      if (this.jobs.jobStates.get(job.id) !== job.state) {
-        this.getCloudSyncTasks();
-      }
-      this.jobs.jobStates.set(job.id, job.state);
+      this.jobs.reconcile(job, () => this.getCloudSyncTasks());
     });
   }
 

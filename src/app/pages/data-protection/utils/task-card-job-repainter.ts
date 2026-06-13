@@ -28,8 +28,8 @@ interface TaskWithJob {
  * see the freshly-loaded rows.
  */
 export class TaskCardJobRepainter<T extends TaskWithJob> {
-  /** Last seen state per job id; cards read it to decide whether a reload is needed. */
-  readonly jobStates = new Map<number, JobState>();
+  /** Last seen state per job id, used by `reconcile` to dedupe full reloads. */
+  private readonly jobStates = new Map<number, JobState>();
   private subscriptions = new Subscription();
 
   constructor(
@@ -42,10 +42,12 @@ export class TaskCardJobRepainter<T extends TaskWithJob> {
   watch(tasks: T[]): void {
     this.subscriptions.unsubscribe();
     this.subscriptions = new Subscription();
+    const watchedJobIds = new Set<number>();
     tasks.forEach((task) => {
       if (!task.job) {
         return;
       }
+      watchedJobIds.add(task.job.id);
       this.subscriptions.add(
         this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean)).subscribe((job) => {
           this.jobStates.set(job.id, job.state);
@@ -53,6 +55,29 @@ export class TaskCardJobRepainter<T extends TaskWithJob> {
         }),
       );
     });
+
+    // Drop last-seen state for jobs no longer backing any row. Each manual run
+    // mints a fresh job id, so without this the map would grow one entry per run
+    // over the dashboard's lifetime.
+    for (const jobId of this.jobStates.keys()) {
+      if (!watchedJobIds.has(jobId)) {
+        this.jobStates.delete(jobId);
+      }
+    }
+  }
+
+  /**
+   * Called from the imperative run/stop handlers that already hold a fresh job.
+   * Triggers `reload` only when the job's state actually changed since the last
+   * value seen for that id — so a burst of same-state progress emits doesn't
+   * reload the whole list — then records the new state. The caller is expected
+   * to have already repainted the affected row in place.
+   */
+  reconcile(job: Job, reload: () => void): void {
+    if (this.jobStates.get(job.id) !== job.state) {
+      reload();
+    }
+    this.jobStates.set(job.id, job.state);
   }
 
   destroy(): void {

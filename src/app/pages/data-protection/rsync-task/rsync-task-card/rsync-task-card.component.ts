@@ -230,10 +230,7 @@ export class RsyncTaskCardComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((job: Job) => {
       this.updateRowStateAndJob(row, job.state, job);
-      if (this.jobs.jobStates.get(job.id) !== job.state) {
-        this.getRsyncTasks();
-      }
-      this.jobs.jobStates.set(job.id, job.state);
+      this.jobs.reconcile(job, () => this.getRsyncTasks());
     });
   }
 
