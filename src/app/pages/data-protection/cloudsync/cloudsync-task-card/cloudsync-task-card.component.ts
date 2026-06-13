@@ -343,16 +343,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job | null): void {
-    this.cloudSyncTasks = this.cloudSyncTasks.map((task) => {
-      if (task.id === row.id) {
-        return {
-          ...task,
-          state: { state },
-          job,
-        };
-      }
-      return task;
-    });
-    this.dataProvider.setRows(this.cloudSyncTasks);
+    this.jobs.repaintRow(row.id, (task) => ({ ...task, state: { state }, job }));
   }
 }

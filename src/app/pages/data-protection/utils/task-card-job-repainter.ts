@@ -67,6 +67,16 @@ export class TaskCardJobRepainter<T extends TaskWithJob> {
   }
 
   /**
+   * Apply `transform` to the row with the given id and republish the whole list
+   * through `setRows`. Lets the imperative run/stop handlers repaint a single
+   * row's state/job without re-implementing the `map` + republish dance in every
+   * card — the merge shape stays per-card, the plumbing is shared here.
+   */
+  repaintRow(rowId: number, transform: (row: T) => T): void {
+    this.setRows(this.getRows().map((row) => (row.id === rowId ? transform(row) : row)));
+  }
+
+  /**
    * Called from the imperative run/stop handlers that already hold a fresh job.
    * Triggers `reload` only when the job's state actually changed since the last
    * value seen for that id — so a burst of same-state progress emits doesn't

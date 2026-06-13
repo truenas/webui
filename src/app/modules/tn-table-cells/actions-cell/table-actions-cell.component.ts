@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnIconButtonComponent,
@@ -10,7 +9,7 @@ import {
   TnMenuItemComponent,
   TnMenuTriggerDirective,
 } from '@truenas/ui-components';
-import { isObservable } from 'rxjs';
+import { Subscription, isObservable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 
@@ -56,32 +55,48 @@ export class TableActionsCellComponent<T = unknown> {
 
   protected readonly visibleActions = signal<IconActionConfig<T>[]>([]);
 
+  /** Async `hidden()` subscriptions for the current effect run; torn down before each re-run. */
+  private hiddenSubscriptions = new Subscription();
+
   constructor() {
+    this.destroyRef.onDestroy(() => this.hiddenSubscriptions.unsubscribe());
+
     // Recompute visibility whenever the row or action list changes. `hidden`
     // may be synchronous or an Observable, mirroring ix-cell-actions-with-menu.
     effect(() => {
       const row = this.row();
       const actions = this.actions();
 
-      this.visibleActions.set([]);
+      // Drop the previous run's subscriptions so re-runs (row/actions changes)
+      // neither leak nor let a stale async emission push into the reset list.
+      this.hiddenSubscriptions.unsubscribe();
+      this.hiddenSubscriptions = new Subscription();
 
-      actions.forEach((action) => {
+      // Track visibility per index and project in declaration order, so an async
+      // hidden() resolving out of order cannot reorder the rendered buttons.
+      const visible = new Array<boolean>(actions.length).fill(false);
+      const publish = (): void => {
+        this.visibleActions.set(actions.filter((_, index) => visible[index]));
+      };
+
+      actions.forEach((action, index) => {
         if (!action.hidden) {
-          this.visibleActions.update((items) => [...items, action]);
+          visible[index] = true;
           return;
         }
 
         const result$ = action.hidden(row);
         if (isObservable(result$)) {
-          result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((shouldHide) => {
-            if (!shouldHide) {
-              this.visibleActions.update((items) => [...items, action]);
-            }
-          });
-        } else if (!result$) {
-          this.visibleActions.update((items) => [...items, action]);
+          this.hiddenSubscriptions.add(result$.subscribe((shouldHide) => {
+            visible[index] = !shouldHide;
+            publish();
+          }));
+        } else {
+          visible[index] = !result$;
         }
       });
+
+      publish();
     });
   }
 

@@ -94,6 +94,18 @@ describe('TaskCardJobRepainter', () => {
     expect(mergeSpy).not.toHaveBeenCalled();
   });
 
+  it('repaintRow applies the transform to the matching row and republishes the list', () => {
+    const row1 = { id: 1, job: { id: 10, state: JobState.Running } as Job };
+    const row2 = { id: 2, job: { id: 20, state: JobState.Running } as Job };
+    rows = [row1, row2];
+
+    repainter.repaintRow(2, (row) => ({ ...row, state: { state: JobState.Success } }));
+
+    expect(rows.find((row) => row.id === 2)?.state?.state).toBe(JobState.Success);
+    // The non-matching row is passed through untouched by reference.
+    expect(rows.find((row) => row.id === 1)).toBe(row1);
+  });
+
   it('reconcile reloads only when the job state changed since the last value seen', () => {
     const reload = jest.fn();
     rows = [{ id: 1, job: { id: 10, state: JobState.Running } as Job }];

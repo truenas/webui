@@ -74,9 +74,17 @@ export class TaskStateCellComponent {
   });
 
   protected readonly tooltip = computed(() => {
-    // Mirror `onButtonClick`: the logs dialog opens whenever an excerpt exists,
-    // so the tooltip must promise "Show Logs" under the same condition.
-    if (this.job()?.logs_excerpt) {
+    // Mirror every `onButtonClick` branch so the hint promises what the click
+    // actually does, not just the logs case: the running-job dialog and the
+    // error / logs modals all surface logs, hold has its own message.
+    const job = this.job();
+    if (this.state() === JobState.Running) {
+      return this.translate.instant('Show Logs');
+    }
+    if (this.state() === TaskState.Hold) {
+      return this.translate.instant('Task is on hold');
+    }
+    if (job?.error || job?.logs_excerpt) {
       return this.translate.instant('Show Logs');
     }
     return this.translate.instant('No logs available');

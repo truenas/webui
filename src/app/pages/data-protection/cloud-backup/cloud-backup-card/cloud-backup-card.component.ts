@@ -265,15 +265,6 @@ export class CloudBackupCardComponent implements OnInit {
   }
 
   private updateRowJob(row: CloudBackup, job: Job): void {
-    this.cloudBackups = this.cloudBackups.map((task) => {
-      if (task.id === row.id) {
-        return {
-          ...task,
-          job,
-        };
-      }
-      return task;
-    });
-    this.dataProvider.setRows(this.cloudBackups);
+    this.jobs.repaintRow(row.id, (task) => ({ ...task, job }));
   }
 }

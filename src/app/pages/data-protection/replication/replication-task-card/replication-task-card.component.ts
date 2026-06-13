@@ -298,16 +298,6 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   private updateRowStateAndJob(row: ReplicationTask, state: JobState, job: Job | null): void {
-    this.replicationTasks = this.replicationTasks.map((task) => {
-      if (task.id === row.id) {
-        return {
-          ...task,
-          state: { state },
-          job,
-        };
-      }
-      return task;
-    });
-    this.dataProvider.setRows(this.replicationTasks);
+    this.jobs.repaintRow(row.id, (task) => ({ ...task, state: { state }, job }));
   }
 }

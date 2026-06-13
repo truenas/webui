@@ -269,16 +269,6 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   private updateRowStateAndJob(row: RsyncTask, state: JobState, job: Job | null): void {
-    this.rsyncTasks = this.rsyncTasks.map((task) => {
-      if (task.id === row.id) {
-        return {
-          ...task,
-          state: { state },
-          job,
-        };
-      }
-      return task;
-    });
-    this.dataProvider.setRows(this.rsyncTasks);
+    this.jobs.repaintRow(row.id, (task) => ({ ...task, state: { state }, job }));
   }
 }
