@@ -4,10 +4,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
-import { SubsystemPartiallyCreatedDialogComponent } from './subsystem-partially-created-dialog.component';
+import { SubsystemPartiallyCreatedDialog } from './subsystem-partially-created-dialog.component';
 
-describe('SubsystemPartiallyCreatedDialogComponent', () => {
-  let spectator: Spectator<SubsystemPartiallyCreatedDialogComponent>;
+describe('SubsystemPartiallyCreatedDialog', () => {
+  let spectator: Spectator<SubsystemPartiallyCreatedDialog>;
   let loader: HarnessLoader;
 
   const mockSubsystem = {
@@ -32,7 +32,7 @@ describe('SubsystemPartiallyCreatedDialogComponent', () => {
   ];
 
   const createComponent = createComponentFactory({
-    component: SubsystemPartiallyCreatedDialogComponent,
+    component: SubsystemPartiallyCreatedDialog,
     providers: [
       {
         provide: DIALOG_DATA,

@@ -34,7 +34,7 @@ import {
   StartServiceDialog, StartServiceDialogResult,
 } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import {
-  SubsystemPartiallyCreatedDialogComponent, SubsystemPartiallyCreatedDialogData,
+  SubsystemPartiallyCreatedDialog, SubsystemPartiallyCreatedDialogData,
 } from 'app/modules/dialog/components/subsystem-partially-created-dialog/subsystem-partially-created-dialog.component';
 import { UpdateDialog, UpdateDialogData } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { topbarDialogPositionStrategy } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
@@ -265,8 +265,8 @@ export class DialogService {
   }
 
   subsystemPartiallyCreated(data: SubsystemPartiallyCreatedDialogData): Observable<void | undefined> {
-    return this.tnDialog.open<SubsystemPartiallyCreatedDialogComponent, SubsystemPartiallyCreatedDialogData, void>(
-      SubsystemPartiallyCreatedDialogComponent,
+    return this.tnDialog.open<SubsystemPartiallyCreatedDialog, SubsystemPartiallyCreatedDialogData, void>(
+      SubsystemPartiallyCreatedDialog,
       { data },
     ).closed;
   }

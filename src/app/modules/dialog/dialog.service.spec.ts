@@ -1,15 +1,28 @@
 import { Dialog } from '@angular/cdk/dialog';
+import { Overlay } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
 import { firstValueFrom, of, throwError } from 'rxjs';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ConfirmDialog } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
 import { ErrorDialog } from 'app/modules/dialog/components/error-dialog/error-dialog.component';
 import { MultiErrorDialog } from 'app/modules/dialog/components/multi-error-dialog/multi-error-dialog.component';
+import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
+import { RedirectDialogData } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog-data.interface';
+import { RedirectDialog } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog.component';
+import { SessionExpiringDialog } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
+import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
+import { StartServiceDialog } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
+import {
+  SubsystemPartiallyCreatedDialog,
+  SubsystemPartiallyCreatedDialogData,
+} from 'app/modules/dialog/components/subsystem-partially-created-dialog/subsystem-partially-created-dialog.component';
+import { UpdateDialog, UpdateDialogData } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -31,6 +44,7 @@ describe('DialogService', () => {
     providers: [
       mockProvider(TnDialog),
       mockProvider(Dialog),
+      mockProvider(Overlay),
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
@@ -296,6 +310,89 @@ describe('DialogService', () => {
       }).subscribe(nextFn);
 
       expect(nextFn).toHaveBeenCalledWith(undefined);
+    });
+  });
+
+  // These thin wrappers aren't pure passthroughs: each encodes dialog config
+  // (disableClose, minWidth, panelClass, positionStrategy) that fails silently
+  // if it drifts. Lock the config down so a regression is caught by a test, not
+  // a user noticing a loader can suddenly be dismissed mid-update.
+  describe('dialog wrapper configuration', () => {
+    it('rebootRequired opens RebootRequiredDialog with a minWidth', () => {
+      const open = mockDialogClosed(true);
+
+      spectator.service.rebootRequired().subscribe();
+
+      expect(open).toHaveBeenCalledWith(RebootRequiredDialog, { minWidth: '400px' });
+    });
+
+    it('update opens UpdateDialog anchored to the topbar with disableable backdrop', () => {
+      const open = mockDialogClosed(true);
+      const positionStrategy = {} as ReturnType<Overlay['position']>;
+      jest.spyOn(spectator.inject(Overlay), 'position').mockReturnValue({
+        global: () => ({ top: () => ({ right: () => positionStrategy }) }),
+      } as unknown as ReturnType<Overlay['position']>);
+      const data = {} as UpdateDialogData;
+
+      spectator.service.update(data);
+
+      expect(open).toHaveBeenCalledWith(UpdateDialog, {
+        width: '400px',
+        hasBackdrop: true,
+        panelClass: 'topbar-panel',
+        positionStrategy,
+        data,
+      });
+    });
+
+    it('startService opens StartServiceDialog with disableClose', () => {
+      const open = mockDialogClosed(true);
+
+      spectator.service.startService(ServiceName.Cifs).subscribe();
+
+      expect(open).toHaveBeenCalledWith(StartServiceDialog, {
+        data: ServiceName.Cifs,
+        disableClose: true,
+      });
+    });
+
+    it('sessionExpiring opens SessionExpiringDialog with disableClose', () => {
+      const open = mockDialogClosed(true);
+      const options = {} as Parameters<DialogService['sessionExpiring']>[0];
+
+      spectator.service.sessionExpiring(options);
+
+      expect(open).toHaveBeenCalledWith(SessionExpiringDialog, {
+        data: options,
+        disableClose: true,
+      });
+    });
+
+    it('showLogs opens ShowLogsDialog with the job as data', () => {
+      const open = mockDialogClosed(true);
+      const job = { id: 1 } as Job;
+
+      spectator.service.showLogs(job).subscribe();
+
+      expect(open).toHaveBeenCalledWith(ShowLogsDialog, { data: job });
+    });
+
+    it('redirect opens RedirectDialog with the redirect data', () => {
+      const open = mockDialogClosed(true);
+      const data = {} as RedirectDialogData;
+
+      spectator.service.redirect(data).subscribe();
+
+      expect(open).toHaveBeenCalledWith(RedirectDialog, { data });
+    });
+
+    it('subsystemPartiallyCreated opens SubsystemPartiallyCreatedDialog with data', () => {
+      const open = mockDialogClosed(true);
+      const data = {} as SubsystemPartiallyCreatedDialogData;
+
+      spectator.service.subsystemPartiallyCreated(data).subscribe();
+
+      expect(open).toHaveBeenCalledWith(SubsystemPartiallyCreatedDialog, { data });
     });
   });
 });

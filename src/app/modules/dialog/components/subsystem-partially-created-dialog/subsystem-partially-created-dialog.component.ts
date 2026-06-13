@@ -24,7 +24,7 @@ export interface SubsystemPartiallyCreatedDialogData {
     TranslateModule,
   ],
 })
-export class SubsystemPartiallyCreatedDialogComponent {
-  protected dialogRef = inject<DialogRef<void, SubsystemPartiallyCreatedDialogComponent>>(DialogRef);
+export class SubsystemPartiallyCreatedDialog {
+  protected dialogRef = inject<DialogRef<void, SubsystemPartiallyCreatedDialog>>(DialogRef);
   data = inject<SubsystemPartiallyCreatedDialogData>(DIALOG_DATA);
 }
