@@ -35,10 +35,15 @@
       <tn-form-field
         [label]="'Mocking Scenario' | translate"
         [hint]="'Select the scenario for populating enclosure slots' | translate">
-        <tn-select
-          formControlName="scenario"
-          [options]="scenarioOptions"
-        ></tn-select>
+        @for (option of scenarioOptions; track option.value) {
+          <tn-radio
+            name="scenario"
+            formControlName="scenario"
+            [value]="option.value"
+            [label]="option.label | translate"
+            [testId]="'scenario-' + option.value"
+          ></tn-radio>
+        }
       </tn-form-field>
     </div>
 

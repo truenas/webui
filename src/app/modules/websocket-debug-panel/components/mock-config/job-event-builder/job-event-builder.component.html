@@ -34,6 +34,8 @@
                 <tn-input
                   testId="delay-input"
                   formControlName="delay"
+                  [inputType]="InputType.Number"
+                  [allowDecimals]="false"
                 ></tn-input>
               </tn-form-field>
 
@@ -58,6 +60,8 @@
                 <tn-input
                   testId="progress-percent-input"
                   formControlName="progressPercent"
+                  [inputType]="InputType.Number"
+                  [allowDecimals]="false"
                 ></tn-input>
               </tn-form-field>
 

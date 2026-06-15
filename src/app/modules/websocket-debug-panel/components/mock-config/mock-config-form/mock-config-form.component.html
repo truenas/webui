@@ -19,11 +19,15 @@
       </tn-form-field>
 
       <tn-form-field [label]="'Response Type' | translate" [required]="true">
-        <tn-select
-          testId="response-type-radio"
-          formControlName="responseType"
-          [options]="responseTypeOptions"
-        ></tn-select>
+        @for (option of responseTypeOptions; track option.value) {
+          <tn-radio
+            name="responseType"
+            formControlName="responseType"
+            [value]="option.value"
+            [label]="option.label | translate"
+            [testId]="'response-type-' + option.value"
+          ></tn-radio>
+        }
       </tn-form-field>
 
       @if (isErrorMode) {
@@ -52,6 +56,8 @@
           <tn-input
             testId="error-code-input"
             formControlName="errorCode"
+            [inputType]="InputType.Number"
+            [allowDecimals]="false"
           ></tn-input>
         </tn-form-field>
         <tn-form-field
@@ -80,6 +86,8 @@
             <tn-input
               testId="call-error-code-input"
               formControlName="callErrorCode"
+              [inputType]="InputType.Number"
+              [allowDecimals]="false"
             ></tn-input>
           </tn-form-field>
           <tn-form-field
@@ -121,6 +129,8 @@
         <tn-input
           testId="response-delay-input"
           formControlName="responseDelay"
+          [inputType]="InputType.Number"
+          [allowDecimals]="false"
           [placeholder]="'0' | translate"
         ></tn-input>
       </tn-form-field>
@@ -128,7 +138,7 @@
       <div class="events-section">
         <label>{{ 'Events (Optional)' | translate }}</label>
         <ix-job-event-builder
-          [events]="form.value.events"
+          [events]="form.controls.events.value ?? []"
           (eventsChange)="onEventsChange($event)">
         </ix-job-event-builder>
       </div>

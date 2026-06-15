@@ -57,7 +57,7 @@
           <div class="config-item" [class.enabled]="config.enabled">
             <tn-slide-toggle
               [checked]="config.enabled"
-              [ariaLabel]="(config.enabled ? 'Disable mock for ' : 'Enable mock for ') + config.methodName | translate"
+              [ariaLabel]="(config.enabled ? 'Disable mock for {name}' : 'Enable mock for {name}') | translate: { name: config.methodName }"
               [tnTooltip]="config.enabled ? ('Disable' | translate) : ('Enable' | translate)"
               (change)="toggleConfig(config.id)"
             ></tn-slide-toggle>
@@ -78,7 +78,7 @@
                 library="mdi"
                 testId="edit-config-button"
                 [tooltip]="'Edit' | translate"
-                [ariaLabel]="'Edit mock for ' + config.methodName | translate"
+                [ariaLabel]="'Edit mock for {name}' | translate: { name: config.methodName }"
                 (click)="editConfig(config)"
               ></tn-icon-button>
               <tn-icon-button
@@ -86,7 +86,7 @@
                 library="mdi"
                 testId="delete-config-button"
                 [tooltip]="'Delete' | translate"
-                [ariaLabel]="'Delete mock for ' + config.methodName | translate"
+                [ariaLabel]="'Delete mock for {name}' | translate: { name: config.methodName }"
                 (click)="deleteConfig(config.id)"
               ></tn-icon-button>
             </div>

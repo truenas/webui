@@ -8,7 +8,9 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
+  InputType,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent,
+  TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
@@ -31,6 +33,7 @@ import { PrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/web
     TnCheckboxComponent,
     TnFormFieldComponent,
     TnInputComponent,
+    TnRadioComponent,
     TnSelectComponent,
     TranslateModule,
     IxCodeEditorComponent,
@@ -51,6 +54,7 @@ export class MockConfigFormComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
+  protected readonly InputType = InputType;
   protected readonly responseTypeOptions: TnSelectOption<'success' | 'error'>[] = [
     { label: 'Success', value: 'success' },
     { label: 'Error', value: 'error' },
@@ -331,7 +335,8 @@ export class MockConfigFormComponent implements OnInit {
     }
   }
 
-  // tn-input has no numeric type, so numeric controls hold strings once edited; coerce to a number.
+  // Numeric tn-inputs emit a number (or null when cleared); coerce defensively so a
+  // null/blank value becomes 0 rather than NaN before it reaches the mock config.
   private toNumber(value: unknown): number {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : 0;

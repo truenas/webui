@@ -8,7 +8,7 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnSelectComponent, TnSelectOption,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnRadioComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import {
@@ -28,6 +28,7 @@ import { AppState } from 'app/store';
     TnButtonComponent,
     TnCheckboxComponent,
     TnFormFieldComponent,
+    TnRadioComponent,
     TnSelectComponent,
     TranslateModule,
   ],

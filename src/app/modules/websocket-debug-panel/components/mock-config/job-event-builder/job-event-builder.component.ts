@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
+  InputType,
   TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnFormFieldComponent, TnIconButtonComponent,
   TnInputComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
@@ -40,6 +41,8 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
 
   private destroyRef = inject(DestroyRef);
   private isUpdatingFromInput = false;
+
+  protected readonly InputType = InputType;
 
   protected readonly stateOptions: TnSelectOption<string>[] = [
     { label: 'RUNNING', value: 'RUNNING' },
