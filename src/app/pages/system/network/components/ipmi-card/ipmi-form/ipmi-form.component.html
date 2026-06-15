@@ -4,114 +4,93 @@
   [loading]="isLoading()"
 ></ix-modal-header>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      @if (remoteControllerOptions) {
-        <ix-fieldset [title]="helptext.ipmiRemoteController | translate">
-          <ix-radio-group
-            formControlName="apply_remote"
-            [label]="helptext.ipmiRemoteController | translate"
-            [options]="remoteControllerOptions"
-          >
-          </ix-radio-group>
-        </ix-fieldset>
-        <mat-divider></mat-divider>
-      }
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  @if (remoteControllerOptions) {
+    <ix-fieldset [title]="helptext.ipmiRemoteController | translate">
+      <ix-radio-group
+        formControlName="apply_remote"
+        [label]="helptext.ipmiRemoteController | translate"
+        [options]="remoteControllerOptions"
+      >
+      </ix-radio-group>
+    </ix-fieldset>
+    <tn-divider></tn-divider>
+  }
 
-      <ix-fieldset [title]="helptext.ipmiConfiguration | translate">
-        <ix-checkbox
-          formControlName="dhcp"
-          [label]="'DHCP' | translate"
-          [tooltip]="helptext.dhcpTooltip | translate"
-        ></ix-checkbox>
+  <ix-fieldset [title]="helptext.ipmiConfiguration | translate">
+    <ix-checkbox
+      formControlName="dhcp"
+      [label]="'DHCP' | translate"
+      [tooltip]="helptext.dhcpTooltip | translate"
+    ></ix-checkbox>
 
-        <ix-input
-          formControlName="ipaddress"
-          [label]="'IPv4 Address' | translate"
-          [tooltip]="helptext.ipAddressTooltip | translate"
-        ></ix-input>
+    <ix-input
+      formControlName="ipaddress"
+      [label]="'IPv4 Address' | translate"
+      [tooltip]="helptext.ipAddressTooltip | translate"
+    ></ix-input>
 
-        <ix-input
-          formControlName="netmask"
-          [label]="'IPv4 Netmask' | translate"
-          [tooltip]="helptext.netmaskTooltip | translate"
-        ></ix-input>
+    <ix-input
+      formControlName="netmask"
+      [label]="'IPv4 Netmask' | translate"
+      [tooltip]="helptext.netmaskTooltip | translate"
+    ></ix-input>
 
-        <ix-input
-          formControlName="gateway"
-          [label]="'IPv4 Default Gateway' | translate"
-        ></ix-input>
+    <ix-input
+      formControlName="gateway"
+      [label]="'IPv4 Default Gateway' | translate"
+    ></ix-input>
 
-        <ix-checkbox
-          formControlName="vlan_id_enable"
-          [label]="'Enable VLAN' | translate"
-        ></ix-checkbox>
-        @if (vlanEnabled()) {
-          <ix-input
-            formControlName="vlan_id"
-            type="number"
-            [required]="true"
-            [label]="'VLAN ID' | translate"
-            [tooltip]="helptext.vlanTooltip | translate"
-          ></ix-input>
-        }
-      </ix-fieldset>
-      <mat-divider></mat-divider>
+    <ix-checkbox
+      formControlName="vlan_id_enable"
+      [label]="'Enable VLAN' | translate"
+    ></ix-checkbox>
+    @if (vlanEnabled()) {
+      <ix-input
+        formControlName="vlan_id"
+        type="number"
+        [required]="true"
+        [label]="'VLAN ID' | translate"
+        [tooltip]="helptext.vlanTooltip | translate"
+      ></ix-input>
+    }
+  </ix-fieldset>
+  <tn-divider></tn-divider>
 
-      <ix-fieldset [title]="helptext.ipmiPasswordReset | translate">
-        <ix-input
-          formControlName="password"
-          type="password"
-          [label]="'Password' | translate"
-          [tooltip]="helptext.passwordTooltip | translate"
-        ></ix-input>
-      </ix-fieldset>
+  <ix-fieldset [title]="helptext.ipmiPasswordReset | translate">
+    <ix-input
+      formControlName="password"
+      type="password"
+      [label]="'Password' | translate"
+      [tooltip]="helptext.passwordTooltip | translate"
+    ></ix-input>
+  </ix-fieldset>
 
-      <mat-divider></mat-divider>
+  <tn-divider></tn-divider>
 
-      <mat-card-actions class="buttons">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
+  <ix-form-actions class="buttons">
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="form.invalid || isLoading()"
+      (onClick)="onSubmit()"
+    ></tn-button>
 
-        <button
-          mat-button
-          type="button"
-          ixTest="manage-ipmi"
-          [disabled]="isManageButtonDisabled || isLoading()"
-          (click)="openManageWindow()"
-        >
-          {{ 'Manage' | translate }}
-        </button>
+    <tn-button
+      [testId]="'manage-ipmi'"
+      [label]="'Manage' | translate"
+      [disabled]="isManageButtonDisabled || isLoading()"
+      (onClick)="openManageWindow()"
+    ></tn-button>
 
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="button"
-          ixTest="toggle-identify-light"
-          [disabled]="isFlashingLoading()"
-          (click)="toggleFlashing()"
-        >
-          @if (isFlashingLoading()) {
-            <mat-spinner [diameter]="20"></mat-spinner>
-          } @else {
-            <tn-icon name="lightbulb-on-outline" library="mdi"></tn-icon>
-          }
-          @if (isFlashing()) {
-            {{ 'Stop Flashing' | translate }}
-          } @else {
-            {{ 'Flash Identify Light' | translate }}
-          }
-        </button>
-      </mat-card-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      [testId]="'toggle-identify-light'"
+      [label]="(isFlashing() ? 'Stop Flashing' : 'Flash Identify Light') | translate"
+      [disabled]="isFlashingLoading()"
+      (onClick)="toggleFlashing()"
+    ></tn-button>
+  </ix-form-actions>
+</form>

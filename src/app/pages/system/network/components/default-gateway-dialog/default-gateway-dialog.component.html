@@ -35,19 +35,19 @@
   </div>
 
   <ix-form-actions mat-dialog-actions class="form-actions">
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ 'Skip' | translate }}
-    </button>
+    <tn-button
+      [testId]="'cancel'"
+      [label]="'Skip' | translate"
+      (onClick)="dialogRef.close(false)"
+    ></tn-button>
 
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
       color="primary"
-      ixTest="register"
+      [testId]="'register'"
+      [label]="'Register' | translate"
       [disabled]="form.invalid"
-    >
-      {{ 'Register' | translate }}
-    </button>
+      (onClick)="onSubmit()"
+    ></tn-button>
   </ix-form-actions>
 </form>

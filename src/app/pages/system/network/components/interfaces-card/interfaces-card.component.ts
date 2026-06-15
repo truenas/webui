@@ -1,13 +1,13 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardHeaderDirective,
+  TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
+  TnTooltipDirective, tnIconMarker,
+} from '@truenas/ui-components';
 import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import {
   filter, map, throttleTime,
@@ -22,21 +22,18 @@ import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { convertStringToId } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ShareActionsCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { interfacesCardElements } from 'app/pages/system/network/components/interfaces-card/interfaces-card.elements';
 import {
-  ipAddressesColumn,
+  IpAddressesCellComponent,
 } from 'app/pages/system/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/system/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -50,19 +47,20 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   styleUrls: ['./interfaces-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
-    MatTooltip,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnButtonComponent,
+    TnTooltipDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    ShareActionsCellComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableHeadComponent,
     AsyncPipe,
-    IxTableBodyComponent,
-    IxTableCellDirective,
     InterfaceStatusIconComponent,
+    IpAddressesCellComponent,
     TranslateModule,
   ],
 })
@@ -93,77 +91,58 @@ export class InterfacesCardComponent implements OnInit {
   dataProvider = new ArrayDataProvider<NetworkInterface>();
   inOutUpdates = signal<AllNetworkInterfacesUpdate>({});
 
-  columns = createTable<NetworkInterface>([
-    textColumn({
-      propertyName: 'state',
-    }),
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-      getValue: (row) => {
-        const value = row.name;
+  protected readonly displayedColumns = ['state', 'name', 'ip_addresses', 'mac', 'actions'];
 
-        if (row.description) {
-          return `${value} (${row.description})`;
-        }
+  protected readonly actions: IconActionConfig<NetworkInterface>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.onEdit(row),
+    },
+    {
+      iconName: tnIconMarker('refresh', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      hidden: (row) => combineLatest([
+        of(!this.isPhysical(row)),
+        this.isHaEnabled$,
+      ]).pipe(
+        map(([isNotPhysical, isHaEnabled]) => isHaEnabled || isNotPhysical),
+      ),
+      tooltip: this.translate.instant('Reset configuration'),
+      onClick: (row) => this.onReset(row),
+    },
+    {
+      iconName: tnIconMarker('', 'mdi'),
+      hidden: () => this.isHaEnabled$.pipe(map((isHaEnabled) => !isHaEnabled)),
+      disabled: () => of(true),
+      tooltip: this.translate.instant(helptextInterfaces.haEnabledResetMessage),
+      onClick: (): void => {},
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      dynamicTooltip: () => this.isHaEnabled$.pipe(
+        map((isHaEnabled) => (isHaEnabled
+          ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
+          : this.translate.instant('Delete'))),
+      ),
+      hidden: (row) => of(this.isPhysical(row)),
+      onClick: (row) => this.onDelete(row),
+      disabled: () => this.isHaEnabled$,
+    },
+  ];
 
-        return value;
-      },
-    }),
-    ipAddressesColumn({
-      title: this.translate.instant('IP Addresses'),
-      sortBy: (row) => row.aliases.map((alias) => alias.address).join(', '),
-      cssClass: 'wider-column',
-    }),
-    textColumn({
-      title: this.translate.instant('MAC Address'),
-      cssClass: 'wider-column',
-      getValue: (row) => row.state.permanent_link_address,
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.onEdit(row),
-        },
-        {
-          iconName: tnIconMarker('refresh', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          hidden: (row) => combineLatest([
-            of(!this.isPhysical(row)),
-            this.isHaEnabled$,
-          ]).pipe(
-            map(([isNotPhysical, isHaEnabled]) => isHaEnabled || isNotPhysical),
-          ),
-          tooltip: this.translate.instant('Reset configuration'),
-          onClick: (row) => this.onReset(row),
-        },
-        {
-          iconName: tnIconMarker('', 'mdi'),
-          hidden: () => this.isHaEnabled$.pipe(map((isHaEnabled) => !isHaEnabled)),
-          disabled: () => of(true),
-          tooltip: this.translate.instant(helptextInterfaces.haEnabledResetMessage),
-          onClick: (): void => {},
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          dynamicTooltip: () => this.isHaEnabled$.pipe(
-            map((isHaEnabled) => (isHaEnabled
-              ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
-              : this.translate.instant('Delete'))),
-          ),
-          hidden: (row) => of(this.isPhysical(row)),
-          onClick: (row) => this.onDelete(row),
-          disabled: () => this.isHaEnabled$,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'interface-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('Interface')],
-  });
+  protected nameWithDescription(row: NetworkInterface): string {
+    return row.description ? `${row.name} (${row.description})` : row.name;
+  }
+
+  protected uniqueRowTag(row: NetworkInterface): string {
+    return convertStringToId('interface-' + row.name);
+  }
+
+  protected ariaLabel(row: NetworkInterface): string {
+    return [row.name, this.translate.instant('Interface')].join(' ');
+  }
 
   readonly helptext = helptextInterfaces;
 

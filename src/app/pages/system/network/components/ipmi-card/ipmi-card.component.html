@@ -1,27 +1,44 @@
 @if (hasIpmi$ | async) {
-  <mat-card [ixUiSearch]="searchableElements.ipmi">
-    <mat-toolbar-row>
-      <h3>IPMI</h3>
+  <tn-card padding="small" [ixUiSearch]="searchableElements.ipmi">
+    <div tnCardHeader class="card-header">
+      <h3 class="tn-card__title">IPMI</h3>
 
-      <button
-        mat-button
-        class="actions"
-        ixTest="show-events"
+      <tn-button
+        variant="outline"
+        color="default"
+        [label]="'Show Events' | translate"
+        [testId]="'show-events'"
         [ixUiSearch]="searchableElements.showEvents"
-        (click)="onOpenEvents()"
-      >{{ 'Show Events' | translate }}</button>
-    </mat-toolbar-row>
+        (onClick)="onOpenEvents()"
+      ></tn-button>
+    </div>
 
-    <ix-table
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    <tn-table
+      class="table"
+      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns"
+      [loading]="!!(dataProvider.isLoading$ | async)"
+      [emptyMessage]="'No IPMI channels found' | translate"
     >
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      ></tbody>
-    </ix-table>
-  </mat-card>
+      <ng-container [tnColumnDef]="'channel'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          {{ 'Channel {n}' | translate: { n: row.channel } }}
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-share-actions-cell
+            mode="inline"
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-share-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
+  </tn-card>
 }

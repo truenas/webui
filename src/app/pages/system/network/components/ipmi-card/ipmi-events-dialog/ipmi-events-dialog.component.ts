@@ -1,20 +1,14 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnEmptyComponent } from '@truenas/ui-components';
 import { parse } from 'date-fns';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -27,12 +21,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FakeProgressBarComponent,
     MatDialogTitle,
     MatDialogContent,
-    EmptyComponent,
+    TnEmptyComponent,
     FormActionsComponent,
     MatDialogActions,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     TranslateModule,
     FormatDateTimePipe,
   ],
@@ -40,16 +32,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class IpmiEventsDialog implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  protected dialogRef = inject<MatDialogRef<IpmiEventsDialog>>(MatDialogRef);
 
   protected readonly isLoading = signal(false);
   protected events: IpmiEvent[] = [];
-
-  protected emptyConfig: EmptyConfig = {
-    title: this.translate.instant('No events to display.'),
-    type: EmptyType.NoPageData,
-  };
 
   get canClear(): boolean {
     return this.events.length > 0 && !this.isLoading();

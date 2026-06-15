@@ -2,13 +2,11 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import {
   BehaviorSubject, EMPTY, forkJoin, of, Observable,
@@ -48,7 +46,6 @@ import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -77,8 +74,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   providers: [InterfaceNameValidatorService],
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
@@ -91,12 +86,11 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxErrorsComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
     IxRadioGroupComponent,
-    MatTooltip,
+    TnTooltipDirective,
   ],
 })
 export class InterfaceFormComponent implements OnInit {

@@ -1,14 +1,10 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
-import { MatDivider } from '@angular/material/divider';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDividerComponent } from '@truenas/ui-components';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -18,6 +14,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -28,7 +25,6 @@ import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validati
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
@@ -43,21 +39,16 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxRadioGroupComponent,
-    MatDivider,
+    TnDividerComponent,
     IxCheckboxComponent,
     IxInputComponent,
-    MatCardActions,
+    FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    TnIconComponent,
+    TnButtonComponent,
     TranslateModule,
-    MatProgressSpinner,
   ],
 })
 export class IpmiFormComponent implements OnInit {

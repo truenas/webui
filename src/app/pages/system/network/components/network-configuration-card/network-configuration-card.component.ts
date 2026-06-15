@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnIconComponent,
+  TnListComponent, TnListIconDirective, TnListItemComponent,
+} from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { combineLatest } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -18,7 +17,6 @@ import { searchDelayConst } from 'app/modules/global-search/constants/delay.cons
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
 import {
@@ -33,14 +31,13 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   styleUrls: ['./network-configuration-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
-    MatButton,
-    TestDirective,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnButtonComponent,
     UiSearchDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnListComponent,
+    TnListItemComponent,
+    TnListIconDirective,
     TnIconComponent,
     TranslateModule,
     CastPipe,

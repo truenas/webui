@@ -1,8 +1,16 @@
-table {
-  table-layout: fixed;
+.card-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
-p {
-  margin: 0;
-  padding: 13px;
+.title-group {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+
+:host tn-card {
+  height: auto;
 }

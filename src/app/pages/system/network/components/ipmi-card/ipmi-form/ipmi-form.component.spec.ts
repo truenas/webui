@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -192,7 +192,7 @@ describe('IpmiFormComponent', () => {
         'VLAN ID': '2',
         Password: '',
       });
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
@@ -217,7 +217,7 @@ describe('IpmiFormComponent', () => {
         'Enable VLAN': true,
         'VLAN ID': '2',
       });
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.lan.update', [1, {
@@ -242,7 +242,7 @@ describe('IpmiFormComponent', () => {
         Password: '',
         'Enable VLAN': false,
       });
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.lan.update', [1, {
@@ -284,16 +284,16 @@ describe('IpmiFormComponent', () => {
     });
 
     it('flashes IPMI light when Flash Identify Light is pressed', async () => {
-      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
       await flashButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.On }]);
     });
 
     it('stops flashing IPMI light when Flash Identify Light is pressed again', async () => {
-      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
       await flashButton.click();
-      const stopFlashing = await loader.getHarness(MatButtonHarness.with({ text: 'Stop Flashing' }));
+      const stopFlashing = await loader.getHarness(TnButtonHarness.with({ label: 'Stop Flashing' }));
       await stopFlashing.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.Off }]);
@@ -303,7 +303,7 @@ describe('IpmiFormComponent', () => {
       const remoteController = await loader.getHarness(IxRadioGroupHarness);
       await remoteController.setValue('Standby: TrueNAS Controller 2');
 
-      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
       await flashButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
@@ -316,9 +316,9 @@ describe('IpmiFormComponent', () => {
       const remoteController = await loader.getHarness(IxRadioGroupHarness);
       await remoteController.setValue('Standby: TrueNAS Controller 2');
 
-      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
       await flashButton.click();
-      const stopFlashing = await loader.getHarness(MatButtonHarness.with({ text: 'Stop Flashing' }));
+      const stopFlashing = await loader.getHarness(TnButtonHarness.with({ label: 'Stop Flashing' }));
       await stopFlashing.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
@@ -362,7 +362,7 @@ describe('IpmiFormComponent', () => {
     });
 
     it('should be enabled by default with valid static IP', async () => {
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
 
       expect(await manageButton.isDisabled()).toBe(false);
       expect(spectator.component.managementIp).toBe('10.220.15.114');
@@ -373,7 +373,7 @@ describe('IpmiFormComponent', () => {
       const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
       await ipaddressInput.setValue('');
 
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
 
       expect(await manageButton.isDisabled()).toBe(true);
       expect(spectator.component.isManageButtonDisabled).toBe(true);
@@ -383,7 +383,7 @@ describe('IpmiFormComponent', () => {
       const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
       await ipaddressInput.setValue('0.0.0.0');
 
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
 
       expect(await manageButton.isDisabled()).toBe(true);
       expect(spectator.component.isManageButtonDisabled).toBe(true);
@@ -393,7 +393,7 @@ describe('IpmiFormComponent', () => {
       const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
       await ipaddressInput.setValue('invalid.ip.address');
 
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
 
       expect(await manageButton.isDisabled()).toBe(true);
       expect(spectator.component.isManageButtonDisabled).toBe(true);
@@ -403,7 +403,7 @@ describe('IpmiFormComponent', () => {
       const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
       await ipaddressInput.setValue('192.168.1.100');
 
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
 
       expect(await manageButton.isDisabled()).toBe(false);
       expect(spectator.component.managementIp).toBe('192.168.1.100');
@@ -419,7 +419,7 @@ describe('IpmiFormComponent', () => {
       spectator.component.form.controls.ipaddress.setValue('192.168.1.50');
       spectator.component.form.controls.ipaddress.updateValueAndValidity();
 
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
 
       expect(await manageButton.isDisabled()).toBe(false);
       expect(spectator.component.managementIp).toBe('192.168.1.50');
@@ -457,7 +457,7 @@ describe('IpmiFormComponent', () => {
       const redirectService = spectator.inject(RedirectService);
       const openWindowSpy = jest.spyOn(redirectService, 'openWindow');
 
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
       await manageButton.click();
 
       expect(openWindowSpy).toHaveBeenCalledWith('https://10.220.15.114');
@@ -477,7 +477,7 @@ describe('IpmiFormComponent', () => {
       spectator.component.form.controls.ipaddress.setValue('');
       spectator.component.form.controls.ipaddress.updateValueAndValidity();
 
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
 
       expect(await manageButton.isDisabled()).toBe(true);
       expect(spectator.component.isManageButtonDisabled).toBe(true);
@@ -491,14 +491,14 @@ describe('IpmiFormComponent', () => {
       spectator.component.form.controls.ipaddress.setValue('');
       spectator.component.form.controls.ipaddress.updateValueAndValidity();
 
-      let manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      let manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
       expect(await manageButton.isDisabled()).toBe(true);
 
       // Simulate DHCP obtaining an IP
       spectator.component.form.controls.ipaddress.setValue('10.0.0.50');
       spectator.component.form.controls.ipaddress.updateValueAndValidity();
 
-      manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
       expect(await manageButton.isDisabled()).toBe(false);
       expect(spectator.component.managementIp).toBe('10.0.0.50');
     });
@@ -514,7 +514,7 @@ describe('IpmiFormComponent', () => {
       // Switch back to static
       await dhcpCheckbox.setValue(false);
 
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
       expect(await manageButton.isDisabled()).toBe(false);
       expect(spectator.component.managementIp).toBe('192.168.1.100');
     });
@@ -533,11 +533,11 @@ describe('IpmiFormComponent', () => {
         throw new Error(`Unexpected method: ${method}`);
       });
 
-      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
       await flashButton.click();
 
       // Button text should remain "Flash Identify Light" since the request failed
-      const buttonAfterClick = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      const buttonAfterClick = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
       expect(buttonAfterClick).toBeTruthy();
     });
 
@@ -553,7 +553,7 @@ describe('IpmiFormComponent', () => {
         throw new Error(`Unexpected method: ${method}`);
       });
 
-      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
       await flashButton.click();
 
       // Loading state should be reset after error

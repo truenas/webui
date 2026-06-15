@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -232,7 +232,7 @@ describe('InterfaceFormComponent', () => {
         'Enable Learning': true,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
@@ -285,7 +285,7 @@ describe('InterfaceFormComponent', () => {
         },
       );
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
@@ -330,7 +330,7 @@ describe('InterfaceFormComponent', () => {
         },
       );
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
@@ -390,7 +390,7 @@ describe('InterfaceFormComponent', () => {
       spectator.component.ngOnInit();
       spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Reset to HA disabled
@@ -559,7 +559,7 @@ describe('InterfaceFormComponent', () => {
         'Failover Group': '1',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [
@@ -593,7 +593,7 @@ describe('InterfaceFormComponent', () => {
         'Virtual IP Address (Failover Address)': '192.168.1.3',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [
@@ -668,7 +668,7 @@ describe('InterfaceFormComponent', () => {
 
       spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
       await saveButton.click();
 

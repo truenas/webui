@@ -1,10 +1,10 @@
-:host {
-  .actions {
-    display: flex;
-    justify-content: flex-end;
+.card-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
 
-    button {
-      display: inline-block;
-    }
-  }
+:host tn-card {
+  height: auto;
 }

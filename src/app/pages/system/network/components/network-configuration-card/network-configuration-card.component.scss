@@ -1,19 +1,22 @@
 @import 'scss-imports/variables';
 
-:host ::ng-deep {
-  mat-list-item {
-    height: inherit !important;
-    padding: 0;
-  }
+:host ::ng-deep tn-list-item .tn-list-item__content {
+  // TEMP: tn-list-item ships row padding/min-height tuned for interactive lists;
+  // this card is a dense key/value summary. Remove once the library exposes a
+  // sizing input for tn-list-item. Tracked under the tn-* migration (NAS-141021).
+  min-height: 0;
+  padding: 0;
 }
 
 .card {
   width: 100%;
 }
 
-.mat-toolbar-row {
+.card-header {
+  align-items: center;
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 
 .columns {
@@ -61,4 +64,8 @@
 
 ul {
   padding: 0 16px;
+}
+
+:host tn-card {
+  height: auto;
 }

@@ -1,13 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import {
   createComponentFactory,
   mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import {
+  TnButtonComponent, TnButtonHarness, TnCardComponent, TnCellDefDirective, TnHeaderCellDefDirective,
+  TnInputComponent, TnMenuHarness, TnMenuTesting, TnTableColumnDirective, TnTableComponent,
+} from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -22,10 +24,12 @@ import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import {
+  ShareActionsCellComponent,
+} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/system/network/components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from 'app/pages/system/network/components/ipmi-card/ipmi-card.component';
@@ -75,8 +79,15 @@ describe('NetworkComponent', () => {
       ReactiveFormsModule,
       FormsModule,
       MatInputModule,
+      TnButtonComponent,
+      TnCardComponent,
+      TnInputComponent,
+      TnTableComponent,
+      TnTableColumnDirective,
+      TnHeaderCellDefDirective,
+      TnCellDefDirective,
+      ShareActionsCellComponent,
       IxIpInputWithNetmaskComponent,
-      IxTableCellDirective,
     ],
     declarations: [
       InterfacesCardComponent,
@@ -148,9 +159,13 @@ describe('NetworkComponent', () => {
   async function makeEdit(): Promise<void> {
     wasEditMade = true;
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    spectator.click('[data-test="button-interface-eno1-more-action"]');
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    await menu.clickItem({ label: 'Edit' });
+    await spectator.fixture.whenStable();
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 0);
+    });
     spectator.detectComponentChanges();
   }
 
@@ -166,7 +181,7 @@ describe('NetworkComponent', () => {
   it('reverts changes when user presses Revert Changes', async () => {
     await makeEdit();
 
-    const revertButton = await loader.getHarness(MatButtonHarness.with({ text: 'Revert Changes' }));
+    const revertButton = await loader.getHarness(TnButtonHarness.with({ label: 'Revert Changes' }));
     await revertButton.click();
 
     expect(api.call).toHaveBeenCalledWith('interface.rollback');
@@ -178,7 +193,7 @@ describe('NetworkComponent', () => {
     await makeEdit();
 
     // Click Test Changes button using native click to avoid harness zone issues
-    const testChangesButton = spectator.query<HTMLButtonElement>('button[ixTest="test-changes"]');
+    const testChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-test-changes"]');
     testChangesButton!.click();
     spectator.detectChanges();
     // Small delay to allow async operations to complete without waiting for zone stability
@@ -205,7 +220,7 @@ describe('NetworkComponent', () => {
     await makeEdit();
 
     // Click Test Changes button using native click
-    const testChangesButton = spectator.query<HTMLButtonElement>('button[ixTest="test-changes"]');
+    const testChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-test-changes"]');
     testChangesButton!.click();
     spectator.detectChanges();
     await new Promise<void>((resolve) => {
@@ -214,7 +229,7 @@ describe('NetworkComponent', () => {
     spectator.detectChanges();
 
     // Click Save Changes button using native click
-    const saveChangesButton = spectator.query<HTMLButtonElement>('button[ixTest="save-changes"]');
+    const saveChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-save-changes"]');
     saveChangesButton!.click();
     spectator.detectChanges();
     await new Promise<void>((resolve) => {
@@ -229,7 +244,7 @@ describe('NetworkComponent', () => {
     await makeEdit();
 
     // Click Test Changes button using native click
-    const testChangesButton = spectator.query<HTMLButtonElement>('button[ixTest="test-changes"]');
+    const testChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-test-changes"]');
     testChangesButton!.click();
     spectator.detectChanges();
     await new Promise<void>((resolve) => {

@@ -4,233 +4,227 @@
   [loading]="isLoading()"
 ></ix-modal-header>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="'Interface Settings' | translate">
-        @if (isNew) {
-          <ix-select
-            formControlName="type"
-            [label]="'Type' | translate"
-            [required]="true"
-            [options]="interfaceTypes$"
-            [tooltip]="helptext.typeTooltip | translate"
-          ></ix-select>
-        }
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-fieldset [title]="'Interface Settings' | translate">
+    @if (isNew) {
+      <ix-select
+        formControlName="type"
+        [label]="'Type' | translate"
+        [required]="true"
+        [options]="interfaceTypes$"
+        [tooltip]="helptext.typeTooltip | translate"
+      ></ix-select>
+    }
 
-        <ix-input
-          formControlName="name"
-          [label]="'Name' | translate"
-          [tooltip]="helptext.nameTooltip | translate"
-          [required]="true"
-          [readonly]="!isNew"
-        ></ix-input>
+    <ix-input
+      formControlName="name"
+      [label]="'Name' | translate"
+      [tooltip]="helptext.nameTooltip | translate"
+      [required]="true"
+      [readonly]="!isNew"
+    ></ix-input>
 
-        <ix-input
-          formControlName="description"
-          [label]="'Description' | translate"
-        ></ix-input>
+    <ix-input
+      formControlName="description"
+      [label]="'Description' | translate"
+    ></ix-input>
 
-        <ix-radio-group
-          formControlName="ipv4_dhcp"
-          [label]="'DHCP' | translate"
-          [tooltip]="helptext.dhcpTooltip | translate"
-          [options]="dhcpOptions$"
-        ></ix-radio-group>
+    <ix-radio-group
+      formControlName="ipv4_dhcp"
+      [label]="'DHCP' | translate"
+      [tooltip]="helptext.dhcpTooltip | translate"
+      [options]="dhcpOptions$"
+    ></ix-radio-group>
 
-        @if (canHaveStaticIpAddresses) {
-          <ix-list
-            formArrayName="aliases"
-            [empty]="form.controls.aliases.controls.length === 0"
+    @if (canHaveStaticIpAddresses) {
+      <ix-list
+        formArrayName="aliases"
+        [empty]="form.controls.aliases.controls.length === 0"
+        [label]="'Static IP Addresses' | translate"
+        [formArray]="form.get('aliases')"
+        (add)="addStaticIpAddress()"
+      >
+        @for (network of form.controls.aliases.controls; track network; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
             [label]="'Static IP Addresses' | translate"
-            [formArray]="form.get('aliases')"
-            (add)="addStaticIpAddress()"
+            (delete)="removeStaticIpAddress(i)"
           >
-            @for (network of form.controls.aliases.controls; track network; let i = $index) {
-              <ix-list-item
-                [formGroupName]="i"
-                [label]="'Static IP Addresses' | translate"
-                (delete)="removeStaticIpAddress(i)"
-              >
-                <div class="alias">
-                  <ix-ip-input-with-netmask
-                    class="alias-ip"
-                    formControlName="address"
-                    [label]="asTranslatedString(('IP Address' | translate) + ipLabelSuffix)"
-                    [required]="true"
-                    [tooltip]="helptext.aliasAddressTooltip | translate"
-                  ></ix-ip-input-with-netmask>
+            <div class="alias">
+              <ix-ip-input-with-netmask
+                class="alias-ip"
+                formControlName="address"
+                [label]="asTranslatedString(('IP Address' | translate) + ipLabelSuffix)"
+                [required]="true"
+                [tooltip]="helptext.aliasAddressTooltip | translate"
+              ></ix-ip-input-with-netmask>
 
-                  @if (isHaLicensed) {
-                    <ix-input
-                      formControlName="failover_address"
-                      [label]="asTranslatedString(('IP Address' | translate) + failoverLabelSuffix)"
-                      [required]="true"
-                      [tooltip]="helptext.failover.aliasAddressTooltip | translate"
-                    ></ix-input>
-                    <ix-input
-                      formControlName="failover_virtual_address"
-                      [label]="'Virtual IP Address (Failover Address)' | translate"
-                      [required]="true"
-                      [tooltip]="helptext.failover.virtualAliasAddressTooltip | translate"
-                    ></ix-input>
-                  }
+              @if (isHaLicensed) {
+                <ix-input
+                  formControlName="failover_address"
+                  [label]="asTranslatedString(('IP Address' | translate) + failoverLabelSuffix)"
+                  [required]="true"
+                  [tooltip]="helptext.failover.aliasAddressTooltip | translate"
+                ></ix-input>
+                <ix-input
+                  formControlName="failover_virtual_address"
+                  [label]="'Virtual IP Address (Failover Address)' | translate"
+                  [required]="true"
+                  [tooltip]="helptext.failover.virtualAliasAddressTooltip | translate"
+                ></ix-input>
+              }
 
-                  <ix-errors [control]="network"></ix-errors>
-                </div>
-              </ix-list-item>
-            }
-          </ix-list>
+              <ix-errors [control]="network"></ix-errors>
+            </div>
+          </ix-list-item>
         }
+      </ix-list>
+    }
 
-        <ix-checkbox
-          formControlName="ipv6_auto"
-          [label]="'Autoconfigure IPv6' | translate"
-          [tooltip]="isHaLicensed ? ('Autoconfigure IPv6 is not supported for HA systems.' | translate) : (helptext.ipv6autoTooltip | translate)"
-        ></ix-checkbox>
-      </ix-fieldset>
+    <ix-checkbox
+      formControlName="ipv6_auto"
+      [label]="'Autoconfigure IPv6' | translate"
+      [tooltip]="isHaLicensed ? ('Autoconfigure IPv6 is not supported for HA systems.' | translate) : (helptext.ipv6autoTooltip | translate)"
+    ></ix-checkbox>
+  </ix-fieldset>
 
-      @if (isBridge) {
-        <ix-fieldset [title]="'Bridge Settings' | translate">
-          <ix-select
-            formControlName="bridge_members"
-            [multiple]="true"
-            [label]="'Bridge Members' | translate"
-            [options]="bridgeMembers$"
-            [tooltip]="helptext.bridgeMembersTooltip | translate"
-          ></ix-select>
+  @if (isBridge) {
+    <ix-fieldset [title]="'Bridge Settings' | translate">
+      <ix-select
+        formControlName="bridge_members"
+        [multiple]="true"
+        [label]="'Bridge Members' | translate"
+        [options]="bridgeMembers$"
+        [tooltip]="helptext.bridgeMembersTooltip | translate"
+      ></ix-select>
 
-          <ix-checkbox
-            formControlName="enable_learning"
-            [label]="'Enable Learning' | translate"
-            [tooltip]="helptext.enableLearningTooltip | translate"
-          ></ix-checkbox>
-        </ix-fieldset>
+      <ix-checkbox
+        formControlName="enable_learning"
+        [label]="'Enable Learning' | translate"
+        [tooltip]="helptext.enableLearningTooltip | translate"
+      ></ix-checkbox>
+    </ix-fieldset>
+  }
+
+  @if (isLag) {
+    <ix-fieldset [title]="'Link Aggregation' | translate">
+      <ix-select
+        formControlName="lag_protocol"
+        [label]="'Link Aggregation Protocol' | translate"
+        [options]="lagProtocols$"
+        [required]="true"
+      ></ix-select>
+
+      @if (isLacpLag || isLoadBalanceLag) {
+        <ix-select
+          formControlName="xmit_hash_policy"
+          [label]="'Transmit Hash Policy' | translate"
+          [required]="true"
+          [options]="xmitHashPolicies$"
+        ></ix-select>
       }
 
-      @if (isLag) {
-        <ix-fieldset [title]="'Link Aggregation' | translate">
-          <ix-select
-            formControlName="lag_protocol"
-            [label]="'Link Aggregation Protocol' | translate"
-            [options]="lagProtocols$"
-            [required]="true"
-          ></ix-select>
-
-          @if (isLacpLag || isLoadBalanceLag) {
-            <ix-select
-              formControlName="xmit_hash_policy"
-              [label]="'Transmit Hash Policy' | translate"
-              [required]="true"
-              [options]="xmitHashPolicies$"
-            ></ix-select>
-          }
-
-          @if (isLacpLag) {
-            <ix-select
-              formControlName="lacpdu_rate"
-              [label]="'LACPDU Rate' | translate"
-              [required]="true"
-              [options]="lacpduRates$"
-            ></ix-select>
-          }
-
-          @if (isFailover) {
-            <ix-ordered-listbox
-              formControlName="lag_ports"
-              [label]="'Link Aggregation Interfaces' | translate"
-              [options]="lagPorts$"
-              [required]="true"
-              [tooltip]="helptext.lagg.interfacesFailoverTooltip | translate"
-            ></ix-ordered-listbox>
-          } @else {
-            <ix-select
-              formControlName="lag_ports"
-              [label]="'Link Aggregation Interfaces' | translate"
-              [multiple]="true"
-              [options]="lagPorts$"
-              [required]="true"
-              [tooltip]="helptext.lagg.interfacesTooltip | translate"
-            ></ix-select>
-          }
-        </ix-fieldset>
+      @if (isLacpLag) {
+        <ix-select
+          formControlName="lacpdu_rate"
+          [label]="'LACPDU Rate' | translate"
+          [required]="true"
+          [options]="lacpduRates$"
+        ></ix-select>
       }
 
-      @if (isVlan) {
-        <ix-fieldset [title]="'VLAN Settings' | translate">
-          <ix-select
-            formControlName="vlan_parent_interface"
-            [label]="'Parent Interface' | translate"
-            [required]="true"
-            [options]="vlanParentInterfaces$"
-            [tooltip]="helptext.vlan.parentInterfaceTooltip | translate"
-          ></ix-select>
-
-          <ix-input
-            formControlName="vlan_tag"
-            type="number"
-            [label]="'VLAN Tag' | translate"
-            [tooltip]="helptext.vlan.tagTooltip | translate"
-            [required]="true"
-          ></ix-input>
-
-          <ix-select
-            formControlName="vlan_pcp"
-            [label]="'Priority Code Point' | translate"
-            [tooltip]="helptext.vlan.priorityCodePointTooltip | translate"
-            [options]="vlanPcpOptions$"
-          ></ix-select>
-        </ix-fieldset>
+      @if (isFailover) {
+        <ix-ordered-listbox
+          formControlName="lag_ports"
+          [label]="'Link Aggregation Interfaces' | translate"
+          [options]="lagPorts$"
+          [required]="true"
+          [tooltip]="helptext.lagg.interfacesFailoverTooltip | translate"
+        ></ix-ordered-listbox>
+      } @else {
+        <ix-select
+          formControlName="lag_ports"
+          [label]="'Link Aggregation Interfaces' | translate"
+          [multiple]="true"
+          [options]="lagPorts$"
+          [required]="true"
+          [tooltip]="helptext.lagg.interfacesTooltip | translate"
+        ></ix-select>
       }
+    </ix-fieldset>
+  }
 
-      @if (isHaLicensed) {
-        <ix-fieldset [title]="'Failover' | translate">
-          <ix-checkbox
-            formControlName="failover_critical"
-            [label]="'Critical' | translate"
-            [tooltip]="helptext.failover.criticalTooltip | translate"
-          ></ix-checkbox>
+  @if (isVlan) {
+    <ix-fieldset [title]="'VLAN Settings' | translate">
+      <ix-select
+        formControlName="vlan_parent_interface"
+        [label]="'Parent Interface' | translate"
+        [required]="true"
+        [options]="vlanParentInterfaces$"
+        [tooltip]="helptext.vlan.parentInterfaceTooltip | translate"
+      ></ix-select>
 
-          <ix-select
-            formControlName="failover_group"
-            [label]="'Failover Group' | translate"
-            [options]="failoverGroups$"
-            [tooltip]="helptext.failover.groupTooltip | translate"
-          ></ix-select>
-        </ix-fieldset>
-      }
+      <ix-input
+        formControlName="vlan_tag"
+        type="number"
+        [label]="'VLAN Tag' | translate"
+        [tooltip]="helptext.vlan.tagTooltip | translate"
+        [required]="true"
+      ></ix-input>
 
-      <ix-fieldset [title]="'Other Settings' | translate">
-        <ix-input
-          type="number"
-          formControlName="mtu"
-          [label]="'MTU' | translate"
-          [tooltip]="helptext.mtuTooltip | translate"
-        ></ix-input>
+      <ix-select
+        formControlName="vlan_pcp"
+        [label]="'Priority Code Point' | translate"
+        [tooltip]="helptext.vlan.priorityCodePointTooltip | translate"
+        [options]="vlanPcpOptions$"
+      ></ix-select>
+    </ix-fieldset>
+  }
 
-        @if (showFecMode()) {
-          <ix-select
-            formControlName="fec_mode"
-            [label]="'FEC Mode' | translate"
-            [options]="fecModeOptions$"
-            [tooltip]="helptext.fecModeTooltip | translate"
-          ></ix-select>
-        }
-      </ix-fieldset>
+  @if (isHaLicensed) {
+    <ix-fieldset [title]="'Failover' | translate">
+      <ix-checkbox
+        formControlName="failover_critical"
+        [label]="'Critical' | translate"
+        [tooltip]="helptext.failover.criticalTooltip | translate"
+      ></ix-checkbox>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [matTooltip]="(isHaEnabled$ | async) ? ('Editing interfaces is not allowed while HA is enabled' | translate) : ''"
-          [disabled]="form.invalid || isLoading() || (isHaEnabled$ | async)"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+      <ix-select
+        formControlName="failover_group"
+        [label]="'Failover Group' | translate"
+        [options]="failoverGroups$"
+        [tooltip]="helptext.failover.groupTooltip | translate"
+      ></ix-select>
+    </ix-fieldset>
+  }
+
+  <ix-fieldset [title]="'Other Settings' | translate">
+    <ix-input
+      type="number"
+      formControlName="mtu"
+      [label]="'MTU' | translate"
+      [tooltip]="helptext.mtuTooltip | translate"
+    ></ix-input>
+
+    @if (showFecMode()) {
+      <ix-select
+        formControlName="fec_mode"
+        [label]="'FEC Mode' | translate"
+        [options]="fecModeOptions$"
+        [tooltip]="helptext.fecModeTooltip | translate"
+      ></ix-select>
+    }
+  </ix-fieldset>
+
+  <ix-form-actions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [tnTooltip]="(isHaEnabled$ | async) ? ('Editing interfaces is not allowed while HA is enabled' | translate) : ''"
+      [disabled]="form.invalid || isLoading() || !!(isHaEnabled$ | async)"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  </ix-form-actions>
+</form>

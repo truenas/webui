@@ -3,12 +3,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
-  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
+  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { EMPTY } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,7 +20,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -37,9 +36,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxInputComponent,
     FormActionsComponent,
     MatDialogActions,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -48,7 +45,7 @@ export class DefaultGatewayDialog implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   cdr = inject(ChangeDetectorRef);
-  private dialogRef = inject<MatDialogRef<DefaultGatewayDialog>>(MatDialogRef);
+  protected dialogRef = inject<MatDialogRef<DefaultGatewayDialog>>(MatDialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);

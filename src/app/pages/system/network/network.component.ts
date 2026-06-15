@@ -1,14 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, viewChild, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NgModel, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
-import { MatFormField, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Navigation, Router } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { InputType, TnButtonComponent, TnCardComponent, TnInputComponent } from '@truenas/ui-components';
 import {
   firstValueFrom, lastValueFrom, switchMap,
 } from 'rxjs';
@@ -24,7 +21,6 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/system/network/components/interfaces-card/interfaces-card.component';
@@ -45,16 +41,11 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     UiSearchDirective,
-    MatCard,
-    MatCardContent,
-    MatFormField,
-    MatInput,
+    TnCardComponent,
+    TnInputComponent,
+    TnButtonComponent,
     ReactiveFormsModule,
-    TestDirective,
     FormsModule,
-    MatError,
-    MatCardActions,
-    MatButton,
     InterfacesCardComponent,
     NetworkConfigurationCardComponent,
     StaticRoutesCardComponent,
@@ -84,15 +75,13 @@ export class NetworkComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = networkElements;
-
-  readonly checkinTimeoutField = viewChild<NgModel>('checkinTimeoutField');
+  protected readonly InputType = InputType;
 
   protected readonly isHaEnabled = toSignal(this.networkService.getIsHaEnabled());
   hasPendingChanges = false;
   checkinWaiting = false;
   checkinTimeout = 60;
   checkinTimeoutMinValue = 10;
-  checkinTimeoutPattern = '^[0-9]+$';
   checkinRemaining: number | null = null;
   private uniqueIps: string[] = [];
   private affectedServices: string[] = [];
@@ -102,7 +91,8 @@ export class NetworkComponent implements OnInit {
   helptext = helptextInterfaces;
 
   protected get isCheckinTimeoutFieldInvalid(): boolean {
-    return this.checkinTimeoutField()?.invalid || false;
+    const value = this.checkinTimeout;
+    return value == null || Number.isNaN(value) || value < this.checkinTimeoutMinValue;
   }
 
   constructor() {

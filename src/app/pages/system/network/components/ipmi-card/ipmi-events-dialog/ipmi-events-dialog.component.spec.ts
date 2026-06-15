@@ -1,13 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MatDialogRef } from '@angular/material/dialog';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -21,7 +21,6 @@ describe('IpmiEventsDialogComponent', () => {
     component: IpmiEventsDialog,
     declarations: [
       FakeFormatDateTimePipe,
-      EmptyComponent,
       FakeProgressBarComponent,
     ],
     providers: [
@@ -46,6 +45,7 @@ describe('IpmiEventsDialogComponent', () => {
         ] as IpmiEvent[])),
         mockJob('ipmi.sel.clear', fakeSuccessfulJob()),
       ]),
+      mockProvider(MatDialogRef),
     ],
   });
 
@@ -64,7 +64,7 @@ describe('IpmiEventsDialogComponent', () => {
   });
 
   it('clears IPMI events when Clear button is pressed', async () => {
-    const clearButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear' }));
+    const clearButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear' }));
     await clearButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('ipmi.sel.clear');
@@ -80,7 +80,7 @@ describe('IpmiEventsDialogComponent', () => {
     });
 
     it('does not show Clear button', async () => {
-      const clearButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Clear' }));
+      const clearButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Clear' }));
       expect(clearButton).toBeNull();
     });
 

@@ -3,14 +3,16 @@
   <p class="message" [innerHTML]="deleteMessage | translate: { name: route.destination }"></p>
 </div>
 <ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button ixTest="cancel" [matDialogClose]="false">{{ 'Cancel' | translate }}</button>
-  <button
+  <tn-button
+    [testId]="'cancel'"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="warn"
-    ixTest="delete"
-    (click)="onDelete()"
-  >
-    {{ 'Delete' | translate }}
-  </button>
+    [testId]="'delete'"
+    [label]="'Delete' | translate"
+    (onClick)="onDelete()"
+  ></tn-button>
 </ix-form-actions>

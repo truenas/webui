@@ -1,14 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
@@ -29,7 +27,6 @@ const staticRoutes = Array.from({ length: 10 }).map((val, index) => ({
 describe('StaticRoutesCardComponent', () => {
   let spectator: Spectator<StaticRoutesCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -63,10 +60,9 @@ describe('StaticRoutesCardComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
   });
 
   it('checks page title', () => {
@@ -75,14 +71,14 @@ describe('StaticRoutesCardComponent', () => {
   });
 
   it('opens static route form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(StaticRouteFormComponent);
   });
 
   it('opens static route form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 2);
+    const [editButton] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(StaticRouteFormComponent, {
@@ -96,7 +92,7 @@ describe('StaticRoutesCardComponent', () => {
   });
 
   it('opens static route delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 2);
+    const [deleteButton] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StaticRouteDeleteDialog, {

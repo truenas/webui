@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
@@ -72,7 +72,7 @@ describe('NetworkConfigurationCardComponent', () => {
 
   it('shows nameservers assigned via settings', () => {
     const dnsServersSection = spectator.query(byText('DNS Servers'))!.parentElement!;
-    const dnsServerItems = dnsServersSection.querySelectorAll('mat-list-item');
+    const dnsServerItems = dnsServersSection.querySelectorAll('tn-list-item');
 
     expect(dnsServerItems).toHaveLength(3);
     expect(dnsServerItems[0]).toHaveText('Primary');
@@ -83,7 +83,7 @@ describe('NetworkConfigurationCardComponent', () => {
 
   it('separately shows nameservers obtained via DHCP and not settings', () => {
     const dnsServersSection = spectator.query(byText('DNS Servers'))!.parentElement!;
-    const dnsServerItems = dnsServersSection.querySelectorAll('mat-list-item');
+    const dnsServerItems = dnsServersSection.querySelectorAll('tn-list-item');
 
     expect(dnsServerItems).toHaveLength(3);
     expect(dnsServerItems[2]).toHaveText('Nameserver (DHCP)');
@@ -107,7 +107,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('shows config details', () => {
-    const detailsList = spectator.queryAll('.details-list mat-list-item');
+    const detailsList = spectator.queryAll('.details-list tn-list-item');
 
     const detailsItems = detailsList.reduce((items, element) => {
       const label = element.querySelector('.label')!.textContent!;
@@ -147,7 +147,7 @@ describe('NetworkConfigurationCardComponent', () => {
   it('opens settings form when Settings button is clicked', async () => {
     const slideInRef = spectator.inject(SlideIn);
 
-    const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
+    const settingsButton = await loader.getHarness(TnButtonHarness.with({ label: 'Settings' }));
     await settingsButton.click();
 
     expect(slideInRef.open).toHaveBeenCalledWith(NetworkConfigurationComponent, { wide: true });

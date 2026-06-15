@@ -6,23 +6,22 @@ import {
 } from 'app/pages/system/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 
 describe('IpAddressesCellComponent', () => {
-  let spectator: Spectator<IpAddressesCellComponent<NetworkInterface>>;
+  let spectator: Spectator<IpAddressesCellComponent>;
   const createComponent = createComponentFactory({
-    component: IpAddressesCellComponent<NetworkInterface>,
+    component: IpAddressesCellComponent,
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({ detectChanges: false });
   });
 
   it('shows network interface aliases', () => {
-    spectator.component.setRow({
+    spectator.setInput('row', {
       aliases: [
         { address: '77.23.44.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
         { address: '77.23.45.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
       ],
     } as NetworkInterface);
-    spectator.detectComponentChanges();
 
     const addresses = spectator.queryAll('ul li');
     expect(addresses).toHaveLength(2);
@@ -31,7 +30,7 @@ describe('IpAddressesCellComponent', () => {
   });
 
   it('shows NICs state aliases for interfaces with DHCP', () => {
-    spectator.component.setRow({
+    spectator.setInput('row', {
       ipv4_dhcp: true,
       aliases: [] as NetworkInterfaceAlias[],
       state: {
@@ -41,7 +40,6 @@ describe('IpAddressesCellComponent', () => {
         ],
       },
     } as NetworkInterface);
-    spectator.detectComponentChanges();
 
     const addresses = spectator.queryAll('ul li');
     expect(addresses).toHaveLength(2);
@@ -50,14 +48,13 @@ describe('IpAddressesCellComponent', () => {
   });
 
   it('shows failover aliases', () => {
-    spectator.component.setRow({
+    spectator.setInput('row', {
       aliases: [] as NetworkInterfaceAlias[],
       failover_aliases: [
         { address: '33.12.44.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
         { address: '33.12.45.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
       ],
     } as NetworkInterface);
-    spectator.detectComponentChanges();
 
     const addresses = spectator.queryAll('ul li');
     expect(addresses).toHaveLength(2);
@@ -66,14 +63,13 @@ describe('IpAddressesCellComponent', () => {
   });
 
   it('shows virtual addresses if any', () => {
-    spectator.component.setRow({
+    spectator.setInput('row', {
       aliases: [] as NetworkInterfaceAlias[],
       failover_virtual_aliases: [
         { address: '33.10.44.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
         { address: '33.10.45.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
       ],
     } as NetworkInterface);
-    spectator.detectComponentChanges();
 
     const addresses = spectator.queryAll('ul li');
     expect(addresses).toHaveLength(2);
