@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonHarness, TnCardComponent, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -103,7 +103,7 @@ describe('UserAccessCardComponent', () => {
   });
 
   it('should render user access card', () => {
-    expect(spectator.query('h3')).toHaveText('Access');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Access');
   });
 
   it('contains last action component', () => {

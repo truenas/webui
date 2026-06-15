@@ -3,7 +3,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent } from '@truenas/ui-components';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { filter, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -53,7 +53,6 @@ export interface ApiKeyParams {
     IxFieldsetComponent,
     IxInputComponent,
     TnButtonComponent,
-    TnCardComponent,
     ModalHeaderComponent,
     ReactiveFormsModule,
     RequiresRolesDirective,

@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonHarness, TnCardComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -78,7 +78,7 @@ describe('UserPasswordCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('tn-card h3')).toHaveText('Password');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Password');
   });
 
   it('shows password details when no change is required', () => {

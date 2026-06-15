@@ -5,7 +5,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnIconComponent, TnTooltipDirective,
+  TnButtonComponent, TnCardComponent, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -19,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { userAccessCardElements } from 'app/pages/credentials/users/all-users/user-details/user-access-card/user-access-card.elements';
 import { UserLastActionComponent } from 'app/pages/credentials/users/all-users/user-details/user-last-action/user-last-action.component';
@@ -42,7 +41,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     TnTooltipDirective,
     TranslateModule,
     RequiresRolesDirective,
-    TestDirective,
+    TnTestIdDirective,
     UserLastActionComponent,
     RouterLink,
     UiSearchDirective,

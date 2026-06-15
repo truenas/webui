@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, effect, input, inject }
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCheckboxComponent, TnCheckboxLabelDirective, TnIconComponent } from '@truenas/ui-components';
+import { TnCheckboxComponent, TnCheckboxLabelDirective, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
@@ -10,7 +10,6 @@ import { User } from 'app/interfaces/user.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
 @Component({
@@ -21,7 +20,7 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-for
     TnIconComponent,
     IxSelectComponent,
     IxErrorsComponent,
-    TestDirective,
+    TnTestIdDirective,
     TnCheckboxComponent,
     TnCheckboxLabelDirective,
     IxFieldsetComponent,
