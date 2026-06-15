@@ -1,4 +1,5 @@
 @import 'scss-imports/variables';
+@import '../../../radio-group';
 
 :host {
   display: block;
@@ -23,13 +24,7 @@
     gap: 8px;
   }
 
-  tn-radio {
-    display: block;
-
-    &:not(:last-child) {
-      margin-bottom: 8px;
-    }
-  }
+  @include tn-radio-group-layout;
 }
 
 .response-editor,
