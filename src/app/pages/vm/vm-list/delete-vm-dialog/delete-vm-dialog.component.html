@@ -1,11 +1,13 @@
-<h1 mat-dialog-title>{{ 'Delete Virtual Machine' | translate }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell testId="delete-vm" [title]="'Delete Virtual Machine' | translate">
+<div>
   <form [formGroup]="form">
-    <ix-checkbox
-      formControlName="zvols"
-      [label]="'Delete Virtual Machine Data?' | translate"
-      [tooltip]="helptext.delete_dialog.zvolsTooltip | translate"
-    ></ix-checkbox>
+    <tn-form-field [tooltip]="helptext.delete_dialog.zvolsTooltip | translate">
+      <tn-checkbox
+        testId="zvols"
+        formControlName="zvols"
+        [label]="'Delete Virtual Machine Data?' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
     @if (form.value.zvols && devices().length) {
       <div class="devices-section" role="region" aria-labelledby="devices-heading" aria-live="polite">
@@ -18,36 +20,36 @@
       </div>
     }
 
-    <ix-checkbox
-      formControlName="force"
-      [label]="'Force Delete?' | translate"
-      [tooltip]="helptext.delete_dialog.forceTooltip | translate"
-    ></ix-checkbox>
-    <ix-input
-      formControlName="confirmName"
-      [label]="'Enter <b>{value}</b> below to confirm.' | translate: { value: vm.name }"
-      [required]="true"
-    ></ix-input>
+    <tn-form-field [tooltip]="helptext.delete_dialog.forceTooltip | translate">
+      <tn-checkbox
+        testId="force"
+        formControlName="force"
+        [label]="'Force Delete?' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+    <tn-form-field [label]="'Enter **{value}** below to confirm.' | translate: { value: vm.name }">
+      <tn-input
+        testId="confirm-name"
+        formControlName="confirmName"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
   </form>
 </div>
-<mat-dialog-actions>
-  <ix-form-actions>
-    <button
-      mat-button
-      ixTest="cancel"
-      [matDialogClose]="false"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="warn"
-      ixTest="delete"
-      [disabled]="form.invalid"
-      (click)="onDelete()"
-    >
-      {{ 'Delete' | translate }}
-    </button>
-  </ix-form-actions>
-</mat-dialog-actions>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="warn"
+    testId="delete"
+    [label]="'Delete' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onDelete()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

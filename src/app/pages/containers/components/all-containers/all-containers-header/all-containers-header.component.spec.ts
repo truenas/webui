@@ -2,9 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -39,7 +39,7 @@ describe('AllContainersHeaderComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of(undefined)),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(),
       }),
     ],
@@ -102,7 +102,7 @@ describe('AllContainersHeaderComponent', () => {
       const menu = await loader.getHarness(MatMenuHarness);
       await menu.clickItem({ text: 'Map User/Group IDs' });
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
         MapUserGroupIdsDialogComponent,
         {
           width: '800px',

@@ -1,12 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import {
-  MatDialog, MatDialogClose, MatDialogContent, MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnDialogShellComponent, tnIconMarker } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
 import { Role } from 'app/enums/role.enum';
@@ -25,7 +21,6 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -42,14 +37,9 @@ interface NvmeOfPortAndUsage extends NvmeOfPort {
   styleUrl: './manage-ports-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnIconComponent,
-    MatButton,
-    MatDialogContent,
-    MatDialogTitle,
-    MatIconButton,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TranslateModule,
-    TestDirective,
-    MatDialogClose,
     AsyncPipe,
     IxTableBodyComponent,
     IxTableComponent,
@@ -65,7 +55,7 @@ export class ManagePortsDialog implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
@@ -150,7 +140,7 @@ export class ManagePortsDialog implements OnInit {
     const subsystemsInUse = this.nvmeOfStore?.subsystems?.()
       .filter((subsystem) => subsystem.ports.some((subsystemPort) => subsystemPort.id === port.id)) || [];
 
-    this.matDialog.open(
+    this.tnDialog.open(
       SubsystemPortOrHostDeleteDialogComponent,
       {
         data: {
@@ -162,7 +152,7 @@ export class ManagePortsDialog implements OnInit {
         minWidth: '500px',
       },
     )
-      .afterClosed()
+      .closed
       .pipe(
         filter((data: { confirmed: boolean; force: boolean }) => !!data?.confirmed),
         switchMap(({ force }) => {

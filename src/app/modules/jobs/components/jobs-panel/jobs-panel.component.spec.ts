@@ -1,12 +1,12 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -120,7 +120,7 @@ describe('JobsPanelComponent', () => {
         }),
         mockCall('core.job_abort'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -181,7 +181,7 @@ describe('JobsPanelComponent', () => {
   });
 
   it('checks redirect when "View All Jobs" button is pressed', async () => {
-    const historyButton = await loader.getHarness(MatButtonHarness.with({ text: 'View All Jobs' }));
+    const historyButton = await loader.getHarness(TnButtonHarness.with({ label: 'View All Jobs' }));
     await historyButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/jobs']);
@@ -214,7 +214,7 @@ describe('JobsPanelComponent', () => {
 
     expect(spectator.query('div[mat-subheader]')).toHaveText('Recently Completed Jobs');
     expect(spectator.query('.finished-jobs-list')).toExist();
-    expect(spectator.query('mat-divider.list-divider')).toExist();
+    expect(spectator.query('tn-divider.list-divider')).toExist();
   });
 
   it('displays finished jobs in the recently completed section', () => {

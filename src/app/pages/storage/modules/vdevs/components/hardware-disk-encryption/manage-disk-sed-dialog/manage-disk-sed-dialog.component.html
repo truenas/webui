@@ -1,35 +1,36 @@
-<h1 matDialogTitle>{{ 'Manage SED Password' | translate }}</h1>
+<tn-dialog-shell testId="manage-disk-sed" [title]="'Manage SED Password' | translate">
 <form class="ix-form-container" (submit)="onSubmit($event)">
-  <ix-input
-    type="password"
-    [formControl]="passwordControl"
-    [label]="'SED Password' | translate"
-    [tooltip]="helptext.passwordTooltip | translate"
-  ></ix-input>
+  <tn-form-field [label]="'SED Password' | translate" [tooltip]="helptext.passwordTooltip | translate">
+    <tn-input
+      testId="sed-password"
+      [inputType]="InputType.Password"
+      [formControl]="passwordControl"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-form-actions>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="save"
-      [disabled]="passwordControl.invalid"
-    >
-      {{ 'Save' | translate }}
-    </button>
-    @if (disk?.passwd) {
-      <button
-        mat-button
-        type="button"
-        ixTest="clear-sed-password"
-        (click)="onClearPassword()"
-      >
-        {{ 'Clear SED Password' | translate }}
-      </button>
-    }
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  @if (disk?.passwd) {
+    <tn-button
+      variant="outline"
+      testId="clear-sed-password"
+      [label]="'Clear SED Password' | translate"
+      (onClick)="onClearPassword()"
+    ></tn-button>
+  }
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="save"
+    [label]="'Save' | translate"
+    [disabled]="passwordControl.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

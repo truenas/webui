@@ -5,21 +5,19 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnIconComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { Observable, switchMap } from 'rxjs';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import { directIdMapping } from 'app/interfaces/user.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ViewType,
@@ -38,12 +36,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormsModule,
     ReactiveFormsModule,
     TranslateModule,
-    IxCheckboxComponent,
-    IxInputComponent,
+    TnCheckboxComponent,
+    TnButtonComponent,
     TnIconComponent,
-    MatButton,
-    MatTooltip,
-    TestDirective,
+    TnTooltipDirective,
+    IxInputComponent,
     IxFieldsetComponent,
   ],
 })

@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnSpriteLoaderService } from '@truenas/ui-components';
+import { TnDialog, TnSpriteLoaderService } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -25,9 +24,9 @@ describe('PowerMenuComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(Router),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of('reason')),
+          closed: of('reason'),
         })),
       }),
       mockProvider(TnSpriteLoaderService, {
@@ -51,7 +50,7 @@ describe('PowerMenuComponent', () => {
     const restart = await menu.getItems({ text: /Restart$/ });
     await restart[0].click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialog, {
       width: '430px',
     });
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/restart'], {
@@ -64,7 +63,7 @@ describe('PowerMenuComponent', () => {
     const shutdown = await menu.getItems({ text: /Shut Down$/ });
     await shutdown[0].click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialog, {
       width: '430px',
       data: true,
     });

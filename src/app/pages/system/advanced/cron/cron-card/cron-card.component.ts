@@ -3,12 +3,11 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
@@ -70,7 +69,7 @@ export class CronCardComponent implements OnInit {
   private api = inject(ApiService);
   private dialog = inject(DialogService);
   private taskService = inject(TaskService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
@@ -184,9 +183,9 @@ export class CronCardComponent implements OnInit {
   }
 
   doDelete(row: CronjobRow): void {
-    this.matDialog.open(CronDeleteDialog, {
+    this.tnDialog.open(CronDeleteDialog, {
       data: row,
-    }).afterClosed()
+    }).closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getCronJobs();

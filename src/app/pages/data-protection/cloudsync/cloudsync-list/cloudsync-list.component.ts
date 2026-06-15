@@ -4,10 +4,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   EMPTY, catchError, filter, map, switchMap, tap,
 } from 'rxjs';
@@ -94,7 +93,7 @@ export class CloudSyncListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
@@ -282,8 +281,8 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   protected restore(row: CloudSyncTaskUi): void {
-    this.matDialog.open(CloudSyncRestoreDialog, { data: row.id })
-      .afterClosed()
+    this.tnDialog.open(CloudSyncRestoreDialog, { data: row.id })
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.snackbar.success(

@@ -1,9 +1,9 @@
+import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import {
   catchError, of, Subject, Subscription, takeUntil, tap,
 } from 'rxjs';
@@ -20,7 +20,6 @@ import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-f
 import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
@@ -32,14 +31,12 @@ import { UploadService } from 'app/services/upload.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxExplorerComponent,
     IxFileInputComponent,
     FormActionsComponent,
-    MatButton,
-    MatDialogClose,
-    TestDirective,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
     ExplorerCreateDatasetComponent,
@@ -50,7 +47,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private filesystemService = inject(FilesystemService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<UploadIsoDialogComponent, string | null>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<string | null, UploadIsoDialogComponent>>(DialogRef);
   private uploadService = inject(UploadService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
@@ -72,7 +69,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private uploadSubscription: Subscription | null = null;
   private loaderCloseSubscription: Subscription | null = null;
   private cancelUpload: (() => void) | null = null;
-  private matDialog = inject(MatDialog);
+  private cdkDialog = inject(Dialog);
 
   ngOnDestroy(): void {
     // Cancel any ongoing upload and cleanup when component is destroyed
@@ -97,7 +94,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
 
   private closeAllConfirmationDialogs(): void {
     // Force close any open confirmation dialogs (but not the upload dialog itself)
-    const openDialogs = this.matDialog.openDialogs;
+    const openDialogs = this.cdkDialog.openDialogs;
     openDialogs.forEach((dialog) => {
       // Only close dialogs that are not this upload dialog
       if (dialog !== this.dialogRef) {

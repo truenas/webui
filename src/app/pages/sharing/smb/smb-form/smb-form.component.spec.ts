@@ -2,11 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -140,9 +140,9 @@ describe('SmbFormComponent', () => {
           ]);
         }),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(DialogService, {
@@ -254,7 +254,7 @@ describe('SmbFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialog);
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(RestartSmbDialog);
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         helptextSharingSmb.restartedSmbDialog.message,
@@ -262,10 +262,10 @@ describe('SmbFormComponent', () => {
     });
 
     it('should not restart service when user clicks No in restart dialog', async () => {
-      const matDialog = spectator.inject(MatDialog);
-      matDialog.open = jest.fn(() => ({
-        afterClosed: () => of(false),
-      })) as unknown as typeof matDialog.open;
+      const tnDialog = spectator.inject(TnDialog);
+      tnDialog.open = jest.fn(() => ({
+        closed: of(false),
+      })) as unknown as typeof tnDialog.open;
 
       mockStore$.overrideSelector(selectServices, [{
         id: 4,
@@ -281,7 +281,7 @@ describe('SmbFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(matDialog.open).toHaveBeenCalledWith(RestartSmbDialog);
+      expect(tnDialog.open).toHaveBeenCalledWith(RestartSmbDialog);
       expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
     });
 

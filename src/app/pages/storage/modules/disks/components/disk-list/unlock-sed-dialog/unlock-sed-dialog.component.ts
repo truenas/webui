@@ -1,18 +1,17 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  InputType,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -21,29 +20,27 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './unlock-sed-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
+    TnDialogShellComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     ReactiveFormsModule,
-    IxInputComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class UnlockSedDialog {
+  protected readonly InputType = InputType;
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
-  private dialogRef = inject<MatDialogRef<UnlockSedDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, UnlockSedDialog>>(DialogRef);
   private destroyRef = inject(DestroyRef);
-  protected data = inject<{ diskName: string }>(MAT_DIALOG_DATA);
+  protected data = inject<{ diskName: string }>(DIALOG_DATA);
 
   protected readonly Role = Role;
 
