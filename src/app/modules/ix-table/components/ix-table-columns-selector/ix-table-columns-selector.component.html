@@ -38,7 +38,8 @@
       type="button"
       role="menuitemcheckbox"
       class="columns-menu__item"
-      [ixTest]="['toggle-all-columns']"
+      tnTestIdType="button"
+      [tnTestId]="['toggle-all-columns']"
       [attr.aria-checked]="isAllSelected"
       (click)="toggleAll(); saveColumnPreferences(); enableResetButton()"
     >
@@ -56,7 +57,8 @@
           type="button"
           role="menuitemcheckbox"
           class="columns-menu__item"
-          [ixTest]="['toggle-column', column.title]"
+          tnTestIdType="button"
+          [tnTestId]="['toggle-column', column.title]"
           [attr.aria-checked]="!isSelected(column)"
           (click)="toggle(column); saveColumnPreferences(); enableResetButton()"
         >
@@ -70,7 +72,8 @@
       type="button"
       role="menuitem"
       class="columns-menu__item"
-      [ixTest]="['reset-columns-to-defaults']"
+      tnTestIdType="button"
+      [tnTestId]="['reset-columns-to-defaults']"
       [disabled]="isResetToDefaultDisabled()"
       (click)="resetToDefaults(); saveColumnPreferences()"
     >

@@ -4,10 +4,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnTooltipDirective } from '@truenas/ui-components';
+import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
 @Component({
@@ -17,7 +16,7 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     TnTooltipDirective,
   ],
 })

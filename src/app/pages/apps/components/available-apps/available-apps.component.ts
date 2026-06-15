@@ -8,7 +8,7 @@ import {
   RouterLink,
 } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   Observable, combineLatest, filter, map,
@@ -17,7 +17,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
 import { availableAppsElements } from 'app/pages/apps/components/available-apps/available-apps.elements';
@@ -40,7 +39,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
     NgTemplateOutlet,
     NgxSkeletonLoaderModule,
     AppCardComponent,
-    TestDirective,
+    TnTestIdDirective,
     TnButtonComponent,
     UiSearchDirective,
     RouterLink,

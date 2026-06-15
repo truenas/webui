@@ -24,6 +24,14 @@
   ></ix-basic-search>
 </div>
 
+<!--
+  Deliberate divergence from the docker-images/docker-registries siblings, which fold their
+  empty state into tn-table's [emptyMessage]/[emptyIcon] inputs. This list's empty states are
+  actionable — FirstUse/NoPageData show a "Check Available Apps" CTA and NoSearchResults shows
+  a "Reset Search" CTA (see showLoadStatus()). tn-table's empty slot is text-only (no projected
+  content / action button), so ix-empty is kept here to preserve those buttons. Revisit once
+  tn-table exposes a projectable empty-state slot (NAS-141021 library follow-up).
+-->
 @if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading())) {
   <ix-empty [conf]="entityEmptyConf"></ix-empty>
 } @else {
@@ -132,6 +140,7 @@
               class="has-updates-icon"
               name="alert-circle"
               library="mdi"
+              customSize="14px"
               [tnTooltip]="'Updates available' | translate"
             ></tn-icon>
           }

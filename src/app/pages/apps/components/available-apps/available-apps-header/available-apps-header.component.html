@@ -52,10 +52,11 @@
 <div class="header-numbers">
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
-    <a class="header-link" ixTest="refresh-apps">
+    <a class="header-link" tnTestId="available-apps-section" tnTestIdType="link">
       @if (areLoaded$ | async) {
         <a
-          ixTest="available-apps"
+          tnTestId="available-apps"
+          tnTestIdType="link"
           [routerLink]="['/apps/available', AppExtraCategory.All]"
         >
           <h2>{{ (availableApps$ | async)?.length }}</h2>
@@ -65,7 +66,8 @@
       }
       <a
         *ixRequiresRoles="requiredRoles"
-        ixTest="refresh-apps"
+        tnTestId="refresh-apps"
+        tnTestIdType="link"
         class="refresh-apps"
         (click)="refreshCatalog()"
       >
@@ -76,7 +78,7 @@
 
   <div class="header-number">
     <div class="header-number-title">{{ 'Installed Apps' | translate }}</div>
-    <a class="header-link" ixTest="manage-installed-apps" [routerLink]="['/apps/installed']">
+    <a class="header-link" tnTestId="manage-installed-apps" tnTestIdType="link" [routerLink]="['/apps/installed']">
       @if (areLoaded$ | async) {
         <h2>{{ (installedApps$ | async)?.length }}</h2>
       } @else {

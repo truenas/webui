@@ -57,8 +57,9 @@
         <div class="apps">
           @for (app of apps; track trackByAppId($index, app)) {
             <a
+              tnTestIdType="link"
               [routerLink]="['/apps', 'available', app.train, app.name]"
-              [ixTest]="['open', app.train, app.name]"
+              [tnTestId]="['open', app.train, app.name]"
             >
               <ix-app-card [app]="app"></ix-app-card>
             </a>

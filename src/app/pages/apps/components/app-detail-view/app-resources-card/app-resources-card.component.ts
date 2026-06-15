@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal,
 } from '@angular/core';
@@ -22,7 +21,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     TnCardComponent,
     NgxSkeletonLoaderModule,
     FileSizePipe,
-    AsyncPipe,
   ],
 })
 export class AppResourcesCardComponent implements OnInit {
@@ -34,7 +32,7 @@ export class AppResourcesCardComponent implements OnInit {
   readonly cpuPercentage = signal(0);
   readonly memoryUsed = signal(0);
   readonly memoryTotal = signal(0);
-  readonly availableSpace$ = this.api.call('app.available_space');
+  readonly availableSpace = toSignal(this.api.call('app.available_space'));
   readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
 
   ngOnInit(): void {

@@ -25,9 +25,10 @@
           <a
             class="source-link"
             target="_blank"
+            tnTestIdType="link"
             [href]="source"
             [title]="source"
-            [ixTest]="[app()?.name, 'source']"
+            [tnTestId]="[app()?.name, 'source']"
           >{{ source | cleanLink }}</a>
           @if (!last) {
             <span>, </span>

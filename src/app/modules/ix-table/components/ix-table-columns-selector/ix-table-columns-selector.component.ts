@@ -5,18 +5,26 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inpu
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { cloneDeep } from 'lodash-es';
 import { map, take } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxCellActionsComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { IxCellActionsWithMenuComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { preferredColumnsUpdated } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
+/**
+ * Deliberate deviation from the tn-menu component-map entry: the column dropdown is
+ * hand-rolled from a CDK connected overlay rather than `<tn-menu>`/`<tn-menu-item>`.
+ * tn-menu-item renders as a plain command button (role="menuitem") and does not expose
+ * the `role="menuitemcheckbox"` + `aria-checked` semantics this control needs to announce
+ * each column's checked/unchecked state, nor the roving Home/End/Arrow focus management
+ * implemented here. Revisit if tn-menu gains a checkbox-item variant (NAS-141021 library
+ * follow-up).
+ */
 @Component({
   selector: 'ix-table-columns-selector',
   templateUrl: './ix-table-columns-selector.component.html',
@@ -29,7 +37,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     TnButtonComponent,
     TnIconComponent,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
   ],
 })
 export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, OnInit {

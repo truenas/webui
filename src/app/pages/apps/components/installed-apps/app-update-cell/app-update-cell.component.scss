@@ -7,15 +7,6 @@
   .icon {
     display: inline-flex;
     line-height: 1;
-
-    // Force a consistent rendered size for both the check and alert glyphs,
-    // independent of whether tn-icon resolves them via sprite (sized by box) or
-    // font (sized by font-size).
-    ::ng-deep .tn-icon {
-      font-size: 16px;
-      height: 16px;
-      width: 16px;
-    }
   }
 
   .icon--update {

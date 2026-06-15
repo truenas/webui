@@ -6,7 +6,7 @@ import { Spectator } from '@ngneat/spectator';
 import {
   createComponentFactory, mockProvider,
 } from '@ngneat/spectator/jest';
-import { TnIconButtonHarness } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -92,7 +92,7 @@ describe('AppContainersCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('.tn-card__title')).toHaveText('Workloads');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Workloads');
   });
 
   it('shows number of ports', () => {

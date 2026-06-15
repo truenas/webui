@@ -7,7 +7,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardAction, TnCardComponent, TnCardHeaderDirective, TnIconButtonComponent,
-  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTooltipDirective,
+  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -28,7 +28,6 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
@@ -55,7 +54,7 @@ import { RedirectService } from 'app/services/redirect.service';
     TnMenuItemComponent,
     TnMenuTriggerDirective,
     RequiresRolesDirective,
-    TestDirective,
+    TnTestIdDirective,
     ImgFallbackModule,
     OrNotAvailablePipe,
     CleanLinkPipe,
