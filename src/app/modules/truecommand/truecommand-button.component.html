@@ -1,41 +1,40 @@
 @let status = tcStatus();
 @if (status) {
   @if (status.status === TrueCommandStatus.Connecting) {
-    <button
-      mat-icon-button
+    <tn-icon-button
       id="tc-connecting"
       class="topbar-button-right truecommand-button"
-      ixTest="truecommand-indicator"
-      matTooltipClass="tooltip-multiline"
-      [matTooltip]="tooltip()"
-      [attr.aria-label]="tooltip()"
-      (click)="stopTrueCommandConnecting()"
+      name="tn-truecommand-logo-mark"
+      size="lg"
+      testId="truecommand-indicator"
+      [dense]="true"
+      [tooltip]="tooltip()"
+      [ariaLabel]="tooltip()"
+      (onClick)="stopTrueCommandConnecting()"
     >
-      <ng-container *ngTemplateOutlet="logoWithBadge"></ng-container>
-    </button>
+      <ng-container *ngTemplateOutlet="logoBadge"></ng-container>
+    </tn-icon-button>
   } @else {
-    <button
-      mat-icon-button
+    <tn-icon-button
       class="topbar-button-right truecommand-button"
-      ixTest="truecommand-indicator"
-      matTooltipClass="tooltip-multiline"
-      [matTooltip]="tooltip()"
-      [attr.aria-label]="tooltip()"
+      name="tn-truecommand-logo-mark"
+      size="lg"
+      testId="truecommand-indicator"
+      [dense]="true"
       [ngClass]="[status.status]"
+      [tooltip]="tooltip()"
+      [ariaLabel]="tooltip()"
       [ixUiSearch]="searchableElements.elements.trueCommand"
-      (click)="handleClick()"
+      (onClick)="handleClick()"
     >
-      <ng-container *ngTemplateOutlet="logoWithBadge"></ng-container>
-    </button>
+      <ng-container *ngTemplateOutlet="logoBadge"></ng-container>
+    </tn-icon-button>
   }
 }
 
-<ng-template #logoWithBadge>
-  <span class="icon-wrapper">
-    <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
-    @let badge = statusBadge();
-    @if (badge) {
-      <ix-status-badge [badge]="badge"></ix-status-badge>
-    }
-  </span>
+<ng-template #logoBadge>
+  @let badge = statusBadge();
+  @if (badge) {
+    <ix-status-badge [badge]="badge"></ix-status-badge>
+  }
 </ng-template>

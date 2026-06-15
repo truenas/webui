@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -132,7 +132,7 @@ describe('ServiceNfsComponent', () => {
       'rpc.lockd(8) bind port': 510,
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('nfs.update', [{
@@ -167,7 +167,7 @@ describe('ServiceNfsComponent', () => {
       'Require Kerberos for NFSv4': true,
     });
 
-    const addSpnButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add SPN' }));
+    const addSpnButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add SPN' }));
     await addSpnButton.click();
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AddSpnDialog);

@@ -1,53 +1,51 @@
-<ix-fake-progress-bar [loading]="isLoading"></ix-fake-progress-bar>
+<tn-dialog-shell testId="feedback-dialog" [title]="'Send Feedback' | translate">
+  <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
 
-<h1 matDialogTitle>{{ 'Send Feedback' | translate }}</h1>
-
-<tn-icon-button
-  mat-dialog-close
-  class="close-feedback-dialog"
-  testId="close-feedback-dialog"
-  name="close"
-  library="mdi"
-  [disabled]="isLoading"
-  [aria-label]="'Close Feedback Dialog' | translate"
-></tn-icon-button>
-
-@if (isLoadingTypes) {
-  <div class="placeholder">
-    <ngx-skeleton-loader [count]="3"></ngx-skeleton-loader>
-  </div>
-} @else {
-  @if (allowedTypes.length > 1) {
-    <ix-button-group
-      class="feedback-type"
-      [formControl]="typeControl"
-      [label]="'I would like to' | translate"
-      [options]="feedbackTypeOptions$"
-      [inlineFields]="true"
-      [attr.aria-label]="'Feedback Type' | translate"
-    ></ix-button-group>
-  }
-  @if (isReview) {
-    <ix-file-review
-      [dialogRef]="dialogRef"
-      [isLoading]="isLoading"
-      (isLoadingChange)="onIsLoadingChange($event)"
-    ></ix-file-review>
+  @if (isLoadingTypes()) {
+    <div class="placeholder">
+      <ngx-skeleton-loader [count]="3"></ngx-skeleton-loader>
+    </div>
   } @else {
-    @if (isEnterprise()) {
-      <ix-file-ticket-licensed
+    @if (allowedTypes().length > 1) {
+      <div class="feedback-type">
+        <span class="feedback-type__label" [id]="feedbackTypeLabelId">{{ 'I would like to' | translate }}</span>
+        <tn-button-toggle-group
+          [formControl]="typeControl"
+          [ariaLabelledby]="feedbackTypeLabelId"
+        >
+          @for (option of feedbackTypeOptions(); track option.value) {
+            <tn-button-toggle [value]="option.value" [testId]="option.value">{{ option.label }}</tn-button-toggle>
+          }
+        </tn-button-toggle-group>
+      </div>
+    }
+    @if (isReview) {
+      <ix-file-review
         [dialogRef]="dialogRef"
-        [isLoading]="isLoading"
+        [isLoading]="isLoading()"
         (isLoadingChange)="onIsLoadingChange($event)"
-      ></ix-file-ticket-licensed>
+      ></ix-file-review>
     } @else {
-      <ix-file-ticket
-        [type]="typeControl.value | cast"
-        [dialogRef]="dialogRef"
-        [isLoading]="isLoading"
-        (isLoadingChange)="onIsLoadingChange($event)"
-      ></ix-file-ticket>
+      @if (isEnterprise()) {
+        <ix-file-ticket-licensed
+          [dialogRef]="dialogRef"
+          [isLoading]="isLoading()"
+          (isLoadingChange)="onIsLoadingChange($event)"
+        ></ix-file-ticket-licensed>
+      } @else {
+        <ix-file-ticket
+          [type]="typeControl.value | cast"
+          [dialogRef]="dialogRef"
+          [isLoading]="isLoading()"
+          (isLoadingChange)="onIsLoadingChange($event)"
+        ></ix-file-ticket>
+      }
     }
   }
-}
 
+  <div tnDialogAction class="feedback-actions">
+    @if (actionsTemplate(); as actions) {
+      <ng-container [ngTemplateOutlet]="actions"></ng-container>
+    }
+  </div>
+</tn-dialog-shell>
