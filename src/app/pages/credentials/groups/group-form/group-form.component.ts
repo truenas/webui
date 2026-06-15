@@ -61,18 +61,18 @@ export class GroupFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.AccountWrite];
 
-  get isNew(): boolean {
+  private get isNew(): boolean {
     return !this.editingGroup;
   }
 
-  get title(): string {
+  protected get title(): string {
     return this.isNew ? this.translate.instant('Add Group') : this.translate.instant('Edit Group');
   }
 
   protected isFormLoading = signal(false);
   protected editingGroup: Group | undefined;
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     gid: [null as number | null, [Validators.required, Validators.pattern(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
     sudo_commands: [[] as string[]],
@@ -83,7 +83,7 @@ export class GroupFormComponent implements OnInit {
     privileges: [[] as string[] | number[]],
   });
 
-  readonly tooltips = {
+  protected readonly tooltips = {
     gid: helptextGroups.groupIdTooltip,
     name: helptextGroups.nameTooltip,
     privileges: helptextGroups.privilegesTooltip,

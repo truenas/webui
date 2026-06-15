@@ -1,19 +1,18 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, computed,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnProgressBarComponent, tnIconMarker,
+  TnCardAction, TnCardComponent, TnCardHeaderDirective, TnProgressBarComponent, tnIconMarker,
 } from '@truenas/ui-components';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -31,11 +30,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnCardHeaderDirective,
     TnProgressBarComponent,
     ReadOnlyComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class GroupMembersComponent implements OnInit {
@@ -56,9 +51,28 @@ export class GroupMembersComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly group = signal<Group | null>(null);
 
-  get hasRequiredRoles(): Observable<boolean> {
-    return this.authService.hasRole(this.requiredRoles);
-  }
+  protected readonly hasAccountWrite = toSignal(
+    this.authService.hasRole(this.requiredRoles),
+    { initialValue: false },
+  );
+
+  protected readonly primaryAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasAccountWrite()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Save'),
+      handler: () => this.onSubmit(),
+      disabled: this.isLoading(),
+      testId: 'save',
+    };
+  });
+
+  protected readonly secondaryAction = computed<TnCardAction>(() => ({
+    label: this.translate.instant('Cancel'),
+    handler: () => this.onCancel(),
+    testId: 'cancel',
+  }));
 
   ngOnInit(): void {
     this.isLoading.set(true);
@@ -99,11 +113,11 @@ export class GroupMembersComponent implements OnInit {
     });
   }
 
-  onCancel(): void {
+  protected onCancel(): void {
     this.router.navigate(['/', 'credentials', 'groups']);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     const userIds = this.selectedMembers.map((user) => user.id);

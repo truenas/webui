@@ -1,16 +1,13 @@
 import { Component, ChangeDetectionStrategy, computed, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DeleteGroupDialog,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
@@ -22,12 +19,10 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
   styleUrls: ['./group-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    TestDirective,
-    TnIconComponent,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
-    MatTooltip,
+    TnTooltipDirective,
   ],
 })
 export class GroupDetailsRowComponent {
@@ -61,7 +56,7 @@ export class GroupDetailsRowComponent {
     if (group?.roles?.length || group?.users?.length) {
       return this.translate.instant('Groups with privileges or members cannot be deleted.');
     }
-    return null;
+    return '';
   });
 
   protected openGroupMembersForm(): void {

@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnTableHarness } from '@truenas/ui-components';
+import { TnButtonComponent, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
@@ -50,6 +50,7 @@ describe('GroupListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
+      TnButtonComponent,
     ],
     declarations: [
       MockComponent(GroupDetailsRowComponent),

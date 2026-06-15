@@ -1,8 +1,7 @@
-import { AsyncPipe } from '@angular/common';
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal, viewChild, effect,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -52,7 +51,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     GroupDetailsRowComponent,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
     PageHeaderComponent,
   ],
 })
@@ -67,7 +65,8 @@ export class GroupListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = groupListElements;
 
-  dataProvider = new ArrayDataProvider<Group>();
+  protected readonly dataProvider = new ArrayDataProvider<Group>();
+  protected readonly currentPage = toSignal(this.dataProvider.currentPage$, { initialValue: [] as Group[] });
   protected readonly table = viewChild(TnTableComponent<Group>);
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
@@ -94,12 +93,14 @@ export class GroupListComponent implements OnInit {
     });
   }
 
-  hideBuiltinGroups = true;
-  searchQuery = signal('');
-  groups: Group[] = [];
+  protected hideBuiltinGroups = true;
+  protected readonly searchQuery = signal('');
+  private groups: Group[] = [];
 
-  isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
-  emptyType$: Observable<EmptyType> = combineLatest([
+  private readonly isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
+  protected readonly isLoading = toSignal(this.isLoading$, { initialValue: false });
+
+  private readonly emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
     this.store$.select(selectGroupsTotal).pipe(map((total) => total === 0)),
     this.store$.select(selectGroupState).pipe(map((state) => state.error)),
@@ -118,9 +119,11 @@ export class GroupListComponent implements OnInit {
     }),
   );
 
-  protected emptyMessage$: Observable<string> = this.emptyType$.pipe(
+  private readonly emptyMessage$: Observable<string> = this.emptyType$.pipe(
     map((type) => this.translate.instant(this.emptyService.defaultEmptyConfig(type).title)),
   );
+
+  protected readonly emptyMessage = toSignal(this.emptyMessage$, { initialValue: '' });
 
   protected getRolesValue(row: Group): string {
     return row.roles
