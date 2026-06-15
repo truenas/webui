@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -100,7 +99,6 @@ function createTopbarComponent(options: ComponentOptions = {}): {
       }),
       mockProvider(UiSearchProvider),
       mockProvider(TnDialog, tnDialog),
-      mockProvider(MatDialog),
       mockProvider(DialogService, {
         update: jest.fn(() => ({ close: jest.fn() })),
         rebootRequired: jest.fn(() => of(undefined)),

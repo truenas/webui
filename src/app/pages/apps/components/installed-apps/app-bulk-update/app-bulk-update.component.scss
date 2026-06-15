@@ -3,6 +3,9 @@
   max-width: 100%;
   width: 600px;
 
+  // TEMP: tn-select has no margin/padding input, so its outer spacing can only
+  // be controlled by piercing encapsulation to reach the component host. Remove
+  // once @truenas/ui-components exposes layout spacing inputs. Tracked under NAS-141021.
   ::ng-deep {
     tn-select {
       margin: 0 0 8px;

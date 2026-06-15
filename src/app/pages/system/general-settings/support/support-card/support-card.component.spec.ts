@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnDialog } from '@truenas/ui-components';
@@ -66,8 +65,6 @@ describe('SupportCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(TnDialog),
-      mockProvider(MatDialog),
       mockProvider(TnDialog),
       mockProvider(DialogService),
       mockProvider(SlideIn, {

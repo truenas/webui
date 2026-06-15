@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnSelectHarness } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
 
@@ -49,6 +50,9 @@ describe('AppUpdateDialog', () => {
     imports: [
       FormsModule,
       ImgFallbackModule,
+    ],
+    providers: [
+      mockAuth(),
     ],
   });
 
@@ -97,9 +101,8 @@ describe('AppUpdateDialog', () => {
       expect(changelogLink?.getAttribute('aria-label')).toContain('opens in new window');
     });
 
-    it('shows version dropdown when multiple versions are available', () => {
-      const versionDropdown = spectator.query('.resource tn-select');
-      expect(versionDropdown).toBeTruthy();
+    it('shows version dropdown when multiple versions are available', async () => {
+      expect(await loader.hasHarness(TnSelectHarness)).toBe(true);
     });
 
     it('updates version row when a different version is selected from dropdown', async () => {
@@ -180,6 +183,8 @@ describe('AppUpdateDialog', () => {
   });
 
   describe('with single version', () => {
+    let loader: HarnessLoader;
+
     beforeEach(() => {
       spectator = createComponent({
         providers: [
@@ -193,11 +198,11 @@ describe('AppUpdateDialog', () => {
           },
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('hides version dropdown when only one version is available', () => {
-      const versionDropdown = spectator.query('.resource tn-select');
-      expect(versionDropdown).not.toBeTruthy();
+    it('hides version dropdown when only one version is available', async () => {
+      expect(await loader.hasHarness(TnSelectHarness)).toBe(false);
     });
   });
 });

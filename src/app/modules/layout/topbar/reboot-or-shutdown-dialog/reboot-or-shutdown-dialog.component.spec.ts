@@ -150,8 +150,7 @@ describe('RebootOrShutdownDialog – non-enterprise', () => {
   });
 
   it('should not render select/input and allow submission when only confirm is checked', async () => {
-    const select = spectator.query('tn-select');
-    expect(select).toBeNull();
+    expect(await loader.hasHarness(TnSelectHarness)).toBe(false);
 
     const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
     await checkbox.check();
