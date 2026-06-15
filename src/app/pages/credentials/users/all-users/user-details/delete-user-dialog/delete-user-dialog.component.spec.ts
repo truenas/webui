@@ -81,7 +81,9 @@ describe('DeleteUserDialogComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('group.query', [[['id', '=', 23]]]);
 
-    const deleteGroupCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete user primary group `swine`' }));
+    // tn-checkbox renders its label as markdown, so the backticks around the group
+    // name become a <code> element and are stripped from the harness label text.
+    const deleteGroupCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete user primary group swine' }));
     await deleteGroupCheckbox.check();
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
