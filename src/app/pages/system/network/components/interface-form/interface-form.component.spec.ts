@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
@@ -21,6 +20,7 @@ import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -484,8 +484,8 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('renders Enable Learning for edit', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Enable Learning' }));
-      expect(await checkbox.isChecked()).toBe(false);
+      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Learning' }));
+      expect(await checkbox.getValue()).toBe(false);
     });
   });
 
@@ -544,9 +544,9 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('disables Autoconfigure IPv6 when failover is licensed', async () => {
-      const ipv6AutoCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Autoconfigure IPv6' }));
+      const ipv6AutoCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Autoconfigure IPv6' }));
       expect(await ipv6AutoCheckbox.isDisabled()).toBe(true);
-      expect(await ipv6AutoCheckbox.isChecked()).toBe(false);
+      expect(await ipv6AutoCheckbox.getValue()).toBe(false);
     });
 
     it('shows and saves additional fields in Aliases when failover is licensed', async () => {

@@ -1,4 +1,4 @@
-@if (hasIpmi$ | async) {
+@if (hasIpmi()) {
   <tn-card padding="small" [ixUiSearch]="searchableElements.ipmi">
     <div tnCardHeader class="card-header">
       <h3 class="tn-card__title">IPMI</h3>

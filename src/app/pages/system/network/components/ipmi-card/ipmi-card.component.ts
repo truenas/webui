@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -78,7 +78,7 @@ export class IpmiCardComponent implements OnInit {
     return [row.ip_address, this.translate.instant('IPMI')].join(' ');
   }
 
-  protected readonly hasIpmi$ = this.api.call('ipmi.is_loaded');
+  protected readonly hasIpmi = toSignal(this.api.call('ipmi.is_loaded'));
 
   ngOnInit(): void {
     const ipmi$ = this.api.call('ipmi.lan.query').pipe(takeUntilDestroyed(this.destroyRef));

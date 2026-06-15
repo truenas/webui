@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -67,7 +67,6 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 export class InterfacesCardComponent implements OnInit {
   private interfacesStore$ = inject(InterfacesStore);
   private store$ = inject<Store<AppState>>(Store);
-  private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
@@ -82,12 +81,13 @@ export class InterfacesCardComponent implements OnInit {
   readonly interfacesUpdated = output();
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
-  protected interfaces: NetworkInterface[] = [];
+  protected readonly interfaces = signal<NetworkInterface[]>([]);
 
+  // Kept as a subject because IconActionConfig hidden/disabled/dynamicTooltip callbacks expect Observables.
   protected readonly isHaEnabled$ = new BehaviorSubject<boolean>(false);
-  private readonly isHaEnabled = toSignal(this.isHaEnabled$);
+  protected readonly isHaEnabled = toSignal(this.isHaEnabled$, { initialValue: false });
 
-  isLoading = false;
+  protected readonly isLoading = signal(false);
   dataProvider = new ArrayDataProvider<NetworkInterface>();
   inOutUpdates = signal<AllNetworkInterfacesUpdate>({});
 
@@ -153,24 +153,20 @@ export class InterfacesCardComponent implements OnInit {
   ngOnInit(): void {
     this.interfacesStore$.loadInterfaces();
     this.interfacesStore$.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
-      this.isLoading = state.isLoading;
-      this.interfaces = state.interfaces;
+      this.isLoading.set(state.isLoading);
+      this.interfaces.set(state.interfaces);
       this.dataProvider.setRows(state.interfaces);
-      this.inOutUpdates.set({});
+      const inOutUpdates: AllNetworkInterfacesUpdate = {};
       for (const nic of state.interfaces) {
-        this.inOutUpdates.update((value) => {
-          value[nic.name] = {
-            link_state: nic.state?.link_state,
-            received_bytes_rate: 0,
-            sent_bytes_rate: 0,
-            speed: 0,
-          };
-          return value;
-        });
+        inOutUpdates[nic.name] = {
+          link_state: nic.state?.link_state,
+          received_bytes_rate: 0,
+          sent_bytes_rate: 0,
+          speed: 0,
+        };
       }
+      this.inOutUpdates.set(inOutUpdates);
       this.subscribeToUpdates();
-
-      this.cdr.markForCheck();
     });
     this.checkFailoverDisabled();
   }
@@ -180,14 +176,13 @@ export class InterfacesCardComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((isHaEnabled) => {
       this.isHaEnabled$.next(isHaEnabled);
-      this.cdr.markForCheck();
     });
   }
 
   protected onAddNew(): void {
     this.slideIn.open(InterfaceFormComponent, {
       data: {
-        interfaces: this.interfaces,
+        interfaces: this.interfaces(),
       },
     }).onSuccess(() => {
       this.interfacesUpdated.emit();
@@ -254,12 +249,12 @@ export class InterfacesCardComponent implements OnInit {
       .subscribe((updates) => {
         const updatedInterfaces = Object.keys(updates);
         this.inOutUpdates.update((value) => {
+          const next = { ...value };
           for (const nic of updatedInterfaces) {
-            value[nic] = { ...updates[nic] };
+            next[nic] = { ...updates[nic] };
           }
-          return value;
+          return next;
         });
-        this.cdr.markForCheck();
       });
   }
 }

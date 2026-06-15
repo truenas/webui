@@ -12,11 +12,11 @@
   </div>
 
   <div class="columns" [ixUiSearch]="networkConfigurationCardElements.elements.configuration">
-    @if (!isLoading) {
+    @if (!isLoading()) {
       <div>
         <tn-list class="list" [dense]="true">
           <div class="section-title">{{ 'DNS Servers' | translate }}</div>
-          @for (nameserver of nameservers; track nameserver.label) {
+          @for (nameserver of nameservers(); track nameserver.label) {
             <tn-list-item
               [ixUiSearch]="networkConfigurationCardElements.elements.nameServers"
             >
@@ -28,14 +28,14 @@
           }
         </tn-list>
 
-        @if (ipv4.length > 0) {
+        @if (ipv4().length > 0) {
           <tn-list class="list" [dense]="true">
             <div class="section-title">{{ 'Default Route' | translate }}</div>
             <tn-list-item>
               <tn-icon tnListIcon name="router" library="mdi" class="list-icon"></tn-icon>
               <span class="label">{{ 'IPv4' | translate }}:</span>
               <ul class="value">
-                @for (ip of ipv4; track ip) {
+                @for (ip of ipv4(); track ip) {
                   <li>{{ ip }}</li>
                 }
               </ul>
@@ -43,13 +43,13 @@
           </tn-list>
         }
 
-        @if (ipv6.length > 0) {
+        @if (ipv6().length > 0) {
           <tn-list class="list" [dense]="true">
             <tn-list-item>
               <tn-icon tnListIcon name="router" library="mdi" class="list-icon"></tn-icon>
               <span class="label">{{ 'IPv6' | translate }}:</span>
               <ul class="value">
-                @for (ip of ipv6; track ip) {
+                @for (ip of ipv6(); track ip) {
                   <li>{{ ip }}</li>
                 }
               </ul>
@@ -58,37 +58,39 @@
         }
       </div>
 
-      @if (config.hostname) {
-        <tn-list class="details-list" [dense]="true">
-          <tn-list-item>
-            <span class="label">{{ 'Hostname:' | translate }}</span>
-            <span class="value">{{ config.hostname_local }}</span>
-          </tn-list-item>
-          <tn-list-item>
-            <span class="label">{{ 'Domain:' | translate }}</span>
-            <span class="value">{{ config.domain || ('Inherit from DHCP' | translate) }}</span>
-          </tn-list-item>
-          <tn-list-item>
-            <span class="label">{{ 'HTTP Proxy:' | translate }}</span>
-            <span class="value">{{ config.httpproxy || '-' }}</span>
-          </tn-list-item>
-          <tn-list-item>
-            <span class="label">{{ 'Service Announcement:' | translate }}</span>
-            <span class="value">{{ serviceAnnouncement }}</span>
-          </tn-list-item>
-          <tn-list-item>
-            <span class="label">{{ 'Additional Domains:' | translate }}</span>
-            <span class="value">{{ additionalDomains }}</span>
-          </tn-list-item>
-          <tn-list-item>
-            <span class="label">{{ 'Hostname Database:' | translate }}</span>
-            <span class="value">{{ config.hosts.join(', ') || '-' }}</span>
-          </tn-list-item>
-          <tn-list-item>
-            <span class="label">{{ 'Outbound Network:' | translate }}</span>
-            <span class="value">{{ outboundNetwork }}</span>
-          </tn-list-item>
-        </tn-list>
+      @if (config(); as config) {
+        @if (config.hostname) {
+          <tn-list class="details-list" [dense]="true">
+            <tn-list-item>
+              <span class="label">{{ 'Hostname:' | translate }}</span>
+              <span class="value">{{ config.hostname_local }}</span>
+            </tn-list-item>
+            <tn-list-item>
+              <span class="label">{{ 'Domain:' | translate }}</span>
+              <span class="value">{{ config.domain || ('Inherit from DHCP' | translate) }}</span>
+            </tn-list-item>
+            <tn-list-item>
+              <span class="label">{{ 'HTTP Proxy:' | translate }}</span>
+              <span class="value">{{ config.httpproxy || '-' }}</span>
+            </tn-list-item>
+            <tn-list-item>
+              <span class="label">{{ 'Service Announcement:' | translate }}</span>
+              <span class="value">{{ serviceAnnouncement() }}</span>
+            </tn-list-item>
+            <tn-list-item>
+              <span class="label">{{ 'Additional Domains:' | translate }}</span>
+              <span class="value">{{ additionalDomains() }}</span>
+            </tn-list-item>
+            <tn-list-item>
+              <span class="label">{{ 'Hostname Database:' | translate }}</span>
+              <span class="value">{{ config.hosts.join(', ') || '-' }}</span>
+            </tn-list-item>
+            <tn-list-item>
+              <span class="label">{{ 'Outbound Network:' | translate }}</span>
+              <span class="value">{{ outboundNetwork() }}</span>
+            </tn-list-item>
+          </tn-list>
+        }
       }
     }
   </div>

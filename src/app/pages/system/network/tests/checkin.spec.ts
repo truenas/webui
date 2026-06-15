@@ -192,7 +192,9 @@ describe('NetworkComponent', () => {
   it('shows testing prompt with a countdown when Test Changes is pressed', async () => {
     await makeEdit();
 
-    // Click Test Changes button using native click to avoid harness zone issues
+    // Native click: pressing Test Changes starts a 1s checkin countdown interval, and
+    // TnButtonHarness cannot stabilize against the running timer. data-test is the preserved
+    // test contract (tn-button [testId]). Do not switch this back to the harness. See NAS-141040.
     const testChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-test-changes"]');
     testChangesButton!.click();
     spectator.detectChanges();
@@ -219,7 +221,8 @@ describe('NetworkComponent', () => {
   it('saves network interface changes when user presses Save Changes in second prompt', async () => {
     await makeEdit();
 
-    // Click Test Changes button using native click
+    // Native click: Test Changes starts a 1s checkin countdown interval that prevents
+    // TnButtonHarness from stabilizing. data-test is the preserved test contract. See NAS-141040.
     const testChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-test-changes"]');
     testChangesButton!.click();
     spectator.detectChanges();
@@ -228,7 +231,8 @@ describe('NetworkComponent', () => {
     });
     spectator.detectChanges();
 
-    // Click Save Changes button using native click
+    // Native click: Save Changes is rendered during the running countdown, so the harness
+    // cannot stabilize. data-test is the preserved test contract. See NAS-141040.
     const saveChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-save-changes"]');
     saveChangesButton!.click();
     spectator.detectChanges();
@@ -243,7 +247,8 @@ describe('NetworkComponent', () => {
   it('stops testing changes and goes back to first prompt when another edit is made while the first one is being tested', async () => {
     await makeEdit();
 
-    // Click Test Changes button using native click
+    // Native click: Test Changes starts a 1s checkin countdown interval that prevents
+    // TnButtonHarness from stabilizing. data-test is the preserved test contract. See NAS-141040.
     const testChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-test-changes"]');
     testChangesButton!.click();
     spectator.detectChanges();

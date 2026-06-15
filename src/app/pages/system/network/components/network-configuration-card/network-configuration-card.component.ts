@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -46,7 +48,6 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 export class NetworkConfigurationCardComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private cdr = inject(ChangeDetectorRef);
   private slideIn = inject(SlideIn);
   private searchDirectives = inject(UiSearchDirectivesService);
   private actions$ = inject(Actions);
@@ -55,9 +56,9 @@ export class NetworkConfigurationCardComponent implements OnInit {
 
   protected readonly networkConfigurationCardElements = networkConfigurationCardElements;
 
-  summary: NetworkSummary;
-  config: NetworkConfiguration;
-  isLoading = false;
+  protected readonly summary = signal<NetworkSummary | undefined>(undefined);
+  protected readonly config = signal<NetworkConfiguration | undefined>(undefined);
+  protected readonly isLoading = signal(false);
 
   ngOnInit(): void {
     this.loadNetworkConfigAndSummary();
@@ -66,48 +67,69 @@ export class NetworkConfigurationCardComponent implements OnInit {
       .subscribe(() => this.loadNetworkConfigAndSummary());
   }
 
-  get serviceAnnouncement(): string {
+  protected readonly serviceAnnouncement = computed<string>(() => {
+    const config = this.config();
+    if (!config) {
+      return '';
+    }
+
     const options: string[] = [];
-    if (this.config.service_announcement.netbios) {
+    if (config.service_announcement.netbios) {
       options.push('NETBIOS-NS');
     }
-    if (this.config.service_announcement.mdns) {
+    if (config.service_announcement.mdns) {
       options.push('mDNS');
     }
-    if (this.config.service_announcement.wsd) {
+    if (config.service_announcement.wsd) {
       options.push('WS-DISCOVERY');
     }
 
     return options.join(', ');
-  }
+  });
 
-  get additionalDomains(): string {
-    return this.config.domains.length > 0 ? this.config.domains.join(', ') : '-';
-  }
+  protected readonly additionalDomains = computed<string>(() => {
+    const config = this.config();
+    if (!config) {
+      return '-';
+    }
 
-  get outboundNetwork(): string {
-    if (this.config.activity.activities.length === 0) {
-      if (this.config.activity.type === NetworkActivityType.Allow) {
+    return config.domains.length > 0 ? config.domains.join(', ') : '-';
+  });
+
+  protected readonly outboundNetwork = computed<string>(() => {
+    const config = this.config();
+    if (!config) {
+      return '';
+    }
+
+    if (config.activity.activities.length === 0) {
+      if (config.activity.type === NetworkActivityType.Allow) {
         return this.translate.instant('Deny All');
       }
 
       return this.translate.instant('Allow All');
     }
 
-    if (this.config.activity.type === NetworkActivityType.Allow) {
+    if (config.activity.type === NetworkActivityType.Allow) {
       return this.translate.instant(
         'Only allow: {activities}',
-        { activities: this.config.activity.activities.join(', ') },
+        { activities: config.activity.activities.join(', ') },
       );
     }
 
     return this.translate.instant(
       'Allow all except: {activities}',
-      { activities: this.config.activity.activities.join(', ') },
+      { activities: config.activity.activities.join(', ') },
     );
-  }
+  });
 
-  get nameservers(): Option[] {
+  protected readonly nameservers = computed<Option[]>(() => {
+    const config = this.config();
+    const summary = this.summary();
+    if (!config || !summary) {
+      return [];
+    }
+
     const nameservers: Option[] = [];
     const nameserverAttributes = ['nameserver1', 'nameserver2', 'nameserver3'] as const;
     const labels = [
@@ -117,7 +139,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
     ];
 
     nameserverAttributes.forEach((attribute, index) => {
-      const nameserver = this.config[attribute];
+      const nameserver = config[attribute];
       if (nameserver) {
         nameservers.push({
           label: this.translate.instant(labels[index]),
@@ -126,8 +148,8 @@ export class NetworkConfigurationCardComponent implements OnInit {
       }
     });
 
-    this.summary.nameservers.forEach((nameserver) => {
-      if (nameserverAttributes.some((attribute) => this.config[attribute] === nameserver)) {
+    summary.nameservers.forEach((nameserver) => {
+      if (nameserverAttributes.some((attribute) => config[attribute] === nameserver)) {
         return;
       }
 
@@ -138,15 +160,25 @@ export class NetworkConfigurationCardComponent implements OnInit {
     });
 
     return nameservers;
-  }
+  });
 
-  get ipv4(): string[] {
-    return this.summary.default_routes.filter((item) => ipRegex.v4().test(item));
-  }
+  protected readonly ipv4 = computed<string[]>(() => {
+    const summary = this.summary();
+    if (!summary) {
+      return [];
+    }
 
-  get ipv6(): string[] {
-    return this.summary.default_routes.filter((item) => ipRegex.v6().test(item));
-  }
+    return summary.default_routes.filter((item) => ipRegex.v4().test(item));
+  });
+
+  protected readonly ipv6 = computed<string[]>(() => {
+    const summary = this.summary();
+    if (!summary) {
+      return [];
+    }
+
+    return summary.default_routes.filter((item) => ipRegex.v6().test(item));
+  });
 
   onSettingsClicked(): void {
     this.slideIn.open(NetworkConfigurationComponent, { wide: true })
@@ -154,8 +186,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   private loadNetworkConfigAndSummary(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     combineLatest([
       this.api.call('network.general.summary'),
@@ -166,12 +197,10 @@ export class NetworkConfigurationCardComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([summary, config]) => {
-        this.isLoading = false; // TODO: Add loading indication in UI.
-        this.summary = summary;
-        this.config = config;
+        this.summary.set(summary);
+        this.config.set(config);
+        this.isLoading.set(false); // TODO: Add loading indication in UI.
         setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 2);
-
-        this.cdr.markForCheck();
       });
   }
 

@@ -4,9 +4,9 @@
 >
   <div class="content">
     <div class="left-column">
-      @if (hasPendingChanges) {
+      @if (hasPendingChanges()) {
         <tn-card class="pending-changes-card" padding="small">
-          @if (!checkinWaiting) {
+          @if (!checkinWaiting()) {
             <div>
               <p>{{ helptext.pendingChangesText | translate }}</p>
 
@@ -19,12 +19,13 @@
                   [required]="true"
                   [ariaLabel]="'Check-in timeout in seconds' | translate"
                   [testId]="'checkin-timeout'"
-                  [(ngModel)]="checkinTimeout"
+                  [ngModel]="checkinTimeout()"
+                  (ngModelChange)="checkinTimeout.set($event)"
                 ></tn-input>
                 {{ helptext.checkinText2 | translate }}
               </p>
 
-              @if (isCheckinTimeoutFieldInvalid) {
+              @if (isCheckinTimeoutFieldInvalid()) {
                 <p class="checkin-error">
                   {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
                 </p>
@@ -33,23 +34,23 @@
           } @else {
             <div>
               <p>
-                {{ helptext.pendingCheckinText | translate: { x: checkinRemaining } }}
+                {{ helptext.pendingCheckinText | translate: { x: checkinRemaining() } }}
               </p>
             </div>
           }
 
           <div class="interface-pending-actions">
-            @if (!checkinWaiting) {
+            @if (!checkinWaiting()) {
               <tn-button
                 variant="outline"
                 [label]="helptext.commitButton | translate"
                 [testId]="'test-changes'"
-                [disabled]="isHaEnabled() || isCheckinTimeoutFieldInvalid"
+                [disabled]="isHaEnabled() || isCheckinTimeoutFieldInvalid()"
                 (onClick)="commitPendingChanges()"
               ></tn-button>
             }
 
-            @if (checkinWaiting) {
+            @if (checkinWaiting()) {
               <tn-button
                 variant="outline"
                 [label]="helptext.keepButton | translate"
@@ -74,7 +75,12 @@
               (
               <span
                 class="pseudolink"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="helptext.goToHa | translate"
                 (click)="goToHa()"
+                (keydown.enter)="goToHa()"
+                (keydown.space)="goToHa()"
               >
                 {{ helptext.goToHa | translate }}
               </span>

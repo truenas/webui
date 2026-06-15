@@ -7,9 +7,9 @@
       color="default"
       [label]="'Add' | translate"
       [testId]="['add', 'interface']"
-      [disabled]="!!(isHaEnabled$ | async)"
+      [disabled]="isHaEnabled()"
       [tnTooltip]="'Editing interfaces is not allowed while HA is enabled' | translate"
-      [tnTooltipDisabled]="!(isHaEnabled$ | async)"
+      [tnTooltipDisabled]="!isHaEnabled()"
       [ixUiSearch]="searchableElements.addInterface"
       (onClick)="onAddNew()"
     ></tn-button>
@@ -20,7 +20,7 @@
     [ixUiSearch]="searchableElements.interfaces"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
-    [loading]="isLoading"
+    [loading]="isLoading()"
   >
     <ng-container [tnColumnDef]="'state'" [width]="'40px'">
       <ng-template tnHeaderCellDef></ng-template>

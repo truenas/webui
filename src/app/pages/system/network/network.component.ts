@@ -1,4 +1,6 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import {
+  Component, OnInit, ChangeDetectionStrategy, DestroyRef, computed, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Navigation, Router } from '@angular/router';
@@ -69,7 +71,6 @@ export class NetworkComponent implements OnInit {
   private interfacesStore = inject(InterfacesStore);
   private actions$ = inject(Actions);
   private authService = inject(AuthService);
-  private cdr = inject(ChangeDetectorRef);
   private networkService = inject(NetworkService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
@@ -77,12 +78,12 @@ export class NetworkComponent implements OnInit {
   protected readonly searchableElements = networkElements;
   protected readonly InputType = InputType;
 
-  protected readonly isHaEnabled = toSignal(this.networkService.getIsHaEnabled());
-  hasPendingChanges = false;
-  checkinWaiting = false;
-  checkinTimeout = 60;
-  checkinTimeoutMinValue = 10;
-  checkinRemaining: number | null = null;
+  protected readonly isHaEnabled = toSignal(this.networkService.getIsHaEnabled(), { initialValue: false });
+  protected readonly hasPendingChanges = signal(false);
+  protected readonly checkinWaiting = signal(false);
+  protected readonly checkinTimeout = signal(60);
+  protected readonly checkinTimeoutMinValue = 10;
+  protected readonly checkinRemaining = signal<number | null>(null);
   private uniqueIps: string[] = [];
   private affectedServices: string[] = [];
   checkinInterval: Interval;
@@ -90,10 +91,10 @@ export class NetworkComponent implements OnInit {
   private navigation: Navigation | null;
   helptext = helptextInterfaces;
 
-  protected get isCheckinTimeoutFieldInvalid(): boolean {
-    const value = this.checkinTimeout;
+  protected readonly isCheckinTimeoutFieldInvalid = computed(() => {
+    const value = this.checkinTimeout();
     return value == null || Number.isNaN(value) || value < this.checkinTimeoutMinValue;
-  }
+  });
 
   constructor() {
     this.navigation = this.router.currentNavigation();
@@ -108,13 +109,12 @@ export class NetworkComponent implements OnInit {
           return;
         }
 
-        this.checkinRemaining = null;
-        this.checkinWaiting = false;
+        this.checkinRemaining.set(null);
+        this.checkinWaiting.set(false);
         if (this.checkinInterval) {
           clearInterval(this.checkinInterval);
         }
-        this.hasPendingChanges = false;
-        this.cdr.markForCheck();
+        this.hasPendingChanges.set(false);
       });
 
     this.openInterfaceForEditFromRoute();
@@ -132,9 +132,8 @@ export class NetworkComponent implements OnInit {
       return;
     }
 
-    this.hasPendingChanges = await this.getPendingChanges();
+    this.hasPendingChanges.set(await this.getPendingChanges());
     this.handleWaitingCheckIn(await this.getCheckInWaitingSeconds());
-    this.cdr.markForCheck();
   }
 
   protected async loadCheckinStatusAfterChange(): Promise<void> {
@@ -153,9 +152,8 @@ export class NetworkComponent implements OnInit {
       checkinWaitingSeconds = await this.getCheckInWaitingSeconds();
     }
 
-    this.hasPendingChanges = hasPendingChanges;
+    this.hasPendingChanges.set(hasPendingChanges);
     this.handleWaitingCheckIn(checkinWaitingSeconds);
-    this.cdr.markForCheck();
   }
 
   private getCheckInWaitingSeconds(): Promise<number | null> {
@@ -178,31 +176,29 @@ export class NetworkComponent implements OnInit {
 
   private handleWaitingCheckIn(seconds: number | null, isAfterInterfaceCommit = false): void {
     if (seconds !== null) {
-      if (seconds > 0 && this.checkinRemaining === null) {
-        this.checkinRemaining = Math.round(seconds);
+      if (seconds > 0 && this.checkinRemaining() === null) {
+        this.checkinRemaining.set(Math.round(seconds));
         this.checkinInterval = setInterval(() => {
-          if (Number(this.checkinRemaining) > 0) {
-            this.checkinRemaining = Number(this.checkinRemaining) - 1;
+          if (Number(this.checkinRemaining()) > 0) {
+            this.checkinRemaining.set(Number(this.checkinRemaining()) - 1);
           } else {
-            this.checkinRemaining = null;
-            this.checkinWaiting = false;
+            this.checkinRemaining.set(null);
+            this.checkinWaiting.set(false);
             clearInterval(this.checkinInterval);
             this.window.location.reload(); // should just refresh after the timer goes off
           }
-
-          this.cdr.markForCheck();
         }, 1000);
       }
-      this.checkinWaiting = true;
+      this.checkinWaiting.set(true);
     } else {
-      this.checkinWaiting = false;
-      this.checkinRemaining = null;
+      this.checkinWaiting.set(false);
+      this.checkinRemaining.set(null);
       if (this.checkinInterval) {
         clearInterval(this.checkinInterval);
       }
       // Inform user that we have restored the previous network configuration to ensure continued connectivity.
       if (isAfterInterfaceCommit) {
-        this.hasPendingChanges = false;
+        this.hasPendingChanges.set(false);
         this.dialogService.warn(
           this.translate.instant(this.helptext.networkReconnectionIssue),
           this.translate.instant(this.helptext.networkReconnectionIssueText),
@@ -255,7 +251,7 @@ export class NetworkComponent implements OnInit {
             }
 
             this.api
-              .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
+              .call('interface.commit', [{ checkin_timeout: this.checkinTimeout() }])
               .pipe(
                 this.loader.withLoader(),
                 this.errorHandler.withErrorHandler(),
@@ -266,7 +262,6 @@ export class NetworkComponent implements OnInit {
                 this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: false }));
                 this.interfacesStore.loadInterfaces();
                 this.handleWaitingCheckIn(checkInSeconds, true);
-                this.cdr.markForCheck();
               });
           });
       });
@@ -317,11 +312,10 @@ export class NetworkComponent implements OnInit {
         this.snackbar.success(
           this.translate.instant(helptextInterfaces.checkinCompleteMessage),
         );
-        this.hasPendingChanges = false;
-        this.checkinWaiting = false;
+        this.hasPendingChanges.set(false);
+        this.checkinWaiting.set(false);
         clearInterval(this.checkinInterval);
-        this.checkinRemaining = null;
-        this.cdr.markForCheck();
+        this.checkinRemaining.set(null);
       });
   }
 
@@ -349,12 +343,11 @@ export class NetworkComponent implements OnInit {
           .subscribe(() => {
             this.store$.dispatch(networkInterfacesChanged({ commit: false }));
             this.interfacesStore.loadInterfaces();
-            this.hasPendingChanges = false;
-            this.checkinWaiting = false;
+            this.hasPendingChanges.set(false);
+            this.checkinWaiting.set(false);
             this.snackbar.success(
               this.translate.instant(helptextInterfaces.changesRolledBack),
             );
-            this.cdr.markForCheck();
           });
       });
   }

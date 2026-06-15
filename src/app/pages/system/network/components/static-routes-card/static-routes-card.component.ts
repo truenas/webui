@@ -8,7 +8,7 @@ import {
   TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
   tnIconMarker, type TnSortEvent,
 } from '@truenas/ui-components';
-import { filter, tap } from 'rxjs';
+import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -63,7 +63,6 @@ export class StaticRoutesCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   dataProvider: AsyncDataProvider<StaticRoute>;
-  staticRoutes: StaticRoute[] = [];
   protected readonly displayedColumns = ['destination', 'gateway', 'actions'];
 
   protected readonly actions: IconActionConfig<StaticRoute>[] = [
@@ -94,7 +93,6 @@ export class StaticRoutesCardComponent implements OnInit {
 
   ngOnInit(): void {
     const staticRoutes$ = this.api.call('staticroute.query').pipe(
-      tap((staticRoutes) => this.staticRoutes = staticRoutes),
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<StaticRoute>(staticRoutes$);
