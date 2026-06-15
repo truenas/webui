@@ -2,7 +2,8 @@
   <div class="enable-section">
     <tn-checkbox
       [label]="'Auto-check alert class sync on open' | translate"
-      [(ngModel)]="autoCheckEnabled"
+      [ngModel]="autoCheck()"
+      (ngModelChange)="autoCheck.set($event)"
     ></tn-checkbox>
   </div>
 

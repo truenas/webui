@@ -9,12 +9,15 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnAutocompleteComponent, TnAutocompleteOption, TnButtonComponent, TnCheckboxComponent,
-  TnFormFieldComponent, TnInputComponent, TnRadioComponent, TnSelectComponent, TnSelectOption,
+  TnFormFieldComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
+import { Observable, of } from 'rxjs';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { generateUuid } from 'app/helpers/uuid.helper';
+import { RadioOption } from 'app/interfaces/option.interface';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { JobEventBuilderComponent } from 'app/modules/websocket-debug-panel/components/mock-config/job-event-builder/job-event-builder.component';
 import {
   MockConfig, MockEvent, CallErrorData,
@@ -32,10 +35,10 @@ import { PrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/web
     TranslateModule,
     TnFormFieldComponent,
     TnInputComponent,
-    TnRadioComponent,
     TnSelectComponent,
     TnAutocompleteComponent,
     TnCheckboxComponent,
+    IxRadioGroupComponent,
     IxCodeEditorComponent,
     JobEventBuilderComponent,
   ],
@@ -55,10 +58,10 @@ export class MockConfigFormComponent implements OnInit {
 
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
   protected readonly InputType = InputType;
-  protected readonly responseTypeOptions: { label: string; value: 'success' | 'error' }[] = [
+  protected readonly responseTypeOptions: Observable<RadioOption[]> = of([
     { label: 'Success', value: 'success' },
     { label: 'Error', value: 'error' },
-  ];
+  ]);
 
   // Common JSON-RPC error codes
   protected readonly errorCodeOptions: TnAutocompleteOption<number>[] = [

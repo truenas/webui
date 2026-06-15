@@ -52,14 +52,6 @@ export class AlertClassesTabComponent {
     });
   }
 
-  protected get autoCheckEnabled(): boolean {
-    return this.autoCheck();
-  }
-
-  protected set autoCheckEnabled(checked: boolean) {
-    this.autoCheck.set(checked);
-  }
-
   protected runComparison(): void {
     if (this.loading()) return;
     this.loading.set(true);
