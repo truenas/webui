@@ -20,10 +20,7 @@ export class JobProgressDialogRef<T> {
    * (AbortedJobError) or jobFailure.
    */
   afterClosed(): Observable<Job<T>> {
-    const componentInstance = this.dialogRef.componentInstance;
-    if (!componentInstance) {
-      throw new Error('JobProgressDialogRef: componentInstance is not available.');
-    }
+    const componentInstance = this.componentInstance;
     return merge(
       outputToObservable(componentInstance.jobSuccess),
       outputToObservable(componentInstance.jobAborted).pipe(
@@ -35,10 +32,14 @@ export class JobProgressDialogRef<T> {
   }
 
   getDestroyRef(): DestroyRef {
+    return this.componentInstance.destroyRef;
+  }
+
+  private get componentInstance(): JobProgressDialog<T> {
     const componentInstance = this.dialogRef.componentInstance;
     if (!componentInstance) {
       throw new Error('JobProgressDialogRef: componentInstance is not available.');
     }
-    return componentInstance.destroyRef;
+    return componentInstance;
   }
 }

@@ -22,6 +22,7 @@ describe('DeleteUserDialogComponent', () => {
     imports: [
       ReactiveFormsModule,
     ],
+    detectChanges: false,
     providers: [
       mockAuth(),
       mockApi([
@@ -55,6 +56,8 @@ describe('DeleteUserDialogComponent', () => {
   });
 
   it('deletes user when dialog is submitted', async () => {
+    spectator.detectChanges();
+
     expect(spectator.query('.message')).toHaveText(
       'Are you sure you want to delete user "peppa"?',
     );
@@ -74,7 +77,6 @@ describe('DeleteUserDialogComponent', () => {
         users: [1],
       },
     ] as Group[]);
-    spectator.component.ngOnInit();
     spectator.detectChanges();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('group.query', [[['id', '=', 23]]]);
