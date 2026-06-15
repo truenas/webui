@@ -83,13 +83,19 @@ export class UserApiKeysComponent implements OnInit {
   protected readonly emptyIcon = 'mdi-key-outline';
   protected readonly trackById = (_index: number, row: ApiKey): number => row.id;
 
-  private readonly canWriteApiKeys = toSignal(this.authService.hasRole([Role.ApiKeyWrite]), { initialValue: false });
+  private readonly canWriteApiKeys = toSignal(this.authService.hasRole([Role.ApiKeyWrite]));
   private readonly currentUsername = toSignal(
     this.authService.user$.pipe(filter((user) => !!user), map((user) => user.pw_name)),
   );
 
   protected isActionDisabled(row: ApiKey): boolean {
-    return !this.canWriteApiKeys() && row.username !== this.currentUsername();
+    const canWrite = this.canWriteApiKeys();
+    const username = this.currentUsername();
+    // While auth state is still resolving, keep actions enabled (matches legacy behavior).
+    if (canWrite === undefined || username === undefined) {
+      return false;
+    }
+    return !canWrite && row.username !== username;
   }
 
   protected expiresLabel(row: ApiKey): string {
