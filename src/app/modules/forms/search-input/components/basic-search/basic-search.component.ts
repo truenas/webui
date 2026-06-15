@@ -1,13 +1,12 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, Component, ElementRef, input, model, output, Signal, viewChild,
+  ChangeDetectionStrategy, Component, input, model, output, viewChild,
 } from '@angular/core';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatInput } from '@angular/material/input';
-import { MatTooltip } from '@angular/material/tooltip';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TnIconComponent, TnInputComponent, TnTestIdDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 
 @Component({
   selector: 'ix-basic-search',
@@ -16,10 +15,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
-    MatInput,
-    MatTooltip,
-    ReactiveFormsModule,
-    TestDirective,
+    TnInputComponent,
+    TnTooltipDirective,
+    TnTestIdDirective,
     FormsModule,
     TranslateModule,
   ],
@@ -33,7 +31,7 @@ export class BasicSearchComponent implements AfterViewInit {
   readonly queryChange = output<string>();
   readonly runSearch = output();
 
-  private readonly searchControl: Signal<ElementRef<HTMLElement>> = viewChild.required('searchControl', { read: ElementRef });
+  private readonly searchInput = viewChild(TnInputComponent);
 
   ngAfterViewInit(): void {
     this.focusInput();
@@ -47,6 +45,6 @@ export class BasicSearchComponent implements AfterViewInit {
   }
 
   private focusInput(): void {
-    this.searchControl()?.nativeElement?.focus();
+    this.searchInput()?.inputEl()?.nativeElement?.focus();
   }
 }
