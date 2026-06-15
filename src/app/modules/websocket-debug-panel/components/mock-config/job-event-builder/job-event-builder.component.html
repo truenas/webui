@@ -30,61 +30,66 @@
 
           <div class="event-fields">
             <div class="field-row">
-              <ix-input
-                ixTest="delay-input"
-                formControlName="delay"
-                [label]="'Delay (ms)' | translate"
-                [type]="'number'"
-                [required]="true"
-              ></ix-input>
+              <tn-form-field [label]="'Delay (ms)' | translate" [required]="true">
+                <tn-input
+                  testId="delay-input"
+                  formControlName="delay"
+                  [inputType]="InputType.Number"
+                ></tn-input>
+              </tn-form-field>
 
-              <ix-select
-                ixTest="state-select"
-                formControlName="state"
-                [label]="'State' | translate"
-                [options]="stateOptions$"
-                [required]="true"
-              ></ix-select>
+              <tn-form-field [label]="'State' | translate" [required]="true">
+                <tn-select
+                  testId="state-select"
+                  formControlName="state"
+                  [options]="stateOptions"
+                ></tn-select>
+              </tn-form-field>
             </div>
 
-            <ix-input
-              ixTest="description-input"
-              formControlName="description"
-              [label]="'Description' | translate"
-              [required]="true"
-            ></ix-input>
+            <tn-form-field [label]="'Description' | translate" [required]="true">
+              <tn-input
+                testId="description-input"
+                formControlName="description"
+              ></tn-input>
+            </tn-form-field>
 
             <div class="progress-fields">
-              <ix-input
-                ixTest="progress-percent-input"
-                formControlName="progressPercent"
-                [label]="'Progress %' | translate"
-                [type]="'number'"
-              ></ix-input>
+              <tn-form-field [label]="'Progress %' | translate">
+                <tn-input
+                  testId="progress-percent-input"
+                  formControlName="progressPercent"
+                  [inputType]="InputType.Number"
+                ></tn-input>
+              </tn-form-field>
 
-              <ix-input
-                ixTest="progress-description-input"
-                formControlName="progressDescription"
-                [label]="'Progress Description' | translate"
-              ></ix-input>
+              <tn-form-field [label]="'Progress Description' | translate">
+                <tn-input
+                  testId="progress-description-input"
+                  formControlName="progressDescription"
+                ></tn-input>
+              </tn-form-field>
             </div>
 
             @if (isResultVisible(i)) {
-              <ix-textarea
-                ixTest="result-textarea"
-                formControlName="result"
-                [label]="'Result (JSON)' | translate"
-                [rows]="3"
-              ></ix-textarea>
+              <tn-form-field [label]="'Result (JSON)' | translate">
+                <tn-input
+                  testId="result-textarea"
+                  formControlName="result"
+                  [multiline]="true"
+                  [rows]="3"
+                ></tn-input>
+              </tn-form-field>
             }
 
             @if (getEventControl(i).get('state')?.value === 'FAILED') {
-              <ix-input
-                ixTest="error-input"
-                formControlName="error"
-                [label]="'Error Message' | translate"
-                [placeholder]="'Error description' | translate"
-              ></ix-input>
+              <tn-form-field [label]="'Error Message' | translate">
+                <tn-input
+                  testId="error-input"
+                  formControlName="error"
+                  [placeholder]="'Error description' | translate"
+                ></tn-input>
+              </tn-form-field>
             }
           </div>
         </tn-card>

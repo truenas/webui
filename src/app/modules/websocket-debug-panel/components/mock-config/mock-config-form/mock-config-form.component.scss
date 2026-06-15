@@ -22,6 +22,14 @@
     flex-direction: column;
     gap: 8px;
   }
+
+  tn-radio {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: 8px;
+    }
+  }
 }
 
 .response-editor,

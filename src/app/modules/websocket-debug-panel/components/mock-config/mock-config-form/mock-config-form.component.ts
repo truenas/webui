@@ -7,20 +7,14 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
+import {
+  InputType, TnAutocompleteComponent, TnAutocompleteOption, TnButtonComponent, TnCheckboxComponent,
+  TnFormFieldComponent, TnInputComponent, TnRadioComponent, TnSelectComponent, TnSelectOption,
+} from '@truenas/ui-components';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { generateUuid } from 'app/helpers/uuid.helper';
-import { RadioOption, SelectOption } from 'app/interfaces/option.interface';
-import { SimpleComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-combobox-provider';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
-import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { JobEventBuilderComponent } from 'app/modules/websocket-debug-panel/components/mock-config/job-event-builder/job-event-builder.component';
 import {
   MockConfig, MockEvent, CallErrorData,
@@ -36,11 +30,12 @@ import { PrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/web
     ReactiveFormsModule,
     TnButtonComponent,
     TranslateModule,
-    IxInputComponent,
-    IxRadioGroupComponent,
-    IxSelectComponent,
-    IxComboboxComponent,
-    IxCheckboxComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnRadioComponent,
+    TnSelectComponent,
+    TnAutocompleteComponent,
+    TnCheckboxComponent,
     IxCodeEditorComponent,
     JobEventBuilderComponent,
   ],
@@ -59,13 +54,14 @@ export class MockConfigFormComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
-  protected readonly responseTypeOptions: Observable<RadioOption[]> = of([
+  protected readonly InputType = InputType;
+  protected readonly responseTypeOptions: { label: string; value: 'success' | 'error' }[] = [
     { label: 'Success', value: 'success' },
     { label: 'Error', value: 'error' },
-  ]);
+  ];
 
   // Common JSON-RPC error codes
-  protected readonly errorCodeProvider: IxComboboxProvider = new SimpleComboboxProvider([
+  protected readonly errorCodeOptions: TnAutocompleteOption<number>[] = [
     // Standard JSON-RPC 2.0 error codes
     { label: '-32700 - Parse error', value: -32700 },
     { label: '-32600 - Invalid Request', value: -32600 },
@@ -80,10 +76,10 @@ export class MockConfigFormComponent implements OnInit {
     { label: '2 - Not found', value: 2 },
     { label: '3 - Permission denied', value: 3 },
     { label: '22 - Invalid argument', value: 22 },
-  ]);
+  ];
 
   // Common API error names for CallError
-  protected readonly errorNameOptions: Observable<SelectOption[]> = of([
+  protected readonly errorNameOptions: TnSelectOption<string>[] = [
     { label: 'EINVAL - Invalid argument', value: ApiErrorName.Validation },
     { label: 'EACCES - Access denied', value: ApiErrorName.NoAccess },
     { label: 'ENOTAUTHENTICATED - Not authenticated', value: ApiErrorName.NotAuthenticated },
@@ -93,7 +89,7 @@ export class MockConfigFormComponent implements OnInit {
     { label: 'ECONNRESET - Connection reset', value: ApiErrorName.ConnectionReset },
     { label: 'ETIMEDOUT - Connection timed out', value: ApiErrorName.TimedOut },
     { label: 'ENETUNREACH - Network unreachable', value: ApiErrorName.NetworkUnreachable },
-  ]);
+  ];
 
   protected readonly form = this.fb.group({
     methodName: ['', Validators.required],

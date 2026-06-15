@@ -18,6 +18,27 @@
     }
 
 
+    .config-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .config-title {
+        color: var(--fg1);
+        font-size: 14px;
+        font-weight: 500;
+        margin: 0;
+      }
+
+      tn-radio {
+        display: block;
+
+        &:not(:last-child) {
+          margin-bottom: 8px;
+        }
+      }
+    }
+
     .actions {
       border-top: 1px solid var(--lines);
       margin-top: 24px;
