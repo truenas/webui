@@ -1,11 +1,9 @@
 @import 'scss-imports/variables';
 
-:host ::ng-deep tn-list-item .tn-list-item__content {
-  // TEMP: tn-list-item ships row padding/min-height tuned for interactive lists;
-  // this card is a dense key/value summary. Remove once the library exposes a
-  // sizing input for tn-list-item. Tracked under the tn-* migration (NAS-141021).
-  min-height: 0;
-  padding: 0;
+:host ::ng-deep tn-list-item {
+  // tn-list ships no divider input, so restore the per-row separator the card had
+  // before the mat-list migration. Uses the library's own divider colour token.
+  border-bottom: 1px solid var(--tn-lines);
 }
 
 .card {
