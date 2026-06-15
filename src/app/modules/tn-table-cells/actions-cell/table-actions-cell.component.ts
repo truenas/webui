@@ -9,7 +9,7 @@ import {
   TnMenuItemComponent,
   TnMenuTriggerDirective,
 } from '@truenas/ui-components';
-import { Subscription, isObservable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 
@@ -61,8 +61,7 @@ export class TableActionsCellComponent<T = unknown> {
   constructor() {
     this.destroyRef.onDestroy(() => this.hiddenSubscriptions.unsubscribe());
 
-    // Recompute visibility whenever the row or action list changes. `hidden`
-    // may be synchronous or an Observable, mirroring ix-cell-actions-with-menu.
+    // Recompute visibility whenever the row or action list changes.
     effect(() => {
       const row = this.row();
       const actions = this.actions();
@@ -85,15 +84,13 @@ export class TableActionsCellComponent<T = unknown> {
           return;
         }
 
-        const result$ = action.hidden(row);
-        if (isObservable(result$)) {
-          this.hiddenSubscriptions.add(result$.subscribe((shouldHide) => {
-            visible[index] = !shouldHide;
-            publish();
-          }));
-        } else {
-          visible[index] = !result$;
-        }
+        // `hidden` always resolves through an Observable (parity with the
+        // `async` pipe in ix-cell-actions); an out-of-order emission re-publishes
+        // against the index, so it cannot reorder the rendered buttons.
+        this.hiddenSubscriptions.add(action.hidden(row).subscribe((shouldHide) => {
+          visible[index] = !shouldHide;
+          publish();
+        }));
       });
 
       publish();

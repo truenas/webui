@@ -29,9 +29,9 @@ import { FailedJobError } from 'app/services/errors/error.classes';
  * `<button>` styled locally rather than a `tn-*` element. The running-job log
  * viewer is still opened through `MatDialog` (as in the original
  * `ix-cell-state-button` cell), pending the dialog migration (NAS-141022).
- * Presentational inputs only; the live job state arrives via the bound
- * `[state]`/`[job]` inputs (the host card updates the row), and the running-job
- * dialog stream is built on demand.
+ * The live job state arrives via the bound `[state]`/`[job]` inputs (the host
+ * card updates the row); the cell itself handles the click, opening the
+ * running-job dialog or the error / logs modals as `ix-cell-state-button` did.
  */
 @Component({
   selector: 'ix-task-state-cell',
@@ -115,11 +115,6 @@ export class TaskStateCellComponent {
   protected onButtonClick(): void {
     const state = this.state();
     const job = this.job();
-
-    if (!state) {
-      this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
-      return;
-    }
 
     if (state === JobState.Running) {
       this.showJobDialog();

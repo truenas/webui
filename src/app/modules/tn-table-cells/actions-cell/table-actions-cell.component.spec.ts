@@ -80,4 +80,14 @@ describe('TableActionsCellComponent', () => {
     expect(spectator.query('[data-test="button-card-smb-share-smb123-mdi-pencil-row-action"]')).not.toBeNull();
     expect(spectator.query('[data-test="button-card-smb-share-smb123-more-action"]')).toBeNull();
   });
+
+  it('keeps an action visible when its async hidden() resolves to false', async () => {
+    setup([editAction, { ...deleteAction, hidden: () => of(false) }]);
+    spectator.detectChanges();
+
+    // Both actions stay visible, so they collapse behind the menu trigger.
+    spectator.click('[data-test="button-card-smb-share-smb123-more-action"]');
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    expect(await menu.getItemLabels()).toEqual(['Edit', 'Delete']);
+  });
 });
