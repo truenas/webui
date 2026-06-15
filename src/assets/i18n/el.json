@@ -232,7 +232,7 @@
   "Are you sure you want to cancel this data migration? Data already transferred will remain at its destination.": "",
   "Are you sure you want to clear two-factor authentication settings for \"{user}\" user?": "",
   "Are you sure you want to delete <b>{name}</b> Reporting Exporter?": "",
-  "Are you sure you want to delete cronjob <b>\"{name}\"</b>?": "Είστε σίγουροι ότι θέλετε να διαγράψετε το cronjob <b>\«{name}\»</b>;",
+  "Are you sure you want to delete cronjob <b>\"{name}\"</b>?": "Είστε σίγουροι ότι θέλετε να διαγράψετε το cronjob <b>\"{name}\"</b>;",
   "Are you sure you want to delete NFS Share <b>\"{path}\"</b>?": "",
   "Are you sure you want to delete SMB Share <b>\"{name}\"</b>?": "",
   "Are you sure you want to delete static route <b>\"{name}\"</b>?": "",
