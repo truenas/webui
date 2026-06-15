@@ -5,7 +5,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnIconComponent, TnIconButtonComponent, TnCheckboxComponent, TnInputComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
@@ -14,7 +14,6 @@ import { map, shareReplay } from 'rxjs/operators';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { scrollToBottomDelayMs } from 'app/modules/websocket-debug-panel/constants';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { clearMessages, createMockFromResponse, toggleDuplicateNotifications, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
@@ -53,6 +52,7 @@ export class MessageListComponent implements AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
   private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
 
   @ViewChild('messageViewport', { read: ElementRef }) protected messageViewport?: ElementRef<HTMLDivElement>;
   protected messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
@@ -110,10 +110,10 @@ export class MessageListComponent implements AfterViewInit {
     const messageContent = JSON.stringify(message.message, null, 2);
     navigator.clipboard.writeText(messageContent)
       .then(() => {
-        this.snackbar.success(ignoreTranslation('Message copied to clipboard'));
+        this.snackbar.success(this.translate.instant('Message copied to clipboard'));
       })
       .catch(() => {
-        this.snackbar.error(ignoreTranslation('Failed to copy message to clipboard'));
+        this.snackbar.error(this.translate.instant('Failed to copy message to clipboard'));
       });
   }
 

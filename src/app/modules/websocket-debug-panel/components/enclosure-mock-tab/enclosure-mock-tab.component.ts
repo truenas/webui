@@ -7,15 +7,19 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnRadioComponent, TnSelectComponent, TnSelectOption,
-} from '@truenas/ui-components';
+import { TnButtonComponent } from '@truenas/ui-components';
+import { of } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import {
   MockEnclosureScenario,
   mockEnclosureScenarioLabels,
 } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { setEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { AppState } from 'app/store';
@@ -26,11 +30,11 @@ import { AppState } from 'app/store';
   imports: [
     ReactiveFormsModule,
     TnButtonComponent,
-    TnCheckboxComponent,
-    TnFormFieldComponent,
-    TnRadioComponent,
-    TnSelectComponent,
     TranslateModule,
+    IxSelectComponent,
+    IxFieldsetComponent,
+    IxRadioGroupComponent,
+    IxCheckboxComponent,
   ],
   templateUrl: './enclosure-mock-tab.component.html',
   styleUrls: ['./enclosure-mock-tab.component.scss'],
@@ -50,26 +54,24 @@ export class EnclosureMockTabComponent implements OnInit {
     scenario: [MockEnclosureScenario.FillSomeSlots, Validators.required],
   });
 
-  protected readonly controllerOptions: TnSelectOption<string>[] = enclosureMocks
+  protected readonly controllerOptions = of(enclosureMocks
     .filter((mock) => mock.controller)
     .map((mock) => ({
       label: mock.model,
       value: mock.model,
-    }));
+    }))).pipe(shareReplay({ bufferSize: 1, refCount: false }));
 
-  protected readonly expansionOptions: TnSelectOption<string>[] = enclosureMocks
+  protected readonly expansionOptions = of(enclosureMocks
     .filter((mock) => !mock.controller)
     .map((mock) => ({
       label: mock.model,
       value: mock.model,
-    }));
+    }))).pipe(shareReplay({ bufferSize: 1, refCount: false }));
 
-  protected readonly scenarioOptions: TnSelectOption<MockEnclosureScenario>[] = Array
-    .from(mockEnclosureScenarioLabels)
-    .map(([value, label]) => ({
-      label,
-      value,
-    }));
+  protected readonly scenarioOptions = of(Array.from(mockEnclosureScenarioLabels).map(([value, label]) => ({
+    label,
+    value,
+  })));
 
   protected getScenarioLabel(scenario: MockEnclosureScenario): string {
     const scenarioOption = Array.from(mockEnclosureScenarioLabels).find(([value]) => value === scenario);

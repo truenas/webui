@@ -18,22 +18,6 @@
     }
 
 
-    .fieldset {
-      border: 1px solid var(--lines);
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      padding: 16px;
-
-      .fieldset-title {
-        color: var(--fg1);
-        font-size: 14px;
-        font-weight: 500;
-        margin: 0;
-      }
-    }
-
     .actions {
       border-top: 1px solid var(--lines);
       margin-top: 24px;

@@ -3,6 +3,7 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { firstValueFrom } from 'rxjs';
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { JobEventBuilderComponent } from './job-event-builder.component';
 
@@ -341,8 +342,9 @@ describe('JobEventBuilderComponent', () => {
   });
 
   describe('state options', () => {
-    it('should provide correct state options', () => {
-      expect(spectator.component['stateOptions']).toEqual([
+    it('should provide correct state options', async () => {
+      const options = await firstValueFrom(spectator.component['stateOptions$']);
+      expect(options).toEqual([
         { label: 'RUNNING', value: 'RUNNING' },
         { label: 'SUCCESS', value: 'SUCCESS' },
         { label: 'FAILED', value: 'FAILED' },

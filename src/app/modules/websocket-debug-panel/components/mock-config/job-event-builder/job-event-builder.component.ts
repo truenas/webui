@@ -7,11 +7,14 @@ import {
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  InputType,
-  TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnFormFieldComponent, TnIconButtonComponent,
-  TnInputComponent, TnSelectComponent, TnSelectOption,
+  TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnIconButtonComponent,
 } from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { SelectOption } from 'app/interfaces/option.interface';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websocket-debug-panel/utils/type-guards';
 
@@ -23,11 +26,11 @@ import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websoc
     TnCardComponent,
     TnCardHeaderDirective,
     TnButtonComponent,
-    TnFormFieldComponent,
-    TnInputComponent,
-    TnSelectComponent,
     TranslateModule,
     TnIconButtonComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    IxTextareaComponent,
   ],
   templateUrl: './job-event-builder.component.html',
   styleUrls: ['./job-event-builder.component.scss'],
@@ -42,15 +45,13 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
   private destroyRef = inject(DestroyRef);
   private isUpdatingFromInput = false;
 
-  protected readonly InputType = InputType;
-
-  protected readonly stateOptions: TnSelectOption<string>[] = [
+  protected readonly stateOptions$ = of<SelectOption[]>([
     { label: 'RUNNING', value: 'RUNNING' },
     { label: 'SUCCESS', value: 'SUCCESS' },
     { label: 'FAILED', value: 'FAILED' },
     { label: 'ABORTED', value: 'ABORTED' },
     { label: 'WAITING', value: 'WAITING' },
-  ];
+  ]);
 
   protected form = this.fb.group({
     events: this.fb.array<FormGroup>([]),

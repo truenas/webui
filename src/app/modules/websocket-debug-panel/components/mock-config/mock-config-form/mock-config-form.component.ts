@@ -7,15 +7,20 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  InputType,
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent,
-  TnSelectComponent, TnSelectOption,
-} from '@truenas/ui-components';
+import { TnButtonComponent } from '@truenas/ui-components';
+import { Observable, of } from 'rxjs';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { generateUuid } from 'app/helpers/uuid.helper';
+import { RadioOption, SelectOption } from 'app/interfaces/option.interface';
+import { SimpleComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-combobox-provider';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
+import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { JobEventBuilderComponent } from 'app/modules/websocket-debug-panel/components/mock-config/job-event-builder/job-event-builder.component';
 import {
   MockConfig, MockEvent, CallErrorData,
@@ -30,12 +35,12 @@ import { PrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/web
   imports: [
     ReactiveFormsModule,
     TnButtonComponent,
-    TnCheckboxComponent,
-    TnFormFieldComponent,
-    TnInputComponent,
-    TnRadioComponent,
-    TnSelectComponent,
     TranslateModule,
+    IxInputComponent,
+    IxRadioGroupComponent,
+    IxSelectComponent,
+    IxComboboxComponent,
+    IxCheckboxComponent,
     IxCodeEditorComponent,
     JobEventBuilderComponent,
   ],
@@ -54,14 +59,31 @@ export class MockConfigFormComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
-  protected readonly InputType = InputType;
-  protected readonly responseTypeOptions: TnSelectOption<'success' | 'error'>[] = [
+  protected readonly responseTypeOptions: Observable<RadioOption[]> = of([
     { label: 'Success', value: 'success' },
     { label: 'Error', value: 'error' },
-  ];
+  ]);
+
+  // Common JSON-RPC error codes
+  protected readonly errorCodeProvider: IxComboboxProvider = new SimpleComboboxProvider([
+    // Standard JSON-RPC 2.0 error codes
+    { label: '-32700 - Parse error', value: -32700 },
+    { label: '-32600 - Invalid Request', value: -32600 },
+    { label: '-32601 - Method not found', value: -32601 },
+    { label: '-32602 - Invalid params', value: -32602 },
+    { label: '-32603 - Internal error', value: -32603 },
+    // Server errors
+    { label: '-32000 - Server error (generic)', value: -32000 },
+    { label: '-32001 - CallError', value: JsonRpcErrorCode.CallError },
+    // Application specific codes
+    { label: '1 - General error', value: 1 },
+    { label: '2 - Not found', value: 2 },
+    { label: '3 - Permission denied', value: 3 },
+    { label: '22 - Invalid argument', value: 22 },
+  ]);
 
   // Common API error names for CallError
-  protected readonly errorNameOptions: TnSelectOption<ApiErrorName>[] = [
+  protected readonly errorNameOptions: Observable<SelectOption[]> = of([
     { label: 'EINVAL - Invalid argument', value: ApiErrorName.Validation },
     { label: 'EACCES - Access denied', value: ApiErrorName.NoAccess },
     { label: 'ENOTAUTHENTICATED - Not authenticated', value: ApiErrorName.NotAuthenticated },
@@ -71,7 +93,7 @@ export class MockConfigFormComponent implements OnInit {
     { label: 'ECONNRESET - Connection reset', value: ApiErrorName.ConnectionReset },
     { label: 'ETIMEDOUT - Connection timed out', value: ApiErrorName.TimedOut },
     { label: 'ENETUNREACH - Network unreachable', value: ApiErrorName.NetworkUnreachable },
-  ];
+  ]);
 
   protected readonly form = this.fb.group({
     methodName: ['', Validators.required],
@@ -170,7 +192,7 @@ export class MockConfigFormComponent implements OnInit {
     this.form.controls.errorCode.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((code) => {
-        const isCallErr = this.toNumber(code) === (JsonRpcErrorCode.CallError as number);
+        const isCallErr = code === (JsonRpcErrorCode.CallError as number);
         if (isCallErr !== this.form.controls.isCallError.value) {
           this.form.patchValue({ isCallError: isCallErr });
         }
@@ -181,7 +203,7 @@ export class MockConfigFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isCallError) => {
         if (isCallError) {
-          if (this.toNumber(this.form.controls.errorCode.value) !== (JsonRpcErrorCode.CallError as number)) {
+          if (this.form.controls.errorCode.value !== (JsonRpcErrorCode.CallError as number)) {
             this.form.patchValue({ errorCode: JsonRpcErrorCode.CallError });
           }
           // Set default values for CallError if fields are empty
@@ -192,7 +214,7 @@ export class MockConfigFormComponent implements OnInit {
           if (!this.form.controls.callErrorErrname.value) {
             updates.callErrorErrname = ApiErrorName.Validation; // Default to EINVAL
           }
-          if (!this.toNumber(this.form.controls.callErrorCode.value)) {
+          if (!this.form.controls.callErrorCode.value) {
             updates.callErrorCode = 22; // EINVAL error code
           }
           if (!this.form.controls.callErrorReason.value) {
@@ -269,7 +291,7 @@ export class MockConfigFormComponent implements OnInit {
 
         const callErrorData: CallErrorData = {
           errname: formValue.callErrorErrname || 'EINVAL',
-          error: this.toNumber(formValue.callErrorCode),
+          error: formValue.callErrorCode ?? 0,
           reason: formValue.callErrorReason || 'Error occurred',
           extra: formValue.callErrorExtra ? this.parseJson(formValue.callErrorExtra) : null,
           trace,
@@ -289,16 +311,16 @@ export class MockConfigFormComponent implements OnInit {
         ? {
             type: 'error',
             error: {
-              code: this.toNumber(formValue.errorCode),
+              code: formValue.errorCode ?? 0,
               message: formValue.errorMessage ?? '',
               data: errorData,
             },
-            delay: this.toNumber(formValue.responseDelay),
+            delay: formValue.responseDelay ?? 0,
           }
         : {
             type: 'success',
             result: this.parseJson(formValue.responseResult ?? ''),
-            delay: this.toNumber(formValue.responseDelay),
+            delay: formValue.responseDelay ?? 0,
           },
       events: formValue.events && formValue.events.length > 0 ? formValue.events : undefined,
     };
@@ -333,13 +355,6 @@ export class MockConfigFormComponent implements OnInit {
         },
       };
     }
-  }
-
-  // Numeric tn-inputs emit a number (or null when cleared); coerce defensively so a
-  // null/blank value becomes 0 rather than NaN before it reaches the mock config.
-  private toNumber(value: unknown): number {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : 0;
   }
 
   private stringifyJson(value: unknown): string {

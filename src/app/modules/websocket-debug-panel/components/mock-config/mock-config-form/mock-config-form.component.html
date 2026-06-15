@@ -1,41 +1,34 @@
 <div class="mock-config-form">
   <div class="form-content">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <tn-form-field [label]="'Method Name' | translate" [required]="true">
-        <tn-input
-          testId="method-name-input"
-          formControlName="methodName"
-          [placeholder]="'e.g., pool.create' | translate"
-        ></tn-input>
-      </tn-form-field>
-
-      <tn-form-field
+      <ix-input
+        ixTest="method-name-input"
+        formControlName="methodName"
+        [label]="'Method Name' | translate"
+        [placeholder]="'e.g., pool.create' | translate"
+        [required]="true"
+      ></ix-input>
+      <ix-input
+        ixTest="message-pattern-input"
+        formControlName="messagePattern"
         [label]="'Message Pattern (Optional)' | translate"
-        [hint]="'Regex pattern to match against message content' | translate">
-        <tn-input
-          testId="message-pattern-input"
-          formControlName="messagePattern"
-        ></tn-input>
-      </tn-form-field>
+        [hint]="'Regex pattern to match against message content' | translate"
+      ></ix-input>
 
-      <tn-form-field [label]="'Response Type' | translate" [required]="true">
-        @for (option of responseTypeOptions; track option.value) {
-          <tn-radio
-            name="responseType"
-            formControlName="responseType"
-            [value]="option.value"
-            [label]="option.label | translate"
-            [testId]="'response-type-' + option.value"
-          ></tn-radio>
-        }
-      </tn-form-field>
+      <ix-radio-group
+        ixTest="response-type-radio"
+        formControlName="responseType"
+        [label]="'Response Type' | translate"
+        [options]="responseTypeOptions"
+        [required]="true"
+      ></ix-radio-group>
 
       @if (isErrorMode) {
-        <tn-checkbox
-          testId="is-call-error-checkbox"
+        <ix-checkbox
+          ixTest="is-call-error-checkbox"
           formControlName="isCallError"
           [label]="'Configure as CallError' | translate"
-        ></tn-checkbox>
+        ></ix-checkbox>
       }
 
       @if (!isErrorMode) {
@@ -49,55 +42,44 @@
       }
 
       @if (isErrorMode) {
-        <tn-form-field
+        <ix-combobox
+          ixTest="error-code-input"
+          formControlName="errorCode"
           [label]="'Error Code' | translate"
           [required]="true"
-          [hint]="'Standard JSON-RPC codes: -32700 Parse error, -32600 Invalid request, -32601 Method not found, -32602 Invalid params, -32603 Internal error; -32001 = CallError. Custom codes allowed.' | translate">
-          <tn-input
-            testId="error-code-input"
-            formControlName="errorCode"
-            [inputType]="InputType.Number"
-            [allowDecimals]="false"
-          ></tn-input>
-        </tn-form-field>
-        <tn-form-field
+          [hint]="'Select a standard code or enter a custom value' | translate"
+          [provider]="errorCodeProvider"
+          [allowCustomValue]="true"
+        ></ix-combobox>
+        <ix-input
+          ixTest="error-message-input"
+          formControlName="errorMessage"
           [label]="'Error Message' | translate"
           [required]="true"
-          [hint]="'Human-readable error message' | translate">
-          <tn-input
-            testId="error-message-input"
-            formControlName="errorMessage"
-          ></tn-input>
-        </tn-form-field>
+          [hint]="'Human-readable error message' | translate"
+        ></ix-input>
 
         @if (isCallErrorMode) {
-          <tn-form-field
+          <ix-select
+            ixTest="call-error-errname-select"
+            formControlName="callErrorErrname"
             [label]="'Error Name (errname)' | translate"
-            [hint]="'Standard error name (e.g., EINVAL, EACCES)' | translate">
-            <tn-select
-              testId="call-error-errname-select"
-              formControlName="callErrorErrname"
-              [options]="errorNameOptions"
-            ></tn-select>
-          </tn-form-field>
-          <tn-form-field
+            [options]="errorNameOptions"
+            [hint]="'Standard error name (e.g., EINVAL, EACCES)' | translate"
+          ></ix-select>
+          <ix-input
+            ixTest="call-error-code-input"
+            formControlName="callErrorCode"
+            type="number"
             [label]="'Error Code (error)' | translate"
-            [hint]="'Integer error code (e.g., 22 for EINVAL, 13 for EACCES)' | translate">
-            <tn-input
-              testId="call-error-code-input"
-              formControlName="callErrorCode"
-              [inputType]="InputType.Number"
-              [allowDecimals]="false"
-            ></tn-input>
-          </tn-form-field>
-          <tn-form-field
+            [hint]="'Integer error code (e.g., 22 for EINVAL, 13 for EACCES)' | translate"
+          ></ix-input>
+          <ix-input
+            ixTest="call-error-reason-input"
+            formControlName="callErrorReason"
             [label]="'Error Reason' | translate"
-            [hint]="'Human-readable reason for the error' | translate">
-            <tn-input
-              testId="call-error-reason-input"
-              formControlName="callErrorReason"
-            ></tn-input>
-          </tn-form-field>
+            [hint]="'Human-readable reason for the error' | translate"
+          ></ix-input>
           <ix-code-editor
             ixTest="call-error-extra-textarea"
             formControlName="callErrorExtra"
@@ -123,17 +105,14 @@
         }
       }
 
-      <tn-form-field
+      <ix-input
+        ixTest="response-delay-input"
+        formControlName="responseDelay"
+        type="number"
         [label]="'Response Delay (ms)' | translate"
-        [hint]="'Delay in milliseconds before returning the response' | translate">
-        <tn-input
-          testId="response-delay-input"
-          formControlName="responseDelay"
-          [inputType]="InputType.Number"
-          [allowDecimals]="false"
-          [placeholder]="'0' | translate"
-        ></tn-input>
-      </tn-form-field>
+        [placeholder]="'0' | translate"
+        [hint]="'Delay in milliseconds before returning the response' | translate"
+      ></ix-input>
 
       <div class="events-section">
         <label>{{ 'Events (Optional)' | translate }}</label>

@@ -41,11 +41,11 @@
         gap: 8px;
         width: 100%;
 
-        tn-form-field:first-child {
+        ix-input:first-child {
           width: 150px;
         }
 
-        tn-form-field:last-child {
+        ix-input:last-child {
           flex: 1;
         }
       }
