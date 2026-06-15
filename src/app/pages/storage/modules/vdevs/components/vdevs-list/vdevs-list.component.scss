@@ -5,6 +5,8 @@
 
 
 .disk-tree {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   border-top: 2px solid var(--lines);
 }
 
@@ -25,4 +27,9 @@
 
 .table-container {
   max-width: none;
+}
+
+.item-search {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }

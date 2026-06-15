@@ -60,13 +60,14 @@ describe('HardwareDiskEncryptionComponent', () => {
 
   describe('no SED support', () => {
     beforeEach(() => {
-      store$.overrideSelector(selectIsEnterprise, true);
+      // Non-enterprise with no per-disk and no global SED password => hasSedSupport() is false.
+      store$.overrideSelector(selectIsEnterprise, false);
       store$.refreshState();
       spectator.detectChanges();
     });
 
     it('checks no hardware disk encryption support', () => {
-      expect(spectator.query('.mat-card')).not.toExist();
+      expect(spectator.query('tn-card')).not.toExist();
     });
   });
 

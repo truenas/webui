@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -104,14 +104,14 @@ describe('DiskInfoCardComponent', () => {
   });
 
   it('opens slide to edit Disk when clicks Edit button', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { data: disk });
   });
 
   it('opens a ReplaceDiskDialogComponent when clicks Replace button', async () => {
-    const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Replace' }));
+    const replaceButton = await loader.getHarness(TnButtonHarness.with({ label: 'Replace' }));
     await replaceButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplaceDiskDialog, {
