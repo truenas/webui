@@ -1,0 +1,17 @@
+@import 'scss-imports/variables';
+
+:host {
+  // The tn-table cell content is a flex row; push the actions to the far right
+  // of the cell (auto margin absorbs the free space on a flex item).
+  margin-left: auto;
+}
+
+.actions {
+  display: flex;
+  gap: 0;
+  justify-content: flex-end;
+
+  @media(max-width: $breakpoint-sm) {
+    flex-wrap: wrap;
+  }
+}

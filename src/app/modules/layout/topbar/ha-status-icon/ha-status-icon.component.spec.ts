@@ -1,6 +1,9 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
@@ -11,6 +14,7 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
 
 describe('HaStatusIconComponent', () => {
   let spectator: Spectator<HaStatusIconComponent>;
+  let loader: HarnessLoader;
   let mockStore$: MockStore;
   const createComponent = createComponentFactory({
     component: HaStatusIconComponent,
@@ -36,14 +40,16 @@ describe('HaStatusIconComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     mockStore$ = spectator.inject(MockStore);
   });
 
-  it('shows an icon when HA is enabled', () => {
-    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'tn-ha-enabled');
+  it('shows an icon when HA is enabled', async () => {
+    const button = await loader.getHarness(TnIconButtonHarness);
+    expect(await button.getName()).toBe('tn-ha-enabled');
   });
 
-  it('shows a reconnecting icon when HA disabled reason is NoSystemReady', () => {
+  it('shows a reconnecting icon when HA disabled reason is NoSystemReady', async () => {
     mockStore$.overrideSelector(selectHaStatus, {
       hasHa: false,
       reasons: [FailoverDisabledReason.NoSystemReady],
@@ -51,10 +57,11 @@ describe('HaStatusIconComponent', () => {
     mockStore$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'tn-ha-reconnecting');
+    const button = await loader.getHarness(TnIconButtonHarness);
+    expect(await button.getName()).toBe('tn-ha-reconnecting');
   });
 
-  it('shows an HA disabled icon when HA is disabled', () => {
+  it('shows an HA disabled icon when HA is disabled', async () => {
     mockStore$.overrideSelector(selectHaStatus, {
       hasHa: false,
       reasons: [FailoverDisabledReason.MismatchDisks],
@@ -62,11 +69,13 @@ describe('HaStatusIconComponent', () => {
     mockStore$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'tn-ha-disabled');
+    const button = await loader.getHarness(TnIconButtonHarness);
+    expect(await button.getName()).toBe('tn-ha-disabled');
   });
 
-  it('opens status popover when icon is clicked', () => {
-    spectator.click('button');
+  it('opens status popover when icon is clicked', async () => {
+    const button = await loader.getHarness(TnIconButtonHarness);
+    await button.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
       HaStatusPopoverComponent,

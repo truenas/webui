@@ -20,6 +20,10 @@ const projectOverrides = {
 };
 
 export default [
+  {
+    // Generated test coverage reports; not ignored by the base config.
+    ignores: ['coverage/'],
+  },
   ...baseConfig,
   projectOverrides,
 ];

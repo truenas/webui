@@ -3,9 +3,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -19,7 +18,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -31,21 +30,19 @@ import { ApiService } from 'app/modules/websocket/api.service';
   standalone: true,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxCheckboxComponent,
     IxSelectComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
     RequiresRolesDirective,
   ],
 })
-export class ServiceWebshareComponent implements OnInit {
-  protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
+export class ServiceWebshareComponent extends SidePanelForm implements OnInit {
+  readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -53,11 +50,10 @@ export class ServiceWebshareComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject(SlideInRef<undefined, boolean>);
 
-  protected isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     search: [false],
     passkey: [WebSharePasskey.Disabled, Validators.required],
   });
@@ -65,11 +61,8 @@ export class ServiceWebshareComponent implements OnInit {
   readonly helptext = helptextServiceWebshare;
   readonly passkeyOptions$ = of(mapToOptions(webSharePasskeyLabels, this.translate));
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
@@ -96,7 +89,7 @@ export class ServiceWebshareComponent implements OnInit {
       next: () => {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Service configuration saved'));
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

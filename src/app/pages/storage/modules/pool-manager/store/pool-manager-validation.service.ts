@@ -351,7 +351,7 @@ export class PoolManagerValidationService {
 
     if (Number(topologyCategory.width) < 10) {
       errors.push({
-        text: this.translate.instant('In order for dRAID to overweight its benefits over RaidZ the minimum recommended number of disks per dRAID vdev is 10.'),
+        text: this.translate.instant('For dRAID\'s benefits to outweigh those of RaidZ, we recommend at least 10 disks per dRAID vdev.'),
         severity: PoolCreationSeverity.Warning,
         step: PoolCreationWizardStep.Data,
       });

@@ -11,28 +11,45 @@
         min-width: 96.5%;
       }
     }
-
-    form {
-      padding: 0;
-    }
-  }
-
-  mat-dialog-content {
-    padding: 0;
   }
 }
 
-.close-feedback-dialog {
-  position: absolute;
-  right: 16px;
-  top: 24px;
+.feedback-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .feedback-type {
-  margin-left: 24px;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.feedback-type__label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+// The shell renders its own close (X) button, which calls dialogRef.close()
+// directly and so bypasses dialogRef.disableClose (which still covers Escape
+// and backdrop clicks). Until @truenas/ui-components exposes a supported
+// `disableClose` / `showCloseButton` input on tn-dialog-shell, we hide the
+// button while a request is in flight by targeting its internal class.
+//
+// `visibility: hidden` keeps the header layout stable and removes the button
+// from the tab order and accessibility tree (unlike `pointer-events: none`,
+// which leaves it keyboard-focusable). The `pointer-events: none` is a
+// belt-and-braces guard so even a synthetic click from extensions/tests can't
+// fire it.
+// TEMP: reaches into a @truenas/ui-components internal class; remove once
+// tn-dialog-shell exposes a supported `disableClose` / `showCloseButton` input.
+:host(.loading) ::ng-deep .tn-dialog__close {
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .placeholder {
   min-height: 350px;
-  padding: 15px 24px;
 }

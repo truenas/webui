@@ -1,16 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { AutofillMonitor } from '@angular/cdk/text-field';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
+import { TnBannerHarness, TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { LoginExResponse, LoginExResponseType, LoginSuccessResponse } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
@@ -18,7 +16,6 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 describe('SigninFormComponent', () => {
   let spectator: Spectator<SigninFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: SigninFormComponent,
     imports: [
@@ -33,12 +30,6 @@ describe('SigninFormComponent', () => {
       mockApi([
         mockCall('auth.login_ex', { response_type: LoginExResponseType.Success } as LoginSuccessResponse),
       ]),
-      mockProvider(TranslateService, {
-        instant: jest.fn((key: string) => key),
-        get: jest.fn((key: string) => of(key)),
-        stream: jest.fn((key: string) => of(key)),
-        currentLang: 'en',
-      }),
       mockProvider(SnackbarService),
       mockProvider(SigninStore, {
         setLoadingState: jest.fn(),
@@ -53,16 +44,10 @@ describe('SigninFormComponent', () => {
             : 'Wrong username or password. Please try again.';
         }),
       }),
-      mockProvider(AutofillMonitor, {
-        monitor: jest.fn(() => of({ isAutofilled: true })),
-      }),
-      mockProvider(TranslateService, {
-        instant: jest.fn((key) => key),
-      }),
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         disabled: false,
@@ -85,22 +70,37 @@ describe('SigninFormComponent', () => {
     });
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
+  });
+
+
+  async function fillField(name: string, value: string): Promise<void> {
+    const input = await loader.getHarness(TnInputHarness.with({ name }));
+    await input.setValue(value);
+  }
+
+  it('shows insecure-connection warning banner when not on https', async () => {
+    const banner = await loader.getHarness(
+      TnBannerHarness.with({ textContains: /Connection is insecure/ }),
+    );
+    expect(await banner.getText()).toContain('You are using an insecure connection. Switch to HTTPS for secure access.');
+  });
+
+  it('toggles password visibility via the suffix action', async () => {
+    const password = await loader.getHarness(TnInputHarness.with({ name: 'password' }));
+    expect(await (await password.getSuffixIcon())!.getName()).toBe('mdi-eye-off');
+
+    await password.clickSuffixAction();
+
+    expect(await (await password.getSuffixIcon())!.getName()).toBe('mdi-eye');
   });
 
   it('logs user in and calls handleSuccessfulLogin on success', async () => {
-    await form.fillForm({
-      Username: 'root',
-      Password: '12345678',
-    });
+    await fillField('username', 'root');
+    await fillField('password', '12345678');
 
-    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+    const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }));
     await loginButton.click();
 
-    // Wait for async operations to complete
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 50);
-    });
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
@@ -122,17 +122,11 @@ describe('SigninFormComponent', () => {
         } as LoginExResponse,
       }));
 
-      await form.fillForm({
-        Username: 'test',
-        Password: 'test',
-      });
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+      await fillField('username', 'test');
+      await fillField('password', 'test');
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }));
       await loginButton.click();
 
-      // Wait for async operations to complete
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 50);
-      });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
@@ -148,23 +142,19 @@ describe('SigninFormComponent', () => {
         loginResponse: { response_type: LoginExResponseType.Success } as LoginExResponse,
       }));
 
-      await form.fillForm({
-        Username: 'test',
-        Password: 'wrong',
-      });
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+      await fillField('username', 'test');
+      await fillField('password', 'wrong');
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }));
       await loginButton.click();
 
-      // Wait for async operations to complete
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 50);
-      });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       expect(signinStore.setLoadingState).toHaveBeenCalledWith(false);
       expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoToken);
       expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Wrong username or password. Please try again.');
+
+      spectator.detectChanges();
       expect(spectator.query('.error p')).toHaveText('Wrong username or password. Please try again.');
     });
 
@@ -181,17 +171,11 @@ describe('SigninFormComponent', () => {
         'Login denied. Please ensure proper roles have been granted to the user.',
       );
 
-      await form.fillForm({
-        Username: 'test',
-        Password: 'test',
-      });
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+      await fillField('username', 'test');
+      await fillField('password', 'test');
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }));
       await loginButton.click();
 
-      // Wait for async operations to complete
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 50);
-      });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
@@ -211,22 +195,21 @@ describe('SigninFormComponent', () => {
         } as LoginExResponse,
       }));
 
-      await form.fillForm({
-        Username: 'testuser',
-        Password: 'testpass',
-      });
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+      await fillField('username', 'testuser');
+      await fillField('password', 'testpass');
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }));
       await loginButton.click();
 
-      // Wait for async operations to complete
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 50);
-      });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       expect(spectator.component.form.controls.otp.enabled).toBe(true);
       expect(spectator.component.form.value.password).toBe('');
+
+      const otpBanner = await loader.getHarness(
+        TnBannerHarness.with({ textContains: /Enter one-time password/ }),
+      );
+      expect(await otpBanner.getText()).toContain('2FA has been configured for this account. Enter the OTP to continue.');
     });
 
     it('handles failed OTP login', async () => {
@@ -241,17 +224,12 @@ describe('SigninFormComponent', () => {
         } as LoginExResponse,
       }));
 
-      await form.fillForm({
-        Username: 'testuser',
-        Password: 'testpass',
-      });
-      await (await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }))).click();
+      await fillField('username', 'testuser');
+      await fillField('password', 'testpass');
+      await (await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }))).click();
 
-      // Wait for the component to update and show OTP field
       spectator.detectChanges();
-
-      // Get a fresh form harness since the form structure has changed
-      form = await loader.getHarness(IxFormHarness);
+      await spectator.fixture.whenStable();
 
       // Now test OTP failure
       jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
@@ -259,8 +237,8 @@ describe('SigninFormComponent', () => {
         loginResponse: { response_type: LoginExResponseType.Success } as LoginExResponse,
       }));
 
-      await form.fillForm({ 'Two-Factor Authentication Code': '123456' });
-      await (await loader.getHarness(MatButtonHarness.with({ text: 'Proceed' }))).click();
+      await fillField('otp', '123456');
+      await (await loader.getHarness(TnButtonHarness.with({ label: 'Proceed' }))).click();
 
       expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoAccess, true);
       expect(spectator.component.form.value.otp).toBe('');
