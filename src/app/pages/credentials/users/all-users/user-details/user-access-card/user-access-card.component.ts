@@ -2,15 +2,11 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardActions, MatCardContent, MatCardHeader,
-  MatCardTitle,
-} from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnIconComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -40,14 +36,10 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   styleUrls: ['./user-access-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatCard,
+    TnButtonComponent,
+    TnCardComponent,
     TnIconComponent,
-    MatCardTitle,
-    MatCardHeader,
-    MatCardActions,
-    MatCardContent,
-    MatTooltip,
+    TnTooltipDirective,
     TranslateModule,
     RequiresRolesDirective,
     TestDirective,

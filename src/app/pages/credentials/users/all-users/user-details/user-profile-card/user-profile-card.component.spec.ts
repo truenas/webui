@@ -37,7 +37,7 @@ describe('UserProfileCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('mat-card-header h3')).toHaveText('Profile');
+    expect(spectator.query('tn-card h3')).toHaveText('Profile');
   });
 
   it('shows user details', () => {

@@ -60,9 +60,9 @@ describe('AllUsersComponent', () => {
       MasterDetailViewComponent,
       MockComponent(UserListComponent),
       MockComponent(AllUsersHeaderComponent),
+      MockComponent(UserDetailHeaderComponent),
     ],
     declarations: [
-      UserDetailHeaderComponent,
       UserDetailsComponent,
     ],
     providers: [

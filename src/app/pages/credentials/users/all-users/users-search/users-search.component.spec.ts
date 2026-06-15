@@ -1,14 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnSelectHarness, TnSlideToggleHarness } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { AdvancedSearchHarness } from 'app/modules/forms/search-input/components/advanced-search/advanced-search.harness';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchInputHarness } from 'app/modules/forms/search-input/components/search-input/search-input.harness';
@@ -16,6 +14,19 @@ import { mockUserApiDataProvider } from 'app/pages/credentials/users/all-users/t
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
 import * as UsersSearchPresets from 'app/pages/credentials/users/all-users/users-search/users-search-presets';
 import { UsersSearchComponent } from 'app/pages/credentials/users/all-users/users-search/users-search.component';
+
+// tn-select (multiple) has no setValue harness method; toggle the options to reach the
+// desired selection, reading the current state from the trigger's display text.
+async function setUserTypes(harness: TnSelectHarness, desired: string[]): Promise<void> {
+  const allOptions = ['Local', 'Directory Services'];
+  const currentText = await harness.getDisplayText();
+  for (const option of allOptions) {
+    if (currentText.includes(option) !== desired.includes(option)) {
+      await harness.selectOption(option);
+    }
+  }
+  await harness.close();
+}
 
 describe('UsersSearchComponent', () => {
   let spectator: Spectator<UsersSearchComponent>;
@@ -80,7 +91,7 @@ describe('UsersSearchComponent', () => {
     it('performs search with the correct value with both Local and Directory selected by default', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('root');
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
       await button.click();
 
       // With both Local and Directory selected, builtin=false OR local=false filters out builtin local users
@@ -94,13 +105,13 @@ describe('UsersSearchComponent', () => {
     });
 
     it('searches with only Local user type selected', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Local']);
 
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('test');
 
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
       await button.click();
 
       expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
@@ -114,12 +125,12 @@ describe('UsersSearchComponent', () => {
     });
 
     it('converts * wildcard to .* in search pattern', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Local']);
 
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('*user');
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
       await button.click();
 
       expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
@@ -133,12 +144,12 @@ describe('UsersSearchComponent', () => {
     });
 
     it('escapes regex special characters in search pattern', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Local']);
 
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('(test)');
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
       await button.click();
 
       expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
@@ -155,7 +166,7 @@ describe('UsersSearchComponent', () => {
   describe('Advanced Search', () => {
     it('performs advanced search with builtin filter', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
 
       await searchInput.toggleMode();
       const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
@@ -168,7 +179,7 @@ describe('UsersSearchComponent', () => {
 
     it('tracks builtin filter state in advanced mode', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
 
       await searchInput.toggleMode();
       const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
@@ -183,15 +194,15 @@ describe('UsersSearchComponent', () => {
 
   describe('Active Directory Integration', () => {
     it('shows Directory Services option when AD is enabled', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      const options = await selectHarness.getOptionLabels();
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      const options = await selectHarness.getOptions();
 
       expect(options).toContain('Directory Services');
     });
 
     it('filters by directory users correctly', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Directory Services']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Directory Services']);
 
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [['local', '=', false]],
@@ -201,7 +212,7 @@ describe('UsersSearchComponent', () => {
 
     it('updates local filter state when local filter is applied', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
 
       await searchInput.toggleMode();
       const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
@@ -239,8 +250,8 @@ describe('UsersSearchComponent', () => {
     });
 
     it('does not show Directory Services option when AD is disabled', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      const options = await selectHarness.getOptionLabels();
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      const options = await selectHarness.getOptions();
 
       expect(options).not.toContain('Directory Services');
       expect(options).toContain('Local');
@@ -250,7 +261,7 @@ describe('UsersSearchComponent', () => {
   describe('Filter Conflict Resolution', () => {
     it('resolves conflicting builtin filters by keeping the latest when entered via advanced search', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
 
       await searchInput.toggleMode();
       const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
@@ -270,7 +281,7 @@ describe('UsersSearchComponent', () => {
 
     it('resolves conflicting local filters by keeping the latest when entered via advanced search', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
 
       await searchInput.toggleMode();
       const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
@@ -290,7 +301,7 @@ describe('UsersSearchComponent', () => {
 
     it('preserves multiple different filter types without conflicts', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
 
       await searchInput.toggleMode();
       const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
@@ -313,7 +324,7 @@ describe('UsersSearchComponent', () => {
   describe('Search Properties', () => {
     it('allows searching by various user properties in advanced mode', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
 
       await searchInput.toggleMode();
       const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
@@ -400,9 +411,11 @@ describe('UsersSearchComponent', () => {
       // Verify component starts in Basic mode
       expect(await searchInput.isInAdvancedMode()).toBe(false);
 
-      // Trigger search with default selection (Local + Directory)
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local', 'Directory Services']);
+      // Re-apply the default Local + Directory selection (toggle Local off, then back on)
+      // so the change handler fires and applies the combined filter.
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Directory Services']);
+      await setUserTypes(selectHarness, ['Local', 'Directory Services']);
 
       // Verify initial Basic mode applies both Local and Directory user filtering
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
@@ -447,15 +460,15 @@ describe('UsersSearchComponent', () => {
   describe('Search Mode Switching - Query Clearing', () => {
     it('clears search queries when switching modes and maintains correct default filtering', async () => {
       // Select only Local for this test
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Local']);
       jest.clearAllMocks();
 
       const searchInput = await loader.getHarness(SearchInputHarness);
 
       // 1. Enter basic search query
       await searchInput.setValue('localuser');
-      const searchButton = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const searchButton = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
       await searchButton.click();
 
       // Verify basic search filtering is applied
@@ -514,10 +527,10 @@ describe('UsersSearchComponent', () => {
 
   describe('Show Built-in Users Toggle', () => {
     it('shows built-in users when toggle is enabled', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Local']);
 
-      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      const toggleHarness = await loader.getHarness(TnSlideToggleHarness);
       await toggleHarness.check();
 
       expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
@@ -527,46 +540,46 @@ describe('UsersSearchComponent', () => {
     });
 
     it('disables built-in toggle when Local is not selected', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Directory Services']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Directory Services']);
 
-      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      const toggleHarness = await loader.getHarness(TnSlideToggleHarness);
       expect(await toggleHarness.isDisabled()).toBe(true);
     });
 
     it('enables built-in toggle when Local is selected', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Local']);
 
-      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      const toggleHarness = await loader.getHarness(TnSlideToggleHarness);
       expect(await toggleHarness.isDisabled()).toBe(false);
     });
 
     it('unchecks toggle when Local is deselected', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Local']);
 
-      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      const toggleHarness = await loader.getHarness(TnSlideToggleHarness);
       await toggleHarness.check();
 
       // Deselect Local
-      await selectHarness.setValue(['Directory Services']);
+      await setUserTypes(selectHarness, ['Directory Services']);
 
       expect(await toggleHarness.isChecked()).toBe(false);
     });
 
     it('maintains toggle state when searching', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Local']);
 
-      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      const toggleHarness = await loader.getHarness(TnSlideToggleHarness);
       await toggleHarness.check();
       jest.clearAllMocks();
 
       // Perform a search
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('test');
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Search' }));
       await button.click();
 
       // Verify toggle state is maintained and filter includes built-in users
@@ -581,10 +594,10 @@ describe('UsersSearchComponent', () => {
     });
 
     it('resets toggle when switching from Basic to Advanced mode', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Local']);
 
-      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      const toggleHarness = await loader.getHarness(TnSlideToggleHarness);
       await toggleHarness.check();
 
       expect(await toggleHarness.isChecked()).toBe(true);
@@ -597,15 +610,15 @@ describe('UsersSearchComponent', () => {
       // Switch back to Basic mode - toggle should be reset
       await searchInput.toggleMode();
 
-      const newToggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      const newToggleHarness = await loader.getHarness(TnSlideToggleHarness);
       expect(await newToggleHarness.isChecked()).toBe(false);
     });
 
     it('shows all users when both Local and Directory selected with toggle on', async () => {
-      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
-      await selectHarness.setValue(['Local', 'Directory Services']);
+      const selectHarness = await loader.getHarness(TnSelectHarness);
+      await setUserTypes(selectHarness, ['Local', 'Directory Services']);
 
-      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      const toggleHarness = await loader.getHarness(TnSlideToggleHarness);
       await toggleHarness.check();
 
       // With built-in enabled and both types, no filter is needed - show all users
