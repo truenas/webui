@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
@@ -9,8 +10,6 @@ import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
@@ -51,7 +50,6 @@ describe('GroupListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
-      IxTableDetailsRowDirective,
     ],
     declarations: [
       MockComponent(GroupDetailsRowComponent),
@@ -96,40 +94,48 @@ describe('GroupListComponent', () => {
     store$.overrideSelector(selectGroups, fakeGroupDataSource);
     store$.refreshState();
 
-    const expectedRows = [
-      ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', 'Roles'],
-      ['mock', '1000', 'Yes', 'No', 'Yes', 'N/A'],
-      ['fake', '1001', 'Yes', 'Yes', 'Yes', 'Full Admin'],
-    ];
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.getRowCount()).toBe(2);
 
-    const table = await loader.getHarness(IxTableHarness);
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    expect(await table.getCellText(0, 'group')).toBe('mock');
+    expect(await table.getCellText(0, 'gid')).toBe('1000');
+    expect(await table.getCellText(0, 'builtin')).toBe('Yes');
+    expect(await table.getCellText(0, 'sudo')).toBe('No');
+    expect(await table.getCellText(0, 'smb')).toBe('Yes');
+    expect(await table.getCellText(0, 'roles')).toBe('N/A');
+
+    expect(await table.getCellText(1, 'group')).toBe('fake');
+    expect(await table.getCellText(1, 'sudo')).toBe('Yes');
+    expect(await table.getCellText(1, 'roles')).toBe('Full Admin');
   });
 
-  it('should expand and collapse only one row when clicked on it', async () => {
+  it('expands and collapses a row to reveal its details when the row is clicked', async () => {
     store$.overrideSelector(selectGroups, fakeGroupDataSource);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTableHarness);
+    const table = await loader.getHarness(TnTableHarness);
+
     await table.clickRow(0);
-    await table.clickRow(1);
+    expect(await table.isRowExpanded(0)).toBe(true);
     expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
 
-    await table.clickRow(1);
+    await table.clickRow(0);
+    expect(await table.isRowExpanded(0)).toBe(false);
     expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(0);
   });
 
-  it('should expand and collapse only one row on toggle click', async () => {
+  it('keeps only one row expanded at a time', async () => {
     store$.overrideSelector(selectGroups, fakeGroupDataSource);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTableHarness);
-    await table.expandRow(0);
-    await table.expandRow(1);
-    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
+    const table = await loader.getHarness(TnTableHarness);
 
-    await table.expandRow(1);
-    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(0);
+    await table.clickRow(0);
+    expect(await table.isRowExpanded(0)).toBe(true);
+
+    await table.clickRow(1);
+    expect(await table.isRowExpanded(1)).toBe(true);
+    expect(await table.isRowExpanded(0)).toBe(false);
+    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
   });
 });

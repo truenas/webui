@@ -1,11 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal } from '@angular/core';
+import {
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal, viewChild, effect,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnSlideToggleComponent, TnTableComponent, TnTableColumnDirective,
+  TnHeaderCellDefDirective, TnCellDefDirective, TnDetailRowDefDirective, TnTablePagerComponent, TnSortEvent,
+} from '@truenas/ui-components';
 import {
   Observable, combineLatest, of,
 } from 'rxjs';
@@ -18,18 +21,9 @@ import { Group } from 'app/interfaces/group.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 import { groupListElements } from 'app/pages/credentials/groups/group-list/group-list.elements';
@@ -46,16 +40,15 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BasicSearchComponent,
-    MatSlideToggle,
-    TestDirective,
+    TnSlideToggleComponent,
     UiSearchDirective,
     RequiresRolesDirective,
-    MatButton,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
     GroupDetailsRowComponent,
     TnTablePagerComponent,
     TranslateModule,
@@ -75,37 +68,31 @@ export class GroupListComponent implements OnInit {
   protected readonly searchableElements = groupListElements;
 
   dataProvider = new ArrayDataProvider<Group>();
-  columns = createTable<Group>([
-    textColumn({
-      title: this.translate.instant('Group'),
-      propertyName: 'group',
-    }),
-    textColumn({
-      title: this.translate.instant('GID'),
-      propertyName: 'gid',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Builtin'),
-      propertyName: 'builtin',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Allows sudo commands'),
-      getValue: (row) => !!row.sudo_commands?.length,
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Samba Authentication'),
-      propertyName: 'smb',
-    }),
-    textColumn({
-      title: this.translate.instant('Roles'),
-      getValue: (row) => row.roles
-        .map((role) => this.translate.instant(roleNames.get(role) || role))
-        .join(', ') || this.translate.instant('N/A'),
-    }),
-  ], {
-    uniqueRowTag: (row) => 'group-' + row.group,
-    ariaLabels: (row) => [row.group, this.translate.instant('Group')],
-  });
+  protected readonly table = viewChild(TnTableComponent<Group>);
+  protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
+  protected readonly trackById = (_: number, row: Group): number => row.id;
+
+  // tn-table allows multiple rows expanded at once; restore the single-expand behavior of
+  // the previous ix-table by collapsing every other row whenever a new one is opened
+  // (via row click or the expand chevron).
+  private lastExpandedRow: Group | null = null;
+
+  constructor() {
+    effect(() => {
+      const table = this.table();
+      if (!table) {
+        return;
+      }
+      const expanded = table.expandedRows();
+      if (expanded.size <= 1) {
+        this.lastExpandedRow = expanded.size === 1 ? ([...expanded][0] as Group) : null;
+        return;
+      }
+      const newest = ([...expanded].find((row) => row !== this.lastExpandedRow) ?? null) as Group | null;
+      this.lastExpandedRow = newest;
+      table.expandedRows.set(newest ? new Set<unknown>([newest]) : new Set<unknown>());
+    });
+  }
 
   hideBuiltinGroups = true;
   searchQuery = signal('');
@@ -131,8 +118,27 @@ export class GroupListComponent implements OnInit {
     }),
   );
 
-  protected get emptyConfigService(): EmptyService {
-    return this.emptyService;
+  protected emptyMessage$: Observable<string> = this.emptyType$.pipe(
+    map((type) => this.translate.instant(this.emptyService.defaultEmptyConfig(type).title)),
+  );
+
+  protected getRolesValue(row: Group): string {
+    return row.roles
+      .map((role) => this.translate.instant(roleNames.get(role) || role))
+      .join(', ') || this.translate.instant('N/A');
+  }
+
+  protected onRowClick(row: Group): void {
+    this.table()?.toggleRowExpansion(row);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    const direction = event.direction === '' ? null : (event.direction as SortDirection);
+    this.dataProvider.setSorting({
+      propertyName: direction ? (event.column as keyof Group) : null,
+      direction,
+      active: null,
+    });
   }
 
   ngOnInit(): void {

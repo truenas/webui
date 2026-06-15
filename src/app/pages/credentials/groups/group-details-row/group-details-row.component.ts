@@ -9,9 +9,6 @@ import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
-import {
-  IxTableExpandableRowComponent,
-} from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -25,7 +22,6 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
   styleUrls: ['./group-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxTableExpandableRowComponent,
     MatButton,
     TestDirective,
     TnIconComponent,
@@ -42,7 +38,6 @@ export class GroupDetailsRowComponent {
   private translate = inject(TranslateService);
 
   readonly group = input.required<Group>();
-  readonly colspan = input<number>();
 
   readonly delete = output<number>();
   protected readonly Role = Role;

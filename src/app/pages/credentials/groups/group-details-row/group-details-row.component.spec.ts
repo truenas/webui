@@ -83,14 +83,9 @@ describe('GroupDetailsRowComponent', () => {
     spectator = createComponent({
       props: {
         group: dummyGroup,
-        colspan: 5,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  });
-
-  it('checks colspan attribute', () => {
-    expect(spectator.query('td')!.getAttribute('colspan')).toBe('5');
   });
 
   describe('Members button', () => {

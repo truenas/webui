@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -70,7 +71,7 @@ describe('GroupMembersComponent', () => {
     const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All Users"]' }));
     const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group Members"]' }));
 
-    expect(spectator.query('mat-card-title')).toHaveText('dummy-group');
+    expect(spectator.query('.members-card-title')).toHaveText('dummy-group');
 
     expect(await userList.getItems()).toHaveLength(1);
     expect(await memberList.getItems()).toHaveLength(1);
@@ -79,7 +80,7 @@ describe('GroupMembersComponent', () => {
   });
 
   it('redirects to Group List page when Cancel button is pressed', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
     await button.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
@@ -101,7 +102,7 @@ describe('GroupMembersComponent', () => {
     expect(await userList.getItems()).toHaveLength(0);
     expect(await memberList.getItems()).toHaveLength(2);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('group.update', [1, { users: [41, 42] }]);

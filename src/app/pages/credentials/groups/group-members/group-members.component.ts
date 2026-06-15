@@ -1,14 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardTitle, MatCardContent, MatCardActions,
-} from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnProgressBarComponent, tnIconMarker,
+} from '@truenas/ui-components';
 import { forkJoin, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -16,10 +13,10 @@ import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -30,15 +27,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DualListBoxComponent,
-    MatCard,
-    MatProgressBar,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnProgressBarComponent,
     ReadOnlyComponent,
-    MatCardContent,
-    MatCardActions,
+    FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
   ],
