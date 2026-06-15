@@ -1,18 +1,44 @@
-<button
-  mat-button
-  ixTest="columns"
-  [matMenuTriggerFor]="menu"
+<div
+  #trigger="cdkOverlayOrigin"
+  cdkOverlayOrigin
+  class="columns-trigger"
 >
-  {{ 'Columns' | translate }}
-  <tn-icon name="menu-down" library="mdi"></tn-icon>
-</button>
+  <tn-button
+    testId="columns"
+    [label]="'Columns' | translate"
+    [attr.aria-haspopup]="'menu'"
+    [attr.aria-expanded]="menuOpen()"
+    (onClick)="toggleMenu()"
+    (keydown.arrowDown)="openMenu()"
+  ></tn-button>
+  <tn-icon class="columns-trigger__caret" name="menu-down" library="mdi" size="sm"></tn-icon>
+</div>
 
-<mat-menu #menu="matMenu" multiple overlapTrigger="false">
-  <div (click)="$event.stopPropagation()">
+<ng-template
+  cdkConnectedOverlay
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="menuOpen()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  (backdropClick)="closeMenu()"
+  (detach)="closeMenu()"
+>
+  <div
+    cdkTrapFocus
+    role="menu"
+    class="columns-menu"
+    [cdkTrapFocusAutoCapture]="true"
+    (keydown.escape)="closeMenu()"
+    (keydown.arrowDown)="moveFocus($event, 1)"
+    (keydown.arrowUp)="moveFocus($event, -1)"
+  >
     <button
-      mat-menu-item
+      type="button"
+      role="menuitemcheckbox"
+      class="columns-menu__item"
       [ixTest]="['toggle-all-columns']"
-      (click)="toggleAll(); saveColumnPreferences(); enableResetButton();"
+      [attr.aria-checked]="isAllSelected"
+      (click)="toggleAll(); saveColumnPreferences(); enableResetButton()"
     >
       <tn-icon library="mdi" [name]="!isAllSelected ? 'minus-circle' : 'check-circle'"></tn-icon>
       @if (isAllSelected) {
@@ -21,26 +47,27 @@
         <span>{{ 'Select All' | translate }}</span>
       }
     </button>
-  </div>
 
-  <div (click)="$event.stopPropagation()">
     @for (column of columns(); track column) {
       @if (column.title) {
         <button
-          mat-menu-item
+          type="button"
+          role="menuitemcheckbox"
+          class="columns-menu__item"
           [ixTest]="['toggle-column', column.title]"
-          (click)="toggle(column); saveColumnPreferences(); enableResetButton();"
+          [attr.aria-checked]="!isSelected(column)"
+          (click)="toggle(column); saveColumnPreferences(); enableResetButton()"
         >
           <tn-icon library="mdi" [name]="isSelected(column) ? 'minus-circle' : 'check-circle'"></tn-icon>
           <span>{{ column.title | translate }}</span>
         </button>
       }
     }
-  </div>
 
-  <div (click)="$event.stopPropagation()">
     <button
-      mat-menu-item
+      type="button"
+      role="menuitem"
+      class="columns-menu__item"
       [ixTest]="['reset-columns-to-defaults']"
       [disabled]="isResetToDefaultDisabled()"
       (click)="resetToDefaults(); saveColumnPreferences()"
@@ -49,4 +76,4 @@
       <span>{{ 'Reset to Defaults' | translate }}</span>
     </button>
   </div>
-</mat-menu>
+</ng-template>

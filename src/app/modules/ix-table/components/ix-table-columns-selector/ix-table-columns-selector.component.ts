@@ -1,11 +1,11 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
+import { CdkConnectedOverlay, CdkOverlayOrigin } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, model, OnChanges, OnInit, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { cloneDeep } from 'lodash-es';
 import { map, take } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -23,11 +23,11 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   styleUrls: ['./ix-table-columns-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatMenuTrigger,
+    CdkOverlayOrigin,
+    CdkConnectedOverlay,
+    CdkTrapFocus,
+    TnButtonComponent,
     TnIconComponent,
-    MatMenu,
-    MatMenuItem,
     TranslateModule,
     TestDirective,
   ],
@@ -42,6 +42,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
 
   readonly columnsChange = output<Column<T, ColumnComponent<T>>[]>();
   readonly isResetToDefaultDisabled = signal(true);
+  protected readonly menuOpen = signal(false);
 
   hiddenColumns = new SelectionModel<Column<T, ColumnComponent<T>>>(true, []);
   private defaultColumns: Column<T, ColumnComponent<T>>[];
@@ -52,6 +53,31 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
 
   get isAllSelected(): boolean {
     return !this.columns().filter((column) => column.hidden && !!column.title).length;
+  }
+
+  protected toggleMenu(): void {
+    this.menuOpen.update((open) => !open);
+  }
+
+  protected openMenu(): void {
+    this.menuOpen.set(true);
+  }
+
+  protected closeMenu(): void {
+    this.menuOpen.set(false);
+  }
+
+  /** Roving focus between menu items with the Up/Down arrow keys. */
+  protected moveFocus(event: Event, direction: 1 | -1): void {
+    event.preventDefault();
+    const menu = event.currentTarget as HTMLElement;
+    const items = Array.from(menu.querySelectorAll<HTMLButtonElement>('.columns-menu__item:not([disabled])'));
+    if (!items.length) {
+      return;
+    }
+    const currentIndex = items.indexOf(menu.ownerDocument.activeElement as HTMLButtonElement);
+    const nextIndex = (currentIndex + direction + items.length) % items.length;
+    items[nextIndex].focus();
   }
 
   constructor() {

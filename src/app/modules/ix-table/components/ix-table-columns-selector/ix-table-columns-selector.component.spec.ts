@@ -1,6 +1,3 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
@@ -17,8 +14,6 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('IxTableColumnsSelectorComponent', () => {
   let spectator: Spectator<IxTableColumnsSelectorComponent>;
-  let loader: HarnessLoader;
-  let menu: MatMenuHarness;
 
   function createTestColumns(): Column<unknown, ColumnComponent<unknown>>[] {
     return createTable<CronjobRow>([
@@ -55,23 +50,38 @@ describe('IxTableColumnsSelectorComponent', () => {
     ],
   });
 
-  async function setupComponent(
+  function getMenuItem(text: string): HTMLButtonElement {
+    return Array.from(document.querySelectorAll<HTMLButtonElement>('.columns-menu__item'))
+      .find((item) => item.textContent.trim().includes(text));
+  }
+
+  function clickMenuItem(text: string): void {
+    getMenuItem(text).click();
+    spectator.detectChanges();
+  }
+
+  function openMenu(): void {
+    spectator.click('.columns-trigger button');
+    spectator.detectChanges();
+  }
+
+  function setupComponent(
     columns: Column<unknown, ColumnComponent<unknown>>[],
     columnPreferencesKey?: string,
-  ): Promise<void> {
+  ): void {
+    // Tear down any previous instance so its overlay leaves the document.
+    spectator?.fixture.destroy();
     spectator = createComponent({
       props: {
         columns,
         ...(columnPreferencesKey && { columnPreferencesKey }),
       },
     });
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    menu = await loader.getHarness(MatMenuHarness);
-    await menu.open();
+    openMenu();
   }
 
-  beforeEach(async () => {
-    await setupComponent(createTestColumns());
+  beforeEach(() => {
+    setupComponent(createTestColumns());
   });
 
   it('initializes with the correct default and hidden columns', () => {
@@ -82,64 +92,62 @@ describe('IxTableColumnsSelectorComponent', () => {
     expect(selectedColumnsTitles).toEqual(expect.arrayContaining(['Users', 'Command']));
   });
 
-  it('checks when "Select All" / "Unselect All" is pressed', async () => {
+  it('checks when "Select All" / "Unselect All" is pressed', () => {
     const columnsChangeSpy = jest.spyOn(spectator.component.columnsChange, 'emit');
 
-    await menu.clickItem({ text: 'Select All' });
+    clickMenuItem('Select All');
     expect(spectator.component.hiddenColumns.selected).toHaveLength(0);
     expect(columnsChangeSpy).toHaveBeenCalled();
 
-    await menu.clickItem({ text: 'Unselect All' });
+    clickMenuItem('Unselect All');
     expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
     expect(columnsChangeSpy).toHaveBeenCalled();
   });
 
-  it('does not affect checkbox column visibility when toggling all', async () => {
+  it('does not affect checkbox column visibility when toggling all', () => {
     const checkboxCol = spectator.component.columns().find((col) => !col.title);
     expect(checkboxCol?.hidden).toBe(false);
 
-    // Initially not all selected (Description is hidden), so "Select All" shows
-    await menu.clickItem({ text: 'Select All' });
+    clickMenuItem('Select All');
     expect(checkboxCol?.hidden).toBe(false);
 
-    // Now all are selected, so "Unselect All" shows
-    await menu.clickItem({ text: 'Unselect All' });
+    clickMenuItem('Unselect All');
     expect(checkboxCol?.hidden).toBe(false);
   });
 
-  it('"Reset to Defaults" is disabled initially', async () => {
+  it('"Reset to Defaults" is disabled initially', () => {
     jest.spyOn(spectator.component, 'resetToDefaults').mockImplementation();
-    await menu.clickItem({ text: 'Reset to Defaults' });
+    clickMenuItem('Reset to Defaults');
     expect(spectator.component.resetToDefaults).not.toHaveBeenCalled();
   });
 
-  it('checks when "Reset to Defaults" is pressed', async () => {
-    await menu.clickItem({ text: 'Users' });
+  it('checks when "Reset to Defaults" is pressed', () => {
+    clickMenuItem('Users');
 
     jest.spyOn(spectator.component, 'resetToDefaults').mockImplementation();
-    await menu.clickItem({ text: 'Reset to Defaults' });
+    clickMenuItem('Reset to Defaults');
 
     expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
     expect(spectator.component.resetToDefaults).toHaveBeenCalled();
   });
 
-  it('toggles an individual column correctly', async () => {
+  it('toggles an individual column correctly', () => {
     expect(spectator.component.hiddenColumns.selected).toHaveLength(1);
 
-    await menu.clickItem({ text: 'Users' });
+    clickMenuItem('Users');
     expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
 
-    await menu.clickItem({ text: 'Description' });
+    clickMenuItem('Description');
     expect(spectator.component.hiddenColumns.selected).toHaveLength(1);
   });
 
-  it('saves column preferences when columnPreferencesKey is provided', async () => {
+  it('saves column preferences when columnPreferencesKey is provided', () => {
     const store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
 
     spectator.setInput('columnPreferencesKey', 'test-key');
 
-    await menu.clickItem({ text: 'Description' });
+    clickMenuItem('Description');
 
     expect(store$.dispatch).toHaveBeenCalledWith(preferredColumnsUpdated({
       tableDisplayedColumns: [{
@@ -149,8 +157,43 @@ describe('IxTableColumnsSelectorComponent', () => {
     }));
   });
 
+  describe('keyboard accessibility', () => {
+    function getMenu(): HTMLElement {
+      return document.querySelector<HTMLElement>('.columns-menu');
+    }
+
+    function pressKey(key: string): void {
+      getMenu().dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+      spectator.detectChanges();
+    }
+
+    it('moves focus between items with the arrow keys', () => {
+      const items = Array.from(document.querySelectorAll<HTMLButtonElement>('.columns-menu__item'));
+      items[0].focus();
+
+      pressKey('ArrowDown');
+      expect(document.activeElement).toBe(items[1]);
+
+      pressKey('ArrowUp');
+      expect(document.activeElement).toBe(items[0]);
+    });
+
+    it('exposes the visibility state through aria-checked', () => {
+      const usersItem = getMenuItem('Users');
+      const descriptionItem = getMenuItem('Description');
+
+      expect(usersItem.getAttribute('aria-checked')).toBe('true');
+      expect(descriptionItem.getAttribute('aria-checked')).toBe('false');
+    });
+
+    it('closes the menu when Escape is pressed', () => {
+      pressKey('Escape');
+      expect(spectator.component.menuOpen()).toBe(false);
+    });
+  });
+
   describe('with saved preferences', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       const mockStore$ = spectator.inject(MockStore);
       mockStore$.overrideSelector(selectPreferences, {
         tableDisplayedColumns: [{
@@ -159,7 +202,7 @@ describe('IxTableColumnsSelectorComponent', () => {
         }],
       } as Preferences);
 
-      await setupComponent(createTestColumns(), 'test-table');
+      setupComponent(createTestColumns(), 'test-table');
     });
 
     it('preserves checkbox column visibility when loading saved preferences', () => {
@@ -167,24 +210,19 @@ describe('IxTableColumnsSelectorComponent', () => {
       expect(checkboxCol?.hidden).toBe(false);
     });
 
-    it('enables Reset to Defaults button when preferences are loaded', async () => {
-      const resetButton = await menu.getItems({ text: 'Reset to Defaults' });
-      expect(await resetButton[0].isDisabled()).toBe(false);
+    it('enables Reset to Defaults button when preferences are loaded', () => {
+      expect(getMenuItem('Reset to Defaults').disabled).toBe(false);
     });
 
-    it('restores original column visibility when Reset to Defaults is clicked', async () => {
-      // Before reset: Command should be hidden (not in saved preferences)
+    it('restores original column visibility when Reset to Defaults is clicked', () => {
       const commandColBefore = spectator.component.columns().find((col) => col.title === 'Command');
       expect(commandColBefore?.hidden).toBe(true);
 
-      // Click Reset to Defaults
-      await menu.clickItem({ text: 'Reset to Defaults' });
+      clickMenuItem('Reset to Defaults');
 
-      // After reset: Command should be visible (was visible by default)
       const commandColAfter = spectator.component.columns().find((col) => col.title === 'Command');
       expect(commandColAfter?.hidden).toBe(false);
 
-      // Description should still be hidden (was hidden by default)
       const descriptionCol = spectator.component.columns().find((col) => col.title === 'Description');
       expect(descriptionCol?.hidden).toBe(true);
     });
