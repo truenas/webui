@@ -1,6 +1,9 @@
+import { Signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { type TnSortEvent } from '@truenas/ui-components';
 import { get } from 'lodash-es';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
+import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
@@ -59,6 +62,25 @@ export function mapTnSortToTableSort<T>(
     direction,
     active: direction && columnIndex >= 0 ? columnIndex : null,
   };
+}
+
+/**
+ * Adapts a data provider's paged rows into a signal for binding to a `tn-table`
+ * `[dataSource]`. Replaces the `(dataProvider.currentPage$ | async) ?? []` idiom
+ * so migrated cards follow the declarative-signal recipe. Must be called from an
+ * injection context (e.g. a component field initializer).
+ */
+export function dataProviderRows<T>(provider: BaseDataProvider<T>): Signal<T[]> {
+  return toSignal(provider.currentPage$, { initialValue: [] as T[] });
+}
+
+/**
+ * Adapts a data provider's loading state into a signal for binding to a `tn-table`
+ * `[loading]`. Must be called from an injection context (e.g. a component field
+ * initializer).
+ */
+export function dataProviderLoading<T>(provider: BaseDataProvider<T>): Signal<boolean> {
+  return toSignal(provider.isLoading$, { initialValue: false });
 }
 
 export function filterTableRows<T>(filter: TableFilter<T>): T[] {

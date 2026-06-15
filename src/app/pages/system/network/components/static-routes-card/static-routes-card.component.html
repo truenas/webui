@@ -22,9 +22,9 @@
 
   <tn-table
     class="table"
-    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [dataSource]="rows()"
     [displayedColumns]="displayedColumns"
-    [loading]="!!(dataProvider.isLoading$ | async)"
+    [loading]="isLoading()"
     [emptyMessage]="'No static routes configured' | translate"
     (sortChange)="onSortChange($event)"
   >

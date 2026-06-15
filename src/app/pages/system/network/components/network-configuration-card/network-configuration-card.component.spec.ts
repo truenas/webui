@@ -70,6 +70,8 @@ describe('NetworkConfigurationCardComponent', () => {
     expect(api.call).toHaveBeenCalledWith('network.configuration.config');
   });
 
+  // White-box reads of tn-list-item: @truenas/ui-components ships no list harness yet
+  // (NAS-141021). Swap to a TnListHarness once it lands.
   it('shows nameservers assigned via settings', () => {
     const dnsServersSection = spectator.query(byText('DNS Servers'))!.parentElement!;
     const dnsServerItems = dnsServersSection.querySelectorAll('tn-list-item');

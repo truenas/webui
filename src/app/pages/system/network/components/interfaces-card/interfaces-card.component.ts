@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -23,7 +22,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { convertStringToId } from 'app/modules/ix-table/utils';
+import { convertStringToId, dataProviderRows } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -58,7 +57,6 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     ShareActionsCellComponent,
     RequiresRolesDirective,
     UiSearchDirective,
-    AsyncPipe,
     InterfaceStatusIconComponent,
     IpAddressesCellComponent,
     TranslateModule,
@@ -89,6 +87,7 @@ export class InterfacesCardComponent implements OnInit {
 
   protected readonly isLoading = signal(false);
   dataProvider = new ArrayDataProvider<NetworkInterface>();
+  protected readonly rows = dataProviderRows(this.dataProvider);
   inOutUpdates = signal<AllNetworkInterfacesUpdate>({});
 
   protected readonly displayedColumns = ['state', 'name', 'ip_addresses', 'mac', 'actions'];

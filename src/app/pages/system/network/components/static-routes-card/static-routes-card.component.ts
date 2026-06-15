@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
@@ -17,7 +16,9 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
+} from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -49,7 +50,6 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
     IxTablePagerShowMoreComponent,
     TranslateModule,
     TooltipComponent,
-    AsyncPipe,
   ],
 })
 export class StaticRoutesCardComponent implements OnInit {
@@ -62,7 +62,13 @@ export class StaticRoutesCardComponent implements OnInit {
   protected readonly searchableElements = staticRoutesCardElements.elements;
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
-  dataProvider: AsyncDataProvider<StaticRoute>;
+  private readonly staticRoutes$ = this.api.call('staticroute.query').pipe(
+    takeUntilDestroyed(this.destroyRef),
+  );
+
+  dataProvider = new AsyncDataProvider<StaticRoute>(this.staticRoutes$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly displayedColumns = ['destination', 'gateway', 'actions'];
 
   protected readonly actions: IconActionConfig<StaticRoute>[] = [
@@ -92,10 +98,6 @@ export class StaticRoutesCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const staticRoutes$ = this.api.call('staticroute.query').pipe(
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<StaticRoute>(staticRoutes$);
     this.setDefaultSort();
     this.getStaticRoutes();
   }

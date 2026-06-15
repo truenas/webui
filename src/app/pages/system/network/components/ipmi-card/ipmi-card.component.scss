@@ -5,10 +5,6 @@
   width: 100%;
 }
 
-// TEMP: this table's columns (channel, actions) have no header text, so tn-table
-// renders an empty topbar-coloured header band. Hide it until tn-table gains a
-// [hideHeader] input, then replace this with [hideHeader]="true" on the tn-table.
-// Tracked under the tn-* migration (NAS-141021).
 :host ::ng-deep .tn-table__header {
   display: none;
 }

@@ -18,7 +18,7 @@
   <tn-table
     class="interfaces-table"
     [ixUiSearch]="searchableElements.interfaces"
-    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [dataSource]="rows()"
     [displayedColumns]="displayedColumns"
     [loading]="isLoading()"
   >

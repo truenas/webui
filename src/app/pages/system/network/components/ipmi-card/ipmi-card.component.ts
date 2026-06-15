@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,7 +12,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { convertStringToId } from 'app/modules/ix-table/utils';
+import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -41,7 +40,6 @@ import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card
     ShareActionsCellComponent,
     UiSearchDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class IpmiCardComponent implements OnInit {
@@ -53,7 +51,11 @@ export class IpmiCardComponent implements OnInit {
   private window = inject<Window>(WINDOW);
 
   protected readonly searchableElements = ipmiCardElements.elements;
-  protected dataProvider: AsyncDataProvider<Ipmi>;
+
+  private readonly ipmi$ = this.api.call('ipmi.lan.query').pipe(takeUntilDestroyed(this.destroyRef));
+  protected dataProvider = new AsyncDataProvider<Ipmi>(this.ipmi$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly displayedColumns = ['channel', 'actions'];
 
   protected readonly actions: IconActionConfig<Ipmi>[] = [
@@ -81,8 +83,6 @@ export class IpmiCardComponent implements OnInit {
   protected readonly hasIpmi = toSignal(this.api.call('ipmi.is_loaded'));
 
   ngOnInit(): void {
-    const ipmi$ = this.api.call('ipmi.lan.query').pipe(takeUntilDestroyed(this.destroyRef));
-    this.dataProvider = new AsyncDataProvider<Ipmi>(ipmi$);
     this.loadIpmiEntries();
   }
 
