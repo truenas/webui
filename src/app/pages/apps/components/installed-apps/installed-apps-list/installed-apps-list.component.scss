@@ -34,6 +34,10 @@
     table-layout: fixed;
   }
 
+  // TEMP: tn-table has no cell-density/font-size input, so the compact spacing the
+  // apps table needs is applied by reaching into the private `.tn-table__cell` /
+  // `.tn-table__header-cell` classes. Remove once tn-table exposes cell padding /
+  // font-size inputs (tracked under the NAS-141021 library follow-up).
   ::ng-deep .tn-table__cell,
   ::ng-deep .tn-table__header-cell {
     font-size: 13px;
@@ -41,8 +45,10 @@
     padding-right: 3px;
   }
 
-  // Body values wrap (not clip) so long stats show in full on two lines. The
-  // library sets nowrap/ellipsis on the inner cell-content wrapper too.
+  // TEMP: tn-table sets nowrap/ellipsis on the cell-content wrapper with no opt-out,
+  // so body values are forced to wrap via the private `.tn-table__cell` /
+  // `.tn-table__cell-content` classes (long stats need to show in full on two lines).
+  // Remove once tn-table exposes a cell-wrap input (NAS-141021 library follow-up).
   ::ng-deep .tn-table__cell,
   ::ng-deep .tn-table__cell-content {
     overflow: visible;
@@ -51,24 +57,28 @@
     word-break: break-word;
   }
 
-  // Column titles stay on a single line.
+  // TEMP: column titles stay on a single line — same private-class caveat and
+  // NAS-141021 library follow-up as the cell-wrap override above.
   ::ng-deep .tn-table__header-cell {
     white-space: nowrap;
   }
 
-  // The selection column only needs room for the checkbox, but keep enough left
-  // padding that the checkbox lines up with the search input's content rather
-  // than hugging the active-row indicator.
+  // TEMP: tn-table has no selection-column width/padding input, so the checkbox
+  // column is sized via the private `.tn-table__select-cell` class to line the
+  // checkbox up with the search input's content rather than hugging the active-row
+  // indicator. Remove once tn-table exposes a select-column layout input
+  // (NAS-141021 library follow-up).
   ::ng-deep .tn-table__select-cell {
     padding-left: 14px;
     padding-right: 0;
     width: 30px;
   }
 
-  // On narrow/mobile screens fitting every column squashes the content into
+  // TEMP: on narrow/mobile screens fitting every column squashes the content into
   // unreadable single characters. Instead let the table size to its content and
   // scroll horizontally (tn-table's host already has overflow-x: auto), keeping
-  // each value on one readable line.
+  // each value on one readable line. Same private `.tn-table__*` caveat / NAS-141021
+  // library follow-up as the overrides above.
   @media (max-width: $breakpoint-tablet) {
     ::ng-deep .tn-table__table {
       min-width: 760px;

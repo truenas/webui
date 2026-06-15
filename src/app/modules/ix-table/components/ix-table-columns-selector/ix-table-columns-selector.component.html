@@ -31,6 +31,8 @@
     (keydown.escape)="closeMenu()"
     (keydown.arrowDown)="moveFocus($event, 1)"
     (keydown.arrowUp)="moveFocus($event, -1)"
+    (keydown.home)="focusEdge($event, 'first')"
+    (keydown.end)="focusEdge($event, 'last')"
   >
     <button
       type="button"

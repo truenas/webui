@@ -71,13 +71,27 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
   protected moveFocus(event: Event, direction: 1 | -1): void {
     event.preventDefault();
     const menu = event.currentTarget as HTMLElement;
-    const items = Array.from(menu.querySelectorAll<HTMLButtonElement>('.columns-menu__item:not([disabled])'));
+    const items = this.getFocusableItems(menu);
     if (!items.length) {
       return;
     }
     const currentIndex = items.indexOf(menu.ownerDocument.activeElement as HTMLButtonElement);
     const nextIndex = (currentIndex + direction + items.length) % items.length;
     items[nextIndex].focus();
+  }
+
+  /** Jump focus to the first/last menu item with the Home/End keys. */
+  protected focusEdge(event: Event, edge: 'first' | 'last'): void {
+    event.preventDefault();
+    const items = this.getFocusableItems(event.currentTarget as HTMLElement);
+    if (!items.length) {
+      return;
+    }
+    (edge === 'first' ? items[0] : items[items.length - 1]).focus();
+  }
+
+  private getFocusableItems(menu: HTMLElement): HTMLButtonElement[] {
+    return Array.from(menu.querySelectorAll<HTMLButtonElement>('.columns-menu__item:not([disabled])'));
   }
 
   constructor() {

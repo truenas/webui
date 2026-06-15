@@ -593,10 +593,14 @@ export class InstalledAppsListComponent implements OnInit {
 
   private readonly statsCache = new Map<string, Observable<AppStats>>();
 
+  // De-dupes the per-row stats subscription across the CPU/RAM/I-O/Network cells that
+  // each read `getAppStats(row.name) | async`. `refCount: true` tears the shared
+  // subscription down once a row leaves the list (search filtering, app removal) and
+  // re-attaches cheaply from the backing ComponentStore state on the next render.
   getAppStats(name: string): Observable<AppStats> {
     let stats$ = this.statsCache.get(name);
     if (!stats$) {
-      stats$ = this.appsStats.getStatsForApp(name).pipe(shareReplay({ bufferSize: 1, refCount: false }));
+      stats$ = this.appsStats.getStatsForApp(name).pipe(shareReplay({ bufferSize: 1, refCount: true }));
       this.statsCache.set(name, stats$);
     }
     return stats$;
