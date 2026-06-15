@@ -1,13 +1,5 @@
 @import 'mixins/tier-status';
 
-// Tighten the title's line box and center its items so the small status pill
-// lines up with the large title text (the default MDC title line-height is much
-// taller than the glyphs, which left the pill sitting high).
-h1[mat-dialog-title] {
-  align-items: center;
-  line-height: 1.2;
-}
-
 .status-badge {
   border: 1px solid currentColor;
   border-radius: 25px;

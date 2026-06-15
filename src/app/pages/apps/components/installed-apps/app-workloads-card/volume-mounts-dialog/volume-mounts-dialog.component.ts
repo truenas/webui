@@ -1,10 +1,9 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { AppContainerDetails } from 'app/interfaces/app.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-volume-mounts-dialog',
@@ -15,7 +14,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TnDialogShellComponent,
     TranslateModule,
     TnButtonComponent,
-    TestDirective,
+    TnTestIdDirective,
     FormActionsComponent,
   ],
 })

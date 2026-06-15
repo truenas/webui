@@ -2,13 +2,14 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import {
   EMPTY, Observable, catchError, of, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
@@ -211,5 +212,58 @@ describe('ChangeTierDialogComponent — loadDetails parsing', () => {
     await spectator.fixture.whenStable();
 
     expect(spectator.component.hasSnapshots()).toBe(true);
+  });
+});
+
+describe('ChangeTierDialogComponent — apply', () => {
+  let spectator: Spectator<ChangeTierDialogComponent>;
+  let loader: HarnessLoader;
+
+  const dialogData: ChangeTierDialogData = {
+    datasetName: 'tank/SHARE',
+    currentTier: DatasetTier.Regular,
+    poolName: 'tank',
+  };
+
+  const createComponent = createComponentFactory({
+    component: ChangeTierDialogComponent,
+    providers: [
+      mockApi([
+        mockCall('zpool.query', []),
+        mockCall('pool.dataset.query', []),
+        mockCall('sharing.smb.query', []),
+        mockCall('sharing.nfs.query', []),
+        mockCall('sharing.webshare.query', []),
+        mockCall('zfs.tier.dataset_set_tier'),
+      ]),
+      { provide: DIALOG_DATA, useValue: dialogData },
+      mockProvider(DialogRef),
+      mockProvider(LoaderService, {
+        withLoader: <T>() => (source$: Observable<T>) => source$,
+      }),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent({ detectChanges: false });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('sends the new tier with move_existing_data from the checkbox and closes on apply', async () => {
+    const moveExistingData = await loader.getHarness(TnCheckboxHarness.with({ label: 'Move existing data' }));
+    await moveExistingData.uncheck();
+
+    const applyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Apply' }));
+    await applyButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.tier.dataset_set_tier', [{
+      dataset_name: 'tank/SHARE',
+      tier_type: DatasetTier.Performance,
+      move_existing_data: false,
+    }]);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

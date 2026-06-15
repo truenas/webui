@@ -34,7 +34,7 @@
     </ix-fieldset>
 
     <div class="table-wrapper">
-      <table mat-table [dataSource]="filteredImages()" [ixTest]="['images-table']">
+      <table mat-table tnTestIdType="table" [dataSource]="filteredImages()" [tnTestId]="['images-table']">
         <ng-container matColumnDef="label">
           <th *matHeaderCellDef mat-header-cell>{{ 'Label' | translate }}</th>
           <td *matCellDef="let image" mat-cell>{{ image.label }}</td>
@@ -67,8 +67,8 @@
           </td>
         </ng-container>
 
-        <tr *matHeaderRowDef="columns" mat-header-row [ixTest]="['image-table-header']"></tr>
-        <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['image-table-row', row]"></tr>
+        <tr *matHeaderRowDef="columns" mat-header-row tnTestIdType="row" [tnTestId]="['image-table-header']"></tr>
+        <tr *matRowDef="let row; columns: columns" mat-row tnTestIdType="row" [tnTestId]="['image-table-row', row]"></tr>
       </table>
 
       @if (!filteredImages().length) {

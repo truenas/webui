@@ -7,6 +7,7 @@ import { MatTableModule } from '@angular/material/table';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { catchError, Observable, of } from 'rxjs';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
@@ -16,7 +17,6 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -38,7 +38,7 @@ export type ContainerImageWithId = ContainerImage & {
     TnFormFieldComponent,
     TnInputComponent,
     TnSelectComponent,
-    TestDirective,
+    TnTestIdDirective,
     EmptyComponent,
   ],
   templateUrl: './select-image-dialog.component.html',

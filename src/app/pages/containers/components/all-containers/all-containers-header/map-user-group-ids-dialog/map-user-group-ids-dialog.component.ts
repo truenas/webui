@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
 import {
   MatCell,
   MatCellDef,
@@ -19,7 +18,12 @@ import {
 } from '@angular/material/table';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnDialogShellComponent, TnIconComponent, TnSpinnerComponent, TnTooltipDirective,
+  TnDialogShellComponent,
+  TnIconButtonComponent,
+  TnIconComponent,
+  TnSpinnerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
 } from '@truenas/ui-components';
 import {
   finalize, map, Observable, of,
@@ -35,7 +39,6 @@ import {
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   IdMapping,
@@ -56,11 +59,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnDialogShellComponent,
     FakeProgressBarComponent,
     TnIconComponent,
+    TnIconButtonComponent,
     TnSpinnerComponent,
     TnTooltipDirective,
-    MatIconButton,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     EmptyComponent,
     FormsModule,
     MatCell,

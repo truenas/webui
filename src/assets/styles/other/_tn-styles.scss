@@ -982,6 +982,9 @@ tn-dialog-shell tn-form-field {
 // which flips .tn-form-field-wrapper to display:flex. A bare input/select is not
 // flex-grow by default, so it collapses to its intrinsic width (e.g. the app
 // delete-confirmation field). Keep the control full-width next to the asterisk.
+// TEMP: reaches the private .tn-form-field-wrapper--inline class until
+// @truenas/ui-components flex-grows a no-label required control itself.
+// Tracked under NAS-141021.
 .tn-form-field-wrapper--inline > tn-input,
 .tn-form-field-wrapper--inline > tn-select {
   flex: 1 1 auto;

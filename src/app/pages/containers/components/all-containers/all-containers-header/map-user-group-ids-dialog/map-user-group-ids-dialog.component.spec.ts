@@ -2,9 +2,9 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatTableHarness } from '@angular/material/table/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Group } from 'app/interfaces/group.interface';
@@ -130,7 +130,7 @@ describe('MapUserGroupIdsDialogComponent', () => {
     const table = await loader.getHarness(MatTableHarness);
     const rows = await table.getRows();
     const firstRowCells = await rows[0].getCells();
-    const deleteButton = await firstRowCells[3].getHarness(MatButtonHarness);
+    const deleteButton = await firstRowCells[3].getHarness(TnIconButtonHarness);
 
     await deleteButton.click();
 

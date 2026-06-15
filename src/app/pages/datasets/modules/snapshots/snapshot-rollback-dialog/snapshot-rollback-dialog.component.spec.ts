@@ -4,7 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -86,6 +86,13 @@ describe('SnapshotRollbackDialog', () => {
     expect(spectator.fixture.nativeElement.textContent as string).toContain(expectedCreationDateFragment);
     expect(spectator.fixture.nativeElement).toHaveText('Rolling the dataset back destroys data on the dataset');
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.snapshot.query', expect.anything());
+  });
+
+  it('warns about destructive rollback via the banner', async () => {
+    setupDialog();
+
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain('Rolling back destroys data');
   });
 
   it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
