@@ -18,6 +18,55 @@ import { ReportComponent } from './components/report/report.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 import { ReportsService } from './reports.service';
 
+/**
+ * helper map to match reporting graph names to their corresponding report type.
+ * used by `getActiveReportsForTab`.
+ */
+const reportTypeMap = new Map([
+  [ReportType.Cpu, [
+    ReportingGraphName.Cpu,
+    ReportingGraphName.CpuTemp,
+    ReportingGraphName.SystemLoad,
+    ReportingGraphName.Processes,
+  ]],
+  [ReportType.Memory, [
+    ReportingGraphName.Memory,
+  ]],
+  [ReportType.Network, [
+    ReportingGraphName.NetworkInterface,
+  ]],
+  [ReportType.Nfs, [
+    ReportingGraphName.NfsStat,
+    ReportingGraphName.NfsStatBytes,
+  ]],
+  [ReportType.Partition, [
+    ReportingGraphName.Partition,
+  ]],
+  [ReportType.System, [
+    ReportingGraphName.Processes,
+    ReportingGraphName.Uptime,
+  ]],
+  [ReportType.Target, [
+    ReportingGraphName.Target,
+  ]],
+  [ReportType.Ups, [
+    ReportingGraphName.UpsCharge,
+    ReportingGraphName.UpsCurrent,
+    ReportingGraphName.UpsFrequency,
+    ReportingGraphName.UpsLoad,
+    ReportingGraphName.UpsRuntime,
+    ReportingGraphName.UpsTemp,
+    ReportingGraphName.UpsVoltage,
+  ]],
+  [ReportType.Zfs, [
+    ReportingGraphName.ZfsArcSize,
+    ReportingGraphName.ZfsArcRatio,
+    ReportingGraphName.ZfsArcResult,
+    ReportingGraphName.ZfsArcActualRate,
+    ReportingGraphName.ZfsArcRate,
+  ]],
+])
+
 @Component({
   selector: 'ix-reports-dashboard',
   styleUrls: ['./reports-dashboard.component.scss'],
@@ -153,66 +202,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
 
     return this.otherReports().filter((report) => {
       const graphName = report.name;
-      let condition;
-      switch (activeTab.value) {
-        case ReportType.Cpu:
-          condition = [
-            ReportingGraphName.Cpu,
-            ReportingGraphName.CpuTemp,
-            ReportingGraphName.SystemLoad,
-            ReportingGraphName.Processes,
-          ].includes(graphName);
-          break;
-        case ReportType.Memory:
-          condition = [ReportingGraphName.Memory].includes(graphName);
-          break;
-        case ReportType.Network:
-          condition = ReportingGraphName.NetworkInterface === graphName;
-          break;
-        case ReportType.Nfs:
-          condition = [
-            ReportingGraphName.NfsStat,
-            ReportingGraphName.NfsStatBytes,
-          ].includes(graphName);
-          break;
-        case ReportType.Partition:
-          condition = ReportingGraphName.Partition === graphName;
-          break;
-        case ReportType.System:
-          condition = [
-            ReportingGraphName.Processes,
-            ReportingGraphName.Uptime,
-          ].includes(graphName);
-          break;
-        case ReportType.Target:
-          condition = ReportingGraphName.Target === graphName;
-          break;
-        case ReportType.Ups:
-          condition = [
-            ReportingGraphName.UpsCharge,
-            ReportingGraphName.UpsCurrent,
-            ReportingGraphName.UpsFrequency,
-            ReportingGraphName.UpsLoad,
-            ReportingGraphName.UpsRuntime,
-            ReportingGraphName.UpsTemp,
-            ReportingGraphName.UpsVoltage,
-          ].includes(graphName);
-          break;
-        case ReportType.Zfs:
-          condition = [
-            ReportingGraphName.ZfsArcSize,
-            ReportingGraphName.ZfsArcRatio,
-            ReportingGraphName.ZfsArcResult,
-            ReportingGraphName.ZfsArcActualRate,
-            ReportingGraphName.ZfsArcRate,
-          ].includes(graphName);
-          break;
-        default:
-          condition = true;
-          break;
-      }
-
-      return condition;
+      const reportTypeList = reportTypeMap.get(activeTab.value);
+      return reportTypeList?.includes(graphName) ?? true;
     });
   }
 
