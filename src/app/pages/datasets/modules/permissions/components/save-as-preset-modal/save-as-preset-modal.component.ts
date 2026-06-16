@@ -1,15 +1,14 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatIconButton, MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnIconButtonComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { cloneDeep, concat } from 'lodash-es';
 import {
   EMPTY, Observable, catchError, combineLatest, map, of, switchMap, tap,
@@ -23,9 +22,7 @@ import {
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
@@ -38,18 +35,14 @@ import { UserService } from 'app/services/user.service';
   styleUrls: ['./save-as-preset-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    MatDialogContent,
     NgClass,
-    MatIconButton,
-    TestDirective,
-    TnIconComponent,
-    IxInputComponent,
+    TnIconButtonComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
-    MatDialogClose,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -60,10 +53,10 @@ export class SaveAsPresetModalComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private userService = inject(UserService);
-  private dialogRef = inject<MatDialogRef<SaveAsPresetModalComponent>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private store = inject(DatasetAclEditorStore);
   private destroyRef = inject(DestroyRef);
-  data = inject<SaveAsPresetModalConfig>(MAT_DIALOG_DATA);
+  data = inject<SaveAsPresetModalConfig>(DIALOG_DATA);
 
   form = this.fb.group({
     presetName: ['', Validators.required],

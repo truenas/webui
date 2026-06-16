@@ -1,5 +1,4 @@
 import { Location } from '@angular/common';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { BehaviorSubject } from 'rxjs';
@@ -16,10 +15,9 @@ describe('WebSocketConnectionGuard', () => {
   const createService = createServiceFactory({
     service: WebSocketConnectionGuard,
     providers: [
-      mockProvider(MatDialog, {
-        openDialogs: [],
+      mockProvider(DialogService, {
+        closeAllDialogs: jest.fn(),
       }),
-      mockProvider(DialogService),
       mockProvider(Location),
       mockProvider(Router),
       {
@@ -124,21 +122,12 @@ describe('WebSocketConnectionGuard', () => {
     });
 
     it('closes all open dialogs on WebSocket disconnect', () => {
-      const matDialog = spectator.inject(MatDialog);
-      const mockDialog1 = { close: jest.fn() };
-      const mockDialog2 = { close: jest.fn() };
-      Object.defineProperty(matDialog, 'openDialogs', {
-        value: [mockDialog1, mockDialog2],
-        configurable: true,
-      });
-
       const location = spectator.inject(Location);
       jest.spyOn(location, 'path').mockReturnValue('/dashboard');
 
       isClosed$.next(true);
 
-      expect(mockDialog1.close).toHaveBeenCalled();
-      expect(mockDialog2.close).toHaveBeenCalled();
+      expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
     });
   });
 

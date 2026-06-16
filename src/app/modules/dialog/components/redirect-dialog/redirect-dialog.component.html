@@ -1,34 +1,27 @@
-<h1 mat-dialog-title>{{ data.title | translate }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell testId="redirect" [title]="data.title | translate">
   <div class="message-content">
     <span [innerHTML]="data.message | translate"></span>
   </div>
-</div>
-<input #el class="invisible" type="text" ixTest="url" [value]="data.url" />
+  <input #el class="invisible" type="text" tnTestIdType="input" [tnTestId]="'url'" [value]="data.url" />
 
-<div mat-dialog-actions>
-  <button
-    mat-button
-    color="accent"
-    ixTest="cancel"
-    (click)="dialogRef.close(false)"
-  >
-    {{ 'Cancel' | translate }}
-  </button>
-  <button
-    mat-button
-    color="accent"
-    ixTest="copy-url"
-    (click)="copyToClipboard()"
-  >
-    {{ 'Copy URL' | translate }}
-  </button>
-  <button
-    mat-button
-    color="primary"
-    ixTest="continue"
-    (click)="dialogRef.close(true)"
-  >
-    {{ 'Continue' | translate }}
-  </button>
-</div>
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      testId="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close(false)"
+    ></tn-button>
+    <tn-button
+      variant="outline"
+      testId="copy-url"
+      [label]="'Copy URL' | translate"
+      (onClick)="copyToClipboard()"
+    ></tn-button>
+    <tn-button
+      color="primary"
+      testId="continue"
+      [label]="'Continue' | translate"
+      (onClick)="dialogRef.close(true)"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>

@@ -1,13 +1,13 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
-import { SubsystemPartiallyCreatedDialogComponent } from './subsystem-partially-created-dialog.component';
+import { SubsystemPartiallyCreatedDialog } from './subsystem-partially-created-dialog.component';
 
-describe('SubsystemPartiallyCreatedDialogComponent', () => {
-  let spectator: Spectator<SubsystemPartiallyCreatedDialogComponent>;
+describe('SubsystemPartiallyCreatedDialog', () => {
+  let spectator: Spectator<SubsystemPartiallyCreatedDialog>;
   let loader: HarnessLoader;
 
   const mockSubsystem = {
@@ -32,17 +32,17 @@ describe('SubsystemPartiallyCreatedDialogComponent', () => {
   ];
 
   const createComponent = createComponentFactory({
-    component: SubsystemPartiallyCreatedDialogComponent,
+    component: SubsystemPartiallyCreatedDialog,
     providers: [
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           subsystem: mockSubsystem,
           relatedErrors: mockErrors,
         },
       },
       {
-        provide: MatDialogRef,
+        provide: DialogRef,
         useValue: {
           close: jest.fn(),
         },
@@ -55,13 +55,17 @@ describe('SubsystemPartiallyCreatedDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows the title', () => {
-    expect(spectator.query('h1')).toHaveText('Saved Partially');
+  it('shows the title', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('Saved Partially');
   });
 
-  it('shows the intro message with subsystem name', () => {
-    const content = spectator.query('div[mat-dialog-content]');
-    expect(content?.textContent).toContain(' Subsystem "test-subsystem" has been created. However, we could not create some related items: Ports Error: Port 7000 already in use.Hosts Error: Host ABC not found.Namespaces Error: /mnt/test already used. Please create related items manually. ');
+  it('shows the intro message with subsystem name', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    const content = await dialog.getContentText();
+    expect(content).toContain('Subsystem "test-subsystem" has been created.');
+    expect(content).toContain('However, we could not create some related items:');
+    expect(content).toContain('Please create related items manually.');
   });
 
   it('renders all related error messages in a list', () => {
@@ -73,9 +77,9 @@ describe('SubsystemPartiallyCreatedDialogComponent', () => {
   });
 
   it('shows a Close button and closes dialog on click', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ selector: '[mat-dialog-close]' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
     await button.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 });

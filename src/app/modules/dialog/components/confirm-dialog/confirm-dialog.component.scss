@@ -1,16 +1,16 @@
 :host {
   display: block;
   min-width: 330px;
-}
-
-.confirm-checkbox {
-  margin-left: -10px;
-  margin-right: auto;
-  padding-right: 10px;
+  // TnDialog panel is max-width: 90vw with no default width, so without this a
+  // long single-line message would stretch the dialog very wide.
+  max-width: 480px;
 }
 
 .secondary-checkbox {
-  margin-top: 5px;
+  display: block;
+  // Comfortable gap below the message without the oversized rhythm a
+  // tn-form-field wrapper would add (12px margin + 8px padding + subscript).
+  margin-top: 16px;
 }
 
 #confirm-label:hover {
@@ -19,10 +19,6 @@
 
 h1 {
   margin-bottom: 1px !important;
-}
-
-#confirm-msg {
-  padding-top: 20px;
 }
 
 div.message-content {

@@ -1,15 +1,8 @@
-
-.mat-mdc-dialog-actions {
+:host {
   display: block;
-  min-height: unset;
-  text-align: right;
+  max-width: 600px;
 }
 
-.mat-divider {
+tn-divider {
   margin: 8px 0;
-}
-
-.ix-dark .mat-mdc-dialog-container,
-.ix-dark .mat-mdc-dialog-content {
-  overflow: auto !important;
 }

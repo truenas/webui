@@ -1,5 +1,8 @@
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialogHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
@@ -8,6 +11,7 @@ import {
 
 describe('VolumeMountsDialogComponent', () => {
   let spectator: Spectator<VolumeMountsDialog>;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: VolumeMountsDialog,
     imports: [
@@ -16,8 +20,9 @@ describe('VolumeMountsDialogComponent', () => {
       ),
     ],
     providers: [
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           service_name: 'netdata',
           volume_mounts: [
@@ -41,10 +46,12 @@ describe('VolumeMountsDialogComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows dialog header', () => {
-    expect(spectator.query('h1')).toHaveText('netdata Volume Mounts');
+  it('shows dialog header', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('netdata Volume Mounts');
   });
 
   it('shows a table with information about volume mounts', () => {

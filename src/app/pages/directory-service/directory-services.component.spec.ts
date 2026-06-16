@@ -1,8 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of, throwError, NEVER } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import { DirectoryServiceStatus, DirectoryServiceType, DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
@@ -72,7 +73,7 @@ describe('DirectoryServicesComponent', () => {
         error: jest.fn(),
       }),
       mockProvider(SlideIn),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
       }),
@@ -555,10 +556,10 @@ describe('DirectoryServicesComponent', () => {
     });
 
     it('should open Leave Domain dialog when Leave button is clicked', async () => {
-      const dialogRef: Partial<MatDialogRef<unknown>> = {
-        afterClosed: () => of(false),
+      const dialogRef: Partial<DialogRef> = {
+        closed: of(false),
       };
-      const dialogOpenSpy = jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue(dialogRef as MatDialogRef<unknown>);
+      const dialogOpenSpy = jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue(dialogRef as DialogRef);
       await spectator.fixture.whenStable();
 
       const menu = await loader.getHarness(MatMenuHarness);
@@ -574,10 +575,10 @@ describe('DirectoryServicesComponent', () => {
       const originalWarn = console.warn;
       console.warn = jest.fn();
 
-      const dialogRef: Partial<MatDialogRef<unknown>> = {
-        afterClosed: () => of(true),
+      const dialogRef: Partial<DialogRef> = {
+        closed: of(true),
       };
-      jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue(dialogRef as MatDialogRef<unknown>);
+      jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue(dialogRef as DialogRef);
       const apiCallSpy = jest.spyOn(spectator.inject(ApiService), 'call');
 
       await spectator.fixture.whenStable();

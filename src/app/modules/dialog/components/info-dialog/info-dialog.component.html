@@ -1,25 +1,23 @@
-<h1 mat-dialog-title>
-  <tn-icon class="information-icon" library="mdi" [name]="icon"></tn-icon>
-  <span class="information-title" [innerHTML]="title | translate"></span>
-</h1>
-<div mat-dialog-content>
-  @if (isHtml) {
+<tn-dialog-shell testId="info" [title]="''">
+  <h1 class="information-header">
+    <tn-icon class="information-icon" library="mdi" [name]="data.icon || 'information'"></tn-icon>
+    <span class="information-title">{{ data.title | translate }}</span>
+  </h1>
+  @if (data.isHtml) {
     <div class="info-panel ip-overflow-auto">
-      <span [innerHtml]="info | translate"></span>
+      <span [innerHtml]="data.info | translate"></span>
     </div>
   } @else {
     <div class="info-panel">
-      <div class="textarea" readonly matInput>{{ info | translate }}</div>
+      <div class="textarea">{{ data.info | translate }}</div>
     </div>
   }
-</div>
-<div mat-dialog-actions>
-  &nbsp;
-  <button
-    mat-button
-    ixTest="dialog-close"
-    (click)="dialogRef.close(true)"
-  >
-    {{ 'Close' | translate }}
-  </button>
-</div>
+
+  <div tnDialogAction>
+    <tn-button
+      testId="dialog-close"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close(true)"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>

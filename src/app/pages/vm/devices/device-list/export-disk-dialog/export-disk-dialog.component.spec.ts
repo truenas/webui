@@ -1,14 +1,13 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { FilesystemService } from 'app/services/filesystem.service';
 import {
@@ -44,17 +43,15 @@ describe('ExportDiskDialogComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxExplorerComponent,
-      IxInputComponent,
-      IxSelectComponent,
       TranslateModule.forRoot(),
     ],
     providers: [
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(() => jest.fn()),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: mockDialogData,
       },
     ],
@@ -74,20 +71,29 @@ describe('ExportDiskDialogComponent', () => {
   it('initializes form with default values', async () => {
     const values = await form.getValues();
     expect(values['Destination Directory']).toBe('');
-    expect(values['Image Name']).toContain('test-vm_disk_');
-    expect(values['Image Format']).toBe('QCOW2 - QEMU Copy On Write');
+
+    const imageNameInput = await loader.getHarness(TnInputHarness);
+    expect(await imageNameInput.getValue()).toContain('test-vm_disk_');
+
+    const formatSelect = await loader.getHarness(TnSelectHarness);
+    expect(await formatSelect.getDisplayText()).toBe('QCOW2 - QEMU Copy On Write');
   });
 
   it('closes dialog with export data when form is submitted', async () => {
     await form.fillForm({
       'Destination Directory': '/mnt/tank/exports',
-      'Image Name': 'my-vm-disk',
-      'Image Format': 'VMDK - VMware Virtual Machine Disk',
     });
 
-    spectator.click(spectator.query('button[ixTest="export"]'));
+    const imageNameInput = await loader.getHarness(TnInputHarness);
+    await imageNameInput.setValue('my-vm-disk');
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    const formatSelect = await loader.getHarness(TnSelectHarness);
+    await formatSelect.selectOption(/VMDK - VMware Virtual Machine Disk/);
+
+    const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export' }));
+    await exportButton.click();
+
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       request: {
         source: '/dev/zvol/tank/vm-disk',
         destination: '/mnt/tank/exports/my-vm-disk.vmdk',
@@ -96,13 +102,13 @@ describe('ExportDiskDialogComponent', () => {
     });
   });
 
-  it('disables submit button when form is invalid', () => {
+  it('disables submit button when form is invalid', async () => {
     // Clear required fields to make the form invalid
     spectator.component.form.patchValue({ destinationDir: '', imageName: '' });
     spectator.detectChanges();
 
-    const submitButton = spectator.query('button[ixTest="export"]');
-    expect(submitButton).toBeDisabled();
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export' }));
+    expect(await submitButton.isDisabled()).toBe(true);
   });
 
   it('provides format options for image export', () => {

@@ -1,19 +1,20 @@
-<h1 matDialogTitle>
-  {{ 'Restore Cloud Sync Task' | translate }}
-</h1>
+<tn-dialog-shell testId="cloudsync-restore" [title]="'Restore Cloud Sync Task' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-input
-    formControlName="description"
-    [label]="'Description' | translate"
-    [required]="true"
-  ></ix-input>
+  <tn-form-field [label]="'Description' | translate">
+    <tn-input
+      testId="description"
+      formControlName="description"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-select
-    formControlName="transfer_mode"
-    [label]="'Transfer Mode' | translate"
-    [required]="true"
-    [options]="transferModes$"
-  ></ix-select>
+  <tn-form-field [label]="'Transfer Mode' | translate" [required]="true">
+    <tn-select
+      testId="transfer-mode"
+      formControlName="transfer_mode"
+      [options]="(transferModes$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   <ix-transfer-mode-explanation
     [mode]="form.controls.transfer_mode.value"
@@ -27,20 +28,22 @@
     [nodeProvider]="treeNodeProvider"
   ></ix-explorer>
 
-  <ix-form-actions>
-    <button mat-button type="button" matDialogClose ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
 
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      type="submit"
-      ixTest="restore"
-      [disabled]="form.invalid"
-    >
-      {{ 'Restore' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="restore"
+    [label]="'Restore' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

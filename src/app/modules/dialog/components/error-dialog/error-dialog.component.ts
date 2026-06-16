@@ -1,16 +1,14 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnIconComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { switchMap, tap } from 'rxjs';
 import { ErrorReport, ErrorReportAction, collapsibleDetailLabels } from 'app/interfaces/error-report.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -21,23 +19,21 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./error-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TnIconComponent,
-    MatDialogContent,
     CopyButtonComponent,
-    MatDialogActions,
-    MatButton,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
   ],
 })
 export class ErrorDialog {
-  protected dialogRef = inject<MatDialogRef<ErrorDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<boolean, ErrorDialog>>(DialogRef);
   private api = inject(ApiService);
   private download = inject(DownloadService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
-  protected error = inject<ErrorReport>(MAT_DIALOG_DATA);
+  protected error = inject<ErrorReport>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected isDetailsOpen = signal(false);

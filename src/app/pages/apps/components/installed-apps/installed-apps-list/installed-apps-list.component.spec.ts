@@ -1,12 +1,13 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SortDirection } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
@@ -109,9 +110,9 @@ describe('InstalledAppsListComponent', () => {
           afterClosed: () => of({ result: [{ error: 'test error' }] }),
         })),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(null),
+          closed: of(null),
         })),
       }),
       mockProvider(LayoutService, {
@@ -208,19 +209,19 @@ describe('InstalledAppsListComponent', () => {
     await selectAll.check();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: apps });
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: apps });
   });
 
   it('removes several applications', async () => {
-    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
-      afterClosed: () => of({ removeVolumes: true, removeImages: true }),
-    } as MatDialogRef<unknown>);
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of({ removeVolumes: true, removeImages: true }),
+    } as DialogRef);
 
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkDelete.emit();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppDeleteDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppDeleteDialog, {
       data: {
         name: 'ix-test-app-1, ix-test-app-2',
         showRemoveVolumes: true,

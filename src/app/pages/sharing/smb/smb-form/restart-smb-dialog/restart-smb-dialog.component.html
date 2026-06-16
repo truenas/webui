@@ -1,5 +1,4 @@
-<mat-dialog-content>
-  <h3>{{ 'Restart SMB Service' | translate }}</h3>
+<tn-dialog-shell testId="restart-smb" [title]="'Restart SMB Service' | translate">
   <div>
     <p>{{ helptext.restartMessage | translate }}</p>
     <p><strong>{{ helptext.restartPrompt | translate }}</strong></p>
@@ -8,7 +7,8 @@
       class="learn-more-link"
       role="button"
       tabindex="0"
-      ixTest="learn-more"
+      tnTestIdType="link"
+      [tnTestId]="'learn-more'"
       [attr.aria-expanded]="showLearnMore()"
       (click)="toggleLearnMore()"
       (keydown.enter)="toggleLearnMore()"
@@ -29,15 +29,20 @@
       </div>
     }
   </div>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button ixTest="do-not-restart" [mat-dialog-close]="false">{{ 'No' | translate }}</button>
-  <button
+
+<div tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="do-not-restart"
+    [label]="'No' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    cdkFocusInitial
     color="primary"
-    ixTest="restart-service"
-    [mat-dialog-close]="true"
-  >{{ 'Restart Service' | translate }}</button>
-</mat-dialog-actions>
+    testId="restart-service"
+    [label]="'Restart Service' | translate"
+    (onClick)="dialogRef.close(true)"
+  ></tn-button>
+</div>
+</tn-dialog-shell>

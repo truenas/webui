@@ -3,9 +3,9 @@ import {
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   filter, Observable, of, switchMap, take,
 } from 'rxjs';
@@ -34,7 +34,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 export class InstallAppButtonComponent {
   private dockerStore = inject(DockerStore);
   private router = inject(Router);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private authService = inject(AuthService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
@@ -82,7 +82,7 @@ export class InstallAppButtonComponent {
 
   showChoosePoolModal(): void {
     this.showAgreementWarning().pipe(
-      switchMap(() => this.matDialog.open(SelectPoolDialog, { viewContainerRef: this.viewContainerRef }).afterClosed()),
+      switchMap(() => this.tnDialog.open(SelectPoolDialog, { viewContainerRef: this.viewContainerRef }).closed),
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.navigateToInstallPage());

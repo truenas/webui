@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -13,8 +13,6 @@ import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { DeleteDatasetDialog } from './delete-dataset-dialog.component';
@@ -31,13 +29,13 @@ describe('DeleteDatasetDialogComponent', () => {
     providers: [
       mockAuth(),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           id: 'lab1',
           name: 'Lab 1',
         } as VolumesListDataset,
       },
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockApi([
         mockCall('pool.dataset.delete'),
         mockCall('pool.dataset.attachments', [
@@ -72,13 +70,13 @@ describe('DeleteDatasetDialogComponent', () => {
   });
 
   async function confirmAndDelete(): Promise<void> {
-    const confirmInput = await loader.getHarness(IxInputHarness);
+    const confirmInput = await loader.getHarness(TnInputHarness);
     await confirmInput.setValue('Lab 1');
 
-    const confirmCheckbox = await loader.getHarness(IxCheckboxHarness);
-    await confirmCheckbox.setValue(true);
+    const confirmCheckbox = await loader.getHarness(TnCheckboxHarness);
+    await confirmCheckbox.check();
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Dataset' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete Dataset' }));
     await deleteButton.click();
   }
 

@@ -1,6 +1,6 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
@@ -29,7 +29,7 @@ describe('SaveDebugButtonComponent', () => {
           afterClosed: () => of(undefined),
         })),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DownloadService, {
         downloadUrl: jest.fn(() => of('')),
       }),

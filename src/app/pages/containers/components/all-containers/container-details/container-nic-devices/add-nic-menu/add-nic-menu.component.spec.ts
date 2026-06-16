@@ -1,9 +1,10 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -34,10 +35,11 @@ describe('AddNicMenuComponent', () => {
         selectedContainer: () => ({ id: 123 }),
         reload: jest.fn(),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of({ useDefault: true, trust_guest_rx_filters: false })),
-        })),
+          closed: of({ useDefault: true, trust_guest_rx_filters: false }),
+          close: jest.fn(),
+        } as unknown as DialogRef)),
       }),
       mockProvider(ContainerDevicesStore, {
         devices: () => [
@@ -78,17 +80,18 @@ describe('AddNicMenuComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
     await menu.open();
 
-    (spectator.inject(MatDialog).open as jest.Mock) = jest.fn(() => ({
-      afterClosed: jest.fn(() => of({
+    (spectator.inject(TnDialog).open as jest.Mock) = jest.fn(() => ({
+      closed: of({
         useDefault: true,
         type: ContainerNicDeviceType.Virtio,
         trust_guest_rx_filters: false,
-      })),
-    }));
+      }),
+      close: jest.fn(),
+    } as unknown as DialogRef));
 
     await menu.clickItem({ text: 'truenasbr0' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ContainerNicFormDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ContainerNicFormDialog, {
       data: { nic: 'truenasbr0' },
       minWidth: '500px',
     });
@@ -110,12 +113,13 @@ describe('AddNicMenuComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
     await menu.open();
 
-    (spectator.inject(MatDialog).open as jest.Mock) = jest.fn(() => ({
-      afterClosed: jest.fn(() => of({
+    (spectator.inject(TnDialog).open as jest.Mock) = jest.fn(() => ({
+      closed: of({
         useDefault: true,
         type: ContainerNicDeviceType.E1000,
-      })),
-    }));
+      }),
+      close: jest.fn(),
+    } as unknown as DialogRef));
 
     await menu.clickItem({ text: 'truenasbr0' });
 
@@ -152,7 +156,7 @@ describe('AddNicMenuComponent - Default Bridge Filtering', () => {
         devices: () => [] as ContainerDevice[],
         isLoading: () => false,
       }),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(SnackbarService),
     ],
   });
@@ -192,7 +196,7 @@ describe('AddNicMenuComponent - No NICs Available', () => {
         devices: () => [] as ContainerDevice[],
         isLoading: () => false,
       }),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(SnackbarService),
     ],
   });
@@ -228,7 +232,7 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
         devices: () => [] as ContainerDevice[],
         isLoading: () => false,
       }),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(SnackbarService),
     ],
   });

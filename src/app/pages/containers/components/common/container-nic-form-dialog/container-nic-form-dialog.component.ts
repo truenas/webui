@@ -1,25 +1,22 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, inject, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   map, Observable, of, startWith,
 } from 'rxjs';
 import { ContainerNicDeviceType, containerNicDeviceTypeLabels } from 'app/enums/container.enum';
 import { ContainerNicDevice } from 'app/interfaces/container.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface ContainerNicFormDialogData {
   nic?: string; // NIC key for adding
@@ -31,17 +28,14 @@ export interface ContainerNicFormDialogData {
   templateUrl: './container-nic-form-dialog.component.html',
   standalone: true,
   imports: [
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogTitle,
-    TestDirective,
+    TnDialogShellComponent,
+    TnCheckboxComponent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    IxInputComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     AsyncPipe,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,8 +44,8 @@ export class ContainerNicFormDialog {
   private fb = inject(FormBuilder);
   private ixValidator = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  private matDialogRef = inject<MatDialogRef<ContainerNicFormDialog>>(MatDialogRef);
-  private dialogData = inject<ContainerNicFormDialogData>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, ContainerNicFormDialog>>(DialogRef);
+  private dialogData = inject<ContainerNicFormDialogData>(DIALOG_DATA);
 
   protected readonly isEditMode = computed(() => !!this.dialogData.device);
 
@@ -151,7 +145,7 @@ export class ContainerNicFormDialog {
         result.mac = this.form.value.mac;
       }
 
-      this.matDialogRef.close(result);
+      this.dialogRef.close(result);
     } else {
       // For E1000: explicitly exclude trust_guest_rx_filters
       const result: {
@@ -169,7 +163,7 @@ export class ContainerNicFormDialog {
         result.mac = this.form.value.mac;
       }
 
-      this.matDialogRef.close(result);
+      this.dialogRef.close(result);
     }
   }
 }

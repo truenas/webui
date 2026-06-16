@@ -2,13 +2,13 @@ import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,7 +37,7 @@ export class FailoverComponent implements OnInit {
   private wsStatus = inject(WebSocketStatusService);
   protected router = inject(Router);
   protected loader = inject(LoaderService);
-  protected matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
   private location = inject(Location);
   private store$ = inject<Store<AlertSlice>>(Store);
   private authService = inject(AuthService);
@@ -67,7 +67,7 @@ export class FailoverComponent implements OnInit {
     this.wsStatus.setReconnectAllowed(false);
     this.wsStatus.setFailoverStatus(true);
 
-    this.matDialog.closeAll();
+    this.dialogService.closeAllDialogs();
     this.api.call('failover.become_passive').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       error: (error: unknown) => { // error on restart
         this.errorHandler.showErrorModal(error)
