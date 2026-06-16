@@ -111,7 +111,12 @@ interface BaseFieldDefinition<T extends object> {
    * further validators (min, max, pattern, custom) via `validators`.
    */
   required?: boolean;
-  /** Control starts disabled. */
+  /**
+   * Control starts disabled. NOTE: Angular's `patchValue` skips disabled
+   * controls, so a field that is both `disabled` and populated from `editData`
+   * / `loadData` keeps its `value` (or the per-type default) instead of the
+   * entity value. Give such a field an explicit `value`, or keep it enabled.
+   */
   disabled?: boolean;
   /** Validators added on top of `required`. */
   validators?: ValidatorFn[];

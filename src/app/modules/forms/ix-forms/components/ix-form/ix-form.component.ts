@@ -288,9 +288,10 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
         if (payload === undefined) {
           if (isDevMode()) {
             console.warn(
-              '[ix-form] submitHandler.request$ emitted undefined and no closeWith was provided; '
-              + 'slide-in will close with `true` so upstream listeners don\'t observe a cancel. '
-              + 'Provide an explicit `closeWith` in SubmitResult to silence this warning.',
+              '[ix-form] submitHandler close payload resolved to undefined (request$ emitted undefined '
+              + 'and closeWith is absent or also returned undefined); slide-in will close with `true` so '
+              + 'upstream listeners don\'t observe a cancel. Provide a closeWith that returns a defined '
+              + 'value in SubmitResult to silence this warning.',
             );
           }
           this.slideInRef.close({ response: true });

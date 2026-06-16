@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
@@ -44,7 +43,6 @@ export function getGlobalTwoFactorFormConfig(
         inputType: 'number',
         label: T('Window'),
         required: true,
-        validators: [Validators.required],
       },
       {
         name: 'ssh',

@@ -103,7 +103,7 @@ const silenceJsDomCssParseError: (message: string, methodName: string) => boolea
   // The default test mock intentionally uses `request$: of(undefined)` as
   // a no-op success — production callers should still see the warning, so
   // it's silenced only at the test layer.
-  if (methodName === 'warn' && message.startsWith('[ix-form] submitHandler.request$ emitted undefined')) {
+  if (methodName === 'warn' && message.startsWith('[ix-form] submitHandler close payload resolved to undefined')) {
     return true;
   }
   return false;

@@ -5,7 +5,6 @@ import { TnSelectOption } from '@truenas/ui-components';
 import { sortBy } from 'lodash-es';
 import { map } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
-import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -23,7 +22,6 @@ export function getLocalizationFormConfig(
   api: ApiService,
   translate: TranslateService,
   store$: Store<AppState>,
-  editingSettings: LocalizationSettings | undefined,
 ): FormDefinition<LocalizationFormValues> {
   return {
     title: T('Localization Settings'),
@@ -36,7 +34,6 @@ export function getLocalizationFormConfig(
           type: 'select',
           label: helptext.kbdmap.label,
           required: true,
-          value: editingSettings?.kbdMap ?? '',
           options: sysGeneralService.kbdMapChoices().pipe(
             map((choices) => choices.map((choice): TnSelectOption => ({ label: choice.label, value: choice.value }))),
           ),
@@ -47,7 +44,6 @@ export function getLocalizationFormConfig(
           label: helptext.timezone.label,
           required: true,
           requireSelection: true,
-          value: editingSettings?.timezone ?? '',
           options: sysGeneralService.timezoneChoices().pipe(
             map((choices) => sortBy(choices, [(choice) => choice.label.toLowerCase()])),
             map((choices) => choices.map((choice): TnSelectOption => ({ label: choice.label, value: choice.value }))),

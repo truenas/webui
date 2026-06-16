@@ -103,6 +103,8 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
   protected title = '';
   protected addTitle = '';
   protected editTitle = '';
+  protected requiredRoles: Role[] = [];
+  protected submitHandler!: FormDefinition<T>['submit'];
 
   /** True while `loadData` is in flight; forwarded to `<ix-form>`. */
   protected readonly externalLoading = signal(false);
@@ -119,6 +121,8 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
     this.title = this.translateOrEmpty(definition.title);
     this.addTitle = this.translateOrEmpty(definition.addTitle);
     this.editTitle = this.translateOrEmpty(definition.editTitle);
+    this.requiredRoles = definition.requiredRoles ?? [];
+    this.submitHandler = definition.submit;
     this.resolvedEditMode.set(this.isEditMode());
 
     if (definition.loadData) {
@@ -200,10 +204,6 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
       requireSelection: field.type === 'combobox' ? (field.requireSelection ?? true) : true,
       options: field.type === 'select' || field.type === 'combobox' ? field.options : undefined,
     };
-  }
-
-  protected get requiredRoles(): Role[] {
-    return this.definition().requiredRoles ?? [];
   }
 
   private translateOrEmpty(value: string | undefined): TranslatedString {
