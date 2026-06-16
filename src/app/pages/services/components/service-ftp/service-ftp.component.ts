@@ -19,11 +19,9 @@ import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -45,7 +43,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
-    IxInputComponent,
     TnInputComponent,
     TnCheckboxComponent,
     IxExplorerComponent,
@@ -69,7 +66,6 @@ export class ServiceFtpComponent implements OnInit {
   private filesystemService = inject(FilesystemService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
-  iecFormatter = inject(IxFormatterService);
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
@@ -78,8 +74,6 @@ export class ServiceFtpComponent implements OnInit {
 
   protected isFormLoading = signal(false);
   isAdvancedMode = false;
-
-  kibParser = (value: string): number | null => this.iecFormatter.memorySizeParsing(value, 'KiB');
 
   form = this.formBuilder.group({
     port: new FormControl(null as number | null, [portRangeValidator(), Validators.required]),

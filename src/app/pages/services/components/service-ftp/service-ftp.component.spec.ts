@@ -14,7 +14,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import {
   WithManageCertificatesLinkComponent,
@@ -84,9 +83,6 @@ describe('ServiceFtpComponent', () => {
   );
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
-  );
-  const getIxInput = (name: string): Promise<IxInputHarness> => loader.getHarness(
-    IxInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
   const hasSelect = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -179,10 +175,10 @@ describe('ServiceFtpComponent', () => {
     expect(await (await getInput('banner')).getValue()).toBe('Welcome');
     expect(await (await getInput('options')).getValue()).toBe('--test=value');
 
-    expect(await (await getIxInput('localuserbw')).getValue()).toBe('1 GiB');
-    expect(await (await getIxInput('localuserdlbw')).getValue()).toBe('2 GiB');
-    expect(await (await getIxInput('anonuserbw')).getValue()).toBe('3 GiB');
-    expect(await (await getIxInput('anonuserdlbw')).getValue()).toBe('5 MiB');
+    expect(await (await getInput('localuserbw')).getValue()).toBe('1 GiB');
+    expect(await (await getInput('localuserdlbw')).getValue()).toBe('2 GiB');
+    expect(await (await getInput('anonuserbw')).getValue()).toBe('3 GiB');
+    expect(await (await getInput('anonuserdlbw')).getValue()).toBe('5 MiB');
   });
 
   it('updates config for FTP service when form is submitted', async () => {
@@ -190,7 +186,7 @@ describe('ServiceFtpComponent', () => {
     await advancedOptionsButton.click();
 
     await (await getCheckbox('tls_opt_ip_address_required')).check();
-    await (await getIxInput('anonuserdlbw')).setValue('5');
+    await (await getInput('anonuserdlbw')).setValue('5');
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();

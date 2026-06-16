@@ -215,37 +215,53 @@
           </tn-form-section>
 
           <tn-form-section [heading]="'Bandwidth' | translate">
-            <ix-input
-              formControlName="localuserbw"
+            <tn-form-field
               [label]="helptext.localuserbwLabel | translate"
               [tooltip]="helptext.userbwTooltip | translate"
-              [format]="iecFormatter.memorySizeFormatting"
-              [parse]="kibParser"
-            ></ix-input>
+            >
+              <tn-input
+                formControlName="localuserbw"
+                sizeStandard="iec"
+                sizeDefaultUnit="KiB"
+                [inputType]="InputType.Size"
+              ></tn-input>
+            </tn-form-field>
 
-            <ix-input
-              formControlName="localuserdlbw"
+            <tn-form-field
               [label]="'Local User Download Bandwidth' | translate"
               [tooltip]="helptext.userbwTooltip | translate"
-              [format]="iecFormatter.memorySizeFormatting"
-              [parse]="kibParser"
-            ></ix-input>
+            >
+              <tn-input
+                formControlName="localuserdlbw"
+                sizeStandard="iec"
+                sizeDefaultUnit="KiB"
+                [inputType]="InputType.Size"
+              ></tn-input>
+            </tn-form-field>
 
-            <ix-input
-              formControlName="anonuserbw"
+            <tn-form-field
               [label]="'Anonymous User Upload Bandwidth' | translate"
               [tooltip]="helptext.userbwTooltip | translate"
-              [format]="iecFormatter.memorySizeFormatting"
-              [parse]="kibParser"
-            ></ix-input>
+            >
+              <tn-input
+                formControlName="anonuserbw"
+                sizeStandard="iec"
+                sizeDefaultUnit="KiB"
+                [inputType]="InputType.Size"
+              ></tn-input>
+            </tn-form-field>
 
-            <ix-input
-              formControlName="anonuserdlbw"
+            <tn-form-field
               [label]="'Anonymous User Download Bandwidth' | translate"
               [tooltip]="helptext.userbwTooltip | translate"
-              [format]="iecFormatter.memorySizeFormatting"
-              [parse]="kibParser"
-            ></ix-input>
+            >
+              <tn-input
+                formControlName="anonuserdlbw"
+                sizeStandard="iec"
+                sizeDefaultUnit="KiB"
+                [inputType]="InputType.Size"
+              ></tn-input>
+            </tn-form-field>
           </tn-form-section>
         </div>
       }
