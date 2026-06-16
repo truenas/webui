@@ -2,11 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AsyncValidatorFn, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness, TnSelectOption,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { FormSubmitEvent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -16,6 +16,7 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 const asTranslated = (value: string): TranslatedString => value as TranslatedString;
 
@@ -84,6 +85,7 @@ describe('IxFormRendererComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       ...ixFormTestingProviders(),
+      mockProvider(ErrorHandlerService),
       { provide: SlideInRef, useValue: slideInRef },
       mockAuth(),
     ],
@@ -128,6 +130,14 @@ describe('IxFormRendererComponent', () => {
     it('shows the modal title for create mode', () => {
       expect(spectator.query('ix-modal-header')).toBeTruthy();
       expect(spectator.fixture.nativeElement).toHaveText('Add Sample');
+    });
+
+    it('shows the required indicator on a required field, inferred from the validator', async () => {
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+      const flavorField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Flavor' }));
+
+      expect(await nameField.isRequired()).toBe(true);
+      expect(await flavorField.isRequired()).toBe(false);
     });
   });
 
@@ -252,6 +262,24 @@ describe('IxFormRendererComponent', () => {
     });
   });
 
+  describe('required select', () => {
+    const requiredSelectDefinition = {
+      title: asTranslated('Required Select'),
+      fields: [{
+        name: 'flavor', type: 'select', label: asTranslated('Flavor'), required: true, options: of(flavorOptions),
+      }],
+      submit: submitHandler,
+    } as unknown as FormDefinition<SampleForm>;
+
+    it('shows the required indicator on a required select (no explicit [required] threaded)', async () => {
+      spectator = createComponent({ props: { definition: requiredSelectDefinition } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const flavorField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Flavor' }));
+      expect(await flavorField.isRequired()).toBe(true);
+    });
+  });
+
   describe('loadData', () => {
     const loadDataDefinition = {
       addTitle: asTranslated('Add Config'),
@@ -268,6 +296,21 @@ describe('IxFormRendererComponent', () => {
       const name = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
       expect(await name.getValue()).toBe('loaded-value');
       expect(spectator.fixture.nativeElement).toHaveText('Edit Config');
+    });
+
+    it('surfaces the error in a modal when the loader fails', () => {
+      const error = new Error('load failed');
+      const failingDefinition = {
+        editTitle: asTranslated('Edit Config'),
+        fields: [{ name: 'name', type: 'input', label: asTranslated('Name') }],
+        loadData: () => throwError(() => error),
+        submit: submitHandler,
+      } as unknown as FormDefinition<SampleForm>;
+
+      spectator = createComponent({ props: { definition: failingDefinition } });
+      const errorHandler = spectator.inject(ErrorHandlerService);
+
+      expect(errorHandler.showErrorModal).toHaveBeenCalledWith(error);
     });
   });
 });

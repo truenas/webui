@@ -37,7 +37,16 @@ import { FormSubmitEvent, SubmitResult } from 'app/modules/forms/ix-forms/compon
  *   }),
  * };
  */
-export interface FormDefinition<T extends object = Record<string, unknown>> {
+/**
+ * Fields are supplied EITHER as a flat `fields` list (one untitled fieldset)
+ * OR as `sections` (one `<ix-fieldset>` each) — never both. Enforced at the
+ * type level so the precedence rule can't be tripped accidentally.
+ */
+type FormFieldsOrSections<T extends object>
+  = { fields: FormFieldDefinition<T>[]; sections?: never }
+    | { sections: FormSectionDefinition<T>[]; fields?: never };
+
+interface FormDefinitionBase<T extends object> {
   /**
    * User-facing strings are untranslated markers (`T('...')`) or helptext
    * constants — the renderer runs them through `TranslateService.instant`.
@@ -54,17 +63,6 @@ export interface FormDefinition<T extends object = Record<string, unknown>> {
   requiredRoles?: Role[];
 
   /**
-   * Single-section convenience: fields rendered in one untitled fieldset.
-   * Mutually exclusive with `sections` — when both are set, `sections` wins.
-   */
-  fields?: FormFieldDefinition<T>[];
-
-  /**
-   * Multi-section form: each entry renders as one `<ix-fieldset>`.
-   */
-  sections?: FormSectionDefinition<T>[];
-
-  /**
    * FormGroup-level validators (e.g. cross-field rules such as
    * `greaterThanFg('maxpoll', ['minpoll'], ...)`).
    */
@@ -75,8 +73,10 @@ export interface FormDefinition<T extends object = Record<string, unknown>> {
    * API call (e.g. `mail.config`, `audit.config`) rather than `editData`. The
    * renderer shows the loading bar, fetches once on init, patches the form and
    * captures the result as the change-tracking baseline. The form is treated as
-   * an edit. Mutually exclusive with `editData`. Handle load errors inside the
-   * returned Observable (e.g. `catchError`) — the renderer just clears loading.
+   * an edit. Mutually exclusive with `editData`. On failure the renderer clears
+   * loading and surfaces the error in a modal, so a config need not add its own
+   * `catchError` — though it may still pre-handle the error in the returned
+   * Observable (e.g. to map it or close the slide-in).
    */
   loadData?: () => Observable<Partial<T>>;
 
@@ -84,9 +84,16 @@ export interface FormDefinition<T extends object = Record<string, unknown>> {
    * Builds the API request and success message from the submitted values.
    * Reuses `<ix-form>`'s submit contract verbatim, so create-vs-update
    * branching, success callbacks and payload overrides all work here.
+   *
+   * Unlike the marker strings above (titles/labels, which the renderer
+   * translates), `SubmitResult.successMessage` goes straight to the snackbar, so
+   * pre-translate it here (`translate.instant(T('...'))`).
    */
   submit: (event: FormSubmitEvent<T>) => SubmitResult;
 }
+
+export type FormDefinition<T extends object = Record<string, unknown>>
+  = FormDefinitionBase<T> & FormFieldsOrSections<T>;
 
 export interface FormSectionDefinition<T extends object = Record<string, unknown>> {
   /** Fieldset title (untranslated marker); omit for an untitled section. */
@@ -107,7 +114,10 @@ interface BaseFieldDefinition<T extends object> {
   hint?: string;
   placeholder?: string;
   /**
-   * Shows the required indicator AND adds `Validators.required`. Add any
+   * Adds `Validators.required`. The `*` indicator is then inferred by
+   * `tn-form-field` from that validator (reference equality), so every control
+   * type — input, checkbox, select and combobox alike — shows it without the
+   * renderer threading an explicit `[required]` to each wrapper. Add any
    * further validators (min, max, pattern, custom) via `validators`.
    */
   required?: boolean;

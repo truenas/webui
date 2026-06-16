@@ -19,6 +19,7 @@ import {
   FormDefinition, FormFieldDefinition, FormFieldType, FormSectionDefinition, InputFieldDefinition,
 } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 const inputTypeMap: Record<NonNullable<InputFieldDefinition<object>['inputType']>, InputType> = {
   text: InputType.PlainText,
@@ -96,6 +97,7 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
 
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   protected form!: FormGroup;
@@ -104,7 +106,6 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
   protected addTitle = '';
   protected editTitle = '';
   protected requiredRoles: Role[] = [];
-  protected submitHandler!: FormDefinition<T>['submit'];
 
   /** True while `loadData` is in flight; forwarded to `<ix-form>`. */
   protected readonly externalLoading = signal(false);
@@ -122,7 +123,6 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
     this.addTitle = this.translateOrEmpty(definition.addTitle);
     this.editTitle = this.translateOrEmpty(definition.editTitle);
     this.requiredRoles = definition.requiredRoles ?? [];
-    this.submitHandler = definition.submit;
     this.resolvedEditMode.set(this.isEditMode());
 
     if (definition.loadData) {
@@ -140,7 +140,14 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
         this.loadedSnapshot.set(this.form.getRawValue() as Partial<T>);
         this.externalLoading.set(false);
       },
-      error: () => this.externalLoading.set(false),
+      error: (error: unknown) => {
+        // Surface the failure instead of silently rendering a blank form, so
+        // every loadData config inherits error reporting without each having to
+        // repeat a catchError. A config may still pre-handle the error in its
+        // own Observable; this is the shared fallback.
+        this.externalLoading.set(false);
+        this.errorHandler.showErrorModal(error);
+      },
     });
   }
 
@@ -206,6 +213,12 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
     };
   }
 
+  /**
+   * Resolves a marker string eagerly via `translate.instant` (once, at init),
+   * not the `| translate` pipe. Intentional: slide-in forms are recreated on
+   * each open, so they pick up a language change anyway. A renderer left mounted
+   * across a runtime locale switch would NOT re-translate its labels/titles.
+   */
   private translateOrEmpty(value: string | undefined): TranslatedString {
     return value ? (this.translate.instant(value) as TranslatedString) : '';
   }
