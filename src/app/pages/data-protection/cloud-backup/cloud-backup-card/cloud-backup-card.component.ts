@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, signal, inject,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
   TnCardComponent,
@@ -18,11 +17,9 @@ import {
   TnTableComponent,
   TnTestIdDirective,
   TnTooltipDirective,
-  type TnCardAction,
-  type TnSortEvent,
 } from '@truenas/ui-components';
 import {
-  filter, of, switchMap, tap,
+  Observable, filter, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -31,15 +28,11 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
-import { JobSlice } from 'app/modules/jobs/store/job.selectors';
+import { convertStringToId } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -54,7 +47,7 @@ import {
   TaskStateCellComponent,
 } from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
-import { TaskCardJobRepainter } from 'app/pages/data-protection/utils/task-card-job-repainter';
+import { JobTaskCardBase } from 'app/pages/data-protection/utils/job-task-card-base.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -83,9 +76,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TaskStateCellComponent,
   ],
 })
-export class CloudBackupCardComponent implements OnInit {
+export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
   private api = inject(ApiService);
-  private translate = inject(TranslateService);
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -93,41 +85,14 @@ export class CloudBackupCardComponent implements OnInit {
   private router = inject(Router);
   protected emptyService = inject(EmptyService);
   private window = inject<Window>(WINDOW);
-  private destroyRef = inject(DestroyRef);
-  private authService = inject(AuthService);
-  private store$ = inject<Store<JobSlice>>(Store);
 
-  private cloudBackups: CloudBackup[] = [];
-  private jobs = new TaskCardJobRepainter<CloudBackup>(
-    this.store$,
-    () => this.cloudBackups,
-    (rows) => {
-      this.cloudBackups = rows;
-      this.dataProvider.setRows(rows);
-    },
-    (row, job) => ({ ...row, job }),
-  );
-
-  dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;
   protected readonly cardMenuPath = ['data-protection', 'cloud-backup'];
-  updatedCount = signal(0);
-
-  private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
-
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      testId: 'cloud-backup-add',
-      handler: () => this.openForm(),
-    };
-  });
-
   protected readonly displayedColumns = ['description', 'state', 'enabled', 'actions'];
+  protected readonly defaultSortProperty = 'description';
+  protected readonly addTestId = 'cloud-backup-add';
+  updatedCount = signal(0);
 
   protected readonly actions: IconActionConfig<CloudBackup>[] = [
     {
@@ -156,8 +121,6 @@ export class CloudBackupCardComponent implements OnInit {
     },
   ];
 
-  protected readonly trackByTaskId = (_index: number, row: CloudBackup): number => row.id;
-
   protected uniqueRowTag(row: CloudBackup): string {
     return convertStringToId('cloud-backup-' + row.description);
   }
@@ -166,35 +129,12 @@ export class CloudBackupCardComponent implements OnInit {
     return [row.description, this.translate.instant('Cloud Backup')].join(' ');
   }
 
-  protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<CloudBackup>(event, this.displayedColumns));
+  protected queryTasks(): Observable<CloudBackup[]> {
+    return this.api.call('cloud_backup.query');
   }
 
-  ngOnInit(): void {
-    this.destroyRef.onDestroy(() => this.jobs.destroy());
-    const cloudBackups$ = this.api.call('cloud_backup.query').pipe(
-      // Publish the rows before watching: the job store emits synchronously on
-      // subscribe, so the first repaint can fire before `watch` returns and must
-      // see the freshly-loaded rows.
-      tap((cloudBackups) => this.cloudBackups = cloudBackups),
-      tap((cloudBackups) => this.jobs.watch(cloudBackups)),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
-    this.setDefaultSort();
-    this.getCloudBackups();
-  }
-
-  private setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'description',
-    });
-  }
-
-  private getCloudBackups(): void {
-    this.dataProvider.load();
+  protected mergeJob(row: CloudBackup, job: Job): CloudBackup {
+    return { ...row, job };
   }
 
   protected runNow(row: CloudBackup): void {
@@ -223,14 +163,18 @@ export class CloudBackupCardComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.getCloudBackups();
+        this.reload();
       },
     });
   }
 
   protected openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
-      .onSuccess(() => this.getCloudBackups(), this.destroyRef);
+      .onSuccess(() => this.reload(), this.destroyRef);
+  }
+
+  protected onAdd(): void {
+    this.openForm();
   }
 
   protected doDelete(row: CloudBackup): void {
@@ -243,7 +187,7 @@ export class CloudBackupCardComponent implements OnInit {
       successMessage: this.translate.instant('Cloud Backup Task «{name}» deleted.', { name: row.description }),
     }).pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getCloudBackups());
+    ).subscribe(() => this.reload());
   }
 
   protected onChangeEnabledState(cloudBackup: CloudBackup): void {
@@ -255,13 +199,13 @@ export class CloudBackupCardComponent implements OnInit {
         next: () => {
           this.updatedCount.update((count) => count - 1);
           if (!this.updatedCount()) {
-            this.getCloudBackups();
+            this.reload();
           }
         },
         error: (error: unknown) => {
           this.updatedCount.update((count) => count - 1);
           if (!this.updatedCount()) {
-            this.getCloudBackups();
+            this.reload();
           }
           this.errorHandler.showErrorModal(error);
         },

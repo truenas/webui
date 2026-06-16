@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject,
+  ChangeDetectionStrategy, Component, inject,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
   TnCardComponent,
@@ -18,12 +17,10 @@ import {
   TnTableComponent,
   TnTestIdDirective,
   TnTooltipDirective,
-  type TnCardAction,
-  type TnSortEvent,
   TnDialog,
 } from '@truenas/ui-components';
 import {
-  EMPTY, catchError, filter, map, of, switchMap, tap,
+  EMPTY, Observable, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -32,14 +29,11 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { convertStringToId } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -56,10 +50,9 @@ import { CloudSyncDataTransformer } from 'app/pages/data-protection/cloudsync/ut
 import {
   TaskStateCellComponent,
 } from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
-import { TaskCardJobRepainter } from 'app/pages/data-protection/utils/task-card-job-repainter';
+import { JobTaskCardBase } from 'app/pages/data-protection/utils/job-task-card-base.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
-import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-cloudsync-task-card',
@@ -87,49 +80,21 @@ import { AppState } from 'app/store';
     CardAlertBadgeComponent,
   ],
 })
-export class CloudSyncTaskCardComponent implements OnInit {
-  private translate = inject(TranslateService);
+export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi> {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private slideIn = inject(SlideIn);
   private taskService = inject(TaskService);
-  private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
   private tnDialog = inject(TnDialog);
   protected emptyService = inject(EmptyService);
-  private destroyRef = inject(DestroyRef);
-  private authService = inject(AuthService);
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly cardMenuPath = ['data-protection', 'cloudsync'];
-
-  private cloudSyncTasks: CloudSyncTaskUi[] = [];
-  dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
-  private jobs = new TaskCardJobRepainter<CloudSyncTaskUi>(
-    this.store$,
-    () => this.cloudSyncTasks,
-    (rows) => {
-      this.cloudSyncTasks = rows;
-      this.dataProvider.setRows(rows);
-    },
-    (row, job) => ({ ...row, job, state: { state: job.state } }),
-  );
-
-  private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
-
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      testId: 'cloudsync-task-add',
-      handler: () => this.onAdd(),
-    };
-  });
-
   protected readonly displayedColumns = ['description', 'state', 'enabled', 'actions'];
+  protected readonly defaultSortProperty = 'description';
+  protected readonly addTestId = 'cloudsync-task-add';
 
   protected readonly actions: IconActionConfig<CloudSyncTaskUi>[] = [
     {
@@ -171,8 +136,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
     },
   ];
 
-  protected readonly trackByTaskId = (_index: number, row: CloudSyncTaskUi): number => row.id;
-
   protected uniqueRowTag(row: CloudSyncTaskUi): string {
     return convertStringToId('card-cloudsync-task-' + row.description);
   }
@@ -181,40 +144,18 @@ export class CloudSyncTaskCardComponent implements OnInit {
     return [row.description, this.translate.instant('Cloud Sync Task')].join(' ');
   }
 
-  protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<CloudSyncTaskUi>(event, this.displayedColumns));
-  }
-
-  private setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'description',
-    });
-  }
-
-  ngOnInit(): void {
-    this.destroyRef.onDestroy(() => this.jobs.destroy());
-    const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
+  protected queryTasks(): Observable<CloudSyncTaskUi[]> {
+    return this.api.call('cloudsync.query').pipe(
       map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
         cloudSyncTasks,
         this.taskService,
         this.translate,
       )),
-      // Publish the rows before watching: the job store emits synchronously on
-      // subscribe, so the first repaint can fire before `watch` returns and must
-      // see the freshly-loaded rows.
-      tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
-      tap((cloudSyncTasks) => this.jobs.watch(cloudSyncTasks)),
-      takeUntilDestroyed(this.destroyRef),
     );
-    this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
-    this.setDefaultSort();
-    this.getCloudSyncTasks();
   }
 
-  private getCloudSyncTasks(): void {
-    this.dataProvider.load();
+  protected mergeJob(row: CloudSyncTaskUi, job: Job): CloudSyncTaskUi {
+    return { ...row, job, state: { state: job.state } };
   }
 
   protected doDelete(cloudsyncTask: CloudSyncTaskUi): void {
@@ -227,17 +168,17 @@ export class CloudSyncTaskCardComponent implements OnInit {
       successMessage: this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: cloudsyncTask.description }),
     }).pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getCloudSyncTasks());
+    ).subscribe(() => this.reload());
   }
 
   protected onAdd(): void {
     this.slideIn.open(CloudSyncWizardComponent, { wide: true })
-      .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
+      .onSuccess(() => this.reload(), this.destroyRef);
   }
 
   protected onEdit(row?: CloudSyncTaskUi): void {
     this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row })
-      .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
+      .onSuccess(() => this.reload(), this.destroyRef);
   }
 
   protected runNow(row: CloudSyncTaskUi): void {
@@ -253,7 +194,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.translate.instant('Cloud Sync Task «{name}» has started.', { name: row.description }),
       )),
       catchError((error: unknown) => {
-        this.getCloudSyncTasks();
+        this.reload();
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
@@ -263,7 +204,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» completed successfully.', { name: row.description }));
       }
       this.updateRowStateAndJob(row, job.state, job);
-      this.jobs.reconcile(job, () => this.getCloudSyncTasks());
+      this.jobs.reconcile(job, () => this.reload());
     });
   }
 
@@ -310,7 +251,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» dry run completed successfully.', { name: row.description }));
       }
       this.updateRowStateAndJob(row, job.state, job);
-      this.jobs.reconcile(job, () => this.getCloudSyncTasks());
+      this.jobs.reconcile(job, () => this.reload());
     });
   }
 
@@ -323,7 +264,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.snackbar.success(
           this.translate.instant('Cloud Sync «{name}» has been restored.', { name: row.description }),
         );
-        this.getCloudSyncTasks();
+        this.reload();
       });
   }
 
@@ -333,10 +274,10 @@ export class CloudSyncTaskCardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.getCloudSyncTasks();
+          this.reload();
         },
         error: (error: unknown) => {
-          this.getCloudSyncTasks();
+          this.reload();
           this.errorHandler.showErrorModal(error);
         },
       });

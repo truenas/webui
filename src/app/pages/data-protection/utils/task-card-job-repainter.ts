@@ -4,7 +4,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 
-interface TaskWithJob {
+export interface TaskWithJob {
   id: number;
   job?: Job | null;
 }

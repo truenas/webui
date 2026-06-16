@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject,
+  ChangeDetectionStrategy, Component, inject,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
   TnCardComponent,
@@ -19,11 +18,9 @@ import {
   TnTestIdDirective,
   TnTooltipDirective,
   TnDialog,
-  type TnCardAction,
-  type TnSortEvent,
 } from '@truenas/ui-components';
 import {
-  catchError, EMPTY, filter, of, switchMap, tap,
+  catchError, EMPTY, Observable, filter, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -31,15 +28,11 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
-import { JobSlice } from 'app/modules/jobs/store/job.selectors';
+import { convertStringToId } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -61,7 +54,7 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { TaskCardJobRepainter } from 'app/pages/data-protection/utils/task-card-job-repainter';
+import { JobTaskCardBase } from 'app/pages/data-protection/utils/job-task-card-base.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -91,9 +84,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TaskStateCellComponent,
   ],
 })
-export class ReplicationTaskCardComponent implements OnInit {
+export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTask> {
   private slideIn = inject(SlideIn);
-  private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
@@ -101,39 +93,12 @@ export class ReplicationTaskCardComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private download = inject(DownloadService);
   protected emptyService = inject(EmptyService);
-  private destroyRef = inject(DestroyRef);
-  private authService = inject(AuthService);
-  private store$ = inject<Store<JobSlice>>(Store);
-
-  dataProvider: AsyncDataProvider<ReplicationTask>;
-  private replicationTasks: ReplicationTask[] = [];
-  private jobs = new TaskCardJobRepainter<ReplicationTask>(
-    this.store$,
-    () => this.replicationTasks,
-    (rows) => {
-      this.replicationTasks = rows;
-      this.dataProvider.setRows(rows);
-    },
-    (row, job) => ({ ...row, job, state: { state: job.state } }),
-  );
 
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly cardMenuPath = ['data-protection', 'replication'];
-
-  private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
-
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      testId: 'replication-task-add',
-      handler: () => this.addReplicationTask(),
-    };
-  });
-
   protected readonly displayedColumns = ['name', 'state', 'enabled', 'actions'];
+  protected readonly defaultSortProperty = 'name';
+  protected readonly addTestId = 'replication-task-add';
 
   protected readonly actions: IconActionConfig<ReplicationTask>[] = [
     {
@@ -169,8 +134,6 @@ export class ReplicationTaskCardComponent implements OnInit {
     },
   ];
 
-  protected readonly trackByTaskId = (_index: number, row: ReplicationTask): number => row.id;
-
   protected uniqueRowTag(row: ReplicationTask): string {
     return convertStringToId('replication-task-' + row.name);
   }
@@ -179,37 +142,14 @@ export class ReplicationTaskCardComponent implements OnInit {
     return [row.name, this.translate.instant('Replication Task')].join(' ');
   }
 
-  protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<ReplicationTask>(event, this.displayedColumns));
-  }
-
-  private setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'name',
-    });
-  }
-
-  ngOnInit(): void {
-    this.destroyRef.onDestroy(() => this.jobs.destroy());
-    const replicationTasks$ = this.api.call('replication.query', [[], {
+  protected queryTasks(): Observable<ReplicationTask[]> {
+    return this.api.call('replication.query', [[], {
       extra: { check_dataset_encryption_keys: true },
-    }]).pipe(
-      // Publish the rows before watching: the job store emits synchronously on
-      // subscribe, so the first repaint can fire before `watch` returns and must
-      // see the freshly-loaded rows.
-      tap((replicationTasks) => this.replicationTasks = replicationTasks),
-      tap((replicationTasks) => this.jobs.watch(replicationTasks)),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
-    this.setDefaultSort();
-    this.getReplicationTasks();
+    }]);
   }
 
-  private getReplicationTasks(): void {
-    this.dataProvider.load();
+  protected mergeJob(row: ReplicationTask, job: Job): ReplicationTask {
+    return { ...row, job, state: { state: job.state } };
   }
 
   protected doDelete(replicationTask: ReplicationTask): void {
@@ -221,17 +161,17 @@ export class ReplicationTaskCardComponent implements OnInit {
       call: () => this.api.call('replication.delete', [replicationTask.id]),
     }).pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getReplicationTasks());
+    ).subscribe(() => this.reload());
   }
 
-  protected addReplicationTask(): void {
+  protected onAdd(): void {
     this.slideIn.open(ReplicationWizardComponent, { wide: true })
-      .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
+      .onSuccess(() => this.reload(), this.destroyRef);
   }
 
   private editReplicationTask(row: ReplicationTask): void {
     this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
-      .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
+      .onSuccess(() => this.reload(), this.destroyRef);
   }
 
   protected runNow(row: ReplicationTask): void {
@@ -249,14 +189,14 @@ export class ReplicationTaskCardComponent implements OnInit {
         );
       }),
       catchError((error: unknown) => {
-        this.getReplicationTasks();
+        this.reload();
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((job: Job) => {
       this.updateRowStateAndJob(row, job.state, job);
-      this.jobs.reconcile(job, () => this.getReplicationTasks());
+      this.jobs.reconcile(job, () => this.reload());
     });
   }
 
@@ -266,7 +206,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     });
     dialog.closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.getReplicationTasks());
+      .subscribe(() => this.reload());
   }
 
   protected downloadKeys(row: ReplicationTask): void {
@@ -288,10 +228,10 @@ export class ReplicationTaskCardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.getReplicationTasks();
+          this.reload();
         },
         error: (error: unknown) => {
-          this.getReplicationTasks();
+          this.reload();
           this.errorHandler.showErrorModal(error);
         },
       });
