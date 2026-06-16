@@ -98,6 +98,12 @@ export class TaskCardJobRepainter<T extends TaskWithJob> {
    * through `setRows`. Lets the imperative run/stop handlers repaint a single
    * row's state/job without re-implementing the `map` + republish dance in every
    * card — the merge shape stays per-card, the plumbing is shared here.
+   *
+   * Run/stop handler contract: repaint in place with this, then call `reconcile`
+   * only when you hold a fresh job. `repaintRow` deliberately does NOT touch
+   * `jobStates`, so a repaint-only call (e.g. stopping to an `Aborted` pill with
+   * no fresh job in hand) leaves the dedupe map stale on purpose — the live
+   * `watch()` subscription corrects it on the next store emit.
    */
   repaintRow(rowId: number, transform: (row: T) => T): void {
     this.setRows(this.getRows().map((row) => (row.id === rowId ? transform(row) : row)));

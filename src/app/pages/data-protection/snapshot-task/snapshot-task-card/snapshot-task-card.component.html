@@ -1,7 +1,4 @@
-<tn-card
-  padding="small"
-  [primaryAction]="addAction()"
->
+<tn-card padding="small">
   <h3 tnCardHeader class="card-title">
     <a
       tnTestIdType="link"
@@ -20,7 +17,9 @@
     <ix-card-alert-badge [menuPath]="cardMenuPath" />
   </h3>
 
-  @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
+  @let isEmpty = !(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async);
+
+  @if (isEmpty) {
     <tn-empty
       icon="file-multiple-outline"
       iconLibrary="mdi"
@@ -91,31 +90,49 @@
       [ixTestOverride]="['snapshot-task']"
       [routerLink]="['/data-protection', 'snapshot']"
     ></ix-table-pager-show-more>
+  }
 
-    <!--
-      Two router-linked outline buttons kept hand-rolled: the card's typed footer
-      slots (primaryAction / secondaryAction / footerLink) expose only
-      handler: () => void — not [routerLink] — and host at most one filled + one
-      outline + one link, so they can't carry both native-anchor links.
-      Note: tn-button owns the `button-` test-id prefix, so the resolved data-test
-      values are button-snapshot-task-vmware-snapshots / -snapshots (was link-*).
-      This rename is intentional per the tn-* test-id directive adoption.
-    -->
-    <div class="footer-actions">
-      <tn-button
-        variant="outline"
-        [testId]="['snapshot-task', 'vmware-snapshots']"
-        [routerLink]="['/data-protection', 'vmware-snapshots']"
-        [ixUiSearch]="uiSearchableElement.elements.vmwareSnapshots"
-        [label]="'VMware Snapshot Integration' | translate"
-      ></tn-button>
+  <!--
+    Footer is hand-rolled rather than driven by [primaryAction]: the two outline
+    buttons are router links and the card's typed footer slots
+    (primaryAction / secondaryAction / footerLink) expose only handler: () => void —
+    not [routerLink] — and host at most one filled + one outline + one link, so they
+    can't carry both native-anchor links. We render the whole footer here to keep the
+    links on the left next to the Add button on the right.
+    Note: tn-button owns the `button-` test-id prefix, so the resolved data-test
+    values are button-snapshot-task-vmware-snapshots / -snapshots (was link-*).
+    This rename is intentional per the tn-* test-id directive adoption.
+  -->
+  @if (!isEmpty || addAction()) {
+    <div class="card-footer">
+      <div class="card-footer__start">
+        @if (!isEmpty) {
+          <tn-button
+            variant="outline"
+            [testId]="['snapshot-task', 'vmware-snapshots']"
+            [routerLink]="['/data-protection', 'vmware-snapshots']"
+            [ixUiSearch]="uiSearchableElement.elements.vmwareSnapshots"
+            [label]="'VMware Snapshot Integration' | translate"
+          ></tn-button>
 
-      <tn-button
-        variant="outline"
-        [testId]="['snapshot-task', 'snapshots']"
-        [routerLink]="['/datasets', 'snapshots']"
-        [label]="'Snapshots' | translate"
-      ></tn-button>
+          <tn-button
+            variant="outline"
+            [testId]="['snapshot-task', 'snapshots']"
+            [routerLink]="['/datasets', 'snapshots']"
+            [label]="'Snapshots' | translate"
+          ></tn-button>
+        }
+      </div>
+
+      @if (addAction(); as add) {
+        <tn-button
+          variant="filled"
+          color="primary"
+          [testId]="add.testId"
+          [label]="add.label"
+          (click)="add.handler()"
+        ></tn-button>
+      }
     </div>
   }
 </tn-card>
