@@ -1,14 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
-import {
-  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
-} from '@angular/material/expansion';
-import { MatTooltip } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent, TnExpansionPanelComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter, finalize, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -16,9 +11,7 @@ import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interf
 import { Job } from 'app/interfaces/job.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -29,30 +22,24 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./snapshot-batch-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
     ReactiveFormsModule,
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    IxCheckboxComponent,
-    MatTooltip,
+    TnExpansionPanelComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
+    TnTooltipDirective,
     RequiresRolesDirective,
-    TestDirective,
-    MatButton,
-    MatDialogClose,
+    TnButtonComponent,
     FormActionsComponent,
-    RouterLink,
-    MatAnchor,
   ],
 })
 export class SnapshotBatchDeleteDialog implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
+  protected dialogRef = inject<DialogRef<boolean, SnapshotBatchDeleteDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
-  private snapshots = inject<ZfsSnapshot[]>(MAT_DIALOG_DATA);
+  private snapshots = inject<ZfsSnapshot[]>(DIALOG_DATA);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
 
@@ -93,6 +80,11 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   }
 
   onSubmit(): void {
+    // Guard against accidental submission (e.g. a stray form submit): only an
+    // explicit, valid confirmation with no dependent clones may delete.
+    if (this.form.invalid || this.hasClones || this.isDeleting()) {
+      return;
+    }
     this.isDeleting.set(true);
     const snapshots = this.snapshots.map((item) => [item.name]);
     const params: CoreBulkQuery = ['pool.snapshot.delete', snapshots];

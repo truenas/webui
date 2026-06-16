@@ -1,8 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -20,6 +21,7 @@ describe('UploadConfigDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockProvider(DialogRef),
       mockProvider(Router),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -47,7 +49,7 @@ describe('UploadConfigDialogComponent', () => {
     const fileInput = await loader.getHarness(IxFileInputHarness.with({ label: 'Select Configuration File' }));
     await fileInput.setValue([file]);
 
-    const uploadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upload' }));
+    const uploadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Upload' }));
     await uploadButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

@@ -1,19 +1,15 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialog,
-} from '@angular/material/dialog';
-import {
-  MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
-} from '@angular/material/expansion';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialog, TnDialogShellComponent, TnExpansionPanelComponent,
+  TnFormFieldComponent, TnIconComponent, TnInputComponent, TnProgressBarComponent,
+} from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -30,13 +26,10 @@ import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
@@ -56,19 +49,16 @@ export enum DisconnectOption {
   templateUrl: './export-disconnect-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatProgressBar,
+    TnDialogShellComponent,
+    TnProgressBarComponent,
     ReactiveFormsModule,
-    MatDialogContent,
     IxFieldsetComponent,
-    IxCheckboxComponent,
-    IxInputComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
-    MatButton,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    TestDirective,
+    TnButtonComponent,
+    TnExpansionPanelComponent,
     RequiresRolesDirective,
     TranslateModule,
     TnIconComponent,
@@ -76,11 +66,11 @@ export enum DisconnectOption {
 })
 export class ExportDisconnectModalComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private dialogRef = inject<MatDialogRef<ExportDisconnectModalComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, ExportDisconnectModalComponent>>(DialogRef);
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
   private dialogService = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private loader = inject(LoaderService);
   private api = inject(ApiService);
   private datasetStore = inject(DatasetTreeStore);
@@ -88,7 +78,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
   private store = inject(Store);
-  pool = inject<Pool>(MAT_DIALOG_DATA);
+  pool = inject<Pool>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   readonly helptext = helptextVolumes;
@@ -236,10 +226,10 @@ export class ExportDisconnectModalComponent implements OnInit {
   }
 
   private showServicesToBeRestartedDialog(servicesInfo: ServicesToBeRestartedInfo): void {
-    this.matDialog.open(ServicesToBeRestartedDialogComponent, {
+    this.tnDialog.open(ServicesToBeRestartedDialogComponent, {
       data: servicesInfo,
     })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),

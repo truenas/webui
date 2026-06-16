@@ -1,16 +1,6 @@
-<h1 mat-dialog-title class="header">
-  {{ 'Hosts' | translate }}
-  <button
-    mat-icon-button
-    [ixTest]="['close-dialog']"
-    [attr.aria-label]="'Close Dialog' | translate"
-    [matDialogClose]="false"
-  >
-    <tn-icon name="close" library="mdi"></tn-icon>
-  </button>
-</h1>
+<tn-dialog-shell testId="dialog" [title]="'Hosts' | translate">
 
-<mat-dialog-content class="content">
+
   <ix-table
     class="table"
     [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
@@ -29,14 +19,11 @@
     ></tbody>
   </ix-table>
 
-  <div class="controls">
-    <button
-      mat-button
-      [ixTest]="['add-new']"
-      (click)="onAdd()"
-    >
-      <tn-icon name="plus" library="mdi"></tn-icon>
-      {{ 'Add New' | translate }}
-    </button>
-  </div>
-</mat-dialog-content>
+  <tn-button
+    tnDialogAction
+    variant="outline"
+    [testId]="['add-new']"
+    [label]="'Add New' | translate"
+    (onClick)="onAdd()"
+  ></tn-button>
+</tn-dialog-shell>

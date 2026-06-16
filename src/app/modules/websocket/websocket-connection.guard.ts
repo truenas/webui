@@ -1,7 +1,6 @@
 import { Location } from '@angular/common';
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { isSigninUrl } from 'app/helpers/url.helper';
@@ -14,7 +13,6 @@ export class WebSocketConnectionGuard {
   private wsManager = inject(WebSocketHandlerService);
   protected router = inject(Router);
   private location = inject(Location);
-  private matDialog = inject(MatDialog);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private window = inject<Window>(WINDOW);
@@ -40,7 +38,7 @@ export class WebSocketConnectionGuard {
   }
 
   private resetUi(): void {
-    this.closeAllDialogs();
+    this.dialogService.closeAllDialogs();
     if (!this.wsManager.isSystemShuttingDown) {
       // Store current URL before redirecting to signin so user can return after login
       // Use location.path() which returns the path without base href and includes query params
@@ -52,12 +50,6 @@ export class WebSocketConnectionGuard {
       // manually preserve query params
       const params = new URLSearchParams(this.window.location.search);
       this.router.navigate(['/signin'], { queryParams: Object.fromEntries(params) });
-    }
-  }
-
-  private closeAllDialogs(): void {
-    for (const openDialog of this.matDialog.openDialogs) {
-      openDialog.close();
     }
   }
 

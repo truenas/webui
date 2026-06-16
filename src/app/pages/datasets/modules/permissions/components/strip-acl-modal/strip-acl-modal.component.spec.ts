@@ -1,15 +1,14 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   StripAclModalComponent, StripAclModalData,
@@ -32,9 +31,9 @@ describe('StripAclModalComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           path: '/mnt/tank/test',
         } as StripAclModalData,
@@ -48,7 +47,7 @@ describe('StripAclModalComponent', () => {
   });
 
   it('strips ACL when dialog is submitted', async () => {
-    const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACLs' }));
+    const stripButton = await loader.getHarness(TnButtonHarness.with({ label: 'Strip ACLs' }));
     await stripButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -64,16 +63,16 @@ describe('StripAclModalComponent', () => {
         path: '/mnt/tank/test',
       }],
     );
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('strips ACL with traverse when "Remove ACL from children" checkbox is ticked', async () => {
     const traverseCheckbox = await loader.getHarness(
-      IxCheckboxHarness.with({ label: helptextAcl.stripAclDialog.traverseCheckbox }),
+      TnCheckboxHarness.with({ label: helptextAcl.stripAclDialog.traverseCheckbox }),
     );
-    await traverseCheckbox.setValue(true);
+    await traverseCheckbox.check();
 
-    const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACLs' }));
+    const stripButton = await loader.getHarness(TnButtonHarness.with({ label: 'Strip ACLs' }));
     await stripButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

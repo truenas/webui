@@ -1,13 +1,13 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -100,11 +100,11 @@ describe('UpdateComponent', () => {
           },
         ],
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
           close: jest.fn(),
-          afterClosed: () => of(true),
-        } as unknown as MatDialogRef<unknown>)),
+          closed: of(true),
+        } as unknown as DialogRef)),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -226,7 +226,7 @@ describe('UpdateComponent', () => {
       const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
       await installButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
         data: expect.objectContaining({
           title: 'Save configuration settings from this machine before updating?',
         }),
@@ -254,10 +254,10 @@ describe('UpdateComponent', () => {
     });
 
     it('continues update flow when save config dialog returns false (Do Not Save)', async () => {
-      const matDialog = spectator.inject(MatDialog);
-      const openSpy = jest.spyOn(matDialog, 'open').mockReturnValue({
-        afterClosed: () => of(false),
-      } as MatDialogRef<SaveConfigDialog>);
+      const tnDialog = spectator.inject(TnDialog);
+      const openSpy = jest.spyOn(tnDialog, 'open').mockReturnValue({
+        closed: of(false),
+      } as DialogRef<unknown, SaveConfigDialog>);
 
       const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
       await installButton.click();
@@ -267,15 +267,15 @@ describe('UpdateComponent', () => {
 
       openSpy.mockReturnValue({
         close: jest.fn(),
-        afterClosed: () => of(true),
-      } as unknown as MatDialogRef<SaveConfigDialog>);
+        closed: of(true),
+      } as unknown as DialogRef<unknown, SaveConfigDialog>);
     });
 
     it('stops update flow when save config dialog returns undefined (error or dismissed)', async () => {
-      const matDialog = spectator.inject(MatDialog);
-      const openSpy = jest.spyOn(matDialog, 'open').mockReturnValue({
-        afterClosed: () => of(undefined),
-      } as MatDialogRef<SaveConfigDialog>);
+      const tnDialog = spectator.inject(TnDialog);
+      const openSpy = jest.spyOn(tnDialog, 'open').mockReturnValue({
+        closed: of(undefined),
+      } as DialogRef<unknown, SaveConfigDialog>);
 
       const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
       await installButton.click();
@@ -285,8 +285,8 @@ describe('UpdateComponent', () => {
 
       openSpy.mockReturnValue({
         close: jest.fn(),
-        afterClosed: () => of(true),
-      } as unknown as MatDialogRef<SaveConfigDialog>);
+        closed: of(true),
+      } as unknown as DialogRef<unknown, SaveConfigDialog>);
     });
 
     it('uses failover.upgrade for HA systems', async () => {
@@ -343,7 +343,7 @@ describe('UpdateComponent', () => {
       const installManualButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install', ancestor: '.manual-update' }));
       await installManualButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
         data: expect.objectContaining({
           saveButton: 'Save Configuration',
         }),
@@ -353,10 +353,10 @@ describe('UpdateComponent', () => {
     });
 
     it('continues manual update flow when save config dialog returns false (Do Not Save)', async () => {
-      const matDialog = spectator.inject(MatDialog);
-      const openSpy = jest.spyOn(matDialog, 'open').mockReturnValue({
-        afterClosed: () => of(false),
-      } as MatDialogRef<SaveConfigDialog>);
+      const tnDialog = spectator.inject(TnDialog);
+      const openSpy = jest.spyOn(tnDialog, 'open').mockReturnValue({
+        closed: of(false),
+      } as DialogRef<unknown, SaveConfigDialog>);
 
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
@@ -368,15 +368,15 @@ describe('UpdateComponent', () => {
 
       openSpy.mockReturnValue({
         close: jest.fn(),
-        afterClosed: () => of(true),
-      } as unknown as MatDialogRef<SaveConfigDialog>);
+        closed: of(true),
+      } as unknown as DialogRef<unknown, SaveConfigDialog>);
     });
 
     it('stops manual update flow when save config dialog returns undefined (error or dismissed)', async () => {
-      const matDialog = spectator.inject(MatDialog);
-      const openSpy = jest.spyOn(matDialog, 'open').mockReturnValue({
-        afterClosed: () => of(undefined),
-      } as MatDialogRef<SaveConfigDialog>);
+      const tnDialog = spectator.inject(TnDialog);
+      const openSpy = jest.spyOn(tnDialog, 'open').mockReturnValue({
+        closed: of(undefined),
+      } as DialogRef<unknown, SaveConfigDialog>);
 
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
@@ -388,8 +388,8 @@ describe('UpdateComponent', () => {
 
       openSpy.mockReturnValue({
         close: jest.fn(),
-        afterClosed: () => of(true),
-      } as unknown as MatDialogRef<SaveConfigDialog>);
+        closed: of(true),
+      } as unknown as DialogRef<unknown, SaveConfigDialog>);
     });
   });
 

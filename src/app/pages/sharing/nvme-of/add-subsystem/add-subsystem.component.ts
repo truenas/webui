@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import {
   MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious,
 } from '@angular/material/stepper';
@@ -23,7 +22,7 @@ import {
 } from 'app/interfaces/nvme-of.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
-import { SubsystemPartiallyCreatedDialogComponent } from 'app/modules/dialog/components/subsystem-partially-created-dialog/subsystem-partially-created-dialog.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -89,7 +88,7 @@ export class AddSubsystemComponent {
   private errorHandler = inject(ErrorHandlerService);
   private nvmeOfService = inject(NvmeOfService);
   private store$ = inject<Store<AppState>>(Store);
-  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
 
   protected isLoading = signal(false);
@@ -129,12 +128,10 @@ export class AddSubsystemComponent {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(({ subsystem, relatedErrors }) => {
       if (subsystem && relatedErrors?.length > 0) {
-        this.matDialog.open(SubsystemPartiallyCreatedDialogComponent, {
-          data: {
-            subsystem,
-            relatedErrors,
-          },
-        });
+        this.dialogService.subsystemPartiallyCreated({
+          subsystem,
+          relatedErrors,
+        }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
       }
 
       this.snackbar.success(this.translate.instant('New subsystem added'));

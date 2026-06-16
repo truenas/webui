@@ -1,9 +1,8 @@
-<h1 matDialogTitle>{{ 'System Thumbprint' | translate }}</h1>
-
-<div mat-dialog-content class="dialog-content">
+<tn-dialog-shell testId="license-fingerprint" [title]="'System Thumbprint' | translate">
+<div class="dialog-content">
   @if (isLoading()) {
     <div class="loading">
-      <mat-spinner [diameter]="36"></mat-spinner>
+      <tn-spinner [diameter]="36"></tn-spinner>
       <span>{{ 'Loading thumbprint…' | translate }}</span>
     </div>
   } @else {
@@ -36,21 +35,20 @@
   }
 </div>
 
-<div mat-dialog-actions class="dialog-actions">
-  <button
-    mat-icon-button
-    type="button"
-    ixTest="copy-fingerprint"
+<div tnDialogAction class="dialog-actions">
+  <tn-icon-button
+    testId="copy-fingerprint"
+    name="content-copy"
+    library="mdi"
+    size="md"
     [disabled]="isLoading() || !fingerprintRaw()"
-    [matTooltip]="'Copy raw thumbprint to clipboard' | translate"
-    (click)="copyToClipboard()"
-  >
-    <tn-icon name="content-copy" library="mdi" size="md"></tn-icon>
-  </button>
+    [tooltip]="'Copy raw thumbprint to clipboard' | translate"
+    [ariaLabel]="'Copy raw thumbprint to clipboard' | translate"
+    (onClick)="copyToClipboard()"
+  ></tn-icon-button>
 
   <span class="spacer"></span>
 
-  <button mat-button type="button" ixTest="close" [matDialogClose]="true">
-    {{ 'Close' | translate }}
-  </button>
+  <tn-button variant="outline" testId="close" [label]="'Close' | translate" (onClick)="dialogRef.close(true)"></tn-button>
 </div>
+</tn-dialog-shell>

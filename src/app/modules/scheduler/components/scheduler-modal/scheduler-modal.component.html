@@ -64,14 +64,12 @@
 
       <div class="weekdays" formGroupName="weekdays">
         @for (weekday of weekdays; track weekday) {
-          <mat-checkbox
-            color="primary"
+          <tn-checkbox
             class="weekend"
-            [ixTest]="['scheduler', weekday.label]"
+            [testId]="['scheduler', weekday.label]"
+            [label]="weekday.label | translate"
             [formControlName]="weekday.value"
-          >
-            {{ weekday.label | translate }}
-          </mat-checkbox>
+          ></tn-checkbox>
         }
       </div>
     </section>
@@ -81,28 +79,24 @@
 
       <div class="months" formArrayName="months">
         @for (month of months; track month) {
-          <mat-checkbox
-            color="primary"
+          <tn-checkbox
             class="month"
-            [ixTest]="['scheduler', month.label]"
+            [testId]="['scheduler', month.label]"
+            [label]="month.label | translate"
             [formControlName]="month.value"
-          >
-            {{ month.label | translate }}
-          </mat-checkbox>
+          ></tn-checkbox>
         }
       </div>
     </section>
 
     <div class="form-actions">
-      <button
-        mat-button
+      <tn-button
         color="primary"
-        ixTest="done"
+        testId="done"
+        [label]="'Done' | translate"
         [disabled]="form.invalid"
-        (click)="onDone()"
-      >
-        {{ 'Done' | translate }}
-      </button>
+        (onClick)="onDone()"
+      ></tn-button>
     </div>
   </form>
 </div>
@@ -111,4 +105,5 @@
   [timezone]="timezone"
   [startTime]="config.startTime"
   [endTime]="config.endTime"
+  (closeRequested)="closeModal()"
 ></ix-scheduler-preview-column>

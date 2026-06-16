@@ -1,10 +1,9 @@
 import { Component, ChangeDetectionStrategy, computed, input, output, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   filter,
   forkJoin,
@@ -48,7 +47,7 @@ export class ContainerListBulkActionsComponent {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private dialog = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private loader = inject(LoaderService);
 
   readonly checkedContainers = input.required<Container[]>();
@@ -102,9 +101,9 @@ export class ContainerListBulkActionsComponent {
   }
 
   onBulkStop(): void {
-    this.matDialog
+    this.tnDialog
       .open(StopOptionsDialog, { data: StopOptionsOperation.Stop })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         switchMap((options: ContainerStopParams) => {
@@ -125,9 +124,9 @@ export class ContainerListBulkActionsComponent {
   }
 
   onBulkRestart(): void {
-    this.matDialog
+    this.tnDialog
       .open(StopOptionsDialog, { data: StopOptionsOperation.Restart })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         switchMap((options: ContainerStopParams) => {

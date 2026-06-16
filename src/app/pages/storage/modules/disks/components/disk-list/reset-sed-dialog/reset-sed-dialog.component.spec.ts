@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -22,13 +21,13 @@ describe('ResetSedDialog', () => {
       mockApi([
         mockCall('disk.reset_sed'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(SnackbarService),
       mockProvider(LoaderService, {
         withLoader: () => <T>(source$: T) => source$,
       }),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: { diskName: 'sdf' },
       },
     ],
@@ -39,9 +38,9 @@ describe('ResetSedDialog', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows dialog title', () => {
-    const title = spectator.query('h1');
-    expect(title).toHaveText('SED Reset - Secure Erase');
+  it('shows dialog title', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('SED Reset - Secure Erase');
   });
 
   it('shows critical warning message', () => {
@@ -69,13 +68,15 @@ describe('ResetSedDialog', () => {
   });
 
   it('calls disk.reset_sed with correct payload when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Physical Security ID (PSID)': 'TESTPSID12345678',
-      'I understand this will permanently destroy all data on this disk': true,
-    });
+    const psidInput = await loader.getHarness(TnInputHarness);
+    await psidInput.setValue('TESTPSID12345678');
 
-    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Perform SED Reset' }));
+    const understand = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'I understand this will permanently destroy all data on this disk' }),
+    );
+    await understand.check();
+
+    const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Perform SED Reset' }));
     await resetButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.reset_sed', [{
@@ -83,21 +84,19 @@ describe('ResetSedDialog', () => {
       psid: 'TESTPSID12345678',
     }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('disables submit button when PSID is empty', async () => {
-    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Perform SED Reset' }));
+    const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Perform SED Reset' }));
     expect(await resetButton.isDisabled()).toBe(true);
   });
 
   it('disables submit button when confirmation checkbox is not checked', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Physical Security ID (PSID)': 'TESTPSID12345678',
-    });
+    const psidInput = await loader.getHarness(TnInputHarness);
+    await psidInput.setValue('TESTPSID12345678');
 
-    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Perform SED Reset' }));
+    const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Perform SED Reset' }));
     expect(await resetButton.isDisabled()).toBe(true);
   });
 });

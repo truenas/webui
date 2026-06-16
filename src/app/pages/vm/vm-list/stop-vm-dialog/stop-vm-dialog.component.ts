@@ -1,17 +1,13 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface StopVmDialogData {
   forceAfterTimeout: boolean;
@@ -24,22 +20,19 @@ export interface StopVmDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    IxCheckboxComponent,
+    TnDialogShellComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
     ReactiveFormsModule,
-    MatDialogActions,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class StopVmDialogComponent {
-  private dialogRef = inject<MatDialogRef<StopVmDialogComponent, StopVmDialogData>>(MatDialogRef);
-  vm = inject<VirtualMachine>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<StopVmDialogData, StopVmDialogComponent>>(DialogRef);
+  vm = inject<VirtualMachine>(DIALOG_DATA);
 
   forceAfterTimeoutCheckbox = new FormControl(false, { nonNullable: true });
   protected readonly requiredRoles = [Role.VmWrite];

@@ -1,11 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogActions,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
@@ -17,18 +14,17 @@ import { DownloadService } from 'app/services/download.service';
   styleUrls: ['./view-certificate-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    TestDirective,
-    MatDialogActions,
+    TnDialogShellComponent,
+    TnTestIdDirective,
     CopyButtonComponent,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
 export class ViewCertificateDialog {
   private download = inject(DownloadService);
-  dialogRef = inject<MatDialogRef<ViewCertificateDialog>>(MatDialogRef);
-  data = inject<ViewCertificateDialogData>(MAT_DIALOG_DATA);
+  dialogRef = inject<DialogRef<unknown, ViewCertificateDialog>>(DialogRef);
+  data = inject<ViewCertificateDialogData>(DIALOG_DATA);
 
 
   onDownloadPressed(): void {
