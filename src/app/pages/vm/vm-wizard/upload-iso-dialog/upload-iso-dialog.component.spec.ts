@@ -1,10 +1,10 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -43,7 +43,7 @@ describe('UploadIsoDialogComponent', () => {
       mockProvider(SnackbarService, {
         success: jest.fn(),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockAuth(),
     ],
   });
@@ -62,7 +62,7 @@ describe('UploadIsoDialogComponent', () => {
       'Installer image file': [upload],
     });
 
-    const uploadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upload' }));
+    const uploadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Upload' }));
     await uploadButton.click();
 
     expect(spectator.inject(UploadService).upload).toHaveBeenCalledWith(expect.objectContaining({
@@ -70,7 +70,7 @@ describe('UploadIsoDialogComponent', () => {
       method: 'filesystem.put',
       params: ['/mnt/tank/iso/new-windows.iso', { mode: 493 }],
     }));
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('/mnt/tank/iso/new-windows.iso');
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('/mnt/tank/iso/new-windows.iso');
   });
 
   it('cancels upload and cleans up when component is destroyed', async () => {
@@ -88,7 +88,7 @@ describe('UploadIsoDialogComponent', () => {
       'Installer image file': [upload],
     });
 
-    const uploadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upload' }));
+    const uploadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Upload' }));
     await uploadButton.click();
 
     // Verify upload started

@@ -1,11 +1,12 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   Spectator, SpectatorFactory, createComponentFactory, mockProvider,
 } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -29,7 +30,7 @@ describe('ContainerLogsComponent', () => {
     });
 
     it('subscribes to logs updates', () => {
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LogsDetailsDialog, { width: '400px' });
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(LogsDetailsDialog, { width: '400px' });
 
       expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith(
         'app.container_log_follow: {"app_name":"ix-test-app","container_id":"ix-test-container","tail_lines":650}',
@@ -68,10 +69,10 @@ describe('ContainerLogsComponent', () => {
       ],
       providers: [
         mockProvider(Router),
-        mockProvider(MatDialog, {
+        mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: jest.fn(() => of({ tail_lines: 500 } as LogsDetailsDialog['form']['value'])),
-          }) as unknown as MatDialogRef<LogsDetailsDialog>),
+            closed: of({ tail_lines: 500 } as LogsDetailsDialog['form']['value']),
+          }) as unknown as DialogRef<unknown, LogsDetailsDialog>),
         }),
         mockProvider(ApiService, {
           subscribe: jest.fn(() => {
@@ -173,18 +174,14 @@ describe('ContainerLogsComponent', () => {
       ],
       providers: [
         mockProvider(Router),
-        mockProvider(MatDialog, {
+        mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: jest.fn(() => {
-              if (cancel) {
-                return of(false);
-              }
-
-              return of({
-                tail_lines: 650,
-              } as LogsDetailsDialog['form']['value']);
-            }),
-          }) as unknown as MatDialogRef<LogsDetailsDialog>),
+            closed: cancel
+              ? of(false)
+              : of({
+                  tail_lines: 650,
+                } as LogsDetailsDialog['form']['value']),
+          }) as unknown as DialogRef<unknown, LogsDetailsDialog>),
         }),
         mockProvider(ApiService, {
           subscribe: jest.fn(() => of({

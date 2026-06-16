@@ -1,21 +1,18 @@
-<h1 mat-dialog-title>{{ helptext.stripAclDialog.title | translate }}</h1>
-<div mat-dialog-content class="modal-body">
+<tn-dialog-shell testId="strip-acl" [title]="helptext.stripAclDialog.title | translate">
+<div class="modal-body">
   <p>{{ helptext.stripAclDialog.message | translate }}</p>
 
-  <ix-checkbox
-    class="traverse-checkbox"
-    [formControl]="traverseCheckbox"
-    [label]="helptext.stripAclDialog.traverseCheckbox | translate"
-  ></ix-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      class="traverse-checkbox"
+      testId="traverse"
+      [formControl]="traverseCheckbox"
+      [label]="helptext.stripAclDialog.traverseCheckbox | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 </div>
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button ixTest="cancel" matDialogClose>{{ 'Cancel' | translate }}</button>
-  <button
-    mat-button
-    color="warn"
-    ixTest="strip-acl"
-    (click)="onStrip()"
-  >
-    {{ 'Strip ACLs' | translate }}
-  </button>
+<ix-form-actions tnDialogAction class="form-actions">
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
+  <tn-button color="warn" testId="strip-acl" [label]="'Strip ACLs' | translate" (onClick)="onStrip()"></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>

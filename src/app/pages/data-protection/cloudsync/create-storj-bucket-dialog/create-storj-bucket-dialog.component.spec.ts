@@ -1,12 +1,11 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CreateStorjBucketDialog,
@@ -25,9 +24,9 @@ describe('CreateStorjBucketDialogComponent', () => {
       mockApi([
         mockCall('cloudsync.create_bucket'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           credentialsId: 1,
         },
@@ -41,13 +40,13 @@ describe('CreateStorjBucketDialogComponent', () => {
   });
 
   it('creates a cloudsync bucket with bucket name specified by the user', async () => {
-    const bucketName = await loader.getHarness(IxInputHarness.with({ label: 'Bucket Name' }));
+    const bucketName = await loader.getHarness(TnInputHarness);
     await bucketName.setValue('new-bucket');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.create_bucket', [1, 'new-bucket']);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('new-bucket');
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('new-bucket');
   });
 });

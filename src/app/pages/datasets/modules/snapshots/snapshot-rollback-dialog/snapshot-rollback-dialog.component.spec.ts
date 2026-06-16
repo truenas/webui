@@ -1,9 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnBannerHarness, TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -38,7 +39,7 @@ describe('SnapshotRollbackDialog', () => {
   let loader: HarnessLoader;
 
   // Per-test snapshot resolved lazily via useFactory so each test can swap the
-  // MAT_DIALOG_DATA value before calling `createComponent()` without needing
+  // DIALOG_DATA value before calling `createComponent()` without needing
   // TestBed.overrideProvider (which fails once the module is instantiated).
   let dialogSnapshot: ZfsSnapshot;
 
@@ -52,8 +53,9 @@ describe('SnapshotRollbackDialog', () => {
     ],
     providers: [
       mockAuth(),
-      { provide: MAT_DIALOG_DATA, useFactory: () => dialogSnapshot },
-      mockProvider(MatDialogRef),
+      mockProvider(Router),
+      { provide: DIALOG_DATA, useFactory: () => dialogSnapshot },
+      mockProvider(DialogRef),
       mockProvider(DialogService),
       mockProvider(ErrorHandlerService),
       mockProvider(LocaleService, {
@@ -86,15 +88,22 @@ describe('SnapshotRollbackDialog', () => {
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.snapshot.query', expect.anything());
   });
 
+  it('warns about destructive rollback via the banner', async () => {
+    setupDialog();
+
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain('Rolling back destroys data');
+  });
+
   it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
     setupDialog();
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Stop Rollback if Snapshots Exist:': 'Newer Intermediate, Child, and Clone',
-      Confirm: true,
     });
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).check();
 
-    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
+    const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
@@ -108,11 +117,11 @@ describe('SnapshotRollbackDialog', () => {
     setupDialog();
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      Confirm: true,
       'Stop Rollback if Snapshots Exist:': 'Newer Clone',
     });
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).check();
 
-    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
+    const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
@@ -153,7 +162,7 @@ describe('SnapshotRollbackDialog', () => {
     spectator.detectChanges();
 
     expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('closes the dialog when the fallback query returns no snapshot (deleted between list-render and click)', () => {
@@ -165,7 +174,7 @@ describe('SnapshotRollbackDialog', () => {
 
     spectator.detectChanges();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('closes the dialog when invoked without dialog data', () => {
@@ -176,18 +185,18 @@ describe('SnapshotRollbackDialog', () => {
 
     spectator.detectChanges();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('checks payload when RollbackRecursiveType.RecursiveClones', async () => {
     setupDialog();
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      Confirm: true,
       'Stop Rollback if Snapshots Exist:': 'No Safety Check (CAUTION)',
     });
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).check();
 
-    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
+    const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [

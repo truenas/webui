@@ -1,9 +1,8 @@
 import {
   Component, ChangeDetectionStrategy, signal,
 } from '@angular/core';
-import { MatDialogContent } from '@angular/material/dialog';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnSpinnerComponent } from '@truenas/ui-components';
 
 @Component({
   selector: 'ix-app-loader',
@@ -11,8 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['./app-loader.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogContent,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     TranslateModule,
   ],
 })

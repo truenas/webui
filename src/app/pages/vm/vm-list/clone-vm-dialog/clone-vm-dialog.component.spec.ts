@@ -1,14 +1,13 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 
@@ -25,10 +24,10 @@ describe('CloneVmDialogComponent', () => {
         mockCall('vm.clone'),
       ]),
       mockAuth(),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DialogService),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           id: 1,
         } as VirtualMachine,
@@ -42,13 +41,13 @@ describe('CloneVmDialogComponent', () => {
   });
 
   it('clones VM when dialog is submitted', async () => {
-    const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Enter a Name (optional)' }));
+    const nameInput = await loader.getHarness(TnInputHarness);
     await nameInput.setValue('Dolly');
 
-    const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clone' }));
+    const cloneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clone' }));
     await cloneButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.clone', [1, 'Dolly']);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

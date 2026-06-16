@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -18,7 +17,6 @@ import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -52,7 +50,6 @@ interface RowState {
   ],
 })
 export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements OnInit {
-  matDialog: MatDialog = inject(MatDialog);
   translate: TranslateService = inject(TranslateService);
   dialogService: DialogService = inject(DialogService);
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
@@ -149,7 +146,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     }
 
     if (this.job()?.logs_excerpt) {
-      this.matDialog.open(ShowLogsDialog, { data: this.job() });
+      this.dialogService.showLogs(this.job()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
       return;
     }
 

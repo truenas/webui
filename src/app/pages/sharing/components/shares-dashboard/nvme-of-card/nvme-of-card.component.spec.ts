@@ -1,12 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnMenuHarness, TnMenuTesting, TnTableHarness } from '@truenas/ui-components';
-import { MockComponents } from 'ng-mocks';
+import { TnDialog, TnMenuHarness, TnMenuTesting, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -19,7 +17,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -50,20 +47,15 @@ describe('NvmeOfCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: NvmeOfCardComponent,
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-      ),
-    ],
     providers: [
       mockAuth(),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(NvmeOfStore, mockNvmeOfStore),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of({ confirmed: true, force: true }),
+          closed: of({ confirmed: true, force: true }),
         })),
       }),
       mockApi([
@@ -119,7 +111,7 @@ describe('NvmeOfCardComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: 'Delete' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SubsystemDeleteDialogComponent, expect.anything());
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SubsystemDeleteDialogComponent, expect.anything());
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [1, { force: true }]);
   });
 

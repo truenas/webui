@@ -1,21 +1,28 @@
-<h1 matDialogTitle>
-  {{ 'Pool Options for {pool}' | translate: { pool: pool.name } }}
-</h1>
-
+<tn-dialog-shell testId="autotrim" [title]="'Pool Options for {pool}' | translate: { pool: pool.name }">
 <form class="ix-form-container" (submit)="onSubmit($event)">
-  <ix-checkbox
-    [formControl]="autotrimControl"
-    [label]="'Auto TRIM' | translate"
-    [tooltip]="helptext.autotrimTooltip | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="helptext.autotrimTooltip | translate">
+    <tn-checkbox
+      testId="autotrim"
+      [formControl]="autotrimControl"
+      [label]="'Auto TRIM' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button *ixRequiresRoles="requiredRoles" mat-button type="submit" color="primary" ixTest="save">
-      {{ 'Save' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="save"
+    [label]="'Save' | translate"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

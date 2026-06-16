@@ -1,46 +1,40 @@
-<div class="header">
-  <h1 mat-dialog-title>{{ 'Select Image' | translate }}</h1>
-  <button
-    mat-icon-button
-    id="ix-close-icon"
-    [ixTest]="['close-container-form']"
-    [attr.aria-label]="'Close Container Form' | translate"
-    (click)="onClose()"
-    (keydown.enter)="onClose()"
-  >
-    <tn-icon name="close" library="mdi"></tn-icon>
-  </button>
-</div>
-
-<mat-dialog-content>
+<tn-dialog-shell testId="container-form" [title]="'Select Image' | translate">
   <form [formGroup]="filterForm">
     <ix-fieldset [title]="'Filters' | translate">
-      <ix-input
-        formControlName="searchQuery"
-        [label]="'Search Images' | translate"
-      ></ix-input>
+      <tn-form-field [label]="'Search Images' | translate">
+        <tn-input
+          testId="search-query"
+          formControlName="searchQuery"
+        ></tn-input>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="os"
-        [label]="'OS' | translate"
-        [options]="osOptions$"
-      ></ix-select>
+      <tn-form-field [label]="'OS' | translate">
+        <tn-select
+          testId="os"
+          formControlName="os"
+          [options]="(osOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="variant"
-        [label]="'Variant' | translate"
-        [options]="variantOptions$"
-      ></ix-select>
+      <tn-form-field [label]="'Variant' | translate">
+        <tn-select
+          testId="variant"
+          formControlName="variant"
+          [options]="(variantOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="release"
-        [label]="'Release' | translate"
-        [options]="releaseOptions$"
-      ></ix-select>
+      <tn-form-field [label]="'Release' | translate">
+        <tn-select
+          testId="release"
+          formControlName="release"
+          [options]="(releaseOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     </ix-fieldset>
 
     <div class="table-wrapper">
-      <table mat-table [dataSource]="filteredImages()" [ixTest]="['images-table']">
+      <table mat-table tnTestIdType="table" [dataSource]="filteredImages()" [tnTestId]="['images-table']">
         <ng-container matColumnDef="label">
           <th *matHeaderCellDef mat-header-cell>{{ 'Label' | translate }}</th>
           <td *matCellDef="let image" mat-cell>{{ image.label }}</td>
@@ -69,19 +63,12 @@
         <ng-container matColumnDef="actions">
           <th *matHeaderCellDef mat-header-cell></th>
           <td *matCellDef="let image" mat-cell>
-            <button
-              mat-button
-              type="button"
-              [ixTest]="['select-image', image.label]"
-              (click)="selectImage(image)"
-            >
-              {{ 'Select' | translate }}
-            </button>
+            <tn-button variant="outline" [testId]="['select-image', image.label]" [label]="'Select' | translate" (onClick)="selectImage(image)"></tn-button>
           </td>
         </ng-container>
 
-        <tr *matHeaderRowDef="columns" mat-header-row [ixTest]="['image-table-header']"></tr>
-        <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['image-table-row', row]"></tr>
+        <tr *matHeaderRowDef="columns" mat-header-row tnTestIdType="row" [tnTestId]="['image-table-header']"></tr>
+        <tr *matRowDef="let row; columns: columns" mat-row tnTestIdType="row" [tnTestId]="['image-table-row', row]"></tr>
       </table>
 
       @if (!filteredImages().length) {
@@ -89,4 +76,4 @@
       }
     </div>
   </form>
-</mat-dialog-content>
+</tn-dialog-shell>

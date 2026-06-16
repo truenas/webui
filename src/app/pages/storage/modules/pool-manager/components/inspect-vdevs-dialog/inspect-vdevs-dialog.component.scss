@@ -3,36 +3,25 @@
   height: 85vh;
   min-width: 80vw;
 
-  .container {
-    border: none;
-    border-radius: 0;
+  .inner-container {
+    display: flex;
+    flex-direction: row;
     height: 100%;
-    margin: 0;
+    padding: 0;
 
-    .card-content {
-      height: 100%;
+    .left-pane {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      flex-shrink: 0;
+      max-width: 260px;
+      min-width: 260px;
     }
 
-    .inner-container {
+    .right-pane {
       display: flex;
-      flex-direction: row;
-      height: 100%;
-      padding: 0;
-
-      .left-pane {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        flex-shrink: 0;
-        max-width: 260px;
-        min-width: 260px;
-      }
-
-      .right-pane {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-      }
+      flex-direction: column;
+      flex-grow: 1;
     }
   }
 

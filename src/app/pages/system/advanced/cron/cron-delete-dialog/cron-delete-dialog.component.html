@@ -1,16 +1,9 @@
-<h1 mat-dialog-title>{{ 'Delete Cron Job' | translate }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell testId="cron-delete" [title]="'Delete Cron Job' | translate">
+<div>
   <p class="message" [innerHtml]="deleteMessage | translate: { name: cronjob.user + ' ' + cronjob.command + ' ' + cronjob.description }"></p>
 </div>
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button ixTest="cancel" [matDialogClose]="false">{{ 'Cancel' | translate }}</button>
-  <button
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    color="warn"
-    ixTest="delete"
-    (click)="onDelete()"
-  >
-    {{ 'Delete' | translate }}
-  </button>
+<ix-form-actions tnDialogAction class="form-actions">
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
+  <tn-button *ixRequiresRoles="requiredRoles" color="warn" testId="delete" [label]="'Delete' | translate" (onClick)="onDelete()"></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>

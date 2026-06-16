@@ -1,35 +1,23 @@
+<tn-dialog-shell testId="dialog" [title]="'Map User And Group IDs' | translate">
 <ix-fake-progress-bar
   [loading]="isLoading()"
 ></ix-fake-progress-bar>
 
 <div class="header">
-  <h1 mat-dialog-title>
-    {{ 'Map User And Group IDs' | translate }}
-
-    <tn-icon
-      name="help_outline"
-      class="help-icon"
-      tabindex="0"
-      role="button"
-      matTooltipClass="tooltip-wide tooltip-multiline"
-      [attr.aria-label]="'Help' | translate"
-      [matTooltip]="idMapHintText"
-      (keydown.enter)="$event.preventDefault()"
-      (keydown.space)="$event.preventDefault()"
-    ></tn-icon>
-  </h1>
-
-  <button
-    mat-icon-button
-    [ixTest]="['close-dialog']"
-    [attr.aria-label]="'Close Dialog' | translate"
-    (click)="dialogRef.close()"
-  >
-    <tn-icon name="close" library="mdi"></tn-icon>
-  </button>
+  <tn-icon
+    name="help_outline"
+    class="help-icon"
+    tabindex="0"
+    role="button"
+    tnTooltipClass="tooltip-wide"
+    [attr.aria-label]="'Help' | translate"
+    [tnTooltip]="idMapHintText"
+    (keydown.enter)="$event.preventDefault()"
+    (keydown.space)="$event.preventDefault()"
+  ></tn-icon>
 </div>
 
-<mat-dialog-content class="dialog-content">
+
   <ix-button-group
     class="type-selector"
     [formControl]="typeControl"
@@ -38,11 +26,11 @@
 
   @if (isLoading()) {
     <div class="loading-container">
-      <mat-spinner diameter="50"></mat-spinner>
+      <tn-spinner [diameter]="50"></tn-spinner>
     </div>
   } @else {
     <div class="table-wrapper">
-      <table mat-table [dataSource]="mappings()" [ixTest]="['mapping-table']">
+      <table mat-table tnTestIdType="table" [dataSource]="mappings()" [tnTestId]="['mapping-table']">
         <ng-container matColumnDef="name">
           <th *matHeaderCellDef mat-header-cell>{{ 'Name' | translate }}</th>
           <td *matCellDef="let mapping" mat-cell>{{ mapping.name }}</td>
@@ -70,20 +58,18 @@
         <ng-container matColumnDef="actions">
           <th *matHeaderCellDef mat-header-cell></th>
           <td *matCellDef="let mapping" mat-cell>
-            <button
-              mat-icon-button
-              type="button"
-              [ixTest]="['clear-mapping', mapping.description]"
-              [matTooltip]="'Clear mapping' | translate"
-              (click)="onClearMapping(mapping)"
-            >
-              <tn-icon name="mdi-delete"></tn-icon>
-            </button>
+            <tn-icon-button
+              name="mdi-delete"
+              [ariaLabel]="'Clear mapping' | translate"
+              [tooltip]="'Clear mapping' | translate"
+              [testId]="['clear-mapping', mapping.description]"
+              (onClick)="onClearMapping(mapping)"
+            ></tn-icon-button>
           </td>
         </ng-container>
 
-        <tr *matHeaderRowDef="columns" mat-header-row [ixTest]="['image-table-header']"></tr>
-        <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['image-table-row', row]"></tr>
+        <tr *matHeaderRowDef="columns" mat-header-row tnTestIdType="row" [tnTestId]="['image-table-header']"></tr>
+        <tr *matRowDef="let row; columns: columns" mat-row tnTestIdType="row" [tnTestId]="['image-table-row', row]"></tr>
       </table>
 
       @if (!mappings().length) {
@@ -96,4 +82,4 @@
       (mappingAdded)="loadMappings()"
     ></ix-new-mapping-form>
   }
-</mat-dialog-content>
+</tn-dialog-shell>

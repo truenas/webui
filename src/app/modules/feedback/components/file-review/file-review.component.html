@@ -14,17 +14,20 @@
     [placeholder]="messagePlaceholderText"
   ></ix-textarea>
 
-  <ix-checkbox
-    formControlName="take_screenshot"
-    [label]="'Take screenshot of the current page' | translate"
-    [tooltip]="'Capture and attach screenshot to the review' | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="'Capture and attach screenshot to the review' | translate">
+    <tn-checkbox
+      formControlName="take_screenshot"
+      [label]="'Take screenshot of the current page' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
   @if (form.controls.attach_images.enabled) {
-    <ix-checkbox
-      formControlName="attach_images"
-      [label]="'Attach additional images' | translate"
-    ></ix-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="attach_images"
+        [label]="'Attach additional images' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
 
   @if (form.controls.attach_images.value) {

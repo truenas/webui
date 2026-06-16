@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -83,9 +83,9 @@ describe('DatasetDetailsCardComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockApi([
@@ -200,7 +200,7 @@ describe('DatasetDetailsCardComponent', () => {
       const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
       await deleteButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteDatasetDialog, { data: dataset });
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteDatasetDialog, { data: dataset });
     });
   });
 
