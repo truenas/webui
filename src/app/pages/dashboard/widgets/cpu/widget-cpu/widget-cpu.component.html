@@ -3,9 +3,6 @@
     <div class="header">
       <h3>{{ name | translate }}</h3>
 
-      <!-- TEMP: tn-icon-button has no [routerLink]/[href] inputs yet; Angular's RouterLink
-           directive rides the host (same pattern in memory/network/storage/pool/sys-info widgets).
-           Replace once @truenas/ui-components ships anchor support on tn-icon-button. -->
       <tn-icon-button
         name="chart-box"
         library="mdi"
@@ -14,7 +11,7 @@
         tooltipPosition="above"
         [ariaLabel]="'CPU Reports' | translate"
         [tooltip]="'CPU Reports' | translate"
-        [routerLink]="['/reportsdashboard', 'cpu']"
+        (onClick)="goToReports()"
       ></tn-icon-button>
     </div>
 

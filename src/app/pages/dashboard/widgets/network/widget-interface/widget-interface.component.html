@@ -11,7 +11,7 @@
           tooltipPosition="above"
           [ariaLabel]="'Network Reports' | translate"
           [tooltip]="'Network Reports' | translate"
-          [routerLink]="['/reportsdashboard', 'network']"
+          (onClick)="goToReports()"
         ></tn-icon-button>
       </div>
     }

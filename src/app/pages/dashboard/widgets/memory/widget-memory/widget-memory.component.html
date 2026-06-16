@@ -11,7 +11,7 @@
         tooltipPosition="above"
         [ariaLabel]="'Memory Reports' | translate"
         [tooltip]="'Memory Reports' | translate"
-        [routerLink]="['/reportsdashboard', 'memory']"
+        (onClick)="goToReports()"
       ></tn-icon-button>
     </div>
 

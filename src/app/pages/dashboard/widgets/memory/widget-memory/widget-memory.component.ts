@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TinyColor } from '@ctrl/tinycolor';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -26,7 +26,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   imports: [
     TnCardComponent,
     TnIconButtonComponent,
-    RouterLink,
     NgxSkeletonLoaderModule,
     BaseChartDirective,
     TranslateModule,
@@ -36,6 +35,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class WidgetMemoryComponent {
   private store$ = inject<Store<AppState>>(Store);
+  private router = inject(Router);
   private resources = inject(WidgetResourcesService);
   private theme = inject(ThemeService);
   private translate = inject(TranslateService);
@@ -114,5 +114,9 @@ export class WidgetMemoryComponent {
 
   protected formatUnit(bytes: number): string {
     return (bytes / GiB).toFixed(1);
+  }
+
+  protected goToReports(): void {
+    this.router.navigate(['/reportsdashboard', 'memory']);
   }
 }

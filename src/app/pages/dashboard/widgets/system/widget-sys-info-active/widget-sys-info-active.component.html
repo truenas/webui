@@ -64,7 +64,7 @@
             testId="system-go-to-reports"
             [ariaLabel]="'System Reports' | translate"
             [tooltip]="'System Reports' | translate"
-            [routerLink]="['/reportsdashboard', 'system']"
+            (onClick)="goToReports()"
           ></tn-icon-button>
         </div>
 

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnIconButtonComponent, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { ChartData } from 'chart.js';
@@ -37,7 +37,6 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
   imports: [
     TnCardComponent,
     TnIconButtonComponent,
-    RouterLink,
     TnIconComponent,
     TnTooltipDirective,
     WithLoadingStateDirective,
@@ -50,6 +49,7 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
   ],
 })
 export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
+  private router = inject(Router);
   private resources = inject(WidgetResourcesService);
   private translate = inject(TranslateService);
   private theme = inject(ThemeService);
@@ -189,5 +189,9 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
     }
 
     return ip;
+  }
+
+  protected goToReports(): void {
+    this.router.navigate(['/reportsdashboard', 'network']);
   }
 }

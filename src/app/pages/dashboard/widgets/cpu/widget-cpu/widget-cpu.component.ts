@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -29,7 +29,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     TnIconButtonComponent,
     TnListComponent,
     TnListItemComponent,
-    RouterLink,
     CpuChartGaugeComponent,
     NgxSkeletonLoaderModule,
     CpuCoreBarComponent,
@@ -38,6 +37,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class WidgetCpuComponent {
   private store$ = inject<Store<AppState>>(Store);
+  private router = inject(Router);
   private resources = inject(WidgetResourcesService);
   private translate = inject(TranslateService);
 
@@ -158,5 +158,9 @@ export class WidgetCpuComponent {
       usageMinThreads,
       usageMaxThreads,
     };
+  }
+
+  protected goToReports(): void {
+    this.router.navigate(['/reportsdashboard', 'cpu']);
   }
 }

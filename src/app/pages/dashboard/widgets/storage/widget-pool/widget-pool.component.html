@@ -12,7 +12,7 @@
           tooltipPosition="above"
           [ariaLabel]="'Disk Reports' | translate"
           [tooltip]="'Disk Reports' | translate"
-          [routerLink]="['/reportsdashboard', 'disk']"
+          (onClick)="goToReports()"
         ></tn-icon-button>
       </div>
       <div [class]="['container', size()]">

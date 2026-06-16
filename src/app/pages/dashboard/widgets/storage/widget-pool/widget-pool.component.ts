@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import {
@@ -24,7 +24,6 @@ import { PoolUsageGaugeComponent } from './common/pool-usage-gauge/pool-usage-ga
   imports: [
     TnCardComponent,
     TnIconButtonComponent,
-    RouterLink,
     PoolUsageGaugeComponent,
     PoolStatusComponent,
     DisksWithZfsErrorsComponent,
@@ -34,6 +33,7 @@ import { PoolUsageGaugeComponent } from './common/pool-usage-gauge/pool-usage-ga
   ],
 })
 export class WidgetPoolComponent implements WidgetComponent {
+  private router = inject(Router);
   private resources = inject(WidgetResourcesService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -55,4 +55,8 @@ export class WidgetPoolComponent implements WidgetComponent {
   ));
 
   readonly name = poolWidget.name;
+
+  protected goToReports(): void {
+    this.router.navigate(['/reportsdashboard', 'disk']);
+  }
 }

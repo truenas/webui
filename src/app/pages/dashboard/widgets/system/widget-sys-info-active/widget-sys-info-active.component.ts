@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -43,7 +43,6 @@ import {
     TnIconComponent,
     TnTooltipDirective,
     ProductImageComponent,
-    RouterLink,
     NgxSkeletonLoaderModule,
     NgTemplateOutlet,
     CopyButtonComponent,
@@ -53,6 +52,7 @@ import {
   ],
 })
 export class WidgetSysInfoActiveComponent {
+  private router = inject(Router);
   private resources = inject(WidgetResourcesService);
   private store$ = inject<Store<AppState>>(Store);
   private localeService = inject(LocaleService);
@@ -113,4 +113,8 @@ export class WidgetSysInfoActiveComponent {
   }
 
   protected readonly tnIconMarker = tnIconMarker;
+
+  protected goToReports(): void {
+    this.router.navigate(['/reportsdashboard', 'system']);
+  }
 }

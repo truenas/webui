@@ -1,7 +1,7 @@
 import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCardComponent, TnIconButtonComponent, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
@@ -44,6 +44,7 @@ import {
   ],
 })
 export class WidgetStorageComponent {
+  private router = inject(Router);
   private resources = inject(WidgetResourcesService);
   private translate = inject(TranslateService);
   private formatDateTimePipe = inject(FormatDateTimePipe);
@@ -321,5 +322,9 @@ export class WidgetStorageComponent {
     }
 
     return this.translate.instant('Unknown');
+  }
+
+  protected goToReports(): void {
+    this.router.navigate(['/reportsdashboard', 'disk']);
   }
 }
