@@ -8,6 +8,10 @@
   justify-content: space-between;
   opacity: 0;
   padding: 3px 3px 0;
+  // Outside edit mode the controls are an invisible overlay above the widget header —
+  // they must not intercept clicks meant for the widget. Edit mode re-enables them
+  // via `.group-container.editing .controls` in dashboard.component.scss.
+  pointer-events: none;
   position: absolute;
   top: 0;
   transition: opacity $animation-duration;
