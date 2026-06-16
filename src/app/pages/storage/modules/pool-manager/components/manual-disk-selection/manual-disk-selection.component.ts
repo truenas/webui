@@ -1,18 +1,15 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogClose } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent, TnDividerComponent } from '@truenas/ui-components';
 import { combineLatest, filter, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ManualSelectionVdev,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
@@ -43,15 +40,12 @@ export interface ManualDiskSelectionParams {
   styleUrls: ['./manual-disk-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
+    TnDialogShellComponent,
     ManualSelectionDisksComponent,
-    MatDivider,
+    TnDividerComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     ManualSelectionVdevComponent,
-    MatDialogClose,
     TranslateModule,
     AsyncPipe,
   ],
@@ -61,8 +55,8 @@ export interface ManualDiskSelectionParams {
   ],
 })
 export class ManualDiskSelectionComponent implements OnInit {
-  protected data = inject<ManualDiskSelectionParams>(MAT_DIALOG_DATA);
-  private dialogRef = inject<MatDialogRef<ManualDiskSelectionComponent>>(MatDialogRef);
+  protected data = inject<ManualDiskSelectionParams>(DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, ManualDiskSelectionComponent>>(DialogRef);
   private manualDiskSelectionStore = inject(ManualDiskSelectionStore);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);

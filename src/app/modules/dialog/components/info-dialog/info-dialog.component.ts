@@ -1,11 +1,14 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+
+export interface InfoDialogData {
+  title: string;
+  info: string;
+  icon?: string;
+  isHtml?: boolean;
+}
 
 @Component({
   selector: 'ix-info-dialog',
@@ -13,20 +16,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./info-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TnIconComponent,
-    MatDialogContent,
-    MatDialogActions,
-    MatButton,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class InfoDialog {
-  dialogRef = inject<MatDialogRef<InfoDialog>>(MatDialogRef);
-
-  title: string;
-  info: string;
-  icon = 'information';
-  isHtml = false;
+  protected dialogRef = inject<DialogRef<boolean, InfoDialog>>(DialogRef);
+  protected data = inject<InfoDialogData>(DIALOG_DATA);
 }

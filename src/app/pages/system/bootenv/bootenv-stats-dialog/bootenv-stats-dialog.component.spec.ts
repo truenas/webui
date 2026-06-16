@@ -1,10 +1,10 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -13,7 +13,6 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -46,7 +45,7 @@ describe('BootenvStatsDialogComponent', () => {
     providers: [
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockApi([
         mockCall('boot.get_state', poolInstance),
         mockCall('boot.set_scrub_interval'),
@@ -95,26 +94,21 @@ describe('BootenvStatsDialogComponent', () => {
   });
 
   it('shows current scrub interval from system settings', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+    const input = await loader.getHarness(TnInputHarness);
 
-    expect(values).toEqual({
-      'Scrub interval (in days)': '2',
-    });
+    expect(await input.getValue()).toBe('2');
   });
 
   it('saves new scrub interval and closes modal when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Scrub interval (in days)': 3,
-    });
+    const input = await loader.getHarness(TnInputHarness);
+    await input.setValue('3');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update Interval' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Update Interval' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('boot.set_scrub_interval', [3]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Scrub interval set to 3 days');
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('tells user to look at alerts if boot pool status is degraded', () => {

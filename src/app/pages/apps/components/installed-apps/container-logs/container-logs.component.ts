@@ -4,10 +4,10 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   combineLatest, filter, map, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -46,7 +46,7 @@ export class ContainerLogsComponent implements OnInit {
   protected loader = inject(LoaderService);
   protected download = inject(DownloadService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
@@ -86,7 +86,7 @@ export class ContainerLogsComponent implements OnInit {
       this.logsChangedListener.unsubscribe();
     }
 
-    this.logsChangedListener = this.matDialog.open(LogsDetailsDialog, { width: '400px' }).afterClosed().pipe(
+    this.logsChangedListener = this.tnDialog.open(LogsDetailsDialog, { width: '400px' }).closed.pipe(
       tap((value: LogsDetailsDialog['form']['value'] | undefined) => {
         if (!value) {
           this.router.navigate(['/apps/installed/', this.train, this.appName]);

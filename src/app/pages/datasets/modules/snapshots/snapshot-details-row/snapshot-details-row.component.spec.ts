@@ -2,9 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -75,18 +75,18 @@ describe('SnapshotDetailsRowComponent', () => {
   });
 
   it('should open clone dialog when `Clone To New Dataset` button click', async () => {
-    const matDialog = spectator.inject(MatDialog);
-    jest.spyOn(matDialog, 'open').mockImplementation();
+    const tnDialog = spectator.inject(TnDialog);
+    jest.spyOn(tnDialog, 'open').mockImplementation();
 
     const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clone To New Dataset' }));
     await cloneButton.click();
 
-    expect(matDialog.open).toHaveBeenCalledWith(SnapshotCloneDialog, { data: fakeZfsSnapshot.name });
+    expect(tnDialog.open).toHaveBeenCalledWith(SnapshotCloneDialog, { data: fakeZfsSnapshot.name });
   });
 
   it('should open rollback dialog when `Rollback` button click', async () => {
-    const matDialog = spectator.inject(MatDialog);
-    jest.spyOn(matDialog, 'open').mockImplementation();
+    const tnDialog = spectator.inject(TnDialog);
+    jest.spyOn(tnDialog, 'open').mockImplementation();
 
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
@@ -95,7 +95,7 @@ describe('SnapshotDetailsRowComponent', () => {
     // timestamp without a second pool.snapshot.query. By the time the user
     // clicks Rollback, `pool.snapshot.query` (in ngOnInit) has populated
     // `snapshotInfo` with `creation`, so the component passes that through.
-    expect(matDialog.open).toHaveBeenCalledWith(SnapshotRollbackDialog, {
+    expect(tnDialog.open).toHaveBeenCalledWith(SnapshotRollbackDialog, {
       data: expect.objectContaining({
         name: fakeZfsSnapshot.name,
         properties: expect.objectContaining({

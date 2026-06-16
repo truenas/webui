@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -77,11 +76,6 @@ describe('CertificateListComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(undefined)),
-        })),
-      }),
       mockProvider(StorageService),
       mockProvider(SnackbarService),
       mockAuth(),
@@ -124,10 +118,6 @@ describe('CertificateListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
-      afterClosed: () => of({ force: true }),
-    } as MatDialogRef<unknown>);
-
     const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
     await menuButton.click();
     const menu = await loader.getHarness(MatMenuHarness);

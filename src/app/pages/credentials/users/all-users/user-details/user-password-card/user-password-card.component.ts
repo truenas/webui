@@ -1,8 +1,7 @@
 import { Component, ChangeDetectionStrategy, computed, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnCardComponent, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { filter, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -39,7 +38,7 @@ export class UserPasswordCardComponent {
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private api = inject(ApiService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
@@ -70,7 +69,7 @@ export class UserPasswordCardComponent {
       switchMap(() => {
         return this.api.call('auth.generate_onetime_password', [{ username }]).pipe(
           switchMap((password) => {
-            this.matDialog.open(OneTimePasswordCreatedDialog, { data: password });
+            this.tnDialog.open(OneTimePasswordCreatedDialog, { data: password });
             return of(password);
           }),
           this.loader.withLoader(),

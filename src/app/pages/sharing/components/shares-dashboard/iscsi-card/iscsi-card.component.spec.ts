@@ -1,11 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnMenuHarness, TnMenuTesting, TnTableHarness } from '@truenas/ui-components';
-import { MockComponents } from 'ng-mocks';
+import { TnDialog, TnMenuHarness, TnMenuTesting, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -22,9 +20,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
-import {
-  ServiceStateButtonComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { LicenseService } from 'app/services/license.service';
@@ -66,11 +61,6 @@ describe('IscsiCardComponent', () => {
     component: IscsiCardComponent,
     imports: [IxTablePagerShowMoreComponent,
     ],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-      ),
-    ],
     providers: [
       mockAuth(),
       mockApi([
@@ -87,9 +77,9 @@ describe('IscsiCardComponent', () => {
       mockProvider(LicenseService, {
         hasFibreChannel$: of(true),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       provideMockStore({
@@ -149,7 +139,7 @@ describe('IscsiCardComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: 'Delete' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
       DeleteTargetDialog,
       { data: iscsiShares[0], width: '600px' },
     );

@@ -1,23 +1,22 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectPresetModalConfig,
@@ -30,27 +29,26 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: 'select-preset-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
+    AsyncPipe,
     ReactiveFormsModule,
     IxRadioGroupComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     FormActionsComponent,
-    MatButton,
-    MatDialogClose,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
 export class SelectPresetModalComponent implements OnInit {
-  private dialogRef = inject<MatDialogRef<SelectPresetModalComponent>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private aclEditorStore = inject(DatasetAclEditorStore);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
-  data = inject<SelectPresetModalConfig>(MAT_DIALOG_DATA);
+  data = inject<SelectPresetModalConfig>(DIALOG_DATA);
 
   form = new FormGroup({
     presetName: new FormControl('', this.validatorsService.validateOnCondition(

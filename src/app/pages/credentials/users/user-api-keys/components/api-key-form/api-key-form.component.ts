@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
 import { filter, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -62,7 +61,7 @@ export interface ApiKeyParams {
 })
 export class ApiKeyFormComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(FormErrorHandlerService);
@@ -168,7 +167,7 @@ export class ApiKeyFormComponent implements OnInit {
           this.slideInRef.close({ response: true });
 
           if (key) {
-            this.matDialog.open(KeyCreatedDialog, { data: key });
+            this.tnDialog.open(KeyCreatedDialog, { data: key });
           }
         },
         error: (error: unknown) => {

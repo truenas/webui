@@ -1,12 +1,14 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnDialog, TnDialogHarness, TnExpansionPanelHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { Observable, of, throwError } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import {
@@ -21,7 +23,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -104,11 +105,12 @@ describe('ExportDisconnectModalComponent', () => {
         error: jest.fn(),
         warn: jest.fn(),
       }),
-      mockProvider(MatDialogRef),
-      mockProvider(MatDialog, {
+      mockProvider(DialogRef),
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(false),
-        }) as unknown as MatDialogRef<JobProgressDialogRef<unknown>>),
+          closed: of(false),
+          close: jest.fn(),
+        }) as unknown as DialogRef<unknown, JobProgressDialogRef<unknown>>),
       }),
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
@@ -134,7 +136,7 @@ describe('ExportDisconnectModalComponent', () => {
       }),
     ],
     componentProviders: [
-      { provide: MAT_DIALOG_DATA, useValue: fakePool },
+      { provide: DIALOG_DATA, useValue: fakePool },
     ],
   });
 
@@ -155,8 +157,9 @@ describe('ExportDisconnectModalComponent', () => {
     spectator.fixture.destroy();
   });
 
-  it('should display the pool name in the title', () => {
-    expect(spectator.query('.export-disconnect-modal-title')).toContainText('Disconnect Pool: fakePool');
+  it('should display the pool name in the title', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toContain('Disconnect Pool: fakePool');
   });
 
   it('should start with Export option selected by default', () => {
@@ -467,14 +470,15 @@ describe('ExportDisconnectModalComponent', () => {
   });
 
   describe('pool summary', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       // Expand the pool summary panel to make content visible
-      const panels = spectator.queryAll('mat-expansion-panel-header');
-      const summaryPanel = panels.find((panel) => panel.textContent?.includes('services and processes depend on this pool'));
-      if (summaryPanel) {
-        spectator.click(summaryPanel);
-        spectator.detectChanges();
+      const panels = await loader.getAllHarnesses(TnExpansionPanelHarness);
+      for (const panel of panels) {
+        if ((await panel.getTitle()).includes('services and processes depend on this pool')) {
+          await panel.expand();
+        }
       }
+      spectator.detectChanges();
     });
 
     it('should display pool summary when attachments or processes exist', () => {
@@ -518,13 +522,14 @@ describe('ExportDisconnectModalComponent', () => {
 
 
   async function submitExportForm(): Promise<void> {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Delete saved configurations from TrueNAS?': true,
-      'Confirm Export Pool': true,
-    });
+    const cascade = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Delete saved configurations from TrueNAS?' }),
+    );
+    await cascade.check();
+    const confirm = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm Export Pool' }));
+    await confirm.check();
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Disconnect' }));
     await submitButton.click();
   }
 
@@ -536,26 +541,28 @@ describe('ExportDisconnectModalComponent', () => {
     await spectator.fixture.whenStable();
     spectator.detectChanges();
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Remove all related configurations': true,
-      'Confirm Delete Pool': true,
-      'Enter fakePool below to confirm': 'fakePool',
-    });
+    const cascade = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Remove all related configurations' }),
+    );
+    await cascade.check();
+    const confirm = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm Delete Pool' }));
+    await confirm.check();
+    const nameInput = await loader.getHarness(TnInputHarness);
+    await nameInput.setValue('fakePool');
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Disconnect' }));
     await submitButton.click();
   }
 
   describe('form interactions', () => {
     it('shows initial state of checkboxes for export', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const cascade = await loader.getHarness(
+        TnCheckboxHarness.with({ label: 'Delete saved configurations from TrueNAS?' }),
+      );
+      const confirm = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm Export Pool' }));
 
-      expect(values).toEqual({
-        'Delete saved configurations from TrueNAS?': true,
-        'Confirm Export Pool': false,
-      });
+      expect(await cascade.isChecked()).toBe(true);
+      expect(await confirm.isChecked()).toBe(false);
     });
 
     it('shows additional name input field for delete option', async () => {
@@ -566,14 +573,15 @@ describe('ExportDisconnectModalComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const cascade = await loader.getHarness(
+        TnCheckboxHarness.with({ label: 'Remove all related configurations' }),
+      );
+      const confirm = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm Delete Pool' }));
+      const nameInput = await loader.getHarness(TnInputHarness);
 
-      expect(values).toEqual({
-        'Remove all related configurations': true,
-        'Confirm Delete Pool': false,
-        'Enter fakePool below to confirm': '',
-      });
+      expect(await cascade.isChecked()).toBe(true);
+      expect(await confirm.isChecked()).toBe(false);
+      expect(await nameInput.getValue()).toBe('');
     });
 
     it('sends correct export payload when export form is submitted', async () => {
@@ -607,7 +615,7 @@ describe('ExportDisconnectModalComponent', () => {
     describe('error handling', () => {
       it('shows an error dialog when there are unstoppable processes', async () => {
         const dialog = spectator.inject(DialogService);
-        jest.spyOn(dialog, 'jobDialog').mockReturnValue({
+        jest.spyOn(dialog, 'jobDialog').mockReturnValueOnce({
           afterClosed: () => throwError(() => {
             return new FailedJobError({
               error: 'Unstoppable processes',
@@ -630,7 +638,7 @@ describe('ExportDisconnectModalComponent', () => {
 
       it('shows services restart dialog when services need to be restarted', async () => {
         const dialog = spectator.inject(DialogService);
-        jest.spyOn(dialog, 'jobDialog').mockReturnValue({
+        jest.spyOn(dialog, 'jobDialog').mockReturnValueOnce({
           afterClosed: () => throwError(() => {
             return new FailedJobError({
               error: 'Control services error',
@@ -647,7 +655,7 @@ describe('ExportDisconnectModalComponent', () => {
 
         await submitExportForm();
 
-        expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ServicesToBeRestartedDialogComponent, {
+        expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ServicesToBeRestartedDialogComponent, {
           data: {
             code: 'control_services',
             restart_services: ['cifs', 'iscsi'],
@@ -673,9 +681,10 @@ describe('ExportDisconnectModalComponent', () => {
           }) as Observable<Job>,
         } as JobProgressDialogRef<unknown>);
 
-        jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
-          afterClosed: () => of(true),
-        } as unknown as MatDialogRef<ServicesToBeRestartedDialogComponent>);
+        jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValueOnce({
+          closed: of(true),
+          close: jest.fn(),
+        } as unknown as DialogRef<unknown, ServicesToBeRestartedDialogComponent>);
 
         await submitExportForm();
 
@@ -711,8 +720,13 @@ describe('ExportDisconnectModalComponent', () => {
           error: jest.fn(),
           warn: jest.fn(),
         }),
-        mockProvider(MatDialogRef),
-        mockProvider(MatDialog),
+        mockProvider(DialogRef),
+        mockProvider(TnDialog, {
+          open: jest.fn(() => ({
+            closed: of(false),
+            close: jest.fn(),
+          }) as unknown as DialogRef<unknown, JobProgressDialogRef<unknown>>),
+        }),
         mockProvider(LoaderService, {
           withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
         }),
@@ -733,7 +747,7 @@ describe('ExportDisconnectModalComponent', () => {
         }),
       ],
       componentProviders: [
-        { provide: MAT_DIALOG_DATA, useValue: fakePool },
+        { provide: DIALOG_DATA, useValue: fakePool },
       ],
     });
 

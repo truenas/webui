@@ -1,5 +1,4 @@
 import { Location } from '@angular/common';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -7,6 +6,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { RestartComponent } from 'app/pages/system-tasks/restart/restart.component';
@@ -35,8 +35,8 @@ describe('RestartComponent', () => {
       mockProvider(Location, {
         replaceState: jest.fn(),
       }),
-      mockProvider(MatDialog, {
-        closeAll: jest.fn(),
+      mockProvider(DialogService, {
+        closeAllDialogs: jest.fn(),
       }),
       mockProvider(ErrorHandlerService),
       mockProvider(WebSocketHandlerService, {
@@ -71,7 +71,7 @@ describe('RestartComponent', () => {
     });
 
     it('closes all dialogs', () => {
-      expect(spectator.inject(MatDialog).closeAll).toHaveBeenCalled();
+      expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
     });
   });
 
