@@ -4,7 +4,7 @@
 
 // Hand-rolled footer mirroring tn-card's small-padding footer. Negative margins
 // break out of the 16px content padding so the border-top spans the card width and
-// the row sits flush at the bottom, matching the [primaryAction] footer on sibling cards.
+// the row sits flush at the bottom, matching the tnCardFooterActions footer on sibling cards.
 .card-footer {
   display: flex;
   align-items: center;

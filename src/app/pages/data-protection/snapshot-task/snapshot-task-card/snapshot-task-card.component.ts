@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -18,17 +18,16 @@ import {
   TnTableComponent,
   TnTestIdDirective,
   TnTooltipDirective,
-  type TnCardAction,
   type TnSortEvent,
 } from '@truenas/ui-components';
 import { Observable, filter, map, switchMap } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -71,6 +70,7 @@ import { SnapshotTaskService } from 'app/services/snapshot-task.service';
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     IxTablePagerShowMoreComponent,
+    RequiresRolesDirective,
     UiSearchDirective,
     TranslateModule,
     AsyncPipe,
@@ -91,24 +91,10 @@ export class SnapshotTaskCardComponent implements OnInit {
   private snapshotTaskService = inject(SnapshotTaskService);
   private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
-  private authService = inject(AuthService);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly uiSearchableElement = snapshotTaskCardElements;
   protected readonly cardMenuPath = ['data-protection', 'snapshot'];
-
-  private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
-
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      testId: 'snapshot-task-add',
-      handler: () => this.openForm(),
-    };
-  });
 
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
 

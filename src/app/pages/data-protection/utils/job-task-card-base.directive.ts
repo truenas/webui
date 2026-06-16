@@ -1,14 +1,13 @@
 import {
-  computed, DestroyRef, Directive, inject, Injector, type OnInit, type Signal,
+  DestroyRef, Directive, inject, type OnInit,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { type TnCardAction, type TnSortEvent } from '@truenas/ui-components';
+import { type TnSortEvent } from '@truenas/ui-components';
 import { Observable, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
@@ -34,8 +33,6 @@ export abstract class JobTaskCardBase<T extends TaskWithJob> implements OnInit {
   protected readonly translate = inject(TranslateService);
   protected readonly destroyRef = inject(DestroyRef);
   protected readonly store$ = inject<Store<JobSlice>>(Store);
-  private readonly authService = inject(AuthService);
-  private readonly injector = inject(Injector);
 
   /** Assigned by {@link loadAndWatch}; bound by each card's template. */
   dataProvider: AsyncDataProvider<T>;
@@ -84,33 +81,9 @@ export abstract class JobTaskCardBase<T extends TaskWithJob> implements OnInit {
   /** Open the add/create flow for this task type. */
   protected abstract onAdd(): void;
 
-  private hasAddRole?: Signal<boolean>;
-
-  /**
-   * Add-button descriptor for `[primaryAction]`, or `undefined` when the user
-   * lacks the role. The computed body is lazy, so it reads `hasAddRole` only
-   * after {@link ngOnInit} has created it.
-   */
-  protected readonly addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole?.()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      testId: this.addTestId,
-      handler: () => this.onAdd(),
-    };
-  });
-
   protected readonly trackByTaskId = (_index: number, row: T): number => row.id;
 
   ngOnInit(): void {
-    // Built here, not in a field initializer: `requiredRoles` is a subclass field
-    // that is only assigned after this base class has finished constructing.
-    this.hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), {
-      initialValue: false,
-      injector: this.injector,
-    });
     this.loadAndWatch();
   }
 

@@ -7,7 +7,9 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
+  TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
@@ -22,6 +24,7 @@ import {
 import {
   catchError, EMPTY, Observable, filter, of, switchMap, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -64,8 +67,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./replication-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnButtonComponent,
     TnCardComponent,
+    TnCardFooterActionsDirective,
     TnCardHeaderDirective,
+    RequiresRolesDirective,
     TnTestIdDirective,
     RouterLink,
     TnIconComponent,

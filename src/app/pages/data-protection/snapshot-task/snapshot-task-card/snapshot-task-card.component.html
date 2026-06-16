@@ -92,36 +92,33 @@
     ></ix-table-pager-show-more>
   }
 
-  @if (!isEmpty || addAction()) {
-    <div class="card-footer">
-      <div class="card-footer__start">
-        @if (!isEmpty) {
-          <tn-button
-            variant="outline"
-            [testId]="['snapshot-task', 'vmware-snapshots']"
-            [routerLink]="['/data-protection', 'vmware-snapshots']"
-            [ixUiSearch]="uiSearchableElement.elements.vmwareSnapshots"
-            [label]="'VMware Snapshot Integration' | translate"
-          ></tn-button>
-
-          <tn-button
-            variant="outline"
-            [testId]="['snapshot-task', 'snapshots']"
-            [routerLink]="['/datasets', 'snapshots']"
-            [label]="'Snapshots' | translate"
-          ></tn-button>
-        }
-      </div>
-
-      @if (addAction(); as add) {
+  <div class="card-footer">
+    <div class="card-footer__start">
+      @if (!isEmpty) {
         <tn-button
-          variant="filled"
-          color="primary"
-          [testId]="add.testId"
-          [label]="add.label"
-          (click)="add.handler()"
+          variant="outline"
+          [testId]="['snapshot-task', 'vmware-snapshots']"
+          [routerLink]="['/data-protection', 'vmware-snapshots']"
+          [ixUiSearch]="uiSearchableElement.elements.vmwareSnapshots"
+          [label]="'VMware Snapshot Integration' | translate"
+        ></tn-button>
+
+        <tn-button
+          variant="outline"
+          [testId]="['snapshot-task', 'snapshots']"
+          [routerLink]="['/datasets', 'snapshots']"
+          [label]="'Snapshots' | translate"
         ></tn-button>
       }
     </div>
-  }
+
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      variant="filled"
+      color="primary"
+      testId="snapshot-task-add"
+      [label]="'Add' | translate"
+      (onClick)="openForm()"
+    ></tn-button>
+  </div>
 </tn-card>

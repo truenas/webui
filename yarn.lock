@@ -4536,9 +4536,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.3.0":
-  version: 0.3.0
-  resolution: "@truenas/ui-components@npm:0.3.0"
+"@truenas/ui-components@npm:~0.3.4":
+  version: 0.3.4
+  resolution: "@truenas/ui-components@npm:0.3.4"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -4559,7 +4559,7 @@ __metadata:
     "@mdi/js": ^7.4.47
   bin:
     truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/b37619756ae6c520c27f3fe49ad9ee3d6f2b133f894fcd984634bd339ddd844611bc2d1d269ed4fd6c0f6865c273ef072d169b1399ae2c9491a8ba3d81632def
+  checksum: 10/71084114895b53c49688a3deac0c2335fa9f54b4a6d3841ad74980adf5c02c44aa2124784bb82bfe4621b1d6786e7aefb956575becdc4fb5ebb906dae9574a4f
   languageName: node
   linkType: hard
 
@@ -5151,6 +5151,15 @@ __metadata:
     "@types/expect": "npm:^1.20.4"
     "@types/node": "npm:*"
   checksum: 10/3fb407972a4f64dbb2b020bc6ca418793d66b321acb042c8712eec36cc115fc4b0e2d5eeb03efe48cda8942abd730ae13cd2fc31a2c614403e81b913a6bb38ba
+  languageName: node
+  linkType: hard
+
+"@types/ws@npm:~8.18.1":
+  version: 8.18.1
+  resolution: "@types/ws@npm:8.18.1"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10/1ce05e3174dcacf28dae0e9b854ef1c9a12da44c7ed73617ab6897c5cbe4fccbb155a20be5508ae9a7dde2f83bd80f5cf3baa386b934fc4b40889ec963e94f3a
   languageName: node
   linkType: hard
 
@@ -16017,7 +16026,7 @@ __metadata:
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.3.0"
+    "@truenas/ui-components": "npm:~0.3.4"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"
@@ -16030,6 +16039,7 @@ __metadata:
     "@types/node": "npm:^24.0.0"
     "@types/uuid": "npm:~10.0.0"
     "@types/vinyl": "npm:~2.0.12"
+    "@types/ws": "npm:~8.18.1"
     "@typescript-eslint/types": "npm:~8.41.0"
     "@typescript-eslint/utils": "npm:~8.41.0"
     "@uiw/codemirror-theme-material": "npm:~4.23.6"

@@ -19,6 +19,18 @@
 }
 
 :host ::ng-deep .role-missing {
+  // @truenas/ui-components controls render their own (non-Material) markup, so the
+  // Material-class dimming below never reaches them and the `button:disabled` reset
+  // above cancels their built-in disabled opacity. Dim the whole tn-* host instead —
+  // opacity compounds over the inner control regardless of that reset — so role-gated
+  // tn-* buttons/toggles read as disabled. The lock icon is a sibling, so it stays crisp.
+  tn-button,
+  tn-icon-button,
+  tn-slide-toggle,
+  tn-checkbox {
+    opacity: 0.5;
+  }
+
   .mat-mdc-checkbox,
   .mdc-switch__handle,
   a,

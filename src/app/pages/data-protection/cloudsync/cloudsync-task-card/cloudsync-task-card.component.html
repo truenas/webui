@@ -1,7 +1,4 @@
-<tn-card
-  padding="small"
-  [primaryAction]="addAction()"
->
+<tn-card padding="small">
   <h3 tnCardHeader class="card-title">
     <a
       tnTestIdType="link"
@@ -93,4 +90,15 @@
       [routerLink]="['/data-protection', 'cloudsync']"
     ></ix-table-pager-show-more>
   }
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="filled"
+      [testId]="addTestId"
+      [label]="'Add' | translate"
+      (onClick)="onAdd()"
+    ></tn-button>
+  </ng-template>
 </tn-card>

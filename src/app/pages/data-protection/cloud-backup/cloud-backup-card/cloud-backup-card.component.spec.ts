@@ -7,6 +7,7 @@ import {
   TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { delay, of, throwError } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
@@ -177,6 +178,17 @@ describe('CloudBackupCardComponent', () => {
       CloudBackupFormComponent,
       { wide: true },
     );
+  });
+
+  it('still renders the role-gated Add button for users without the write role', async () => {
+    spectator = createComponent({ detectChanges: false });
+    spectator.inject(MockAuthService).hasRole.mockReturnValue(of(false));
+    spectator.detectChanges();
+
+    const gatedLoader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const addButton = await gatedLoader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+
+    expect(addButton).toBeTruthy();
   });
 
   it('shows confirmation dialog when Run job button is pressed', async () => {
