@@ -1,22 +1,18 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MatDialogContent, MatDialogActions, MatDialogTitle,
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-} from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -28,26 +24,24 @@ const customReasonValue = 'CUSTOM_REASON_VALUE';
   styleUrls: ['./reboot-or-shutdown-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogModule,
-    MatButton,
+    AsyncPipe,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TranslateModule,
-    TestDirective,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    IxSelectComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     IxInputComponent,
     FormActionsComponent,
   ],
 })
 export class RebootOrShutdownDialog {
-  dialogRef = inject<MatDialogRef<RebootOrShutdownDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<string, RebootOrShutdownDialog>>(DialogRef);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
-  isShutdown = inject(MAT_DIALOG_DATA) ?? false;
+  isShutdown = inject<boolean>(DIALOG_DATA) ?? false;
   private destroyRef = inject(DestroyRef);
 
   form = this.fb.group({

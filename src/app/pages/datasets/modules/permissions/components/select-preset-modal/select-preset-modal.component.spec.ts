@@ -1,16 +1,15 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectPresetModalConfig,
@@ -54,13 +53,13 @@ describe('SelectPresetModalComponent', () => {
       mockProvider(DatasetAclEditorStore, {
         usePreset: jest.fn(),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DialogService),
       mockApi([
         mockCall('filesystem.acltemplate.by_path', presets),
       ]),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {},
       },
     ],
@@ -70,7 +69,7 @@ describe('SelectPresetModalComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: {
             allowCustom: true,
             datasetPath: '/mnt/pool/dataset',
@@ -83,7 +82,7 @@ describe('SelectPresetModalComponent', () => {
 
   it('loads acl presets for given path and shows them in the select', async () => {
     const api = spectator.inject(ApiService);
-    const presetSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Preset' }));
+    const presetSelect = await loader.getHarness(TnSelectHarness);
 
     expect(api.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{
       'format-options': {
@@ -91,15 +90,15 @@ describe('SelectPresetModalComponent', () => {
       },
       path: '/mnt/pool/dataset',
     }]);
-    expect(await presetSelect.getOptionLabels()).toContain('POSIX_HOME');
-    expect(await presetSelect.getOptionLabels()).toContain('POSIX_OFFICE');
+    expect(await presetSelect.getOptions()).toContain('POSIX_HOME');
+    expect(await presetSelect.getOptions()).toContain('POSIX_OFFICE');
   });
 
   it('hides the preset select when Create a custom ACL is selected', async () => {
     const actionsRadios = await loader.getHarness(IxRadioGroupHarness);
     await actionsRadios.setValue('Create a custom ACL');
 
-    const presetSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Preset' }));
+    const presetSelect = await loader.getHarnessOrNull(TnSelectHarness);
 
     expect(presetSelect).toBeNull();
   });
@@ -108,10 +107,10 @@ describe('SelectPresetModalComponent', () => {
     const actionsRadios = await loader.getHarness(IxRadioGroupHarness);
     await actionsRadios.setValue('Create a custom ACL');
 
-    const continueButton = await loader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
+    const continueButton = await loader.getHarness(TnButtonHarness.with({ label: 'Continue' }));
     await continueButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(DatasetAclEditorStore).usePreset).not.toHaveBeenCalled();
   });
 
@@ -119,13 +118,13 @@ describe('SelectPresetModalComponent', () => {
     const actionsRadios = await loader.getHarness(IxRadioGroupHarness);
     await actionsRadios.setValue('Select a preset ACL');
 
-    const presetSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Preset' }));
-    await presetSelect.setValue('POSIX_HOME');
+    const presetSelect = await loader.getHarness(TnSelectHarness);
+    await presetSelect.selectOption('POSIX_HOME');
 
-    const continueButton = await loader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
+    const continueButton = await loader.getHarness(TnButtonHarness.with({ label: 'Continue' }));
     await continueButton.click();
 
     expect(spectator.inject(DatasetAclEditorStore).usePreset).toHaveBeenCalledWith(presets[0]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 });

@@ -1,14 +1,13 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -30,9 +29,9 @@ describe('DeleteGroupDialogComponent', () => {
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           id: 2,
           group: 'vip',
@@ -52,14 +51,14 @@ describe('DeleteGroupDialogComponent', () => {
       'Are you sure you want to delete group "vip"?',
     );
 
-    const deleteUsersCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Delete 3 users with this primary group?' }));
-    await deleteUsersCheckbox.setValue(true);
+    const deleteUsersCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete 3 users with this primary group?' }));
+    await deleteUsersCheckbox.check();
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('group.delete', [2, { delete_users: true }]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Group deleted');
   });
 });

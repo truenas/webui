@@ -1,10 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ComponentType } from '@angular/cdk/portal';
 import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild,
 } from '@angular/router';
+import { TnDialog } from '@truenas/ui-components';
 import {
   Observable, of, switchMap, take, tap,
   combineLatest,
@@ -20,11 +21,11 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 export class BlockingActionGuardService implements CanActivateChild {
   private authService = inject(AuthService);
   private wsStatus = inject(WebSocketStatusService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
 
   private twoFactorDialogOpen = false;
-  private dialogRef: MatDialogRef<TwoFactorSetupDialog> | null = null;
+  private dialogRef: DialogRef<boolean, TwoFactorSetupDialog> | null = null;
   private hasCheckedTwoFactorSetup = false; // Track if we've already checked 2FA this session
 
   constructor() {
@@ -86,7 +87,7 @@ export class BlockingActionGuardService implements CanActivateChild {
           } else {
             this.twoFactorDialogOpen = true;
             this.hasCheckedTwoFactorSetup = true; // Mark as checked when dialog opens
-            this.dialogRef = this.matDialog.open(TwoFactorSetupDialog, {
+            this.dialogRef = this.tnDialog.open<TwoFactorSetupDialog, void, boolean>(TwoFactorSetupDialog, {
               maxWidth: '100vw',
               maxHeight: '100vh',
               height: '100%',
@@ -95,7 +96,7 @@ export class BlockingActionGuardService implements CanActivateChild {
               disableClose: true,
             });
 
-            twoFactorDialog$ = this.dialogRef.afterClosed().pipe(
+            twoFactorDialog$ = (this.dialogRef.closed as Observable<boolean>).pipe(
               tap({
                 next: () => {
                   this.twoFactorDialogOpen = false;
@@ -114,20 +115,22 @@ export class BlockingActionGuardService implements CanActivateChild {
           }
         }
 
-        let passwordChangeRequired$: Observable<boolean> = of(true);
+        // When a password change is required, run that dialog first and only then
+        // chain the 2FA dialog. Otherwise fall straight through to the 2FA flow
+        // (which is `of(true)` when 2FA isn't required).
         if (isPasswordChangeRequired) {
-          passwordChangeRequired$ = this.openFullScreenDialog(PasswordChangeRequiredDialog).pipe(
+          return this.openFullScreenDialog(PasswordChangeRequiredDialog).pipe(
             switchMap(() => twoFactorDialog$),
           );
         }
 
-        return passwordChangeRequired$ ?? (twoFactorDialog$ ?? of(true));
+        return twoFactorDialog$;
       }),
     );
   }
 
   private openFullScreenDialog<T>(component: ComponentType<T>): Observable<boolean> {
-    const dialogRef = this.matDialog.open(component, {
+    const dialogRef = this.tnDialog.open<T, void, boolean>(component, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -136,6 +139,6 @@ export class BlockingActionGuardService implements CanActivateChild {
       disableClose: true,
     });
 
-    return dialogRef.afterClosed();
+    return dialogRef.closed as Observable<boolean>;
   }
 }

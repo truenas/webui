@@ -10,14 +10,32 @@
   }
 }
 
+// Inner-button full-width is handled by the shared TEMP block in signin.component.scss.
 .submit-button {
   margin-top: 16px;
   width: 100%;
 }
 
-input,
-button {
-  &:disabled {
-    cursor: not-allowed;
-  }
+.username-input {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.password-input {
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+tn-banner {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.otp-banner {
+  margin-bottom: 1.5rem;
+}
+
+.otp-input {
+  display: block;
+  margin-bottom: 1.5rem;
 }

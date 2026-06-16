@@ -1,9 +1,8 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -41,9 +40,9 @@ describe('ManageHostsDialog', () => {
       mockApi([
         mockCall('nvmet.host.delete'),
       ]),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of({ confirmed: true, force: true }),
+          closed: of({ confirmed: true, force: true }),
         })),
       }),
       mockProvider(NvmeOfStore, {
@@ -69,7 +68,7 @@ describe('ManageHostsDialog', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.success({})),
       }),
-      mockProvider(MatDialogRef, {
+      mockProvider(DialogRef, {
         close: jest.fn(),
       }),
       mockAuth(),
@@ -105,7 +104,7 @@ describe('ManageHostsDialog', () => {
     const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'nqn.2014-08.org.nvmexpress');
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SubsystemPortOrHostDeleteDialogComponent, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SubsystemPortOrHostDeleteDialogComponent, {
       data: {
         type: PortOrHostDeleteType.Host,
         item: {
@@ -124,7 +123,7 @@ describe('ManageHostsDialog', () => {
   });
 
   it('opens a form to add a new host when Add New is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add New' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add New' }));
     await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(HostFormComponent);

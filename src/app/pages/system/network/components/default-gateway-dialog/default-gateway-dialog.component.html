@@ -1,53 +1,62 @@
-<h1 mat-dialog-title>{{ 'Set Gateway and DNS' | translate }}</h1>
-
-<div mat-dialog-content>
+<tn-dialog-shell testId="default-gateway" [title]="'Set Gateway and DNS' | translate">
+<div>
   <p class="message">{{ 'Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:' | translate }}</p>
   <p class="message">{{ 'Current values are pre-filled in the form below.' | translate }}</p>
 </div>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <div mat-dialog-content>
+  <div>
     <ix-fieldset>
-      <ix-input
-        formControlName="defaultGateway"
+      <tn-form-field
         [label]="'New IPv4 Default Gateway' | translate"
-        [required]="true"
         [tooltip]="helptext.ipv4gatewayTooltip | translate"
-      ></ix-input>
-      
-      <ix-input
-        formControlName="dns1"
+      >
+        <tn-input
+          testId="default-gateway"
+          name="defaultGateway"
+          formControlName="defaultGateway"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
         [label]="'Primary DNS Server' | translate"
         [tooltip]="'Primary DNS server address (optional)' | translate"
-      ></ix-input>
-      
-      <ix-input
-        formControlName="dns2"
+      >
+        <tn-input
+          testId="dns1"
+          name="dns1"
+          formControlName="dns1"
+        ></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
         [label]="'Secondary DNS Server' | translate"
         [tooltip]="'Secondary DNS server address (optional)' | translate"
-      ></ix-input>
-      
-      <ix-input
-        formControlName="dns3"
+      >
+        <tn-input
+          testId="dns2"
+          name="dns2"
+          formControlName="dns2"
+        ></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
         [label]="'Tertiary DNS Server' | translate"
         [tooltip]="'Tertiary DNS server address (optional)' | translate"
-      ></ix-input>
+      >
+        <tn-input
+          testId="dns3"
+          name="dns3"
+          formControlName="dns3"
+        ></tn-input>
+      </tn-form-field>
     </ix-fieldset>
   </div>
-
-  <ix-form-actions mat-dialog-actions class="form-actions">
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ 'Skip' | translate }}
-    </button>
-
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="register"
-      [disabled]="form.invalid"
-    >
-      {{ 'Register' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+
+<ix-form-actions tnDialogAction class="form-actions">
+  <tn-button variant="outline" testId="cancel" [label]="'Skip' | translate" (onClick)="dialogRef.close(false)"></tn-button>
+
+  <tn-button *ixRequiresRoles="requiredRoles" color="primary" testId="register" [label]="'Register' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

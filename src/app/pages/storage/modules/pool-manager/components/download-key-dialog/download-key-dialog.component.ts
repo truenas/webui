@@ -1,14 +1,11 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { helptextDownloadKey } from 'app/helptext/storage/volumes/download-key';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -23,20 +20,18 @@ export interface DownloadKeyDialogParams {
   styleUrls: ['./download-key-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
 export class DownloadKeyDialog {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
+  protected dialogRef = inject<DialogRef<boolean, DownloadKeyDialog>>(DialogRef);
   private download = inject(DownloadService);
-  private data = inject<DownloadKeyDialogParams>(MAT_DIALOG_DATA);
+  private data = inject<DownloadKeyDialogParams>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected helptext = helptextDownloadKey;

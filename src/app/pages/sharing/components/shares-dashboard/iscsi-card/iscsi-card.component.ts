@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -21,6 +20,7 @@ import {
   TnTooltipDirective,
   type TnCardAction,
   type TnSortEvent,
+  TnDialog,
 } from '@truenas/ui-components';
 import {
   filter, startWith, tap,
@@ -94,7 +94,7 @@ export class IscsiCardComponent implements OnInit {
   private api = inject(ApiService);
   protected emptyService = inject(EmptyService);
   private store$ = inject<Store<ServicesState>>(Store);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private iscsiService = inject(IscsiService);
   private license = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
@@ -224,9 +224,9 @@ export class IscsiCardComponent implements OnInit {
   }
 
   doDelete(iscsi: IscsiTarget): void {
-    this.matDialog
+    this.tnDialog
       .open(DeleteTargetDialog, { data: iscsi, width: '600px' })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
   }

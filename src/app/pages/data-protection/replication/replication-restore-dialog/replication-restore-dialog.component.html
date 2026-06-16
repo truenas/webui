@@ -1,13 +1,12 @@
-<h1 matDialogTitle>
-  {{ 'Restore Replication Task' | translate }}
-</h1>
+<tn-dialog-shell testId="replication-restore" [title]="'Restore Replication Task' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-input
-    formControlName="name"
-    [label]="'Name' | translate"
-    [required]="true"
-    [tooltip]="helptext.nameTooltip | translate"
-  ></ix-input>
+  <tn-form-field [label]="'Name' | translate" [tooltip]="helptext.nameTooltip | translate">
+    <tn-input
+      testId="name"
+      formControlName="name"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
   <ix-explorer
     formControlName="target_dataset"
@@ -17,20 +16,22 @@
     [nodeProvider]="treeNodeProvider"
   ></ix-explorer>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" matDialogClose>
-      {{ 'Cancel' | translate }}
-    </button>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
 
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      type="submit"
-      ixTest="restore"
-      [disabled]="form.invalid"
-    >
-      {{ 'Restore' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="restore"
+    [label]="'Restore' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

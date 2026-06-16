@@ -1,11 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -135,9 +134,12 @@ describe('CloudSyncTaskCardComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(SlideIn, {
+        open: jest.fn(() => SlideInResult.empty()),
+      }),
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(LocaleService),
@@ -279,11 +281,11 @@ describe('CloudSyncTaskCardComponent', () => {
   });
 
   it('shows dialog when Restore button is pressed', async () => {
-    jest.spyOn(spectator.inject(MatDialog), 'open');
+    jest.spyOn(spectator.inject(TnDialog), 'open');
     const menu = await openRowMenu();
     await menu.clickItem({ label: 'Restore' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialog, {
       data: 3,
     });
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudsync» has been restored.');

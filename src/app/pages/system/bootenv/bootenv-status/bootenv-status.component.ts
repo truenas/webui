@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import { MatList, MatListItem } from '@angular/material/list';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -78,7 +77,7 @@ export class BootStatusListComponent implements OnInit {
   private router = inject(Router);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private loader = inject(LoaderService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
@@ -128,15 +127,15 @@ export class BootStatusListComponent implements OnInit {
   }
 
   attach(): void {
-    this.matDialog.open(BootPoolAttachDialog)
-      .afterClosed()
+    this.tnDialog.open(BootPoolAttachDialog)
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadPoolInstance());
   }
 
   replace(diskPath: string): void {
-    this.matDialog.open(BootPoolReplaceDialog, { data: diskPath })
-      .afterClosed()
+    this.tnDialog.open(BootPoolReplaceDialog, { data: diskPath })
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadPoolInstance());
   }

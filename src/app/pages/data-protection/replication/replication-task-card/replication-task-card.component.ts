@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -19,6 +18,7 @@ import {
   TnTableComponent,
   TnTestIdDirective,
   TnTooltipDirective,
+  TnDialog,
   type TnCardAction,
   type TnSortEvent,
 } from '@truenas/ui-components';
@@ -98,7 +98,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private download = inject(DownloadService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
@@ -261,10 +261,10 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   protected restore(row: ReplicationTask): void {
-    const dialog = this.matDialog.open(ReplicationRestoreDialog, {
+    const dialog = this.tnDialog.open(ReplicationRestoreDialog, {
       data: row.id,
     });
-    dialog.afterClosed()
+    dialog.closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.getReplicationTasks());
   }

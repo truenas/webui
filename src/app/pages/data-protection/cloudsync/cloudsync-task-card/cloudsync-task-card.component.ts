@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -21,6 +20,7 @@ import {
   TnTooltipDirective,
   type TnCardAction,
   type TnSortEvent,
+  TnDialog,
 } from '@truenas/ui-components';
 import {
   EMPTY, catchError, filter, map, of, switchMap, tap,
@@ -96,7 +96,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   private taskService = inject(TaskService);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
@@ -315,9 +315,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   protected restore(row: CloudSyncTaskUi): void {
-    this.matDialog
+    this.tnDialog
       .open(CloudSyncRestoreDialog, { data: row.id })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.snackbar.success(

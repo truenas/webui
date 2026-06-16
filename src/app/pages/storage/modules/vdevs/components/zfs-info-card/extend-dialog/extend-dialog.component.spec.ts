@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -53,7 +53,7 @@ describe('ExtendDialogComponent', () => {
           used: [],
         }),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -64,7 +64,7 @@ describe('ExtendDialogComponent', () => {
         checkForExistingExtendJob: jest.fn(() => of(false)),
       }),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           poolId: 4,
           targetVdevGuid: 'vdev-guid',
@@ -84,7 +84,7 @@ describe('ExtendDialogComponent', () => {
       'New Disk': 'sde (10.91 TiB)',
     });
 
-    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -97,7 +97,7 @@ describe('ExtendDialogComponent', () => {
       },
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('shows error when extend job is already running for this pool', async () => {
@@ -109,7 +109,7 @@ describe('ExtendDialogComponent', () => {
       'New Disk': 'sde (10.91 TiB)',
     });
 
-    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
 
     expect(poolExtendJobService.checkForExistingExtendJob).toHaveBeenCalledWith(4);
@@ -128,7 +128,7 @@ describe('ExtendDialogComponent', () => {
       'New Disk': 'sde (10.91 TiB)',
     });
 
-    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
 
     expect(poolExtendJobService.checkForExistingExtendJob).toHaveBeenCalledWith(4);

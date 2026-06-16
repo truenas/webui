@@ -1,8 +1,8 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -60,7 +60,7 @@ describe('SshConnectionFormComponent', () => {
         addSshConnection: jest.fn(() => of(existingConnection)),
       }),
       mockProvider(DialogService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockAuth(),
       mockProvider(SlideInRef, {
         close: closeSlideInRef,

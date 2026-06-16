@@ -1,10 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { CustomTransfersDialog } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 
 describe('CustomTransfersDialogComponent', () => {
@@ -16,7 +15,7 @@ describe('CustomTransfersDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -26,12 +25,12 @@ describe('CustomTransfersDialogComponent', () => {
   });
 
   it('selects transfers when save is pressed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ Transfers: 10 });
+    const transfersInput = await loader.getHarness(TnInputHarness);
+    await transfersInput.setValue('10');
 
-    const save = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const save = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await save.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(10);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(10);
   });
 });

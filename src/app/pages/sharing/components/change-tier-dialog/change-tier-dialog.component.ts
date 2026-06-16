@@ -1,20 +1,16 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent } from '@truenas/ui-components';
 import { forkJoin, tap } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTierLabelKey } from 'app/pages/sharing/components/tier-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -31,15 +27,12 @@ export interface ChangeTierDialogData {
   styleUrls: ['./change-tier-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    MatButton,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TranslateModule,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    TestDirective,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
   ],
 })
 export class ChangeTierDialogComponent implements OnInit {
@@ -47,9 +40,9 @@ export class ChangeTierDialogComponent implements OnInit {
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
-  private dialogRef = inject(MatDialogRef<ChangeTierDialogComponent>);
+  protected dialogRef = inject(DialogRef<unknown, ChangeTierDialogComponent>);
   private destroyRef = inject(DestroyRef);
-  protected data = inject<ChangeTierDialogData>(MAT_DIALOG_DATA);
+  protected data = inject<ChangeTierDialogData>(DIALOG_DATA);
 
   protected form = this.fb.nonNullable.group({
     moveExistingData: [true],
