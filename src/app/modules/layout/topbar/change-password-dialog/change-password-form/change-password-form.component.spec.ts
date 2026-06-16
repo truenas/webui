@@ -1,9 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -32,7 +32,7 @@ describe('ChangePasswordDialogComponent', () => {
         mockCall('user.set_password'),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(LoaderService, {
         withLoader: () => <T>(source$: T) => source$,
       }),
@@ -82,7 +82,7 @@ describe('ChangePasswordDialogComponent', () => {
 
     await form.fillForm(formData);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Change Password' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Change Password' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('user.set_password', [{
@@ -90,7 +90,7 @@ describe('ChangePasswordDialogComponent', () => {
       new_password: '123456',
       username: 'root',
     }]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('shows error if any happened during password change request', async () => {
@@ -121,7 +121,7 @@ describe('ChangePasswordDialogComponent', () => {
 
     await form.fillForm(formData);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Change Password' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Change Password' }));
     await saveButton.click();
 
     expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)

@@ -3,13 +3,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnIn
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   EMPTY, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
@@ -88,7 +87,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   private taskService = inject(TaskService);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
@@ -322,9 +321,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   protected restore(row: CloudSyncTaskUi): void {
-    this.matDialog
+    this.tnDialog
       .open(CloudSyncRestoreDialog, { data: row.id })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.snackbar.success(

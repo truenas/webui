@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -76,7 +76,7 @@ describe('WebShareListComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(EmptyService),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(TruenasConnectService, {
         config$: of(mockTruenasConnectConfig),
         config: () => mockTruenasConnectConfig,
@@ -292,7 +292,7 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(EmptyService),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
         get: jest.fn(() => of({})),
@@ -376,7 +376,7 @@ describe('WebShareListComponent - No WebShare users configured', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(EmptyService),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(TruenasConnectService, {
         config$: of(mockTruenasConnectConfig),
         openStatusModal: jest.fn(),

@@ -1,35 +1,39 @@
-<h1 matDialogTitle>
-  {{ 'Choose a pool for Apps' | translate }}
-</h1>
+<tn-dialog-shell testId="select-pool-dialog" [title]="'Choose a pool for Apps' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-select
-    formControlName="pool"
-    [label]="'Pool' | translate"
-    [required]="true"
-    [options]="pools$"
-  ></ix-select>
+  <tn-form-field [label]="'Pool' | translate" [required]="true">
+    <tn-select
+      testId="pool"
+      formControlName="pool"
+      [options]="(pools$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   @if (showMigrateCheckbox) {
-    <ix-checkbox
-      formControlName="migrateApplications"
-      [label]="'Migrate existing applications' | translate"
-    ></ix-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="migrate-applications"
+        formControlName="migrateApplications"
+        [label]="'Migrate existing applications' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
 
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="choose"
-      [disabled]="form.invalid"
-    >
-      {{ 'Choose' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="choose"
+    [label]="'Choose' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

@@ -7,11 +7,10 @@ import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   isArray, isEqual, isPlainObject, unset,
 } from 'lodash-es';
@@ -103,7 +102,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   private dockerStore = inject(DockerStore);
   private api = inject(ApiService);
   private authService = inject(AuthService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private unsavedChangesService = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
@@ -593,7 +592,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   private getDockerHubRateLimitInfo(): void {
     this.api.call('app.image.dockerhub_rate_limit').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((info) => {
       if (Number(info.remaining_pull_limit) < 5) {
-        this.matDialog.open(DockerHubRateInfoDialog, {
+        this.tnDialog.open(DockerHubRateInfoDialog, {
           data: info,
         });
       }

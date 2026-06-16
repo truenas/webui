@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>{{ helptext.exportError | translate }}</h1>
-<div mat-dialog-content class="message-content">
+<tn-dialog-shell testId="services-to-be-restarted" [title]="helptext.exportError | translate">
+<div class="message-content">
   @if (servicesInfo.stop_services.length) {
     <div class="services-block">
       <p>{{ helptext.exportMessages.stopServices | translate }}</p>
@@ -27,21 +27,9 @@
   <p>{{ helptext.exportMessages.continueMessage | translate }}</p>
 </div>
 
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button
-    mat-button
-    ixTest="cancel"
-    [matDialogClose]="false"
-  >
-    {{ 'Cancel' | translate }}
-  </button>
+<ix-form-actions tnDialogAction class="form-actions">
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
 
-  <button
-    mat-button
-    ixTest="continue"
-    color="primary"
-    [matDialogClose]="true"
-  >
-    {{ helptext.exportMessages.continueAction | translate }}
-  </button>
+  <tn-button color="primary" testId="continue" [label]="helptext.exportMessages.continueAction | translate" (onClick)="dialogRef.close(true)"></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>

@@ -4,14 +4,13 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDe
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import {
   MatStepper, MatStep, MatStepLabel,
 } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -88,7 +87,7 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
 export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   private store = inject(PoolManagerStore);
   private systemStore$ = inject<Store<AppState>>(Store);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private router = inject(Router);
@@ -186,10 +185,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
           return of(null);
         }
 
-        return this.matDialog.open<DownloadKeyDialog, DownloadKeyDialogParams>(DownloadKeyDialog, {
+        return this.tnDialog.open<DownloadKeyDialog, DownloadKeyDialogParams>(DownloadKeyDialog, {
           disableClose: true,
           data: job.result,
-        }).afterClosed();
+        }).closed;
       }),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),

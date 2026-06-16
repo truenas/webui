@@ -1,14 +1,13 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { EMPTY } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -16,11 +15,9 @@ import { Role } from 'app/enums/role.enum';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -30,16 +27,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./default-gateway-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -48,7 +42,7 @@ export class DefaultGatewayDialog implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   cdr = inject(ChangeDetectorRef);
-  private dialogRef = inject<MatDialogRef<DefaultGatewayDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DefaultGatewayDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
@@ -58,7 +52,7 @@ export class DefaultGatewayDialog implements OnInit {
     nameserver1?: string;
     nameserver2?: string;
     nameserver3?: string;
-  }>(MAT_DIALOG_DATA);
+  }>(DIALOG_DATA);
 
   private destroyRef = inject(DestroyRef);
 

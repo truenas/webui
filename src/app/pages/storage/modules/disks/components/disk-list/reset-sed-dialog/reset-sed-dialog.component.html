@@ -1,6 +1,5 @@
-<h1 mat-dialog-title>{{ 'SED Reset - Secure Erase' | translate }}</h1>
-
-<div mat-dialog-content>
+<tn-dialog-shell testId="reset-sed" [title]="'SED Reset - Secure Erase' | translate">
+<div>
   <div class="warning-box" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="warning-header">
       <tn-icon name="alert" library="mdi"></tn-icon>
@@ -20,18 +19,23 @@
   <p class="disk-name">{{ 'Disk:' | translate }} <strong>{{ data.diskName }}</strong></p>
 
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-    <ix-input
-      formControlName="psid"
-      [label]="'Physical Security ID (PSID)' | translate"
-      [placeholder]="'Enter PSID from drive label (e.g., ABCD1234EFGH5678)' | translate"
-      [required]="true"
-    ></ix-input>
+    <tn-form-field [label]="'Physical Security ID (PSID)' | translate">
+      <tn-input
+        testId="psid"
+        formControlName="psid"
+        [placeholder]="'Enter PSID from drive label (e.g., ABCD1234EFGH5678)' | translate"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-checkbox
-      formControlName="confirm"
-      [label]="'I understand this will permanently destroy all data on this disk' | translate"
-      [required]="true"
-    ></ix-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="confirm"
+        formControlName="confirm"
+        [label]="'I understand this will permanently destroy all data on this disk' | translate"
+        [required]="true"
+      ></tn-checkbox>
+    </tn-form-field>
   </form>
 
   <div class="psid-info-box">
@@ -51,20 +55,9 @@
   </div>
 </div>
 
-<ix-form-actions mat-dialog-actions>
-  <button mat-button type="button" ixTest="cancel" matDialogClose>
-    {{ 'Cancel' | translate }}
-  </button>
+<ix-form-actions tnDialogAction>
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
 
-  <button
-    *ixRequiresRoles="[Role.DiskWrite]"
-    mat-button
-    type="submit"
-    color="warn"
-    ixTest="reset-sed"
-    [disabled]="form.invalid"
-    (click)="onSubmit()"
-  >
-    {{ 'Perform SED Reset' | translate }}
-  </button>
+  <tn-button *ixRequiresRoles="[Role.DiskWrite]" color="warn" testId="reset-sed" [label]="'Perform SED Reset' | translate" [disabled]="form.invalid" (onClick)="onSubmit()"></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>
