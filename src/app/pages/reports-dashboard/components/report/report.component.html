@@ -5,64 +5,60 @@
         <div class="toolbar" tnCardHeader>
           <h3 class="tn-card__title">{{ reportTitle | translate }}</h3>
           <!-- Controls/Tools -->
-          <div class="tn-card__header-right">
-            <div class="line-chart-tools-wrapper">
-              @if (localControls() && !report().errorConf) {
-                <div class="line-chart-tools">
-                  <div class="steps-group" aria-label="Steps">
-                    <tn-icon-button
-                      name="rewind"
-                      library="mdi"
-                      [disabled]="stepBackDisabled"
-                      [tooltip]="'Step Back' | translate"
-                      [ariaLabel]="'Step Back' | translate"
-                      [testId]="['steps', 'back']"
-                      (onClick)="stepBack()"
-                    ></tn-icon-button>
-                    <tn-icon-button
-                      name="fast-forward"
-                      library="mdi"
-                      [disabled]="stepForwardDisabled"
-                      [tooltip]="'Step Forward' | translate"
-                      [ariaLabel]="'Step Forward' | translate"
-                      [testId]="['steps', 'forward']"
-                      (onClick)="stepForward()"
-                    ></tn-icon-button>
-                  </div>
+          @if (localControls() && !report().errorConf) {
+            <div class="line-chart-tools">
+              <div class="steps-group" aria-label="Steps">
+                <tn-icon-button
+                  name="rewind"
+                  library="mdi"
+                  [disabled]="stepBackDisabled"
+                  [tooltip]="'Step Back' | translate"
+                  [ariaLabel]="'Step Back' | translate"
+                  [testId]="['steps', 'back']"
+                  (onClick)="stepBack()"
+                ></tn-icon-button>
+                <tn-icon-button
+                  name="fast-forward"
+                  library="mdi"
+                  [disabled]="stepForwardDisabled"
+                  [tooltip]="'Step Forward' | translate"
+                  [ariaLabel]="'Step Forward' | translate"
+                  [testId]="['steps', 'forward']"
+                  (onClick)="stepForward()"
+                ></tn-icon-button>
+              </div>
 
-                  <div class="zoom-group" aria-label="Zoom Level">
-                    <tn-icon-button
-                      name="magnify-minus"
-                      library="mdi"
-                      [disabled]="zoomLevelIndex === zoomLevelMin"
-                      [tooltip]="'Zoom Out' | translate"
-                      [ariaLabel]="'Zoom Out' | translate"
-                      [testId]="['zoom', 'out']"
-                      (onClick)="timeZoomOut()"
-                    ></tn-icon-button>
+              <div class="zoom-group" aria-label="Zoom Level">
+                <tn-icon-button
+                  name="magnify-minus"
+                  library="mdi"
+                  [disabled]="zoomLevelIndex === zoomLevelMin"
+                  [tooltip]="'Zoom Out' | translate"
+                  [ariaLabel]="'Zoom Out' | translate"
+                  [testId]="['zoom', 'out']"
+                  (onClick)="timeZoomOut()"
+                ></tn-icon-button>
 
-                    <tn-button
-                      [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
-                      [tnTooltip]="'Reset Zoom' | translate"
-                      [label]="currentZoomLevel | mapValue: zoomLevelLabels | translate"
-                      [testId]="['zoom', 'reset']"
-                      (onClick)="timeZoomReset()"
-                    ></tn-button>
+                <tn-button
+                  [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
+                  [tnTooltip]="'Reset Zoom' | translate"
+                  [label]="currentZoomLevel | mapValue: zoomLevelLabels | translate"
+                  [testId]="['zoom', 'reset']"
+                  (onClick)="timeZoomReset()"
+                ></tn-button>
 
-                    <tn-icon-button
-                      name="magnify-plus"
-                      library="mdi"
-                      [disabled]="zoomLevelIndex === zoomLevelMax"
-                      [tooltip]="'Zoom In' | translate"
-                      [ariaLabel]="'Zoom In' | translate"
-                      [testId]="['zoom', 'in']"
-                      (onClick)="timeZoomIn()"
-                    ></tn-icon-button>
-                    </div>
-                  </div>
-                }
+                <tn-icon-button
+                  name="magnify-plus"
+                  library="mdi"
+                  [disabled]="zoomLevelIndex === zoomLevelMax"
+                  [tooltip]="'Zoom In' | translate"
+                  [ariaLabel]="'Zoom In' | translate"
+                  [testId]="['zoom', 'in']"
+                  (onClick)="timeZoomIn()"
+                ></tn-icon-button>
               </div>
             </div>
+          }
         </div>
       }
       @if (isReady && !report().errorConf) {
@@ -119,9 +115,9 @@
 
             @if (report() && data?.legend) {
               <div class="legend-group-wrapper">
-                <table class="legend-table" [ixTest]="['reports-table', report().title]">
+                <table class="legend-table" [tnTestId]="['reports-table', report().title]">
                   <!-- Table Header-->
-                  <tr class="legend-group header" ixTest="table-header">
+                  <tr class="legend-group header" [tnTestId]="'table-header'">
                     <th class="legend-label">
                       <strong>{{ 'Key' | translate }}</strong>
                     </th>
@@ -135,7 +131,7 @@
                   </tr>
                   <!-- Table Rows -->
                   @for (legendItem of data.legend; track legendItem; let i = $index) {
-                    <tr class="legend-group" [ixTest]="legendItem">
+                    <tr class="legend-group" [tnTestId]="legendItem">
                       <td class="legend-label">
                         <!--Legend Label-->
                         @if (chartColors && legendItem) {

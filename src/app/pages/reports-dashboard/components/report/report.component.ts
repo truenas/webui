@@ -3,7 +3,14 @@ import { Component, OnChanges, OnInit, OnDestroy, ChangeDetectionStrategy, Chang
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardHeaderDirective,
+  TnIconButtonComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import {
   add, Duration, isToday, sub,
 } from 'date-fns';
@@ -28,7 +35,6 @@ import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.compone
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
@@ -55,7 +61,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
     TnButtonComponent,
     TnIconButtonComponent,
     TnTooltipDirective,
-    TestDirective,
+    TnTestIdDirective,
     LineChartComponent,
     IxDateComponent,
     EmptyComponent,

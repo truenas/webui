@@ -1,6 +1,7 @@
 <tn-card [padContent]="false">
   <h3 tnCardHeader class="tn-card__title">{{ 'Reporting Exporters' | translate }}</h3>
-  <div tnCardHeader class="actions action-icon">
+
+  <div class="actions action-icon">
     <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
     <tn-button
       *ixRequiresRoles="requiredRoles"

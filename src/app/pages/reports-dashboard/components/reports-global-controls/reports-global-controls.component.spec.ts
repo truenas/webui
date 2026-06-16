@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
@@ -23,7 +23,6 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 describe('ReportsGlobalControlsComponent', () => {
   let spectator: Spectator<ReportsGlobalControlsComponent>;
   let loader: HarnessLoader;
-  let rootLoader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: ReportsGlobalControlsComponent,
     providers: [
@@ -70,26 +69,20 @@ describe('ReportsGlobalControlsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    rootLoader = TnMenuTesting.rootLoader(spectator.fixture);
   });
 
   describe('report selector', () => {
     it('shows a list of available reports', async () => {
-      const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Disk' }));
-      await trigger.click();
+      const tabSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
+      const options = await tabSelect.getOptionLabels();
 
-      const reportMenu = await rootLoader.getHarness(TnMenuHarness);
-      const labels = await reportMenu.getItemLabels();
-
-      expect(labels).toEqual(['Disk', 'CPU', 'UPS']);
+      expect(options).toEqual(['--', 'Disk', 'CPU', 'UPS']);
     });
 
-    it('marks currently selected menu item based on current route', async () => {
-      const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Disk' }));
-      await trigger.click();
+    it('marks currently selected tab based on current route', async () => {
+      const tabSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
 
-      const reportMenu = await rootLoader.getHarness(TnMenuHarness);
-      expect(await reportMenu.getSelectedItemLabel()).toBe('Disk');
+      expect(await tabSelect.getValue()).toBe('Disk');
     });
   });
 

@@ -4,22 +4,22 @@
   ></ix-reports-global-controls>
 </ix-page-header>
 
-@if (visibleReports.length && activeReports) {
+@if (visibleReports().length && activeReports()) {
   <div
     class="master-container"
     [ixUiSearch]="searchableElements.elements.reporting"
   >
     <cdk-virtual-scroll-viewport [itemSize]="325" [minBufferPx]="325" [maxBufferPx]="325">
-      <div *cdkVirtualFor="let key of visibleReports; let i = index" class="report-container">
-        @if (activeReports[key] && activeReports[key].identifiers.length > 0) {
+      <div *cdkVirtualFor="let key of visibleReports(); let i = index" class="report-container">
+        @if (activeReports()[key] && activeReports()[key].identifiers.length > 0) {
           <ix-report
-            [report]="activeReports[key]"
-            [identifier]="activeReports[key].identifiers[0]"
+            [report]="activeReports()[key]"
+            [identifier]="activeReports()[key].identifiers[0]"
           ></ix-report>
         }
-        @if (activeReports[key].identifiers.length === 0) {
+        @if (activeReports()[key].identifiers.length === 0) {
           <ix-report
-            [report]="activeReports[key]"
+            [report]="activeReports()[key]"
           ></ix-report>
         }
       </div>

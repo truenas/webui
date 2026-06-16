@@ -10,6 +10,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { reportingGlobalControlsElements } from 'app/pages/reports-dashboard/components/reports-global-controls/reports-global-controls.elements';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
@@ -41,6 +42,7 @@ const supportedReportTypes = [
     IxSelectComponent,
     IxSlideToggleComponent,
     TnButtonComponent,
+    TestDirective,
     UiSearchDirective,
     TranslateModule,
   ],

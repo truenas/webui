@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, output, signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   UntypedFormGroup, Validators, ReactiveFormsModule,
@@ -60,8 +62,10 @@ export class ReportingExportersFormComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
-  slideInRef = inject<SlideInRef<ReportingExporter | undefined, boolean>>(SlideInRef);
+  slideInRef = inject<SlideInRef<ReportingExporter | undefined, boolean>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
+
+  readonly closed = output<boolean>();
 
   get isNew(): boolean {
     return !this.editingExporter;
@@ -93,11 +97,17 @@ export class ReportingExportersFormComponent implements OnInit {
   protected reportingExporterList: ReportingExporterList[] = [];
   protected readonly requiredRoles = [Role.ReportingWrite];
 
+  readonly canSubmit = computed(() => this.form.valid && !this.isLoading());
+
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
+    this.slideInRef?.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
-    this.editingExporter = this.slideInRef.getData();
+    this.editingExporter = this.slideInRef?.getData();
+  }
+
+  submit(): void {
+    this.onSubmit();
   }
 
   ngOnInit(): void {
@@ -243,12 +253,20 @@ export class ReportingExportersFormComponent implements OnInit {
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
+  }
+
+  private close(response: boolean): void {
+    if (this.slideInRef) {
+      this.slideInRef.close({ response });
+    } else {
+      this.closed.emit(response);
+    }
   }
 }
