@@ -79,20 +79,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     });
   });
 
-  private readonly userSelectedTab = signal<ReportTab | undefined>(undefined);
   private readonly diskOptions = signal<{ devices: string[]; metrics: string[] } | null>(null);
 
-  private readonly defaultTab = computed<ReportTab | undefined>(() => {
+  protected readonly activeTab = computed<ReportTab | undefined>(() => {
     const tabs = this.allTabs();
     if (!tabs.length) {
       return undefined;
     }
     const subpath = this.route.snapshot?.url[0]?.path;
     return tabs.find((tab) => (tab.value as string) === subpath) || tabs[0];
-  });
-
-  protected readonly activeTab = computed<ReportTab | undefined>(() => {
-    return this.userSelectedTab() ?? this.defaultTab();
   });
 
   readonly activeReports = computed<Report[]>(() => {
@@ -149,10 +144,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     if (this.scrollContainer) {
       this.scrollContainer.style.overflow = 'auto';
     }
-  }
-
-  updateActiveTab(tab: ReportTab): void {
-    this.userSelectedTab.set(tab);
   }
 
   private getReportsForTab(activeTab: ReportTab): Report[] {

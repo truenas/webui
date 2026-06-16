@@ -76,7 +76,7 @@ describe('ReportsGlobalControlsComponent', () => {
       const tabSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
       const options = await tabSelect.getOptionLabels();
 
-      expect(options).toEqual(['--', 'Disk', 'CPU', 'UPS']);
+      expect(options).toEqual(['Disk', 'CPU', 'UPS']);
     });
 
     it('marks currently selected tab based on current route', async () => {

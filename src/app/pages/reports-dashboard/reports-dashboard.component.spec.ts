@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -53,11 +54,9 @@ describe('ReportsDashboardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-  });
-
   it('separates disk and other reports', () => {
+    spectator = createComponent();
+
     const fakeReports = [
       {
         identifiers: [],
@@ -89,7 +88,14 @@ describe('ReportsDashboardComponent', () => {
 
   describe('buildDiskReport', () => {
     it('rebuilds disk reports', () => {
-      spectator.component.updateActiveTab(fakeTabs[2]);
+      spectator = createComponent({
+        providers: [
+          mockProvider(ActivatedRoute, {
+            snapshot: { url: [{ path: 'disk' }] },
+          }),
+        ],
+      });
+
       expect(spectator.component.activeReports()).toHaveLength(2);
 
       spectator.component.buildDiskReport({

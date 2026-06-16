@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, output, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -62,10 +62,8 @@ export class ReportingExportersFormComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
-  slideInRef = inject<SlideInRef<ReportingExporter | undefined, boolean>>(SlideInRef, { optional: true });
+  slideInRef = inject<SlideInRef<ReportingExporter | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
-
-  readonly closed = output<boolean>();
 
   get isNew(): boolean {
     return !this.editingExporter;
@@ -97,17 +95,11 @@ export class ReportingExportersFormComponent implements OnInit {
   protected reportingExporterList: ReportingExporterList[] = [];
   protected readonly requiredRoles = [Role.ReportingWrite];
 
-  readonly canSubmit = computed(() => this.form.valid && !this.isLoading());
-
   constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
+    this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
-    this.editingExporter = this.slideInRef?.getData();
-  }
-
-  submit(): void {
-    this.onSubmit();
+    this.editingExporter = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
@@ -263,10 +255,6 @@ export class ReportingExportersFormComponent implements OnInit {
   }
 
   private close(response: boolean): void {
-    if (this.slideInRef) {
-      this.slideInRef.close({ response });
-    } else {
-      this.closed.emit(response);
-    }
+    this.slideInRef.close({ response });
   }
 }
