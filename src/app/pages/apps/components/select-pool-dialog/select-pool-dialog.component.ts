@@ -1,12 +1,15 @@
+import { DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   forkJoin, Observable, of, take,
 } from 'rxjs';
@@ -16,11 +19,8 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -32,15 +32,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./select-pool-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    MatDialogTitle,
     TranslateModule,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
-    IxCheckboxComponent,
+    TnButtonComponent,
+    TnCheckboxComponent,
     RequiresRolesDirective,
   ],
 })
@@ -52,7 +52,7 @@ export class SelectPoolDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<SelectPoolDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, SelectPoolDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
   private dockerStore = inject(DockerStore);
   private destroyRef = inject(DestroyRef);

@@ -1,20 +1,19 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  InputType,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk } from 'app/interfaces/disk.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -24,25 +23,25 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./manage-disk-sed-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     ReactiveFormsModule,
-    IxInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
 export class ManageDiskSedDialog implements OnInit {
+  protected readonly InputType = InputType;
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
-  private dialogRef = inject<MatDialogRef<ManageDiskSedDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ManageDiskSedDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private diskName = inject(MAT_DIALOG_DATA);
+  private diskName = inject(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
@@ -64,8 +63,8 @@ export class ManageDiskSedDialog implements OnInit {
     this.setNewPassword('');
   }
 
-  onSubmit(event: SubmitEvent): void {
-    event.preventDefault();
+  onSubmit(event?: SubmitEvent): void {
+    event?.preventDefault();
     this.setNewPassword(this.passwordControl.value);
   }
 

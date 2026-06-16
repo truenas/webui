@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness } from '@angular/material/stepper/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -136,9 +136,9 @@ describe('PoolManagerWizardComponent', () => {
           afterClosed: () => of(fakeSuccessfulJob(createdPool)),
         })),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(undefined),
+          closed: of(undefined),
         })),
       }),
       provideMockStore({
@@ -259,7 +259,7 @@ describe('PoolManagerWizardComponent', () => {
       await wizard.selectStep({ label: 'Review' });
       spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
-      expect(spectator.inject(MatDialog, true).open).toHaveBeenCalledWith(DownloadKeyDialog, {
+      expect(spectator.inject(TnDialog, true).open).toHaveBeenCalledWith(DownloadKeyDialog, {
         disableClose: true,
         data: createdPool,
       });

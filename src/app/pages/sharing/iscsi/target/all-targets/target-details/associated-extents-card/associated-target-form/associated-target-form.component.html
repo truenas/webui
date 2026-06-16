@@ -1,47 +1,39 @@
-<h1 matDialogTitle>
-  {{ 'Associate' | translate }}
-  {{ data.target.name }}
-</h1>
+<tn-dialog-shell testId="associated-target-form" [title]="('Associate' | translate) + ' ' + data.target.name">
 
-<mat-dialog-content>
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
     <ix-fieldset>
-      <ix-input
-        formControlName="lunid"
-        type="number"
-        [label]="'LUN ID' | translate"
-        [tooltip]="tooltips.lunid | translate"
-      ></ix-input>
+      <tn-form-field [label]="'LUN ID' | translate" [tooltip]="tooltips.lunid | translate">
+        <tn-input
+          testId="lunid"
+          formControlName="lunid"
+          [inputType]="InputType.Number"
+        ></tn-input>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="extent"
-        [label]="'Extent' | translate"
-        [tooltip]="tooltips.extent | translate"
-        [options]="extents$"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field [label]="'Extent' | translate" [tooltip]="tooltips.extent | translate" [required]="true">
+        <tn-select
+          testId="extent"
+          formControlName="extent"
+          [options]="(extents$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     </ix-fieldset>
-
-    <ix-form-actions mat-dialog-actions class="form-actions">
-      <button
-        mat-button
-        type="button"
-        ixTest="cancel-associate-target"
-        [matDialogClose]="false"
-      >
-        {{ 'Cancel' | translate }}
-      </button>
-
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        type="submit"
-        color="primary"
-        ixTest="associate-target"
-        [disabled]="form.invalid || isLoading()"
-      >
-        {{ 'Associate' | translate }}
-      </button>
-    </ix-form-actions>
   </form>
-</mat-dialog-content>
+  <ix-form-actions tnDialogAction class="form-actions">
+    <tn-button
+      variant="outline"
+      testId="cancel-associate-target"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close(false)"
+    ></tn-button>
+
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      testId="associate-target"
+      [label]="'Associate' | translate"
+      [disabled]="form.invalid || isLoading()"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  </ix-form-actions>
+</tn-dialog-shell>

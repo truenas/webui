@@ -1,15 +1,18 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnDialogShellComponent,
+  TnDividerComponent,
+  TnIconComponent,
+  TnProgressBarComponent,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import {
   filter, map,
@@ -34,7 +37,6 @@ import {
 } from 'app/modules/jobs/store/job.selectors';
 import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
@@ -46,17 +48,15 @@ import { FailedJobError } from 'app/services/errors/error.classes';
   styleUrls: ['./jobs-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogContent,
-    MatTooltip,
+    TnDialogShellComponent,
+    TnTooltipDirective,
     TnIconComponent,
-    MatProgressBar,
+    TnProgressBarComponent,
     JobItemComponent,
-    MatDialogActions,
-    MatButton,
-    MatDivider,
+    TnButtonComponent,
+    TnDividerComponent,
     TranslateModule,
     AsyncPipe,
-    TestDirective,
     JobStateDisplayPipe,
   ],
 })
@@ -64,7 +64,7 @@ export class JobsPanelComponent {
   protected readonly JobState = JobState;
   private router = inject(Router);
   private store$ = inject<Store<JobSlice>>(Store);
-  private dialogRef = inject<MatDialogRef<JobsPanelComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, JobsPanelComponent>>(DialogRef);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);

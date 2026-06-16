@@ -1,5 +1,4 @@
-<mat-dialog-content>
-  <h3>{{ 'Docker Hub Rate Limit Warning' | translate }}</h3>
+<tn-dialog-shell testId="dockerhub-rate-limit-info" [title]="'Docker Hub Rate Limit Warning' | translate">
   <div>
     <p>{{  warningText }}</p>
 
@@ -7,24 +6,9 @@
       {{ 'You can alleviate rate limiting issues by signing in with Docker Hub.' | translate }}
     </p>
   </div>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button
-    mat-button
-    type="button"
-    ixTest="close"
-    [matDialogClose]="true"
-  >
-    {{ 'Close' | translate }}
-  </button>
-  <button
-    mat-button
-    type="button"
-    color="primary"
-    ixTest="navigate-to-docker-registries"
-    [routerLink]="['/apps', 'docker-registries']"
-    [matDialogClose]="true"
-  >
-    {{ 'Sign-in to Docker Hub' | translate }}
-  </button>
-</mat-dialog-actions>
+
+<div tnDialogAction align="end">
+  <tn-button variant="outline" testId="close" [label]="'Close' | translate" (onClick)="dialogRef.close(true)"></tn-button>
+  <tn-button color="primary" testId="navigate-to-docker-registries" [label]="'Sign-in to Docker Hub' | translate" (onClick)="dialogRef.close(true)"></tn-button>
+</div>
+</tn-dialog-shell>

@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   NEVER, filter, switchMap,
 } from 'rxjs';
@@ -54,7 +53,7 @@ export class DeviceActionsMenuComponent {
 
   private destroyRef = inject(DestroyRef);
   private dialog = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
@@ -112,12 +111,12 @@ export class DeviceActionsMenuComponent {
 
     // For NIC devices, open the dialog
     if (device.dtype === ContainerDeviceType.Nic) {
-      this.matDialog.open(ContainerNicFormDialog, {
+      this.tnDialog.open(ContainerNicFormDialog, {
         data: {
           device: device as ContainerNicDevice & { id: number },
         },
         minWidth: '500px',
-      }).afterClosed().pipe(
+      }).closed.pipe(
         filter(Boolean),
         switchMap((config: {
           mac?: string;

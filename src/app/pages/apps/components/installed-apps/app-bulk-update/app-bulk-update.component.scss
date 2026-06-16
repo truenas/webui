@@ -3,8 +3,11 @@
   max-width: 100%;
   width: 600px;
 
+  // TEMP: tn-select has no margin/padding input, so its outer spacing can only
+  // be controlled by piercing encapsulation to reach the component host. Remove
+  // once @truenas/ui-components exposes layout spacing inputs. Tracked under NAS-141021.
   ::ng-deep {
-    ix-select {
+    tn-select {
       margin: 0 0 8px;
       padding: 0;
     }
@@ -41,62 +44,16 @@
     opacity: 0.5;
   }
 
-  .mat-accordion {
-    .mat-expansion-panel {
-      border: none;
-      box-shadow: none;
-    }
+  .bulk-list {
+    display: block;
+    max-height: 50vh;
+    overflow: hidden auto;
+    padding-bottom: 16px;
 
-    &.details-list {
-      max-height: 300px;
-
-      .mat-expansion-panel-body {
-        margin-left: 8px;
-        max-height: 40vh;
-        overflow-y: auto;
-        padding: 0;
-      }
-
-      .mat-expansion-panel-spacing {
-        margin: 0;
-      }
-
-      > .mat-expansion-panel {
-        background: transparent;
-        margin: 0 -24px;
-
-        .mat-expansion-panel-header {
-          font-size: 14px;
-          margin: 0 -24px;
-          padding: 0 48px;
-        }
-      }
-    }
-
-    &.bulk-list {
+    tn-expansion-panel {
       display: block;
-      max-height: 50vh;
-      overflow: hidden auto;
-      padding-bottom: 16px;
-
-      > .mat-expansion-panel {
-        margin-left: -24px;
-        margin-right: -24px;
-
-        &.mat-expanded {
-          background: var(--bg1);
-          border-bottom: 1px solid var(--lines);
-        }
-
-        > .mat-expansion-panel-header.mat-expanded {
-          border-top: 2px solid var(--lines);
-        }
-
-        &.mat-expansion-panel-spacing {
-          margin-bottom: 0;
-          margin-top: 0;
-        }
-      }
+      margin-left: -24px;
+      margin-right: -24px;
     }
   }
 
@@ -196,4 +153,32 @@
       }
     }
   }
+}
+
+// The logo lives in the panel's [slot=title], i.e. projected into
+// <tn-expansion-panel> (itself projected into <tn-dialog-shell>). Scoped rules
+// don't reach across that projection boundary, so neither the size constraint
+// nor the spacing applies — the <img> renders at natural size with no margin.
+// Pierce encapsulation and restore both here. max-height/max-width with auto
+// dimensions keeps aspect ratio (no stretching or cropping).
+:host ::ng-deep .bulk-list .logo {
+  margin-left: 16px;
+  pointer-events: none;
+  user-select: none;
+
+  img {
+    max-height: 32px;
+    max-width: 64px;
+    object-fit: contain;
+  }
+}
+
+// TEMP: The panel projects its header via [slot=title] rather than the `title`
+// input, so the library's --title-* colour classes never apply and the
+// expand/collapse chevron falls back to the static --tn-fg1 (#fff), which only
+// suits a dark theme. Force webui's theme-aware foreground so the toggle is
+// always visible. Remove once @truenas/ui-components exposes a theme-aware
+// indicator colour for projected-title panels. Tracked under NAS-141021.
+:host ::ng-deep .tn-expansion-panel__indicator {
+  color: var(--fg1);
 }

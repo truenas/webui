@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>{{ helptext.selectPreset | translate }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell testId="select-preset" [title]="helptext.selectPreset | translate">
+<div>
   <p>{{ helptext.selectPresetTooltip | translate }}</p>
 
   @if (!data.allowCustom) {
@@ -15,25 +15,29 @@
     }
     <!-- TODO: Add [required]="true" once FormsModule is removed -->
     @if (form.value.usePreset) {
-      <ix-select
-        formControlName="presetName"
-        [label]="'Preset' | translate"
-        [options]="presetOptions$"
-      ></ix-select>
+      <tn-form-field [label]="'Preset' | translate">
+        <tn-select
+          testId="preset-name"
+          formControlName="presetName"
+          [options]="(presetOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     }
   </form>
-
-  <ix-form-actions>
-    <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
-    <button
-      mat-button
-      color="primary"
-      matDialogClose
-      ixTest="continue"
-      [disabled]="form.invalid"
-      (click)="onContinuePressed()"
-    >
-      {{ 'Continue' | translate }}
-    </button>
-  </ix-form-actions>
 </div>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+  <tn-button
+    color="primary"
+    testId="continue"
+    [label]="'Continue' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onContinuePressed()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

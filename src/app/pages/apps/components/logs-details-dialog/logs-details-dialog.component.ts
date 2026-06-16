@@ -1,27 +1,28 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialogActions, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  InputType,
+} from '@truenas/ui-components';
 
 @Component({
   selector: 'ix-logs-details-dialog',
   templateUrl: './logs-details-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
     TranslateModule,
     ReactiveFormsModule,
-    IxInputComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
-    MatDialogTitle,
-    MatDialogActions,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnButtonComponent,
   ],
 })
 export class LogsDetailsDialog {
+  protected readonly InputType = InputType;
+  protected dialogRef = inject<DialogRef<unknown, LogsDetailsDialog>>(DialogRef);
   private fb = inject(FormBuilder);
 
   form = this.fb.group({

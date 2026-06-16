@@ -1,10 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -123,10 +124,11 @@ describe('DiskListComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(true)),
-        })),
+          closed: of(true),
+          close: jest.fn(),
+        }) as unknown as DialogRef),
       }),
       mockProvider(LicenseService, {
         hasSed$: of(true),
@@ -209,7 +211,7 @@ describe('DiskListComponent', () => {
     const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'Wipe' }));
     await manualTestButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DiskWipeDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DiskWipeDialog, {
       data: {
         diskName: fakeDisk.name,
         exportedPool: fakeUnusedDisks[0].exported_zpool,
@@ -244,7 +246,7 @@ describe('DiskListComponent', () => {
     const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
     await unlockButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(UnlockSedDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(UnlockSedDialog, {
       data: { diskName: 'sdc' },
     });
   });
@@ -255,7 +257,7 @@ describe('DiskListComponent', () => {
     const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'SED Reset' }));
     await resetButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ResetSedDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ResetSedDialog, {
       data: { diskName: 'sdc' },
     });
   });
@@ -314,7 +316,7 @@ describe('DiskListComponent - without SED license', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(LicenseService, {
         hasSed$: of(false),
       }),

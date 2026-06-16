@@ -1,13 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
+  TnDialog,
   TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
-import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -28,7 +27,6 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -69,12 +67,6 @@ describe('NfsCardComponent', () => {
 
   const commonImports = [IxTablePagerShowMoreComponent];
 
-  const commonDeclarations = [
-    MockComponents(
-      ServiceStateButtonComponent,
-    ),
-  ];
-
   const commonProviders = [
     mockAuth(),
     mockProvider(DialogService, {
@@ -82,9 +74,9 @@ describe('NfsCardComponent', () => {
       confirmDelete: jest.fn(() => of(undefined)),
     }),
     mockProvider(SlideInRef, slideInRef),
-    mockProvider(MatDialog, {
+    mockProvider(TnDialog, {
       open: jest.fn(() => ({
-        afterClosed: () => of(true),
+        closed: of(true),
       })),
     }),
     mockProvider(LoaderService, {
@@ -117,7 +109,6 @@ describe('NfsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: NfsCardComponent,
     imports: commonImports,
-    declarations: commonDeclarations,
     providers: [
       ...commonProviders,
       mockApi([
@@ -191,7 +182,6 @@ describe('NfsCardComponent', () => {
     const createExportedComponent = createComponentFactory({
       component: NfsCardComponent,
       imports: commonImports,
-      declarations: commonDeclarations,
       providers: [
         ...commonProviders,
         mockApi([
@@ -222,7 +212,6 @@ describe('NfsCardComponent', () => {
     const createLockedComponent = createComponentFactory({
       component: NfsCardComponent,
       imports: commonImports,
-      declarations: commonDeclarations,
       providers: [
         ...commonProviders,
         mockApi([

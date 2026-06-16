@@ -1,12 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { TnSpriteLoaderService } from '@truenas/ui-components';
+import { TnDialog, TnSpriteLoaderService } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
@@ -29,7 +28,7 @@ describe('UserMenuComponent', () => {
   const createComponent = createComponentFactory({
     component: UserMenuComponent,
     providers: [
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
@@ -76,7 +75,7 @@ describe('UserMenuComponent', () => {
       const changePassword = await menu.getItems({ text: /Change Password$/ });
       await changePassword[0].click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ChangePasswordDialog);
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ChangePasswordDialog);
     });
 
     it('has a Preferences menu item that opens the preferences form', async () => {
