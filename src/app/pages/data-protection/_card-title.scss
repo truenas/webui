@@ -6,7 +6,10 @@
     display: flex;
     margin: 0;
 
-    tn-icon {
+    // Scope to the title's own open-in-new icon — a bare `tn-icon` selector
+    // also matches the projected `ix-card-alert-badge` icon (a sibling inside
+    // this `<h3>`) and would shift it 5px.
+    .title-icon {
       margin-left: 5px;
     }
   }
