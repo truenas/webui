@@ -5,10 +5,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnCheckboxHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
@@ -50,19 +50,14 @@ describe('KernelFormComponent', () => {
     });
 
     it('shows current system advanced kernel values when form is being edited', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable Debug Kernel' }));
 
-      expect(values).toEqual({
-        'Enable Debug Kernel': true,
-      });
+      expect(await checkbox.isChecked()).toBe(true);
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Enable Debug Kernel': false,
-      });
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable Debug Kernel' }));
+      await checkbox.uncheck();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -81,19 +76,14 @@ describe('KernelFormComponent', () => {
     });
 
     it('shows debug kernel as disabled', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable Debug Kernel' }));
 
-      expect(values).toEqual({
-        'Enable Debug Kernel': false,
-      });
+      expect(await checkbox.isChecked()).toBe(false);
     });
 
     it('enables debug kernel and saves', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Enable Debug Kernel': true,
-      });
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable Debug Kernel' }));
+      await checkbox.check();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

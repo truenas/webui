@@ -5,13 +5,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ProductType } from 'app/enums/product-type.enum';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
@@ -33,6 +32,7 @@ describe('AccessFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockWindow({
         localStorage: {
           setItem: jest.fn,
@@ -45,9 +45,6 @@ describe('AccessFormComponent', () => {
         mockCall('system.general.update'),
         mockCall('system.advanced.update'),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => of(true)),
-      }),
       mockProvider(SystemGeneralService),
       provideMockStore({
         initialState: {
@@ -77,24 +74,31 @@ describe('AccessFormComponent', () => {
   });
 
   it('shows settings values when form is being edited', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+    const loginBanner = await loader.getHarness(TnInputHarness.with({ name: 'login_banner' }));
+    const dsAuth = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Allow Directory Service users to access WebUI' }),
+    );
 
-    expect(values).toEqual({
-      'Login Banner': 'test',
-      'Allow Directory Service users to access WebUI': true,
-    });
+    expect(await loginBanner.getValue()).toBe('test');
+    expect(await dsAuth.isChecked()).toBe(true);
   });
 
   it('updates settings when save is pressed', async () => {
     const store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Login Banner': '',
-      'Allow Directory Service users to access WebUI': false,
-    });
+    // Clear the textarea natively: CDK's setValue('') throws on an empty string.
+    const bannerEl = spectator.query<HTMLTextAreaElement>('textarea[name="login_banner"]')
+      ?? spectator.query<HTMLInputElement>('input[name="login_banner"]');
+    bannerEl!.value = '';
+    bannerEl!.dispatchEvent(new Event('input'));
+    bannerEl!.dispatchEvent(new Event('blur'));
+    spectator.detectChanges();
+
+    const dsAuth = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Allow Directory Service users to access WebUI' }),
+    );
+    await dsAuth.uncheck();
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

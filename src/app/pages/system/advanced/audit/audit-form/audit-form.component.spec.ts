@@ -4,15 +4,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 
@@ -20,12 +17,19 @@ describe('AuditFormComponent', () => {
   let spectator: Spectator<AuditFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const setInput = async (name: string, value: string): Promise<void> => {
+    const input = await loader.getHarness(TnInputHarness.with({ name }));
+    await input.setValue(value);
+  };
+
   const createComponent = createComponentFactory({
     component: AuditFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('audit.config', {
           retention: 30,
@@ -36,10 +40,6 @@ describe('AuditFormComponent', () => {
         } as AuditConfig),
         mockCall('audit.update'),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockProvider(DialogService),
       provideMockStore(),
       mockProvider(SlideInRef, {
         close: jest.fn(),
@@ -57,28 +57,26 @@ describe('AuditFormComponent', () => {
   });
 
   it('loads current settings for audit form and shows them', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+    const retention = await loader.getHarness(TnInputHarness.with({ name: 'retention' }));
+    const reservation = await loader.getHarness(TnInputHarness.with({ name: 'reservation' }));
+    const quota = await loader.getHarness(TnInputHarness.with({ name: 'quota' }));
+    const quotaFillWarning = await loader.getHarness(TnInputHarness.with({ name: 'quota_fill_warning' }));
+    const quotaFillCritical = await loader.getHarness(TnInputHarness.with({ name: 'quota_fill_critical' }));
 
     expect(api.call).toHaveBeenCalledWith('audit.config');
-    expect(values).toEqual({
-      'Retention (in days)': '30',
-      'Reservation (in GiB)': '100',
-      'Quota (in GiB)': '100',
-      'Quota Fill Warning (in %)': '80',
-      'Quota Fill Critical (in %)': '95',
-    });
+    expect(await retention.getNumericValue()).toBe(30);
+    expect(await reservation.getNumericValue()).toBe(100);
+    expect(await quota.getNumericValue()).toBe(100);
+    expect(await quotaFillWarning.getNumericValue()).toBe(80);
+    expect(await quotaFillCritical.getNumericValue()).toBe(95);
   });
 
-  it('saves both advanced config and dataset config when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Retention (in days)': 29,
-      'Reservation (in GiB)': 99,
-      'Quota (in GiB)': 99,
-      'Quota Fill Warning (in %)': 79,
-      'Quota Fill Critical (in %)': 94,
-    });
+  it('saves audit config when form is submitted', async () => {
+    await setInput('retention', '29');
+    await setInput('reservation', '99');
+    await setInput('quota', '99');
+    await setInput('quota_fill_warning', '79');
+    await setInput('quota_fill_critical', '94');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -95,24 +93,18 @@ describe('AuditFormComponent', () => {
   });
 
   it('shows validation error when quota fill critical is less than quota fill warning', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Quota Fill Warning (in %)': 70,
-      'Quota Fill Critical (in %)': 60,
-    });
+    await setInput('quota_fill_warning', '70');
+    await setInput('quota_fill_critical', '60');
 
-    const criticalControl = await form.getControl('Quota Fill Critical (in %)') as IxInputHarness;
-    expect(await criticalControl.getErrorText()).toBe('Quota Fill Critical must be greater than Quota Fill Warning.');
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    expect(await saveButton.isDisabled()).toBe(true);
   });
 
   it('shows validation error when quota fill critical equals quota fill warning', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Quota Fill Warning (in %)': 70,
-      'Quota Fill Critical (in %)': 70,
-    });
+    await setInput('quota_fill_warning', '70');
+    await setInput('quota_fill_critical', '70');
 
-    const criticalControl = await form.getControl('Quota Fill Critical (in %)') as IxInputHarness;
-    expect(await criticalControl.getErrorText()).toBe('Quota Fill Critical must be greater than Quota Fill Warning.');
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    expect(await saveButton.isDisabled()).toBe(true);
   });
 });

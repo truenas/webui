@@ -3,12 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
@@ -27,10 +26,24 @@ describe('JbofFormComponent', () => {
     mgmt_password: '12345678',
   } as Jbof;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
+  const slideInRef: SlideInRef<Jbof | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn((): undefined => undefined),
+  };
+
+  const setInput = async (name: string, value: string): Promise<void> => {
+    if (value === '') {
+      const inputEl = spectator.query<HTMLInputElement>(`input[name="${name}"]`);
+      if (inputEl) {
+        spectator.typeInElement('', inputEl);
+        inputEl.value = '';
+        inputEl.dispatchEvent(new Event('input'));
+      }
+      return;
+    }
+    const input = await loader.getHarness(TnInputHarness.with({ name }));
+    await input.setValue(value);
   };
 
   const createComponent = createComponentFactory({
@@ -39,12 +52,11 @@ describe('JbofFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('jbof.create'),
         mockCall('jbof.update'),
       ]),
-      mockProvider(SlideIn),
-      mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
@@ -58,14 +70,11 @@ describe('JbofFormComponent', () => {
     });
 
     it('sends a create payload to websocket and closes modal form is saved', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Description: 'new description',
-        IP: '11.11.11.11',
-        'Optional IP': '12.12.12.12',
-        Username: 'admin',
-        Password: 'qwerty',
-      });
+      await setInput('description', 'new description');
+      await setInput('mgmt_ip1', '11.11.11.11');
+      await setInput('mgmt_ip2', '12.12.12.12');
+      await setInput('mgmt_username', 'admin');
+      await setInput('mgmt_password', 'qwerty');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -94,27 +103,25 @@ describe('JbofFormComponent', () => {
     });
 
     it('shows current group values when form is being edited', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const description = await loader.getHarness(TnInputHarness.with({ name: 'description' }));
+      const mgmtIp1 = await loader.getHarness(TnInputHarness.with({ name: 'mgmt_ip1' }));
+      const mgmtIp2 = await loader.getHarness(TnInputHarness.with({ name: 'mgmt_ip2' }));
+      const mgmtUsername = await loader.getHarness(TnInputHarness.with({ name: 'mgmt_username' }));
+      const mgmtPassword = await loader.getHarness(TnInputHarness.with({ name: 'mgmt_password' }));
 
-      expect(values).toEqual({
-        Description: 'editing description',
-        IP: '13.13.13.13',
-        'Optional IP': '14.14.14.14',
-        Username: 'user',
-        Password: '12345678',
-      });
+      expect(await description.getValue()).toBe('editing description');
+      expect(await mgmtIp1.getValue()).toBe('13.13.13.13');
+      expect(await mgmtIp2.getValue()).toBe('14.14.14.14');
+      expect(await mgmtUsername.getValue()).toBe('user');
+      expect(await mgmtPassword.getValue()).toBe('12345678');
     });
 
     it('sends an update payload to websocket when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Description: 'updated description',
-        IP: '15.15.15.15',
-        'Optional IP': '',
-        Username: 'admin',
-        Password: 'qwerty',
-      });
+      await setInput('description', 'updated description');
+      await setInput('mgmt_ip1', '15.15.15.15');
+      await setInput('mgmt_ip2', '');
+      await setInput('mgmt_username', 'admin');
+      await setInput('mgmt_password', 'qwerty');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

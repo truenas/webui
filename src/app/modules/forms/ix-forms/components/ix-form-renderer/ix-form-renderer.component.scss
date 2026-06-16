@@ -1,0 +1,28 @@
+// Global knobs for the vertical rhythm of every declarative form.
+// The library renders `tn-form-field` without block layout or outer spacing
+// (see the login forms, which each re-declare this), so the renderer owns the
+// spacing here — change these two values to retune all forms at once.
+:host {
+  // Gap between consecutive fields within a section.
+  --ix-form-renderer-field-gap: 1.5rem;
+  // Gap after a section: between sections, and before the Save button.
+  --ix-form-renderer-section-gap: 2.5rem;
+}
+
+// `ix-fieldset` is the last element before `<ix-form>`'s projected actions row
+// (which has no top margin), so its bottom margin is what separates the last
+// field from the Save button.
+ix-fieldset {
+  display: block;
+  // Kept on the last fieldset too: its bottom margin is the gap before Save.
+  margin-bottom: var(--ix-form-renderer-section-gap);
+}
+
+tn-form-field {
+  display: block;
+  margin-bottom: var(--ix-form-renderer-field-gap);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

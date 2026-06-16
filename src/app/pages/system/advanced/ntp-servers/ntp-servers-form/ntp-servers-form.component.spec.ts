@@ -4,11 +4,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
@@ -17,6 +17,15 @@ describe('NtpServerFormComponent', () => {
   let spectator: Spectator<NtpServersFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const setInput = async (name: string, value: string): Promise<void> => {
+    const input = await loader.getHarness(TnInputHarness.with({ name }));
+    await input.setValue(value);
+  };
+
+  const checkboxByLabel = (label: string): Promise<TnCheckboxHarness> => {
+    return loader.getHarness(TnCheckboxHarness.with({ label }));
+  };
 
   const editingNtpServer = {
     id: 1,
@@ -58,12 +67,9 @@ describe('NtpServerFormComponent', () => {
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Address: 'ua.pool.ntp.org',
-        'Min Poll': 8,
-        Force: true,
-      });
+      await setInput('address', 'ua.pool.ntp.org');
+      await setInput('minpoll', '8');
+      await (await checkboxByLabel('Force')).check();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -92,26 +98,22 @@ describe('NtpServerFormComponent', () => {
     });
 
     it('shows current server values when form is being edited', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const address = await loader.getHarness(TnInputHarness.with({ name: 'address' }));
+      const minpoll = await loader.getHarness(TnInputHarness.with({ name: 'minpoll' }));
+      const maxpoll = await loader.getHarness(TnInputHarness.with({ name: 'maxpoll' }));
 
-      expect(values).toEqual({
-        Address: 'mock.ntp.server',
-        Burst: false,
-        IBurst: true,
-        Prefer: false,
-        'Min Poll': '6',
-        'Max Poll': '10',
-        Force: false,
-      });
+      expect(await address.getValue()).toBe('mock.ntp.server');
+      expect(await minpoll.getNumericValue()).toBe(6);
+      expect(await maxpoll.getNumericValue()).toBe(10);
+      expect(await (await checkboxByLabel('Burst')).isChecked()).toBe(false);
+      expect(await (await checkboxByLabel('IBurst')).isChecked()).toBe(true);
+      expect(await (await checkboxByLabel('Prefer')).isChecked()).toBe(false);
+      expect(await (await checkboxByLabel('Force')).isChecked()).toBe(false);
     });
 
     it('sends the full payload on update when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Address: 'updated.mock.ntp.server',
-        'Max Poll': 14,
-      });
+      await setInput('address', 'updated.mock.ntp.server');
+      await setInput('maxpoll', '14');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
