@@ -34,6 +34,14 @@
     .detail-content > * {
       @include detail-flex-column;
     }
+
+    // The master list is wrapped in a tn-card; its inner wrapper and content
+    // slot must carry the flex column chain so the projected table fills the
+    // card height and its own sticky-header/scroll regions keep working.
+    .table-container > div,
+    .table-container .tn-card__content {
+      @include detail-flex-column;
+    }
   }
 }
 
