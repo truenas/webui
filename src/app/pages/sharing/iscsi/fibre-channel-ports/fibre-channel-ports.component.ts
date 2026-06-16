@@ -2,11 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal, OnInit, computed, inject, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import { TnDialog, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
 import { finalize, forkJoin, of } from 'rxjs';
 import {
   catchError,
@@ -63,7 +62,7 @@ export class FibreChannelPortsComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   protected emptyService = inject(EmptyService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
@@ -141,8 +140,8 @@ export class FibreChannelPortsComponent implements OnInit {
   }
 
   doEdit(row: FibreChannelPortRow): void {
-    this.matDialog.open(VirtualPortsNumberDialog, { data: row.host })
-      .afterClosed()
+    this.tnDialog.open(VirtualPortsNumberDialog, { data: row.host })
+      .closed
       .pipe(
         filter(Boolean),
         tap(() => this.loadTable()),

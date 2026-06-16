@@ -4,10 +4,10 @@ import {
   Validators, FormBuilder, FormControl, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatStepperPrevious } from '@angular/material/stepper';
 import { NavigationExtras, Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
   BehaviorSubject,
@@ -88,7 +88,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private cloudCredentialService = inject(CloudCredentialService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
@@ -464,13 +464,13 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter((selectedOption) => selectedOption === newOption),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      const dialogRef = this.matDialog.open(CreateStorjBucketDialog, {
+      const dialogRef = this.tnDialog.open(CreateStorjBucketDialog, {
         width: '500px',
         data: {
           credentialsId: this.form.controls.credentials.value,
         },
       });
-      dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((bucket: string | false) => {
+      dialogRef.closed.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((bucket: string | false) => {
         if (bucket !== false) {
           this.loadBucketOptions();
           this.form.controls.bucket.setValue(bucket);

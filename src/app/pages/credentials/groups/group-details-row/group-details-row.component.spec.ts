@@ -1,11 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonComponent, TnButtonHarness, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnButtonHarness, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -59,9 +58,9 @@ describe('GroupDetailsRowComponent', () => {
         mockCall('group.delete'),
         mockCall('group.query', []),
       ]),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       provideMockStore({
@@ -170,7 +169,7 @@ describe('GroupDetailsRowComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: /Delete/ }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteGroupDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteGroupDialog, {
       data: dummyGroup,
     });
     expect(deleteSpy).toHaveBeenCalledWith(dummyGroup.id);

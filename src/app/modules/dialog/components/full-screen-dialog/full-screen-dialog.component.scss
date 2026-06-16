@@ -5,8 +5,7 @@
     z-index: 99999;
   }
 
-  .cdk-overlay-pane.full-screen-modal,
-  .mat-mdc-dialog-container {
+  .cdk-overlay-pane.full-screen-modal {
     max-width: none !important;
   }
 }

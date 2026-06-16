@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnSelectHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/widget-app.definition';
@@ -45,13 +45,13 @@ describe('WidgetAppSettingsComponent', () => {
   });
 
   it('checks pre-select first option when no settings', async () => {
-    const application = await loader.getHarness(IxSelectHarness.with({ label: 'Application' }));
-    const selectedApplication = await application.getValue();
+    const application = await loader.getHarness(TnSelectHarness);
+    const selectedApplication = await application.getDisplayText();
     expect(selectedApplication).toBe('App 1');
   });
 
   it('checks app options', async () => {
-    const select = await loader.getHarness(IxSelectHarness.with({ label: 'Application' }));
-    expect(await select.getOptionLabels()).toEqual(['App 1', 'App 2', 'App 3']);
+    const select = await loader.getHarness(TnSelectHarness);
+    expect(await select.getOptions()).toEqual(['App 1', 'App 2', 'App 3']);
   });
 });

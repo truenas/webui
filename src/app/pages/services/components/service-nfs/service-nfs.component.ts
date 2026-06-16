@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
 import {
   combineLatest, finalize, forkJoin, Observable, of, tap,
 } from 'rxjs';
@@ -68,7 +67,7 @@ export class ServiceNfsComponent extends SidePanelForm implements OnInit {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
 
@@ -253,7 +252,7 @@ export class ServiceNfsComponent extends SidePanelForm implements OnInit {
       if (!confirmed) {
         return;
       }
-      this.matDialog.open(AddSpnDialog);
+      this.tnDialog.open(AddSpnDialog);
     });
   }
 }

@@ -1,14 +1,17 @@
-<h1 mat-dialog-title>{{ 'Delete Namespace' | translate }}</h1>
-<div mat-dialog-content class="message">
+<tn-dialog-shell testId="delete-namespace" [title]="'Delete Namespace' | translate">
+<div class="message">
   <p>
     {{ 'Are you sure you want to delete this namespace?' | translate }}
   </p>
 
   @if (isFile) {
-    <ix-checkbox
-      [formControl]="removeFileControl"
-      [label]="('Also delete the underlying file – {name}' | translate: { name: namespace.device_path })"
-    ></ix-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="remove-file"
+        [formControl]="removeFileControl"
+        [label]="('Also delete the underlying file – {name}' | translate: { name: namespace.device_path })"
+      ></tn-checkbox>
+    </tn-form-field>
   } @else {
     <p>
       {{ 'Underlying Zvol will not be deleted.' | translate }}
@@ -16,16 +19,8 @@
   }
 </div>
 
-<ix-form-actions mat-dialog-actions>
-  <button
-    mat-button
-    ixTest="cancel"
-    [matDialogClose]="false"
-  >{{ 'Cancel' | translate }}</button>
-  <button
-    mat-button
-    color="warn"
-    ixTest="delete"
-    (click)="onDelete()"
-  >{{ 'Delete' | translate }}</button>
+<ix-form-actions tnDialogAction>
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
+  <tn-button color="warn" testId="delete" [label]="'Delete' | translate" (onClick)="onDelete()"></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>

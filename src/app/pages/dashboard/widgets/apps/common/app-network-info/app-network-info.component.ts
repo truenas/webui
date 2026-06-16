@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, computed, signal, effect, inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -16,7 +16,7 @@ import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/r
   styleUrls: ['./app-network-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatTooltip,
+    TnTooltipDirective,
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,
     RateChartComponent,

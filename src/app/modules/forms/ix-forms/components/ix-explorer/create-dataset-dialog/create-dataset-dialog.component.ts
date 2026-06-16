@@ -1,14 +1,13 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnProgressBarComponent,
+} from '@truenas/ui-components';
 import { BehaviorSubject, tap } from 'rxjs';
 import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -16,9 +15,7 @@ import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -29,19 +26,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./create-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatProgressBar,
+    TnDialogShellComponent,
+    TnButtonComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnProgressBarComponent,
     FormsModule,
     ReactiveFormsModule,
-    IxInputComponent,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
-    MatDialogClose,
     AsyncPipe,
     TranslateModule,
     RequiresRolesDirective,
-    TestDirective,
   ],
 })
 export class CreateDatasetDialog implements OnInit {
@@ -49,11 +44,11 @@ export class CreateDatasetDialog implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<MatDialogRef<CreateDatasetDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<Dataset | false, CreateDatasetDialog>>(DialogRef);
   private data = inject<{
     parentId: string;
     dataset: DatasetCreate;
-  }>(MAT_DIALOG_DATA);
+  }>(DIALOG_DATA);
 
   private destroyRef = inject(DestroyRef);
 

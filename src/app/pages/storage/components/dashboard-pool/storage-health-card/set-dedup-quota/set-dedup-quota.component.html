@@ -1,32 +1,38 @@
-<h1 matDialogTitle>
-  {{ 'Deduplication Quota for {pool}' | translate: { pool: pool.name } }}
-</h1>
-
+<tn-dialog-shell testId="set-dedup-quota" [title]="'Deduplication Quota for {pool}' | translate: { pool: pool.name }">
 <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
-  <ix-select
-    formControlName="quotaType"
-    [label]="'Quota' | translate"
-    [options]="quotaTypeOptions$"
-    [required]="true"
-  ></ix-select>
+  <tn-form-field [label]="'Quota' | translate" [required]="true">
+    <tn-select
+      testId="quota-type"
+      formControlName="quotaType"
+      [options]="(quotaTypeOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   @if (hasCustomQuota) {
-    <ix-input
-      formControlName="quotaValue"
-      [label]="'Custom Quota' | translate"
-      [format]="formatter.memorySizeFormatting"
-      [parse]="formatter.memorySizeParsing"
-      [required]="true"
-    ></ix-input>
+    <tn-form-field [label]="'Custom Quota' | translate">
+      <tn-input
+        testId="quota-value"
+        formControlName="quotaValue"
+        [inputType]="InputType.Size"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
   }
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button mat-button type="submit" color="primary" ixTest="save">
-      {{ 'Save' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    color="primary"
+    testId="save"
+    [label]="'Save' | translate"
+    (onClick)="submit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

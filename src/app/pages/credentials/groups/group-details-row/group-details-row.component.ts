@@ -1,9 +1,8 @@
 import { Component, ChangeDetectionStrategy, computed, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -28,7 +27,7 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
 export class GroupDetailsRowComponent {
   private slideIn = inject(SlideIn);
   private router = inject(Router);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
 
@@ -68,8 +67,8 @@ export class GroupDetailsRowComponent {
 
   protected doDelete(group: Group): void {
     if (this.isDeleteDisabled()) return;
-    this.matDialog.open(DeleteGroupDialog, { data: group })
-      .afterClosed()
+    this.tnDialog.open(DeleteGroupDialog, { data: group })
+      .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((wasDeleted) => {
         if (!wasDeleted) {

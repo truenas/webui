@@ -1,3 +1,4 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
@@ -11,6 +12,7 @@ describe('ConsolePanelDialogComponent', () => {
       mockProvider(ConsoleMessagesStore, {
         lines$: of('[12:34] Pod bay door open request received.'),
       }),
+      mockProvider(DialogRef),
     ],
   });
 

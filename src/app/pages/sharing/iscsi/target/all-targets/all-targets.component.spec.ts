@@ -1,5 +1,5 @@
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -19,7 +19,7 @@ describe('AllTargetsComponent', () => {
         getTargets: jest.fn(() => of([])),
         listenForDataRefresh: jest.fn(() => of(null)),
       }),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(SlideIn),
     ],
   });

@@ -1,28 +1,31 @@
-<h1 matDialogTitle>
-  {{ 'Edit Encryption Options for {dataset}' | translate: { dataset: data.dataset.id } }}
-</h1>
+<tn-dialog-shell testId="encryption-options" [title]="'Edit Encryption Options for {dataset}' | translate: { dataset: data.dataset.id }">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   @if (canInherit) {
-    <ix-checkbox
-      formControlName="inherit_encryption"
-      [label]="'Inherit encryption properties from parent' | translate"
-    ></ix-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="inherit-encryption"
+        formControlName="inherit_encryption"
+        [label]="'Inherit encryption properties from parent' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
 
   @if (!(isInheriting$ | async)) {
-    <ix-select
-      formControlName="encryption_type"
-      [label]="'Encryption Type' | translate"
-      [tooltip]="tooltips.encryption_type | translate"
-      [options]="encryptionTypeOptions$"
-      [required]="true"
-    ></ix-select>
+    <tn-form-field [label]="'Encryption Type' | translate" [tooltip]="tooltips.encryption_type | translate" [required]="true">
+      <tn-select
+        testId="encryption-type"
+        formControlName="encryption_type"
+        [options]="(encryptionTypeOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
     @if (isKey$ | async) {
-      <ix-checkbox
-        formControlName="generate_key"
-        [label]="'Generate Key' | translate"
-        [tooltip]="tooltips.generate_key | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="tooltips.generate_key | translate">
+        <tn-checkbox
+          testId="generate-key"
+          formControlName="generate_key"
+          [label]="'Generate Key' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
 
       @if (!(isSetToGenerateKey$ | async)) {
         <ix-textarea
@@ -58,25 +61,29 @@
     [label]="'Algorithm' | translate"
   ></ix-input>
 
-  <ix-checkbox
-    formControlName="confirm"
-    [label]="'Confirm' | translate"
-  ></ix-checkbox>
-
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button
-      *ixRequiresRoles="[Role.DatasetWrite]"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="save"
-      [disabled]="form.invalid"
-    >
-      {{ 'Save' | translate }}
-    </button>
-  </ix-form-actions>
+  <tn-form-field>
+    <tn-checkbox
+      testId="confirm"
+      formControlName="confirm"
+      [label]="'Confirm' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="[Role.DatasetWrite]"
+    color="primary"
+    testId="save"
+    [label]="'Save' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

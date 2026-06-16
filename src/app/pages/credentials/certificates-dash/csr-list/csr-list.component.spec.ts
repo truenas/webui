@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -63,18 +62,13 @@ describe('CertificateSigningRequestsListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of(undefined),
+          afterClosed: () => of(fakeSuccessfulJob()),
         })),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: () => of({ force: false }),
-        })),
-      }),
       mockProvider(StorageService),
       mockAuth(),
     ],

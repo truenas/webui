@@ -1,4 +1,4 @@
-<h1 matDialogTitle>{{ 'Stats/Settings' | translate }}</h1>
+<tn-dialog-shell testId="bootenv-stats" [title]="'Stats/Settings' | translate">
 @if (state) {
   <form
     class="ix-form-container"
@@ -36,26 +36,32 @@
         }
       </span>
     </div>
-    <ix-input
-      formControlName="interval"
-      type="number"
-      [label]="'Scrub interval (in days)' | translate"
-      [required]="true"
-    ></ix-input>
-    <ix-form-actions>
-      <button mat-button type="button" matDialogClose ixTest="close">
-        {{ 'Close' | translate }}
-      </button>
-      <button
-        *ixRequiresRoles="[Role.BootEnvWrite]"
-        mat-button
-        type="submit"
-        color="primary"
-        ixTest="update-interval"
-        [disabled]="form.invalid"
-      >
-        {{ 'Update Interval' | translate }}
-      </button>
-    </ix-form-actions>
+    <tn-form-field [label]="'Scrub interval (in days)' | translate">
+      <tn-input
+        testId="interval"
+        formControlName="interval"
+        [inputType]="InputType.Number"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
   </form>
 }
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="close"
+    [label]="'Close' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+  @if (state) {
+    <tn-button
+      *ixRequiresRoles="[Role.BootEnvWrite]"
+      color="primary"
+      testId="update-interval"
+      [label]="'Update Interval' | translate"
+      [disabled]="form.invalid"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  }
+</ix-form-actions>
+</tn-dialog-shell>

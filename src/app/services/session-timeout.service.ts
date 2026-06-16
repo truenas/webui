@@ -1,6 +1,6 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,7 +15,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { JobProgressDialog } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import {
   SessionExpiringDialog,
-  SessionExpiringDialogOptions,
 } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -30,7 +29,6 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 export class SessionTimeoutService {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
-  private matDialog = inject(MatDialog);
   private authService = inject(AuthService);
   private router = inject(Router);
   private snackbar = inject(SnackbarService);
@@ -45,7 +43,7 @@ export class SessionTimeoutService {
   private terminateCancelTimeout: Timeout;
   private currentLifetime: number | null = null;
   private preferencesSubscription: Subscription | null = null;
-  private warningDialogRef: MatDialogRef<SessionExpiringDialog> | null = null;
+  private warningDialogRef: DialogRef<boolean, SessionExpiringDialog> | null = null;
   private afterClosedSubscription: Subscription | null = null;
 
   private readonly defaultLifetime = 300;
@@ -76,7 +74,7 @@ export class SessionTimeoutService {
       }, showWarningDialogFor);
 
       this.warningDialogRef = this.showWarningDialog(showWarningDialogFor, lifetime);
-      this.afterClosedSubscription = this.warningDialogRef.afterClosed()
+      this.afterClosedSubscription = this.warningDialogRef.closed
         .subscribe((shouldExtend) => {
           this.warningDialogRef = null;
           clearTimeout(this.terminateCancelTimeout);
@@ -88,10 +86,10 @@ export class SessionTimeoutService {
   }
 
   constructor() {
-    this.matDialog.afterOpened.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((dialog) => {
+    this.dialogService.afterOpened$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((dialog) => {
       if (dialog.componentInstance instanceof JobProgressDialog) {
         this.stop();
-        dialog.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+        dialog.closed.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           this.start();
         });
       }
@@ -163,14 +161,11 @@ export class SessionTimeoutService {
     this.preferencesSubscription = null;
   }
 
-  private showWarningDialog(showConfirmTime: number, lifetime: number): MatDialogRef<SessionExpiringDialog> {
-    return this.matDialog.open(SessionExpiringDialog, {
-      disableClose: true,
-      data: {
-        title: this.translate.instant('Logout'),
-        message: this.translate.instant('It looks like your session has been inactive for more than {lifetime} seconds.<br>\nFor security reasons we will log you out at {time}.', { time: format(new Date(new Date().getTime() + showConfirmTime), this.localeService.getPreferredTimeFormat()), lifetime }),
-        buttonText: this.translate.instant('Extend session'),
-      } as SessionExpiringDialogOptions,
+  private showWarningDialog(showConfirmTime: number, lifetime: number): DialogRef<boolean, SessionExpiringDialog> {
+    return this.dialogService.sessionExpiring({
+      title: this.translate.instant('Logout'),
+      message: this.translate.instant('It looks like your session has been inactive for more than {lifetime} seconds.<br>\nFor security reasons we will log you out at {time}.', { time: format(new Date(new Date().getTime() + showConfirmTime), this.localeService.getPreferredTimeFormat()), lifetime }),
+      buttonText: this.translate.instant('Extend session'),
     });
   }
 

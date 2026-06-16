@@ -1,27 +1,25 @@
-<h1 mat-dialog-title>{{ 'Clone' | translate }}</h1>
-<div mat-dialog-content>
-  <ix-input
-    [label]="'Enter a Name (optional)' | translate"
-    [formControl]="nameControl"
-  ></ix-input>
+<tn-dialog-shell testId="clone-vm" [title]="'Clone' | translate">
+<div>
+  <tn-form-field [label]="'Enter a Name (optional)' | translate">
+    <tn-input
+      testId="name"
+      [formControl]="nameControl"
+    ></tn-input>
+  </tn-form-field>
 </div>
-<mat-dialog-actions>
-  <ix-form-actions>
-    <button
-      mat-button
-      ixTest="cancel"
-      [matDialogClose]="false"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      ixTest="clone"
-      (click)="onClone()"
-    >
-      {{ 'Clone' | translate }}
-    </button>
-  </ix-form-actions>
-</mat-dialog-actions>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="clone"
+    [label]="'Clone' | translate"
+    (onClick)="onClone()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

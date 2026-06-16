@@ -1,15 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface SetProductionStatusDialogResult {
   sendInitialDebug: boolean;
@@ -21,21 +17,17 @@ export interface SetProductionStatusDialogResult {
   styleUrls: ['./set-production-status-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    IxCheckboxComponent,
+    TnDialogShellComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class SetProductionStatusDialog {
-  private dialogRef = inject<MatDialogRef<SetProductionStatusDialog, SetProductionStatusDialogResult>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<SetProductionStatusDialogResult, SetProductionStatusDialog>>(DialogRef);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 
