@@ -581,15 +581,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/common@npm:~21.2.0":
-  version: 21.2.0
-  resolution: "@angular/common@npm:21.2.0"
+"@angular/common@npm:~21.2.17":
+  version: 21.2.17
+  resolution: "@angular/common@npm:21.2.17"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": 21.2.0
+    "@angular/core": 21.2.17
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/1fae61795678ba4b760c4043e5dfd8764d92b9fd77b976a2da64e4ae7e14d545c8d7af302d732021d7482377c7b2ee970d78b195f6f0e51a8adab46b8999a990
+  checksum: 10/ca477ef4fecb3c841b4003dd6f58ccda3cff95cb80e4b97ddf9f0cccae7c54225d0ecb4d952b8bfcbb4be52f3380ca2d2197792bee7b18250a603ba54c511bbb
   languageName: node
   linkType: hard
 
@@ -15967,7 +15967,7 @@ __metadata:
     "@angular/build": "npm:~21.2.10"
     "@angular/cdk": "npm:~21.2.0"
     "@angular/cli": "npm:~21.2.10"
-    "@angular/common": "npm:~21.2.0"
+    "@angular/common": "npm:~21.2.17"
     "@angular/compiler": "npm:~21.2.4"
     "@angular/compiler-cli": "npm:~21.2.0"
     "@angular/core": "npm:~21.2.17"
