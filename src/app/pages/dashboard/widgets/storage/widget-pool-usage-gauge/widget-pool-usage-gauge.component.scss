@@ -1,5 +1,19 @@
 @import 'scss-imports/cssvars';
 
+// Replicates the legacy global "mat-card-content > div" padding from _material-reduction.scss.
+.card-content > div {
+  padding: 16px;
+}
+
+// Scoped (not ::ng-deep) so it actually beats the legacy "> div" padding rule above —
+// the old :host ::ng-deep form lost that specificity contest and never applied.
+.card-content > .container {
+  &.half,
+  &.quarter {
+    padding-top: 0;
+  }
+}
+
 :host ::ng-deep .container {
   &.full {
     .pool-info-top {
@@ -33,8 +47,6 @@
 
   &.half,
   &.quarter {
-    padding-top: 0;
-
     .pool-info-top {
       height: 115px;
       opacity: 0.7;

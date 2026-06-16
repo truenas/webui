@@ -1,21 +1,31 @@
-<h1 matDialogTitle>{{ 'Lock Dataset' | translate }}</h1>
+<tn-dialog-shell testId="lock-dataset" [title]="'Lock Dataset' | translate">
 <form class="ix-form-container" (submit)="onSubmit($event)">
   <p>
     {{ 'Lock Dataset {datasetName}?' | translate: { datasetName: dataset.name } }}
   </p>
 
-  <ix-checkbox
-    [formControl]="forceCheckbox"
-    [label]="'Force unmount' | translate"
-  ></ix-checkbox>
-
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button *ixRequiresRoles="requiredRoles" mat-button type="submit" color="primary" ixTest="lock">
-      {{ 'Lock' | translate }}
-    </button>
-  </ix-form-actions>
+  <tn-form-field>
+    <tn-checkbox
+      testId="force"
+      [formControl]="forceCheckbox"
+      [label]="'Force unmount' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="lock"
+    [label]="'Lock' | translate"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

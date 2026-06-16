@@ -3,12 +3,11 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
   BehaviorSubject,
@@ -112,7 +111,7 @@ export class CloudSyncFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
-  protected matDialog = inject(MatDialog);
+  protected tnDialog = inject(TnDialog);
   private filesystemService = inject(FilesystemService);
   protected cloudCredentialService = inject(CloudCredentialService);
   slideInRef = inject<SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask>>(SlideInRef);
@@ -302,13 +301,13 @@ export class CloudSyncFormComponent implements OnInit {
         this.setBucketNodeProvider();
         return;
       }
-      const dialogRef = this.matDialog.open(CreateStorjBucketDialog, {
+      const dialogRef = this.tnDialog.open(CreateStorjBucketDialog, {
         width: '500px',
         data: {
           credentialsId: this.form.controls.credentials.value,
         },
       });
-      dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((bucket: string | false) => {
+      dialogRef.closed.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((bucket: string | false) => {
         if (bucket !== false) {
           this.isLoading = true;
           this.loadBucketOptions();
@@ -404,8 +403,8 @@ export class CloudSyncFormComponent implements OnInit {
 
     this.form.controls.transfers.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: number) => {
       if (value === customOptionValue) {
-        const dialogRef = this.matDialog.open(CustomTransfersDialog);
-        dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((transfers: number) => {
+        const dialogRef = this.tnDialog.open(CustomTransfersDialog);
+        dialogRef.closed.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((transfers: number) => {
           if (this.isCustomTransfers(transfers)) {
             this.setTransfersOptions(true, transfers);
           }

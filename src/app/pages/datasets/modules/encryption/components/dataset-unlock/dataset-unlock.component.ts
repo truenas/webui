@@ -5,9 +5,9 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   Observable,
   from, of, switchMap,
@@ -72,7 +72,7 @@ export class DatasetUnlockComponent implements OnInit {
   private authService = inject(AuthService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private router = inject(Router);
   private translate = inject(TranslateService);
   private upload = inject(UploadService);
@@ -280,7 +280,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     if (!this.dialogOpen) {
       this.dialogOpen = true;
-      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialog, { disableClose: true });
+      const unlockDialogRef = this.tnDialog.open(UnlockSummaryDialog, { disableClose: true });
       unlockDialogRef.componentInstance.parent = this;
       unlockDialogRef.componentInstance.showFinalResults();
       unlockDialogRef.componentInstance.unlockDatasets = unlock;
@@ -304,7 +304,7 @@ export class DatasetUnlockComponent implements OnInit {
     }
     if (!this.dialogOpen) { // prevent dialog from opening more than once
       this.dialogOpen = true;
-      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialog, { disableClose: true });
+      const unlockDialogRef = this.tnDialog.open(UnlockSummaryDialog, { disableClose: true });
       unlockDialogRef.componentInstance.parent = this;
       unlockDialogRef.componentInstance.unlockDatasets = unlock;
       unlockDialogRef.componentInstance.errorDatasets = errors;

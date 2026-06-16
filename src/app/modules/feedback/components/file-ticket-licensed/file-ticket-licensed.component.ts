@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent } from '@truenas/ui-components';
 import * as EmailValidator from 'email-validator';
 import { finalize, of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -24,7 +24,6 @@ import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -47,9 +46,10 @@ import { ApiService } from 'app/modules/websocket/api.service';
     IxChipsComponent,
     IxSelectComponent,
     IxTextareaComponent,
-    IxCheckboxComponent,
     IxFileInputComponent,
     TnButtonComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
     TranslateModule,
   ],
   providers: [

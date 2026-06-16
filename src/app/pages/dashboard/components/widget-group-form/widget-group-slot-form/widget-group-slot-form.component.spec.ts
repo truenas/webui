@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent } from 'ng-mocks';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { TnFormFieldComponent, TnSelectComponent, TnSelectHarness } from '@truenas/ui-components';
+import { MockComponent, ngMocks } from 'ng-mocks';
 import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-slot-form/widget-group-slot-form.component';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
@@ -14,6 +14,12 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
 import { WidgetInterfaceIpSettingsComponent } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip-settings/widget-interface-ip-settings.component';
 import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+
+// Mocking WidgetInterfaceIpSettingsComponent would otherwise mock its transitive
+// TnFormFieldComponent/TnSelectComponent imports, which trips the ng-mocks
+// signal-query bug (https://github.com/help-me-mom/ng-mocks/issues/8634). Keep them real.
+ngMocks.globalKeep(TnFormFieldComponent, true);
+ngMocks.globalKeep(TnSelectComponent, true);
 
 describe('WidgetGroupSlotComponent', () => {
   let spectator: Spectator<WidgetGroupSlotFormComponent>;
@@ -58,8 +64,8 @@ describe('WidgetGroupSlotComponent', () => {
       category: WidgetCategory.Network,
       type: WidgetType.Ipv4Address,
     });
-    const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Card Type' }));
-    expect(await typeSelect.getValue()).toBe(widgetRegistry[WidgetType.Ipv4Address].name);
+    const [, typeSelect] = await loader.getAllHarnesses(TnSelectHarness);
+    expect(await typeSelect.getDisplayText()).toBe(widgetRegistry[WidgetType.Ipv4Address].name);
     expect(spectator.component.slot()).toEqual({
       slotPosition: SlotPosition.First,
       slotSize: SlotSize.Half,
@@ -69,13 +75,13 @@ describe('WidgetGroupSlotComponent', () => {
   });
 
   it('emits updated value when value changed', async () => {
-    const categorySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Card Category' }));
-    await categorySelect.setValue(`${widgetCategoryLabels.get(WidgetCategory.Cpu)} (8 cards)`);
+    const [categorySelect] = await loader.getAllHarnesses(TnSelectHarness);
+    await categorySelect.selectOption(`${widgetCategoryLabels.get(WidgetCategory.Cpu)} (8 cards)`);
 
     spectator.detectChanges();
 
-    const widgetTypeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Card Type' }));
-    expect(await widgetTypeSelect.getValue()).toBe('CPU Model');
+    const [, widgetTypeSelect] = await loader.getAllHarnesses(TnSelectHarness);
+    expect(await widgetTypeSelect.getDisplayText()).toBe('CPU Model');
 
     expect(spectator.component.slot()).toEqual({
       slotPosition: SlotPosition.First,

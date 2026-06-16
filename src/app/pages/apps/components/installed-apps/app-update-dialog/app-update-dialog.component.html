@@ -1,4 +1,5 @@
-<div mat-dialog-content>
+<tn-dialog-shell testId="app-update" [title]="'Update' | translate">
+<div>
   <div class="logo-container">
     <div class="logo">
       <img [src]="dialogConfig.appInfo.metadata.icon" [src-fallback]="imagePlaceholder" />
@@ -34,22 +35,14 @@
     @if (versionOptions.size > 1) {
       <div class="resource">
         <span>{{ 'Version to be updated to' | translate }}:</span>
-        <mat-form-field class="form-element">
-          <mat-select
-            ixTest="versions"
-            [(ngModel)]="selectedVersionKey"
-            (ngModelChange)="onVersionOptionChanged()"
-          >
-            @for (option of versionOptions | keyvalue: originalOrder; track option) {
-              <mat-option
-                [value]="option.key"
-                [ixTest]="['versions', option.value.latest_human_version]"
-              >
-                {{ getVersionLabel(option.key, option.value.latest_human_version) }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <tn-select
+          class="form-element"
+          testId="versions"
+          [options]="versionSelectOptions"
+          [optionTestIdKey]="versionOptionTestId"
+          [(ngModel)]="selectedVersionKey"
+          (ngModelChange)="onVersionOptionChanged()"
+        ></tn-select>
       </div>
     }
 
@@ -74,23 +67,20 @@
     </div>
   }
 
-  <ix-form-actions>
-    <button
-      mat-button
-      ixTest="close"
-      (click)="dialogRef.close(false)"
-    >
-      {{ 'Close' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      ixTest="update"
-      (click)="dialogRef.close(selectedVersionKey)"
-    >
-      {{ 'Update' | translate }}
-    </button>
-  </ix-form-actions>
-
 </div>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="close"
+    [label]="'Close' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="update"
+    [label]="'Update' | translate"
+    (onClick)="dialogRef.close(selectedVersionKey)"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

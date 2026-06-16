@@ -1,9 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
@@ -11,12 +11,10 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -25,15 +23,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
   styleUrls: ['./boot-pool-attach-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     UnusedDiskSelectComponent,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     FakeProgressBarComponent,
     TranslateModule,
@@ -42,7 +39,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class BootPoolAttachDialog implements OnInit {
   private fb = inject(FormBuilder);
   private dialogService = inject(DialogService);
-  private dialogRef = inject<MatDialogRef<BootPoolAttachDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, BootPoolAttachDialog>>(DialogRef);
   private translate = inject(TranslateService);
   protected api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);

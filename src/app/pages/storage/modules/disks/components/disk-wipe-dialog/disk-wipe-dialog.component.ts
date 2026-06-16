@@ -1,11 +1,12 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -14,9 +15,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -27,14 +26,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./disk-wipe-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    AsyncPipe,
+    TnDialogShellComponent,
     WarningComponent,
     ReactiveFormsModule,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -45,11 +44,11 @@ export class DiskWipeDialog {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
-  private dialogRef = inject<MatDialogRef<DiskWipeDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DiskWipeDialog>>(DialogRef);
   data = inject<{
     diskName: string;
     exportedPool: string;
-  }>(MAT_DIALOG_DATA);
+  }>(DIALOG_DATA);
 
   private destroyRef = inject(DestroyRef);
 

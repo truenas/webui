@@ -1,6 +1,6 @@
-<h1 mat-dialog-title>{{ 'Save As Preset' | translate }}</h1>
+<tn-dialog-shell testId="save-as-preset" [title]="'Save As Preset' | translate">
 <form [formGroup]="form" (submit)="onSubmit()">
-  <div mat-dialog-content>
+  <div>
     <p>{{ 'Save current ACL entries as a preset for future use.' | translate }}</p>
 
     <div class="exist-content">
@@ -11,16 +11,14 @@
             <div class="preset-name">{{ preset.name }}</div>
             <div class="preset-type">{{ preset.acltype }}</div>
             @if (!preset.builtin) {
-              <button
-                ixTest="remove-preset"
-                type="button"
-                mat-icon-button
+              <tn-icon-button
+                testId="remove-preset"
                 class="preset-remove"
-                [attr.aria-label]="'Remove preset' | translate"
-                (click)="onRemovePreset(preset)"
-              >
-                <tn-icon name="close-circle" library="mdi"></tn-icon>
-              </button>
+                name="close-circle"
+                library="mdi"
+                [ariaLabel]="'Remove preset' | translate"
+                (onClick)="onRemovePreset(preset)"
+              ></tn-icon-button>
             }
           </div>
         }
@@ -29,23 +27,15 @@
 
     <div class="save-content">
       <h4 class="label">{{ 'Save ACL as preset' | translate }}:</h4>
-      <ix-input
-        formControlName="presetName"
-        [label]="'Preset Name' | translate"
-      ></ix-input>
+      <tn-form-field [label]="'Preset Name' | translate">
+        <tn-input testId="preset-name" formControlName="presetName"></tn-input>
+      </tn-form-field>
     </div>
   </div>
-
-  <ix-form-actions mat-dialog-actions class="form-actions">
-    <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
-    <button
-      mat-button
-      color="primary"
-      type="submit"
-      ixTest="save"
-      [disabled]="form.invalid || isFormLoading()"
-    >
-      {{ 'Save' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+
+<ix-form-actions tnDialogAction class="form-actions">
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
+  <tn-button color="primary" testId="save" [label]="'Save' | translate" [disabled]="form.invalid || isFormLoading()" (onClick)="onSubmit()"></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

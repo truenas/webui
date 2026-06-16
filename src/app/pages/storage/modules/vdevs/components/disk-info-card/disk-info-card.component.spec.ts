@@ -1,11 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -56,9 +55,9 @@ describe('DiskInfoCardComponent', () => {
       mockProvider(ActivatedRoute, {
         snapshot: { params: { poolId: '1' } },
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(),
+          closed: of(),
         })),
       }),
       mockProvider(VDevsStore),
@@ -114,7 +113,7 @@ describe('DiskInfoCardComponent', () => {
     const replaceButton = await loader.getHarness(TnButtonHarness.with({ label: 'Replace' }));
     await replaceButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplaceDiskDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ReplaceDiskDialog, {
       data: {
         poolId: 1,
         guid: '11254578662959974657',

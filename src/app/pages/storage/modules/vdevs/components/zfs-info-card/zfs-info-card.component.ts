@@ -1,9 +1,8 @@
 import { UpperCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, type TnCardAction, type TnMenuItem } from '@truenas/ui-components';
+import { TnCardComponent, TnDialog, type TnCardAction, type TnMenuItem } from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { VDevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -44,7 +43,7 @@ export class ZfsInfoCardComponent {
   private loader = inject(LoaderService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private vDevsStore = inject(VDevsStore);
   private snackbar = inject(SnackbarService);
@@ -263,13 +262,13 @@ export class ZfsInfoCardComponent {
   }
 
   onExtend(): void {
-    this.matDialog.open(ExtendDialog, {
+    this.tnDialog.open(ExtendDialog, {
       data: {
         poolId: this.poolId(),
         targetVdevGuid: this.topologyItem().guid,
       } as ExtendDialogParams,
     })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),
@@ -280,13 +279,13 @@ export class ZfsInfoCardComponent {
   }
 
   onRaidzExtend(): void {
-    this.matDialog.open(RaidzExtendDialog, {
+    this.tnDialog.open(RaidzExtendDialog, {
       data: {
         poolId: this.poolId(),
         vdev: this.topologyItem() as VDev,
       } as RaidzExtendDialogParams,
     })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),

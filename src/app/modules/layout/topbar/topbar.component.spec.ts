@@ -1,13 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnIconButtonHarness, TnIconComponent, TnIconHarness, TnSpriteLoaderService,
+  TnDialog, TnIconButtonHarness, TnIconComponent, TnIconHarness, TnSpriteLoaderService,
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -17,7 +16,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { selectImportantUnreadAlertsCount, selectIsAlertPanelOpen, selectTopAlertSeverity } from 'app/modules/alerts/store/alert.selectors';
-import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
@@ -49,7 +48,7 @@ const fakeRebootInfo: RebootInfoState = {
 interface ComponentOptions {
   updateJob?: Job[];
   updateRunningStatus$?: EventEmitter<'true' | 'false'>;
-  matDialog?: Partial<MatDialog>;
+  tnDialog?: Partial<TnDialog>;
 }
 
 function createTopbarComponent(options: ComponentOptions = {}): {
@@ -64,12 +63,12 @@ function createTopbarComponent(options: ComponentOptions = {}): {
       } as Job,
     ],
     updateRunningStatus$ = new EventEmitter<'true' | 'false'>(),
-    matDialog = {
+    tnDialog = {
       open: jest.fn(() => ({
         componentInstance: {
           setMessage: jest.fn(),
         },
-        afterClosed: () => of({}),
+        closed: of({}),
       })),
     },
   } = options;
@@ -99,7 +98,11 @@ function createTopbarComponent(options: ComponentOptions = {}): {
         updateRunningNoticeSent: new EventEmitter<string>(),
       }),
       mockProvider(UiSearchProvider),
-      mockProvider(MatDialog, matDialog),
+      mockProvider(TnDialog, tnDialog),
+      mockProvider(DialogService, {
+        update: jest.fn(() => ({ close: jest.fn() })),
+        rebootRequired: jest.fn(() => of(undefined)),
+      }),
       mockApi([]),
       mockProvider(TruenasConnectService, {
         config: mockConfigSignal,
@@ -187,18 +190,9 @@ describe('TopbarComponent', () => {
     updateRunningStatus$.emit('true');
     spectator.detectChanges();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenNthCalledWith(1, UpdateDialog, {
-      hasBackdrop: true,
-      panelClass: 'topbar-panel',
-      position: {
-        right: '16px',
-        top: '48px',
-      },
-      width: '400px',
-      data: {
-        title: 'Update in Progress',
-        message: 'A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.',
-      },
+    expect(spectator.inject(DialogService).update).toHaveBeenCalledWith({
+      title: 'Update in Progress',
+      message: 'A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.',
     });
   });
 

@@ -1,8 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -59,7 +59,7 @@ describe('ManualDiskSelectionComponent', () => {
         layout$: of(CreateVdevLayout.Stripe),
         initialize: jest.fn(),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -68,7 +68,7 @@ describe('ManualDiskSelectionComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               inventory,
               enclosures,
@@ -115,7 +115,7 @@ describe('ManualDiskSelectionComponent', () => {
     });
 
     it('adds a new vdev when Add button is clicked', async () => {
-      const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+      const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
 
       expect(spectator.inject(ManualDiskSelectionStore, true).addVdev).toHaveBeenCalled();
@@ -123,10 +123,10 @@ describe('ManualDiskSelectionComponent', () => {
 
     describe('saving', () => {
       it('returns false when resulting vdevs are the same as incoming vdevs', async () => {
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Selection' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save Selection' }));
         await saveButton.click();
 
-        expect(spectator.inject(MatDialogRef, true).close).toHaveBeenCalledWith(false);
+        expect(spectator.inject(DialogRef, true).close).toHaveBeenCalledWith(false);
       });
 
       it('returns new vdevs when there was change in vdevs', async () => {
@@ -136,17 +136,17 @@ describe('ManualDiskSelectionComponent', () => {
             disks: [{ devname: 'sda' }],
           },
         ] as ManualSelectionVdev[]);
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Selection' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save Selection' }));
         await saveButton.click();
 
-        expect(spectator.inject(MatDialogRef, true).close).toHaveBeenCalledWith([[{ devname: 'sda' }]]);
+        expect(spectator.inject(DialogRef, true).close).toHaveBeenCalledWith([[{ devname: 'sda' }]]);
       });
 
       it('returns false when Cancel button is pressed', async () => {
-        const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+        const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
         await cancelButton.click();
 
-        expect(spectator.inject(MatDialogRef, true).close).toHaveBeenCalledWith(false);
+        expect(spectator.inject(DialogRef, true).close).toHaveBeenCalledWith(false);
       });
     });
   });
@@ -156,7 +156,7 @@ describe('ManualDiskSelectionComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               inventory,
               enclosures,
@@ -174,7 +174,7 @@ describe('ManualDiskSelectionComponent', () => {
       const vdevs = spectator.queryAll(ManualSelectionVdevComponent);
       expect(vdevs).toHaveLength(1);
 
-      const addButtonRemoved = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Add' }));
+      const addButtonRemoved = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Add' }));
       expect(addButtonRemoved).toBeNull();
     });
   });

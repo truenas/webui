@@ -3,9 +3,9 @@
 }
 
 .device-delete-modal-actions {
-  display: block;
-  margin: 16px 4px 0;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
   min-height: unset;
   padding: unset;
-  text-align: right;
 }

@@ -2,8 +2,7 @@
 
 .card {
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  display: block;
   height: 100%;
 }
 
@@ -38,7 +37,23 @@
   }
 }
 
-mat-grid-list[cols='2'] {
+.tiles-grid {
+  display: grid;
+  gap: var(--tiles-gap, 12px);
+  grid-auto-rows: var(--tile-height, 153px);
+  grid-template-columns: 1fr;
+
+  &.two-cols {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &.loading-grid {
+    gap: 7px;
+    grid-auto-rows: 100px;
+  }
+}
+
+.tiles-grid.two-cols {
   ul li:nth-child(2) {
     .value {
       font-size: 11px;
@@ -210,4 +225,9 @@ mat-grid-list[cols='2'] {
 .skeleton {
   display: flex;
   width: 100%;
+}
+
+// Replicates the legacy global "mat-card-content > div" padding from _material-reduction.scss.
+.card-content > div {
+  padding: 16px;
 }

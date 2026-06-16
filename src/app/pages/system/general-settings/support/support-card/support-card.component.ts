@@ -5,7 +5,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
@@ -74,9 +73,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class SupportCardComponent implements OnInit {
   protected api = inject(ApiService);
   private loader = inject(LoaderService);
-  // SetProductionStatusDialog is not migrated yet, so MatDialog stays alongside
-  // TnDialog (used for the migrated FeedbackDialog).
-  private matDialog = inject(MatDialog);
   private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);
   private store$ = inject<Store<AppState>>(Store);
@@ -190,7 +186,7 @@ export class SupportCardComponent implements OnInit {
   private updateProductionStatus(newStatus: boolean): void {
     let request$: Observable<boolean | SetProductionStatusDialogResult>;
     if (newStatus) {
-      request$ = this.matDialog.open(SetProductionStatusDialog).afterClosed().pipe(
+      request$ = this.tnDialog.open(SetProductionStatusDialog).closed.pipe(
         filter((result: SetProductionStatusDialogResult | false) => {
           if (result) {
             return true;

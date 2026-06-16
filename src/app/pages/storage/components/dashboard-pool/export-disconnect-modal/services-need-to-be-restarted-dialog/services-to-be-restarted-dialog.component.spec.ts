@@ -1,4 +1,4 @@
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
@@ -15,8 +15,8 @@ describe('ServicesToBeRestartedDialogComponent', () => {
   const createComponent: SpectatorFactory<ServicesToBeRestartedDialogComponent> = createComponentFactory({
     component: ServicesToBeRestartedDialogComponent,
     providers: [
-      { provide: MAT_DIALOG_DATA, useValue: mockDialogData },
-      mockProvider(MatDialogRef),
+      { provide: DIALOG_DATA, useValue: mockDialogData },
+      mockProvider(DialogRef),
     ],
   });
 

@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { filter, map, of, switchMap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
@@ -41,7 +40,7 @@ import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.ac
   ],
 })
 export class UserMenuComponent {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);
   private store$ = inject(Store);
   private authService = inject(AuthService);
@@ -68,7 +67,7 @@ export class UserMenuComponent {
   );
 
   openChangePasswordDialog(): void {
-    this.matDialog.open(ChangePasswordDialog);
+    this.tnDialog.open(ChangePasswordDialog);
   }
 
   openPreferencesForm(): void {

@@ -1,4 +1,6 @@
-<mat-card class="card">
-  <tn-icon class="icon" name="widgets" library="mdi"></tn-icon>
-  <div class="message">{{ message() }}</div>
-</mat-card>
+<tn-card class="card" [padContent]="false">
+  <div class="content">
+    <tn-icon class="icon" name="widgets" library="mdi"></tn-icon>
+    <div class="message">{{ message() }}</div>
+  </div>
+</tn-card>

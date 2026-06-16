@@ -4,9 +4,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   filter, map, take, tap,
 } from 'rxjs/operators';
@@ -65,7 +64,7 @@ export class DockerImagesListComponent implements OnInit {
   emptyService = inject(EmptyService);
   formatter = inject(IxFormatterService);
   private api = inject(ApiService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
   private fileSizePipe = inject(FileSizePipe);
@@ -156,8 +155,8 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   doDelete(images: ContainerImageUi[]): void {
-    this.matDialog.open(DockerImageDeleteDialog, { data: this.prepareImages(images) })
-      .afterClosed()
+    this.tnDialog.open(DockerImageDeleteDialog, { data: this.prepareImages(images) })
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }

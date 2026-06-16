@@ -1,12 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -99,9 +99,9 @@ describe('ReplicationTaskCardComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(DownloadService, {
@@ -165,18 +165,18 @@ describe('ReplicationTaskCardComponent', () => {
   });
 
   it('shows dialog when Restore button is pressed', async () => {
-    jest.spyOn(spectator.inject(MatDialog), 'open');
+    jest.spyOn(spectator.inject(TnDialog), 'open');
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();
     await menu.clickItem({ text: 'Restore' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplicationRestoreDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ReplicationRestoreDialog, {
       data: 1,
     });
   });
 
   it('downloads Encryption Keys', async () => {
-    jest.spyOn(spectator.inject(MatDialog), 'open');
+    jest.spyOn(spectator.inject(TnDialog), 'open');
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();
     await menu.clickItem({ text: 'Download encryption keys' });

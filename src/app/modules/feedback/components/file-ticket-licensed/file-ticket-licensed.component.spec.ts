@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import {
   createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -105,9 +105,10 @@ describe('FileTicketLicensedFormComponent', () => {
 
     await fillTextFields();
 
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Attach additional images' }))).check();
+
     await form.fillForm(
       {
-        'Attach additional images': true,
         'Attach images (optional)': fakeAttachments,
       },
     );
