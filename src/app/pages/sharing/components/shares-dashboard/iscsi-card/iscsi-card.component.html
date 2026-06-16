@@ -1,10 +1,8 @@
 <tn-card
   padding="small"
   [headerStatus]="serviceStatus()"
-  [headerControl]="serviceControl()"
   [headerMenu]="serviceMenu()"
   [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
-  [primaryAction]="wizardAction()"
 >
   <a
     tnCardHeader
@@ -29,6 +27,29 @@
       <ix-card-alert-badge [menuPath]="cardMenuPath" />
     </h3>
   </a>
+
+  <ng-template tnCardHeaderActions>
+    @if (service(); as service) {
+      <tn-slide-toggle
+        *ixRequiresRoles="requiredRoles"
+        [checked]="actionsMenu.isServiceRunning(service)"
+        [testId]="actionsMenu.serviceControlTestId(service)"
+        [ariaLabel]="'Toggle service' | translate"
+        (change)="actionsMenu.toggleServiceState(service)"
+      ></tn-slide-toggle>
+    }
+  </ng-template>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="filled"
+      testId="button-iscsi-share-wizard"
+      [label]="'Wizard' | translate"
+      (onClick)="openForm(undefined, true)"
+    ></tn-button>
+  </ng-template>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
@@ -104,13 +125,15 @@
     <ix-global-target-configuration (closed)="onConfigClosed()"></ix-global-target-configuration>
   }
   @if (configForm(); as form) {
-    <tn-button
-      tnSidePanelAction
-      color="primary"
-      [ixTest]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="form.requiredRoles"
+        color="primary"
+        [ixTest]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
   }
 </tn-side-panel>
