@@ -1,15 +1,14 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DeleteExtentDialog,
@@ -28,10 +27,10 @@ describe('DeleteExtentDialogComponent', () => {
       mockApi([
         mockCall('iscsi.extent.delete'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DialogService),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           id: 1,
           name: 'test',
@@ -45,23 +44,21 @@ describe('DeleteExtentDialogComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Force: true,
-    });
+    const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
+    await forceCheckbox.check();
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await submitButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, false, true]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('shows a Delete File checkbox when extent is a file', async () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: {
             id: 1,
             name: 'test',
@@ -72,16 +69,15 @@ describe('DeleteExtentDialogComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Remove file?': true,
-      Force: true,
-    });
+    const removeCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Remove file?' }));
+    await removeCheckbox.check();
+    const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
+    await forceCheckbox.check();
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await submitButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, true, true]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

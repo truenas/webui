@@ -1,5 +1,5 @@
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { ConsoleFooterComponent } from 'app/modules/layout/console-footer/console-footer.component';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
@@ -13,7 +13,7 @@ describe('ConsoleFooterComponent', () => {
       mockProvider(ConsoleMessagesStore, {
         lastThreeLogLines$: of("[12:35] I'm afraid I can't do that."),
       }),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
     ],
   });
 
@@ -32,6 +32,6 @@ describe('ConsoleFooterComponent', () => {
   it('opens ConsolePanelDialogComponent when footer is clicked', () => {
     spectator.click('.messages');
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConsolePanelDialog);
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ConsolePanelDialog);
   });
 });

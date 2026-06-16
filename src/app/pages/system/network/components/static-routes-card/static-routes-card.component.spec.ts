@@ -1,8 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -51,9 +50,9 @@ describe('StaticRoutesCardComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockAuth(),
@@ -95,7 +94,7 @@ describe('StaticRoutesCardComponent', () => {
     const [deleteButton] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StaticRouteDeleteDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(StaticRouteDeleteDialog, {
       data: {
         description: 'Test description for route 0',
         destination: '192.168.1.1',

@@ -9,6 +9,7 @@ import {
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { topbarDialogPositionStrategy } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -120,7 +121,7 @@ export class TruenasConnectService {
       // The dialog's visible title slot holds the logo, so the shell renders no
       // heading text. Give assistive tech an accessible name for the dialog.
       ariaLabel: this.translate.instant('TrueNAS Connect'),
-      positionStrategy: this.overlay.position().global().top('48px').right('16px'),
+      positionStrategy: topbarDialogPositionStrategy(this.overlay),
     });
   }
 }

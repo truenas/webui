@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -292,7 +292,7 @@ describe('AppWizardComponent', () => {
       MockComponent(PageHeaderComponent),
     ],
     componentProviders: [
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
     ],
     providers: [
       mockProvider(SlideIn),
@@ -531,7 +531,7 @@ describe('AppWizardComponent', () => {
     });
 
     it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
-      expect(spectator.inject(MatDialog, true).open).toHaveBeenCalledWith(DockerHubRateInfoDialog, {
+      expect(spectator.inject(TnDialog, true).open).toHaveBeenCalledWith(DockerHubRateInfoDialog, {
         data: {
           total_pull_limit: 13,
           total_time_limit_in_secs: 21600,

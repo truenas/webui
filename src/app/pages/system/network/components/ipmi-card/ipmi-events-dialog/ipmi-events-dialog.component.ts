@@ -1,8 +1,8 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnEmptyComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnEmptyComponent } from '@truenas/ui-components';
 import { parse } from 'date-fns';
 import { JobState } from 'app/enums/job-state.enum';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
@@ -18,22 +18,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./ipmi-events-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
     FakeProgressBarComponent,
-    MatDialogTitle,
-    MatDialogContent,
     TnEmptyComponent,
     FormActionsComponent,
-    MatDialogActions,
     TnButtonComponent,
     TranslateModule,
     FormatDateTimePipe,
   ],
 })
 export class IpmiEventsDialog implements OnInit {
+  protected dialogRef = inject<DialogRef<unknown, IpmiEventsDialog>>(DialogRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
-  protected dialogRef = inject<MatDialogRef<IpmiEventsDialog>>(MatDialogRef);
 
   protected readonly isLoading = signal(false);
   protected events: IpmiEvent[] = [];

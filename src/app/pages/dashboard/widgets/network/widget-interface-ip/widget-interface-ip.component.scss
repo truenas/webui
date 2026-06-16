@@ -6,7 +6,6 @@ $ip-label-opacity: 0.6;
 
 .wrapper {
   align-items: center;
-  background-color: var(--bg2);
   display: flex;
   height: 100%;
   justify-content: center;
@@ -23,6 +22,7 @@ $ip-label-opacity: 0.6;
 }
 
 .card {
+  display: block;
   height: 100%;
   width: 100%;
 
@@ -68,4 +68,9 @@ $ip-label-opacity: 0.6;
   font-weight: 400;
   line-height: 1;
   opacity: $ip-label-opacity;
+}
+
+// Replicates the legacy global "mat-card-content > div" padding from _material-reduction.scss.
+.card-content > div {
+  padding: 16px;
 }

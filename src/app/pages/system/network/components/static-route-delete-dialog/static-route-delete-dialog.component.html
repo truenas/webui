@@ -1,18 +1,9 @@
-<h1 mat-dialog-title>{{ 'Delete Static Route' | translate }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell testId="static-route-delete" [title]="'Delete Static Route' | translate">
+<div>
   <p class="message" [innerHTML]="deleteMessage | translate: { name: route.destination }"></p>
 </div>
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <tn-button
-    [testId]="'cancel'"
-    [label]="'Cancel' | translate"
-    (onClick)="dialogRef.close(false)"
-  ></tn-button>
-  <tn-button
-    *ixRequiresRoles="requiredRoles"
-    color="warn"
-    [testId]="'delete'"
-    [label]="'Delete' | translate"
-    (onClick)="onDelete()"
-  ></tn-button>
+<ix-form-actions tnDialogAction class="form-actions">
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close(false)"></tn-button>
+  <tn-button *ixRequiresRoles="requiredRoles" color="warn" testId="delete" [label]="'Delete' | translate" (onClick)="onDelete()"></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>

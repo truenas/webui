@@ -3,10 +3,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmState } from 'app/enums/vm.enum';
@@ -37,7 +36,7 @@ import { VmService } from 'app/services/vm.service';
 export class VirtualMachineDetailsRowComponent {
   private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private vmService = inject(VmService);
@@ -101,11 +100,11 @@ export class VirtualMachineDetailsRowComponent {
   }
 
   protected doDelete(): void {
-    this.matDialog.open(DeleteVmDialogComponent, { data: this.vm() });
+    this.tnDialog.open(DeleteVmDialogComponent, { data: this.vm() });
   }
 
   protected doClone(): void {
-    this.matDialog.open(CloneVmDialogComponent, { data: this.vm() });
+    this.tnDialog.open(CloneVmDialogComponent, { data: this.vm() });
   }
 
   protected downloadLogs(): void {

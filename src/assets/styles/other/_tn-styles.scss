@@ -956,3 +956,50 @@ mat-form-field {
 .tn-side-panel__overlay {
   z-index: 999 !important;
 }
+
+// The app loader opens via the bare CDK dialog (not MatDialog), so the dialog
+// container has no surface and shows a stray focus outline. The surface is on
+// ix-app-loader; just remove the container outline and let it fill the panel.
+.app-loader-overlay .cdk-dialog-container {
+  height: 100%;
+  outline: none;
+}
+
+// ix-input / ix-select wrapped their controls with this vertical rhythm
+// (margin: 12px 0; padding: 8px 0). tn-form-field has no default spacing, so
+// dialogs migrated to tn-form-field render their fields flush against each other
+// and against adjacent checkboxes. Restore the original ix-* field spacing.
+// Scoped to `tn-dialog-shell` so it only touches migrated dialogs and leaves the
+// vertical rhythm of non-dialog forms (signin, feedback, etc.) untouched.
+tn-dialog-shell tn-form-field {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  padding: 8px 0;
+}
+
+// A required tn-input / tn-select with no label renders its `*` asterisk inline,
+// which flips .tn-form-field-wrapper to display:flex. A bare input/select is not
+// flex-grow by default, so it collapses to its intrinsic width (e.g. the app
+// delete-confirmation field). Keep the control full-width next to the asterisk.
+// TEMP: reaches the private .tn-form-field-wrapper--inline class until
+// @truenas/ui-components flex-grows a no-label required control itself.
+// Tracked under NAS-141021.
+.tn-form-field-wrapper--inline > tn-input,
+.tn-form-field-wrapper--inline > tn-select {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+// The error / info / warn dialogs render their icon + title as a body heading,
+// because tn-dialog-shell's title is text-only and can't show an icon. The shell
+// still renders an (otherwise empty) header bar with a close button, leaving a
+// stray strip above the content. Collapse it. A global tag-scoped rule is used
+// because the components' own `:host ::ng-deep .tn-dialog__header` does not
+// reliably pierce into the projected tn-dialog-shell.
+// TEMP: until @truenas/ui-components ships an icon/custom title for
+// tn-dialog-shell. Tracked under NAS-141021.
+ix-error-dialog .tn-dialog__header,
+ix-info-dialog .tn-dialog__header {
+  display: none;
+}

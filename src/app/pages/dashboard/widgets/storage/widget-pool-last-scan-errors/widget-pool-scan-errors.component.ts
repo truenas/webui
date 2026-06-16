@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap, tap } from 'rxjs';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -18,8 +18,7 @@ import { poolLastScanErrorsWidget } from 'app/pages/dashboard/widgets/storage/wi
   styleUrls: ['./widget-pool-last-scan-errors.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     NgxSkeletonLoaderModule,
     LastScanErrorsComponent,
     WidgetDatapointComponent,

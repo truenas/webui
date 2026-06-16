@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -50,9 +49,9 @@ describe('UserDetailHeaderComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(SlideIn, {
@@ -128,7 +127,7 @@ describe('UserDetailHeaderComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteUserDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteUserDialog, {
       data: dummyUser,
     });
   });

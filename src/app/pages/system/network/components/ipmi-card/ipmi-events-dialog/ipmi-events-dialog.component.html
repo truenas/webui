@@ -1,6 +1,7 @@
+<tn-dialog-shell testId="ipmi-events" [title]="'IPMI Events' | translate">
 <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
-<h1 mat-dialog-title>{{ 'IPMI Events' | translate }}</h1>
-<div mat-dialog-content class="events-container">
+
+<div class="events-container">
   @if ((events.length || isLoading())) {
     @for (event of events; track event.id) {
       <div class="event">
@@ -25,19 +26,10 @@
     ></tn-empty>
   }
 </div>
-<ix-form-actions mat-dialog-actions class="form-actions">
+<ix-form-actions tnDialogAction class="form-actions">
   @if (canClear) {
-    <tn-button
-      color="warn"
-      [testId]="'clear'"
-      [label]="'Clear' | translate"
-      (onClick)="onClear()"
-    ></tn-button>
+    <tn-button color="warn" testId="clear" [label]="'Clear' | translate" (onClick)="onClear()"></tn-button>
   }
-  <tn-button
-    color="primary"
-    [testId]="'close'"
-    [label]="'Close' | translate"
-    (onClick)="dialogRef.close()"
-  ></tn-button>
+  <tn-button color="primary" testId="close" [label]="'Close' | translate" (onClick)="dialogRef.close()"></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>

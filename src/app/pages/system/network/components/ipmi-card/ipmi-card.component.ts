@@ -1,11 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import {
-  TnButtonComponent, TnCardComponent, TnCardHeaderDirective,
-  TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, tnIconMarker,
-} from '@truenas/ui-components';
+import { TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnCellDefDirective, TnDialog, TnHeaderCellDefDirective, tnIconMarker, TnTableColumnDirective, TnTableComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -45,7 +41,7 @@ import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card
 export class IpmiCardComponent implements OnInit {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private window = inject<Window>(WINDOW);
@@ -99,7 +95,7 @@ export class IpmiCardComponent implements OnInit {
   }
 
   onOpenEvents(): void {
-    this.matDialog.open(IpmiEventsDialog);
+    this.tnDialog.open(IpmiEventsDialog);
   }
 
   private loadIpmiEntries(): void {

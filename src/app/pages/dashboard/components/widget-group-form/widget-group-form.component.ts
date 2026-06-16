@@ -1,17 +1,17 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, forwardRef, Signal, signal, viewChild, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, forwardRef, OnInit,
+  Signal, signal, viewChild, inject, input, output,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, ValidationErrors, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { of, tap } from 'rxjs';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import {
+  TnButtonToggleComponent, TnButtonToggleGroupComponent, TnIconComponent,
+} from '@truenas/ui-components';
+import { startWith, tap } from 'rxjs';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
 import {
@@ -31,22 +31,25 @@ import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-gr
   styleUrls: ['./widget-group-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxIconGroupComponent,
+    TnButtonToggleGroupComponent,
+    TnButtonToggleComponent,
+    TnIconComponent,
     WidgetEditorGroupComponent,
     WidgetGroupSlotFormComponent,
-    FormActionsComponent,
-    MatButton,
-    TestDirective,
     TranslateModule,
   ],
 })
-export class WidgetGroupFormComponent {
-  slideInRef = inject<SlideInRef<WidgetGroup | undefined, WidgetGroup | undefined>>(SlideInRef);
+export class WidgetGroupFormComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
+
+  /** Group to edit; leave unset to create a new group. */
+  initialGroup = input<WidgetGroup | undefined>();
+
+  /** Emits the resulting group when the form is submitted. The host owns closing the panel. */
+  readonly saved = output<WidgetGroup>();
 
   protected group = signal<WidgetGroup>(
     { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
@@ -81,17 +84,27 @@ export class WidgetGroupFormComponent {
     return validationErrors.some((errors) => !!Object.keys(errors).length);
   });
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(Boolean(this.layoutControl.dirty || this.widgetGroupSlotForm()?.form?.dirty));
-    });
+  private layoutStatus = toSignal(
+    this.layoutControl.statusChanges.pipe(startWith(this.layoutControl.status)),
+    { initialValue: this.layoutControl.status },
+  );
 
+  readonly canSubmit = computed(() => this.layoutStatus() === 'VALID' && !this.settingsHasErrors());
+
+  constructor() {
     this.setupLayoutUpdates();
+  }
+
+  ngOnInit(): void {
     this.setInitialFormValues();
   }
 
+  hasUnsavedChanges(): boolean {
+    return Boolean(this.layoutControl.dirty || this.widgetGroupSlotForm()?.form?.dirty);
+  }
+
   private setInitialFormValues(): void {
-    const widgetGroup = this.slideInRef.getData();
+    const widgetGroup = this.initialGroup();
     if (!widgetGroup) {
       this.group.set({ layout: WidgetGroupLayout.Full, slots: [{ type: null }] });
       return;
@@ -150,14 +163,12 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  protected onSubmit(): void {
+  submit(): void {
     this.cleanWidgetGroup();
     if (this.settingsHasErrors()) {
       return;
     }
-    this.slideInRef.close({
-      response: this.group(),
-    });
+    this.saved.emit(this.group());
   }
 
   private cleanWidgetGroup(): void {

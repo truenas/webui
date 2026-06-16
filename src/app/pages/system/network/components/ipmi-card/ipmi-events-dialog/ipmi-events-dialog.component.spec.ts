@@ -1,6 +1,6 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnEmptyHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
@@ -24,6 +24,7 @@ describe('IpmiEventsDialogComponent', () => {
       FakeProgressBarComponent,
     ],
     providers: [
+      mockProvider(DialogRef),
       mockApi([
         mockJob('ipmi.sel.elist', fakeSuccessfulJob([
           {
@@ -45,7 +46,6 @@ describe('IpmiEventsDialogComponent', () => {
         ] as IpmiEvent[])),
         mockJob('ipmi.sel.clear', fakeSuccessfulJob()),
       ]),
-      mockProvider(MatDialogRef),
     ],
   });
 

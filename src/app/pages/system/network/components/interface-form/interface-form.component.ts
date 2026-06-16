@@ -2,11 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import {
   BehaviorSubject, EMPTY, forkJoin, of, Observable,
@@ -61,7 +60,6 @@ import {
 } from 'app/pages/system/network/components/interface-form/network-interface-alias-control.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -104,8 +102,7 @@ export class InterfaceFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private validatorsService = inject(IxValidatorsService);
   private interfaceFormValidator = inject(InterfaceNameValidatorService);
-  private matDialog = inject(MatDialog);
-  private systemGeneralService = inject(SystemGeneralService);
+  private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<{
@@ -309,7 +306,7 @@ export class InterfaceFormComponent implements OnInit {
 
         this.api.call('interface.network_config_to_be_removed').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((configToRemove) => {
           if (configToRemove && Object.keys(configToRemove).length > 0) {
-            this.matDialog.open(DefaultGatewayDialog, {
+            this.tnDialog.open(DefaultGatewayDialog, {
               width: '600px',
               data: configToRemove,
             });

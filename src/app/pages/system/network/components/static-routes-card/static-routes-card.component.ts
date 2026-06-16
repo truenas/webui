@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardHeaderDirective,
-  TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
+  TnCellDefDirective, TnDialog, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
   tnIconMarker, type TnSortEvent,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs';
@@ -53,7 +52,7 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
   ],
 })
 export class StaticRoutesCardComponent implements OnInit {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
@@ -124,9 +123,9 @@ export class StaticRoutesCardComponent implements OnInit {
   }
 
   doDelete(route: StaticRoute): void {
-    this.matDialog.open(StaticRouteDeleteDialog, {
+    this.tnDialog.open(StaticRouteDeleteDialog, {
       data: route,
-    }).afterClosed()
+    }).closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getStaticRoutes();

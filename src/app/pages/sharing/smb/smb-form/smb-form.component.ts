@@ -13,10 +13,10 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   endWith, Observable, of,
 } from 'rxjs';
@@ -109,7 +109,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   formatter = inject(IxFormatterService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private dialogService = inject(DialogService);
   private datasetService = inject(DatasetService);
   private translate = inject(TranslateService);
@@ -804,7 +804,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       map((service) => service.state === ServiceStatus.Running),
       switchMap((isRunning) => {
         if (isRunning && this.isRestartRequired) {
-          return this.matDialog.open(RestartSmbDialog).afterClosed();
+          return this.tnDialog.open<RestartSmbDialog, void, boolean>(RestartSmbDialog).closed as Observable<boolean>;
         }
         return of(false);
       }),

@@ -2,11 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
   createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -54,7 +54,7 @@ import { UserService } from 'app/services/user.service';
 describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
   let api: MockApiService;
-  let matDialog: MatDialog;
+  let tnDialog: TnDialog;
   let loader: HarnessLoader;
   const acl = {
     acltype: AclType.Nfs4,
@@ -118,9 +118,9 @@ describe('DatasetAclEditorComponent', () => {
         getUserByName: (username: string) => of({ username } as { username: string }),
         getGroupByName: (groupName: string) => of({ group: groupName }),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of({ wasStripped: true }),
+          closed: of({ wasStripped: true }),
         })),
       }),
       mockAuth(),
@@ -137,7 +137,7 @@ describe('DatasetAclEditorComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       api = spectator.inject(MockApiService);
-      matDialog = spectator.inject(MatDialog);
+      tnDialog = spectator.inject(TnDialog);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
     });
@@ -152,7 +152,7 @@ describe('DatasetAclEditorComponent', () => {
         const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use Preset' }));
         await usePresetButton.click();
 
-        expect(matDialog.open).toHaveBeenCalledWith(
+        expect(tnDialog.open).toHaveBeenCalledWith(
           SelectPresetModalComponent,
           { data: { allowCustom: false, datasetPath: '/mnt/pool/dataset' } },
         );
@@ -162,7 +162,7 @@ describe('DatasetAclEditorComponent', () => {
         const saveAsPresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save As Preset' }));
         await saveAsPresetButton.click();
 
-        expect(matDialog.open).toHaveBeenCalledWith(
+        expect(tnDialog.open).toHaveBeenCalledWith(
           SaveAsPresetModalComponent,
           { data: { aclType: AclType.Nfs4, datasetPath: '/mnt/pool/dataset' } },
         );
@@ -200,7 +200,7 @@ describe('DatasetAclEditorComponent', () => {
         const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACL' }));
         await stripButton.click();
 
-        expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StripAclModalComponent, {
+        expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(StripAclModalComponent, {
           data: { path: '/mnt/pool/dataset' },
         });
       });
