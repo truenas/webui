@@ -36,12 +36,20 @@
         ></tn-select>
       </tn-form-field>
 
-      <ix-radio-group
-        formControlName="scenario"
+      <tn-form-field
         [label]="'Mocking Scenario' | translate"
-        [options]="scenarioOptions"
         [tooltip]="'Select the scenario for populating enclosure slots' | translate"
-      ></ix-radio-group>
+      >
+        @for (option of scenarioOptions; track option.value) {
+          <tn-radio
+            name="enclosure-scenario"
+            formControlName="scenario"
+            [value]="option.value"
+            [label]="option.label | translate"
+            [testId]="['scenario', option.value]"
+          ></tn-radio>
+        }
+      </tn-form-field>
     </div>
 
     <div class="actions">

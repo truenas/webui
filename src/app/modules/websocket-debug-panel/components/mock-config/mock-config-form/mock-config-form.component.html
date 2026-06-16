@@ -19,13 +19,17 @@
         ></tn-input>
       </tn-form-field>
 
-      <ix-radio-group
-        ixTest="response-type-radio"
-        formControlName="responseType"
-        [label]="'Response Type' | translate"
-        [options]="responseTypeOptions"
-        [required]="true"
-      ></ix-radio-group>
+      <tn-form-field [label]="'Response Type' | translate" [required]="true">
+        @for (option of responseTypeOptions; track option.value) {
+          <tn-radio
+            name="response-type"
+            formControlName="responseType"
+            [value]="option.value"
+            [label]="option.label | translate"
+            [testId]="['response-type', option.value]"
+          ></tn-radio>
+        }
+      </tn-form-field>
 
       @if (isErrorMode) {
         <tn-checkbox

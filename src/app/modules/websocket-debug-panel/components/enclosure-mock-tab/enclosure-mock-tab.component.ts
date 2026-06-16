@@ -8,18 +8,15 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnRadioComponent,
   TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
 import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import {
   MockEnclosureScenario,
   mockEnclosureScenarioLabels,
 } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
-import { RadioOption } from 'app/interfaces/option.interface';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { setEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { AppState } from 'app/store';
@@ -33,7 +30,7 @@ import { AppState } from 'app/store';
     TranslateModule,
     TnSelectComponent,
     TnFormFieldComponent,
-    IxRadioGroupComponent,
+    TnRadioComponent,
     TnCheckboxComponent,
   ],
   templateUrl: './enclosure-mock-tab.component.html',
@@ -68,9 +65,9 @@ export class EnclosureMockTabComponent implements OnInit {
       value: mock.model,
     }));
 
-  protected readonly scenarioOptions: Observable<RadioOption[]> = of(
-    Array.from(mockEnclosureScenarioLabels).map(([value, label]) => ({ label, value })),
-  );
+  protected readonly scenarioOptions: { label: string; value: MockEnclosureScenario }[] = Array
+    .from(mockEnclosureScenarioLabels)
+    .map(([value, label]) => ({ label, value }));
 
   protected getScenarioLabel(scenario: MockEnclosureScenario): string {
     const scenarioOption = Array.from(mockEnclosureScenarioLabels).find(([value]) => value === scenario);

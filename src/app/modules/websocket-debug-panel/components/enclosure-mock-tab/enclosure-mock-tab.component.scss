@@ -1,3 +1,5 @@
+@import '../../radio-group';
+
 .enclosure-mock-tab {
   height: 100%;
   overflow-y: auto;
@@ -29,6 +31,8 @@
         font-weight: 500;
         margin: 0;
       }
+
+      @include tn-radio-group-layout;
     }
 
     .actions {
