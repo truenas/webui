@@ -401,6 +401,9 @@ export class ZvolFormComponent implements OnInit {
     // "no change", this branch must start sending `inherit` explicitly (as
     // dataset-form already does) — otherwise explicit → inherit transitions
     // would silently no-op.
+    //
+    // `in changedValues` gates on "did either paired control change" (membership
+    // = changed); the value itself comes from allValues so both halves are seen.
     if ('special_small_block_size' in event.changedValues || 'special_small_block_size_custom' in event.changedValues) {
       const transformedValue = transformSpecialSmallBlockSizeForPayload(
         event.allValues.special_small_block_size as WithInherit<OnOff>,

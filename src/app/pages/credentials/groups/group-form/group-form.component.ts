@@ -87,14 +87,10 @@ export class GroupFormComponent implements OnInit {
     });
   });
 
-  // refCount: false so late subscribers (e.g. the privileges-chip autocomplete
-  // provider) can't re-execute the source and re-run the tap on a form whose
-  // user-edited values would then overwrite the captured initial snapshot.
-  //
-  // The tap handles the `privileges` patch only; the snapshot is captured
-  // outside this pipe (see ngOnInit) so ordering doesn't depend on whether
-  // this observable resolves synchronously or asynchronously relative to
-  // setupForm()'s own patches.
+  // refCount: false so late subscribers (the privileges-chip provider) can't
+  // re-execute the source and re-run the tap, overwriting the captured snapshot.
+  // No leak despite refCount: false — the source emits once and completes, so
+  // shareReplay tears down on completion (the ngOnInit consumer is also bounded).
   protected readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
     tap((privileges) => {
       this.privileges.set(privileges);
@@ -138,11 +134,9 @@ export class GroupFormComponent implements OnInit {
   };
 
   protected handleSubmit = (event: FormSubmitEvent<GroupFormValue>): SubmitResult => {
-    // Uses the full form value instead of event.changedValues because sudo_commands
-    // and sudo_commands_nopasswd are derived from their `_all` toggles; sending a
-    // partial update based on which individual field changed would drop that pairing.
-    // This is the "Derived/paired controls" unsafe-diff case called out in
-    // FormSubmitEvent.changedValues' JSDoc.
+    // Full form value, not event.changedValues: sudo_commands(_nopasswd) are
+    // derived from their `_all` toggles, so a per-field diff would drop the
+    // pairing (the "derived/paired controls" case in changedValues' docs).
     const values = this.form.getRawValue();
     const commonBody = {
       name: values.name,
@@ -208,10 +202,10 @@ export class GroupFormComponent implements OnInit {
   private togglePrivilegesForGroup(groupId: number): Observable<Privilege[]> {
     const requests$: Observable<Privilege>[] = [];
 
-    const priviliges = this.form.value.privileges;
-    if (priviliges) {
+    const selectedPrivilegeIds = this.form.value.privileges;
+    if (selectedPrivilegeIds) {
       const privileges = this.privileges()
-        .filter((privilege) => priviliges.some((privilegeId) => privilege.id === privilegeId));
+        .filter((privilege) => selectedPrivilegeIds.some((privilegeId) => privilege.id === privilegeId));
 
       privileges.forEach((privilege) => {
         requests$.push(

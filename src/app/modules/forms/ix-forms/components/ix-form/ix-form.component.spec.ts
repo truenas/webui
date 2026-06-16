@@ -2,7 +2,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder, FormControl, FormGroup, ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
@@ -22,12 +24,8 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { FormSubmitEvent, IxFormComponent, SubmitResult } from './ix-form.component';
 
 describe('IxFormComponent', () => {
-  // The host components below reference this via a closure inside handleSubmit
-  // (e.g. `(event) => submitHandlerSpy(event)`) rather than binding the spy
-  // directly. That indirection is load-bearing: the spy is reassigned in each
-  // `beforeEach`, and a direct binding (`handleSubmit = submitHandlerSpy`)
-  // would capture the outer reference once at class-field init time and never
-  // see later reassignments. Do not "simplify" by removing the lambda.
+  // Hosts call this via a closure (not `handleSubmit = submitHandlerSpy`) so the
+  // per-test reassignment in beforeEach is seen — don't inline the lambda.
   let submitHandlerSpy: jest.Mock<SubmitResult, [FormSubmitEvent]>;
 
   @Component({
@@ -103,9 +101,8 @@ describe('IxFormComponent', () => {
   let spectator: Spectator<TestHostComponent>;
   let loader: HarnessLoader;
 
-  // Shared across describe blocks, so spies must be reset per test — otherwise
-  // cross-test call counts leak and assertions like `toHaveBeenCalledTimes(1)`
-  // silently drift.
+  // Shared across describe blocks; reset per test (see beforeEach) so call
+  // counts don't leak between tests.
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
@@ -268,6 +265,39 @@ describe('IxFormComponent', () => {
       expect(submitHandlerSpy).toHaveBeenCalledWith(
         expect.objectContaining({ changedValues: {} }),
       );
+    });
+
+    it('silently omits a control removed after the snapshot from changedValues', async () => {
+      // Removed key is gone from getRawValue(), so the diff can't report it
+      // even though it was in the snapshot (getChangedValues iterates current keys).
+      (spectator.component.form as unknown as FormGroup).removeControl('description');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const event = submitHandlerSpy.mock.calls[0][0];
+      expect(event.changedValues).not.toHaveProperty('description');
+      expect(event.changedValues).toEqual({});
+    });
+
+    it('always flags a control added after the snapshot as changed', async () => {
+      // Absent from the snapshot, so it appears in the diff despite being untouched.
+      (spectator.component.form as unknown as FormGroup).addControl('extra', new FormControl('untouched'));
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(submitHandlerSpy.mock.calls[0][0].changedValues).toEqual({ extra: 'untouched' });
+    });
+
+    it('refreshSnapshot re-baselines so a late-added control is no longer flagged', async () => {
+      (spectator.component.form as unknown as FormGroup).addControl('extra', new FormControl('untouched'));
+      spectator.component.ixForm().refreshSnapshot();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(submitHandlerSpy.mock.calls[0][0].changedValues).toEqual({});
     });
   });
 
