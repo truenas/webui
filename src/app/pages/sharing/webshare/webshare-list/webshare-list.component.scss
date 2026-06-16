@@ -1,23 +1,64 @@
-.info-message {
-  align-items: center;
-  background-color: var(--bg1);
-  border: 1px solid var(--lines);
-  border-radius: 4px;
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 16px;
+:host {
+  display: block;
+  max-width: 1080px;
+}
 
-  tn-icon {
-    color: var(--primary);
-  }
+// The library defaults tn-card to height: 100%, which suits the equal-height
+// dashboard grid but makes this full-page list card fill the viewport. Let it
+// grow to content instead.
+tn-card {
+  display: block;
+  height: auto;
+}
+
+.header-title {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+tn-banner {
+  display: block;
+  margin-bottom: 16px;
 
   &.clickable {
     cursor: pointer;
-    transition: background-color 0.2s ease;
-
-    &:hover {
-      background-color: var(--bg2);
-    }
   }
+}
+
+.webshare-name-container {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+
+  .home-icon {
+    flex-shrink: 0;
+  }
+}
+
+// TEMP: tn-table-pager hardcodes a bordered, boxed footer on its host (full
+// border + bg2 background) with no input to disable it. Drop the box and keep
+// just a top divider so the pager reads as the table's footer inside the card.
+// Remove once @truenas/ui-components exposes a borderless/variant option.
+tn-table-pager {
+  background-color: transparent;
+  border: none;
+  border-top: 1px solid var(--tn-lines);
+}
+
+// TEMP: tn-table rounds all four corners via the internal .tn-table__table
+// border-radius, which rounds the header's top corners. Square them so the
+// table sits flush inside the card. Remove once the library exposes control
+// over the table's corner radius.
+:host ::ng-deep tn-table .tn-table__table {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }

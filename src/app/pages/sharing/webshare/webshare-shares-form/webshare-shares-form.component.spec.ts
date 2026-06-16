@@ -135,7 +135,7 @@ describe('WebShareSharesFormComponent', () => {
       spectator.detectChanges();
 
       // Use spectator click instead of harness due to label issues
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
+      const saveButton = spectator.query('button[type="submit"]');
       spectator.click(saveButton);
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.create', [{
@@ -164,7 +164,7 @@ describe('WebShareSharesFormComponent', () => {
       spectator.detectChanges();
 
       // Use spectator click instead of harness due to label issues
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
+      const saveButton = spectator.query('button[type="submit"]');
       spectator.click(saveButton);
 
       expect(handleErrorSpy).toHaveBeenCalled();
@@ -215,7 +215,7 @@ describe('WebShareSharesFormComponent', () => {
       spectator.detectChanges();
 
       // Use spectator click instead of harness due to label issues
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
+      const saveButton = spectator.query('button[type="submit"]');
       spectator.click(saveButton);
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [1, {
@@ -231,7 +231,7 @@ describe('WebShareSharesFormComponent', () => {
       form.controls.path.setValue('/mnt/tank/docs');
       spectator.detectChanges();
 
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
+      const saveButton = spectator.query('button[type="submit"]');
       spectator.click(saveButton);
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [1, {
@@ -297,7 +297,7 @@ describe('WebShareSharesFormComponent', () => {
       form.controls.path.setValue('/mnt/tank/new_home');
       spectator.detectChanges();
 
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
+      const saveButton = spectator.query('button[type="submit"]');
       spectator.click(saveButton);
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [3, {
@@ -372,7 +372,7 @@ describe('WebShareSharesFormComponent', () => {
         message: 'Could not retrieve existing WebShare configurations. Please check your connection and try again.',
         stackTrace: 'Failed to load shares',
       });
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: undefined });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: false });
     });
 
     it('should prevent submission when form is invalid', () => {
@@ -399,8 +399,9 @@ describe('WebShareSharesFormComponent', () => {
       form.controls.path.setValue('');
       spectator.detectChanges();
 
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
-      spectator.click(saveButton);
+      // Submit via the host entry point (the in-form submit button is natively
+      // blocked by HTML5 required validation when the field is empty).
+      spectator.component.submit();
 
       // Should not call API when form is invalid
       expect(api.call).not.toHaveBeenCalledWith('sharing.webshare.create', expect.anything());
@@ -445,7 +446,7 @@ describe('WebShareSharesFormComponent', () => {
       form.controls.path.setValue('/mnt/tank/docs_updated');
       spectator.detectChanges();
 
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
+      const saveButton = spectator.query('button[type="submit"]');
       spectator.click(saveButton);
 
       expect(handleErrorSpy).toHaveBeenCalled();
