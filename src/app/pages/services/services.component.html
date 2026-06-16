@@ -5,7 +5,7 @@
   ></ix-basic-search>
 </ix-page-header>
 
-<mat-card [ixUiSearch]="searchableElements.elements.services">
+<tn-card [padContent]="false" [ixUiSearch]="searchableElements.elements.services">
   <ix-table
     class="table"
     [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
@@ -41,4 +41,4 @@
       </ng-template>
     </tbody>
   </ix-table>
-</mat-card>
+</tn-card>

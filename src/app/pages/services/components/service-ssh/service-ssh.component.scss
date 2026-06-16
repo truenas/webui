@@ -1,3 +1,7 @@
+@import 'mixins/forms';
+
+@include tn-form-field-spacing();
+
 .form-actions {
   padding: 16px 11px;
 
@@ -11,3 +15,4 @@
   margin-right: auto;
   max-width: 960px;
 }
+

@@ -1,9 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnAutocompleteComponent, TnButtonComponent, TnCardComponent, TnCheckboxComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -11,20 +14,11 @@ import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceUps } from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -35,20 +29,19 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./service-ups.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    IxComboboxComponent,
-    IxTextareaComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnAutocompleteComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -63,6 +56,7 @@ export class ServiceUpsComponent implements OnInit {
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
+  protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);
   isMasterMode = true;
@@ -110,10 +104,11 @@ export class ServiceUpsComponent implements OnInit {
     optionsupsd: helptextServiceUps.optionsupsdLabel,
   };
 
-  readonly providers: Record<string, IxComboboxProvider> = {
-    driver: new SimpleAsyncComboboxProvider(this.api.call('ups.driver_choices').pipe(choicesToOptions())),
-    port: new SimpleAsyncComboboxProvider(this.api.call('ups.port_choices').pipe(singleArrayToOptions())),
-  };
+  /** Driver options: label is the description, value is the `driver$name` key. */
+  readonly driverOptions$ = this.api.call('ups.driver_choices').pipe(choicesToOptions());
+
+  /** Detected device paths; the label IS the value, so tn-autocomplete fits. */
+  readonly portOptions$ = this.api.call('ups.port_choices').pipe(singleArrayToOptions());
 
   readonly tooltips = {
     identifier: helptextServiceUps.identifierTooltip,
@@ -144,8 +139,9 @@ export class ServiceUpsComponent implements OnInit {
     optionsupsd: helptextServiceUps.optionsupsdTooltip,
   };
 
-  readonly modeOptions$ = of(translateOptions(this.translate, helptextServiceUps.modeOptions));
-  readonly shutdownOptions$ = of(translateOptions(this.translate, helptextServiceUps.shutdownOptions));
+  // tn-select does not translate option labels, so translate up-front.
+  readonly modeOptions = translateOptions(this.translate, helptextServiceUps.modeOptions);
+  readonly shutdownOptions = translateOptions(this.translate, helptextServiceUps.shutdownOptions);
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {

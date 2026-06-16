@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, take,
@@ -45,7 +45,7 @@ import { waitForServices } from 'app/store/services/services.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BasicSearchComponent,
-    MatCard,
+    TnCardComponent,
     UiSearchDirective,
     IxTableComponent,
     IxTableEmptyDirective,

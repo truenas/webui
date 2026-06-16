@@ -1,14 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -27,11 +25,10 @@ import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.ser
   styleUrls: ['./service-actions-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
-    TnIconComponent,
+    TnTestIdDirective,
+    TnIconButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
-    MatIconButton,
   ],
 })
 export class ServiceActionsCellComponent {
