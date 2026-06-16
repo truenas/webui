@@ -5,24 +5,19 @@
   align-items: center;
   display: flex;
 
-  > button {
-    border-radius: 4px !important;
-    padding: 4px !important;
-    width: inherit !important;
-  }
-
+  // Projected into tn-icon-button beside the icon, so the name + icon read as one button.
   .username {
     @include line-clamp(2);
-    cursor: pointer;
-    display: inline-block;
+    color: inherit;
     font-size: 14px;
     margin-right: 0.5rem;
-    margin-top: 4px;
     max-width: 105px;
-    min-width: auto;
+    // Render the name before the icon in tn-icon-button's flex row, keeping the
+    // original name-then-icon order.
+    order: -1;
     overflow: hidden;
+    text-align: left;
     text-overflow: ellipsis;
-    vertical-align: middle;
     white-space: nowrap;
 
     @media(max-width: $breakpoint-md) {

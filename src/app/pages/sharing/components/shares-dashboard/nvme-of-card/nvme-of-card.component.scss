@@ -1,10 +1,17 @@
-mat-card {
-  height: 100%;
+@import '../card-service-toggle';
+
+@include card-service-toggle;
+
+.card-title-link {
+  color: inherit;
+  display: inline-flex;
+  text-decoration: none;
 }
 
 .card-title {
   align-items: center;
   display: flex;
+  margin: 0;
 
   tn-icon {
     margin-left: 5px;

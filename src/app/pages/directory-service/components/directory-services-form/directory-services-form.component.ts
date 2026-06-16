@@ -157,17 +157,28 @@ export class DirectoryServicesFormComponent implements OnInit {
 
   onCredentialDataChanged(credentialData: DirectoryServicesUpdate['credential']): void {
     this.credentialData = credentialData;
+    // Backend validation errors for credential fields (e.g. an incorrect bind password) are
+    // mapped onto the main form's `service_type` control via getFieldsMap(). Clear those stale
+    // errors when the user edits the credentials so the Save button re-enables once corrected.
+    this.clearManualValidationErrors();
     this.updateFormValidity();
   }
 
   onCredentialValidityChanged(isValid: boolean): void {
     this.validationService.setCredentialValid(isValid);
+    this.clearManualValidationErrors();
     this.updateFormValidity();
   }
 
   onConfigurationDataChanged(configurationData: DirectoryServicesUpdate['configuration']): void {
     this.configurationData = configurationData;
+    this.clearManualValidationErrors();
+    this.updateFormValidity();
     this.cdr.markForCheck();
+  }
+
+  private clearManualValidationErrors(): void {
+    this.validationService.clearFormControlErrors(this.form);
   }
 
   onIpaValidityChanged(isValid: boolean): void {

@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
   combineLatest, finalize, forkJoin, Observable, of, tap,
 } from 'rxjs';
@@ -30,7 +29,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -47,8 +46,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
@@ -56,14 +53,13 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TooltipComponent,
     TranslateModule,
-
   ],
 })
-export class ServiceNfsComponent implements OnInit {
+export class ServiceNfsComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -75,14 +71,13 @@ export class ServiceNfsComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
-  protected readonly isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
   protected readonly isAddSpnDisabled = signal(true);
   protected readonly hasNfsStatus = signal(false);
   protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
 
-  protected form = this.fb.group({
+  protected readonly form = this.fb.group({
     allow_nonroot: [false],
     bindip: [[] as string[]],
     servers_auto: [true],
@@ -129,15 +124,12 @@ export class ServiceNfsComponent implements OnInit {
   );
 
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
-  protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
@@ -172,7 +164,7 @@ export class ServiceNfsComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

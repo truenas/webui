@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 
@@ -38,11 +38,11 @@ describe('IxTablePagerShowMoreComponent', () => {
   });
 
   it('checks "View All" and "Collapse" buttons is present', async () => {
-    const showMoreButton = await loader.getHarness(MatButtonHarness.with({ text: 'View All' }));
+    const showMoreButton = await loader.getHarness(TnButtonHarness.with({ text: 'View All' }));
     expect(showMoreButton).toExist();
     await showMoreButton.click();
 
-    const collapseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Collapse' }));
+    const collapseButton = await loader.getHarness(TnButtonHarness.with({ text: 'Collapse' }));
     expect(collapseButton).toExist();
     await collapseButton.click();
     expect(showMoreButton).toExist();

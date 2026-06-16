@@ -1,16 +1,16 @@
-@let jobBadgeCount = jobBadgeCount$ | async;
-<button
-  matBadgeSize="small"
-  matBadgeColor="warn"
-  mat-icon-button
+<tn-icon-button
   id="task-manager"
   class="topbar-button-right"
-  ixTest="jobs-manager"
-  [matBadge]="jobBadgeCount"
-  [matBadgeHidden]="jobBadgeCount === 0"
-  [matTooltip]="tooltips.taskManager | translate"
+  name="clipboard-text"
+  library="mdi"
+  size="lg"
+  testId="jobs-manager"
+  [dense]="true"
+  [tooltip]="tooltips.taskManager | translate"
   [ixUiSearch]="searchableElements.elements.jobs"
-  (click)="onIndicatorPressed()"
+  (onClick)="onIndicatorPressed()"
 >
-  <tn-icon size="lg" name="clipboard-text" library="mdi"></tn-icon>
-</button>
+  @if (jobBadge(); as badge) {
+    <ix-status-badge [badge]="badge"></ix-status-badge>
+  }
+</tn-icon-button>

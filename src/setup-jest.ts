@@ -30,7 +30,9 @@ import { StoreModule } from '@ngrx/store';
 import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
-import { TnIconButtonComponent, TnIconComponent, TnIconTesting, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TN_TEST_ATTR, TnIconButtonComponent, TnIconComponent, TnIconTesting, TnTablePagerComponent,
+} from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
 import { MockComponent, MockProvider } from 'ng-mocks';
@@ -192,6 +194,12 @@ defineGlobalsInjections({
     {
       provide: APP_BASE_HREF,
       useValue: '',
+    },
+    {
+      // Mirror production (main.ts): render tn-component test ids to `data-test`
+      // so specs and Release Engineering selectors target the same attribute.
+      provide: TN_TEST_ATTR,
+      useValue: 'data-test',
     },
     {
       provide: WINDOW,

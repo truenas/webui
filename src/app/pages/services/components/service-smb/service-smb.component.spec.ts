@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -156,7 +156,7 @@ describe('ServiceSmbComponent', () => {
   });
 
   it('shows advanced settings when Advanced Settings button is pressed', async () => {
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
     await advancedButton.click();
 
     const form = await loader.getHarness(IxFormHarness);
@@ -226,7 +226,7 @@ describe('ServiceSmbComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
     await advancedButton.click();
 
     const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
@@ -244,12 +244,12 @@ describe('ServiceSmbComponent', () => {
       Workgroup: 'WORKGROUP2',
     });
 
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
     await advancedButton.click();
     const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
     expect(await searchCheckbox.getValue()).toBe(true);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenLastCalledWith('smb.update', [{
@@ -280,7 +280,7 @@ describe('ServiceSmbComponent', () => {
   });
 
   it('sends an update payload to websocket when advanced form is filled and saved', async () => {
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
     await advancedButton.click();
 
     const bindIpList = await loader.getHarness(IxListHarness.with({ label: 'Bind IP Addresses' }));
@@ -308,7 +308,7 @@ describe('ServiceSmbComponent', () => {
     await searchCheckbox.toggle();
     expect(await searchCheckbox.getValue()).toBe(false);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenLastCalledWith('smb.update', [{
@@ -350,7 +350,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
@@ -366,7 +366,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
@@ -382,7 +382,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
@@ -409,7 +409,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const notice = spectator.query('.truenas-connect-notice');
@@ -425,7 +425,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const notice = spectator.query('.truenas-connect-notice');
@@ -440,7 +440,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
@@ -459,7 +459,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
@@ -478,7 +478,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
@@ -497,7 +497,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
@@ -516,7 +516,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
@@ -535,7 +535,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
@@ -554,7 +554,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const notice = spectator.query('.truenas-connect-notice');
@@ -572,7 +572,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
@@ -592,7 +592,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const statefulFailoverCheckbox = spectator.query('[formControlName="stateful_failover"]');
@@ -606,7 +606,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const statefulFailoverCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }));
@@ -640,7 +640,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const statefulFailoverCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }));
@@ -674,7 +674,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       const statefulFailoverCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }));
@@ -688,7 +688,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
       // Initially enabled (no incompatible shares, minimum protocol is SMB2)

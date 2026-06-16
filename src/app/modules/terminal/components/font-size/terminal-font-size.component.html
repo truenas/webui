@@ -3,7 +3,7 @@
   <tn-icon-button
     name="minus"
     library="mdi"
-    ixTest="decrease-font-size"
+    testId="decrease-font-size"
     [attr.aria-label]="'Decrease font size' | translate"
     [disabled]="fontSize() <= minFontSize"
     (click)="change(-1)"
@@ -11,7 +11,7 @@
   <tn-icon-button
     name="plus"
     library="mdi"
-    ixTest="increase-font-size"
+    testId="increase-font-size"
     [attr.aria-label]="'Increase font size' | translate"
     [disabled]="fontSize() >= maxFontSize"
     (click)="change(1)"

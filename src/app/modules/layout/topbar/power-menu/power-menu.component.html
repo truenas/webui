@@ -1,14 +1,14 @@
-<button
-  name="Power"
-  mat-icon-button
+<tn-icon-button
   class="topbar-button-right"
-  ixTest="power-menu"
-  [matTooltip]="tooltips.power | translate"
+  name="power"
+  library="mdi"
+  size="lg"
+  testId="power-menu"
+  [dense]="true"
+  [tooltip]="tooltips.power | translate"
   [matMenuTriggerFor]="powerMenu"
   [ixUiSearch]="searchableElements.elements.powerMenu"
->
-  <tn-icon size="lg" name="power" library="mdi"></tn-icon>
-</button>
+></tn-icon-button>
 <mat-menu #powerMenu="matMenu">
   <button
     *ixRequiresRoles="requiredRoles"
