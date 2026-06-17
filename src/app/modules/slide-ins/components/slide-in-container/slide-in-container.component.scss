@@ -46,7 +46,7 @@ body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
-  padding: 0 20px 40px;
+  padding: 20px 20px 40px;
   width: 100%;
 
   @media (max-width: $breakpoint-sm) {
