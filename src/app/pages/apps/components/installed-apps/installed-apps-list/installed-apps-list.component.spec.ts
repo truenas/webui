@@ -246,13 +246,13 @@ describe('InstalledAppsListComponent', () => {
   it('handles sortChanged with empty apps array correctly', () => {
     const component = spectator.component;
     const originalDataSource = [...apps];
-    component.dataSource = originalDataSource;
+    component.dataSource.set(originalDataSource);
 
     component.setDatasourceWithSort({ active: 'application', direction: 'asc' as SortDirection }, []);
 
-    expect(component.dataSource).toHaveLength(2);
-    expect(component.dataSource[0].name).toBe('test-app-1');
-    expect(component.dataSource[1].name).toBe('test-app-2');
+    expect(component.dataSource()).toHaveLength(2);
+    expect(component.dataSource()[0].name).toBe('test-app-1');
+    expect(component.dataSource()[1].name).toBe('test-app-2');
   });
 
   it('handles sortChanged with valid apps array correctly', () => {
@@ -267,7 +267,7 @@ describe('InstalledAppsListComponent', () => {
 
     component.setDatasourceWithSort({ active: 'application', direction: 'asc' as SortDirection }, newApps);
 
-    expect(component.dataSource).toHaveLength(1);
-    expect(component.dataSource[0].name).toBe('new-app');
+    expect(component.dataSource()).toHaveLength(1);
+    expect(component.dataSource()[0].name).toBe('new-app');
   });
 });

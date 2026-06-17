@@ -14,7 +14,7 @@ import { ContainerImage, ContainerImageUi } from 'app/interfaces/container-image
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { mapTnSortToProviderSorting } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -98,12 +98,7 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    const direction = event.direction === '' ? null : (event.direction as SortDirection);
-    this.dataProvider.setSorting({
-      propertyName: direction ? (event.column as keyof ContainerImage) : null,
-      direction,
-      active: null,
-    });
+    this.dataProvider.setSorting(mapTnSortToProviderSorting<ContainerImage>(event));
   }
 
   private refresh(): void {

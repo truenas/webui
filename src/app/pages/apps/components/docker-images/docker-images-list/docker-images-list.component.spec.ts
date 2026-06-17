@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableComponent, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
@@ -70,7 +69,7 @@ describe('DockerImagesListComponent', () => {
     const deleteButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'delete' }));
     await deleteButtons[0].click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerImageDeleteDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DockerImageDeleteDialog, {
       data: [fakeDockerImagesDataSource[0]],
     });
   });

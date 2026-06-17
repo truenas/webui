@@ -7,9 +7,9 @@
   display: inline-block;
   position: relative;
 
-  // TEMP: tn-button has no trailing-icon slot, so reserve room on the button
-  // for the dropdown caret positioned below. Drop once the library exposes a
-  // trailing-icon affordance on tn-button.
+  // TEMP (NAS-141021): tn-button has no trailing-icon slot, so reserve room on
+  // the button for the dropdown caret positioned below. Drop once the library
+  // exposes a trailing-icon affordance on tn-button.
   ::ng-deep tn-button button {
     padding-right: 36px;
   }

@@ -19,8 +19,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { createTable, mapTnSortToProviderSorting } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -105,12 +104,7 @@ export class DockerRegistriesListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    const direction = event.direction === '' ? null : (event.direction as SortDirection);
-    this.dataProvider.setSorting({
-      propertyName: direction ? (event.column as keyof DockerRegistry) : null,
-      direction,
-      active: null,
-    });
+    this.dataProvider.setSorting(mapTnSortToProviderSorting<DockerRegistry>(event));
   }
 
   protected onAdd(): void {

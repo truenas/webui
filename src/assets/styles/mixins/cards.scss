@@ -178,9 +178,10 @@
 // Shared overrides for the apps detail cards migrated to tn-card (app-info,
 // app-metadata, app-notes). Hoisted here so the three siblings can't drift.
 @mixin tn-detail-card {
-  // The projected title doesn't inherit tn-card's scoped .tn-card__title style
-  // (view encapsulation), so match the library's title sizing explicitly to keep
-  // all detail-card titles consistent.
+  // TEMP (NAS-141021): the projected title doesn't inherit tn-card's scoped
+  // .tn-card__title style (view encapsulation), so match the library's title
+  // sizing explicitly to keep all detail-card titles consistent. Drop once the
+  // library exposes a styled-title projection slot.
   :host ::ng-deep .tn-card__title {
     font-size: 1.125rem;
     font-weight: 600;
@@ -188,9 +189,9 @@
     margin: 0;
   }
 
-  // TEMP: tn-card's header/footer dividers use the unmapped --tn-lines token,
-  // which falls back to a light colour that looks wrong in the dark theme.
-  // Point them at webui's --lines until the design tokens are bridged.
+  // TEMP (NAS-141021): tn-card's header/footer dividers use the unmapped
+  // --tn-lines token, which falls back to a light colour that looks wrong in the
+  // dark theme. Point them at webui's --lines until the design tokens are bridged.
   :host ::ng-deep .tn-card__header,
   :host ::ng-deep .tn-card__footer {
     border-color: var(--lines);

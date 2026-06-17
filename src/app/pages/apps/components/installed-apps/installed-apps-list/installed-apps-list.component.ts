@@ -1,6 +1,7 @@
 import { AsyncPipe, Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, output, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef,
+  inject, OnInit, output, signal, viewChild,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Sort } from '@angular/material/sort';
@@ -120,7 +121,7 @@ export class InstalledAppsListComponent implements OnInit {
   protected readonly searchableElements = installedAppsElements;
   readonly isLoading = toSignal(this.installedAppsStore.isLoading$, { requireSync: true });
 
-  dataSource: App[] = [];
+  readonly dataSource = signal<App[]>([]);
   selectedApp: App | undefined;
   searchQuery = toSignal(this.installedAppsStore.searchQuery$, { requireSync: true });
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
@@ -152,34 +153,26 @@ export class InstalledAppsListComponent implements OnInit {
   };
 
   get isSelectedAppVisible(): boolean {
-    return this.filteredApps?.some((app) => app.id === this.selectedApp?.id);
+    return this.filteredApps().some((app) => app.id === this.selectedApp?.id);
   }
 
-  private filteredAppsCache: { source: App[]; query: string; result: App[] } | null = null;
-
-  get filteredApps(): App[] {
-    const source = this.dataSource;
+  readonly filteredApps = computed(() => {
     const query = this.searchQuery();
-    if (this.filteredAppsCache?.source === source && this.filteredAppsCache.query === query) {
-      return this.filteredAppsCache.result;
-    }
-    const result = source
+    return this.dataSource()
       .filter((app) => app?.name?.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
-    this.filteredAppsCache = { source, query, result };
-    return result;
-  }
+  });
 
   get hasCheckedApps(): boolean {
     return this.checkedApps.length > 0;
   }
 
   get appsUpdateAvailable(): number {
-    return this.dataSource
+    return this.dataSource()
       .filter((app) => app.upgrade_available).length;
   }
 
   get hasUpdates(): boolean {
-    return this.dataSource.some((app) => app.upgrade_available);
+    return this.dataSource().some((app) => app.upgrade_available);
   }
 
   get checkedAppsNames(): string[] {
@@ -264,11 +257,10 @@ export class InstalledAppsListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.installedAppsStore.setSearchQuery(query);
 
-    if (!this.filteredApps.length) {
+    if (!this.filteredApps().length) {
       this.showLoadStatus(EmptyType.NoSearchResults);
     }
   }
-
 
   private showLoadStatus(
     type: EmptyType.FirstUse | EmptyType.NoPageData | EmptyType.Errors | EmptyType.NoSearchResults,
@@ -312,7 +304,7 @@ export class InstalledAppsListComponent implements OnInit {
     ]).pipe(
       filter(([pool]) => {
         if (!pool) {
-          this.dataSource = [];
+          this.dataSource.set([]);
           this.showLoadStatus(EmptyType.FirstUse);
           this.cdr.markForCheck();
           this.redirectToInstalledApps();
@@ -321,7 +313,7 @@ export class InstalledAppsListComponent implements OnInit {
       }),
       filter(([,dockerStarted]) => {
         if (!dockerStarted) {
-          this.dataSource = [];
+          this.dataSource.set([]);
           this.showLoadStatus(EmptyType.Errors);
           this.cdr.markForCheck();
           this.redirectToInstalledApps();
@@ -330,7 +322,7 @@ export class InstalledAppsListComponent implements OnInit {
       }),
       filter(([,, apps]) => {
         if (!apps.length) {
-          this.dataSource = [];
+          this.dataSource.set([]);
           this.showLoadStatus(EmptyType.NoPageData);
           this.cdr.markForCheck();
           this.redirectToInstalledApps();
@@ -441,13 +433,15 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   onBulkUpdate(updateAll = false): void {
-    const apps = this.dataSource.filter((app) => (
+    const apps = this.dataSource().filter((app) => (
       updateAll ? app.upgrade_available : this.checkedApps.some((checked) => checked.id === app.id)
     ));
     this.tnDialog.open(AppBulkUpdateComponent, { data: apps })
       .closed
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
+        // Clear selection whether the dialog was confirmed or dismissed, to stay
+        // consistent with onBulkStart/onBulkStop and the pre-migration behavior.
         this.clearSelection();
       });
   }
@@ -478,8 +472,8 @@ export class InstalledAppsListComponent implements OnInit {
 
   setDatasourceWithSort(sort: Sort, apps?: App[]): void {
     this.installedAppsStore.setSortingInfo(sort);
-    const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
-    this.dataSource = [...sourceArray].sort((a, b) => {
+    const sourceArray = apps && apps.length > 0 ? apps : this.dataSource();
+    this.dataSource.set([...sourceArray].sort((a, b) => {
       const isAsc = sort.direction === 'asc';
 
       switch (sort.active as SortableField) {
@@ -496,7 +490,7 @@ export class InstalledAppsListComponent implements OnInit {
         default:
           return doSortCompare(a.name, b.name, isAsc);
       }
-    });
+    }));
   }
 
   private executeBulkDeletion(options: AppDeleteDialogOutputData): Observable<Job<CoreBulkResponse[]>> {
@@ -516,7 +510,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private handleDeletionResult(job: Job<CoreBulkResponse[]>): void {
-    if (!this.dataSource.length) {
+    if (!this.dataSource().length) {
       this.redirectToInstalledApps();
     }
 
@@ -537,11 +531,11 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private selectAppForDetails(appId: string | null): void {
-    if (!this.dataSource.length) {
+    if (!this.dataSource().length) {
       return;
     }
 
-    const selectedApp = appId && this.dataSource.find((app) => app.id === appId);
+    const selectedApp = appId && this.dataSource().find((app) => app.id === appId);
     if (selectedApp) {
       this.selectedApp = selectedApp;
       this.toggleShowMobileDetails.emit(true);
@@ -554,7 +548,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private selectFirstApp(): void {
-    const [firstApp] = this.dataSource;
+    const [firstApp] = this.dataSource();
     if (firstApp.metadata.train && firstApp.id) {
       this.location.replaceState(['/apps', 'installed', firstApp.metadata.train, firstApp.id].join('/'));
     } else {

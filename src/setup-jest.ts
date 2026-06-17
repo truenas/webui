@@ -31,12 +31,13 @@ import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
 import {
+  LabelMarkupPipe,
   TN_TEST_ATTR, TnButtonComponent, TnIconButtonComponent, TnIconComponent, TnIconTesting,
   TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTablePagerComponent,
 } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
-import { MockComponent, MockProvider } from 'ng-mocks';
+import { MockComponent, MockProvider, ngMocks } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import {
   Observable,
@@ -94,6 +95,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 setupZoneTestEnv();
+
+// `TnCardComponent` imports `TnButtonComponent`, which imports `LabelMarkupPipe`
+// (the pipe that renders a tn-button's `[label]`). When ng-mocks deep-mocks any
+// component that transitively imports `TnCardComponent`, it also mocks this pipe,
+// and the mocked `transform()` returns empty — silently blanking the label of
+// every *real* tn-button in the same TestBed. Keep the pure pipe real everywhere
+// so mocking a card-bearing component never corrupts a sibling button's label.
+ngMocks.globalKeep(LabelMarkupPipe);
 
 const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
   return (

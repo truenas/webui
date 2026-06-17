@@ -32,12 +32,12 @@
   content / action button), so ix-empty is kept here to preserve those buttons. Revisit once
   tn-table exposes a projectable empty-state slot (NAS-141021 library follow-up).
 -->
-@if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading())) {
+@if ((dataSource().length && !filteredApps().length) || (!dataSource().length && !isLoading())) {
   <ix-empty [conf]="entityEmptyConf"></ix-empty>
 } @else {
   <tn-table
     class="apps-table"
-    [dataSource]="filteredApps"
+    [dataSource]="filteredApps()"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByAppId"
     [selectable]="true"
