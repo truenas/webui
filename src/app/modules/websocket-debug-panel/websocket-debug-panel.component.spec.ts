@@ -423,9 +423,9 @@ describe('WebSocketDebugPanelComponent', () => {
     });
 
     it('should update admin layout margin when resizing and panel is open', () => {
-      // Set panel as open
+      // Set panel as open (isPanelOpen is a signal)
       Object.defineProperty(spectator.component, 'isPanelOpen', {
-        value: true,
+        value: () => true,
         writable: true,
       });
 

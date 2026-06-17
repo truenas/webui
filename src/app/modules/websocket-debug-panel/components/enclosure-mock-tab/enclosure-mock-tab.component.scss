@@ -1,3 +1,5 @@
+@import '../../radio-group';
+
 .enclosure-mock-tab {
   height: 100%;
   overflow-y: auto;
@@ -17,6 +19,21 @@
       }
     }
 
+
+    .config-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .config-title {
+        color: var(--fg1);
+        font-size: 14px;
+        font-weight: 500;
+        margin: 0;
+      }
+
+      @include tn-radio-group-layout;
+    }
 
     .actions {
       border-top: 1px solid var(--lines);

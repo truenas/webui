@@ -1,34 +1,42 @@
 <div class="mock-config-form">
   <div class="form-content">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <ix-input
-        ixTest="method-name-input"
-        formControlName="methodName"
-        [label]="'Method Name' | translate"
-        [placeholder]="'e.g., pool.create' | translate"
-        [required]="true"
-      ></ix-input>
-      <ix-input
-        ixTest="message-pattern-input"
-        formControlName="messagePattern"
+      <tn-form-field [label]="'Method Name' | translate" [required]="true">
+        <tn-input
+          testId="method-name-input"
+          formControlName="methodName"
+          [placeholder]="'e.g., pool.create' | translate"
+        ></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
         [label]="'Message Pattern (Optional)' | translate"
         [hint]="'Regex pattern to match against message content' | translate"
-      ></ix-input>
+      >
+        <tn-input
+          testId="message-pattern-input"
+          formControlName="messagePattern"
+        ></tn-input>
+      </tn-form-field>
 
-      <ix-radio-group
-        ixTest="response-type-radio"
-        formControlName="responseType"
-        [label]="'Response Type' | translate"
-        [options]="responseTypeOptions"
-        [required]="true"
-      ></ix-radio-group>
+      <tn-form-field [label]="'Response Type' | translate" [required]="true">
+        @for (option of responseTypeOptions; track option.value) {
+          <tn-radio
+            name="response-type"
+            formControlName="responseType"
+            [value]="option.value"
+            [label]="option.label | translate"
+            [testId]="['response-type', option.value]"
+          ></tn-radio>
+        }
+      </tn-form-field>
 
       @if (isErrorMode) {
-        <ix-checkbox
-          ixTest="is-call-error-checkbox"
+        <tn-checkbox
+          testId="is-call-error-checkbox"
           formControlName="isCallError"
           [label]="'Configure as CallError' | translate"
-        ></ix-checkbox>
+        ></tn-checkbox>
       }
 
       @if (!isErrorMode) {
@@ -42,44 +50,59 @@
       }
 
       @if (isErrorMode) {
-        <ix-combobox
-          ixTest="error-code-input"
-          formControlName="errorCode"
+        <tn-form-field
           [label]="'Error Code' | translate"
           [required]="true"
           [hint]="'Select a standard code or enter a custom value' | translate"
-          [provider]="errorCodeProvider"
-          [allowCustomValue]="true"
-        ></ix-combobox>
-        <ix-input
-          ixTest="error-message-input"
-          formControlName="errorMessage"
+        >
+          <tn-autocomplete
+            testId="error-code-input"
+            formControlName="errorCode"
+            [options]="errorCodeOptions"
+            [allowCustomValue]="true"
+          ></tn-autocomplete>
+        </tn-form-field>
+        <tn-form-field
           [label]="'Error Message' | translate"
           [required]="true"
           [hint]="'Human-readable error message' | translate"
-        ></ix-input>
-        
+        >
+          <tn-input
+            testId="error-message-input"
+            formControlName="errorMessage"
+          ></tn-input>
+        </tn-form-field>
+
         @if (isCallErrorMode) {
-          <ix-select
-            ixTest="call-error-errname-select"
-            formControlName="callErrorErrname"
+          <tn-form-field
             [label]="'Error Name (errname)' | translate"
-            [options]="errorNameOptions"
             [hint]="'Standard error name (e.g., EINVAL, EACCES)' | translate"
-          ></ix-select>
-          <ix-input
-            ixTest="call-error-code-input"
-            formControlName="callErrorCode"
-            type="number"
+          >
+            <tn-select
+              testId="call-error-errname-select"
+              formControlName="callErrorErrname"
+              [options]="errorNameOptions"
+            ></tn-select>
+          </tn-form-field>
+          <tn-form-field
             [label]="'Error Code (error)' | translate"
             [hint]="'Integer error code (e.g., 22 for EINVAL, 13 for EACCES)' | translate"
-          ></ix-input>
-          <ix-input
-            ixTest="call-error-reason-input"
-            formControlName="callErrorReason"
+          >
+            <tn-input
+              testId="call-error-code-input"
+              formControlName="callErrorCode"
+              [inputType]="InputType.Number"
+            ></tn-input>
+          </tn-form-field>
+          <tn-form-field
             [label]="'Error Reason' | translate"
             [hint]="'Human-readable reason for the error' | translate"
-          ></ix-input>
+          >
+            <tn-input
+              testId="call-error-reason-input"
+              formControlName="callErrorReason"
+            ></tn-input>
+          </tn-form-field>
           <ix-code-editor
             ixTest="call-error-extra-textarea"
             formControlName="callErrorExtra"
@@ -105,19 +128,22 @@
         }
       }
 
-      <ix-input
-        ixTest="response-delay-input"
-        formControlName="responseDelay"
-        type="number"
+      <tn-form-field
         [label]="'Response Delay (ms)' | translate"
-        [placeholder]="'0' | translate"
         [hint]="'Delay in milliseconds before returning the response' | translate"
-      ></ix-input>
+      >
+        <tn-input
+          testId="response-delay-input"
+          formControlName="responseDelay"
+          [inputType]="InputType.Number"
+          [placeholder]="'0' | translate"
+        ></tn-input>
+      </tn-form-field>
 
       <div class="events-section">
         <label>{{ 'Events (Optional)' | translate }}</label>
         <ix-job-event-builder
-          [events]="form.value.events"
+          [events]="form.controls.events.value ?? []"
           (eventsChange)="onEventsChange($event)">
         </ix-job-event-builder>
       </div>
@@ -125,11 +151,18 @@
   </div>
 
   <div class="form-actions">
-    <button mat-button ixTest="cancel-button" type="button" (click)="onCancel()">
-      {{ 'Cancel' | translate }}
-    </button>
-    <button mat-button ixTest="submit-button" color="primary" type="button" [disabled]="form.invalid" (click)="onSubmit()">
-      {{ isEditMode ? ('Update' | translate) : ('Create' | translate) }}
-    </button>
+    <tn-button
+      testId="cancel-button"
+      variant="outline"
+      [label]="'Cancel' | translate"
+      (onClick)="onCancel()"
+    ></tn-button>
+    <tn-button
+      testId="submit-button"
+      color="primary"
+      [disabled]="form.invalid"
+      [label]="isEditMode ? ('Update' | translate) : ('Create' | translate)"
+      (onClick)="onSubmit()"
+    ></tn-button>
   </div>
 </div>

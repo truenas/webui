@@ -1,16 +1,19 @@
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef, inject, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnIconButtonComponent } from '@truenas/ui-components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnIconComponent, TnIconButtonComponent, TnCheckboxComponent, TnInputComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
+import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { scrollToBottomDelayMs } from 'app/modules/websocket-debug-panel/constants';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { clearMessages, createMockFromResponse, toggleDuplicateNotifications, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
@@ -30,14 +33,15 @@ interface JsonRpcSuccessResponse {
   selector: 'ix-message-list',
   standalone: true,
   imports: [
-    AsyncPipe,
     JsonPipe,
     FormsModule,
-    MatCheckboxModule,
+    TnCheckboxComponent,
+    TnInputComponent,
+    TnTooltipDirective,
     TranslateModule,
-    IxInputComponent,
     TnIconComponent,
     TnIconButtonComponent,
+    IxCodeEditorComponent,
   ],
   templateUrl: './message-list.component.html',
   styleUrls: ['./message-list.component.scss'],
@@ -47,12 +51,19 @@ export class MessageListComponent implements AfterViewInit {
   private store$ = inject(Store);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
 
   @ViewChild('messageViewport', { read: ElementRef }) protected messageViewport?: ElementRef<HTMLDivElement>;
-  messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
-  protected duplicateNotificationsEnabled$ = this.store$.select(selectDuplicateNotificationsEnabled);
+  protected messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
+  protected readonly duplicateNotificationsEnabled = toSignal(
+    this.store$.select(selectDuplicateNotificationsEnabled),
+    { initialValue: false },
+  );
+
   autoScroll = true;
   protected hasMessages = false;
+  protected readonly CodeEditorLanguage = CodeEditorLanguage;
   protected formattedMessagesArray: FormattedWebSocketDebugMessage[] = [];
   protected filteredMessagesArray: FormattedWebSocketDebugMessage[] = [];
   protected filterText = '';
@@ -97,7 +108,13 @@ export class MessageListComponent implements AfterViewInit {
 
   protected copyMessage(message: WebSocketDebugMessage): void {
     const messageContent = JSON.stringify(message.message, null, 2);
-    navigator.clipboard.writeText(messageContent);
+    navigator.clipboard.writeText(messageContent)
+      .then(() => {
+        this.snackbar.success(this.translate.instant('Message copied to clipboard'));
+      })
+      .catch(() => {
+        this.snackbar.error(this.translate.instant('Failed to copy message to clipboard'));
+      });
   }
 
   protected toggleMessage(messageId: string): void {
