@@ -10,7 +10,7 @@ import { TnDialog, TnTablePagerComponent,
 import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ContainerImage, ContainerImageUi } from 'app/interfaces/container-image.interface';
+import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -76,8 +76,8 @@ export class DockerImagesListComponent implements OnInit {
       .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
-  doDelete(images: ContainerImageUi[]): void {
-    this.tnDialog.open(DockerImageDeleteDialog, { data: this.prepareImages(images) })
+  doDelete(images: ContainerImage[]): void {
+    this.tnDialog.open(DockerImageDeleteDialog, { data: images })
       .closed
       .pipe(filter(Boolean), take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
@@ -105,12 +105,5 @@ export class DockerImagesListComponent implements OnInit {
     this.tnTable()?.selection.clear();
     this.selectedImages.set([]);
     this.dataProvider.load();
-  }
-
-  private prepareImages(images: ContainerImageUi[]): ContainerImage[] {
-    return images.map((image) => {
-      delete image.selected;
-      return image as ContainerImage;
-    });
   }
 }
