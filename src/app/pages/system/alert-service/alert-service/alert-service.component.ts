@@ -167,18 +167,24 @@ export class AlertServiceComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.renderAlertServiceForm();
-
     if (this.existingAlertService) {
       this.setAlertServiceForEdit(this.existingAlertService);
+    } else {
+      this.renderAlertServiceForm();
     }
   }
 
   private setAlertServiceForEdit(alertService: AlertService): void {
+    // Patch silently: the `type.valueChanges` subscription (wired in the
+    // constructor) sets the sticky `hadTypeChange` dirty flag and re-renders the
+    // child form. Letting this edit-open patch fire it would mark the form dirty
+    // before the user touched anything, prompting a bogus unsaved-changes
+    // confirmation on close. Suppress the event and re-render the child here.
     this.commonForm.patchValue({
       ...alertService,
       type: alertService.attributes.type,
-    });
+    }, { emitEvent: false });
+    this.renderAlertServiceForm();
 
     setTimeout(() => {
       this.alertServiceForm.setValues(alertService.attributes);

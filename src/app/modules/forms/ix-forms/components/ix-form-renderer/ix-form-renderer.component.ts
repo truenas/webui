@@ -37,6 +37,8 @@ const inputTypeMap: Record<NonNullable<InputFieldDefinition<object>['inputType']
  */
 interface RenderField {
   name: string;
+  /** Explicit DOM id for the control host, or undefined to leave it unset. */
+  id: string | undefined;
   type: FormFieldType;
   label: TranslatedString;
   tooltip: TranslatedString;
@@ -171,10 +173,10 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
    *
    * The initial pass is split to keep edit/loadData forms correct: when a patch
    * is coming (`editData`/`loadData`), only the visibility signals are seeded —
-   * from the entity-merged value — and the authoritative enable/disable is left
-   * to the patch's own `valueChanges`, so a field hidden by default still
-   * receives its patched value (Angular's `patchValue` skips disabled controls).
-   * Create-mode forms have nothing to patch, so the full state applies at once.
+   * from the entity-merged value — and the authoritative enable/disable is
+   * deferred to the patch's own `valueChanges`, so it runs against the patched
+   * values rather than the pre-patch defaults. Create-mode forms have nothing to
+   * patch, so the full state applies at once.
    */
   private setupConditionalState(): void {
     const hasConditionalLogic = this.sections.some(
@@ -352,6 +354,7 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
 
     return {
       name: field.name,
+      id: field.id,
       type: field.type,
       label: this.translateOrEmpty(field.label),
       tooltip: this.translateOrEmpty(field.tooltip),

@@ -118,6 +118,12 @@ interface BaseFieldDefinition<T extends object> {
   /** Form control name; also the key in the submitted value object. */
   name: keyof T & string;
   type: FormFieldType;
+  /**
+   * Stable DOM `id` set on the rendered control's host element. Omitted by
+   * default; set it only when something outside the form targets the element
+   * (e.g. a `document.getElementById` deep-link / scroll-into-view).
+   */
+  id?: string;
   /** Untranslated marker strings — the renderer translates them. */
   label?: string;
   tooltip?: string;
@@ -132,10 +138,10 @@ interface BaseFieldDefinition<T extends object> {
    */
   required?: boolean;
   /**
-   * Control starts disabled. NOTE: Angular's `patchValue` skips disabled
-   * controls, so a field that is both `disabled` and populated from `editData`
-   * / `loadData` keeps its `value` (or the per-type default) instead of the
-   * entity value. Give such a field an explicit `value`, or keep it enabled.
+   * Control starts disabled: value is shown but not editable, and is excluded
+   * from the form's `.value` and from `changedValues`. It is still present in
+   * `getRawValue()`, so a `submit` reading `allValues` still sends it, and
+   * `editData`/`loadData` still patch it (so it displays the entity value).
    */
   disabled?: boolean;
   /** Validators added on top of `required`. */

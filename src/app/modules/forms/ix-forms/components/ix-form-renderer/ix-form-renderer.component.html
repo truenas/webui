@@ -23,6 +23,7 @@
                     [label]="field.label"
                     [required]="field.required"
                     [testId]="field.name"
+                    [attr.id]="field.id || null"
                   ></tn-checkbox>
                 </tn-form-field>
               }
@@ -33,6 +34,7 @@
                     [options]="(field.options | async) ?? []"
                     [multiple]="field.multiple"
                     [testId]="field.name"
+                    [attr.id]="field.id || null"
                   ></tn-select>
                 </tn-form-field>
               }
@@ -45,6 +47,7 @@
                     [allowCustomValue]="!field.requireSelection"
                     [placeholder]="field.placeholder"
                     [testId]="field.name"
+                    [attr.id]="field.id || null"
                   ></tn-autocomplete>
                 </tn-form-field>
               }
@@ -60,6 +63,7 @@
                     [readonly]="field.readonly"
                     [placeholder]="field.placeholder"
                     [testId]="field.name"
+                    [attr.id]="field.id || null"
                   ></tn-input>
                 </tn-form-field>
               }

@@ -141,6 +141,27 @@ describe('IxFormRendererComponent', () => {
     });
   });
 
+  describe('explicit DOM id', () => {
+    it('sets the host id only on fields that declare one', () => {
+      const withId: FormDefinition<SampleForm> = {
+        addTitle: asTranslated('Add Sample'),
+        fields: [
+          {
+            name: 'enabled', type: 'checkbox', label: asTranslated('Enabled'), id: 'enable-2fa-global',
+          },
+          { name: 'name', type: 'input', label: asTranslated('Name') },
+        ],
+        submit: submitHandler,
+      };
+      spectator = createComponent({ props: { definition: withId } });
+
+      // Deep-link targets (e.g. document.getElementById scroll/highlight) rely on this id.
+      expect(spectator.query('#enable-2fa-global')).toBeTruthy();
+      // Fields without an explicit id are left without one (no collision with `name`).
+      expect(spectator.query('tn-input')?.getAttribute('id')).toBeNull();
+    });
+  });
+
   describe('validation and submit', () => {
     beforeEach(() => {
       spectator = createComponent({ props: { definition } });

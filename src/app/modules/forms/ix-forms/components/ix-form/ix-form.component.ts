@@ -110,8 +110,8 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
 
   /**
    * Entity for edit mode (null = create); auto-patched in ngOnInit. Pass
-   * Partial<T>, or a raw entity with `transformEditData`. Controls disabled at
-   * init aren't patched — use `initialFormSnapshot` if any is.
+   * Partial<T>, or a raw entity with `transformEditData`. For forms that patch
+   * asynchronously themselves, use `initialFormSnapshot` instead.
    */
   readonly editData = input<Partial<T> | object | null | undefined>(null);
 

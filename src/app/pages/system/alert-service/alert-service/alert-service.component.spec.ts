@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { NEVER, of } from 'rxjs';
+import { NEVER, Observable, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -249,6 +249,21 @@ describe('AlertServiceComponent', () => {
 
       const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.setValues).toHaveBeenCalledWith(existingService.attributes);
+    });
+
+    it('does not request close confirmation right after opening in edit mode', () => {
+      // Edit-open patches `type`, which fires its valueChanges. That subscription
+      // must not flip the sticky dirty flag before the user has touched anything,
+      // or closing a freshly-opened edit prompts a bogus unsaved-changes dialog.
+      const requireConfirmationWhen = spectator.inject(SlideInRef).requireConfirmationWhen as jest.Mock;
+      const confirmFactory = requireConfirmationWhen.mock.calls.at(-1)![0] as () => Observable<boolean>;
+
+      let needsConfirmation: boolean | undefined;
+      confirmFactory().subscribe((value) => {
+        needsConfirmation = value;
+      });
+
+      expect(needsConfirmation).toBe(false);
     });
 
     it('updates an existing alert service when update form is submitted', async () => {

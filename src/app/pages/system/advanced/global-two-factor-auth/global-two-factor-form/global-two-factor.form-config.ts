@@ -36,6 +36,8 @@ export function getGlobalTwoFactorFormConfig(
         type: 'checkbox',
         label: T('Enable Two Factor Authentication Globally'),
         hint: twoFactorConfig.enabled ? undefined : enableWarning,
+        // Stable id targeted by system-security-form's deep-link scroll/highlight.
+        id: 'enable-2fa-global',
       },
       {
         name: 'window',
@@ -48,6 +50,8 @@ export function getGlobalTwoFactorFormConfig(
         name: 'ssh',
         type: 'checkbox',
         label: T('Enable Two Factor Authentication for SSH'),
+        // Stable id targeted by system-security-form's deep-link scroll/highlight.
+        id: 'enable-2fa-ssh',
       },
     ],
     submit: (event) => {
