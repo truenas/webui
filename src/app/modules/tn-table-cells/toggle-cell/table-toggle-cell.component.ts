@@ -55,8 +55,13 @@ export class TableToggleCellComponent {
   private readonly slideToggle = viewChild(TnSlideToggleComponent);
 
   constructor() {
+    // Kept as two independent effects so a `disabled` change never re-runs the
+    // value mirror — otherwise toggling `disabled` mid-flight would clobber the
+    // user's optimistic flip by resetting the control to the stale `checked`.
     effect(() => {
       this.control.setValue(this.checked(), { emitEvent: false });
+    });
+    effect(() => {
       // Drive the disabled state through the control rather than a `[disabled]`
       // binding, which reactive forms warns against on a control-bound element.
       if (this.disabled()) {

@@ -74,4 +74,15 @@ describe('TableToggleCellComponent', () => {
 
     expect(await toggle.isChecked()).toBe(false);
   });
+
+  it('keeps the optimistic flip when the disabled input changes mid-flight', async () => {
+    const toggle = await loader.getHarness(TnSlideToggleHarness);
+    await toggle.uncheck();
+    expect(await toggle.isChecked()).toBe(false);
+
+    // A disabled-state change must not reset the still-pending optimistic flip.
+    spectator.setInput('disabled', true);
+
+    expect(await toggle.isChecked()).toBe(false);
+  });
 });
