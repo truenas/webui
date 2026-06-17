@@ -3,11 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -33,7 +32,9 @@ describe('BootEnvironmentFormComponent', () => {
       mockApi([
         mockCall('boot.environment.clone'),
       ]),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef),
       mockAuth(),
@@ -57,21 +58,19 @@ describe('BootEnvironmentFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('should add source field to DOM', () => {
-      const sourceFieldElement = IxInputHarness.with({ label: 'Source' });
-      expect(sourceFieldElement).toBeTruthy();
+    it('should add source field to DOM', async () => {
+      const sourceField = await loader.getHarnessOrNull(TnInputHarness.with({ name: 'source' }));
+      expect(sourceField).toBeTruthy();
     });
 
     it('sends a create payload with source option to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
       const fields = {
         id: cloneSource,
         target: 'cloned',
       };
 
-      await form.fillForm({
-        Name: fields.target,
-      });
+      const nameInput = await loader.getHarness(TnInputHarness.with({ name: 'target' }));
+      await nameInput.setValue(fields.target);
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
