@@ -637,7 +637,7 @@ p.value {
   }
 }
 
-.report tn-empty {
+.report .loading-indicator {
   animation: tn-empty-flash 2s linear infinite;
   display: block;
   min-height: 277px;
