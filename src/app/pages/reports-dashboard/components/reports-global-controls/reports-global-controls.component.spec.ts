@@ -84,6 +84,15 @@ describe('ReportsGlobalControlsComponent', () => {
 
       expect(await tabSelect.getValue()).toBe('Disk');
     });
+
+    it('navigates to the selected report category when the category changes', async () => {
+      const router = spectator.inject(Router);
+
+      const tabSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
+      await tabSelect.setValue('CPU');
+
+      expect(router.navigate).toHaveBeenCalledWith(['/reportsdashboard', ReportType.Cpu]);
+    });
   });
 
   describe('disk reports', () => {
