@@ -261,16 +261,24 @@ describe('InstalledAppsListComponent', () => {
     ]);
   });
 
-  it('handles sortChanged with empty apps array correctly', () => {
+  it('re-sorts the current rows when no apps override is passed', () => {
     const component = spectator.component;
-    const originalDataSource = [...apps];
-    component.dataSource.set(originalDataSource);
+    component.dataSource.set([...apps]);
 
-    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as AppsSortDirection }, []);
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as AppsSortDirection });
 
     expect(component.dataSource()).toHaveLength(2);
     expect(component.dataSource()[0].name).toBe('test-app-1');
     expect(component.dataSource()[1].name).toBe('test-app-2');
+  });
+
+  it('clears the table when called with an explicitly empty apps array', () => {
+    const component = spectator.component;
+    component.dataSource.set([...apps]);
+
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as AppsSortDirection }, []);
+
+    expect(component.dataSource()).toHaveLength(0);
   });
 
   it('handles sortChanged with valid apps array correctly', () => {

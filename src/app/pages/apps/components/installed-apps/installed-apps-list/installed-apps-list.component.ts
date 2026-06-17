@@ -484,7 +484,10 @@ export class InstalledAppsListComponent implements OnInit {
 
   setDatasourceWithSort(sort: AppsSort, apps?: App[]): void {
     this.installedAppsStore.setSortingInfo(sort);
-    const sourceArray = apps && apps.length > 0 ? apps : this.dataSource();
+    // `apps` is the override list (e.g. a fresh load); when omitted we re-sort the
+    // current rows. Use ?? (not a truthy-length check) so an explicit empty array
+    // clears the table instead of resurrecting stale rows.
+    const sourceArray = apps ?? this.dataSource();
     this.dataSource.set([...sourceArray].sort((a, b) => {
       const isAsc = sort.direction === 'asc';
 

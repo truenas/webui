@@ -55,11 +55,11 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
   hiddenColumns = new SelectionModel<Column<T, ColumnComponent<T>>>(true, []);
   private defaultColumns: Column<T, ColumnComponent<T>>[];
 
-  get isOnlyOneColumnSelected(): boolean {
+  private get isOnlyOneColumnSelected(): boolean {
     return this.columns().filter((column) => !column.hidden && !!column.title).length === 1;
   }
 
-  get isAllSelected(): boolean {
+  protected get isAllSelected(): boolean {
     return !this.columns().filter((column) => column.hidden && !!column.title).length;
   }
 
@@ -160,7 +160,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     });
   }
 
-  toggleAll(): void {
+  protected toggleAll(): void {
     const selectableColumns = this.columns().filter((col) => !!col.title);
 
     if (this.isAllSelected) {
@@ -174,15 +174,15 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     this.emitColumnsChange();
   }
 
-  isSelected(column: Column<T, ColumnComponent<T>>): boolean {
+  protected isSelected(column: Column<T, ColumnComponent<T>>): boolean {
     return this.hiddenColumns.isSelected(column);
   }
 
-  resetToDefaults(): void {
+  protected resetToDefaults(): void {
     this.setInitialState();
   }
 
-  toggle(column: Column<T, ColumnComponent<T>>): void {
+  protected toggle(column: Column<T, ColumnComponent<T>>): void {
     if (this.isOnlyOneColumnSelected && !this.isSelected(column)) {
       return;
     }
@@ -190,7 +190,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     this.emitColumnsChange();
   }
 
-  saveColumnPreferences(): void {
+  protected saveColumnPreferences(): void {
     if (this.columnPreferencesKey()) {
       this.store$.dispatch(preferredColumnsUpdated({
         tableDisplayedColumns: [{
@@ -201,7 +201,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     }
   }
 
-  enableResetButton(): void {
+  protected enableResetButton(): void {
     this.isResetToDefaultDisabled.set(false);
   }
 

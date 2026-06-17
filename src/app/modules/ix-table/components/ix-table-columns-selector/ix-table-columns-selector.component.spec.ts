@@ -116,19 +116,19 @@ describe('IxTableColumnsSelectorComponent', () => {
   });
 
   it('"Reset to Defaults" is disabled initially', () => {
-    jest.spyOn(spectator.component, 'resetToDefaults').mockImplementation();
-    clickMenuItem('Reset to Defaults');
-    expect(spectator.component.resetToDefaults).not.toHaveBeenCalled();
+    expect(getMenuItem('Reset to Defaults').disabled).toBe(true);
   });
 
-  it('checks when "Reset to Defaults" is pressed', () => {
+  it('restores default columns when "Reset to Defaults" is pressed', () => {
     clickMenuItem('Users');
+    expect(getMenuItem('Reset to Defaults').disabled).toBe(false);
 
-    jest.spyOn(spectator.component, 'resetToDefaults').mockImplementation();
     clickMenuItem('Reset to Defaults');
 
-    expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
-    expect(spectator.component.resetToDefaults).toHaveBeenCalled();
+    const hiddenTitles = spectator.component.columns()
+      .filter((col) => col.hidden && col.title)
+      .map((col) => col.title);
+    expect(hiddenTitles).toEqual(['Description']);
   });
 
   it('toggles an individual column correctly', () => {
