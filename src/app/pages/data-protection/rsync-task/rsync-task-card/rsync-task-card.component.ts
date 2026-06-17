@@ -204,7 +204,7 @@ export class RsyncTaskCardComponent extends JobTaskCardBase<RsyncTaskUi> {
     });
   }
 
-  protected onChangeEnabledState(rsyncTask: RsyncTaskUi): void {
+  protected onChangeEnabledState(rsyncTask: RsyncTaskUi, toggle: TableToggleCellComponent): void {
     this.api
       .call('rsynctask.update', [rsyncTask.id, { enabled: !rsyncTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -213,7 +213,7 @@ export class RsyncTaskCardComponent extends JobTaskCardBase<RsyncTaskUi> {
           this.reload();
         },
         error: (error: unknown) => {
-          this.reload();
+          toggle.revert();
           this.errorHandler.showErrorModal(error);
         },
       });

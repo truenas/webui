@@ -49,4 +49,29 @@ describe('TableToggleCellComponent', () => {
 
     expect(emitted).toHaveBeenCalledWith(false);
   });
+
+  it('shows the user flip immediately without waiting for the parent (optimistic)', async () => {
+    const toggle = await loader.getHarness(TnSlideToggleHarness);
+    await toggle.uncheck();
+
+    expect(await toggle.isChecked()).toBe(false);
+  });
+
+  it('returns to the checked input when the parent calls revert() after a failed update', async () => {
+    const toggle = await loader.getHarness(TnSlideToggleHarness);
+    await toggle.uncheck();
+    expect(await toggle.isChecked()).toBe(false);
+
+    spectator.component.revert();
+
+    expect(await toggle.isChecked()).toBe(true);
+  });
+
+  it('reflects the checked input after the parent confirms the change', async () => {
+    const toggle = await loader.getHarness(TnSlideToggleHarness);
+    await toggle.uncheck();
+    spectator.setInput('checked', false);
+
+    expect(await toggle.isChecked()).toBe(false);
+  });
 });
