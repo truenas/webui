@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   viewChild,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -29,7 +28,6 @@ import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-
     TnIconComponent,
     RequiresRolesDirective,
     AppSettingsButtonComponent,
-    RouterLink,
     AppDetailsPanelComponent,
     MasterDetailViewComponent,
     InstalledAppsListComponent,

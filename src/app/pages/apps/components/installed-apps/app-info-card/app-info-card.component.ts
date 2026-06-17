@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, output, signal, WritableSignal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardAction, TnCardComponent, TnCardHeaderDirective, TnDialog, TnIconButtonComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnDialog, TnIconButtonComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
@@ -18,7 +18,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { App } from 'app/interfaces/app.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
@@ -45,6 +44,7 @@ import { RedirectService } from 'app/services/redirect.service';
     TnCardComponent,
     TnCardHeaderDirective,
     TnButtonComponent,
+    TnCardFooterActionsDirective,
     TnIconButtonComponent,
     TnMenuComponent,
     TnMenuItemComponent,
@@ -72,37 +72,13 @@ export class AppInfoCardComponent {
   private slideIn = inject(SlideIn);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
-  private authService = inject(AuthService);
 
   readonly app = input.required<App>();
   readonly startApp = output();
   readonly stopApp = output();
   protected readonly requiredRoles = [Role.AppsWrite];
-  private readonly hasRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
-
-  protected readonly rollbackAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasRole() || !this.isRollbackPossible()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Roll Back'),
-      testId: `${this.app().name}-rollback`,
-      handler: () => this.rollbackApp(),
-    };
-  });
-
-  protected readonly deleteAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Delete'),
-      testId: `${this.app().name}-delete`,
-      handler: () => this.deleteButtonPressed(),
-    };
-  });
 
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);

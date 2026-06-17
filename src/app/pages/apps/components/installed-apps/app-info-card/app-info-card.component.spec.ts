@@ -9,6 +9,7 @@ import { TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting } from '@truena
 import { of } from 'rxjs';
 import { mockApi, mockJob, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AppState } from 'app/enums/app-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
@@ -187,7 +188,7 @@ describe('AppInfoCardComponent', () => {
   it('shows header', async () => {
     setupTest(fakeApp);
     spectator.detectChanges();
-    expect(spectator.query('.tn-card__title')).toHaveText('Application Info');
+    expect(spectator.query('.detail-card-title')).toHaveText('Application Info');
     expect(await (await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }))).getLabel()).toBe('Edit');
 
     const menu = await openMenu();
@@ -316,6 +317,26 @@ describe('AppInfoCardComponent', () => {
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppRollbackModalComponent, {
       data: fakeApp,
     });
+  });
+
+  it('emits (stopApp) from the footer Stop button when the app is running', async () => {
+    setupTest({ ...fakeApp, state: AppState.Running });
+    jest.spyOn(spectator.component.stopApp, 'emit');
+
+    const stopButton = await loader.getHarness(TnButtonHarness.with({ label: 'Stop' }));
+    await stopButton.click();
+
+    expect(spectator.component.stopApp.emit).toHaveBeenCalled();
+  });
+
+  it('emits (startApp) from the footer Start button when the app is stopped', async () => {
+    setupTest({ ...fakeApp, state: AppState.Stopped });
+    jest.spyOn(spectator.component.startApp, 'emit');
+
+    const startButton = await loader.getHarness(TnButtonHarness.with({ label: 'Start' }));
+    await startButton.click();
+
+    expect(spectator.component.startApp.emit).toHaveBeenCalled();
   });
 
   it('handles malformed URLs gracefully', () => {

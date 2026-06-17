@@ -2,11 +2,9 @@
   class="card"
   padding="small"
   elevation="none"
-  [primaryAction]="rollbackAction()"
-  [secondaryAction]="deleteAction()"
 >
   <div tnCardHeader class="card-header">
-    <h3 class="tn-card__title">{{ 'Application Info' | translate }}</h3>
+    <h3 class="detail-card-title">{{ 'Application Info' | translate }}</h3>
     <div class="header-actions">
       <tn-button
         variant="outline"
@@ -30,26 +28,9 @@
     The overflow menu trigger shares the projected header with the custom Edit button
     (see .header-actions above), so we host the menu inline rather than via tn-card's
     [headerMenu] slot — that slot renders its own trigger and can't sit beside Edit.
-    Roll Back / Delete remain on the card's primaryAction/secondaryAction footer slots.
+    Start/Stop, Roll Back and Delete stay in the footer (see [tnCardFooterActions]).
   -->
   <tn-menu #appInfoMenu>
-    @if (isAppStopped()) {
-      <tn-menu-item
-        *ixRequiresRoles="requiredRoles"
-        [testId]="[app().name, 'start']"
-        [label]="'Start' | translate"
-        [disabled]="inProgress()"
-        (itemClick)="startApp.emit()"
-      ></tn-menu-item>
-    } @else {
-      <tn-menu-item
-        *ixRequiresRoles="requiredRoles"
-        [testId]="[app().name, 'stop']"
-        [label]="'Stop' | translate"
-        [disabled]="inProgress()"
-        (itemClick)="stopApp.emit()"
-      ></tn-menu-item>
-    }
     <tn-menu-item
       *ixRequiresRoles="requiredRoles"
       [testId]="[app().name, 'update']"
@@ -137,4 +118,53 @@
       }
     </div>
   </div>
+
+  <ng-template tnCardFooterActions>
+    <div class="footer-actions">
+      <!--
+        Start/Stop live in the installed-apps list's controls column on desktop;
+        the detail card only surfaces them when that list is hidden (the mobile/
+        tablet master-detail view), matching the pre-migration .cell-status-actions.
+      -->
+      <div class="status-actions">
+        @if (isAppStopped()) {
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            variant="outline"
+            [testId]="[app().name, 'start']"
+            [label]="'Start' | translate"
+            [disabled]="inProgress()"
+            (onClick)="startApp.emit()"
+          ></tn-button>
+        } @else {
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            variant="outline"
+            [testId]="[app().name, 'stop']"
+            [label]="'Stop' | translate"
+            [disabled]="inProgress()"
+            (onClick)="stopApp.emit()"
+          ></tn-button>
+        }
+      </div>
+
+      @if (isRollbackPossible()) {
+        <tn-button
+          *ixRequiresRoles="requiredRoles"
+          variant="outline"
+          [testId]="[app().name, 'rollback']"
+          [label]="'Roll Back' | translate"
+          (onClick)="rollbackApp()"
+        ></tn-button>
+      }
+
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        variant="outline"
+        [testId]="[app().name, 'delete']"
+        [label]="'Delete' | translate"
+        (onClick)="deleteButtonPressed()"
+      ></tn-button>
+    </div>
+  </ng-template>
 </tn-card>

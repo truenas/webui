@@ -78,6 +78,24 @@
   }
 }
 
+.footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.status-actions {
+  // Hidden on desktop (Start/Stop live in the list's controls column there);
+  // surfaced only in the mobile/tablet master-detail view, where the list is gone.
+  display: none;
+
+  @media (max-width: $breakpoint-tablet) {
+    display: contents;
+  }
+}
+
 .source-link {
   white-space: normal;
   word-break: break-word;

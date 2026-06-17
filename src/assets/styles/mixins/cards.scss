@@ -178,11 +178,14 @@
 // Shared overrides for the apps detail cards migrated to tn-card (app-info,
 // app-metadata, app-notes). Hoisted here so the three siblings can't drift.
 @mixin tn-detail-card {
-  // TEMP (NAS-141021): the projected title doesn't inherit tn-card's scoped
-  // .tn-card__title style (view encapsulation), so match the library's title
-  // sizing explicitly to keep all detail-card titles consistent. Drop once the
-  // library exposes a styled-title projection slot.
-  :host ::ng-deep .tn-card__title {
+  // TEMP (NAS-141021): cards that pass tn-card's [title] input get the library's
+  // own scoped .tn-card__title; cards that project a custom header (app-info,
+  // app-metadata, app-notes) instead mark their <h3> with .detail-card-title,
+  // since the library's scoped style can't reach projected content. Style both
+  // here so every detail-card title stays consistent. Drop once the library
+  // exposes a styled-title projection slot.
+  :host ::ng-deep .tn-card__title,
+  :host ::ng-deep .detail-card-title {
     font-size: 1.125rem;
     font-weight: 600;
     line-height: 1.5;

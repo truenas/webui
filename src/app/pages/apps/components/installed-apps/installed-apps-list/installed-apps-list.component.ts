@@ -206,10 +206,10 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private clearSelection(): void {
-    const table = this.table();
-    if (table) {
-      [...this.checkedApps].forEach((app) => table.toggleRowSelection(app));
-    }
+    // selection.clear() resets the table's own SelectionModel without emitting
+    // (selectionChange) (that output only fires on user interaction), so mirror
+    // the cleared state into checkedApps ourselves. Matches docker-images-list.
+    this.table()?.selection.clear();
     this.checkedApps = [];
     this.cdr.markForCheck();
   }
@@ -332,7 +332,13 @@ export class InstalledAppsListComponent implements OnInit {
     ).subscribe({
       next: ([,, apps]) => {
         this.setDatasourceWithSort(this.sortingInfo(), apps);
-        this.selectAppForDetails(this.appId());
+        // Preserve the user's current selection across data refreshes (e.g. after
+        // start/stop, which re-emits installedApps$). viewDetails() updates the URL
+        // via replaceState without touching the route params, so this.appId() only
+        // reflects the initial deep-link — falling back to it on every refresh would
+        // snap the selection back to the wrong app (or selectFirstApp) and rewrite
+        // the URL. Only use it when nothing is selected yet.
+        this.selectAppForDetails(this.selectedApp?.id ?? this.appId() ?? null);
         this.cdr.markForCheck();
       },
     });
