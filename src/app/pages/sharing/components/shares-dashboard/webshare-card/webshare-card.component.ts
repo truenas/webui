@@ -44,12 +44,12 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
-import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -86,7 +86,7 @@ import { selectService } from 'app/store/services/services.selectors';
     IxTablePagerShowMoreComponent,
     CardAlertBadgeComponent,
     ServiceWebshareComponent,
-    ShareActionsCellComponent,
+    TableActionsCellComponent,
   ],
 })
 export class WebShareCardComponent implements OnInit {
