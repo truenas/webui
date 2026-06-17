@@ -1,3 +1,42 @@
 @import '../../components/storage-tier-cell/tier-cell-host';
 
 @include tier-cell-host;
+
+:host {
+  display: block;
+  max-width: 1080px;
+}
+
+// The library defaults tn-card to height: 100%, which suits the equal-height
+// dashboard grid but makes this full-page list card fill the viewport. Let it
+// grow to content instead.
+tn-card {
+  display: block;
+  height: auto;
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+// TEMP: tn-table-pager hardcodes a bordered, boxed footer on its host with no
+// input to disable it. Drop the box and keep just a top divider so the pager
+// reads as the table's footer. Remove once the library exposes the option.
+tn-table-pager {
+  background-color: transparent;
+  border: none;
+  border-top: 1px solid var(--tn-lines);
+}
+
+// TEMP: tn-table rounds all four corners via the internal .tn-table__table
+// border-radius, which rounds the header's top corners. Square them so the
+// table sits flush inside the card. Remove once the library exposes control
+// over the table's corner radius.
+:host ::ng-deep tn-table .tn-table__table {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
