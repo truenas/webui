@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -5,18 +6,20 @@ import {
   DestroyRef,
   OnInit,
   inject,
+  input,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnDialog, TnFormFieldComponent, TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   endWith, Observable, of,
 } from 'rxjs';
@@ -44,24 +47,20 @@ import {
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
@@ -77,35 +76,41 @@ import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
+export interface SmbFormData {
+  existingSmbShare?: SmbShare;
+  defaultSmbShare?: SmbShare;
+}
+
 @Component({
   selector: 'ix-smb-form',
   templateUrl: './smb-form.component.html',
+  styleUrls: ['./smb-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    IxChipsComponent,
+    TnChipInputComponent,
     IxGroupChipsComponent,
     IxErrorsComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
     WarningComponent,
     SmbUsersWarningComponent,
     SmbExtensionsWarningComponent,
   ],
 })
-export class SmbFormComponent implements OnInit, AfterViewInit {
+export class SmbFormComponent extends SidePanelForm implements OnInit, AfterViewInit {
   formatter = inject(IxFormatterService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
@@ -122,15 +127,19 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private validatorsService = inject(IxValidatorsService);
   private store$ = inject<Store<ServicesState>>(Store);
   private smbValidationService = inject(SmbValidationService);
-  slideInRef = inject<SlideInRef<{
-    existingSmbShare?: SmbShare;
-    defaultSmbShare?: SmbShare;
-  } | undefined, boolean>>(SlideInRef);
+
+  /** Form data when hosted in a `<tn-side-panel>` (the legacy SlideIn host provides it via `slideInRef`). */
+  readonly data = input<SmbFormData>();
 
   private destroyRef = inject(DestroyRef);
 
   private existingSmbShare: SmbShare | undefined;
   private defaultSmbShare: SmbShare | undefined;
+
+  /** Resolves form data from whichever host opened the form. */
+  private get incomingData(): SmbFormData | undefined {
+    return (this.slideInRef?.getData() as SmbFormData | undefined) ?? this.data();
+  }
 
   protected isLoading = signal(false);
   protected showLegacyWarning = signal(false);
@@ -375,15 +384,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ]],
   });
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
-    this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
-    this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
+  constructor() {
+    super();
     this.setupExplorerRootNodes();
-    this.purposeOptions$ = of(this.buildPurposeOptions());
   }
 
   get shouldShowNamingSchema(): boolean {
@@ -402,6 +407,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.existingSmbShare = this.incomingData?.existingSmbShare;
+    this.defaultSmbShare = this.incomingData?.defaultSmbShare;
+    this.purposeOptions$ = of(this.buildPurposeOptions());
+
     this.setupPurposeControl();
     this.loadSmbConfig();
 
@@ -676,7 +685,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  protected submit(): void {
+  protected onSubmit(): void {
     if (this.form.invalid || this.isAsyncValidatorPending) {
       this.form.markAllAsTouched();
       if (this.hasAdvancedErrorsInternal()) {
@@ -767,11 +776,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
               );
             }
             this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-            this.slideInRef.close({ response: true });
+            this.close(true);
           });
         } else {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         }
       },
       error: (error: unknown) => {

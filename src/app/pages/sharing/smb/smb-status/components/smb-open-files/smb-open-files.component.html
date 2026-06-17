@@ -1,25 +1,36 @@
-<mat-card>
-  <mat-toolbar-row>
-    <h3>{{ 'Open Files' | translate }}</h3>
-  </mat-toolbar-row>
-  <mat-card-content>
-    <ix-table
-      class="table"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-    >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      ></tbody>
-    </ix-table>
-    <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
-  </mat-card-content>
-</mat-card>
+<tn-card [padContent]="false">
+  <h3 tnCardHeader class="tn-card__title">{{ 'Open Files' | translate }}</h3>
+
+  @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+  <tn-table
+    class="table"
+    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [displayedColumns]="displayedColumns()"
+    [trackBy]="trackByOpenFile"
+    [loading]="!!(dataProvider.isLoading$ | async)"
+    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyIcon]="emptyConf?.icon ?? ''"
+  >
+    <ng-container [tnColumnDef]="'server_id'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Server' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span [ixTest]="[('Server' | translate), uniqueRowTag(row), 'row-text']">{{ formatServer(row) }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'uid'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Username' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span [ixTest]="[('Username' | translate), uniqueRowTag(row), 'row-text']">{{ formatUsername(row) }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'opened_at'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Opened at' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span [ixTest]="[('Opened at' | translate), uniqueRowTag(row), 'row-text']">{{ row.opened_at }}</span>
+      </ng-template>
+    </ng-container>
+  </tn-table>
+  <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+</tn-card>

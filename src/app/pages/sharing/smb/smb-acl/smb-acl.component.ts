@@ -1,12 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input, Signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { isNumber } from 'lodash-es';
 import {
   concatMap, firstValueFrom, mergeMap, Observable, of, from,
@@ -31,11 +31,9 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -59,24 +57,23 @@ interface FormAclEntry {
   styleUrls: ['./smb-acl.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxListComponent,
     IxListItemComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     IxComboboxComponent,
     IxErrorsComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class SmbAclComponent implements OnInit {
+export class SmbAclComponent extends SidePanelForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -84,16 +81,26 @@ export class SmbAclComponent implements OnInit {
   private translate = inject(TranslateService);
   private userService = inject(UserService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<string, boolean>>(SlideInRef);
 
-  form = this.formBuilder.group({
+  /** Share name when hosted in a `<tn-side-panel>` (the legacy SlideIn host provides it via `slideInRef`). */
+  readonly data = input<string>();
+
+  protected isLoading = signal(false);
+
+  protected readonly form = this.formBuilder.group({
     entries: this.formBuilder.array<FormAclEntry>([]),
   });
 
-  protected isLoading = signal(false);
+  readonly canSubmit: Signal<boolean> = this.trackCanSubmit(this.isLoading);
+
   protected shareName: string;
 
   private shareAclName: string;
+
+  /** Resolves share name from whichever host opened the form. */
+  private get incomingData(): string | undefined {
+    return (this.slideInRef?.getData() as string | undefined) ?? this.data();
+  }
 
   readonly tags$ = of(mapToOptions(smbAclTagLabels, this.translate));
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
@@ -132,16 +139,8 @@ export class SmbAclComponent implements OnInit {
 
   protected groupProvider: GroupComboboxProvider;
 
-  constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.shareName = slideInRef.getData();
-  }
-
   ngOnInit(): void {
+    this.shareName = this.incomingData ?? '';
     if (this.shareName) {
       this.setSmbShareName();
     }
@@ -169,7 +168,7 @@ export class SmbAclComponent implements OnInit {
     this.form.controls.entries.removeAt(index);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     of(undefined)
@@ -179,7 +178,7 @@ export class SmbAclComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

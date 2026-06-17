@@ -1,39 +1,63 @@
-<mat-card>
-  <mat-toolbar-row>
-    <h3>{{ 'Notifications' | translate }}</h3>
+<tn-card [padContent]="false">
+  <h3 tnCardHeader class="tn-card__title">{{ 'Notifications' | translate }}</h3>
 
-    <div class="actions action-icon">
+  <ng-template tnCardHeaderActions>
+    <div class="actions">
       <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
 
-      <ix-table-columns-selector
+      <ix-table-column-picker
+        [columns]="columns()"
         [columnPreferencesKey]="'smbNotificationList'"
-        [columns]="columns"
-        (columnsChange)="columnsChange($event)"
-      ></ix-table-columns-selector>
+        (columnsChange)="onColumnsChange($event)"
+      ></ix-table-column-picker>
 
-      <button mat-button color="primary" ixTest="refresh-data" (click)="loadData()">
-        {{ 'Refresh' | translate }}
-      </button>
+      <tn-button
+        color="primary"
+        [testId]="'refresh-data'"
+        [label]="'Refresh' | translate"
+        (onClick)="loadData()"
+      ></tn-button>
     </div>
-  </mat-toolbar-row>
-  <mat-card-content>
-    <ix-table
-      class="table"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-    >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      ></tbody>
-    </ix-table>
-    <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
-  </mat-card-content>
-</mat-card>
+  </ng-template>
+
+  @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+  <tn-table
+    class="table"
+    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [displayedColumns]="displayedColumns()"
+    [trackBy]="trackByNotification"
+    [loading]="!!(dataProvider.isLoading$ | async)"
+    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyIcon]="emptyConf?.icon ?? ''"
+    (sortChange)="onSortChange($event)"
+  >
+    <ng-container [tnColumnDef]="'path'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']">{{ row.path }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'filter'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Filter' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span [ixTest]="[('Filter' | translate), uniqueRowTag(row), 'row-text']">{{ row.filter }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'subdir_filter'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Subdir Filter' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span [ixTest]="[('Subdir Filter' | translate), uniqueRowTag(row), 'row-text']">{{ row.subdir_filter }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'creation_time'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Creation Time' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span [ixTest]="[('Creation Time' | translate), uniqueRowTag(row), 'row-text']">{{ row.creation_time }}</span>
+      </ng-template>
+    </ng-container>
+  </tn-table>
+  <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+</tn-card>

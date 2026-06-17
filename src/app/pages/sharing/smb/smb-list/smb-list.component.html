@@ -1,62 +1,186 @@
-<mat-card>
-  <ix-fake-progress-bar [loading]="!!(dataProvider.isLoading$ | async)"></ix-fake-progress-bar>
-  <mat-toolbar-row>
-    <h3>{{ 'SMB' | translate }}</h3>
+<tn-card [padContent]="false">
+  <div tnCardHeader class="header-title">
+    <h3 class="tn-card__title">{{ 'SMB' | translate }}</h3>
     <ix-service-state-button
       [service]="service$ | async"
       [count]="+(dataProvider.currentPageCount$ | async)"
     ></ix-service-state-button>
-    <div class="actions action-icon">
+  </div>
+
+  <ng-template tnCardHeaderActions>
+    <div class="actions">
       <ix-basic-search
         [query]="searchQuery()"
         (queryChange)="onListFiltered($event)"
       ></ix-basic-search>
 
-      <a mat-button ixTest="smb-sessions" routerLink="/sharing/smb/status/sessions">
-        {{ 'SMB Sessions' | translate }}
-      </a>
+      <tn-button
+        [testId]="'smb-sessions'"
+        [routerLink]="['/sharing', 'smb', 'status', 'sessions']"
+        [label]="'SMB Sessions' | translate"
+      ></tn-button>
 
-      <ix-table-columns-selector
+      <ix-table-column-picker
+        [columns]="columns()"
         [columnPreferencesKey]="'smbList'"
-        [columns]="columns"
-        (columnsChange)="columnsChange($event)"
-      ></ix-table-columns-selector>
+        (columnsChange)="onColumnsChange($event)"
+      ></ix-table-column-picker>
 
-      <button
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
         color="primary"
-        ixTest="add-smb-share"
+        [testId]="'add-smb-share'"
         [ixUiSearch]="searchableElements.elements.createSmbShare"
-        (click)="doAdd()"
-      >
-        {{ 'Add' | translate }}
-      </button>
+        [label]="'Add' | translate"
+        (onClick)="doAdd()"
+      ></tn-button>
     </div>
-  </mat-toolbar-row>
-  <mat-card-content>
-    @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
-      <ix-empty [conf]="emptyConfig"></ix-empty>
-    } @else {
-      <ix-table
-        [ixUiSearch]="searchableElements.elements.smbList"
-        [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-        [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-      >
-        <thead
-          ix-table-head
-          [columns]="columns"
-          [dataProvider]="dataProvider"
-        ></thead>
-        <tbody
-          ix-table-body
-          [columns]="columns"
-          [dataProvider]="dataProvider"
-          [isLoading]="!!(dataProvider.isLoading$ | async)"
-        ></tbody>
-      </ix-table>
+  </ng-template>
 
-      <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
-    }
-  </mat-card-content>
-</mat-card>
+  @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
+    <tn-empty
+      icon="smb-share"
+      iconLibrary="custom"
+      iconSize="56px"
+      [title]="'Well supported by all major operating systems, allows for easy authentication and authorization. Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.' | translate"
+    ></tn-empty>
+  } @else {
+    @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+    <tn-table
+      class="table"
+      [ixUiSearch]="searchableElements.elements.smbList"
+      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns()"
+      [trackBy]="trackBySmbId"
+      [loading]="!!(dataProvider.isLoading$ | async)"
+      [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+      [emptyIcon]="emptyConf?.icon ?? ''"
+      (sortChange)="onSortChange($event)"
+    >
+      <ng-container [tnColumnDef]="'name'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.name ? (row.name | translate) : ''"
+          >{{ row.name }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'path'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          @let path = getPathValue(row);
+          <span
+            [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="path ? (path | translate) : ''"
+          >{{ path }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'comment'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            [ixTest]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.comment ? (row.comment | translate) : ''"
+          >{{ row.comment }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
+        <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-toggle-cell
+            [title]="'Enabled' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+            [checked]="!!row.enabled"
+            [disabled]="isToggleDisabled(row)"
+            [tooltip]="getEnabledTooltip(row)"
+            [requiredRoles]="requiredRoles"
+            (toggled)="onToggle(row)"
+          ></ix-table-toggle-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'audit'">
+        <ng-template tnHeaderCellDef>{{ 'Audit Logging' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            [ixTest]="[('Audit Logging' | translate), uniqueRowTag(row), 'row-yesno']"
+          >{{ !!row.audit?.enable | yesNo | translate }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'tier'">
+        <ng-template tnHeaderCellDef>{{ 'Storage Tier' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-tier-status [tier]="row.tier" />
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'actions'" [width]="'120px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-actions-cell
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-table-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
+
+    <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+  }
+</tn-card>
+
+<tn-side-panel
+  [title]="formTitle()"
+  [closeGuard]="closeFormGuard"
+  [(open)]="formOpen"
+>
+  @if (formOpen()) {
+    <ix-smb-form
+      [data]="formData()"
+      (closed)="onFormClosed($event)"
+    ></ix-smb-form>
+  }
+  @if (smbForm(); as form) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>
+
+<tn-side-panel
+  [title]="'Edit Share ACL' | translate"
+  [closeGuard]="closeAclGuard"
+  [(open)]="aclOpen"
+>
+  @if (aclOpen()) {
+    <ix-smb-acl
+      [data]="aclShareName()"
+      (closed)="onAclClosed($event)"
+    ></ix-smb-acl>
+  }
+  @if (aclForm(); as form) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

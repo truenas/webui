@@ -21,7 +21,9 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
 export class SmbUsersWarningComponent implements OnInit {
   private router = inject(Router);
   private smbValidationService = inject(SmbValidationService);
-  private slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef);
+  // Optional: present when smb-form is hosted in the legacy SlideIn, absent when
+  // hosted in a tn-side-panel (navigating away tears the panel down on its own).
+  private slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
   protected hasSmbUsers = signal(true);
@@ -31,7 +33,7 @@ export class SmbUsersWarningComponent implements OnInit {
   }
 
   protected closeForm(routerLink: string[]): void {
-    this.slideInRef.close({ response: undefined });
+    this.slideInRef?.close({ response: undefined });
     this.router.navigate(routerLink);
   }
 

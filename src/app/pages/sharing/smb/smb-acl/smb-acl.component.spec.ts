@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
@@ -126,29 +126,25 @@ describe('SmbAclComponent', () => {
   describe('user ace', () => {
     it('shows user combobox when Who is user', async () => {
       await entriesList.pressAddButton();
-      const newListItem = await entriesList.getLastListItem();
-      await newListItem.fillForm({
-        Who: 'User',
-      });
+      const entries = spectator.component.form.controls.entries;
+      entries.at(entries.length - 1).controls.ae_who.setValue(NfsAclTag.User);
+      spectator.detectChanges();
 
       const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
       expect(userSelect).toExist();
 
-      const entries = spectator.component.form.value.entries;
-      expect(entries[entries.length - 1]).toEqual(
+      const entryValues = spectator.component.form.value.entries;
+      expect(entryValues[entryValues.length - 1]).toEqual(
         expect.not.objectContaining({ user: 0 }),
       );
     });
 
     it('allows custom values in User combobox', async () => {
-      const newListItem = await entriesList.getLastListItem();
-      await newListItem.fillForm({
-        Who: 'User',
-      });
+      const entries = spectator.component.form.controls.entries;
+      entries.at(entries.length - 1).controls.ae_who.setValue(NfsAclTag.User);
+      spectator.detectChanges();
 
-      const fields = await newListItem.getControlHarnessesDict();
-
-      const userCombobox = fields['User'] as IxComboboxHarness;
+      const userCombobox = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
       await userCombobox.writeCustomValue('root');
 
       // Wait for debounced value update and autocomplete resolution
@@ -160,8 +156,8 @@ describe('SmbAclComponent', () => {
       const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
       expect(userSelect).toExist();
 
-      const entries = spectator.component.form.value.entries;
-      expect(entries[entries.length - 1]).toEqual(
+      const entryValues = spectator.component.form.value.entries;
+      expect(entryValues[entryValues.length - 1]).toEqual(
         expect.objectContaining({ user: 0 }),
       );
     });
@@ -170,29 +166,25 @@ describe('SmbAclComponent', () => {
   describe('group ace', () => {
     it('shows group combobox when Who is group', async () => {
       await entriesList.pressAddButton();
-      const newListItem = await entriesList.getLastListItem();
-      await newListItem.fillForm({
-        Who: 'Group',
-      });
+      const entries = spectator.component.form.controls.entries;
+      entries.at(entries.length - 1).controls.ae_who.setValue(NfsAclTag.UserGroup);
+      spectator.detectChanges();
 
       const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
       expect(groupSelect).toExist();
 
-      const entries = spectator.component.form.value.entries;
-      expect(entries[entries.length - 1]).toEqual(
+      const entryValues = spectator.component.form.value.entries;
+      expect(entryValues[entryValues.length - 1]).toEqual(
         expect.not.objectContaining({ group: 1 }),
       );
     });
 
     it('allows custom values in Group combobox', async () => {
-      const newListItem = await entriesList.getLastListItem();
-      await newListItem.fillForm({
-        Who: 'Group',
-      });
+      const entries = spectator.component.form.controls.entries;
+      entries.at(entries.length - 1).controls.ae_who.setValue(NfsAclTag.UserGroup);
+      spectator.detectChanges();
 
-      const fields = await newListItem.getControlHarnessesDict();
-
-      const groupCombobox = fields['Group'] as IxComboboxHarness;
+      const groupCombobox = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
       await groupCombobox.writeCustomValue('wheel');
 
       // Wait for debounced value update and autocomplete resolution
@@ -204,47 +196,46 @@ describe('SmbAclComponent', () => {
       const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
       expect(groupSelect).toExist();
 
-      const entries = spectator.component.form.value.entries;
-      expect(entries[entries.length - 1]).toEqual(
+      const entryValues = spectator.component.form.value.entries;
+      expect(entryValues[entryValues.length - 1]).toEqual(
         expect.objectContaining({ group: 1 }),
       );
     });
   });
 
-  it('loads and shows current acl for a share', async () => {
-    const listValues = await entriesList.getFormValues();
-
+  it('loads and shows current acl for a share', () => {
     expect(spectator.inject(ApiService).call)
       .toHaveBeenCalledWith('sharing.smb.getacl', [{ share_name: 'myshare' }]);
 
-    expect(listValues).toEqual([
-      {
-        Permission: 'READ',
-        Type: 'ALLOWED',
-        Who: 'everyone@',
-      },
-      {
-        Who: 'User',
-        User: '3001',
-        Permission: 'FULL',
-        Type: 'DENIED',
-      },
+    const entryValues = spectator.component.form.value.entries;
+    expect(entryValues).toEqual([
+      expect.objectContaining({
+        ae_who_sid: 'S-1-1-0',
+        ae_who: NfsAclTag.Everyone,
+        ae_perm: SmbSharesecPermission.Read,
+        ae_type: SmbSharesecType.Allowed,
+      }),
+      expect.objectContaining({
+        ae_who: NfsAclTag.User,
+        ae_perm: SmbSharesecPermission.Full,
+        ae_type: SmbSharesecType.Denied,
+      }),
     ]);
   });
 
   it('saves updated acl when form is submitted', async () => {
     await entriesList.pressAddButton();
-    const newListItem = await entriesList.getLastListItem();
-    await newListItem.fillForm(
-      {
-        Who: 'Group',
-        Permission: 'FULL',
-        Type: 'ALLOWED',
-        Group: 'wheel',
-      },
-    );
+    const entries = spectator.component.form.controls.entries;
+    const lastEntry = entries.at(entries.length - 1);
+    lastEntry.patchValue({
+      ae_who: NfsAclTag.UserGroup,
+      ae_perm: SmbSharesecPermission.Full,
+      ae_type: SmbSharesecType.Allowed,
+      group: 1,
+    });
+    spectator.detectChanges();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('sharing.smb.setacl', [{

@@ -1,11 +1,6 @@
-:host ::ng-deep {
-  ix-select {
-    margin-top: 0;
-  }
-}
-
-mat-card {
-  overflow: hidden !important;
+tn-form-field {
+  display: block;
+  margin-bottom: 2rem;
 }
 
 .entry-row {
@@ -16,5 +11,9 @@ mat-card {
 
   > * {
     flex: 1;
+  }
+
+  tn-form-field {
+    margin-bottom: 0;
   }
 }
