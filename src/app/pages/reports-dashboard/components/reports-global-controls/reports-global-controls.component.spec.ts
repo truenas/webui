@@ -145,9 +145,15 @@ describe('ReportsGlobalControlsComponent', () => {
     });
   });
 
-  it('shows Exporters button', async () => {
-    const exportersButton = await loader.getHarness(TnButtonHarness.with({ label: 'Exporters' }));
+  it('shows Exporters button that navigates to the exporters page', async () => {
+    const router = spectator.inject(Router);
 
+    const exportersButton = await loader.getHarness(TnButtonHarness.with({ label: 'Exporters' }));
     expect(exportersButton).toBeTruthy();
+
+    await exportersButton.click();
+
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/reportsdashboard', 'exporters'], expect.anything());
+    expect(router.navigateByUrl).toHaveBeenCalled();
   });
 });

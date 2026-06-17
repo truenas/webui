@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
@@ -42,6 +42,7 @@ const supportedReportTypes = [
     IxSelectComponent,
     IxSlideToggleComponent,
     TnButtonComponent,
+    RouterLink,
     TestDirective,
     UiSearchDirective,
     TranslateModule,
