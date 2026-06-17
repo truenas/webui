@@ -2,13 +2,9 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, output, signal, WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  TnButtonComponent, TnCardAction, TnCardComponent, TnCardHeaderDirective, TnIconButtonComponent,
-  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTestIdDirective, TnTooltipDirective,
-} from '@truenas/ui-components';
+import { TnButtonComponent, TnCardAction, TnCardComponent, TnCardHeaderDirective, TnDialog, TnIconButtonComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
@@ -68,7 +64,7 @@ export class AppInfoCardComponent {
   private redirect = inject(RedirectService);
   private errorHandler = inject(ErrorHandlerService);
   private appService = inject(ApplicationsService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private router = inject(Router);
@@ -168,7 +164,7 @@ export class AppInfoCardComponent {
     this.appService.getAppUpgradeSummary(name).pipe(
       this.loader.withLoader(),
       switchMap(
-        (summary) => this.matDialog.open(AppUpdateDialog, {
+        (summary) => this.tnDialog.open(AppUpdateDialog, {
           width: '50vw',
           minWidth: '500px',
           maxWidth: '750px',
@@ -176,7 +172,7 @@ export class AppInfoCardComponent {
             appInfo: this.app(),
             upgradeSummary: summary,
           } as AppUpdateDialogConfig,
-        }).afterClosed(),
+        }).closed,
       ),
       filter(Boolean),
       switchMap(
@@ -205,13 +201,13 @@ export class AppInfoCardComponent {
     this.appService.checkIfAppIxVolumeExists(name).pipe(
       this.loader.withLoader(),
       switchMap((ixVolumeExists) => {
-        return this.matDialog.open<
+        return this.tnDialog.open<
           AppDeleteDialog,
           AppDeleteDialogInputData,
           AppDeleteDialogOutputData
         >(AppDeleteDialog, {
           data: { name, showRemoveVolumes: ixVolumeExists },
-        }).afterClosed();
+        }).closed;
       }),
       filter(Boolean),
       this.errorHandler.withErrorHandler(),
@@ -241,9 +237,9 @@ export class AppInfoCardComponent {
   }
 
   rollbackApp(): void {
-    this.matDialog
+    this.tnDialog
       .open(AppRollbackModalComponent, { data: this.app() })
-      .afterClosed()
+      .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }

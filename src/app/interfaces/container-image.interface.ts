@@ -37,3 +37,7 @@ export interface ContainerImage {
 
   state?: string;
 }
+
+export interface ContainerImageUi extends ContainerImage {
+  selected?: boolean;
+}

@@ -1,9 +1,8 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, computed, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnCardComponent, TnDialog, TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -34,10 +33,10 @@ import {
   ],
 })
 export class AppWorkloadsCardComponent {
-  private matDialog = inject(MatDialog);
-  protected router = inject(Router);
+  private tnDialog = inject(TnDialog);
 
   readonly app = input.required<App>();
+  protected router = inject(Router);
 
   readonly AppState = AppState;
 
@@ -63,7 +62,7 @@ export class AppWorkloadsCardComponent {
   });
 
   volumeButtonPressed(containerDetails: AppContainerDetails): void {
-    this.matDialog.open(VolumeMountsDialog, {
+    this.tnDialog.open(VolumeMountsDialog, {
       minWidth: '60vw',
       data: containerDetails,
     });

@@ -1,17 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import {
   createComponentFactory, mockProvider,
 } from '@ngneat/spectator/jest';
-import { TnCardComponent, TnIconButtonHarness } from '@truenas/ui-components';
+import { TnCardComponent, TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
-import { App, AppContainerState } from 'app/interfaces/app.interface';
+import { AppContainerState, App } from 'app/interfaces/app.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import {
@@ -75,7 +74,7 @@ describe('AppContainersCardComponent', () => {
       MapValuePipe,
     ],
     providers: [
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => of(true)),
       }),
       mockAuth(),
@@ -121,7 +120,7 @@ describe('AppContainersCardComponent', () => {
     const volumeButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'folder-outline' }));
     await volumeButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(VolumeMountsDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(VolumeMountsDialog, {
       data: app.active_workloads.container_details[0],
       minWidth: '60vw',
     });

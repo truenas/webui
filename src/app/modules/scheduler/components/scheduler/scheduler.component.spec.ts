@@ -1,11 +1,11 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSelectHarness } from '@angular/material/select/testing';
 import {
   createHostFactory, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -24,9 +24,9 @@ describe('SchedulerComponent', () => {
       FormsModule,
     ],
     providers: [
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of('0 2 */4 * 0'),
+          closed: of('0 2 */4 * 0'),
         })),
       }),
     ],
@@ -102,7 +102,7 @@ describe('SchedulerComponent', () => {
     const select = await loader.getHarness(MatSelectHarness);
     await select.open();
     await select.clickOptions({ text: 'Create   Custom schedule' });
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
       SchedulerModalComponent,
       {
         data: expect.objectContaining({

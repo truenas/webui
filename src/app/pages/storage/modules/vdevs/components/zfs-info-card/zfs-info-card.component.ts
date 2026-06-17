@@ -5,8 +5,8 @@ import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions,
 } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -56,7 +56,7 @@ export class ZfsInfoCardComponent {
   private loader = inject(LoaderService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private vDevsStore = inject(VDevsStore);
   private snackbar = inject(SnackbarService);
@@ -218,13 +218,13 @@ export class ZfsInfoCardComponent {
   }
 
   onExtend(): void {
-    this.matDialog.open(ExtendDialog, {
+    this.tnDialog.open(ExtendDialog, {
       data: {
         poolId: this.poolId(),
         targetVdevGuid: this.topologyItem().guid,
       } as ExtendDialogParams,
     })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),
@@ -235,13 +235,13 @@ export class ZfsInfoCardComponent {
   }
 
   onRaidzExtend(): void {
-    this.matDialog.open(RaidzExtendDialog, {
+    this.tnDialog.open(RaidzExtendDialog, {
       data: {
         poolId: this.poolId(),
         vdev: this.topologyItem() as VDev,
       } as RaidzExtendDialogParams,
     })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),

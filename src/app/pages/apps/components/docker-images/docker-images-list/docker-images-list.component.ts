@@ -3,16 +3,14 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
+import { TnDialog, TnTablePagerComponent,
   TnButtonComponent, TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
-  TnSortEvent, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent,
-} from '@truenas/ui-components';
+  TnSortEvent, TnTableColumnDirective, TnTableComponent } from '@truenas/ui-components';
 import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ContainerImage } from 'app/interfaces/container-image.interface';
+import { ContainerImage, ContainerImageUi } from 'app/interfaces/container-image.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -49,7 +47,7 @@ import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/
 export class DockerImagesListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private api = inject(ApiService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -78,9 +76,9 @@ export class DockerImagesListComponent implements OnInit {
       .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
-  doDelete(images: ContainerImage[]): void {
-    this.matDialog.open(DockerImageDeleteDialog, { data: images })
-      .afterClosed()
+  doDelete(images: ContainerImageUi[]): void {
+    this.tnDialog.open(DockerImageDeleteDialog, { data: this.prepareImages(images) })
+      .closed
       .pipe(filter(Boolean), take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }
@@ -112,5 +110,12 @@ export class DockerImagesListComponent implements OnInit {
     this.tnTable()?.selection.clear();
     this.selectedImages.set([]);
     this.dataProvider.load();
+  }
+
+  private prepareImages(images: ContainerImageUi[]): ContainerImage[] {
+    return images.map((image) => {
+      delete image.selected;
+      return image as ContainerImage;
+    });
   }
 }

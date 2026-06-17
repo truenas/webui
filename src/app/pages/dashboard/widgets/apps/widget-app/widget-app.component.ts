@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed, effect, ChangeDetectorRef, inject } from '@angular/core';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AppStats } from 'app/interfaces/app.interface';
@@ -24,9 +24,8 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
   styleUrls: ['./widget-app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
     WithLoadingStateDirective,
-    MatCardContent,
     AppControlsComponent,
     AppCardLogoComponent,
     AppCardInfoComponent,

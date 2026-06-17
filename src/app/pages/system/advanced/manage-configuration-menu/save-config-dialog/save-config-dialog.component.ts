@@ -1,21 +1,17 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -35,14 +31,12 @@ export interface SaveConfigDialogMessages {
   styleUrls: ['./save-config-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     FormsModule,
-    IxCheckboxComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -51,7 +45,7 @@ export class SaveConfigDialog {
   private store$ = inject<Store<AppState>>(Store);
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
-  private dialogRef = inject<MatDialogRef<SaveConfigDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, SaveConfigDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -71,7 +65,7 @@ export class SaveConfigDialog {
   };
 
   constructor() {
-    const messageOverrides = inject<Partial<SaveConfigDialogMessages>>(MAT_DIALOG_DATA, { optional: true }) ?? {};
+    const messageOverrides = inject<Partial<SaveConfigDialogMessages>>(DIALOG_DATA, { optional: true }) ?? {};
 
     this.helptext = {
       ...this.defaultMessages,

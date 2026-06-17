@@ -2,9 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnButtonHarness, TnIconButtonHarness, TnTableComponent, TnTableHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableComponent, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -43,9 +41,9 @@ describe('DockerImagesListComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
     ],
@@ -79,13 +77,13 @@ describe('DockerImagesListComponent', () => {
 
   it('shows the batch operations toolbar and bulk-deletes selected images', async () => {
     const tnTable = spectator.query(TnTableComponent);
-    tnTable.selectionChange.emit([fakeDockerImagesDataSource[0]]);
+    tnTable?.selectionChange.emit([fakeDockerImagesDataSource[0]]);
     spectator.detectChanges();
 
     const bulkDeleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await bulkDeleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerImageDeleteDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DockerImageDeleteDialog, {
       data: [fakeDockerImagesDataSource[0]],
     });
   });

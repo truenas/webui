@@ -4,10 +4,9 @@ import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, finalize, forkJoin, switchMap, take,
@@ -45,7 +44,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class AssociatedExtentsCardComponent {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private iscsiService = inject(IscsiService);
   private loader = inject(LoaderService);
   private cdr = inject(ChangeDetectorRef);
@@ -90,12 +89,12 @@ export class AssociatedExtentsCardComponent {
   }
 
   associateTarget(): void {
-    this.matDialog.open(AssociatedTargetFormComponent, {
+    this.tnDialog.open(AssociatedTargetFormComponent, {
       data: {
         target: this.target(),
         extents: this.unassociatedExtents(),
       } as AssociatedTargetDialogData,
-    }).afterClosed()
+    }).closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),

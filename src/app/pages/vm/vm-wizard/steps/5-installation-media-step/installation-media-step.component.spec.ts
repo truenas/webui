@@ -1,10 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -24,10 +25,11 @@ describe('InstallationMediaStepComponent', () => {
     ],
     providers: [
       mockProvider(CdkStepper),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of('/mnt/iso/new-windows.iso')),
-        })),
+          closed: of('/mnt/iso/new-windows.iso'),
+          close: jest.fn(),
+        } as unknown as DialogRef)),
       }),
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(),
@@ -69,7 +71,7 @@ describe('InstallationMediaStepComponent', () => {
     const uploadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upload New Image File' }));
     await uploadButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(UploadIsoDialogComponent);
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(UploadIsoDialogComponent);
 
     expect(spectator.component.form.value).toEqual({
       iso_path: '/mnt/iso/new-windows.iso',

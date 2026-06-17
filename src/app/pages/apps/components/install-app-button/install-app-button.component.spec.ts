@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ViewContainerRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -27,9 +26,9 @@ describe('InstallAppButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: InstallAppButtonComponent,
     providers: [
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(ViewContainerRef),
@@ -54,7 +53,7 @@ describe('InstallAppButtonComponent', () => {
       await button.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialog, expect.anything());
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SelectPoolDialog, expect.anything());
     });
   });
 

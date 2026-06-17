@@ -1,33 +1,30 @@
-<mat-card class="container">
-  <mat-card-content class="card-content">
+<tn-dialog-shell testId="manual-disk-selection" [title]="'Manual Selection' | translate">
+  <div class="container">
     <div class="inner-container">
       <div class="left-pane">
-        <div class="header dialog-header"><h3>{{ 'Manual Selection' | translate }}</h3></div>
         <ix-manual-selection-disks
           [enclosures]="data.enclosures"
           [isSedEncryption]="data.isSedEncryption || false"
         ></ix-manual-selection-disks>
       </div>
-      <mat-divider class="divider" [vertical]="true"></mat-divider>
+      <tn-divider class="divider" [vertical]="true"></tn-divider>
       <div class="right-pane">
         <div class="header vdevs-header">
           <h3>{{ 'VDEVs' | translate }}</h3>
           @if (!(hideAddVdevButton$ | async)) {
             <div class="header-actions">
-              <button
+              <tn-button
                 *ixRequiresRoles="requiredRoles"
-                mat-button
-                class="mat-button"
-                ixTest="add"
-                (click)="addVdev()"
-              >
-                {{ 'Add' | translate }}
-              </button>
+                variant="outline"
+                testId="add"
+                [label]="'Add' | translate"
+                (onClick)="addVdev()"
+              ></tn-button>
             </div>
           }
         </div>
 
-        <mat-divider class="header-divider"></mat-divider>
+        <tn-divider class="header-divider"></tn-divider>
         <div class="vdevs-container">
           @if (!currentVdevs.length) {
             <div class="no-vdevs">
@@ -45,23 +42,24 @@
             }
           }
         </div>
-        <mat-divider class="divider actions-divider"></mat-divider>
-        <div class="actions">
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            color="primary"
-            ixTest="save-selection"
-            [disabled]="isSaveDisabled$ | async"
-            (click)="onSaveSelection()"
-          >{{ 'Save Selection' | translate }}</button>
-          <button
-            mat-button
-            ixTest="cancel"
-            [matDialogClose]="false"
-          >{{ 'Cancel' | translate }}</button>
-        </div>
       </div>
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      testId="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close(false)"
+    ></tn-button>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      testId="save-selection"
+      [label]="'Save Selection' | translate"
+      [disabled]="isSaveDisabled$ | async"
+      (onClick)="onSaveSelection()"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>

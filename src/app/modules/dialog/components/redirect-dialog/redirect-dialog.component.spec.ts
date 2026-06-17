@@ -1,7 +1,7 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { RedirectDialogData } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog-data.interface';
 import { RedirectDialog } from './redirect-dialog.component';
 
@@ -11,14 +11,14 @@ describe('RedirectDialogComponent', () => {
     component: RedirectDialog,
     providers: [
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           title: 'Enabled HTTPS Redirect',
           message: 'You are trying to open:',
           url: 'http://10.24.30.2/redirect',
         } as RedirectDialogData,
       },
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -31,10 +31,6 @@ describe('RedirectDialogComponent', () => {
     spectator = createComponent();
   });
 
-  it('shows a name of dialog header', () => {
-    expect(spectator.query('h1')).toHaveText('Enabled HTTPS Redirect');
-  });
-
   it('shows message of dialog content', () => {
     expect(spectator.query('.message-content span')).toHaveText('You are trying to open:');
   });
@@ -42,7 +38,7 @@ describe('RedirectDialogComponent', () => {
   it('copies URL when Copy URL is pressed', async () => {
     const writeTextSpy = jest.spyOn(navigator.clipboard, 'writeText').mockResolvedValue();
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Copy URL' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Copy URL' }));
     await button.click();
 
     expect(writeTextSpy).toHaveBeenCalledWith('http://10.24.30.2/redirect');

@@ -14,7 +14,7 @@ export class JobsPanelPageObject {
   }
 
   get title(): HTMLElement | null {
-    return this.spectator.query('.jobs-header h3');
+    return this.spectator.query('.tn-dialog__title');
   }
 
   get runningBadgeCount(): HTMLElement | null {

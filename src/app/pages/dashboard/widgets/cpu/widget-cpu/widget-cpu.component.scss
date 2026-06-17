@@ -2,8 +2,7 @@
 
 .card {
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  display: block;
   height: 100%;
 }
 
@@ -11,8 +10,6 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-bottom: 0;
-  padding-right: 10px;
 
   .header {
     padding-bottom: 0;
@@ -63,8 +60,7 @@
     .cpu-data {
       flex: 0 0 55%;
 
-      .mat-mdc-list-item {
-        border-bottom: none !important;
+      tn-list-item {
         height: 36px;
         min-height: 36px;
       }
@@ -87,4 +83,9 @@
       width: 100%;
     }
   }
+}
+
+// Replicates the legacy global "mat-card-content > div" padding from _material-reduction.scss.
+.card-content > div {
+  padding: 16px;
 }

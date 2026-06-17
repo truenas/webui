@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, Observable, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -56,7 +56,7 @@ export class AddNicMenuComponent {
   private translate = inject(TranslateService);
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
 
   protected readonly helptext = containersHelptext;
 
@@ -128,10 +128,10 @@ export class AddNicMenuComponent {
       return;
     }
 
-    this.matDialog.open(ContainerNicFormDialog, {
+    this.tnDialog.open(ContainerNicFormDialog, {
       data: { nic: nicKey },
       minWidth: '500px',
-    }).afterClosed().pipe(
+    }).closed.pipe(
       filter(Boolean),
       switchMap((config: {
         mac?: string;

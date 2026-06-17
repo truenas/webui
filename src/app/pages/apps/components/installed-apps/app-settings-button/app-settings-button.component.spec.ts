@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ViewContainerRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -29,9 +28,9 @@ describe('AppSettingsButtonComponent', () => {
     component: AppSettingsButtonComponent,
     providers: [
       mockAuth(),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(SlideIn, {
@@ -40,7 +39,7 @@ describe('AppSettingsButtonComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of(null),
+          closed: of(null),
         })),
       }),
       mockProvider(DockerStore, {
@@ -65,7 +64,7 @@ describe('AppSettingsButtonComponent', () => {
     const menu = await openMenu();
     await menu.clickItem({ label: 'Choose Pool' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialog, { viewContainerRef });
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SelectPoolDialog, { viewContainerRef });
     expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
   });
 

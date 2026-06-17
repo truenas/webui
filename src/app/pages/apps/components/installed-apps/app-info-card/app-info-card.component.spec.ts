@@ -1,11 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockJob, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -61,8 +61,8 @@ describe('AppInfoCardComponent', () => {
       failure: new EventEmitter(),
     },
     close: jest.fn(),
-    afterClosed: () => of(true),
-  } as unknown as MatDialogRef<AppUpdateDialog>;
+    closed: of(true),
+  } as unknown as DialogRef<unknown, AppUpdateDialog>;
 
   const mockWindow = {
     location: {
@@ -90,7 +90,7 @@ describe('AppInfoCardComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => mockDialogRef),
       }),
       mockProvider(RedirectService),
@@ -203,7 +203,7 @@ describe('AppInfoCardComponent', () => {
     const menu = await openMenu();
     await menu.clickItem({ label: 'Update' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppUpdateDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppUpdateDialog, {
       maxWidth: '750px',
       minWidth: '500px',
       width: '50vw',
@@ -253,15 +253,15 @@ describe('AppInfoCardComponent', () => {
 
   it('opens delete app dialog when Delete button is pressed', async () => {
     setupTest(fakeApp);
-    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
-      afterClosed: () => of({ removeVolumes: true, removeImages: true }),
-    } as MatDialogRef<unknown>);
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of({ removeVolumes: true, removeImages: true }),
+    } as DialogRef);
 
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
       AppDeleteDialog,
       { data: { name: 'test-user-app-name', showRemoveVolumes: true } },
     );
@@ -313,7 +313,7 @@ describe('AppInfoCardComponent', () => {
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Roll Back' }));
     await rollbackButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppRollbackModalComponent, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppRollbackModalComponent, {
       data: fakeApp,
     });
   });
