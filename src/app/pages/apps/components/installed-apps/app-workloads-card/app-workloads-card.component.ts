@@ -34,9 +34,9 @@ import {
 })
 export class AppWorkloadsCardComponent {
   private tnDialog = inject(TnDialog);
+  private router = inject(Router);
 
   readonly app = input.required<App>();
-  protected router = inject(Router);
 
   readonly AppState = AppState;
 
@@ -88,5 +88,11 @@ export class AppWorkloadsCardComponent {
       'shell',
       containerDetails.id,
     ];
+  }
+
+  // tn-icon-button renders as a button, not an anchor, so the shell/logs shortcuts
+  // can't use [routerLink] — route programmatically instead of from the template.
+  protected goTo(commands: string[]): void {
+    this.router.navigate(commands);
   }
 }

@@ -3,7 +3,7 @@
 
   @if (hasCheckedApps) {
     <ix-installed-apps-list-bulk-actions
-      [checkedApps]="checkedApps"
+      [checkedApps]="checkedApps()"
       (bulkStart)="onBulkStart()"
       (bulkStop)="onBulkStop()"
       (bulkUpdate)="onBulkUpdate()"

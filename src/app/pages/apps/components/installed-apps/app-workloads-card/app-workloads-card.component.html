@@ -57,7 +57,7 @@
                 [testId]="[container.service_name, 'shell']"
                 [ariaLabel]="'Shell' | translate"
                 [tooltip]="'Shell' | translate"
-                (onClick)="router.navigate(getShellLink(container))"
+                (onClick)="goTo(getShellLink(container))"
               ></tn-icon-button>
               <tn-icon-button
                 name="folder-outline"
@@ -76,7 +76,7 @@
                 [testId]="[container.service_name, 'view_logs']"
                 [ariaLabel]="'View Logs' | translate"
                 [tooltip]="'View Logs' | translate"
-                (onClick)="router.navigate(getViewLogsLink(container))"
+                (onClick)="goTo(getViewLogsLink(container))"
               ></tn-icon-button>
             </div>
           }

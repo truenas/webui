@@ -124,7 +124,17 @@ export class InstalledAppsListComponent implements OnInit {
   selectedApp: App | undefined;
   searchQuery = toSignal(this.installedAppsStore.searchQuery$, { requireSync: true });
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
-  checkedApps: App[] = [];
+  // Track the selection as ids and derive checkedApps from the live dataSource
+  // rather than storing the App objects tn-table emits. The table is keyed by
+  // trackByAppId, so the bulk-action getters (active/stoppedCheckedApps) always
+  // read current state/upgrade_available for the selected ids instead of a
+  // detached snapshot that could drift if the row objects are replaced.
+  private readonly checkedAppIds = signal<Set<string>>(new Set());
+  readonly checkedApps = computed(() => {
+    const ids = this.checkedAppIds();
+    return this.dataSource().filter((app) => ids.has(app.id));
+  });
+
   sortingInfo = toSignal(this.installedAppsStore.sortingInfo$, { requireSync: true });
 
   protected readonly table = viewChild(TnTableComponent);
@@ -162,7 +172,7 @@ export class InstalledAppsListComponent implements OnInit {
   });
 
   get hasCheckedApps(): boolean {
-    return this.checkedApps.length > 0;
+    return this.checkedApps().length > 0;
   }
 
   get appsUpdateAvailable(): number {
@@ -175,17 +185,17 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   get checkedAppsNames(): string[] {
-    return this.checkedApps.map((app) => app.id);
+    return this.checkedApps().map((app) => app.id);
   }
 
   get activeCheckedApps(): App[] {
-    return this.checkedApps.filter(
+    return this.checkedApps().filter(
       (app) => [AppState.Running, AppState.Deploying].includes(app.state),
     );
   }
 
   get stoppedCheckedApps(): App[] {
-    return this.checkedApps.filter(
+    return this.checkedApps().filter(
       (app) => [AppState.Stopped, AppState.Crashed].includes(app.state),
     );
   }
@@ -196,7 +206,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   protected onSelectionChange(apps: App[]): void {
-    this.checkedApps = apps;
+    this.checkedAppIds.set(new Set(apps.map((app) => app.id)));
     this.cdr.markForCheck();
   }
 
@@ -215,9 +225,9 @@ export class InstalledAppsListComponent implements OnInit {
   private clearSelection(): void {
     // selection.clear() resets the table's own SelectionModel without emitting
     // (selectionChange) (that output only fires on user interaction), so mirror
-    // the cleared state into checkedApps ourselves. Matches docker-images-list.
+    // the cleared state into checkedAppIds ourselves. Matches docker-images-list.
     this.table()?.selection.clear();
-    this.checkedApps = [];
+    this.checkedAppIds.set(new Set());
     this.cdr.markForCheck();
   }
 
@@ -446,7 +456,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   onBulkUpdate(updateAll = false): void {
     const apps = this.dataSource().filter((app) => (
-      updateAll ? app.upgrade_available : this.checkedApps.some((checked) => checked.id === app.id)
+      updateAll ? app.upgrade_available : this.checkedAppIds().has(app.id)
     ));
     this.tnDialog.open(AppBulkUpdateComponent, { data: apps })
       .closed

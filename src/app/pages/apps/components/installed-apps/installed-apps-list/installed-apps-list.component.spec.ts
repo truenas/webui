@@ -224,6 +224,15 @@ describe('InstalledAppsListComponent', () => {
     expect(applicationsService.stopApplication).toHaveBeenCalledWith('test-app-1');
   });
 
+  it('derives the active/stopped checked apps from the current row state', async () => {
+    await selectAllApps();
+
+    // test-app-1 is Running and test-app-2 is Stopped, so the bulk-action partition
+    // must come from the live data, not from how the rows looked when first rendered.
+    expect(spectator.component.activeCheckedApps.map((app) => app.name)).toEqual(['test-app-1']);
+    expect(spectator.component.stoppedCheckedApps.map((app) => app.name)).toEqual(['test-app-2']);
+  });
+
   it('updates several applications', async () => {
     await selectAllApps();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
