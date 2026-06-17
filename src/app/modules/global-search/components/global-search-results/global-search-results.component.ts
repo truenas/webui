@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { findIndex, isEqual } from 'lodash-es';
-import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -88,33 +87,10 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
     const route = element.anchorRouterLink || element.routerLink;
     if (route?.length) {
-      const hasWildcard = route[route.length - 1] === '*';
-      const navigateTo = hasWildcard ? route.slice(0, -1) : route;
-
-      // Convention: `anchorRouterLink` / `routerLink` always start with `/`
-      // (verified across all `*.elements.ts` files). We resolve via the
-      // router so the segments serialise to the same absolute string format
-      // as `router.url`, making the equality / startsWith comparisons below
-      // exact. `createUrlTree` without `relativeTo` resolves from
-      // `routerState.snapshot.root`, so even if a non-absolute route ever
-      // sneaks in it serialises from root rather than the active route.
-      const targetPath = stripQueryAndFragment(
-        this.router.serializeUrl(this.router.createUrlTree(navigateTo)),
-      );
-
-      // Skip navigation when we're already on the target page — even same-URL
-      // `router.navigate` calls fire `NavigationSkipped` events that
-      // master-detail views interpret as "page changed".
-      // Prefix-startsWith only applies when the route opts in with a trailing
-      // `*` (master-detail descendants like `/datasets/<pool>`). Without it
-      // we'd treat sibling pages such as `/credentials/users/api-keys` as a
-      // descendant of `/credentials/users` and skip the navigation the user
-      // actually asked for.
-      const currentPath = stripQueryAndFragment(this.router.url);
-      const onTargetPath = currentPath === targetPath
-        || (hasWildcard && currentPath.startsWith(`${targetPath}/`));
-      if (!onTargetPath) {
-        this.router.navigate(navigateTo);
+      if (!route.includes('*')) {
+        this.router.navigate(route);
+      } else if (!this.router.url.startsWith(route.slice(0, -1).join('/'))) {
+        this.router.navigate(route.slice(0, -1));
       }
     }
 
