@@ -1,4 +1,3 @@
-@import 'mixins/loader';
 @import 'scss-imports/variables';
 
 .toolbar {
@@ -572,8 +571,8 @@ p.value {
     padding-right: 0;
 
     &.loading {
-      @include background-logo-loader(1);
-      min-height: 325px;
+      display: block;
+      height: 325px;
     }
   }
 

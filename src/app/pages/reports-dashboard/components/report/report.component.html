@@ -1,6 +1,6 @@
 <div class="report" ngClass.xs="double-height xs">
   <div class="card-container">
-    <tn-card class="card" [class.loading]="!isReady" [padContent]="false">
+    <tn-card class="card" [class.loading]="!isReady" [bordered]="!isReady" [padContent]="false">
       @if (isReady) {
         <div class="toolbar" tnCardHeader>
           <h3 class="tn-card__title">{{ reportTitle | translate }}</h3>
