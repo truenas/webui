@@ -3,14 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnSlideToggleHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ShareToggleCellComponent } from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
+import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 
-describe('ShareToggleCellComponent', () => {
-  let spectator: Spectator<ShareToggleCellComponent>;
+describe('TableToggleCellComponent', () => {
+  let spectator: Spectator<TableToggleCellComponent>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: ShareToggleCellComponent,
+    component: TableToggleCellComponent,
     providers: [mockAuth()],
   });
 

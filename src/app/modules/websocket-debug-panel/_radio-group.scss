@@ -1,0 +1,14 @@
+// Shared layout for in-form tn-radio groups in the WebSocket debug panel.
+// @truenas/ui-components has no radio-group wrapper yet, so each group is
+// hand-rolled as repeated <tn-radio> elements; this mixin stacks them
+// vertically so the two call sites don't duplicate the spacing rule.
+// Drop the mixin once the library ships a group component (NAS-141021).
+@mixin tn-radio-group-layout {
+  tn-radio {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: 8px;
+    }
+  }
+}
