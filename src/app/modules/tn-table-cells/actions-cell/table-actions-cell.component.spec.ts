@@ -3,18 +3,18 @@ import { TnMenuHarness, TnMenuTesting, tnIconMarker } from '@truenas/ui-componen
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { ShareActionsCellComponent } from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 
 interface Row { id: number }
 
-describe('ShareActionsCellComponent', () => {
-  let spectator: Spectator<ShareActionsCellComponent<Row>>;
+describe('TableActionsCellComponent', () => {
+  let spectator: Spectator<TableActionsCellComponent<Row>>;
 
   const onEdit = jest.fn();
   const onDelete = jest.fn();
 
   const createComponent = createComponentFactory({
-    component: ShareActionsCellComponent<Row>,
+    component: TableActionsCellComponent<Row>,
     providers: [mockAuth()],
   });
 
@@ -25,7 +25,7 @@ describe('ShareActionsCellComponent', () => {
         row: { id: 3 },
         uniqueRowTag: 'card-smb-share-smb123',
         ariaLabel: 'smb123 SMB Share',
-      } as unknown as Partial<ShareActionsCellComponent<Row>>,
+      } as unknown as Partial<TableActionsCellComponent<Row>>,
     });
   }
 
@@ -79,5 +79,15 @@ describe('ShareActionsCellComponent', () => {
     // Only the Edit action remains visible, so it renders as a single inline button.
     expect(spectator.query('[data-test="button-card-smb-share-smb123-mdi-pencil-row-action"]')).not.toBeNull();
     expect(spectator.query('[data-test="button-card-smb-share-smb123-more-action"]')).toBeNull();
+  });
+
+  it('keeps an action visible when its async hidden() resolves to false', async () => {
+    setup([editAction, { ...deleteAction, hidden: () => of(false) }]);
+    spectator.detectChanges();
+
+    // Both actions stay visible, so they collapse behind the menu trigger.
+    spectator.click('[data-test="button-card-smb-share-smb123-more-action"]');
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    expect(await menu.getItemLabels()).toEqual(['Edit', 'Delete']);
   });
 });

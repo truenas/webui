@@ -1,21 +1,22 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
-import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { delay, of, throwError } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -35,7 +36,9 @@ import { selectSystemConfigState } from 'app/store/system-config/system-config.s
 describe('CloudBackupCardComponent', () => {
   let spectator: Spectator<CloudBackupCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+
+  const rowMenuTrigger = '[data-test="button-cloud-backup-test-one-more-action"]';
 
   beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
   afterEach(() => restoreDate());
@@ -119,27 +122,44 @@ describe('CloudBackupCardComponent', () => {
     ],
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    spectator.click(rowMenuTrigger);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
-      ['test one', '', 'No', 'Completed', '1 min. ago', ''],
-      ['test two', '', 'No', 'Completed', '1 min. ago', ''],
-    ];
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'State', 'Enabled', '']);
+    expect(await table.getAllRowTexts()).toEqual([
+      ['test one', 'Completed', '', ''],
+      ['test two', 'Completed', '', ''],
+    ]);
+  });
 
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+  it('repaints rows through the data provider when a backing job changes in the background', () => {
+    const emissions: CloudBackup[][] = [];
+    const subscription = spectator.component.dataProvider.currentPage$.subscribe((rows) => emissions.push(rows));
+    const emissionsBefore = emissions.length;
+
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectJobs, [{ state: JobState.Failed } as Job]);
+    store$.refreshState();
+
+    // The status pill is presentational now, so a fresh array must be pushed through
+    // the provider (an in-place mutation would leave OnPush from repainting).
+    expect(emissions.length).toBeGreaterThan(emissionsBefore);
+    expect(emissions.at(-1)?.[0].job?.state).toBe(JobState.Failed);
+    subscription.unsubscribe();
   });
 
   it('shows form to edit an existing Cloud Backup when Edit button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: /^Edit$/ });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
@@ -151,7 +171,7 @@ describe('CloudBackupCardComponent', () => {
   });
 
   it('shows form to create new Cloud Backup when Add button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
@@ -160,10 +180,20 @@ describe('CloudBackupCardComponent', () => {
     );
   });
 
+  it('still renders the role-gated Add button for users without the write role', async () => {
+    spectator = createComponent({ detectChanges: false });
+    spectator.inject(MockAuthService).hasRole.mockReturnValue(of(false));
+    spectator.detectChanges();
+
+    const gatedLoader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const addButton = await gatedLoader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+
+    expect(addButton).toBeTruthy();
+  });
+
   it('shows confirmation dialog when Run job button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
@@ -182,9 +212,8 @@ describe('CloudBackupCardComponent', () => {
 
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     // Wait for the observable to complete
     spectator.detectChanges();
@@ -203,9 +232,8 @@ describe('CloudBackupCardComponent', () => {
 
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     // Wait for the observable to complete
     spectator.detectChanges();
@@ -217,9 +245,8 @@ describe('CloudBackupCardComponent', () => {
   });
 
   it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
@@ -231,8 +258,8 @@ describe('CloudBackupCardComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
   });
 
-  it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 1);
+  it('updates Cloud Backup Enabled status once toggle is updated', async () => {
+    const [toggle] = await loader.getAllHarnesses(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
 
     expect(await toggle.isChecked()).toBe(false);
 
@@ -244,7 +271,7 @@ describe('CloudBackupCardComponent', () => {
     );
   });
 
-  it('sends only one update request when multiple mat-toggle is updated', async () => {
+  it('sends only one update request when multiple toggles are updated', async () => {
     jest.spyOn(spectator.component.dataProvider, 'load').mockImplementation();
     jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce((method) => {
       if (method === 'cloud_backup.update') {
@@ -253,8 +280,7 @@ describe('CloudBackupCardComponent', () => {
       throw new Error(`Unexpected method: ${method}`);
     });
 
-    const toggle1 = await table.getHarnessInCell(MatSlideToggleHarness, 1, 1);
-    const toggle2 = await table.getHarnessInCell(MatSlideToggleHarness, 2, 1);
+    const [toggle1, toggle2] = await loader.getAllHarnesses(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
 
     expect(spectator.component.dataProvider.load).toHaveBeenCalledTimes(0);
     await Promise.all([toggle1.check(), toggle2.check()]);
@@ -284,7 +310,7 @@ describe('CloudBackupCardComponent', () => {
     });
 
     expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 1);
+    const [toggle] = await loader.getAllHarnesses(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
     await toggle.check();
     expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
   });
@@ -293,9 +319,8 @@ describe('CloudBackupCardComponent', () => {
     const router = spectator.inject(Router);
     const navigateSpy = jest.spyOn(router, 'navigate').mockImplementation();
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'View Details' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'View Details' });
 
     expect(navigateSpy).toHaveBeenCalledWith(['/data-protection', 'cloud-backup'], { fragment: '1' });
   });

@@ -56,11 +56,24 @@ describe('PageAlertsComponent', () => {
     relatedMenuPath: ['storage'],
   } as unknown as Alert & EnhancedAlert;
 
+  const apiKeyAlert = {
+    id: 'api-key-revoked',
+    uuid: 'api-key-revoked',
+    key: 'api-key-revoked-key',
+    level: AlertLevel.Warning,
+    formatted: 'API key has been revoked and must either be renewed or deleted.',
+    dismissed: false,
+    datetime: { $date: 1 },
+    relatedMenuPath: ['credentials'],
+    bannerMenuPath: ['credentials', 'users', 'api-keys'],
+  } as unknown as Alert & EnhancedAlert;
+
   const alertsSignal = signal([
     lockedShareAlert,
     rootLoginAlert,
     dismissedDatasetAlert,
     storageAlert,
+    apiKeyAlert,
   ]);
 
   const createComponent = createComponentFactory({
@@ -134,5 +147,26 @@ describe('PageAlertsComponent', () => {
 
     const messages = renderedMessages();
     expect(messages.some((message) => message.includes('Dismissed'))).toBe(false);
+  });
+
+  it('scopes the banner to bannerMenuPath when provided, not relatedMenuPath', async () => {
+    await setUrl('/credentials/users/api-keys');
+
+    const messages = renderedMessages();
+    expect(messages.some((message) => message.includes('API key has been revoked'))).toBe(true);
+  });
+
+  it('matches the route even when a query string is present', async () => {
+    await setUrl('/credentials/users/api-keys?userName=root');
+
+    const messages = renderedMessages();
+    expect(messages.some((message) => message.includes('API key has been revoked'))).toBe(true);
+  });
+
+  it('does not show a bannerMenuPath-scoped alert on parent routes', async () => {
+    await setUrl('/credentials/users');
+
+    const messages = renderedMessages();
+    expect(messages.some((message) => message.includes('API key has been revoked'))).toBe(false);
   });
 });

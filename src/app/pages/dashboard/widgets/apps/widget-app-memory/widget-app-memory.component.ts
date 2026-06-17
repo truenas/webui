@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, computed, input, inject } from '@angular/core';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { TnCardComponent } from '@truenas/ui-components';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -18,9 +18,8 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
     WithLoadingStateDirective,
-    MatCardContent,
     AppControlsComponent,
     AppMemoryInfoComponent,
     AsyncPipe,

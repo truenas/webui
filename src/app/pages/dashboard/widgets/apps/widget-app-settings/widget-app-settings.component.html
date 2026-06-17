@@ -1,9 +1,10 @@
 <form [formGroup]="form">
-  <ix-select
-    class="half-width"
-    formControlName="appName"
-    [label]="'Application' | translate"
-    [options]="installedApps$"
-    [required]="true"
-  ></ix-select>
+  <tn-form-field class="half-width" [label]="'Application' | translate" [required]="true">
+    <tn-select
+      formControlName="appName"
+      [testId]="'app-name'"
+      [ariaLabel]="'Application' | translate"
+      [options]="installedApps()"
+    ></tn-select>
+  </tn-form-field>
 </form>

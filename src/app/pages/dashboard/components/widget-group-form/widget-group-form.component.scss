@@ -13,8 +13,7 @@
   display: flex;
   gap: 20px;
 
-  ix-select,
-  ix-icon-group {
+  .layout-control {
     flex: 1 1 50%;
     max-width: 50%;
   }
@@ -23,15 +22,15 @@
 .layout-control {
   margin-bottom: 4px;
   margin-top: 6px;
+
+  .layout-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
 }
 
 .widget-options-container {
   padding: 16px 0;
 }
 
-.form-actions {
-  display: flex;
-  flex-direction: row-reverse;
-  gap: 8px;
-  justify-content: flex-end;
-}
