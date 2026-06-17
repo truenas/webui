@@ -103,7 +103,8 @@ describe('alert-enhancement.registry route fixes (NAS-140943)', () => {
       (klass) => {
         const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
 
-        expect(enhancement?.relatedMenuPath).toEqual(['credentials', 'users', 'api-keys']);
+        expect(enhancement?.relatedMenuPath).toEqual(['credentials']);
+        expect(enhancement?.bannerMenuPath).toEqual(['credentials', 'users', 'api-keys']);
         const action = enhancement?.actions?.[0];
         expect(action?.route).toEqual(['/credentials', 'users', 'api-keys']);
       },

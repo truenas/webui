@@ -1,18 +1,18 @@
-<mat-card class="card">
-  <mat-card-content class="card-content">
+<tn-card class="card" [padContent]="false">
+  <div class="card-content">
     <div class="header">
       <h3>{{ name | translate }}</h3>
 
-      <button
-        mat-icon-button
-        ixTest="cpu-go-to-reports"
-        matTooltipPosition="above"
-        [attr.aria-label]="'CPU Reports' | translate"
-        [matTooltip]="'CPU Reports' | translate"
-        [routerLink]="['/reportsdashboard', 'cpu']"
-      >
-        <tn-icon name="chart-box" library="mdi" size="lg"></tn-icon>
-      </button>
+      <tn-icon-button
+        name="chart-box"
+        library="mdi"
+        size="lg"
+        testId="cpu-go-to-reports"
+        tooltipPosition="above"
+        [ariaLabel]="'CPU Reports' | translate"
+        [tooltip]="'CPU Reports' | translate"
+        (onClick)="goToReports()"
+      ></tn-icon-button>
     </div>
 
     <div [class]="['container', size()]">
@@ -22,8 +22,8 @@
         </div>
         <div class="cpu-load-wrapper">
           <ix-cpu-chart-gauge class="chart-gauge"></ix-cpu-chart-gauge>
-          <mat-list class="cpu-data">
-            <mat-list-item>
+          <tn-list class="cpu-data">
+            <tn-list-item>
               <span class="label">
                 <strong>{{ 'Cores' | translate }}:</strong>
               </span>
@@ -32,8 +32,8 @@
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
               }
-            </mat-list-item>
-            <mat-list-item>
+            </tn-list-item>
+            <tn-list-item>
               <span class="label">
                 <strong>{{ 'Threads' | translate }}:</strong>
               </span>
@@ -42,8 +42,8 @@
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
               }
-            </mat-list-item>
-            <mat-list-item>
+            </tn-list-item>
+            <tn-list-item>
               <span class="label">
                 <strong>{{ 'Highest Usage' | translate }}:</strong>
               </span>
@@ -52,8 +52,8 @@
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
               }
-            </mat-list-item>
-            <mat-list-item>
+            </tn-list-item>
+            <tn-list-item>
               <span class="label">
                 <strong>{{ 'Hottest' | translate }}:</strong>
               </span>
@@ -62,16 +62,16 @@
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
               }
-            </mat-list-item>
+            </tn-list-item>
             <ng-template #skeleton>
               <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
             </ng-template>
-          </mat-list>
+          </tn-list>
         </div>
         <div class="bar-wrapper">
           <ix-cpu-core-bar class="bar"></ix-cpu-core-bar>
         </div>
       </div>
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>

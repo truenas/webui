@@ -1,6 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { TnButtonComponent, TnCardComponent } from '@truenas/ui-components';
+import { MockComponent, ngMocks } from 'ng-mocks';
 import { Ng2FittextDirective } from 'ng2-fittext';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
@@ -9,6 +10,13 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { PoolUsageGaugeComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/pool-usage-gauge/pool-usage-gauge.component';
 import { WidgetPoolUsageGaugeComponent } from 'app/pages/dashboard/widgets/storage/widget-pool-usage-gauge/widget-pool-usage-gauge.component';
+
+// Mocking WidgetDatapointComponent would otherwise mock its transitive
+// TnCardComponent/TnButtonComponent imports, which trips the ng-mocks
+// signal-query bug (https://github.com/help-me-mom/ng-mocks/issues/8634).
+// Keep them real.
+ngMocks.globalKeep(TnCardComponent, true);
+ngMocks.globalKeep(TnButtonComponent, true);
 
 describe('WidgetPoolUsageGaugeComponent', () => {
   let spectator: Spectator<WidgetPoolUsageGaugeComponent>;

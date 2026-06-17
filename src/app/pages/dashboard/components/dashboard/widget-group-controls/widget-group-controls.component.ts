@@ -2,10 +2,8 @@ import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy, Component, computed, input, output,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
 
 @Component({
   selector: 'ix-widget-group-controls',
@@ -13,8 +11,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./widget-group-controls.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
-    TestDirective,
+    TnIconButtonComponent,
     TnIconComponent,
     TranslateModule,
     CdkDragHandle,

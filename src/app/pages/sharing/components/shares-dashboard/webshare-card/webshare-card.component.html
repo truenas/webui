@@ -56,6 +56,7 @@
     <tn-empty
       icon="webshare"
       iconLibrary="custom"
+      iconSize="56px"
       [title]="'WebShare service provides web-based file access. Users can access these shares if they have the WebShare Enabled option set on their account.' | translate"
     ></tn-empty>
   } @else {
@@ -101,13 +102,13 @@
       <ng-container [tnColumnDef]="'actions'" [width]="'120px'">
         <ng-template tnHeaderCellDef></ng-template>
         <ng-template let-row tnCellDef>
-          <ix-share-actions-cell
+          <ix-table-actions-cell
             mode="inline"
             [actions]="actions"
             [row]="row"
             [uniqueRowTag]="uniqueRowTag(row)"
             [ariaLabel]="ariaLabel(row)"
-          ></ix-share-actions-cell>
+          ></ix-table-actions-cell>
         </ng-template>
       </ng-container>
     </tn-table>

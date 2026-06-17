@@ -3,7 +3,8 @@
   <a
     *ixRequiresRoles="[Role.CloudSyncWrite]"
     class="backup-action"
-    ixTest="cloud"
+    tnTestIdType="link"
+    [tnTestId]="'cloud'"
     (click)="addCloudSyncTask.emit()"
   >
     {{ 'to cloud' | translate }}
@@ -12,7 +13,8 @@
   <a
     *ixRequiresRoles="[Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull]"
     class="backup-action"
-    ixTest="another-TrueNAS"
+    tnTestIdType="link"
+    [tnTestId]="'another-TrueNAS'"
     (click)="addReplicationTask.emit()"
   >
     {{ 'to another TrueNAS' | translate }}
