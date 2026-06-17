@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import {
   SlotSize,
@@ -14,7 +15,7 @@ import { cpuUsageGaugeWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-
   templateUrl: './widget-cpu-usage-gauge.component.html',
   styleUrls: ['./widget-cpu-usage-gauge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CpuChartGaugeComponent, TranslateModule],
+  imports: [TnCardComponent, CpuChartGaugeComponent, TranslateModule],
 })
 export class WidgetCpuUsageGaugeComponent implements WidgetComponent {
   size = input.required<SlotSize>();

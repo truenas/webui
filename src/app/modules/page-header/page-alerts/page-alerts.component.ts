@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, isDevMode, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -6,8 +6,9 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { Alert } from 'app/interfaces/alert.interface';
-import { AlertWithDuplicates, EnhancedAlert, SmartAlertAction } from 'app/interfaces/smart-alert.interface';
+import { AlertWithDuplicates, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 import { maxAlertMessageLength } from 'app/modules/alerts/constants/alert-display.constants';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
@@ -80,6 +81,14 @@ export class PageAlertsComponent {
   });
 
   /**
+   * Split the current route into path segments, stripping any query string and fragment
+   * so the last segment isn't polluted (e.g. `api-keys?userName=root` -> `api-keys`).
+   */
+  private getPathSegments(): string[] {
+    return stripQueryAndFragment(this.router.url).split('/').filter((segment) => segment);
+  }
+
+  /**
    * Filter alerts relevant to the current page
    */
   protected pageAlerts = computed(() => {
@@ -87,22 +96,25 @@ export class PageAlertsComponent {
     this.currentRoute();
 
     const alerts = this.allAlerts();
-    const url = this.router.url;
     const duplicateInfo = this.duplicateInfoMap();
 
     // Parse current route into segments once
-    const pathSegments = url.split('/').filter((segment) => segment && !segment.startsWith('?'));
+    const pathSegments = this.getPathSegments();
 
     // Single pass: filter by route and group by key simultaneously
     const alertsByKey = new Map<string, (Alert & EnhancedAlert)[]>();
 
     for (const alert of alerts) {
-      // Skip dismissed or alerts without menu path
-      if (!alert.relatedMenuPath || alert.dismissed) continue;
+      // Scope the banner by bannerMenuPath when provided, otherwise fall back to relatedMenuPath.
+      // This lets the banner target a narrower route than the nav badge (e.g. API keys live under
+      // /credentials/users/api-keys but the badge stays on the Credentials menu).
+      const menuPath = alert.bannerMenuPath ?? alert.relatedMenuPath;
+
+      // Skip dismissed or alerts without a page scope
+      if (!menuPath || alert.dismissed) continue;
 
       // Match if current URL is at or below the alert's menu path.
       // Dataset routes use /datasets/:datasetId, so ['datasets'] must still match /datasets/tank.
-      const menuPath = alert.relatedMenuPath;
       const isMatch = menuPath.length <= pathSegments.length
         && menuPath.every((segment, index) => pathSegments[index] === segment);
 
@@ -165,56 +177,6 @@ export class PageAlertsComponent {
    * Check if there are any page alerts to show
    */
   protected hasAlerts = computed(() => this.pageAlerts().length > 0);
-
-  /**
-   * Filter out actions that navigate to current or parent route
-   */
-  protected getVisibleActions = computed(() => {
-    const url = this.router.url;
-    const pathSegments = url.split('/').filter((segment) => segment && !segment.startsWith('?'));
-
-    return (alert: { actions?: SmartAlertAction[] }): SmartAlertAction[] => {
-      if (!alert.actions) {
-        return [];
-      }
-
-      return alert.actions.filter((action) => {
-        // Keep non-navigation actions
-        if (!action.route) {
-          return true;
-        }
-
-        // Filter out if action route is current route
-        const isSameRoute = action.route.length === pathSegments.length
-          && action.route.every((segment, index) => pathSegments[index] === segment);
-
-        if (isSameRoute) {
-          return false;
-        }
-
-        // Filter out if action route is parent of current route
-        const isParentRoute = action.route.length < pathSegments.length
-          && action.route.every((segment, index) => pathSegments[index] === segment);
-
-        if (isParentRoute) {
-          return false;
-        }
-
-        return true;
-      });
-    };
-  });
-
-  /**
-   * Execute alert action
-   */
-  protected onActionClick(handler: (() => void) | undefined): void {
-    if (handler) {
-      handler();
-    } else if (isDevMode()) {
-      console.warn('[PageAlerts] Alert action clicked but handler is undefined');
-    }
-  }
 
   /**
    * Dismiss an alert (and all its duplicates with the same key)

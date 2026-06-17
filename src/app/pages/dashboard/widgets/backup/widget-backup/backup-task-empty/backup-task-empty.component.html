@@ -16,7 +16,8 @@
           *ixRequiresRoles="[Role.CloudSyncWrite]"
           class="action"
           tabIndex="0"
-          ixTest="cloud-sync"
+          tnTestIdType="link"
+          [tnTestId]="'cloud-sync'"
           (click)="addCloudSyncTask.emit()"
           (keydown.enter)="addCloudSyncTask.emit()"
         >
@@ -28,7 +29,8 @@
           *ixRequiresRoles="[Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull]"
           class="action"
           tabIndex="0"
-          ixTest="replication"
+          tnTestIdType="link"
+          [tnTestId]="'replication'"
           (click)="addReplicationTask.emit()"
           (keydown.enter)="addReplicationTask.emit()"
         >
@@ -40,7 +42,8 @@
           *ixRequiresRoles="[Role.SnapshotTaskWrite]"
           class="action"
           tabIndex="0"
-          ixTest="rsync"
+          tnTestIdType="link"
+          [tnTestId]="'rsync'"
           (click)="addRsyncTask.emit()"
           (keydown.enter)="addRsyncTask.emit()"
         >

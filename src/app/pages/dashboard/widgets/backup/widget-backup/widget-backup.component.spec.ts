@@ -1,5 +1,4 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { format } from 'date-fns';
@@ -123,7 +122,6 @@ describe('WidgetBackupComponent', () => {
   const createComponent = createComponentFactory({
     component: WidgetBackupComponent,
     imports: [
-      MatGridListModule,
     ],
     declarations: [
       BackupTaskTileComponent,
