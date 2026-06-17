@@ -1,8 +1,8 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -25,8 +25,8 @@ describe('SessionExpiringDialog', () => {
   const createComponent = createComponentFactory({
     component: SessionExpiringDialog,
     providers: [
-      { provide: MAT_DIALOG_DATA, useValue: options },
-      mockProvider(MatDialogRef),
+      { provide: DIALOG_DATA, useValue: options },
+      mockProvider(DialogRef),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
@@ -39,8 +39,9 @@ describe('SessionExpiringDialog', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows dialog title', () => {
-    expect(spectator.query('h1')).toHaveText(options.title);
+  it('shows dialog title', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe(options.title);
   });
 
   it('shows dialog message', () => {
@@ -48,10 +49,10 @@ describe('SessionExpiringDialog', () => {
   });
 
   it('closes dialog with true when extend session button is pressed', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: options.buttonText }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: options.buttonText }));
     await button.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('opens preferences slide-in and highlights session timeout when preferences link is clicked', () => {
@@ -60,7 +61,7 @@ describe('SessionExpiringDialog', () => {
     const preferencesLink = spectator.query('.preferences-link')!;
     spectator.click(preferencesLink);
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PreferencesFormComponent);
 
     jest.runAllTimers();

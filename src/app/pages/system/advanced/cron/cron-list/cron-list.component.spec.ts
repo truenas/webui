@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -89,9 +89,9 @@ describe('CronListComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn((): undefined => undefined) }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(LocaleService),
@@ -157,7 +157,7 @@ describe('CronListComponent', () => {
     const deleteIcon = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteIcon.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CronDeleteDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(CronDeleteDialog, {
       data: expect.objectContaining({ id: 1 }),
     });
   });

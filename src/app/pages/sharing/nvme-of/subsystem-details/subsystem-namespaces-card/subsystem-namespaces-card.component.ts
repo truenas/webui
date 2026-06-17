@@ -4,10 +4,9 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -50,7 +49,7 @@ import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete
 export class SubsystemNamespacesCardComponent {
   private slideIn = inject(SlideIn);
   private nvmeOfStore = inject(NvmeOfStore);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
 
   subsystem = input.required<NvmeOfSubsystemDetails>();
@@ -68,8 +67,8 @@ export class SubsystemNamespacesCardComponent {
   }
 
   protected onDeleteNamespace(namespace: NvmeOfNamespace): void {
-    this.matDialog.open(DeleteNamespaceDialogComponent, { data: namespace })
-      .afterClosed()
+    this.tnDialog.open(DeleteNamespaceDialogComponent, { data: namespace })
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),

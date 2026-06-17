@@ -2,11 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   filter, map, of, switchMap,
   take,
@@ -78,7 +77,7 @@ interface BootEnvironmentUi extends BootEnvironment {
 })
 export class BootEnvironmentListComponent implements OnInit {
   private api = inject(ApiService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private slideIn = inject(SlideIn);
   private loader = inject(LoaderService);
@@ -223,7 +222,7 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected openBootenvStats(): void {
-    this.matDialog.open(BootenvStatsDialog);
+    this.tnDialog.open(BootenvStatsDialog);
   }
 
   protected doClone(bootenv: BootEnvironment): void {
@@ -254,8 +253,8 @@ export class BootEnvironmentListComponent implements OnInit {
 
   protected doDelete(bootenvs: BootEnvironmentUi[]): void {
     const data = bootenvs.filter((bootenv) => !bootenv.active && !bootenv.activated);
-    this.matDialog.open(BootPoolDeleteDialog, { data })
-      .afterClosed()
+    this.tnDialog.open(BootPoolDeleteDialog, { data })
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         bootenvs.forEach((bootenv) => delete bootenv.selected);

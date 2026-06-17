@@ -6,9 +6,9 @@ import {
   ControlValueAccessor, NgControl, ReactiveFormsModule, FormsModule,
 } from '@angular/forms';
 import { MatOptionSelectionChange, MatOption } from '@angular/material/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -42,7 +42,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 })
 export class SchedulerComponent implements ControlValueAccessor {
   controlDirective = inject(NgControl);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
@@ -95,15 +95,15 @@ export class SchedulerComponent implements ControlValueAccessor {
   }
 
   private onCustomOptionSelected(previousValue: string | undefined): void {
-    this.matDialog.open(SchedulerModalComponent, {
+    this.tnDialog.open<SchedulerModalComponent, SchedulerModalConfig, string>(SchedulerModalComponent, {
       data: {
         startTime: this.startTime(),
         endTime: this.endTime(),
         hideMinutes: this.hideMinutes(),
         crontab: previousValue,
-      } as SchedulerModalConfig,
+      },
     })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe((newCrontab: string) => {
         if (Object.values(CronPresetValue).includes(newCrontab as CronPresetValue)) {

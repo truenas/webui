@@ -7,7 +7,7 @@
         *ixRequiresRoles="(action.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
         [name]="action.iconName"
         [testId]="[uniqueRowTag(), action.iconName, 'row-action']"
-        [ariaLabel]="(tooltip || '') + ' ' + ariaLabel()"
+        [ariaLabel]="tooltip ? (tooltip + ' ' + ariaLabel()) : ariaLabel()"
         [tooltip]="isDisabled ? getDisabledTooltip(action) : (tooltip || '')"
         [disabled]="!!isDisabled"
         (onClick)="onActionClick($event, action)"

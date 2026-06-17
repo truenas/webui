@@ -1,11 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
-import { MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import {
   MatCell,
   MatCellDef,
@@ -18,9 +16,15 @@ import {
   MatRowDef,
   MatTable,
 } from '@angular/material/table';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnDialogShellComponent,
+  TnIconButtonComponent,
+  TnIconComponent,
+  TnSpinnerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import {
   finalize, map, Observable, of,
 } from 'rxjs';
@@ -35,7 +39,6 @@ import {
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   IdMapping,
@@ -53,14 +56,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    TnDialogShellComponent,
     FakeProgressBarComponent,
     TnIconComponent,
-    MatDialogContent,
-    MatDialogTitle,
-    MatIconButton,
-    MatProgressSpinner,
+    TnIconButtonComponent,
+    TnSpinnerComponent,
+    TnTooltipDirective,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     EmptyComponent,
     FormsModule,
     MatCell,
@@ -73,7 +76,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatRowDef,
     MatTable,
     ReactiveFormsModule,
-    MatTooltip,
     MatHeaderCellDef,
     NewMappingFormComponent,
     IxButtonGroupComponent,
@@ -83,7 +85,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  protected dialogRef = inject<MatDialogRef<MapUserGroupIdsDialogComponent>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, MapUserGroupIdsDialogComponent>>(DialogRef);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);

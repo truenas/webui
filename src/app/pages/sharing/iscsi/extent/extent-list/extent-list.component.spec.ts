@@ -1,10 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -69,10 +70,11 @@ describe('ExtentListComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(null)),
-        })),
+          closed: of(null),
+          close: jest.fn(),
+        } as unknown as DialogRef)),
       }),
       provideMockStore({
         selectors: [
@@ -120,7 +122,7 @@ describe('ExtentListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteExtentDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteExtentDialog, {
       data: extents[0],
     });
   });

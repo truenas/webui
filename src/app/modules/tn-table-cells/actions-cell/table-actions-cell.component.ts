@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnIconButtonComponent,
@@ -10,14 +9,15 @@ import {
   TnMenuItemComponent,
   TnMenuTriggerDirective,
 } from '@truenas/ui-components';
-import { isObservable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 
 /**
  * tn-table replacement for the ix-table `actionsWithMenuColumn`/`actionsColumn`
  * cell renderers. Built entirely on tn-* primitives (`tn-icon-button`,
- * `tn-menu`) so share cards carry no Material in their action column.
+ * `tn-menu`) so dashboard card tables carry no Material in their action column.
+ * Shared across the sharing and data-protection card tables.
  *
  * - `mode = 'menu'` (default): one visible action renders as a single icon
  *   button; more than one collapses behind a "⋮" trigger (parity with
@@ -30,9 +30,9 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
  * `composeTestId` — matching the legacy `ixTest` output for icon buttons.
  */
 @Component({
-  selector: 'ix-share-actions-cell',
-  templateUrl: './share-actions-cell.component.html',
-  styleUrls: ['./share-actions-cell.component.scss'],
+  selector: 'ix-table-actions-cell',
+  templateUrl: './table-actions-cell.component.html',
+  styleUrls: ['./table-actions-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
@@ -44,7 +44,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
     TnMenuTriggerDirective,
   ],
 })
-export class ShareActionsCellComponent<T = unknown> {
+export class TableActionsCellComponent<T = unknown> {
   private destroyRef = inject(DestroyRef);
 
   readonly actions = input.required<IconActionConfig<T>[]>();
@@ -55,32 +55,45 @@ export class ShareActionsCellComponent<T = unknown> {
 
   protected readonly visibleActions = signal<IconActionConfig<T>[]>([]);
 
+  /** Async `hidden()` subscriptions for the current effect run; torn down before each re-run. */
+  private hiddenSubscriptions = new Subscription();
+
   constructor() {
-    // Recompute visibility whenever the row or action list changes. `hidden`
-    // may be synchronous or an Observable, mirroring ix-cell-actions-with-menu.
+    this.destroyRef.onDestroy(() => this.hiddenSubscriptions.unsubscribe());
+
+    // Recompute visibility whenever the row or action list changes.
     effect(() => {
       const row = this.row();
       const actions = this.actions();
 
-      this.visibleActions.set([]);
+      // Drop the previous run's subscriptions so re-runs (row/actions changes)
+      // neither leak nor let a stale async emission push into the reset list.
+      this.hiddenSubscriptions.unsubscribe();
+      this.hiddenSubscriptions = new Subscription();
 
-      actions.forEach((action) => {
+      // Track visibility per index and project in declaration order, so an async
+      // hidden() resolving out of order cannot reorder the rendered buttons.
+      const visible = new Array<boolean>(actions.length).fill(false);
+      const publish = (): void => {
+        this.visibleActions.set(actions.filter((_, index) => visible[index]));
+      };
+
+      actions.forEach((action, index) => {
         if (!action.hidden) {
-          this.visibleActions.update((items) => [...items, action]);
+          visible[index] = true;
           return;
         }
 
-        const result$ = action.hidden(row);
-        if (isObservable(result$)) {
-          result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((shouldHide) => {
-            if (!shouldHide) {
-              this.visibleActions.update((items) => [...items, action]);
-            }
-          });
-        } else if (!result$) {
-          this.visibleActions.update((items) => [...items, action]);
-        }
+        // `hidden` always resolves through an Observable (parity with the
+        // `async` pipe in ix-cell-actions); an out-of-order emission re-publishes
+        // against the index, so it cannot reorder the rendered buttons.
+        this.hiddenSubscriptions.add(action.hidden(row).subscribe((shouldHide) => {
+          visible[index] = !shouldHide;
+          publish();
+        }));
       });
+
+      publish();
     });
   }
 

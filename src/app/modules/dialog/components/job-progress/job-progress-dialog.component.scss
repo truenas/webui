@@ -3,65 +3,64 @@
 :host {
   display: block;
   position: relative;
+}
 
-  ::ng-deep {
-    .mat-mdc-dialog-actions {
-      position: static;
+// This dialog's markup is projected into <tn-dialog-shell>'s content slot, so
+// these selectors must pierce encapsulation (::ng-deep) to reach the projected
+// nodes — a plain scoped rule never matches them, leaving the minimize button
+// unpositioned and the content with no min-width.
+:host ::ng-deep {
+  // Minimize button sits in the top-right corner (where the shell close button
+  // would be), so the job dialog can be backgrounded but not closed.
+  .minimize-button {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    z-index: 1;
+  }
+
+  .job-dialog {
+    max-height: 350px;
+    max-width: 100%;
+    width: 100%;
+
+    @media (min-width: $breakpoint-tablet) {
+      max-width: 480px;
+      min-width: 420px;
     }
   }
-}
 
-mat-dialog-content.job-dialog {
-  max-height: 350px;
-  max-width: 100%;
-  width: 100%;
-
-  @media (min-width: $breakpoint-tablet) {
-    max-width: 400px;
-    min-width: 370px;
+  .job-progress {
+    margin: 3px 0;
   }
 
-  .mat-mdc-dialog-content {
-    overflow: auto !important;
+  .job-description {
+    opacity: 0.75;
+    white-space: pre-line;
   }
-}
 
-.mat-dialog-close {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-}
+  .job-time {
+    opacity: 0.5;
+  }
 
-.job-progress {
-  margin: 3px 0;
-}
+  .logs-container {
+    margin-bottom: 20px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
 
-.job-description {
-  opacity: 0.75;
-  white-space: pre-line;
-}
+  .logs {
+    background: rgba(0, 0, 0, 0.096);
+    color: white;
+    overflow-x: auto;
+    padding: 5px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
 
-.job-time {
-  opacity: 0.5;
-}
-
-.logs-container {
-  margin-bottom: 20px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.logs {
-  background: rgba(0, 0, 0, 0.096);
-  color: white;
-  overflow-x: auto;
-  padding: 5px;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.description-line {
-  display: flex;
-  gap: 8px;
-  justify-content: space-between;
+  .description-line {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+  }
 }

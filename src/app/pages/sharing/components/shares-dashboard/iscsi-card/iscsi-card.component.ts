@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -21,6 +20,7 @@ import {
   TnTooltipDirective,
   type TnCardAction,
   type TnSortEvent,
+  TnDialog,
 } from '@truenas/ui-components';
 import {
   filter, startWith, tap,
@@ -40,10 +40,10 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.elements';
 import {
   ServiceActionsMenuService,
@@ -85,7 +85,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnEmptyComponent,
     CardAlertBadgeComponent,
     GlobalTargetConfigurationComponent,
-    ShareActionsCellComponent,
+    TableActionsCellComponent,
   ],
 })
 export class IscsiCardComponent implements OnInit {
@@ -94,7 +94,7 @@ export class IscsiCardComponent implements OnInit {
   private api = inject(ApiService);
   protected emptyService = inject(EmptyService);
   private store$ = inject<Store<ServicesState>>(Store);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private iscsiService = inject(IscsiService);
   private license = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
@@ -224,9 +224,9 @@ export class IscsiCardComponent implements OnInit {
   }
 
   doDelete(iscsi: IscsiTarget): void {
-    this.matDialog
+    this.tnDialog
       .open(DeleteTargetDialog, { data: iscsi, width: '600px' })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
   }

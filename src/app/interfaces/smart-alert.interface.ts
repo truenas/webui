@@ -52,8 +52,15 @@ export interface SmartAlertEnhancement {
   detailedHelp?: string;
   documentationUrl?: string;
 
-  // Navigation integration
+  // Navigation integration.
+  // Drives the nav badge (badge shows on this path and every parent path).
   relatedMenuPath?: string[];
+
+  // Restricts the page-level alert banner to routes at or below this path.
+  // Use when the banner should be scoped more narrowly than the nav badge
+  // (e.g. an alert relevant only to a sub-page that has no menu item of its own).
+  // Falls back to relatedMenuPath when omitted.
+  bannerMenuPath?: string[];
 
   // Visual enhancements
   customIcon?: string;
@@ -144,6 +151,7 @@ export interface EnhancedAlert {
   detailedHelp?: string;
   documentationUrl?: string;
   relatedMenuPath?: string[];
+  bannerMenuPath?: string[];
   customIcon?: string;
   severityScore?: number;
 }

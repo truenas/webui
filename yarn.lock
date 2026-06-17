@@ -581,15 +581,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/common@npm:~21.2.0":
-  version: 21.2.0
-  resolution: "@angular/common@npm:21.2.0"
+"@angular/common@npm:~21.2.17":
+  version: 21.2.17
+  resolution: "@angular/common@npm:21.2.17"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": 21.2.0
+    "@angular/core": 21.2.17
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/1fae61795678ba4b760c4043e5dfd8764d92b9fd77b976a2da64e4ae7e14d545c8d7af302d732021d7482377c7b2ee970d78b195f6f0e51a8adab46b8999a990
+  checksum: 10/ca477ef4fecb3c841b4003dd6f58ccda3cff95cb80e4b97ddf9f0cccae7c54225d0ecb4d952b8bfcbb4be52f3380ca2d2197792bee7b18250a603ba54c511bbb
   languageName: node
   linkType: hard
 
@@ -618,22 +618,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/compiler@npm:~21.2.4":
-  version: 21.2.4
-  resolution: "@angular/compiler@npm:21.2.4"
+"@angular/compiler@npm:~21.2.17":
+  version: 21.2.17
+  resolution: "@angular/compiler@npm:21.2.17"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10/f1071dbfa38d6183fd9fdccff10a6d0e77a08afcb471d631effe3ae4e242ceadd4960dd58c8f596647bf4a39e4b88fc4616bee5d80af393f214363b4455ab288
+  checksum: 10/6a458b9ebb1b59e85d99546eac1f1b5081a36a190667b5f18497ca2086a87693edb6650505d40e0d1bab8525e87f4969604486c716d909a3526e61d3808f48dd
   languageName: node
   linkType: hard
 
-"@angular/core@npm:~21.2.4":
-  version: 21.2.4
-  resolution: "@angular/core@npm:21.2.4"
+"@angular/core@npm:~21.2.17":
+  version: 21.2.17
+  resolution: "@angular/core@npm:21.2.17"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/compiler": 21.2.4
+    "@angular/compiler": 21.2.17
     rxjs: ^6.5.3 || ^7.4.0
     zone.js: ~0.15.0 || ~0.16.0
   peerDependenciesMeta:
@@ -641,7 +641,7 @@ __metadata:
       optional: true
     zone.js:
       optional: true
-  checksum: 10/bd075cbcbdb0866bc8806ec7bc42c9954d3266452c2426abfc56c058e8346836a5163d68bda25f5e19f0af7a45d02dcfe6bed85bbd9b93a00909be14ed135172
+  checksum: 10/63f1938f080ee0d2bb77c265c8ff3b377e942338d07845749e447080d72209393a060d8f87b043768beee8bac0d5c0652669388ba13a929e1211622886dd7756
   languageName: node
   linkType: hard
 
@@ -4536,9 +4536,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.2.2":
-  version: 0.2.2
-  resolution: "@truenas/ui-components@npm:0.2.2"
+"@truenas/ui-components@npm:~0.3.4":
+  version: 0.3.4
+  resolution: "@truenas/ui-components@npm:0.3.4"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -4559,7 +4559,7 @@ __metadata:
     "@mdi/js": ^7.4.47
   bin:
     truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/f0f4e11fa4f3927b65ef30e2e2485db077c3d296fd504f46e6e564b709e8d0ba84c56fb938ecc715fffba16fcdc80a3c90d2f002854f1549f6c0321be2ad295a
+  checksum: 10/71084114895b53c49688a3deac0c2335fa9f54b4a6d3841ad74980adf5c02c44aa2124784bb82bfe4621b1d6786e7aefb956575becdc4fb5ebb906dae9574a4f
   languageName: node
   linkType: hard
 
@@ -8139,15 +8139,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:~3.4.2":
-  version: 3.4.2
-  resolution: "dompurify@npm:3.4.2"
+"dompurify@npm:~3.4.9":
+  version: 3.4.10
+  resolution: "dompurify@npm:3.4.10"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10/8681a27f17412e754b38d080e39abb36fb14dbf58194d520eedd45b47986323966a0391df540a2011bce72dd37d67f2a015246a58f39d48e3e8f6051274fb974
+  checksum: 10/e051c70e7a0729d8cc04d40d7863dc8977495140857e81dc668fb548b7a43c7f80cfc973e3c9c0a6cd18b8eaa94ea7de9603daa02d38c8b15a9b32cc25a6f440
   languageName: node
   linkType: hard
 
@@ -11696,7 +11696,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:^4.1.0, js-yaml@npm:~4.1.1":
+"js-yaml@npm:^4.1.0":
   version: 4.1.1
   resolution: "js-yaml@npm:4.1.1"
   dependencies:
@@ -11716,6 +11716,17 @@ __metadata:
   bin:
     js-yaml: bin/js-yaml.js
   checksum: 10/172e0b6007b0bf0fc8d2469c94424f7dd765c64a047d2b790831fecef2204a4054eabf4d911eb73ab8c9a3256ab8ba1ee8d655b789bf24bf059c772acc2075a1
+  languageName: node
+  linkType: hard
+
+"js-yaml@npm:~4.2.0":
+  version: 4.2.0
+  resolution: "js-yaml@npm:4.2.0"
+  dependencies:
+    argparse: "npm:^2.0.1"
+  bin:
+    js-yaml: bin/js-yaml.js
+  checksum: 10/51de2067a2b44b07ba5206132e56005f8b568ff279bb4d2f645068958c56fa4827d40a6841c983234671fa0a134bf094d0b0717873c2a3d319185297af145a6d
   languageName: node
   linkType: hard
 
@@ -15967,10 +15978,10 @@ __metadata:
     "@angular/build": "npm:~21.2.10"
     "@angular/cdk": "npm:~21.2.0"
     "@angular/cli": "npm:~21.2.10"
-    "@angular/common": "npm:~21.2.0"
-    "@angular/compiler": "npm:~21.2.4"
+    "@angular/common": "npm:~21.2.17"
+    "@angular/compiler": "npm:~21.2.17"
     "@angular/compiler-cli": "npm:~21.2.0"
-    "@angular/core": "npm:~21.2.4"
+    "@angular/core": "npm:~21.2.17"
     "@angular/forms": "npm:~21.2.0"
     "@angular/material": "npm:~21.2.0"
     "@angular/platform-browser": "npm:~21.2.0"
@@ -16015,7 +16026,7 @@ __metadata:
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.2.2"
+    "@truenas/ui-components": "npm:~0.3.4"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"
@@ -16049,7 +16060,7 @@ __metadata:
     d3: "npm:~7.9.0"
     date-fns: "npm:~4.1.0"
     date-fns-tz: "npm:~3.2.0"
-    dompurify: "npm:~3.4.2"
+    dompurify: "npm:~3.4.9"
     dygraphs: "npm:~2.2.1"
     email-validator: "npm:~2.0.4"
     fontfaceobserver: "npm:^2.3.0"
@@ -16067,7 +16078,7 @@ __metadata:
     jest-junit: "npm:~16.0.0"
     jest-preset-angular: "npm:~16.0.0"
     jest-when: "npm:~3.6.0"
-    js-yaml: "npm:~4.1.1"
+    js-yaml: "npm:~4.2.0"
     lint-staged: "npm:^15.2.10"
     lmdb: "npm:^3.3.0"
     lodash: "npm:~4.18.1"

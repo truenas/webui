@@ -5,7 +5,6 @@ import {
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatColumnDef } from '@angular/material/table';
 import {
@@ -13,7 +12,7 @@ import {
 } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   combineLatest, filter, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
@@ -89,7 +88,7 @@ export class InstalledAppsListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
@@ -382,8 +381,8 @@ export class InstalledAppsListComponent implements OnInit {
     const apps = this.dataSource.filter((app) => (
       updateAll ? app.upgrade_available : this.selection.isSelected(app.id)
     ));
-    this.matDialog.open(AppBulkUpdateComponent, { data: apps })
-      .afterClosed()
+    this.tnDialog.open(AppBulkUpdateComponent, { data: apps })
+      .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.toggleAppsChecked(false);
@@ -395,7 +394,7 @@ export class InstalledAppsListComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         switchMap((ixVolumesExist) => {
-          return this.matDialog.open<
+          return this.tnDialog.open<
             AppDeleteDialog,
             AppDeleteDialogInputData,
             AppDeleteDialogOutputData
@@ -404,7 +403,7 @@ export class InstalledAppsListComponent implements OnInit {
               name: this.checkedAppsNames.join(', '),
               showRemoveVolumes: ixVolumesExist.some(Boolean),
             },
-          }).afterClosed();
+          }).closed;
         }),
         filter(Boolean),
         switchMap((options) => this.executeBulkDeletion(options)),

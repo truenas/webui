@@ -5,16 +5,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormArray, FormBuilder, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnIconButtonComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import {
+  InputType, TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnFormFieldComponent,
+  TnIconButtonComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
+} from '@truenas/ui-components';
 import { debounceTime } from 'rxjs/operators';
-import { SelectOption } from 'app/interfaces/option.interface';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websocket-debug-panel/utils/type-guards';
 
@@ -23,15 +19,14 @@ import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websoc
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    MatCard,
-    MatCardContent,
-    MatButton,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnButtonComponent,
     TranslateModule,
-    TnIconComponent,
     TnIconButtonComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    IxTextareaComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
   ],
   templateUrl: './job-event-builder.component.html',
   styleUrls: ['./job-event-builder.component.scss'],
@@ -46,13 +41,14 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
   private destroyRef = inject(DestroyRef);
   private isUpdatingFromInput = false;
 
-  protected readonly stateOptions$ = of<SelectOption[]>([
+  protected readonly InputType = InputType;
+  protected readonly stateOptions: TnSelectOption<string>[] = [
     { label: 'RUNNING', value: 'RUNNING' },
     { label: 'SUCCESS', value: 'SUCCESS' },
     { label: 'FAILED', value: 'FAILED' },
     { label: 'ABORTED', value: 'ABORTED' },
     { label: 'WAITING', value: 'WAITING' },
-  ]);
+  ];
 
   protected form = this.fb.group({
     events: this.fb.array<FormGroup>([]),

@@ -1,9 +1,10 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerStatus } from 'app/enums/container.enum';
@@ -32,10 +33,11 @@ describe('ContainerListBulkActionsComponent', () => {
     providers: [
       mockProvider(SnackbarService),
       mockAuth(),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(true)),
-        })),
+          closed: of(true),
+          close: jest.fn(),
+        } as unknown as DialogRef)),
       }),
       mockProvider(ApiService, {
         call: jest.fn(() => of(undefined)),
@@ -83,21 +85,21 @@ describe('ContainerListBulkActionsComponent', () => {
   });
 
   it('opens the Stop Options dialog when Stop All Selected is clicked', async () => {
-    const matDialog = spectator.inject(MatDialog);
+    const tnDialog = spectator.inject(TnDialog);
 
     await menu.open();
     await menu.clickItem({ text: 'Stop All Selected' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
+    expect(tnDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
   });
 
   it('opens the Restart Options dialog when Restart All Selected is clicked', async () => {
-    const matDialog = spectator.inject(MatDialog);
+    const tnDialog = spectator.inject(TnDialog);
 
     await menu.open();
     await menu.clickItem({ text: 'Restart All Selected' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
+    expect(tnDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
   });
 
   it('emits resetBulkSelection after actions', async () => {
