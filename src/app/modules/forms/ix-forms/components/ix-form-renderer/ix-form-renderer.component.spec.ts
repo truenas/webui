@@ -463,6 +463,25 @@ describe('IxFormRendererComponent', () => {
       const name = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
       expect(await name.getValue()).toBe('patched');
     });
+
+    it('disables a field hidden by editData so its patched value never leaks into the submit', async () => {
+      // The control is patched while still enabled, then disabled once the patch's
+      // valueChanges re-runs the conditional pass — guarding the parent-before-child
+      // lifecycle coupling that keeps a hidden field out of allValues/changedValues.
+      spectator = createComponent({
+        props: { definition: editVisibilityDefinition, editData: { enabled: false, name: 'stale' } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'name' }))).toBeNull();
+
+      await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
+
+      // changedValues omits the disabled control, so the stale value can't reach a
+      // "send only what changed" payload; allValues (getRawValue) still carries it.
+      expect(submitHandler.mock.calls[0][0].changedValues).not.toHaveProperty('name');
+      expect(submitHandler.mock.calls[0][0].allValues).toHaveProperty('name', 'stale');
+    });
   });
 
   describe('readonly', () => {
@@ -481,6 +500,30 @@ describe('IxFormRendererComponent', () => {
       const name = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
       expect(await name.isReadonly()).toBe(true);
       expect(await name.isDisabled()).toBe(false);
+    });
+  });
+
+  describe('ignored-prop dev warning', () => {
+    it('warns when a field sets a prop the renderer does not render for its type', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const misconfiguredDefinition = {
+        title: asTranslated('Misconfigured'),
+        fields: [
+          {
+            name: 'enabled', type: 'checkbox', label: asTranslated('Enabled'), readonly: true,
+          },
+          {
+            name: 'flavor', type: 'select', label: asTranslated('Flavor'), placeholder: asTranslated('Pick'), options: of(flavorOptions),
+          },
+        ],
+        submit: submitHandler,
+      } as unknown as FormDefinition<SampleForm>;
+
+      spectator = createComponent({ props: { definition: misconfiguredDefinition } });
+
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('readonly'));
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('placeholder'));
+      warn.mockRestore();
     });
   });
 });

@@ -144,6 +144,9 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
     }
 
     const sections = definition.sections ?? [{ fields: definition.fields ?? [] }];
+    if (isDevMode()) {
+      this.warnIgnoredFieldProps(sections);
+    }
     this.form = this.buildForm(sections, definition.formValidators);
     this.sections = sections.map((section) => this.toRenderSection(section));
     this.title = this.translateOrEmpty(definition.title);
@@ -270,6 +273,35 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
         this.errorHandler.showErrorModal(error);
       },
     });
+  }
+
+  /**
+   * Dev-only guard: a few declarative props are honored by only a subset of
+   * control types — the template binds `placeholder` on input/textarea/combobox
+   * and `readonly` on input/textarea. Setting one on an unsupported type (e.g.
+   * `readonly` on a checkbox, `placeholder` on a select) silently does nothing.
+   * Warn at author time, mirroring the loadData/editData guard, so the mistake
+   * surfaces in the console rather than as a quietly-missing attribute.
+   */
+  private warnIgnoredFieldProps(sections: FormSectionDefinition<T>[]): void {
+    for (const section of sections) {
+      for (const field of section.fields) {
+        const ignored: string[] = [];
+        if (field.placeholder && (field.type === 'checkbox' || field.type === 'select')) {
+          ignored.push('placeholder');
+        }
+        if (field.readonly && field.type !== 'input' && field.type !== 'textarea') {
+          ignored.push('readonly');
+        }
+        if (ignored.length > 0) {
+          console.warn(
+            `[ix-form-renderer] Field "${field.name}" (type "${field.type}") sets `
+            + `${ignored.join(', ')}, which the renderer does not render for this control type. `
+            + 'Remove the prop, or use a control type that supports it.',
+          );
+        }
+      }
+    }
   }
 
   private buildForm(sections: FormSectionDefinition<T>[], formValidators?: ValidatorFn[]): FormGroup {
