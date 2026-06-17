@@ -174,7 +174,13 @@
 
       @if (isReady && report()?.errorConf) {
         <div class="card-content">
-          <ix-empty [conf]="report().errorConf"></ix-empty>
+          <tn-empty
+            icon="alert-octagon"
+            iconLibrary="mdi"
+            iconSize="56px"
+            [title]="report().errorConf.title | translate"
+            [description]="report().errorConf.message"
+          ></tn-empty>
         </div>
       }
     </tn-card>

@@ -65,7 +65,7 @@ const reportTypeMap = new Map([
     ReportingGraphName.ZfsArcActualRate,
     ReportingGraphName.ZfsArcRate,
   ]],
-])
+]);
 
 @Component({
   selector: 'ix-reports-dashboard',

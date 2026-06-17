@@ -7,6 +7,7 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
+  TnEmptyComponent,
   TnIconButtonComponent,
   TnTestIdDirective,
   TnTooltipDirective,
@@ -32,7 +33,6 @@ import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
@@ -62,9 +62,9 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
     TnIconButtonComponent,
     TnTooltipDirective,
     TnTestIdDirective,
+    TnEmptyComponent,
     LineChartComponent,
     IxDateComponent,
-    EmptyComponent,
     TranslateModule,
     MapValuePipe,
     KeyValuePipe,

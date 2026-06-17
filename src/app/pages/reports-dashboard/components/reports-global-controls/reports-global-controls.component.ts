@@ -108,7 +108,9 @@ export class ReportsGlobalControlsComponent implements OnInit {
     this.form.controls.tab.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((value) => {
-      if (value) this.router.navigate(['/reportsdashboard', value]);
+      if (value) {
+        this.router.navigate(['/reportsdashboard', value]);
+      }
     });
   }
 
