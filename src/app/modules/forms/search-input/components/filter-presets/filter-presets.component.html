@@ -3,15 +3,13 @@
     <span class="label">{{ 'Add Filter' | translate }}:</span>
 
     @for (preset of visiblePresets(); track preset.label) {
-      <button
-        type="button"
-        mat-button
-        color="default"
-        [ixTest]="['Add', preset.label]"
-        (click)="togglePreset(preset)"
-      >
-        + {{ preset.label | translate }}
-      </button>
+      <tn-chip
+        color="secondary"
+        [label]="'+ ' + (preset.label | translate)"
+        [closable]="false"
+        [testId]="['Add', preset.label]"
+        (onClick)="togglePreset(preset)"
+      ></tn-chip>
     }
   </div>
 }

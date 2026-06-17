@@ -4,10 +4,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   filter, forkJoin, map, Subject, take,
 } from 'rxjs';
@@ -81,7 +80,7 @@ interface DiskUi extends Disk {
 export class DiskListComponent implements OnInit {
   private api = inject(ApiService);
   private router = inject(Router);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private slideIn = inject(SlideIn);
   protected emptyService = inject(EmptyService);
@@ -313,29 +312,29 @@ export class DiskListComponent implements OnInit {
 
   protected wipe(disk: Disk): void {
     const exportedPool = this.unusedDisks.find((dev) => dev.devname === disk.devname)?.exported_zpool;
-    const dialog = this.matDialog.open(DiskWipeDialog, {
+    const dialog = this.tnDialog.open(DiskWipeDialog, {
       data: {
         diskName: disk.name,
         exportedPool,
       },
     });
-    dialog.afterClosed().pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    dialog.closed.pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.dataProvider.load();
     });
   }
 
   protected unlock(disk: Disk): void {
-    this.matDialog.open(UnlockSedDialog, {
+    this.tnDialog.open(UnlockSedDialog, {
       data: { diskName: disk.name },
-    }).afterClosed().pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    }).closed.pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.dataProvider.load();
     });
   }
 
   protected resetSed(disk: Disk): void {
-    this.matDialog.open(ResetSedDialog, {
+    this.tnDialog.open(ResetSedDialog, {
       data: { diskName: disk.name },
-    }).afterClosed().pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    }).closed.pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.dataProvider.load();
     });
   }

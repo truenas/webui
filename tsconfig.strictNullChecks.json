@@ -466,7 +466,6 @@
     "./src/app/modules/ix-tree/tree-datasource.ts",
     "./src/app/modules/ix-tree/tree-flattener.ts",
     "./src/app/modules/layout/admin-layout/admin-layout.component.const.ts",
-    "./src/app/modules/layout/topbar/topbar-dialog-position.constant.ts",
     "./src/app/modules/loader/components/app-loader/app-loader.component.ts",
     "./src/app/modules/loader/components/fake-progress-bar/fake-progress-bar.component.ts",
     "./src/app/modules/loader/directives/with-loading-state/with-loading-state-error/with-loading-state-error.component.ts",
@@ -614,7 +613,6 @@
     "./src/app/types/ngx-translate-core.d.ts",
     "./src/app/pages/signin/disconnected-message/disconnected-message.component.spec.ts",
     "./src/app/pages/signin/disconnected-message/disconnected-message.component.ts",
-    "./src/app/pages/signin/insecure-connection/insecure-connection.component.ts",
     "./src/environments/environment.interface.ts",
     "./src/environments/environment.prod.ts",
     "./src/polyfills.ts"

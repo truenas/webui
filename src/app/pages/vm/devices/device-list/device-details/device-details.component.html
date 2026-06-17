@@ -1,23 +1,17 @@
-<h1 mat-dialog-title>
-  <tn-icon class="information-icon" name="information" library="mdi"></tn-icon>
-  <span class="information-title">
-    {{ title | translate }}
-  </span>
-</h1>
-<div mat-dialog-content class="attributes">
+<tn-dialog-shell testId="device-details" [title]="title | translate">
+<div class="attributes">
   @for (attribute of attributes; track attribute) {
     <div>
       {{ attribute[0] }}: {{ attribute[1] }}
     </div>
   }
 </div>
-<div mat-dialog-actions>
-  &nbsp;
-  <button
-    mat-button
-    ixTest="dialog-close"
-    matDialogClose
-  >
-    {{ 'Close' | translate }}
-  </button>
+<div tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="dialog-close"
+    [label]="'Close' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
 </div>
+</tn-dialog-shell>

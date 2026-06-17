@@ -1,25 +1,18 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef,
-  MatDialogClose,
-  MatDialogTitle,
-  MatDialogContent,
-  MatDialogActions,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 export interface ExportDiskDialogData {
@@ -39,17 +32,15 @@ interface ImageFormat {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    AsyncPipe,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxExplorerComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    MatDialogActions,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     FormActionsComponent,
-    MatButton,
-    MatDialogClose,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
     MatProgressBarModule,
   ],
@@ -58,8 +49,8 @@ export class ExportDiskDialogComponent {
   private fb = inject(FormBuilder);
   private filesystemService = inject(FilesystemService);
   private translate = inject(TranslateService);
-  dialogRef = inject(MatDialogRef) as MatDialogRef<ExportDiskDialogComponent>;
-  data = inject<ExportDiskDialogData>(MAT_DIALOG_DATA);
+  dialogRef = inject(DialogRef) as DialogRef<unknown, ExportDiskDialogComponent>;
+  data = inject<ExportDiskDialogData>(DIALOG_DATA);
 
   readonly helptext = helptextVmWizard;
   readonly imageFormats: ImageFormat[] = [

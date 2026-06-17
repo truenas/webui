@@ -7,7 +7,7 @@ import {
   createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -66,12 +66,17 @@ describe('FileReviewComponent', () => {
   it('uploads a new rating when form is submitted', async () => {
     const fakeAttachments = [fakeFile('attachment1.png'), fakeFile('attachment2.png')];
 
+    await (await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Take screenshot of the current page' }),
+    )).check();
+    await (await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Attach additional images' }),
+    )).check();
+
     await form.fillForm(
       {
         'Select Rating': 1,
         Message: 'Git gud',
-        'Take screenshot of the current page': true,
-        'Attach additional images': true,
         'Attach images (optional)': fakeAttachments,
       },
     );

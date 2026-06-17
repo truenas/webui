@@ -1,4 +1,3 @@
-import { MatDialog } from '@angular/material/dialog';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -11,7 +10,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { StartServiceDialog, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
+import { StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -34,7 +33,7 @@ describe('ServicesEffects', () => {
   let api: ApiService;
   let store$: MockStore<ServicesState>;
 
-  const afterClosed$ = new BehaviorSubject<StartServiceDialogResult>({
+  const closed$ = new BehaviorSubject<StartServiceDialogResult>({
     start: true,
     startAutomatically: true,
   });
@@ -46,13 +45,9 @@ describe('ServicesEffects', () => {
       mockApi([
         mockCall('service.query', [cifsService]),
       ]),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: () => afterClosed$,
-        })),
-      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        startService: jest.fn(() => closed$),
       }),
       provideMockStore({
         initialState,
@@ -126,10 +121,7 @@ describe('ServicesEffects', () => {
       const dispatchedAction = await firstValueFrom(spectator.service.checkIfServiceIsEnabled$);
       expect(dispatchedAction).toEqual(serviceEnabled());
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialog, {
-        data: ServiceName.Cifs,
-        disableClose: true,
-      });
+      expect(spectator.inject(DialogService).startService).toHaveBeenCalledWith(ServiceName.Cifs);
     });
 
     it('do not shows dialog when service is running and not set to start automatically.', async () => {
@@ -142,15 +134,12 @@ describe('ServicesEffects', () => {
       store$.refreshState();
 
       actions$.next(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-      afterClosed$.next({ start: true, startAutomatically: false });
+      closed$.next({ start: true, startAutomatically: false });
 
       const dispatchedAction = await firstValueFrom(spectator.service.checkIfServiceIsEnabled$);
       expect(dispatchedAction).toEqual(serviceStarted());
 
-      expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(StartServiceDialog, {
-        data: ServiceName.Cifs,
-        disableClose: true,
-      });
+      expect(spectator.inject(DialogService).startService).not.toHaveBeenCalled();
     });
 
     it('shows dialog when service is stopped twice', async () => {
@@ -162,14 +151,11 @@ describe('ServicesEffects', () => {
       store$.refreshState();
 
       actions$.next(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-      afterClosed$.next({ start: true, startAutomatically: false });
+      closed$.next({ start: true, startAutomatically: false });
 
       expect(await firstValueFrom(spectator.service.checkIfServiceIsEnabled$)).toEqual(serviceStarted());
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialog, {
-        data: ServiceName.Cifs,
-        disableClose: true,
-      });
+      expect(spectator.inject(DialogService).startService).toHaveBeenCalledWith(ServiceName.Cifs);
 
       store$.overrideSelector(selectServices, [{
         ...cifsService,
@@ -179,15 +165,12 @@ describe('ServicesEffects', () => {
       store$.refreshState();
 
       actions$.next(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-      afterClosed$.next({ start: true, startAutomatically: false });
+      closed$.next({ start: true, startAutomatically: false });
 
       expect(await firstValueFrom(spectator.service.checkIfServiceIsEnabled$)).toEqual(serviceStarted());
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialog, {
-        data: ServiceName.Cifs,
-        disableClose: true,
-      });
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledTimes(2);
+      expect(spectator.inject(DialogService).startService).toHaveBeenCalledWith(ServiceName.Cifs);
+      expect(spectator.inject(DialogService).startService).toHaveBeenCalledTimes(2);
     });
 
     it('do not shows dialog when service is running and started automatically.', async () => {
@@ -204,10 +187,7 @@ describe('ServicesEffects', () => {
       const dispatchedAction = await firstValueFrom(spectator.service.checkIfServiceIsEnabled$);
       expect(dispatchedAction).toEqual(serviceEnabled());
 
-      expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(StartServiceDialog, {
-        data: ServiceName.Cifs,
-        disableClose: true,
-      });
+      expect(spectator.inject(DialogService).startService).not.toHaveBeenCalled();
     });
   });
 });

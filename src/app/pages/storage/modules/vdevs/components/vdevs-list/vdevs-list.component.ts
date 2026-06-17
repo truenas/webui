@@ -2,12 +2,11 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, input, output, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, Router, RouterLink, RouterLinkActive,
 } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { filter, map } from 'rxjs/operators';
 import { VDevNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
@@ -27,7 +26,6 @@ import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-w
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/vdevs/components/vdev-group-node/vdev-group-node.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
@@ -39,7 +37,6 @@ import { collectDescendantWarning } from 'app/pages/storage/modules/vdevs/utils/
   styleUrls: ['./vdevs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
     RouterLink,
     BasicSearchComponent,
     FakeProgressBarComponent,
@@ -47,8 +44,8 @@ import { collectDescendantWarning } from 'app/pages/storage/modules/vdevs/utils/
     RouterLinkActive,
     TopologyItemNodeComponent,
     TnIconComponent,
+    TnIconButtonComponent,
     VDevGroupNodeComponent,
-    MatIconButton,
     TranslateModule,
     AsyncPipe,
     TreeViewComponent,

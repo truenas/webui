@@ -1,11 +1,8 @@
 import { Component, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonComponent, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -22,7 +19,6 @@ import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/
 import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state/map-loaded-value.utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -39,12 +35,8 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
   styleUrls: ['./widget-interface.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
-    MatIconButton,
-    TestDirective,
-    MatTooltip,
-    RouterLink,
+    TnCardComponent,
+    TnIconButtonComponent,
     TnIconComponent,
     TnTooltipDirective,
     WithLoadingStateDirective,
@@ -57,6 +49,7 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
   ],
 })
 export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
+  private router = inject(Router);
   private resources = inject(WidgetResourcesService);
   private translate = inject(TranslateService);
   private theme = inject(ThemeService);
@@ -196,5 +189,9 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
     }
 
     return ip;
+  }
+
+  protected goToReports(): void {
+    this.router.navigate(['/reportsdashboard', 'network']);
   }
 }

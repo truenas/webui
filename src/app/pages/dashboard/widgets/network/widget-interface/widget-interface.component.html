@@ -1,18 +1,18 @@
-<mat-card class="card">
-  <mat-card-content class="card-content">
+<tn-card class="card" [padContent]="false">
+  <div class="card-content">
     @if (isFullSize()) {
       <div class="header">
         <h3>{{ 'Interface' | translate }}</h3>
-        <button
-          mat-icon-button
-          matTooltipPosition="above"
-          ixTest="network-reports"
-          [attr.aria-label]="'Network Reports' | translate"
-          [matTooltip]="'Network Reports' | translate"
-          [routerLink]="['/reportsdashboard', 'network']"
-        >
-          <tn-icon name="chart-box" library="mdi" size="lg"></tn-icon>
-        </button>
+        <tn-icon-button
+          name="chart-box"
+          library="mdi"
+          size="lg"
+          testId="network-reports"
+          tooltipPosition="above"
+          [ariaLabel]="'Network Reports' | translate"
+          [tooltip]="'Network Reports' | translate"
+          (onClick)="goToReports()"
+        ></tn-icon-button>
       </div>
     }
 
@@ -127,5 +127,5 @@
       }
       }
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>

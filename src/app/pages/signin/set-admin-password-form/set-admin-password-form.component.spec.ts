@@ -1,15 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnBannerHarness, TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -20,7 +18,6 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 describe('SetAdminPasswordFormComponent', () => {
   let spectator: Spectator<SetAdminPasswordFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: SetAdminPasswordFormComponent,
     imports: [
@@ -46,26 +43,45 @@ describe('SetAdminPasswordFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
+  });
+
+  async function getField(name: string): Promise<TnInputHarness> {
+    return loader.getHarness(TnInputHarness.with({ name }));
+  }
+
+  it('shows a banner explaining the first-time setup', async () => {
+    const banner = await loader.getHarness(
+      TnBannerHarness.with({ textContains: /First-time setup/ }),
+    );
+    expect(await banner.getText()).toContain('No administrator account has been configured yet.');
   });
 
   it('shows truenas_admin in readonly Username field', async () => {
-    const username = await form.getControl('Username') as IxInputHarness;
-
+    const username = await getField('username');
     expect(await username.getValue()).toBe('truenas_admin');
     expect(await username.isReadonly()).toBe(true);
   });
 
-  it('sets new admin password when form is submitted', async () => {
-    await form.fillForm({
-      Password: '12345678',
-      'Reenter Password': '12345678',
-    });
+  it('toggles password visibility via the suffix actions', async () => {
+    const password = await getField('password');
+    expect(await (await password.getSuffixIcon())!.getName()).toBe('mdi-eye-off');
+    await password.clickSuffixAction();
+    expect(await (await password.getSuffixIcon())!.getName()).toBe('mdi-eye');
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
+    const password2 = await getField('password2');
+    expect(await (await password2.getSuffixIcon())!.getName()).toBe('mdi-eye-off');
+    await password2.clickSuffixAction();
+    expect(await (await password2.getSuffixIcon())!.getName()).toBe('mdi-eye');
+  });
+
+  it('sets new admin password when form is submitted', async () => {
+    await (await getField('password')).setValue('12345678');
+    await (await getField('password2')).setValue('12345678');
+
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sign In' }));
     await submitButton.click();
 
     const api = spectator.inject(ApiService);
@@ -84,12 +100,10 @@ describe('SetAdminPasswordFormComponent', () => {
       loginResponse: { response_type: LoginExResponseType.Success } as LoginExResponse,
     }));
 
-    await form.fillForm({
-      Password: '12345678',
-      'Reenter Password': '12345678',
-    });
+    await (await getField('password')).setValue('12345678');
+    await (await getField('password2')).setValue('12345678');
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sign In' }));
     await submitButton.click();
 
     const snackbar = spectator.inject(SnackbarService);

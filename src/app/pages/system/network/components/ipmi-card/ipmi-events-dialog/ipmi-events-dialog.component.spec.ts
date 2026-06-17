@@ -1,7 +1,8 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -25,6 +26,7 @@ describe('IpmiEventsDialogComponent', () => {
       FakeProgressBarComponent,
     ],
     providers: [
+      mockProvider(DialogRef),
       mockApi([
         mockJob('ipmi.sel.elist', fakeSuccessfulJob([
           {
@@ -64,7 +66,7 @@ describe('IpmiEventsDialogComponent', () => {
   });
 
   it('clears IPMI events when Clear button is pressed', async () => {
-    const clearButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear' }));
+    const clearButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear' }));
     await clearButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('ipmi.sel.clear');
@@ -80,7 +82,7 @@ describe('IpmiEventsDialogComponent', () => {
     });
 
     it('does not show Clear button', async () => {
-      const clearButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Clear' }));
+      const clearButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Clear' }));
       expect(clearButton).toBeNull();
     });
 

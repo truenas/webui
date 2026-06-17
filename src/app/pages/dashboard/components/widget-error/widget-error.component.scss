@@ -4,6 +4,11 @@
 }
 
 .card {
+  display: block;
+  height: 100%;
+}
+
+.content {
   color: var(--fg2);
 
   display: flex;

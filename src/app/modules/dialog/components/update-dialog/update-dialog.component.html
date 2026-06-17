@@ -1,19 +1,16 @@
-<div class="dialog-content" mat-dialog-content>
-  <h3 mat-dialog-title class="dialog-title">
-    {{ contentText.title | translate }}
-  </h3>
+<tn-dialog-shell testId="update" [title]="contentText.title | translate">
   <p class="dialog-message">
     <span [innerHTML]="contentText.message | translate"></span>
   </p>
-</div>
 
-@let jobs = selectRunningJobs$ | async;
-<div class="jobs">
-  @if (jobs?.length) {
-    <div>
-      @for (job of jobs; track job) {
-        <ix-job-item [job]="job"></ix-job-item>
-      }
-    </div>
-  }
-</div>
+  @let jobs = selectRunningJobs$ | async;
+  <div class="jobs">
+    @if (jobs?.length) {
+      <div>
+        @for (job of jobs; track job) {
+          <ix-job-item [job]="job"></ix-job-item>
+        }
+      </div>
+    }
+  </div>
+</tn-dialog-shell>

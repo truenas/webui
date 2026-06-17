@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, OnInit, inject, signal, viewChild, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -21,6 +20,7 @@ import {
   TnTooltipDirective,
   type TnCardAction,
   type TnSortEvent,
+  TnDialog,
 } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -38,10 +38,10 @@ import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/ut
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -82,7 +82,7 @@ import { selectService } from 'app/store/services/services.selectors';
     SubSystemNameCellComponent,
     CardAlertBadgeComponent,
     NvmeOfConfigurationComponent,
-    ShareActionsCellComponent,
+    TableActionsCellComponent,
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
@@ -91,7 +91,7 @@ export class NvmeOfCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private store$ = inject<Store<ServicesState>>(Store);
   private nvmeOfStore = inject(NvmeOfStore);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
@@ -210,11 +210,11 @@ export class NvmeOfCardComponent implements OnInit {
   }
 
   doDelete(row: NvmeOfSubsystemDetails): void {
-    this.matDialog.open(
+    this.tnDialog.open(
       SubsystemDeleteDialogComponent,
       { data: row, minWidth: '500px' },
     )
-      .afterClosed()
+      .closed
       .pipe(
         filter((data: { confirmed: boolean; force: boolean }) => data?.confirmed),
         switchMap(({ force }) => {

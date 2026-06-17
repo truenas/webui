@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -37,7 +37,7 @@ export class InstallationMediaStepComponent implements SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.nonNullable.group({
@@ -49,8 +49,8 @@ export class InstallationMediaStepComponent implements SummaryProvider {
   protected readonly requiredRoles = [Role.VmWrite];
 
   onUploadIsoClicked(): void {
-    this.matDialog.open(UploadIsoDialogComponent)
-      .afterClosed()
+    this.tnDialog.open(UploadIsoDialogComponent)
+      .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((newIsoPath: string | null) => {
         if (!newIsoPath) {

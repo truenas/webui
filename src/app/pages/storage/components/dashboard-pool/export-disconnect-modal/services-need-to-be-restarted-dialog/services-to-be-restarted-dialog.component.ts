@@ -1,16 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions, MatDialogClose,
-  MatDialogContent,
-  MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { ServicesToBeRestartedInfo } from 'app/interfaces/pool-export.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-services-to-be-restarted-dialog',
@@ -18,18 +12,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrl: './services-to-be-restarted-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
     FormActionsComponent,
-    MatButton,
-    MatDialogActions,
-    MatDialogContent,
-    MatDialogTitle,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
-    MatDialogClose,
   ],
 })
 export class ServicesToBeRestartedDialogComponent {
-  protected servicesInfo = inject<ServicesToBeRestartedInfo>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, ServicesToBeRestartedDialogComponent>>(DialogRef);
+  protected servicesInfo = inject<ServicesToBeRestartedInfo>(DIALOG_DATA);
 
   protected readonly helptext = helptextVolumes;
 }

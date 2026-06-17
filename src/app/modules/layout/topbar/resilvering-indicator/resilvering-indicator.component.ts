@@ -1,10 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -30,7 +29,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class ResilveringIndicatorComponent {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
 
   protected isResilvering$ = this.api.subscribe('pool.scan').pipe(
@@ -43,6 +42,6 @@ export class ResilveringIndicatorComponent {
   protected readonly tooltips = helptextTopbar.tooltips;
 
   showDetails(): void {
-    this.matDialog.open(ResilverProgressDialog);
+    this.tnDialog.open(ResilverProgressDialog);
   }
 }

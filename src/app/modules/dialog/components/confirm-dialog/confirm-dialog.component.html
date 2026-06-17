@@ -1,64 +1,53 @@
-<h1 mat-dialog-title>{{ options.title }}</h1>
-<div mat-dialog-content id="confirm-msg">
-  <div class="message-content">
-    <span [innerHTML]="options.message"></span>
+<tn-dialog-shell testId="confirm" [title]="options.title" [showCloseButton]="false">
+  <div id="confirm-msg">
+    <div class="message-content">
+      <span [innerHTML]="options.message"></span>
+    </div>
+
+    @if (options.secondaryCheckbox) {
+      <span>
+        <tn-checkbox
+          class="secondary-checkbox"
+          testId="secondary-confirmation"
+          [(ngModel)]="isSecondaryCheckboxChecked"
+          (ngModelChange)="onSecondaryCheckboxChange()"
+        >
+          <span tnCheckboxLabel id="confirm-label">{{ options.secondaryCheckboxText }}</span>
+        </tn-checkbox>
+      </span>
+    }
+
+    @if (options.secondaryCheckboxMessage && isSecondaryCheckboxChecked) {
+      <div class="message-content secondary-message">
+        <span [innerHTML]="options.secondaryCheckboxMessage"></span>
+      </div>
+    }
   </div>
 
-  @if (options.secondaryCheckbox) {
-    <span>
-      <mat-checkbox
-        color="primary"
-        class="confirm-checkbox secondary-checkbox"
-        ixTest="secondary-confirmation"
-        [(ngModel)]="isSecondaryCheckboxChecked"
-        (ngModelChange)="onSecondaryCheckboxChange()"
-      >
-        <span id="confirm-label">{{ options.secondaryCheckboxText }}</span>
-      </mat-checkbox>
-    </span>
-  }
-
-  @if (options.secondaryCheckboxMessage && isSecondaryCheckboxChecked) {
-    <div class="message-content secondary-message">
-      <span [innerHTML]="options.secondaryCheckboxMessage"></span>
-    </div>
-  }
-</div>
-
-<ix-form-actions mat-dialog-actions class="form-actions">
-  @if (!options.hideCheckbox && options.confirmationCheckboxText) {
-    <mat-checkbox
-      color="primary"
-      name="confirm_checkbox"
-      class="confirm-checkbox"
-      ixTest="confirm"
-      (change)="toggleSubmit($event)"
-    >
-      {{ options.confirmationCheckboxText }}
-    </mat-checkbox>
-  }
-  @if (!options.hideCancel && options.cancelText) {
-    <button
-      mat-button
-      name="cancel_button"
-      class="mat-mdc-button mat-button mat-accent cancel-button"
-      ixTest="dialog-cancel"
-      (click)="onCancel()"
-    >
-      {{ options.cancelText }}
-    </button>
-  }
-  @if (options.buttonText) {
-    <button
-      mat-button
-      name="ok_button"
-      class="mat-mdc-button mat-button mat-primary submit-button"
-      ixTest="dialog-confirm"
-      [disabled]="isDisabled()"
-      [color]="options.buttonColor || 'primary'"
-      (click)="onSubmit()"
-    >
-      {{ options.buttonText }}
-    </button>
-  }
-</ix-form-actions>
+  <ix-form-actions tnDialogAction class="form-actions">
+    @if (!options.hideCheckbox && options.confirmationCheckboxText) {
+      <tn-checkbox
+        testId="confirm"
+        [label]="options.confirmationCheckboxText"
+        (change)="toggleSubmit($event)"
+      ></tn-checkbox>
+    }
+    @if (!options.hideCancel && options.cancelText) {
+      <tn-button
+        variant="outline"
+        testId="dialog-cancel"
+        [label]="options.cancelText"
+        (onClick)="onCancel()"
+      ></tn-button>
+    }
+    @if (options.buttonText) {
+      <tn-button
+        testId="dialog-confirm"
+        [color]="options.buttonColor || 'primary'"
+        [label]="options.buttonText"
+        [disabled]="isDisabled()"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    }
+  </ix-form-actions>
+</tn-dialog-shell>
