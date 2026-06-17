@@ -288,4 +288,12 @@ describe('InstalledAppsListComponent', () => {
     expect(component.dataSource()).toHaveLength(1);
     expect(component.dataSource()[0].name).toBe('new-app');
   });
+
+  it('falls back to the default application/asc sort when tn-table clears the direction', () => {
+    const store = spectator.inject(InstalledAppsStore);
+
+    spectator.triggerEventHandler('tn-table', 'sortChange', { column: 'state', direction: '' });
+
+    expect(store.setSortingInfo).toHaveBeenLastCalledWith({ active: 'application', direction: 'asc' });
+  });
 });

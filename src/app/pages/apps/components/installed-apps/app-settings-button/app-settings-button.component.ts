@@ -50,12 +50,18 @@ export class AppSettingsButtonComponent {
   protected appsStore = inject(AppsStore);
   private viewContainerRef = inject(ViewContainerRef);
   private destroyRef = inject(DestroyRef);
-  protected router = inject(Router);
+  private router = inject(Router);
 
   readonly searchableElements = appSettingsButtonElements;
   protected readonly updateDockerRoles = [Role.DockerWrite];
 
   protected readonly helptext = helptextApps;
+
+  // tn-menu-item renders as a button, not an anchor, so these navigation items
+  // can't use [routerLink] — route programmatically instead of from the template.
+  protected goTo(commands: string[]): void {
+    this.router.navigate(commands);
+  }
 
   onChoosePool(): void {
     this.tnDialog

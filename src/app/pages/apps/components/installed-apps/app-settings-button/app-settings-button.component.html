@@ -29,7 +29,7 @@
   <tn-menu-item
     testId="container-images"
     [label]="'Manage Container Images' | translate"
-    (itemClick)="router.navigate(['/apps', 'manage-container-images'])"
+    (itemClick)="goTo(['/apps', 'manage-container-images'])"
   ></tn-menu-item>
 
   <tn-menu-item
@@ -40,7 +40,7 @@
       ? ('Choose pool first' | translate)
       : (helptext.dockerRegistries.tooltip | translate)"
     [disabled]="!(dockerStore.selectedPool$ | async)"
-    (itemClick)="router.navigate(['/apps', 'docker-registries'])"
+    (itemClick)="goTo(['/apps', 'docker-registries'])"
   ></tn-menu-item>
 
   <tn-menu-item

@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ViewContainerRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -49,6 +50,9 @@ describe('AppSettingsButtonComponent', () => {
       mockProvider(AppsStore, {
         loadCatalog: jest.fn(() => of({})),
       }),
+      mockProvider(Router, {
+        navigate: jest.fn(),
+      }),
     ],
   });
 
@@ -77,5 +81,12 @@ describe('AppSettingsButtonComponent', () => {
         message: 'Confirm to unset pool?',
       }));
     expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith(null);
+  });
+
+  it('navigates to Manage Container Images when the menu item is clicked', async () => {
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Manage Container Images' });
+
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'manage-container-images']);
   });
 });

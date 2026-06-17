@@ -201,7 +201,14 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.setDatasourceWithSort({ active: event.column, direction: event.direction });
+    // tn-table has no disableClear, so a third click on a sorted column emits an
+    // empty direction (the "cleared" state). Replicate the pre-migration
+    // matSortDisableClear behaviour by falling back to the default sort rather than
+    // silently ordering descending with no header indicator.
+    const sort: AppsSort = event.direction
+      ? { active: event.column, direction: event.direction }
+      : { active: SortableField.Application, direction: 'asc' };
+    this.setDatasourceWithSort(sort);
     this.cdr.markForCheck();
   }
 
