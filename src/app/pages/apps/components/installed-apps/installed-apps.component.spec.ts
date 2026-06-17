@@ -125,7 +125,7 @@ describe('InstalledAppsComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    spectator.component.installedAppsList().dataSource = [app];
+    spectator.component.installedAppsList().dataSource.set([app]);
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     applicationsService = spectator.inject(ApplicationsService);

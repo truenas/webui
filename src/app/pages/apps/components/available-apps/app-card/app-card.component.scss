@@ -7,7 +7,7 @@
   position: relative;
 }
 
-// TEMP: tn-card uses a preset content padding; restore the original card's
+// TEMP (NAS-141021): tn-card uses a preset content padding; restore the original card's
 // padding. Keep tn-card's 14px content base (matches the app's body font), which
 // the projected em-based title/description sizes are tuned against. Remove once
 // tn-card exposes a padding input.
@@ -24,7 +24,7 @@
   outline: var(--primary) auto 1px;
 }
 
-// TEMP: tn-card owns its background, so the hover state must reach the
+// TEMP (NAS-141021): tn-card owns its background, so the hover state must reach the
 // library's inner element. Drop once tn-card exposes a hover/interactive input.
 :host-context(a:hover) ::ng-deep .app-card .tn-card {
   background-color: var(--contrast-lighter);

@@ -4,7 +4,6 @@ import {
   inject, OnInit, output, signal, viewChild,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Sort } from '@angular/material/sort';
 import {
   ActivatedRoute, Router,
 } from '@angular/router';
@@ -52,7 +51,7 @@ import { installedAppsElements } from 'app/pages/apps/components/installed-apps/
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { AppsSort, InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState as WebuiAppState } from 'app/store';
 
@@ -202,7 +201,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.setDatasourceWithSort({ active: event.column, direction: event.direction } as Sort);
+    this.setDatasourceWithSort({ active: event.column, direction: event.direction });
     this.cdr.markForCheck();
   }
 
@@ -470,7 +469,7 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));
   }
 
-  setDatasourceWithSort(sort: Sort, apps?: App[]): void {
+  setDatasourceWithSort(sort: AppsSort, apps?: App[]): void {
     this.installedAppsStore.setSortingInfo(sort);
     const sourceArray = apps && apps.length > 0 ? apps : this.dataSource();
     this.dataSource.set([...sourceArray].sort((a, b) => {

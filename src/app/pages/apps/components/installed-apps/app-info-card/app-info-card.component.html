@@ -27,8 +27,10 @@
   </div>
 
   <!--
-    tn-card exposes only primaryAction/secondaryAction (Roll Back / Delete), so the
-    remaining app actions — including Start/Stop — live in this overflow menu by design.
+    The overflow menu trigger shares the projected header with the custom Edit button
+    (see .header-actions above), so we host the menu inline rather than via tn-card's
+    [headerMenu] slot — that slot renders its own trigger and can't sit beside Edit.
+    Roll Back / Delete remain on the card's primaryAction/secondaryAction footer slots.
   -->
   <tn-menu #appInfoMenu>
     @if (isAppStopped()) {

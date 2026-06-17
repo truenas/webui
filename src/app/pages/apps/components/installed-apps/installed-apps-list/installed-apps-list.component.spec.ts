@@ -2,7 +2,6 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
-import { SortDirection } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnDialog, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
@@ -30,14 +29,14 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { AppsSortDirection, InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
 describe('InstalledAppsListComponent', () => {
   let spectator: Spectator<InstalledAppsListComponent>;
   let applicationsService: ApplicationsService;
   let loader: HarnessLoader;
   let searchQuery$: BehaviorSubject<string>;
-  let sortingInfo$: BehaviorSubject<{ active: string; direction: SortDirection }>;
+  let sortingInfo$: BehaviorSubject<{ active: string; direction: AppsSortDirection }>;
 
   const apps = [
     {
@@ -86,14 +85,16 @@ describe('InstalledAppsListComponent', () => {
         provide: InstalledAppsStore,
         useFactory: () => {
           searchQuery$ = new BehaviorSubject('');
-          sortingInfo$ = new BehaviorSubject({ active: 'application', direction: 'asc' as SortDirection });
+          sortingInfo$ = new BehaviorSubject({ active: 'application', direction: 'asc' as AppsSortDirection });
           return {
             isLoading$: of(false),
             installedApps$: of(apps),
             searchQuery$: searchQuery$.asObservable(),
             sortingInfo$: sortingInfo$.asObservable(),
             setSearchQuery: jest.fn((query: string) => searchQuery$.next(query)),
-            setSortingInfo: jest.fn((info: { active: string; direction: SortDirection }) => sortingInfo$.next(info)),
+            setSortingInfo: jest.fn(
+              (info: { active: string; direction: AppsSortDirection }) => sortingInfo$.next(info),
+            ),
           };
         },
       },
@@ -248,7 +249,7 @@ describe('InstalledAppsListComponent', () => {
     const originalDataSource = [...apps];
     component.dataSource.set(originalDataSource);
 
-    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as SortDirection }, []);
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as AppsSortDirection }, []);
 
     expect(component.dataSource()).toHaveLength(2);
     expect(component.dataSource()[0].name).toBe('test-app-1');
@@ -265,7 +266,7 @@ describe('InstalledAppsListComponent', () => {
       upgrade_available: false,
     }] as App[];
 
-    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as SortDirection }, newApps);
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as AppsSortDirection }, newApps);
 
     expect(component.dataSource()).toHaveLength(1);
     expect(component.dataSource()[0].name).toBe('new-app');
