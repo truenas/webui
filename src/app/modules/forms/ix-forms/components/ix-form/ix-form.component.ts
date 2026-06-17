@@ -37,10 +37,12 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
 
   /**
    * Top-level keys whose value differs from the initial snapshot (create mode:
-   * all of them). Shallow per-key deep-equality; nested groups report as one
-   * whole-object entry. Build from `allValues` instead for paired/derived
-   * controls, inherit sentinels, payload reshaping, or after addControl/
-   * removeControl (call `refreshSnapshot()`).
+   * all of them). Disabled controls are excluded — a field hidden/disabled by
+   * `visibleWhen`/`enabledWhen` never appears here, so its stale value can't leak
+   * into a "only send what changed" payload. Use `allValues` if you genuinely
+   * need disabled values. Shallow per-key deep-equality; nested groups report as
+   * one whole-object entry. Build from `allValues` instead for paired/derived
+   * controls, inherit sentinels, or payload reshaping.
    */
   changedValues: Partial<T>;
 }
@@ -317,26 +319,28 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     });
   }
 
-  /**
-   * Re-baseline the diff to the current form value. Call after structural
-   * changes (addControl/removeControl, enable toggles) so late-added controls
-   * aren't always flagged as changed. No-op when `initialFormSnapshot` is bound.
-   */
-  refreshSnapshot(): void {
-    if (this.initialFormSnapshot() != null) {
-      return;
-    }
-    this.internalSnapshot.set(this.formGroup().getRawValue() as Partial<T>);
-  }
-
   private getChangedValues(current: T): Partial<T> {
     const snapshot = this.snapshot();
+    const controls = this.formGroup().controls;
+    // Disabled controls (incl. ones hidden by visibleWhen/enabledWhen) are
+    // omitted so a stale value the user can no longer see never reaches the diff.
+    const isActive = (key: keyof T): boolean => !controls[key as string]?.disabled;
+
     if (!snapshot) {
-      return { ...current };
+      const all: Partial<T> = {};
+      for (const key of Object.keys(current) as (keyof T)[]) {
+        if (isActive(key)) {
+          all[key] = current[key];
+        }
+      }
+      return all;
     }
 
     const changed: Partial<T> = {};
     for (const key of Object.keys(current) as (keyof T)[]) {
+      if (!isActive(key)) {
+        continue;
+      }
       if (!(key in snapshot) || !isEqual(current[key], snapshot[key])) {
         changed[key] = current[key];
       }

@@ -298,6 +298,21 @@ describe('IxFormRendererComponent', () => {
       expect(spectator.fixture.nativeElement).toHaveText('Edit Config');
     });
 
+    it('warns in dev mode when both loadData and editData are provided', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const conflictingDefinition = {
+        editTitle: asTranslated('Edit Config'),
+        fields: [{ name: 'name', type: 'input', label: asTranslated('Name') }],
+        loadData: () => of({ name: 'loaded' }),
+        submit: submitHandler,
+      } as unknown as FormDefinition<SampleForm>;
+
+      spectator = createComponent({ props: { definition: conflictingDefinition, editData: { name: 'edit' } } });
+
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('mutually'));
+      warn.mockRestore();
+    });
+
     it('surfaces the error in a modal when the loader fails', () => {
       const error = new Error('load failed');
       const failingDefinition = {

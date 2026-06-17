@@ -290,14 +290,14 @@ describe('IxFormComponent', () => {
       expect(submitHandlerSpy.mock.calls[0][0].changedValues).toEqual({ extra: 'untouched' });
     });
 
-    it('refreshSnapshot re-baselines so a late-added control is no longer flagged', async () => {
-      (spectator.component.form as unknown as FormGroup).addControl('extra', new FormControl('untouched'));
-      spectator.component.ixForm().refreshSnapshot();
+    it('excludes disabled controls from changedValues', async () => {
+      spectator.component.form.controls.name.setValue('changed');
+      spectator.component.form.controls.name.disable();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(submitHandlerSpy.mock.calls[0][0].changedValues).toEqual({});
+      expect(submitHandlerSpy.mock.calls[0][0].changedValues).not.toHaveProperty('name');
     });
   });
 

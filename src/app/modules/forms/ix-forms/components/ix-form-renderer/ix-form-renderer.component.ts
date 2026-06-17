@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, isDevMode, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -11,6 +11,7 @@ import {
   InputType, TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent,
   TnInputComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
+import { isEqual } from 'lodash-es';
 import { Observable, take } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -133,6 +134,15 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
 
   ngOnInit(): void {
     const definition = this.definition();
+
+    if (isDevMode() && definition.loadData && this.editData() != null) {
+      console.warn(
+        '[ix-form-renderer] Both `loadData` and `editData` were provided — they are mutually '
+        + 'exclusive. `editData` patches synchronously while `loadData` patches after its async fetch, '
+        + 'producing a double patch and a confused change-tracking baseline. Use exactly one.',
+      );
+    }
+
     const sections = definition.sections ?? [{ fields: definition.fields ?? [] }];
     this.form = this.buildForm(sections, definition.formValidators);
     this.sections = sections.map((section) => this.toRenderSection(section));
@@ -215,8 +225,14 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
       }
     });
 
-    this.fieldVisible.set(fieldVisibility);
-    this.sectionVisible.set(sectionVisibility);
+    // Only push when the maps actually change — signals use reference equality,
+    // so re-setting an equal-by-value object on every keystroke would tick CD.
+    if (!isEqual(this.fieldVisible(), fieldVisibility)) {
+      this.fieldVisible.set(fieldVisibility);
+    }
+    if (!isEqual(this.sectionVisible(), sectionVisibility)) {
+      this.sectionVisible.set(sectionVisibility);
+    }
   }
 
   /** Template guard: fields without `visibleWhen` are always shown. */
