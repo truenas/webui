@@ -1,10 +1,14 @@
-import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnCellDefDirective,
+  TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, type TnSortEvent,
+} from '@truenas/ui-components';
 import { combineLatest, map, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
@@ -12,18 +16,15 @@ import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.inte
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { createTable } from 'app/modules/ix-table/utils';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
+
+let nextLabelId = 0;
 
 @Component({
   selector: 'ix-nfs-session-list',
@@ -31,18 +32,18 @@ import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/n
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    MatButtonToggleGroup,
-    MatButtonToggle,
+    FormsModule,
+    TnButtonToggleGroupComponent,
+    TnButtonToggleComponent,
     BasicSearchComponent,
-    NgTemplateOutlet,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
-    IxTableColumnsSelectorComponent,
-    IxTableComponent,
+    TableColumnPickerComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
     UiSearchDirective,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
     TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
@@ -57,12 +58,13 @@ export class NfsSessionListComponent implements OnInit {
 
   protected readonly activeNfsType = signal<NfsType>(NfsType.Nfs3);
   protected readonly searchableElements = nfsSessionListElements;
+  protected readonly nfsTypeToggleLabelId = `nfs-type-toggle-label-${nextLabelId++}`;
 
   searchQuery = signal('');
   sessions: Nfs3Session[] | Nfs4Session['info'][] = [];
   readonly NfsType = NfsType;
 
-  nfs3Columns = createTable<Nfs3Session>([
+  protected readonly nfs3Columns = signal(createTable<Nfs3Session>([
     textColumn({
       title: this.translate.instant('IP'),
       propertyName: 'ip',
@@ -74,9 +76,9 @@ export class NfsSessionListComponent implements OnInit {
   ], {
     uniqueRowTag: (row) => 'nfs3-session-' + row.export + '-' + row.ip,
     ariaLabels: (row) => [row.ip, this.translate.instant('NFS3 Session')],
-  });
+  }));
 
-  nfs4Columns = createTable<Nfs4Session['info']>([
+  protected readonly nfs4Columns = signal(createTable<Nfs4Session['info']>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -126,7 +128,13 @@ export class NfsSessionListComponent implements OnInit {
   ], {
     uniqueRowTag: (row) => `nfs4-session-${row.address}-${row.clientid}`,
     ariaLabels: (row) => [row.name, this.translate.instant('NFS4 Session')],
-  });
+  }));
+
+  protected readonly nfs3DisplayedColumns = computed(() => toDisplayedColumns(this.nfs3Columns()));
+  protected readonly nfs4DisplayedColumns = computed(() => toDisplayedColumns(this.nfs4Columns()));
+
+  protected readonly trackByNfs3 = (_index: number, row: Nfs3Session): string => `${row.export}-${row.ip}`;
+  protected readonly trackByNfs4 = (_index: number, row: Nfs4Session['info']): string => `${row.address}-${row.clientid}`;
 
   nfs3ProviderRequest$ = this.api.call('nfs.get_nfs3_clients', []).pipe(
     tap((sessions) => {
@@ -153,6 +161,18 @@ export class NfsSessionListComponent implements OnInit {
 
   nfs4DataProvider = new AsyncDataProvider<Nfs4Session['info']>(this.nfs4ProviderRequest$);
 
+  protected formatStatus(status: string): string {
+    return stringToTitleCase(status);
+  }
+
+  protected uniqueRowTag3(row: Nfs3Session): string {
+    return convertStringToId('nfs3-session-' + row.export + '-' + row.ip);
+  }
+
+  protected uniqueRowTag4(row: Nfs4Session['info']): string {
+    return convertStringToId(`nfs4-session-${row.address}-${row.clientid}`);
+  }
+
   ngOnInit(): void {
     this.loadData();
 
@@ -162,18 +182,13 @@ export class NfsSessionListComponent implements OnInit {
       });
   }
 
-  nfsTypeChanged(changedValue: MatButtonToggleChange): void {
-    if (this.activeNfsType() === changedValue.value) {
+  nfsTypeChanged(value: NfsType): void {
+    if (this.activeNfsType() === value) {
       return;
     }
 
-    if (this.activeNfsType() === NfsType.Nfs3 && changedValue.value === NfsType.Nfs4) {
-      this.activeNfsType.set(NfsType.Nfs4);
-      this.loadData();
-    } else {
-      this.activeNfsType.set(NfsType.Nfs3);
-      this.loadData();
-    }
+    this.activeNfsType.set(value === NfsType.Nfs4 ? NfsType.Nfs4 : NfsType.Nfs3);
+    this.loadData();
   }
 
   loadData(): void {
@@ -194,15 +209,21 @@ export class NfsSessionListComponent implements OnInit {
     }
   }
 
-  columnsChange(columns: unknown): void {
+  protected onColumnsChange(columns: ReturnType<typeof this.nfs3Columns> | ReturnType<typeof this.nfs4Columns>): void {
     if (this.activeNfsType() === NfsType.Nfs3) {
-      this.nfs3Columns = [...columns as Column<Nfs3Session, ColumnComponent<Nfs3Session>>[]];
+      this.nfs3Columns.set([...columns as ReturnType<typeof this.nfs3Columns>]);
     } else {
-      this.nfs4Columns = [...columns as Column<Nfs4Session['info'], ColumnComponent<Nfs4Session['info']>>[]];
+      this.nfs4Columns.set([...columns as ReturnType<typeof this.nfs4Columns>]);
     }
-
-    this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  protected onNfs3SortChange(event: TnSortEvent): void {
+    this.nfs3DataProvider.setSorting(mapTnSortToTableSort<Nfs3Session>(event, this.nfs3DisplayedColumns()));
+  }
+
+  protected onNfs4SortChange(event: TnSortEvent): void {
+    this.nfs4DataProvider.setSorting(mapTnSortToTableSort<Nfs4Session['info']>(event, this.nfs4DisplayedColumns()));
   }
 
   private filterNfs3Data(): void {
