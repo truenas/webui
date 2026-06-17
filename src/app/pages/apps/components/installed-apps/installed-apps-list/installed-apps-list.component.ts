@@ -588,6 +588,8 @@ export class InstalledAppsListComponent implements OnInit {
   // each read `getAppStats(row.name) | async`. `refCount: true` tears the shared
   // subscription down once a row leaves the list (search filtering, app removal) and
   // re-attaches cheaply from the backing ComponentStore state on the next render.
+  // The Map entry itself is retained (an idle shareReplay factory, not a live
+  // subscription); growth is bounded by the number of distinct app names ever rendered.
   getAppStats(name: string): Observable<AppStats> {
     let stats$ = this.statsCache.get(name);
     if (!stats$) {
