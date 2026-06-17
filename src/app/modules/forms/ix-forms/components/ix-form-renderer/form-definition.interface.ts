@@ -8,12 +8,13 @@ import { FormSubmitEvent, SubmitResult } from 'app/modules/forms/ix-forms/compon
 /**
  * Declarative form description rendered by `<ix-form-renderer>`.
  *
- * This is the Phase 1 ("simple") shape: a flat list of primitive fields,
- * optionally grouped into titled sections, with a submit handler. It covers
- * CRUD forms whose fields are static and whose only logic is per-field /
- * form-level validation. Anything needing conditional visibility, dynamic
- * field sets, custom widgets, FormArrays, wizards or payload reshaping should
- * stay on the hand-written `<ix-form>` + template approach.
+ * This is the "simple" shape: a flat list of primitive fields, optionally
+ * grouped into titled sections, with a submit handler. It covers CRUD forms
+ * whose fields are static, plus single-field conditional visibility/enablement
+ * (`visibleWhen`/`enabledWhen`) and read-only fields. Anything needing dynamic
+ * field sets, custom widgets (explorer/scheduler/chips/...), FormArrays,
+ * wizards, imperative `valueChanges` side-effects, or per-field reactive
+ * attributes should stay on the hand-written `<ix-form>` + template approach.
  *
  * The host component owns the definition as an instance property, so it can
  * close over injected services (api, translate, slide-in data) in `submit`
@@ -99,6 +100,15 @@ export interface FormSectionDefinition<T extends object = Record<string, unknown
   /** Fieldset title (untranslated marker); omit for an untitled section. */
   title?: string;
   tooltip?: string;
+  /**
+   * Conditional visibility for the whole fieldset. The section renders only
+   * while this predicate returns true for the current form value; while hidden
+   * every control it owns is disabled (dropping out of validation and `.value`).
+   * Use for groups of fields gated on one toggle (e.g. peer-auth fields shown
+   * only for Mutual CHAP). Per-field `visibleWhen` still applies within a
+   * visible section.
+   */
+  visibleWhen?: (value: T) => boolean;
   fields: FormFieldDefinition<T>[];
 }
 
@@ -132,6 +142,27 @@ interface BaseFieldDefinition<T extends object> {
   validators?: ValidatorFn[];
   /** Async validators (e.g. uniqueness checks that hit the API). */
   asyncValidators?: AsyncValidatorFn[];
+  /**
+   * Conditional visibility. The field renders only while this predicate returns
+   * true for the current form value (re-evaluated on every value change). While
+   * hidden the control is disabled, so it drops out of validation and the form's
+   * `.value` — it still appears in `getRawValue()`, so reshape in `submit` if a
+   * hidden value must not be sent. Replaces hand-written `@if`-wrapped fields.
+   */
+  visibleWhen?: (value: T) => boolean;
+  /**
+   * Conditional enablement. The field stays visible but is enabled only while
+   * this predicate returns true (re-evaluated on every value change). Disabled
+   * controls are excluded from `.value` and validation. Declarative equivalent
+   * of the reactive-forms `enabledWhile` pattern.
+   */
+  enabledWhen?: (value: T) => boolean;
+  /**
+   * Renders the control read-only (value visible and selectable but not
+   * editable). Unlike `disabled`, the control stays enabled, so its value is
+   * still submitted and validated. Supported by input/textarea.
+   */
+  readonly?: boolean;
   /**
    * Initial control value. Defaults per type when omitted:
    * input/textarea → '', checkbox → false, select/combobox → null

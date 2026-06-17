@@ -2,72 +2,50 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import {
-  createComponentFactory, mockProvider, Spectator,
-} from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
+import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 describe('ConsoleFormComponent', () => {
   let spectator: Spectator<ConsoleFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+  let store$: MockStore;
+
+  const consoleConfig = {
+    consolemenu: true,
+    serialconsole: true,
+    serialport: 'ttyS0',
+    serialspeed: '9600',
+    motd: 'Welcome back, commander',
+  } as ConsoleConfig;
+
+  const checkboxByLabel = (label: string): Promise<TnCheckboxHarness> => {
+    return loader.getHarness(TnCheckboxHarness.with({ label }));
+  };
+
   const createComponent = createComponentFactory({
     component: ConsoleFormComponent,
-    imports: [
-      ReactiveFormsModule,
-    ],
+    imports: [ReactiveFormsModule],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
-        mockCall('system.advanced.serial_port_choices', {
-          ttyS0: 'ttyS0',
-          ttyS1: 'ttyS1',
-        }),
+        mockCall('system.advanced.serial_port_choices', { ttyS0: 'ttyS0', ttyS1: 'ttyS1' }),
         mockCall('system.advanced.update'),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockProvider(FormErrorHandlerService),
-      mockProvider(DialogService),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectAdvancedConfig,
-            value: {
-              consolemenu: true,
-              serialconsole: true,
-              serialport: 'ttyS0',
-              serialspeed: '9600',
-              motd: 'Welcome back, commander',
-            } as AdvancedConfig,
-          },
-        ],
-      }),
+      provideMockStore(),
       mockProvider(SlideInRef, {
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(),
-        getData: jest.fn(() => ({
-          consolemenu: true,
-          serialconsole: true,
-          serialport: 'ttyS0',
-          serialspeed: '9600',
-          motd: 'Welcome back, commander',
-        } as ConsoleConfig)),
+        getData: jest.fn(() => consoleConfig),
       }),
       mockAuth(),
     ],
@@ -77,45 +55,29 @@ describe('ConsoleFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
+    store$ = spectator.inject(MockStore);
+    jest.spyOn(store$, 'dispatch');
   });
 
   it('loads current Console settings and shows them', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+    const motd = await loader.getHarness(TnInputHarness.with({ name: 'motd' }));
 
-    expect(values).toEqual({
-      'Show Text Console without Password Prompt': true,
-      'Enable Serial Console': true,
-      'Serial Port': 'ttyS0',
-      'Serial Speed': '9600',
-      'MOTD Banner': 'Welcome back, commander',
-    });
+    expect(await (await checkboxByLabel('Show Text Console without Password Prompt')).isChecked()).toBe(true);
+    expect(await (await checkboxByLabel('Enable Serial Console')).isChecked()).toBe(true);
+    expect(await motd.getValue()).toBe('Welcome back, commander');
   });
 
   it('disables Serial Port and Serial Speed controls when Serial Console is disabled', async () => {
-    const serialConsoleCheckbox = await loader.getHarness(IxCheckboxHarness.with({
-      label: 'Enable Serial Console',
-    }));
+    await (await checkboxByLabel('Enable Serial Console')).uncheck();
 
-    await serialConsoleCheckbox.setValue(false);
-
-    const form = await loader.getHarness(IxFormHarness);
-    const controls = await form.getControlHarnessesDict();
-    const portSelect = await (controls['Serial Port'] as IxSelectHarness).getSelectHarness();
-    const speedSelect = await (controls['Serial Speed'] as IxSelectHarness).getSelectHarness();
-
-    expect(await portSelect.isDisabled()).toBe(true);
-    expect(await speedSelect.isDisabled()).toBe(true);
+    const [serialPort, serialSpeed] = await loader.getAllHarnesses(TnSelectHarness);
+    expect(await serialPort.isDisabled()).toBe(true);
+    expect(await serialSpeed.isDisabled()).toBe(true);
   });
 
-  it('saves updated console settings when Save is pressed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Show Text Console without Password Prompt': false,
-      'Serial Port': 'ttyS1',
-      'Serial Speed': '38400',
-      'MOTD Banner': 'Oh, hi there',
-    });
+  it('saves updated console settings and refreshes advanced config when Save is pressed', async () => {
+    await (await checkboxByLabel('Show Text Console without Password Prompt')).uncheck();
+    await (await loader.getHarness(TnInputHarness.with({ name: 'motd' }))).setValue('Oh, hi there');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -123,9 +85,10 @@ describe('ConsoleFormComponent', () => {
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [{
       consolemenu: false,
       serialconsole: true,
-      serialport: 'ttyS1',
-      serialspeed: '38400',
+      serialport: 'ttyS0',
+      serialspeed: '9600',
       motd: 'Oh, hi there',
     }]);
+    expect(store$.dispatch).toHaveBeenCalledWith(advancedConfigUpdated());
   });
 });

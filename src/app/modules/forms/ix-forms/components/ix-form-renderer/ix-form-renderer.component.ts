@@ -42,18 +42,27 @@ interface RenderField {
   hint: TranslatedString;
   placeholder: TranslatedString;
   required: boolean;
+  readonly: boolean;
+  /** Static disabled flag from the definition; never re-enabled by predicates. */
+  disabled: boolean;
   inputType: InputType;
   multiline: boolean;
   rows: number;
   multiple: boolean;
   requireSelection: boolean;
   options: Observable<TnSelectOption[]> | undefined;
+  /** Shows the field only when true; while false the control is disabled. */
+  visibleWhen: ((value: object) => boolean) | undefined;
+  /** Enables the (visible) field only when true. */
+  enabledWhen: ((value: object) => boolean) | undefined;
 }
 
 interface RenderSection {
   title: TranslatedString;
   tooltip: TranslatedString;
   fields: RenderField[];
+  /** Shows the whole fieldset only when true; while false its controls disable. */
+  visibleWhen: ((value: object) => boolean) | undefined;
 }
 
 /**
@@ -114,6 +123,14 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
   /** `loadData` forms are edits; lets the title resolve to editTitle. */
   protected readonly resolvedEditMode = signal<boolean | null>(null);
 
+  /**
+   * Per-field/-section visibility maps driving the template `@if`. Recomputed
+   * from `visibleWhen` on every value change; entries without a `visibleWhen`
+   * predicate never appear here (and are treated as always visible).
+   */
+  protected readonly fieldVisible = signal<Record<string, boolean>>({});
+  protected readonly sectionVisible = signal<Record<number, boolean>>({});
+
   ngOnInit(): void {
     const definition = this.definition();
     const sections = definition.sections ?? [{ fields: definition.fields ?? [] }];
@@ -125,9 +142,97 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
     this.requiredRoles = definition.requiredRoles ?? [];
     this.resolvedEditMode.set(this.isEditMode());
 
+    this.setupConditionalState();
+
     if (definition.loadData) {
       this.runLoadData(definition.loadData);
     }
+  }
+
+  /**
+   * Wires `visibleWhen`/`enabledWhen` (field and section level), then re-applies
+   * on every value change. Hidden / disabled-when states are both expressed by
+   * disabling the control (so it drops out of validation and `.value`), with
+   * visibility additionally toggling the template `@if`. Enable/disable use
+   * `emitEvent: false` to avoid re-triggering the subscription.
+   *
+   * The initial pass is split to keep edit/loadData forms correct: when a patch
+   * is coming (`editData`/`loadData`), only the visibility signals are seeded —
+   * from the entity-merged value — and the authoritative enable/disable is left
+   * to the patch's own `valueChanges`, so a field hidden by default still
+   * receives its patched value (Angular's `patchValue` skips disabled controls).
+   * Create-mode forms have nothing to patch, so the full state applies at once.
+   */
+  private setupConditionalState(): void {
+    const hasConditionalLogic = this.sections.some(
+      (section) => section.visibleWhen || section.fields.some((field) => field.visibleWhen || field.enabledWhen),
+    );
+    if (!hasConditionalLogic) {
+      return;
+    }
+
+    const willPatch = this.editData() != null || Boolean(this.definition().loadData);
+    if (willPatch) {
+      const initial = { ...(this.form.getRawValue() as object), ...(this.editData() as object ?? {}) };
+      this.applyConditionalState(initial, false);
+    } else {
+      this.applyConditionalState();
+    }
+
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.applyConditionalState());
+  }
+
+  private applyConditionalState(value: object = this.form.getRawValue() as object, toggleControls = true): void {
+    const fieldVisibility: Record<string, boolean> = {};
+    const sectionVisibility: Record<number, boolean> = {};
+
+    this.sections.forEach((section, index) => {
+      const sectionShown = section.visibleWhen ? section.visibleWhen(value) : true;
+      if (section.visibleWhen) {
+        sectionVisibility[index] = sectionShown;
+      }
+
+      for (const field of section.fields) {
+        const fieldShown = sectionShown && (field.visibleWhen ? field.visibleWhen(value) : true);
+        if (field.visibleWhen) {
+          fieldVisibility[field.name] = fieldShown;
+        }
+
+        const managed = Boolean(section.visibleWhen) || Boolean(field.visibleWhen) || Boolean(field.enabledWhen);
+        if (!toggleControls || !managed) {
+          continue;
+        }
+
+        const enabled = fieldShown && !field.disabled && (field.enabledWhen ? field.enabledWhen(value) : true);
+        const control = this.form.controls[field.name];
+        if (control && control.enabled !== enabled) {
+          if (enabled) {
+            control.enable({ emitEvent: false });
+          } else {
+            control.disable({ emitEvent: false });
+          }
+        }
+      }
+    });
+
+    this.fieldVisible.set(fieldVisibility);
+    this.sectionVisible.set(sectionVisibility);
+  }
+
+  /** Template guard: fields without `visibleWhen` are always shown. */
+  protected isFieldVisible(field: RenderField): boolean {
+    if (!field.visibleWhen) {
+      return true;
+    }
+    return this.fieldVisible()[field.name] ?? false;
+  }
+
+  /** Template guard: sections without `visibleWhen` are always shown. */
+  protected isSectionVisible(index: number, section: RenderSection): boolean {
+    if (!section.visibleWhen) {
+      return true;
+    }
+    return this.sectionVisible()[index] ?? false;
   }
 
   private runLoadData(loadData: () => Observable<Partial<T>>): void {
@@ -190,6 +295,7 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
       title: this.translateOrEmpty(section.title),
       tooltip: this.translateOrEmpty(section.tooltip),
       fields: section.fields.map((field) => this.toRenderField(field)),
+      visibleWhen: section.visibleWhen as ((value: object) => boolean) | undefined,
     };
   }
 
@@ -204,12 +310,16 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
       hint: this.translateOrEmpty(field.hint),
       placeholder: this.translateOrEmpty(field.placeholder),
       required: Boolean(field.required),
+      readonly: Boolean(field.readonly),
+      disabled: Boolean(field.disabled),
       inputType,
       multiline: field.type === 'textarea',
       rows: field.type === 'textarea' ? (field.rows ?? 4) : 4,
       multiple: field.type === 'select' ? Boolean(field.multiple) : false,
       requireSelection: field.type === 'combobox' ? (field.requireSelection ?? true) : true,
       options: field.type === 'select' || field.type === 'combobox' ? field.options : undefined,
+      visibleWhen: field.visibleWhen as ((value: object) => boolean) | undefined,
+      enabledWhen: field.enabledWhen as ((value: object) => boolean) | undefined,
     };
   }
 

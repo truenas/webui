@@ -11,57 +11,62 @@
   [submitHandler]="definition().submit"
 >
   @for (section of sections; track $index) {
-    <ix-fieldset [title]="section.title" [tooltip]="section.tooltip">
-      @for (field of section.fields; track field.name) {
-        @switch (field.type) {
-          @case ('checkbox') {
-            <tn-form-field [tooltip]="field.tooltip" [hint]="field.hint">
-              <tn-checkbox
-                [formControlName]="field.name"
-                [label]="field.label"
-                [required]="field.required"
-                [testId]="field.name"
-              ></tn-checkbox>
-            </tn-form-field>
-          }
-          @case ('select') {
-            <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
-              <tn-select
-                [formControlName]="field.name"
-                [options]="(field.options | async) ?? []"
-                [multiple]="field.multiple"
-                [testId]="field.name"
-              ></tn-select>
-            </tn-form-field>
-          }
-          @case ('combobox') {
-            <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
-              <tn-autocomplete
-                [formControlName]="field.name"
-                [options]="(field.options | async) ?? []"
-                [requireSelection]="field.requireSelection"
-                [allowCustomValue]="!field.requireSelection"
-                [placeholder]="field.placeholder"
-                [testId]="field.name"
-              ></tn-autocomplete>
-            </tn-form-field>
-          }
-          @default {
-            <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
-              <tn-input
-                [formControlName]="field.name"
-                [name]="field.name"
-                [inputType]="field.inputType"
-                [multiline]="field.multiline"
-                [rows]="field.rows"
-                [required]="field.required"
-                [placeholder]="field.placeholder"
-                [testId]="field.name"
-              ></tn-input>
-            </tn-form-field>
+    @if (isSectionVisible($index, section)) {
+      <ix-fieldset [title]="section.title" [tooltip]="section.tooltip">
+        @for (field of section.fields; track field.name) {
+          @if (isFieldVisible(field)) {
+            @switch (field.type) {
+              @case ('checkbox') {
+                <tn-form-field [tooltip]="field.tooltip" [hint]="field.hint">
+                  <tn-checkbox
+                    [formControlName]="field.name"
+                    [label]="field.label"
+                    [required]="field.required"
+                    [testId]="field.name"
+                  ></tn-checkbox>
+                </tn-form-field>
+              }
+              @case ('select') {
+                <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
+                  <tn-select
+                    [formControlName]="field.name"
+                    [options]="(field.options | async) ?? []"
+                    [multiple]="field.multiple"
+                    [testId]="field.name"
+                  ></tn-select>
+                </tn-form-field>
+              }
+              @case ('combobox') {
+                <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
+                  <tn-autocomplete
+                    [formControlName]="field.name"
+                    [options]="(field.options | async) ?? []"
+                    [requireSelection]="field.requireSelection"
+                    [allowCustomValue]="!field.requireSelection"
+                    [placeholder]="field.placeholder"
+                    [testId]="field.name"
+                  ></tn-autocomplete>
+                </tn-form-field>
+              }
+              @default {
+                <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
+                  <tn-input
+                    [formControlName]="field.name"
+                    [name]="field.name"
+                    [inputType]="field.inputType"
+                    [multiline]="field.multiline"
+                    [rows]="field.rows"
+                    [required]="field.required"
+                    [readonly]="field.readonly"
+                    [placeholder]="field.placeholder"
+                    [testId]="field.name"
+                  ></tn-input>
+                </tn-form-field>
+              }
+            }
           }
         }
-      }
-    </ix-fieldset>
+      </ix-fieldset>
+    }
   }
 </ix-form>

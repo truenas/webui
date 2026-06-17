@@ -313,4 +313,159 @@ describe('IxFormRendererComponent', () => {
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(error);
     });
   });
+
+  describe('enabledWhen', () => {
+    const enabledWhenDefinition = {
+      title: asTranslated('Conditional Enable'),
+      fields: [
+        {
+          name: 'enabled', type: 'checkbox', label: asTranslated('Enabled'), value: true,
+        },
+        {
+          name: 'flavor',
+          type: 'select',
+          label: asTranslated('Flavor'),
+          options: of(flavorOptions),
+          enabledWhen: (value: SampleForm) => value.enabled,
+        },
+      ],
+      submit: submitHandler,
+    } as unknown as FormDefinition<SampleForm>;
+
+    beforeEach(() => {
+      spectator = createComponent({ props: { definition: enabledWhenDefinition } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('enables the dependent field when the predicate is true', async () => {
+      const flavor = await loader.getHarness(TnSelectHarness.with({ testId: 'flavor' }));
+      expect(await flavor.isDisabled()).toBe(false);
+    });
+
+    it('disables the dependent field when the predicate becomes false', async () => {
+      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }))).uncheck();
+
+      const flavor = await loader.getHarness(TnSelectHarness.with({ testId: 'flavor' }));
+      expect(await flavor.isDisabled()).toBe(true);
+    });
+  });
+
+  describe('visibleWhen', () => {
+    const visibleWhenDefinition = {
+      title: asTranslated('Conditional Visibility'),
+      fields: [
+        {
+          name: 'enabled', type: 'checkbox', label: asTranslated('Enabled'), value: true,
+        },
+        {
+          name: 'notes',
+          type: 'textarea',
+          label: asTranslated('Notes'),
+          visibleWhen: (value: SampleForm) => value.enabled,
+        },
+      ],
+      submit: submitHandler,
+    } as unknown as FormDefinition<SampleForm>;
+
+    beforeEach(() => {
+      spectator = createComponent({ props: { definition: visibleWhenDefinition } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('renders the field while the predicate is true', async () => {
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'notes' }))).toBeTruthy();
+    });
+
+    it('removes the field and drops it from validation when the predicate is false', async () => {
+      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }))).uncheck();
+
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'notes' }))).toBeNull();
+    });
+  });
+
+  describe('section visibleWhen', () => {
+    const sectionDefinition = {
+      title: asTranslated('Sections'),
+      sections: [
+        {
+          fields: [{
+            name: 'enabled', type: 'checkbox', label: asTranslated('Enabled'), value: true,
+          }],
+        },
+        {
+          title: asTranslated('Peer'),
+          visibleWhen: (value: SampleForm) => value.enabled,
+          fields: [{
+            name: 'name', type: 'input', label: asTranslated('Name'), required: true,
+          }],
+        },
+      ],
+      submit: submitHandler,
+    } as unknown as FormDefinition<SampleForm>;
+
+    beforeEach(() => {
+      spectator = createComponent({ props: { definition: sectionDefinition } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('renders the section while its predicate is true', async () => {
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'name' }))).toBeTruthy();
+    });
+
+    it('removes the section and frees Save when its predicate is false', async () => {
+      // The hidden section owns a required field; disabling it must clear that
+      // requirement so Save isn't blocked by an invisible control.
+      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }))).uncheck();
+
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'name' }))).toBeNull();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+  });
+
+  describe('visibleWhen in edit mode', () => {
+    const editVisibilityDefinition = {
+      editTitle: asTranslated('Edit'),
+      fields: [
+        { name: 'enabled', type: 'checkbox', label: asTranslated('Enabled') },
+        {
+          name: 'name',
+          type: 'input',
+          label: asTranslated('Name'),
+          visibleWhen: (value: SampleForm) => value.enabled,
+        },
+      ],
+      submit: submitHandler,
+    } as unknown as FormDefinition<SampleForm>;
+
+    it('still patches a field that starts hidden but is revealed by editData', async () => {
+      spectator = createComponent({
+        props: { definition: editVisibilityDefinition, editData: { enabled: true, name: 'patched' } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const name = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
+      expect(await name.getValue()).toBe('patched');
+    });
+  });
+
+  describe('readonly', () => {
+    const readonlyDefinition = {
+      title: asTranslated('Readonly'),
+      fields: [{
+        name: 'name', type: 'input', label: asTranslated('Name'), readonly: true,
+      }],
+      submit: submitHandler,
+    } as unknown as FormDefinition<SampleForm>;
+
+    it('renders the input as read-only without disabling it', async () => {
+      spectator = createComponent({ props: { definition: readonlyDefinition } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const name = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
+      expect(await name.isReadonly()).toBe(true);
+      expect(await name.isDisabled()).toBe(false);
+    });
+  });
 });
