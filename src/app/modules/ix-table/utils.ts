@@ -23,8 +23,13 @@ export function convertStringToId(inputString: string): string {
 
 export function createTable<T>(
   columns: Column<T, ColumnComponent<T>>[],
-  config: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
+  config?: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
 ): Column<T, ColumnComponent<T>>[] {
+  // tn-table renders cells from the template and supplies its own row tags/aria
+  // labels, so migrated tables build a column model for the picker without config.
+  if (!config) {
+    return columns;
+  }
   return columns.map((column) => {
     const uniqueRowTag = (row: T): string => convertStringToId(config.uniqueRowTag(row));
     const ariaLabels = (row: T): string[] => config.ariaLabels(row);

@@ -160,10 +160,7 @@ export class WebShareListComponent implements OnInit {
       propertyName: 'path',
     }),
     actionsColumn({}),
-  ], {
-    uniqueRowTag: (row) => row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('WebShare')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 
