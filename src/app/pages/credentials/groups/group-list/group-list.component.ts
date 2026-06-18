@@ -71,10 +71,14 @@ export class GroupListComponent implements OnInit {
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
 
-  // tn-table allows multiple rows expanded at once; restore the single-expand behavior of
-  // the previous ix-table by collapsing every other row whenever a new one is opened
-  // (via row click or the expand chevron).
-  private lastExpandedRow: Group | null = null;
+  // tn-table allows multiple rows expanded at once and exposes no single-expand input or
+  // row-expand output to hook into, so we restore the single-expand behavior of the previous
+  // ix-table here: whenever a second row opens (via row click or the expand chevron) we collapse
+  // back to just the newly-opened one. We diff against the previous set rather than caching a
+  // single row reference, so a data reload (which swaps in fresh row objects) can't leave a stale
+  // reference behind — the set tracking stays consistent with whatever tn-table currently holds.
+  private previousExpandedRows = new Set<unknown>();
+  private defaultSortReflected = false;
 
   constructor() {
     effect(() => {
@@ -84,12 +88,25 @@ export class GroupListComponent implements OnInit {
       }
       const expanded = table.expandedRows();
       if (expanded.size <= 1) {
-        this.lastExpandedRow = expanded.size === 1 ? ([...expanded][0] as Group) : null;
+        this.previousExpandedRows = new Set(expanded);
         return;
       }
-      const newest = ([...expanded].find((row) => row !== this.lastExpandedRow) ?? null) as Group | null;
-      this.lastExpandedRow = newest;
-      table.expandedRows.set(newest ? new Set<unknown>([newest]) : new Set<unknown>());
+      const newest = [...expanded].find((row) => !this.previousExpandedRows.has(row));
+      const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
+      this.previousExpandedRows = collapsed;
+      table.expandedRows.set(collapsed);
+    });
+
+    // The data provider sorts the rows, but tn-table tracks its own sort-arrow state, so reflect
+    // the default sort in the header indicator once the table view is available.
+    effect(() => {
+      const table = this.table();
+      if (!table || this.defaultSortReflected) {
+        return;
+      }
+      this.defaultSortReflected = true;
+      table.sortColumn.set('gid');
+      table.sortDirection.set('asc');
     });
   }
 

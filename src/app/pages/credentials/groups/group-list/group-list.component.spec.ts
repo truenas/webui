@@ -139,4 +139,13 @@ describe('GroupListComponent', () => {
     expect(await table.isRowExpanded(0)).toBe(false);
     expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
   });
+
+  it('reflects the default ascending GID sort in the column header on first paint', async () => {
+    store$.overrideSelector(selectGroups, fakeGroupDataSource);
+    store$.refreshState();
+
+    const table = await loader.getHarness(TnTableHarness);
+
+    expect(await table.getSortDirection('gid')).toBe('ascending');
+  });
 });
