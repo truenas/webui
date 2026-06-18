@@ -1,6 +1,7 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonHarness, TnIconComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
@@ -470,7 +471,7 @@ describe('VDevsListComponent', () => {
     jest.spyOn(console, 'warn').mockImplementation();
   });
 
-  it('shows the devices of the pool', () => {
+  it('shows the devices of the pool', async () => {
     spectator = createComponent({
       props: { poolId: 2 },
       providers: [
@@ -493,14 +494,20 @@ describe('VDevsListComponent', () => {
     const vdevGroup = spectator.query('ix-vdev-group-node')!;
     const text = vdevGroup.querySelector('.caption-name')!;
     expect(text.textContent).toBe('Data VDEVs');
-    const button = spectator.query('.mat-mdc-button-touch-target')!;
-    button.dispatchEvent(new Event('click'));
     expect(console.warn).toHaveBeenCalledWith('Tree is using conflicting node types which can cause unexpected behavior. Please use tree nodes of the same type (e.g. only flat or only nested). Current node type: "nested", new node type "flat".');
     spectator.detectChanges();
     const treeNodes = spectator.queryAll('.cell-name');
     expect(treeNodes[0].textContent).toBe('MIRROR');
     expect(treeNodes[1].textContent).toBe('sdc');
     expect(treeNodes[2].textContent).toBe('sdd');
+
+    // The migrated tn-icon-button still drives treeNodeToggle: clicking it collapses
+    // the auto-expanded group, hiding its device rows.
+    const groupLoader = await TestbedHarnessEnvironment.loader(spectator.fixture).getChildLoader('ix-vdev-group-node');
+    const groupToggle = await groupLoader.getHarness(TnIconButtonHarness);
+    await groupToggle.click();
+    spectator.detectChanges();
+    expect(spectator.queryAll('.cell-name')).toHaveLength(0);
   });
 
   describe('auto-expand on descendant warning', () => {

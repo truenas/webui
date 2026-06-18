@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnChipHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { auditEventLabels } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -56,15 +56,15 @@ describe('AdvancedSearchComponent – presets', () => {
   });
 
   it('renders preset buttons when filterPresets are provided', async () => {
-    const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    const texts = await Promise.all(buttons.map((btn) => btn.getText()));
+    const buttons = await loader.getAllHarnesses(TnChipHarness);
+    const texts = await Promise.all(buttons.map((btn) => btn.getLabel()));
 
     expect(texts).toContain('+ Has SMB Access');
     expect(texts).toContain('+ Is Admin');
   });
 
   it('updates the input field when a preset button is clicked', async () => {
-    const adminBtn = await loader.getHarness(MatButtonHarness.with({ text: '+ Is Admin' }));
+    const adminBtn = await loader.getHarness(TnChipHarness.with({ label: '+ Is Admin' }));
     await adminBtn.click();
 
     const value = await searchHarness.getValue();
@@ -72,8 +72,8 @@ describe('AdvancedSearchComponent – presets', () => {
   });
 
   it('appends multiple presets into the search input', async () => {
-    const smbBtn = await loader.getHarness(MatButtonHarness.with({ text: '+ Has SMB Access' }));
-    const adminBtn = await loader.getHarness(MatButtonHarness.with({ text: '+ Is Admin' }));
+    const smbBtn = await loader.getHarness(TnChipHarness.with({ label: '+ Has SMB Access' }));
+    const adminBtn = await loader.getHarness(TnChipHarness.with({ label: '+ Is Admin' }));
 
     await smbBtn.click();
     await adminBtn.click();
@@ -82,18 +82,18 @@ describe('AdvancedSearchComponent – presets', () => {
   });
 
   it('removes preset buttons once clicked', async () => {
-    const smbBtn = await loader.getHarness(MatButtonHarness.with({ text: '+ Has SMB Access' }));
+    const smbBtn = await loader.getHarness(TnChipHarness.with({ label: '+ Has SMB Access' }));
     await smbBtn.click();
 
-    const remaining = await loader.getAllHarnesses(MatButtonHarness);
-    const labels = await Promise.all(remaining.map((btn) => btn.getText()));
+    const remaining = await loader.getAllHarnesses(TnChipHarness);
+    const labels = await Promise.all(remaining.map((btn) => btn.getLabel()));
 
     expect(labels).not.toContain('+ Has SMB Access');
     expect(labels).toContain('+ Is Admin');
   });
 
   it('restores preset buttons when manually cleared from input', async () => {
-    const adminBtn = await loader.getHarness(MatButtonHarness.with({ text: '+ Is Admin' }));
+    const adminBtn = await loader.getHarness(TnChipHarness.with({ label: '+ Is Admin' }));
     await adminBtn.click();
 
     expect(await searchHarness.getValue()).toContain('"Username" = "admin"');
@@ -101,8 +101,8 @@ describe('AdvancedSearchComponent – presets', () => {
     await searchHarness.setValue('');
     await spectator.fixture.whenStable();
 
-    const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    const labels = await Promise.all(buttons.map((btn) => btn.getText()));
+    const buttons = await loader.getAllHarnesses(TnChipHarness);
+    const labels = await Promise.all(buttons.map((btn) => btn.getLabel()));
     expect(labels).toContain('+ Is Admin');
   });
 });
