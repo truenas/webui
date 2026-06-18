@@ -1,4 +1,5 @@
 @import 'scss-imports/variables';
+@import '../../../radio-group';
 
 :host {
   display: block;
@@ -22,6 +23,8 @@
     flex-direction: column;
     gap: 8px;
   }
+
+  @include tn-radio-group-layout;
 }
 
 .response-editor,
@@ -50,24 +53,4 @@
   gap: 8px;
   justify-content: flex-end;
   padding: 12px;
-
-}
-
-// Material button overrides
-.form-actions {
-  .mat-mdc-button {
-    .mat-mdc-button-persistent-ripple {
-      background-color: var(--bg2);
-    }
-
-    .mdc-button__label {
-      color: var(--fg1);
-    }
-
-    &.mat-primary {
-      .mdc-button__label {
-        color: var(--primary);
-      }
-    }
-  }
 }

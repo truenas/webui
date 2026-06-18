@@ -1,47 +1,65 @@
 <div class="enclosure-mock-tab">
   <form class="enclosure-mock-form" [formGroup]="form">
     <div class="enable-section">
-      <mat-checkbox formControlName="enabled" class="enable-checkbox" ixTest="enable-enclosure-mocking">
-        {{ 'Enable Enclosure Mocking' | translate }}
-      </mat-checkbox>
+      <tn-checkbox
+        formControlName="enabled"
+        class="enable-checkbox"
+        testId="enable-enclosure-mocking"
+        [label]="'Enable Enclosure Mocking' | translate"
+      ></tn-checkbox>
     </div>
 
-    <ix-fieldset [title]="'Configuration' | translate">
-      <ix-select
-        formControlName="controllerModel"
+    <div class="config-section">
+      <h3 class="config-title">{{ 'Configuration' | translate }}</h3>
+
+      <tn-form-field
         [label]="'Controller Model' | translate"
-        [options]="controllerOptions"
         [required]="true"
         [tooltip]="'Select the controller enclosure model' | translate"
-      ></ix-select>
+      >
+        <tn-select
+          testId="controller-model-select"
+          formControlName="controllerModel"
+          [options]="controllerOptions"
+        ></tn-select>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="expansionModels"
+      <tn-form-field
         [label]="'Expansion Shelves' | translate"
-        [options]="expansionOptions"
-        [multiple]="true"
         [tooltip]="'Select expansion shelf models to attach' | translate"
-      ></ix-select>
+      >
+        <tn-select
+          testId="expansion-models-select"
+          formControlName="expansionModels"
+          [options]="expansionOptions"
+          [multiple]="true"
+        ></tn-select>
+      </tn-form-field>
 
-      <ix-radio-group
-        formControlName="scenario"
+      <tn-form-field
         [label]="'Mocking Scenario' | translate"
-        [options]="scenarioOptions"
         [tooltip]="'Select the scenario for populating enclosure slots' | translate"
-      ></ix-radio-group>
-    </ix-fieldset>
+      >
+        @for (option of scenarioOptions; track option.value) {
+          <tn-radio
+            name="enclosure-scenario"
+            formControlName="scenario"
+            [value]="option.value"
+            [label]="option.label | translate"
+            [testId]="['scenario', option.value]"
+          ></tn-radio>
+        }
+      </tn-form-field>
+    </div>
 
     <div class="actions">
-      <button
-        mat-button
+      <tn-button
         color="primary"
-        type="button"
-        ixTest="apply-enclosure-mock"
+        testId="apply-enclosure-mock"
         [disabled]="form.invalid && form.value.enabled"
-        (click)="onApply()"
-      >
-        {{ 'Apply' | translate }}
-      </button>
+        [label]="'Apply' | translate"
+        (onClick)="onApply()"
+      ></tn-button>
     </div>
 
     @if (form.value.enabled && form.value.controllerModel) {

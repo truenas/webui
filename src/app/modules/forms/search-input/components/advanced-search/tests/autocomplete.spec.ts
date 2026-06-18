@@ -1,8 +1,8 @@
-import { HarnessLoader, TestKey } from '@angular/cdk/testing';
+import { TestKey } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatCalendarHarness } from '@angular/material/datepicker/testing';
 import { CompletionContext } from '@codemirror/autocomplete';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCalendarComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { auditEventLabels, AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -19,7 +19,6 @@ import { dateProperty, searchProperties, textProperty } from 'app/modules/forms/
 describe('AdvancedSearchComponent – autocomplete', () => {
   let spectator: Spectator<AdvancedSearchComponent<AuditEntry>>;
   let searchHarness: AdvancedSearchHarness;
-  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: AdvancedSearchComponent<AuditEntry>,
     providers: [
@@ -64,7 +63,6 @@ describe('AdvancedSearchComponent – autocomplete', () => {
       },
     });
     searchHarness = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, AdvancedSearchHarness);
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
     // Positioning does not work correctly because of JSDOM limitations, so we fudge it here.
     const autocompleteService = spectator.inject(AdvancedSearchAutocompleteService);
@@ -234,11 +232,11 @@ describe('AdvancedSearchComponent – autocomplete', () => {
     it('shows and inserts a date for date properties', async () => {
       await searchHarness.setValue('Timestamp > ');
 
-      const calendar = await loader.getHarness(MatCalendarHarness);
-      await calendar.changeView();
-      await calendar.selectCell({ text: '2023' });
-      await calendar.selectCell({ text: 'DEC' });
-      await calendar.selectCell({ text: '21' });
+      const calendar = spectator.query(TnCalendarComponent);
+      expect(calendar).toExist();
+
+      calendar!.selectedChange.emit(new Date(2023, 11, 21));
+      spectator.detectChanges();
 
       expect(await searchHarness.getValue()).toBe('Timestamp > "2023-12-21"');
     });
