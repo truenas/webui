@@ -1,17 +1,18 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnCardComponent,
+  TnListComponent,
+  TnListItemComponent,
+  type TnCardAction,
+} from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
@@ -22,14 +23,10 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
   templateUrl: './email-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnListComponent,
+    TnListItemComponent,
     UiSearchDirective,
-    MatToolbarRow,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
     WithLoadingStateDirective,
     TranslateModule,
   ],
@@ -37,6 +34,7 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
 export class EmailCardComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private api = inject(ApiService);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   readonly helptext = helptextSystemEmail;
@@ -48,6 +46,13 @@ export class EmailCardComponent implements OnInit {
   });
 
   protected hasLoadedConfig = computed(() => Boolean(this.emailConfigState().value));
+
+  protected settingsAction = computed<TnCardAction>(() => ({
+    label: this.translate.instant('Settings'),
+    testId: 'email-settings',
+    disabled: !this.hasLoadedConfig(),
+    handler: () => this.openEmailSettings(),
+  }));
 
   ngOnInit(): void {
     this.loadEmailConfig();

@@ -3,13 +3,16 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardHeaderActionsDirective,
+  TnCardHeaderDirective,
+  TnDialog,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
@@ -26,7 +29,6 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   formatLicenseExpiration,
@@ -55,17 +57,16 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   styleUrls: ['./support-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
     UiSearchDirective,
-    MatToolbarRow,
-    MatCardContent,
     SysInfoComponent,
     RequiresRolesDirective,
-    TestDirective,
     ReactiveFormsModule,
     FormsModule,
-    MatButton,
-    MatTooltip,
+    TnButtonComponent,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
+    TnCardHeaderDirective,
+    TnTooltipDirective,
     TranslateModule,
     SaveDebugButtonComponent,
   ],

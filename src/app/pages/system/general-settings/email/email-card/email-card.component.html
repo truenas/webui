@@ -1,48 +1,34 @@
-<mat-card [ixUiSearch]="searchableElements.elements.email">
-  <mat-toolbar-row>
-    <h3>{{ 'Email' | translate }}</h3>
-    <div class="actions action-icon">
-      <button
-        mat-button
-        color="default"
-        [ixTest]="['email', 'settings']"
-        [ixUiSearch]="searchableElements.elements.settings"
-        [disabled]="!hasLoadedConfig()"
-        (click)="openEmailSettings()"
-      >
-        {{ 'Settings' | translate }}
-      </button>
-    </div>
-  </mat-toolbar-row>
+<tn-card
+  [ixUiSearch]="searchableElements.elements.email"
+  [title]="'Email' | translate"
+  [secondaryAction]="settingsAction()"
+>
+  <tn-list>
+    <tn-list-item [ixUiSearch]="searchableElements.elements.sendMethod">
+      <span class="label">{{ 'Send Mail Method' | translate }}:</span>
+      <span *ixWithLoadingState="emailConfigState() as emailConfig" class="value">
+        {{
+          !emailConfig?.oauth?.client_id
+            ? helptext.sendMailMethod.smtp.label
+            : helptext.sendMailMethod[emailConfig?.oauth?.provider]?.label
+        }}
+      </span>
+    </tn-list-item>
 
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.sendMethod">
-        <span class="label">{{ 'Send Mail Method' | translate }}:</span>
-        <span *ixWithLoadingState="emailConfigState() as emailConfig" class="value">
-          {{
-            !emailConfig?.oauth?.client_id
-              ? helptext.sendMailMethod.smtp.label
-              : helptext.sendMailMethod[emailConfig?.oauth?.provider]?.label
-          }}
-        </span>
-      </mat-list-item>
-
-      <ng-container *ixWithLoadingState="emailConfigState() as emailConfig">
-        @if (emailConfig?.fromemail || emailConfig?.fromname) {
-          <mat-list-item>
-            <span class="label">{{ 'From' | translate }}:</span>
-            <span class="value">
-              {{ emailConfig.fromname }}
-              {{
-                emailConfig.outgoingserver && emailConfig.fromemail && !emailConfig?.oauth?.client_id
-                  ? ('{email} via {server}' | translate : { email: emailConfig.fromemail, server: emailConfig.outgoingserver })
-                  : emailConfig.fromemail || '-'
-              }}
-            </span>
-          </mat-list-item>
-        }
-      </ng-container>
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+    <ng-container *ixWithLoadingState="emailConfigState() as emailConfig">
+      @if (emailConfig?.fromemail || emailConfig?.fromname) {
+        <tn-list-item>
+          <span class="label">{{ 'From' | translate }}:</span>
+          <span class="value">
+            {{ emailConfig.fromname }}
+            {{
+              emailConfig.outgoingserver && emailConfig.fromemail && !emailConfig?.oauth?.client_id
+                ? ('{email} via {server}' | translate : { email: emailConfig.fromemail, server: emailConfig.outgoingserver })
+                : emailConfig.fromemail || '-'
+            }}
+          </span>
+        </tn-list-item>
+      }
+    </ng-container>
+  </tn-list>
+</tn-card>

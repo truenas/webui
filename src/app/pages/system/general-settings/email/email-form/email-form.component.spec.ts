@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { when } from 'jest-when';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -119,7 +120,7 @@ describe('EmailFormComponent', () => {
     it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
       spectator.inject(MockApiService).mockCall('mail.local_administrator_email', null);
 
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Send Test Mail' }));
       await button.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.local_administrator_email');
@@ -168,7 +169,7 @@ describe('EmailFormComponent', () => {
       });
 
       // Before OAuth login, Save should be disabled
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Log in to Gmail
@@ -189,7 +190,7 @@ describe('EmailFormComponent', () => {
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
@@ -215,7 +216,7 @@ describe('EmailFormComponent', () => {
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
 
-      const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
+      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -269,7 +270,7 @@ describe('EmailFormComponent', () => {
         'From Email': '',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
     });
 
@@ -295,7 +296,7 @@ describe('EmailFormComponent', () => {
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
       await logInButton.click();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
@@ -324,7 +325,7 @@ describe('EmailFormComponent', () => {
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
       await logInButton.click();
 
-      const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
+      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -373,7 +374,7 @@ describe('EmailFormComponent', () => {
         'SMTP Authentication': false,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
@@ -407,7 +408,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('sends test email with SMTP settings when SMTP form is used and Send Test Mail is pressed', async () => {
-      const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
+      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -470,7 +471,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('has Save button enabled when Gmail config is loaded', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
     });
   });
@@ -511,7 +512,7 @@ describe('EmailFormComponent', () => {
         });
         expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         expect(await saveButton.isDisabled()).toBe(false);
       });
     });
@@ -554,7 +555,7 @@ describe('EmailFormComponent', () => {
           'From Name': 'Jeremy',
         });
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         expect(api.call).toHaveBeenCalledWith('mail.update', [{

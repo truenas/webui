@@ -1,9 +1,8 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Option } from 'app/interfaces/option.interface';
@@ -48,9 +47,9 @@ describe('LocalizationCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows Localization related settings', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+  it('shows Localization related settings', () => {
+    const items = spectator.queryAll<HTMLElement>('tn-list-item');
+    const itemTexts = items.map((item) => item.textContent!.trim().replace(/\s+/g, ' '));
 
     expect(itemTexts).toEqual([
       'Timezone: America/New_York',
@@ -59,7 +58,7 @@ describe('LocalizationCardComponent', () => {
   });
 
   it('opens Localization form when Settings button is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Settings' }));
     await configureButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(LocalizationFormComponent, {

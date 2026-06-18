@@ -10,16 +10,9 @@
   }
 }
 
-.mat-mdc-card-content {
+:host {
   color: var(--fg2);
 }
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 
 .support-banner {
   background-color: var(--bg1);

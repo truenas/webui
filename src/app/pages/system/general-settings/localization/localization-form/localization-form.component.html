@@ -2,35 +2,31 @@
   [title]="'Localization Settings' | translate"
   [loading]="isFormLoading()"
 ></ix-modal-header>
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
-      <ix-fieldset [title]="fieldsetTitle | translate">
-        <ix-select
-          [label]="kbdMap.label | translate"
-          [options]="kbdMap.options"
-          [required]="true"
-          [formControlName]="kbdMap.fcName"
-        ></ix-select>
-        <ix-combobox
-          [formControlName]="timezone.fcName"
-          [label]="timezone.label | translate"
-          [provider]="timezone.provider"
-          [required]="true"
-        ></ix-combobox>
-      </ix-fieldset>
 
-      <ix-form-actions>
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="formGroup.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+<form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
+  <ix-fieldset [title]="fieldsetTitle | translate">
+    <ix-select
+      [label]="kbdMap.label | translate"
+      [options]="kbdMap.options"
+      [required]="true"
+      [formControlName]="kbdMap.fcName"
+    ></ix-select>
+    <ix-combobox
+      [formControlName]="timezone.fcName"
+      [label]="timezone.label | translate"
+      [provider]="timezone.provider"
+      [required]="true"
+    ></ix-combobox>
+  </ix-fieldset>
+
+  <ix-form-actions>
+    <tn-button
+      type="submit"
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="formGroup.invalid || isFormLoading()"
+      (onClick)="submit()"
+    ></tn-button>
+  </ix-form-actions>
+</form>

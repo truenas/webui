@@ -1,8 +1,7 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { MailConfig, MailOauthConfig } from 'app/interfaces/mail-config.interface';
@@ -44,9 +43,9 @@ describe('EmailCardComponent with SMTP', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows Email related settings', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+  it('shows Email related settings', () => {
+    const items = spectator.queryAll<HTMLElement>('tn-list-item');
+    const itemTexts = items.map((item) => item.textContent!.trim().replace(/\s+/g, ' '));
 
     expect(itemTexts).toEqual([
       'Send Mail Method: SMTP',
@@ -55,7 +54,7 @@ describe('EmailCardComponent with SMTP', () => {
   });
 
   it('opens Email form when Settings button is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Settings' }));
     await configureButton.click();
 
     expect(spectator.inject(SlideIn).open)
@@ -65,7 +64,6 @@ describe('EmailCardComponent with SMTP', () => {
 
 describe('EmailCardComponent with Gmail OAuth', () => {
   let spectator: Spectator<EmailCardComponent>;
-  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: EmailCardComponent,
     providers: [
@@ -83,12 +81,11 @@ describe('EmailCardComponent with Gmail OAuth', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows Email related settings', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+  it('shows Email related settings', () => {
+    const items = spectator.queryAll<HTMLElement>('tn-list-item');
+    const itemTexts = items.map((item) => item.textContent!.trim().replace(/\s+/g, ' '));
 
     expect(itemTexts).toEqual([
       'Send Mail Method: GMail OAuth',
@@ -99,7 +96,6 @@ describe('EmailCardComponent with Gmail OAuth', () => {
 
 describe('EmailCardComponent with Outlook OAuth', () => {
   let spectator: Spectator<EmailCardComponent>;
-  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: EmailCardComponent,
     providers: [
@@ -117,12 +113,11 @@ describe('EmailCardComponent with Outlook OAuth', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows Email related settings', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+  it('shows Email related settings', () => {
+    const items = spectator.queryAll<HTMLElement>('tn-list-item');
+    const itemTexts = items.map((item) => item.textContent!.trim().replace(/\s+/g, ' '));
 
     expect(itemTexts).toEqual([
       'Send Mail Method: Outlook OAuth',

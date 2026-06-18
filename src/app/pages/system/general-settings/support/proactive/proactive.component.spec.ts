@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -80,7 +80,7 @@ describe('ProactiveComponent', () => {
       'Secondary Title': 'Cannot connect',
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     expect(await saveButton.isDisabled()).toBeFalsy();
   });
 
@@ -90,7 +90,7 @@ describe('ProactiveComponent', () => {
       'Phone Number': '+777-77-77-77',
     };
     await form.fillForm(sendValue);
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
     expect(api.call).toHaveBeenCalledWith('support.update', [{
       enabled: true,
@@ -109,7 +109,7 @@ describe('ProactiveComponent', () => {
   it('disables form when support is not available', async () => {
     spectator.inject(MockApiService).mockCall('support.is_available', false);
     spectator.component.ngOnInit();
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
 
     expect(await saveButton.isDisabled()).toBeTruthy();
   });

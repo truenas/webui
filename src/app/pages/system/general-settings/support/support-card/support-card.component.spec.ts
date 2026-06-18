@@ -1,7 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import {
+  TnButtonComponent,
+  TnButtonHarness,
+  TnCardComponent,
+  TnCardHeaderDirective,
+  TnSlideToggleComponent,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnDialog } from '@truenas/ui-components';
@@ -17,10 +24,10 @@ import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.in
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
+import { LocaleService } from 'app/modules/language/locale.service';
 import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
-import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -62,6 +69,11 @@ describe('SupportCardComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxSlideToggleComponent,
+      TnButtonComponent,
+      TnCardComponent,
+      TnCardHeaderDirective,
+      TnSlideToggleComponent,
+      TnTooltipDirective,
     ],
     providers: [
       mockAuth(),
@@ -164,7 +176,7 @@ describe('SupportCardComponent', () => {
         const slideIn = spectator.inject(SlideIn);
         jest.spyOn(slideIn, 'open');
 
-        const enableButton = await loader.getHarness(MatButtonHarness.with({ text: 'Enable' }));
+        const enableButton = await loader.getHarness(TnButtonHarness.with({ label: 'Enable' }));
         await enableButton.click();
 
         expect(slideIn.open).toHaveBeenCalledWith(ProactiveComponent, { wide: true });
@@ -178,7 +190,7 @@ describe('SupportCardComponent', () => {
         const apiCallSpy = jest.spyOn(api, 'call');
         apiCallSpy.mockClear();
 
-        const enableButton = await loader.getHarness(MatButtonHarness.with({ text: 'Enable' }));
+        const enableButton = await loader.getHarness(TnButtonHarness.with({ label: 'Enable' }));
         await enableButton.click();
 
         expect(apiCallSpy).toHaveBeenCalledWith('support.is_available');
@@ -235,7 +247,7 @@ describe('SupportCardComponent', () => {
         const tnDialog = spectator.inject(TnDialog);
         jest.spyOn(tnDialog, 'open');
 
-        const fileTicketButton = await loader.getHarness(MatButtonHarness.with({ text: 'File Ticket' }));
+        const fileTicketButton = await loader.getHarness(TnButtonHarness.with({ label: 'File Ticket' }));
         await fileTicketButton.click();
 
         expect(tnDialog.open).toHaveBeenCalledWith(FeedbackDialog, { data: FeedbackType.Bug });
@@ -245,7 +257,7 @@ describe('SupportCardComponent', () => {
         const slideIn = spectator.inject(SlideIn);
         jest.spyOn(slideIn, 'open');
 
-        const updateLicenseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update License' }));
+        const updateLicenseButton = await loader.getHarness(TnButtonHarness.with({ label: 'Update License' }));
         await updateLicenseButton.click();
 
         expect(slideIn.open).toHaveBeenCalledWith(LicenseComponent);

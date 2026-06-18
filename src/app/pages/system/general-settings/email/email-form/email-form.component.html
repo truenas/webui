@@ -4,115 +4,108 @@
   [loading]="isLoading()"
 ></ix-modal-header>
 
-<mat-card class="card">
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-radio-group
-          [label]="'Send Mail Method' | translate"
-          [formControl]="sendMethodControl"
-          [options]="sendMethodOptions$"
-        ></ix-radio-group>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-fieldset>
+    <ix-radio-group
+      [label]="'Send Mail Method' | translate"
+      [formControl]="sendMethodControl"
+      [options]="sendMethodOptions$"
+    ></ix-radio-group>
 
+    <ix-input
+      formControlName="fromemail"
+      [label]="'From Email' | translate"
+      [required]="isFromEmailRequired"
+      [tooltip]="helptext.fromemail.tooltip | translate"
+    ></ix-input>
+
+    <ix-input
+      formControlName="fromname"
+      [label]="'From Name' | translate"
+      [tooltip]="helptext.fromname.tooltip | translate"
+    ></ix-input>
+
+    @if (isSmtp) {
+      <ix-input
+        formControlName="outgoingserver"
+        [label]="'Outgoing Mail Server' | translate"
+        [tooltip]="helptext.outgoingserver.tooltip | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="port"
+        type="number"
+        [label]="'Mail Server Port' | translate"
+        [required]="true"
+        [tooltip]="helptext.port.tooltip | translate"
+      ></ix-input>
+
+      <ix-select
+        formControlName="security"
+        [label]="'Security' | translate"
+        [tooltip]="helptext.security.tooltip | translate"
+        [options]="securityOptions$"
+      ></ix-select>
+
+      <ix-checkbox
+        formControlName="smtp"
+        [label]="'SMTP Authentication' | translate"
+        [tooltip]="helptext.auth.smtp.tooltip | translate"
+      ></ix-checkbox>
+
+      @if (hasSmtpAuthentication) {
         <ix-input
-          formControlName="fromemail"
-          [label]="'From Email' | translate"
-          [required]="isFromEmailRequired"
-          [tooltip]="helptext.fromemail.tooltip | translate"
+          formControlName="user"
+          [label]="'Username' | translate"
+          [required]="true"
+          [tooltip]="helptext.user.tooltip | translate"
         ></ix-input>
 
         <ix-input
-          formControlName="fromname"
-          [label]="'From Name' | translate"
-          [tooltip]="helptext.fromname.tooltip | translate"
+          formControlName="pass"
+          type="password"
+          [label]="'Password' | translate"
+          [tooltip]="helptext.pass.tooltip | translate"
         ></ix-input>
-
-        @if (isSmtp) {
-          <ix-input
-            formControlName="outgoingserver"
-            [label]="'Outgoing Mail Server' | translate"
-            [tooltip]="helptext.outgoingserver.tooltip | translate"
-          ></ix-input>
-
-          <ix-input
-            formControlName="port"
-            type="number"
-            [label]="'Mail Server Port' | translate"
-            [required]="true"
-            [tooltip]="helptext.port.tooltip | translate"
-          ></ix-input>
-
-          <ix-select
-            formControlName="security"
-            [label]="'Security' | translate"
-            [tooltip]="helptext.security.tooltip | translate"
-            [options]="securityOptions$"
-          ></ix-select>
-
-          <ix-checkbox
-            formControlName="smtp"
-            [label]="'SMTP Authentication' | translate"
-            [tooltip]="helptext.auth.smtp.tooltip | translate"
-          ></ix-checkbox>
-
-          @if (hasSmtpAuthentication) {
-            <ix-input
-              formControlName="user"
-              [label]="'Username' | translate"
-              [required]="true"
-              [tooltip]="helptext.user.tooltip | translate"
-            ></ix-input>
-
-            <ix-input
-              formControlName="pass"
-              type="password"
-              [label]="'Password' | translate"
-              [tooltip]="helptext.pass.tooltip | translate"
-            ></ix-input>
-          }
-        } @else {
-          <div class="oauth-message">
-            @if (hasOauthAuthorization) {
-              <tn-icon name="check-circle" library="mdi"></tn-icon>
-              {{ '{oauthType} credentials have been applied.' | translate: { oauthType } }}
-            } @else {
-              <tn-icon name="information" library="mdi"></tn-icon>
-              {{ 'Log in to {oauthType} to set up Oauth credentials.' | translate: { oauthType } }}
-            }
-          </div>
-          <ix-oauth-button
-            testId="login-to-oauth-provider"
-            [oauthType]="oauthType"
-            [oauthUrl]="oauthUrl"
-            [isLoggedIn]="hasOauthAuthorization"
-            (loggedIn)="onLoggedIn($event)"
-          ></ix-oauth-button>
       }
-      </ix-fieldset>
-
-      <div class="form-actions">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="!isValid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-
-        <button
-          *ixRequiresRoles="requiredRolesMailWrite"
-          mat-button
-          type="button"
-          ixTest="send-test-mail"
-          [disabled]="!isValid || isLoading()"
-          (click)="onSendTestEmailPressed()"
-        >
-          {{ 'Send Test Mail' | translate }}
-        </button>
+    } @else {
+      <div class="oauth-message">
+        @if (hasOauthAuthorization) {
+          <tn-icon name="check-circle" library="mdi"></tn-icon>
+          {{ '{oauthType} credentials have been applied.' | translate: { oauthType } }}
+        } @else {
+          <tn-icon name="information" library="mdi"></tn-icon>
+          {{ 'Log in to {oauthType} to set up Oauth credentials.' | translate: { oauthType } }}
+        }
       </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+      <ix-oauth-button
+        testId="login-to-oauth-provider"
+        [oauthType]="oauthType"
+        [oauthUrl]="oauthUrl"
+        [isLoggedIn]="hasOauthAuthorization"
+        (loggedIn)="onLoggedIn($event)"
+      ></ix-oauth-button>
+    }
+  </ix-fieldset>
+
+  <div class="form-actions">
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      type="submit"
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!isValid || isLoading()"
+      (onClick)="onSubmit()"
+    ></tn-button>
+
+    <tn-button
+      *ixRequiresRoles="requiredRolesMailWrite"
+      type="button"
+      [testId]="'send-test-mail'"
+      [label]="'Send Test Mail' | translate"
+      [disabled]="!isValid || isLoading()"
+      (onClick)="onSendTestEmailPressed()"
+    ></tn-button>
+  </div>
+</form>
