@@ -172,11 +172,15 @@
 
       @if (isReady && report()?.errorConf) {
         <div class="card-content">
+          <!--
+               errorConf.title is necessarily translated since its type is `TranslatedString`
+               so there's no reason to translate it here
+          -->
           <tn-empty
             icon="alert-octagon"
             iconLibrary="mdi"
             iconSize="56px"
-            [title]="report().errorConf.title | translate"
+            [title]="report().errorConf.title"
             [description]="report().errorConf.message"
           ></tn-empty>
         </div>
