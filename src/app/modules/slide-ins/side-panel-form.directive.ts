@@ -26,6 +26,12 @@ export abstract class SidePanelForm {
   /** The form whose dirty/validity state drives confirmation and submission. */
   protected abstract readonly form: Pick<AbstractControl, 'dirty' | 'status' | 'statusChanges'>;
 
+  /**
+   * Whether the form can currently be submitted. Hosts (e.g. `<tn-side-panel>`)
+   * read this to enable/disable their Save action. Build it with {@link trackCanSubmit}.
+   */
+  abstract readonly canSubmit: Signal<boolean>;
+
   /** Performs the actual save. Invoked by the host-facing {@link submit}. */
   protected abstract onSubmit(): void;
 

@@ -1,109 +1,113 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="'SNMP' | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles"
+    [title]="'SNMP' | translate"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
 
-<tn-card class="card" padding="small">
-  <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-    <div class="columns">
-      <tn-form-section [heading]="'General Options' | translate">
-        <tn-form-field
-          [label]="'Location' | translate"
-          [tooltip]="tooltips.location | translate"
-        >
-          <tn-input formControlName="location"></tn-input>
-        </tn-form-field>
-
-        <tn-form-field
-          [label]="'Contact' | translate"
-          [tooltip]="tooltips.contact | translate"
-        >
-          <tn-input formControlName="contact" [inputType]="InputType.Email"></tn-input>
-        </tn-form-field>
-
-        <tn-form-field
-          [label]="'Community' | translate"
-          [tooltip]="tooltips.community | translate"
-        >
-          <tn-input formControlName="community"></tn-input>
-        </tn-form-field>
-      </tn-form-section>
-
-      <tn-form-section [heading]="'SNMP v3 Options' | translate">
-        <tn-form-field [tooltip]="tooltips.v3 | translate">
-          <tn-checkbox formControlName="v3" [label]="'SNMP v3 Support' | translate"></tn-checkbox>
-        </tn-form-field>
-
-        @if (isV3SupportEnabled) {
-          <tn-form-field
-            [label]="'Username' | translate"
-            [tooltip]="tooltips.v3_username | translate"
-          >
-            <tn-input formControlName="v3_username"></tn-input>
-          </tn-form-field>
-
-          <tn-form-field
-            [label]="'Authentication Type' | translate"
-            [tooltip]="tooltips.v3_authtype | translate"
-          >
-            <tn-select formControlName="v3_authtype" [options]="authtypeOptions" [allowEmpty]="true"></tn-select>
-          </tn-form-field>
-
-          <tn-form-field
-            [label]="'Password' | translate"
-            [required]="true"
-            [tooltip]="tooltips.v3_password | translate"
-          >
-            <tn-input formControlName="v3_password" [inputType]="InputType.Password"></tn-input>
-          </tn-form-field>
-
-          <tn-form-field
-            [label]="'Privacy Protocol' | translate"
-            [tooltip]="tooltips.v3_privproto | translate"
-          >
-            <tn-select formControlName="v3_privproto" [options]="privprotoOptions"></tn-select>
-          </tn-form-field>
-
-          <tn-form-field
-            [label]="'Privacy Passphrase' | translate"
-            [tooltip]="tooltips.v3_privpassphrase | translate"
-          >
-            <tn-input formControlName="v3_privpassphrase" [inputType]="InputType.Password"></tn-input>
-          </tn-form-field>
-        }
-      </tn-form-section>
-    </div>
-
-    <tn-form-section [heading]="'Other Options' | translate">
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <div class="columns">
+    <tn-form-section [heading]="'General Options' | translate">
       <tn-form-field
-        [label]="'Auxiliary Parameters' | translate"
-        [tooltip]="tooltips.options | translate"
+        [label]="'Location' | translate"
+        [tooltip]="tooltips.location | translate"
       >
-        <tn-input formControlName="options" [multiline]="true"></tn-input>
-      </tn-form-field>
-
-      <tn-form-field>
-        <tn-checkbox formControlName="zilstat" [label]="'Expose zilstat via SNMP' | translate"></tn-checkbox>
+        <tn-input formControlName="location"></tn-input>
       </tn-form-field>
 
       <tn-form-field
-        [label]="'Log Level' | translate"
-        [tooltip]="tooltips.loglevel | translate"
+        [label]="'Contact' | translate"
+        [tooltip]="tooltips.contact | translate"
       >
-        <tn-select formControlName="loglevel" [options]="logLevelOptions"></tn-select>
+        <tn-input formControlName="contact" [inputType]="InputType.Email"></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="'Community' | translate"
+        [tooltip]="tooltips.community | translate"
+      >
+        <tn-input formControlName="community"></tn-input>
       </tn-form-field>
     </tn-form-section>
 
-    <ix-form-actions>
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        color="primary"
-        type="submit"
-        [testId]="'save'"
-        [disabled]="form.invalid || isFormLoading()"
-        [label]="'Save' | translate"
-      ></tn-button>
-    </ix-form-actions>
-  </form>
-</tn-card>
+    <tn-form-section [heading]="'SNMP v3 Options' | translate">
+      <tn-form-field [tooltip]="tooltips.v3 | translate">
+        <tn-checkbox formControlName="v3" [label]="'SNMP v3 Support' | translate"></tn-checkbox>
+      </tn-form-field>
+
+      @if (isV3SupportEnabled) {
+        <tn-form-field
+          [label]="'Username' | translate"
+          [tooltip]="tooltips.v3_username | translate"
+        >
+          <tn-input formControlName="v3_username"></tn-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="'Authentication Type' | translate"
+          [tooltip]="tooltips.v3_authtype | translate"
+        >
+          <tn-select formControlName="v3_authtype" [options]="authtypeOptions" [allowEmpty]="true"></tn-select>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="'Password' | translate"
+          [required]="true"
+          [tooltip]="tooltips.v3_password | translate"
+        >
+          <tn-input formControlName="v3_password" [inputType]="InputType.Password"></tn-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="'Privacy Protocol' | translate"
+          [tooltip]="tooltips.v3_privproto | translate"
+        >
+          <tn-select formControlName="v3_privproto" [options]="privprotoOptions"></tn-select>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="'Privacy Passphrase' | translate"
+          [tooltip]="tooltips.v3_privpassphrase | translate"
+        >
+          <tn-input formControlName="v3_privpassphrase" [inputType]="InputType.Password"></tn-input>
+        </tn-form-field>
+      }
+    </tn-form-section>
+  </div>
+
+  <tn-form-section [heading]="'Other Options' | translate">
+    <tn-form-field
+      [label]="'Auxiliary Parameters' | translate"
+      [tooltip]="tooltips.options | translate"
+    >
+      <tn-input formControlName="options" [multiline]="true"></tn-input>
+    </tn-form-field>
+
+    <tn-form-field>
+      <tn-checkbox formControlName="zilstat" [label]="'Expose zilstat via SNMP' | translate"></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Log Level' | translate"
+      [tooltip]="tooltips.loglevel | translate"
+    >
+      <tn-select formControlName="loglevel" [options]="logLevelOptions"></tn-select>
+    </tn-form-field>
+  </tn-form-section>
+
+  <ix-form-actions>
+    @if (slideInRef) {
+      <div>
+        <tn-button
+          *ixRequiresRoles="requiredRoles"
+          color="primary"
+          type="submit"
+          [testId]="'save'"
+          [disabled]="form.invalid || isFormLoading()"
+          [label]="'Save' | translate"
+        ></tn-button>
+      </div>
+    }
+  </ix-form-actions>
+</form>

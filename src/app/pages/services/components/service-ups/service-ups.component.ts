@@ -4,10 +4,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnAutocompleteComponent, TnButtonComponent, TnCardComponent, TnCheckboxComponent,
+  InputType, TnAutocompleteComponent, TnButtonComponent, TnCheckboxComponent,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { UpsMode } from 'app/enums/ups-mode.enum';
@@ -17,7 +16,7 @@ import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -31,7 +30,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     AsyncPipe,
     ModalHeaderComponent,
-    TnCardComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -45,7 +43,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class ServiceUpsComponent implements OnInit {
+export class ServiceUpsComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
@@ -53,7 +51,6 @@ export class ServiceUpsComponent implements OnInit {
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly InputType = InputType;
@@ -143,11 +140,7 @@ export class ServiceUpsComponent implements OnInit {
   readonly modeOptions = translateOptions(this.translate, helptextServiceUps.modeOptions);
   readonly shutdownOptions = translateOptions(this.translate, helptextServiceUps.shutdownOptions);
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
@@ -204,7 +197,7 @@ export class ServiceUpsComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
