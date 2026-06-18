@@ -12,7 +12,7 @@
 >
   @for (section of sections; track $index) {
     @if (isSectionVisible($index, section)) {
-      <ix-fieldset [title]="section.title" [tooltip]="section.tooltip">
+      <tn-form-section [heading]="section.title" [tooltip]="section.tooltip">
         @for (field of section.fields; track field.name) {
           @if (isFieldVisible(field)) {
             @switch (field.type) {
@@ -70,7 +70,7 @@
             }
           }
         }
-      </ix-fieldset>
+      </tn-form-section>
     }
   }
 </ix-form>

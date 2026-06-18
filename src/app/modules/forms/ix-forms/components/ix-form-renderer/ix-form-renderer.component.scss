@@ -9,12 +9,12 @@
   --ix-form-renderer-section-gap: 2.5rem;
 }
 
-// `ix-fieldset` is the last element before `<ix-form>`'s projected actions row
-// (which has no top margin), so its bottom margin is what separates the last
+// `tn-form-section` is the last element before `<ix-form>`'s projected actions
+// row (which has no top margin), so its bottom margin is what separates the last
 // field from the Save button.
-ix-fieldset {
+tn-form-section {
   display: block;
-  // Kept on the last fieldset too: its bottom margin is the gap before Save.
+  // Kept on the last section too: its bottom margin is the gap before Save.
   margin-bottom: var(--ix-form-renderer-section-gap);
 }
 

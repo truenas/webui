@@ -9,12 +9,11 @@ import {
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent,
-  TnInputComponent, TnSelectComponent, TnSelectOption,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { Observable, take } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFormComponent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import {
   FormDefinition, FormFieldDefinition, FormFieldType, FormSectionDefinition, InputFieldDefinition,
@@ -88,8 +87,8 @@ interface RenderSection {
     AsyncPipe,
     ReactiveFormsModule,
     IxFormComponent,
-    IxFieldsetComponent,
     TnFormFieldComponent,
+    TnFormSectionComponent,
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,

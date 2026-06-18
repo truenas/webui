@@ -4,36 +4,32 @@
   [loading]="isLoading()"
 ></ix-modal-header>
 
-<mat-card>
-  <mat-card-content>
-    <form
-      class="ix-form-container"
-      [formGroup]="formGroup()"
-      [attr.aria-busy]="isLoading() || null"
-      (ngSubmit)="onFormSubmit()"
+<form
+  class="ix-form-container"
+  [formGroup]="formGroup()"
+  [attr.aria-busy]="isLoading() || null"
+  (ngSubmit)="onFormSubmit()"
+>
+  <ng-content />
+
+  <ix-form-actions>
+    <ng-content select="[ixExtraActions]" />
+
+    <button
+      *ixRequiresRoles="requiredRoles()"
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="save"
+      aria-live="polite"
+      [disabled]="isSaveDisabled()"
+      [attr.aria-busy]="isSubmitting() || null"
     >
-      <ng-content />
-
-      <ix-form-actions>
-        <ng-content select="[ixExtraActions]" />
-
-        <button
-          *ixRequiresRoles="requiredRoles()"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          aria-live="polite"
-          [disabled]="isSaveDisabled()"
-          [attr.aria-busy]="isSubmitting() || null"
-        >
-          @if (isSubmitting()) {
-            {{ 'Saving…' | translate }}
-          } @else {
-            {{ 'Save' | translate }}
-          }
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+      @if (isSubmitting()) {
+        {{ 'Saving…' | translate }}
+      } @else {
+        {{ 'Save' | translate }}
+      }
+    </button>
+  </ix-form-actions>
+</form>

@@ -40,7 +40,7 @@ import { FormSubmitEvent, SubmitResult } from 'app/modules/forms/ix-forms/compon
  */
 /**
  * Fields are supplied EITHER as a flat `fields` list (one untitled fieldset)
- * OR as `sections` (one `<ix-fieldset>` each) — never both. Enforced at the
+ * OR as `sections` (one `<tn-form-section>` each) — never both. Enforced at the
  * type level so the precedence rule can't be tripped accidentally.
  */
 type FormFieldsOrSections<T extends object>
