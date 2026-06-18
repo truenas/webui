@@ -4,7 +4,7 @@
   "{app} Metadata": "{app} メタデータ",
   "{app} Notes": "{app} メモ",
   "{count, plural, =1 {1 share} other {# shares}}": "{count} シェア",
-  "{count, plural, one {1 disk in this VDEV is {worst}.} other {# disks in this VDEV are non-optimal (worst: {worst}).}}": "この VDEV 内の {count} 個のディスクは最適ではありません (最悪: {worst})。}",
+  "{count, plural, one {1 disk in this VDEV is {worst}.} other {# disks in this VDEV are non-optimal (worst: {worst}).}}": "この VDEV 内の {count} 個のディスクは最適ではありません (最悪: {worst})。",
   "Adding a stripe special VDEV introduces a single point of failure to your pool.": "ストライプ特殊 VDEV を追加すると、プールに単一障害点が生じます。",
   "Aggregate Data Written": "書き込まれた集計データ",
   "Are you sure you want to cancel this data migration? Data already transferred will remain at its destination.": "このデータ移行をキャンセルしてもよろしいですか?すでに転送されたデータは宛先に残ります。",
