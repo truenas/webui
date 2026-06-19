@@ -312,7 +312,7 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  protected onChangeEnabledState(row: SmbShare): void {
+  protected onChangeEnabledState(row: SmbShare, toggle: TableToggleCellComponent): void {
     const enabled = !row.enabled;
 
     this.api.call('sharing.smb.update', [row.id, { enabled }]).pipe(
@@ -328,7 +328,7 @@ export class SmbCardComponent implements OnInit {
         );
       },
       error: (error: unknown) => {
-        this.dataProvider.load();
+        toggle.revert();
         this.errorHandler.showErrorModal(error);
       },
     });
