@@ -1,3 +1,9 @@
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
 .header {
   align-items: baseline;
   flex-wrap: wrap;
@@ -18,8 +24,15 @@
 
   .ownership-row {
     display: flex;
+    gap: 24px;
     padding-left: 25px;
     width: 100%;
+
+    .control {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
 
     label {
       margin-top: 15px;
@@ -39,10 +52,18 @@
 }
 
 .card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   margin: 0 auto;
+  min-height: 0;
 }
 
 .content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
   padding-bottom: 1px;
 }
 
@@ -52,15 +73,22 @@
 
 .columns {
   display: flex;
+  flex: 1;
+  min-height: 0;
   padding: 0;
 
   .column-left {
     background-color: var(--contrast-darker);
     flex-basis: 400px;
+    flex-shrink: 0;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   .column-right {
     flex-grow: 1;
+    min-height: 0;
+    overflow-y: auto;
   }
 }
 
@@ -98,7 +126,7 @@
   justify-content: space-between;
   margin-bottom: 10px;
 
-  ::ng-deep > * {
+  ::ng-deep>* {
     flex-grow: 1;
     margin-right: 6px;
 
