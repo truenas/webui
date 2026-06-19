@@ -1,6 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -58,7 +57,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TableActionsCellComponent,
     IxTablePagerShowMoreComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class CloudCredentialsCardComponent implements OnInit {
@@ -73,9 +71,19 @@ export class CloudCredentialsCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly searchableElements = cloudCredentialsCardElements;
 
-  dataProvider: AsyncDataProvider<CloudSyncCredential>;
-  providers = new Map<string, string>();
-  credentials: CloudSyncCredential[] = [];
+  protected readonly dataProvider = new AsyncDataProvider<CloudSyncCredential>(
+    this.api.call('cloudsync.credentials.query').pipe(takeUntilDestroyed(this.destroyRef)),
+  );
+
+  protected readonly currentPage = toSignal(this.dataProvider.currentPage$, {
+    initialValue: [] as CloudSyncCredential[],
+  });
+
+  protected readonly isLoading = toSignal(this.dataProvider.isLoading$, { initialValue: false });
+
+  protected readonly isEmpty = computed(() => !this.currentPage().length && !this.isLoading());
+
+  private providers = new Map<string, string>();
 
   protected readonly displayedColumns = ['name', 'provider', 'actions'];
 
@@ -109,11 +117,6 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const credentials$ = this.api.call('cloudsync.credentials.query').pipe(
-      tap((credentials) => this.credentials = credentials),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<CloudSyncCredential>(credentials$);
     this.setDefaultSort();
 
     this.getProviders()
@@ -123,7 +126,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       });
   }
 
-  getCredentials(): void {
+  private getCredentials(): void {
     this.dataProvider.load();
   }
 
@@ -138,7 +141,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       );
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,

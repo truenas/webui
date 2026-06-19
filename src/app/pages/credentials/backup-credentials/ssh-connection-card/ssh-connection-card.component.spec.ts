@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableHarness,
 } from '@truenas/ui-components';
-import { of, Subject } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -24,6 +24,7 @@ describe('SshConnectionCardComponent', () => {
   let spectator: Spectator<SshConnectionCardComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
+  let connections$: BehaviorSubject<KeychainSshCredentials[]>;
 
   const connections = [
     {
@@ -77,7 +78,7 @@ describe('SshConnectionCardComponent', () => {
         })),
       }),
       mockProvider(KeychainCredentialService, {
-        getSshConnections: jest.fn(() => of(connections)),
+        getSshConnections: jest.fn(() => connections$),
         refetchSshKeys: new Subject<void>(),
         refetchSshConnections: new Subject<void>(),
       }),
@@ -86,12 +87,15 @@ describe('SshConnectionCardComponent', () => {
   });
 
   beforeEach(async () => {
+    connections$ = new BehaviorSubject<KeychainSshCredentials[]>(connections);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
   });
 
   it('checks page title', () => {
+    // White-box read: tn-card renders the title from its [title] input; swap for
+    // TnCardHarness.getTitle() once @truenas/ui-components exposes one.
     const title = spectator.query('h3');
     expect(title).toHaveText('SSH Connections');
   });
@@ -154,8 +158,8 @@ describe('SshConnectionCardComponent', () => {
       },
     };
 
-    spectator.component.credentials = [connectionWithoutKeypair];
-    spectator.component.dataProvider.setRows([connectionWithoutKeypair]);
+    connections$.next([connectionWithoutKeypair]);
+    spectator.inject(KeychainCredentialService).refetchSshConnections.next();
     spectator.detectChanges();
 
     const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-delete' }));

@@ -1,6 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -57,7 +56,6 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
     TableActionsCellComponent,
     IxTablePagerShowMoreComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class SshConnectionCardComponent implements OnInit {
@@ -73,8 +71,17 @@ export class SshConnectionCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
   protected readonly searchableElements = sshConnectionsCardElements;
 
-  dataProvider: AsyncDataProvider<KeychainSshCredentials>;
-  credentials: KeychainSshCredentials[] = [];
+  protected readonly dataProvider = new AsyncDataProvider<KeychainSshCredentials>(
+    this.keychainCredentialService.getSshConnections().pipe(takeUntilDestroyed(this.destroyRef)),
+  );
+
+  protected readonly currentPage = toSignal(this.dataProvider.currentPage$, {
+    initialValue: [] as KeychainSshCredentials[],
+  });
+
+  protected readonly isLoading = toSignal(this.dataProvider.isLoading$, { initialValue: false });
+
+  protected readonly isEmpty = computed(() => !this.currentPage().length && !this.isLoading());
 
   protected readonly displayedColumns = ['name', 'actions'];
 
@@ -103,11 +110,6 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const credentials$ = this.keychainCredentialService.getSshConnections().pipe(
-      tap((credentials) => this.credentials = credentials),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<KeychainSshCredentials>(credentials$);
     this.setDefaultSort();
     this.getCredentials();
 
@@ -116,11 +118,11 @@ export class SshConnectionCardComponent implements OnInit {
       .subscribe(() => this.getCredentials());
   }
 
-  getCredentials(): void {
+  private getCredentials(): void {
     this.dataProvider.load();
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,

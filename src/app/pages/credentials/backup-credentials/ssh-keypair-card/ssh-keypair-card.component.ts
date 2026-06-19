@@ -1,6 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -59,7 +58,6 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
     TableActionsCellComponent,
     IxTablePagerShowMoreComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class SshKeypairCardComponent implements OnInit {
@@ -76,8 +74,17 @@ export class SshKeypairCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
   protected readonly searchableElements = sshKeypairsCardElements;
 
-  dataProvider: AsyncDataProvider<KeychainSshKeyPair>;
-  credentials: KeychainSshKeyPair[] = [];
+  protected readonly dataProvider = new AsyncDataProvider<KeychainSshKeyPair>(
+    this.keychainCredentialService.getSshKeys().pipe(takeUntilDestroyed(this.destroyRef)),
+  );
+
+  protected readonly currentPage = toSignal(this.dataProvider.currentPage$, {
+    initialValue: [] as KeychainSshKeyPair[],
+  });
+
+  protected readonly isLoading = toSignal(this.dataProvider.isLoading$, { initialValue: false });
+
+  protected readonly isEmpty = computed(() => !this.currentPage().length && !this.isLoading());
 
   protected readonly displayedColumns = ['name', 'actions'];
 
@@ -111,11 +118,6 @@ export class SshKeypairCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const credentials$ = this.keychainCredentialService.getSshKeys().pipe(
-      tap((credentials) => this.credentials = credentials),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<KeychainSshKeyPair>(credentials$);
     this.setDefaultSort();
     this.getCredentials();
 
@@ -124,11 +126,11 @@ export class SshKeypairCardComponent implements OnInit {
       .subscribe(() => this.getCredentials());
   }
 
-  getCredentials(): void {
+  private getCredentials(): void {
     this.dataProvider.load();
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
@@ -136,17 +138,17 @@ export class SshKeypairCardComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(SshKeypairFormComponent)
       .onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
-  doEdit(credential: KeychainSshKeyPair): void {
+  protected doEdit(credential: KeychainSshKeyPair): void {
     this.slideIn.open(SshKeypairFormComponent, { data: credential })
       .onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
-  doDelete(credential: KeychainSshKeyPair): void {
+  protected doDelete(credential: KeychainSshKeyPair): void {
     this.checkKeypairUsage(credential.id).pipe(
       switchMap((usedBy) => {
         return this.confirmDeletion(credential.name, usedBy).pipe(
@@ -214,7 +216,7 @@ export class SshKeypairCardComponent implements OnInit {
     );
   }
 
-  doDownload(credential: KeychainSshKeyPair): void {
+  protected doDownload(credential: KeychainSshKeyPair): void {
     const name = credential.name;
     Object.keys(credential.attributes).forEach((keyType) => {
       const key = credential.attributes[keyType as keyof typeof credential.attributes];

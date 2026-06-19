@@ -94,6 +94,8 @@ describe('CloudCredentialsCardComponent', () => {
   });
 
   it('checks page title', () => {
+    // White-box read: tn-card renders the title from its [title] input; swap for
+    // TnCardHarness.getTitle() once @truenas/ui-components exposes one.
     const title = spectator.query('h3');
     expect(title).toHaveText('Cloud Credentials');
   });
