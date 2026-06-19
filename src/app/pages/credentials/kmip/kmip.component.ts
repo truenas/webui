@@ -64,7 +64,7 @@ export class KmipComponent implements OnInit {
   protected isLoading = signal(false);
   protected readonly searchableElements = kmipElements;
 
-  form = this.formBuilder.group({
+  protected readonly form = this.formBuilder.group({
     server: [''],
     port: [null as number | null],
     certificate: [null as number | null],
@@ -79,7 +79,7 @@ export class KmipComponent implements OnInit {
   protected readonly requiredRoles = [Role.KmipWrite];
   protected readonly InputType = InputType;
 
-  readonly helptext = helptextSystemKmip;
+  protected readonly helptext = helptextSystemKmip;
   protected readonly certificates = toSignal(
     this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions()),
     { initialValue: [] as Option<number>[] },
