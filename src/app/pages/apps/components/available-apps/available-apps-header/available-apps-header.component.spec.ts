@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { byText } from '@ngneat/spectator';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnChipInputHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,8 +11,6 @@ import { App } from 'app/interfaces/app.interface';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
 import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
@@ -24,9 +22,9 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 describe('AvailableAppsHeaderComponent', () => {
   let spectator: Spectator<AvailableAppsHeaderComponent>;
   let loader: HarnessLoader;
-  let searchInput: IxInputHarness;
+  let searchInput: TnInputHarness;
   let sortItems: FilterSelectListHarness;
-  let categoriesSelect: IxChipsHarness;
+  let categoriesSelect: TnChipInputHarness;
   let appsFilterStore: AppsFilterStore;
 
   const createComponent = createComponentFactory({
@@ -84,9 +82,9 @@ describe('AvailableAppsHeaderComponent', () => {
     const filtersButton = await loader.getHarness(TnButtonHarness.with({ label: 'Filters' }));
     await filtersButton.click();
 
-    searchInput = await loader.getHarness(IxInputHarness);
+    searchInput = await loader.getHarness(TnInputHarness);
     sortItems = (await loader.getAllHarnesses(FilterSelectListHarness))[0];
-    categoriesSelect = await loader.getHarness(IxChipsHarness);
+    categoriesSelect = await loader.getHarness(TnChipInputHarness);
     appsFilterStore = spectator.inject(AppsFilterStore);
   });
 
@@ -117,7 +115,11 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('calls applyFilters when user selects categories', async () => {
-    await categoriesSelect.selectSuggestionValue('storage');
+    for (const category of await categoriesSelect.getChips()) {
+      await categoriesSelect.removeChip(category);
+    }
+    await categoriesSelect.addChip('storage');
+    await spectator.fixture.whenStable();
 
     expect(appsFilterStore.applyFilters).toHaveBeenLastCalledWith({
       sort: null,

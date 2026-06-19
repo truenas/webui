@@ -20,6 +20,7 @@
     display: flex;
     gap: 10px;
     justify-content: flex-end;
+    margin-top: 10px;
 
     // TEMP: tn-button (ui-components 0.2.4) has no ghost variant or icon slot, so
     // the header actions are rendered transparent and the Filters caret overlaid.
@@ -72,7 +73,7 @@
           width: 100%;
         }
 
-        ix-chips {
+        tn-form-field {
           margin-top: 0;
           padding-top: 0;
         }

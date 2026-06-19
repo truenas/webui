@@ -1,16 +1,19 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
+import {
+  tnIconMarker, TnButtonComponent, TnChipInputComponent, TnFormFieldComponent, TnIconComponent, TnInputComponent,
+  TnTestIdDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   BehaviorSubject,
-  debounceTime, distinctUntilChanged, filter, map, Observable, of, take,
+  debounceTime, distinctUntilChanged, filter, Observable, of, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
@@ -19,9 +22,6 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
@@ -36,10 +36,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxInputComponent,
+    TnInputComponent,
     TnButtonComponent,
     TnIconComponent,
-    IxChipsComponent,
+    TnChipInputComponent,
+    TnFormFieldComponent,
     TranslateModule,
     NgxSkeletonLoaderModule,
     AsyncPipe,
@@ -82,12 +83,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     { label: this.translate.instant('Popularity'), value: AppsFiltersSort.PopularityRank },
   ]);
 
-  categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(
-    map((categories) => {
-      this.appsCategories = [...categories];
-      return categories.filter((category) => category.trim().toLowerCase().includes(query.trim().toLowerCase()));
-    }),
-  );
+  protected categorySuggestions = signal<string[]>([]);
 
   readonly AppExtraCategory = AppExtraCategory;
 
@@ -125,6 +121,13 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.areLoaded$.next(true);
+    });
+    this.applicationsStore.appsCategories$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((categories) => {
+      this.appsCategories = [...categories];
+      this.categorySuggestions.set(categories);
+      this.cdr.markForCheck();
     });
   }
 

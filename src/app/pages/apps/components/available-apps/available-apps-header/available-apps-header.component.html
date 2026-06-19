@@ -1,10 +1,9 @@
 <div class="search-filters">
-  <ix-input
+  <tn-input
     [prefixIcon]="tnIconMarker('magnify', 'mdi')"
-    [maxLength]="100"
     [formControl]="searchControl"
     [placeholder]="'Search' | translate"
-  ></ix-input>
+  ></tn-input>
   <div class="actions">
     <tn-button
       class="ghost-button"
@@ -37,12 +36,14 @@
           [options]="(sortOptions$ | async) || []"
         ></ix-filter-select-list>
         <div class="categories">
-          <ix-chips
-            [formControl]="form.controls.categories"
-            [label]="'Categories' | translate"
-            [autocompleteProvider]="categoriesProvider$"
-            [allowNewEntries]="false"
-          ></ix-chips>
+          <tn-form-field [label]="'Categories' | translate">
+            <tn-chip-input
+              testId="categories"
+              [formControl]="form.controls.categories"
+              [suggestions]="categorySuggestions()"
+              [allowCustomValue]="false"
+            ></tn-chip-input>
+          </tn-form-field>
         </div>
       </div>
     </div>
