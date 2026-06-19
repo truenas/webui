@@ -4215,6 +4215,23 @@
   {
     "hierarchy": [
       "Directory Services",
+      "Kerberos Realms"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/directoryservice",
+      "kerberosrealms"
+    ],
+    "routerLink": null,
+    "anchor": "kerberosrealms",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Directory Services",
       "Kerberos Keytabs",
       "Sync Kerberos Keytab"
     ],
@@ -4256,6 +4273,23 @@
     ],
     "routerLink": null,
     "anchor": "add-kerberos-keytab",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Directory Services",
+      "Kerberos Keytabs"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/directoryservice",
+      "kerberoskeytabs"
+    ],
+    "routerLink": null,
+    "anchor": "kerberoskeytabs",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -4,57 +4,51 @@
   [loading]="isFormLoading()"
 ></ix-modal-header>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-input
-          formControlName="realm"
-          [label]="'Realm' | translate"
-          [required]="true"
-          [tooltip]="tooltips.realm | translate"
-        ></ix-input>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-fieldset>
+    <ix-input
+      formControlName="realm"
+      [label]="'Realm' | translate"
+      [required]="true"
+      [tooltip]="tooltips.realm | translate"
+    ></ix-input>
 
-        <ix-input
-          formControlName="primary_kdc"
-          [label]="'Primary KDC' | translate"
-          [tooltip]="tooltips.primary_kdc | translate"
-        ></ix-input>
+    <ix-input
+      formControlName="primary_kdc"
+      [label]="'Primary KDC' | translate"
+      [tooltip]="tooltips.primary_kdc | translate"
+    ></ix-input>
 
-        <ix-chips
-          formControlName="kdc"
-          [label]="'KDC' | translate"
-          [placeholder]="'KDC' | translate"
-          [tooltip]="tooltips.kdc | translate"
-        ></ix-chips>
+    <ix-chips
+      formControlName="kdc"
+      [label]="'KDC' | translate"
+      [placeholder]="'KDC' | translate"
+      [tooltip]="tooltips.kdc | translate"
+    ></ix-chips>
 
-        <ix-chips
-          formControlName="admin_server"
-          [label]="'Admin Servers' | translate"
-          [placeholder]="'Admin Servers' | translate"
-          [tooltip]="tooltips.admin_server | translate"
-        ></ix-chips>
+    <ix-chips
+      formControlName="admin_server"
+      [label]="'Admin Servers' | translate"
+      [placeholder]="'Admin Servers' | translate"
+      [tooltip]="tooltips.admin_server | translate"
+    ></ix-chips>
 
-        <ix-chips
-          formControlName="kpasswd_server"
-          [label]="'Password Servers' | translate"
-          [placeholder]="'Password Servers' | translate"
-          [tooltip]="tooltips.kpasswd_server | translate"
-        ></ix-chips>
-      </ix-fieldset>
+    <ix-chips
+      formControlName="kpasswd_server"
+      [label]="'Password Servers' | translate"
+      [placeholder]="'Password Servers' | translate"
+      [tooltip]="tooltips.kpasswd_server | translate"
+    ></ix-chips>
+  </ix-fieldset>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <ix-form-actions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      type="submit"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="form.invalid || isFormLoading()"
+    ></tn-button>
+  </ix-form-actions>
+</form>

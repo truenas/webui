@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -18,7 +17,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -27,16 +25,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
     IxFileInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })

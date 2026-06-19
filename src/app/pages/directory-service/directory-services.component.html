@@ -1,16 +1,20 @@
 @if(isDirectoryServicesDisabled()) {
   <div class="everything-disabled">
-    <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
+    <tn-empty
+      icon="account-box"
+      iconLibrary="mdi"
+      iconSize="56px"
+      [title]="'Directory services are disabled.' | translate"
+      [description]="'Configure directory services to see details.' | translate"
+    ></tn-empty>
     <div class="actions">
-      <button
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="configure-active-directory"
+        [testId]="'configure-active-directory'"
+        [label]="'Configure Directory Services' | translate"
         [ixUiSearch]="searchableElements.elements.configureDirectoryServices"
-        (click)="openDirectoryServicesForm()"
-      >
-        {{ 'Configure Directory Services' | translate }}
-      </button>
+        (onClick)="openDirectoryServicesForm()"
+      ></tn-button>
     </div>
   </div>
 } @else {
@@ -31,11 +35,11 @@
     {{ 'Advanced Settings' | translate }}
 
     @if (!expansionPanel.expanded) {
-      <button
-        mat-button
-        ixTest="show-advanced-settings"
-        (click)="onAdvancedSettingsOpened(expansionPanel)"
-      >{{ 'Show' | translate }}</button>
+      <tn-button
+        [testId]="'show-advanced-settings'"
+        [label]="'Show' | translate"
+        (onClick)="onAdvancedSettingsOpened(expansionPanel)"
+      ></tn-button>
     }
   </h3>
 
@@ -49,64 +53,21 @@
 
 <ng-template #dataCard let-card="card">
   @if (typeCard(card); as card) {
-    <mat-card>
-      <mat-toolbar-row>
-        <h3>{{ card.title }}</h3>
-        <div class="actions action-icon">
-           <button
-            mat-icon-button
-            [matMenuTriggerFor]="actionsMenu"
-            [matTooltip]="'More Actions' | translate"
-            [attr.aria-label]="'More Actions' | translate"
-          >
-            <tn-icon name="dots-vertical" library="mdi"></tn-icon>
-          </button>
-
-          <mat-menu #actionsMenu="matMenu">
-            <button 
-              mat-menu-item 
-              [ixTest]="[card.title, 'settings']"
-              [ixUiSearch]="searchableElements.elements.settings"
-              (click)="card.onSettingsPressed()"
-            >
-              <tn-icon name="cog" library="mdi"></tn-icon>
-              <span>{{ 'Settings' | translate }}</span>
-            </button>
-            <button 
-              *ixRequiresRoles="requiredRoles"
-              mat-menu-item
-              [ixTest]="[card.title, 'rebuild-cache']"
-              [attr.aria-label]="'Rebuild Directory Service Cache' | translate"
-              [disabled]="isLoading()"
-              (click)="onRebuildCachePressed()"
-            >
-              <tn-icon name="refresh" library="mdi"></tn-icon>
-              <span>{{ 'Rebuild Directory Service Cache' | translate }}</span>
-            </button>
-            @if (card.showLeaveButton) {
-              <button
-                *ixRequiresRoles="requiredRoles"
-                mat-menu-item
-                [ixTest]="[card.title, 'leave']"
-                (click)="card.onLeavePressed()"
-              >
-                <tn-icon name="close-circle" library="mdi"></tn-icon>
-                <span>{{ 'Leave' | translate }}</span>
-              </button>
-            }
-          </mat-menu>
-        </div>
-      </mat-toolbar-row>
-      <mat-card-content>
-        <mat-list>
-          @for (item of card.items; track item) {
-            <mat-list-item class="card-list-item">
-              <span class="label">{{ item.label | translate }}:</span>
-              <span class="value">{{ item.value || ('None' | translate) }}</span>
-            </mat-list-item>
-          }
-        </mat-list>
-      </mat-card-content>
-    </mat-card>
+    <tn-card
+      padding="small"
+      [title]="card.title"
+      [headerMenu]="getCardMenu(card)"
+      [headerMenuTriggerTestId]="menuTriggerTestId"
+      [ixUiSearch]="searchableElements.elements.settings"
+    >
+      <tn-list>
+        @for (item of card.items; track item) {
+          <tn-list-item class="card-list-item">
+            <span class="label">{{ item.label | translate }}:</span>
+            <span class="value">{{ item.value || ('None' | translate) }}</span>
+          </tn-list-item>
+        }
+      </tn-list>
+    </tn-card>
   }
 </ng-template>

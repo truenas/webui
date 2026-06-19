@@ -1,9 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnDialog, TnMenuHarness } from '@truenas/ui-components';
 import { of, throwError, NEVER } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import { DirectoryServiceStatus, DirectoryServiceType, DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
@@ -33,10 +31,21 @@ type DirectoryServicesComponentWithProtected = DirectoryServicesComponent & {
 
 describe('DirectoryServicesComponent', () => {
   let spectator: Spectator<DirectoryServicesComponent>;
-  let loader: HarnessLoader;
   let mockDirectoryServicesConfig: DirectoryServicesConfig;
   let mockServicesStatus: DirectoryServicesStatus;
   let consoleWarnSpy: jest.SpyInstance;
+
+  const menuTrigger = '[data-test="button-directory-services-actions-menu"]';
+
+  /**
+   * Opens the data card's kebab menu and returns the overlay harness. The menu is
+   * rendered in a document-root overlay, so it must be loaded via the root loader.
+   */
+  async function openCardMenu(): Promise<TnMenuHarness> {
+    const rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
+    spectator.click(menuTrigger);
+    return rootLoader.getHarness(TnMenuHarness);
+  }
 
   beforeAll(() => {
     // Suppress console warnings about tracking expressions
@@ -113,37 +122,31 @@ describe('DirectoryServicesComponent', () => {
   describe('Menu visibility and functionality', () => {
     it('should show Settings menu item for all directory services', async () => {
       spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const settingsItems = await menu.getItems({ text: /Settings/ });
-      expect(settingsItems).toHaveLength(1);
+      const menu = await openCardMenu();
+      const labels = await menu.getItemLabels();
+      expect(labels.filter((label) => label.includes('Settings'))).toHaveLength(1);
     });
 
     it('should show Leave button for Active Directory when healthy', async () => {
       spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const menuItems = await menu.getItems({ text: /Leave/ });
-      expect(menuItems).toHaveLength(1);
+      const menu = await openCardMenu();
+      const labels = await menu.getItemLabels();
+      expect(labels.filter((label) => label.includes('Leave'))).toHaveLength(1);
     });
 
     it('should not show Leave button for Active Directory when not healthy', async () => {
       mockServicesStatus.status = DirectoryServiceStatus.Faulted;
 
       spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const menuItems = await menu.getItems({ text: /Leave/ });
-      expect(menuItems).toHaveLength(0);
+      const menu = await openCardMenu();
+      const labels = await menu.getItemLabels();
+      expect(labels.filter((label) => label.includes('Leave'))).toHaveLength(0);
     });
 
     it('should show Leave button for IPA when healthy', async () => {
@@ -158,13 +161,11 @@ describe('DirectoryServicesComponent', () => {
       } as IpaConfig;
 
       spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const menuItems = await menu.getItems({ text: /Leave/ });
-      expect(menuItems).toHaveLength(1);
+      const menu = await openCardMenu();
+      const labels = await menu.getItemLabels();
+      expect(labels.filter((label) => label.includes('Leave'))).toHaveLength(1);
     });
 
     it('should not show Leave button for LDAP', async () => {
@@ -176,13 +177,11 @@ describe('DirectoryServicesComponent', () => {
       } as LdapConfig;
 
       spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const menuItems = await menu.getItems({ text: /Leave/ });
-      expect(menuItems).toHaveLength(0);
+      const menu = await openCardMenu();
+      const labels = await menu.getItemLabels();
+      expect(labels.filter((label) => label.includes('Leave'))).toHaveLength(0);
     });
   });
 
@@ -206,7 +205,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -218,7 +217,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -232,7 +231,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -246,7 +245,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -271,7 +270,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardTitle = spectator.query('mat-toolbar-row h3');
+      const cardTitle = spectator.query('tn-card h3');
       expect(cardTitle).toBeTruthy();
       expect(cardTitle.textContent).toContain('Active Directory');
     });
@@ -280,7 +279,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -292,7 +291,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -304,7 +303,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -316,7 +315,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -330,7 +329,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -344,7 +343,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -370,7 +369,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardTitle = spectator.query('mat-toolbar-row h3');
+      const cardTitle = spectator.query('tn-card h3');
       expect(cardTitle).toBeTruthy();
       expect(cardTitle.textContent).toContain('IPA');
     });
@@ -379,7 +378,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -391,7 +390,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -403,7 +402,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -415,7 +414,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -427,7 +426,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -441,7 +440,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -462,7 +461,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardTitle = spectator.query('mat-toolbar-row h3');
+      const cardTitle = spectator.query('tn-card h3');
       expect(cardTitle).toBeTruthy();
       expect(cardTitle.textContent).toContain('LDAP');
     });
@@ -478,7 +477,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardTitle = spectator.query('mat-toolbar-row h3');
+      const cardTitle = spectator.query('tn-card h3');
       expect(cardTitle).toBeTruthy();
       expect(cardTitle.textContent).toContain('Active Directory');
     });
@@ -496,7 +495,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardTitle = spectator.query('mat-toolbar-row h3');
+      const cardTitle = spectator.query('tn-card h3');
       expect(cardTitle).toBeTruthy();
       expect(cardTitle.textContent).toContain('IPA');
     });
@@ -514,7 +513,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -535,7 +534,7 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const cardContent = spectator.query('mat-card-content');
+      const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
       const cardText = cardContent.textContent;
@@ -552,7 +551,6 @@ describe('DirectoryServicesComponent', () => {
   describe('Leave button interaction', () => {
     beforeEach(() => {
       spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('should open Leave Domain dialog when Leave button is clicked', async () => {
@@ -562,10 +560,8 @@ describe('DirectoryServicesComponent', () => {
       const dialogOpenSpy = jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue(dialogRef as DialogRef);
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const leaveMenuItem = await menu.getItems({ text: /Leave/ });
-      await leaveMenuItem[0].click();
+      const menu = await openCardMenu();
+      await menu.clickItem({ label: /Leave/ });
 
       expect(dialogOpenSpy).toHaveBeenCalledWith(LeaveDomainDialog);
     });
@@ -583,10 +579,8 @@ describe('DirectoryServicesComponent', () => {
 
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const leaveMenuItem = await menu.getItems({ text: /Leave/ });
-      await leaveMenuItem[0].click();
+      const menu = await openCardMenu();
+      await menu.clickItem({ label: /Leave/ });
 
       // Verify that refreshCards was called by checking if the API calls were made
       expect(apiCallSpy).toHaveBeenCalledWith('directoryservices.status');
@@ -600,16 +594,14 @@ describe('DirectoryServicesComponent', () => {
   describe('Rebuild cache functionality', () => {
     beforeEach(() => {
       spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('should show Rebuild Directory Service Cache menu item', async () => {
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
-      expect(rebuildMenuItem).toHaveLength(1);
+      const menu = await openCardMenu();
+      const labels = await menu.getItemLabels();
+      expect(labels.filter((label) => label.includes('Rebuild Directory Service Cache'))).toHaveLength(1);
     });
 
     it('should trigger rebuild cache when menu item is clicked', async () => {
@@ -618,10 +610,8 @@ describe('DirectoryServicesComponent', () => {
 
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
-      await rebuildMenuItem[0].click();
+      const menu = await openCardMenu();
+      await menu.clickItem({ label: /Rebuild Directory Service Cache/ });
 
       expect(jobDialogSpy).toHaveBeenCalled();
     });
@@ -638,10 +628,8 @@ describe('DirectoryServicesComponent', () => {
 
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
-      await rebuildMenuItem[0].click();
+      const menu = await openCardMenu();
+      await menu.clickItem({ label: /Rebuild Directory Service Cache/ });
 
       expect((spectator.component as DirectoryServicesComponentWithProtected).isLoading()).toBe(true);
       expect(dialogService.jobDialog).toHaveBeenCalled();
@@ -661,10 +649,8 @@ describe('DirectoryServicesComponent', () => {
 
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
-      await rebuildMenuItem[0].click();
+      const menu = await openCardMenu();
+      await menu.clickItem({ label: /Rebuild Directory Service Cache/ });
 
       expect(successSpy).toHaveBeenCalledWith('Directory Service cache has been rebuilt.');
     });
@@ -683,10 +669,8 @@ describe('DirectoryServicesComponent', () => {
 
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
-      await rebuildMenuItem[0].click();
+      const menu = await openCardMenu();
+      await menu.clickItem({ label: /Rebuild Directory Service Cache/ });
 
       expect(errorSpy).toHaveBeenCalledWith({
         title: 'Error',
@@ -702,11 +686,9 @@ describe('DirectoryServicesComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+      const menu = await openCardMenu();
 
-      expect(await rebuildMenuItem[0].isDisabled()).toBe(true);
+      expect(await menu.isItemDisabled({ label: /Rebuild Directory Service Cache/ })).toBe(true);
     });
 
     it('should prevent multiple concurrent rebuild operations', async () => {
@@ -722,22 +704,17 @@ describe('DirectoryServicesComponent', () => {
 
       await spectator.fixture.whenStable();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+      const menu = await openCardMenu();
 
       // First click should trigger the operation
-      await rebuildMenuItem[0].click();
+      await menu.clickItem({ label: /Rebuild Directory Service Cache/ });
       expect(jobDialogSpy).toHaveBeenCalledTimes(1);
       expect((spectator.component as DirectoryServicesComponentWithProtected).isLoading()).toBe(true);
 
-      // Close and reopen menu to get fresh menu items
-      await menu.close();
-      await menu.open();
-      const rebuildMenuItemAfter = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
-
-      // Second click should be ignored since loading is true
-      await rebuildMenuItemAfter[0].click();
+      // Reopen menu to get fresh menu items; the item is now disabled and clicking
+      // it again is a no-op (onRebuildCachePressed also returns early while loading)
+      const menuAfter = await openCardMenu();
+      await menuAfter.clickItem({ label: /Rebuild Directory Service Cache/ });
       expect(jobDialogSpy).toHaveBeenCalledTimes(1); // Should still be 1, not 2
     });
 
@@ -751,12 +728,10 @@ describe('DirectoryServicesComponent', () => {
       (spectator.component as DirectoryServicesComponentWithProtected).isLoading.set(true);
       spectator.detectChanges();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+      const menu = await openCardMenu();
 
       // Click the menu item while loading is true
-      await rebuildMenuItem[0].click();
+      await menu.clickItem({ label: /Rebuild Directory Service Cache/ });
 
       // Verify that jobDialog was not called since the method returned early
       expect(jobDialogSpy).not.toHaveBeenCalled();

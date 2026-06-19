@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -145,7 +145,7 @@ describe('DirectoryServicesConfigFormComponent', () => {
 
   describe('clear config', () => {
     it('should show confirmation dialog and call API when Clear Config is clicked', async () => {
-      const clearConfigButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Config' }));
+      const clearConfigButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear Config' }));
       await clearConfigButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -162,7 +162,7 @@ describe('DirectoryServicesConfigFormComponent', () => {
       const dialogService = spectator.inject(DialogService);
       (dialogService.confirm as jest.Mock).mockReturnValue(of(false));
 
-      const clearConfigButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Config' }));
+      const clearConfigButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear Config' }));
       await clearConfigButton.click();
 
       expect(dialogService.confirm).toHaveBeenCalled();

@@ -4,108 +4,100 @@
   [loading]="isLoading()"
 ></ix-modal-header>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <!-- Basic Configuration -->
-      <ix-fieldset [title]="'Basic Configuration' | translate">
-        <ix-select
-          formControlName="service_type"
-          [label]="'Configuration Type' | translate"
-          [required]="true"
-          [options]="configurationTypeOptions$"
-          [tooltip]="helptext.serviceTypeTooltip | translate"
-        ></ix-select>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <!-- Basic Configuration -->
+  <ix-fieldset [title]="'Basic Configuration' | translate">
+    <ix-select
+      formControlName="service_type"
+      [label]="'Configuration Type' | translate"
+      [required]="true"
+      [options]="configurationTypeOptions$"
+      [tooltip]="helptext.serviceTypeTooltip | translate"
+    ></ix-select>
 
-        <ix-checkbox
-          formControlName="enable"
-          [label]="'Enable Service' | translate"
-          [tooltip]="helptext.enableTooltip | translate"
-        ></ix-checkbox>
+    <ix-checkbox
+      formControlName="enable"
+      [label]="'Enable Service' | translate"
+      [tooltip]="helptext.enableTooltip | translate"
+    ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="enable_account_cache"
-          [label]="'Enable Account Cache' | translate"
-          [tooltip]="helptext.enableAccountCacheTooltip | translate"
-        ></ix-checkbox>
+    <ix-checkbox
+      formControlName="enable_account_cache"
+      [label]="'Enable Account Cache' | translate"
+      [tooltip]="helptext.enableAccountCacheTooltip | translate"
+    ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="enable_dns_updates"
-          [label]="'Enable DNS Updates' | translate"
-          [tooltip]="helptext.enableDnsUpdatesTooltip | translate"
-        ></ix-checkbox>
+    <ix-checkbox
+      formControlName="enable_dns_updates"
+      [label]="'Enable DNS Updates' | translate"
+      [tooltip]="helptext.enableDnsUpdatesTooltip | translate"
+    ></ix-checkbox>
 
-        <ix-input
-          formControlName="timeout"
-          type="number"
-          [label]="'Timeout (seconds)' | translate"
-          [required]="true"
-          [tooltip]="helptext.timeoutTooltip | translate"
-        ></ix-input>
+    <ix-input
+      formControlName="timeout"
+      type="number"
+      [label]="'Timeout (seconds)' | translate"
+      [required]="true"
+      [tooltip]="helptext.timeoutTooltip | translate"
+    ></ix-input>
 
-        <ix-input
-          formControlName="kerberos_realm"
-          [label]="'Kerberos Realm' | translate"
-          [tooltip]="helptext.kerberosRealmTooltip | translate"
-        ></ix-input>
-      </ix-fieldset>
+    <ix-input
+      formControlName="kerberos_realm"
+      [label]="'Kerberos Realm' | translate"
+      [tooltip]="helptext.kerberosRealmTooltip | translate"
+    ></ix-input>
+  </ix-fieldset>
 
-      <!-- Credential Configuration Sub-Component -->
-      @if (selectedConfigurationType) {
-        <ix-credential-config
-          [serviceType]="selectedConfigurationType"
-          [credential]="credentialData || preservedCredentialData || previousConfig()?.credential"
-          (credentialUpdated)="onCredentialDataChanged($event)"
-          (isValid)="onCredentialValidityChanged($event)"
-        ></ix-credential-config>
-      }
+  <!-- Credential Configuration Sub-Component -->
+  @if (selectedConfigurationType) {
+    <ix-credential-config
+      [serviceType]="selectedConfigurationType"
+      [credential]="credentialData || preservedCredentialData || previousConfig()?.credential"
+      (credentialUpdated)="onCredentialDataChanged($event)"
+      (isValid)="onCredentialValidityChanged($event)"
+    ></ix-credential-config>
+  }
 
-      @if (selectedConfigurationType === DirectoryServiceType.ActiveDirectory) {
-        <ix-active-directory-config
-          [activeDirectoryConfig]="activeDirectoryConfig()"
-          (isValid)="onActiveDirectoryValidityChanged($event)"
-          (configurationChanged)="onConfigurationDataChanged($event)"
-          (kerberosRealmSuggested)="onKerberosRealmSuggested($event)"
-        ></ix-active-directory-config>
-      }
+  @if (selectedConfigurationType === DirectoryServiceType.ActiveDirectory) {
+    <ix-active-directory-config
+      [activeDirectoryConfig]="activeDirectoryConfig()"
+      (isValid)="onActiveDirectoryValidityChanged($event)"
+      (configurationChanged)="onConfigurationDataChanged($event)"
+      (kerberosRealmSuggested)="onKerberosRealmSuggested($event)"
+    ></ix-active-directory-config>
+  }
 
-      @if (selectedConfigurationType === DirectoryServiceType.Ldap) {
-        <ix-ldap-config
-          [ldapConfig]="ldapConfig()"
-          (isValid)="onLdapValidityChanged($event)"
-          (configurationChanged)="onConfigurationDataChanged($event)"
-        ></ix-ldap-config>
-      }
+  @if (selectedConfigurationType === DirectoryServiceType.Ldap) {
+    <ix-ldap-config
+      [ldapConfig]="ldapConfig()"
+      (isValid)="onLdapValidityChanged($event)"
+      (configurationChanged)="onConfigurationDataChanged($event)"
+    ></ix-ldap-config>
+  }
 
-      @if (selectedConfigurationType === DirectoryServiceType.Ipa) {
-        <ix-ipa-config
-          [ipaConfig]="ipaConfig()"
-          (configurationChanged)="onConfigurationDataChanged($event)"
-          (isValid)="onIpaValidityChanged($event)"
-        ></ix-ipa-config>
-      }
+  @if (selectedConfigurationType === DirectoryServiceType.Ipa) {
+    <ix-ipa-config
+      [ipaConfig]="ipaConfig()"
+      (configurationChanged)="onConfigurationDataChanged($event)"
+      (isValid)="onIpaValidityChanged($event)"
+    ></ix-ipa-config>
+  }
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="button"
-          ixTest="clear-config"
-          (click)="onClearConfig()"
-        >
-          {{ 'Clear Config' | translate }}
-        </button>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="!isFormValid()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <ix-form-actions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      type="button"
+      [testId]="'clear-config'"
+      [label]="'Clear Config' | translate"
+      (onClick)="onClearConfig()"
+    ></tn-button>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      type="submit"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!isFormValid()"
+    ></tn-button>
+  </ix-form-actions>
+</form>

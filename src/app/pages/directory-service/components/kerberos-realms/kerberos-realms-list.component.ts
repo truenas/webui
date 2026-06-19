@@ -1,13 +1,25 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
-import { map, tap } from 'rxjs';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnIconComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -16,17 +28,14 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
 import { kerberosRealmsListElements } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.elements';
@@ -40,20 +49,24 @@ import { KerberosRealmsFormComponent } from 'app/pages/directory-service/compone
   imports: [
     BasicSearchComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnCardHeaderDirective,
     UiSearchDirective,
-    MatToolbarRow,
-    MatTooltip,
+    TnTooltipDirective,
+    TnTestIdDirective,
     RouterLink,
     TnIconComponent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TableActionsCellComponent,
     TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    NgTemplateOutlet,
     PageHeaderComponent,
   ],
 })
@@ -73,57 +86,37 @@ export class KerberosRealmsListComponent implements OnInit {
 
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<KerberosRealmRow>;
-  kerberosRealsm: KerberosRealmRow[] = [];
-  columns = createTable<KerberosRealmRow>([
-    textColumn({
-      title: this.translate.instant('Realm'),
-      propertyName: 'realm',
-    }),
-    textColumn({
-      title: this.translate.instant('KDC'),
-      propertyName: 'kdc_string',
-    }),
-    textColumn({
-      title: this.translate.instant('Admin Server'),
-      propertyName: 'admin_server_string',
-    }),
-    textColumn({
-      title: this.translate.instant('Password Server'),
-      propertyName: 'kpasswd_server_string',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => {
-            this.slideIn.open(KerberosRealmsFormComponent, { data: row })
-              .onSuccess(() => this.getKerberosRealms(), this.destroyRef);
-          },
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => {
-            this.dialogService.confirmDelete({
-              title: this.translate.instant(helptextKerberosRealms.deleteDialogTitle),
-              message: this.translate.instant('Are you sure you want to delete this item?'),
-              call: () => this.api.call('kerberos.realm.delete', [row.id]),
-            }).pipe(
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.getKerberosRealms());
-          },
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'kerberos-realm-' + row.realm,
-    ariaLabels: (row) => [row.realm, this.translate.instant('Kerberos Realm')],
-  });
+
+  protected readonly displayedColumns = ['realm', 'kdc_string', 'admin_server_string', 'kpasswd_server_string', 'actions'];
+  protected readonly trackByRealmId = (_index: number, row: KerberosRealmRow): number => row.id;
+
+  protected readonly actions: IconActionConfig<KerberosRealmRow>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => {
+        this.slideIn.open(KerberosRealmsFormComponent, { data: row })
+          .onSuccess(() => this.getKerberosRealms(), this.destroyRef);
+      },
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => {
+        this.dialogService.confirmDelete({
+          title: this.translate.instant(helptextKerberosRealms.deleteDialogTitle),
+          message: this.translate.instant('Are you sure you want to delete this item?'),
+          call: () => this.api.call('kerberos.realm.delete', [row.id]),
+        }).pipe(
+          takeUntilDestroyed(this.destroyRef),
+        ).subscribe(() => this.getKerberosRealms());
+      },
+    },
+  ];
 
   ngOnInit(): void {
-    const kerberosRealsm$ = this.api.call('kerberos.realm.query').pipe(
+    const kerberosRealms$ = this.api.call('kerberos.realm.query').pipe(
       map((realms) => {
         return realms.map((realm) => {
           return {
@@ -134,15 +127,26 @@ export class KerberosRealmsListComponent implements OnInit {
           };
         });
       }),
-      tap((kerberosRealsm) => this.kerberosRealsm = kerberosRealsm),
       takeUntilDestroyed(this.destroyRef),
     );
-    this.dataProvider = new AsyncDataProvider<KerberosRealmRow>(kerberosRealsm$);
+    this.dataProvider = new AsyncDataProvider<KerberosRealmRow>(kerberosRealms$);
     this.setDefaultSort();
     this.getKerberosRealms();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
+  }
+
+  protected uniqueRowTag(row: KerberosRealmRow): string {
+    return convertStringToId('kerberos-realm-' + row.realm);
+  }
+
+  protected ariaLabel(row: KerberosRealmRow): string {
+    return [row.realm, this.translate.instant('Kerberos Realm')].join(' ');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<KerberosRealmRow>(event, this.displayedColumns));
   }
 
   getKerberosRealms(): void {

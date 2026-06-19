@@ -4,39 +4,33 @@
   [loading]="isLoading()"
 ></ix-modal-header>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-input
-          formControlName="name"
-          [label]="helptext.name | translate"
-          [placeholder]="helptext.name | translate"
-          [required]="true"
-        ></ix-input>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-fieldset>
+    <ix-input
+      formControlName="name"
+      [label]="helptext.name | translate"
+      [placeholder]="helptext.name | translate"
+      [required]="true"
+    ></ix-input>
 
-        <ix-file-input
-          formControlName="file"
-          [label]="helptext.keytab | translate"
-          [tooltip]="helptext.keytabTooltip | translate"
-          [multiple]="false"
-          [required]="true"
-          [acceptedFiles]="'binary'"
-        ></ix-file-input>
-      </ix-fieldset>
+    <ix-file-input
+      formControlName="file"
+      [label]="helptext.keytab | translate"
+      [tooltip]="helptext.keytabTooltip | translate"
+      [multiple]="false"
+      [required]="true"
+      [acceptedFiles]="'binary'"
+    ></ix-file-input>
+  </ix-fieldset>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <ix-form-actions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      type="submit"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="form.invalid || isLoading()"
+    ></tn-button>
+  </ix-form-actions>
+</form>

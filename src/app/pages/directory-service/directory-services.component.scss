@@ -6,7 +6,7 @@
 }
 
 :host ::ng-deep {
-  ix-missing-access-wrapper button {
+  ix-missing-access-wrapper tn-button {
     width: 100%;
   }
 }
@@ -16,7 +16,7 @@
     justify-content: center;
   }
 
-  button {
+  tn-button {
     &:last-child {
       margin-right: 0;
     }
@@ -43,7 +43,7 @@
     margin-bottom: 10px;
     margin-left: 7px;
 
-    button {
+    tn-button {
       margin-left: 5px;
     }
   }
@@ -63,16 +63,12 @@
   @media #{$media-lt-sm} {
     display: block !important;
   }
-
-  mat-card {
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-  }
 }
 
 .card-list-item {
-  padding-bottom: 12px;
-  padding-top: 12px;
+  .label {
+    margin-right: 4px;
+  }
 
   .value {
     overflow-wrap: break-word;
@@ -81,11 +77,6 @@
   }
 }
 
-.empty-message p {
-  margin-bottom: 0.7rem;
-  margin-top: 0.7rem;
-}
-
-ix-empty {
+tn-empty {
   text-align: center;
 }

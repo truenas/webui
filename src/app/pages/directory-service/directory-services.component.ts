@@ -3,15 +3,12 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, viewChild, inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnDialog, TnEmptyComponent, TnListComponent, TnListItemComponent, TnMenuItem,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import {
   forkJoin,
 } from 'rxjs';
@@ -25,18 +22,16 @@ import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.in
 import { credentialTypeLabels } from 'app/interfaces/directoryservice-credentials.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DirectoryServicesFormComponent } from 'app/pages/directory-service/components/directory-services-form/directory-services-form.component';
@@ -61,27 +56,18 @@ interface DataCard {
   styleUrls: ['./directory-services.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    EmptyComponent,
-    TnIconComponent,
+    TnEmptyComponent,
     RequiresRolesDirective,
-    MatButton,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
     NgTemplateOutlet,
-    MatCard,
-    MatToolbarRow,
-    MatCardContent,
+    TnCardComponent,
     CdkAccordionItem,
     KerberosRealmsListComponent,
     KerberosKeytabsListComponent,
-    MatList,
-    MatListItem,
+    TnListComponent,
+    TnListItemComponent,
     TranslateModule,
-    MatTooltip,
   ],
 })
 export class DirectoryServicesComponent implements OnInit {
@@ -96,10 +82,16 @@ export class DirectoryServicesComponent implements OnInit {
   private searchDirectives = inject(UiSearchDirectivesService);
   private snackbarService = inject(SnackbarService);
   private systemGeneralService = inject(SystemGeneralService);
+  private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = directoryServicesElements;
+  protected readonly menuTriggerTestId = 'button-directory-services-actions-menu';
+  private readonly hasDirectoryServiceWrite = toSignal(
+    this.authService.hasRole(this.requiredRoles),
+    { initialValue: false },
+  );
 
   protected isActiveDirectoryEnabled = false;
   protected isLdapEnabled = false;
@@ -115,13 +107,6 @@ export class DirectoryServicesComponent implements OnInit {
 
   private readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
   private readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
-
-  readonly noDirectoryServicesConfig: EmptyConfig = {
-    title: this.translate.instant('Directory services are disabled.'),
-    message: this.translate.instant('Configure directory services to see details.'),
-    large: true,
-    icon: tnIconMarker('account-box', 'mdi'),
-  };
 
   constructor() {
     setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);
@@ -365,6 +350,45 @@ export class DirectoryServicesComponent implements OnInit {
    */
   protected typeCard(card: DataCard): DataCard {
     return card;
+  }
+
+  protected getCardMenu(card: DataCard): TnMenuItem[] {
+    const baseTestId = kebabCase(card.title);
+    const items: TnMenuItem[] = [
+      {
+        id: 'settings',
+        label: this.translate.instant('Settings'),
+        icon: 'cog',
+        iconLibrary: 'mdi',
+        testId: `button-${baseTestId}-settings`,
+        action: () => card.onSettingsPressed(),
+      },
+    ];
+
+    if (this.hasDirectoryServiceWrite()) {
+      items.push({
+        id: 'rebuild-cache',
+        label: this.translate.instant('Rebuild Directory Service Cache'),
+        icon: 'refresh',
+        iconLibrary: 'mdi',
+        disabled: this.isLoading(),
+        testId: `button-${baseTestId}-rebuild-cache`,
+        action: () => this.onRebuildCachePressed(),
+      });
+
+      if (card.showLeaveButton) {
+        items.push({
+          id: 'leave',
+          label: this.translate.instant('Leave'),
+          icon: 'close-circle',
+          iconLibrary: 'mdi',
+          testId: `button-${baseTestId}-leave`,
+          action: () => card.onLeavePressed(),
+        });
+      }
+    }
+
+    return items;
   }
 
   protected openLeaveDialog(): void {

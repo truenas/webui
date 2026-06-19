@@ -1,14 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -18,7 +16,7 @@ import { KerberosRealmsFormComponent } from 'app/pages/directory-service/compone
 describe('KerberosRealmsListComponent', () => {
   let spectator: Spectator<KerberosRealmsListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const kerberosRealms = [
     {
@@ -50,37 +48,33 @@ describe('KerberosRealmsListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const cells = await table.getCellTexts();
-    const expectedRows = [
-      ['Realm', 'KDC', 'Admin Server', 'Password Server', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Realm', 'KDC', 'Admin Server', 'Password Server', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['EXAMPLE.COM', 'kdc1.example.com, kdc2.example.com', 'admin.example.com', 'passwd.example.com', ''],
-    ];
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
   it('opens form to create new Kerberos Realm when Add button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(KerberosRealmsFormComponent);
   });
 
-  it('opens form to edit a Kerberos Realm when Edit button is pressed', async () => {
-    const editIcon = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'EXAMPLE.COM');
-    await editIcon.click();
+  it('opens form to edit a Kerberos Realm when Edit button is pressed', () => {
+    spectator.click(spectator.query('[aria-label^="Edit"]'));
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(KerberosRealmsFormComponent, {
       data: expect.objectContaining({ id: 1, realm: 'EXAMPLE.COM' }),
     });
   });
 
-  it('deletes a Kerberos Realm with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'EXAMPLE.COM');
-    await deleteIcon.click();
+  it('deletes a Kerberos Realm with confirmation when Delete button is pressed', () => {
+    spectator.click(spectator.query('[aria-label^="Delete"]'));
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Kerberos Realm',
