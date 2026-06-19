@@ -1,5 +1,4 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
-import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, viewChild, inject,
 } from '@angular/core';
@@ -60,7 +59,6 @@ interface DataCard {
     RequiresRolesDirective,
     TnButtonComponent,
     UiSearchDirective,
-    NgTemplateOutlet,
     TnCardComponent,
     CdkAccordionItem,
     KerberosRealmsListComponent,
@@ -93,17 +91,78 @@ export class DirectoryServicesComponent implements OnInit {
     { initialValue: false },
   );
 
-  protected isActiveDirectoryEnabled = false;
-  protected isLdapEnabled = false;
-  protected isIpaEnabled = false;
   protected readonly directoryServicesConfig = signal<DirectoryServicesConfig | null>(null);
   protected readonly directoryServicesStatus = signal<DirectoryServicesStatus | null>(null);
   protected readonly isDirectoryServicesDisabled = computed(() => !this.directoryServicesConfig()?.enable);
   protected readonly isLoading = signal(false);
 
-  protected activeDirectoryDataCard: DataCard;
-  protected ldapDataCard: DataCard;
-  protected ipaDataCard: DataCard;
+  protected readonly isActiveDirectoryEnabled = computed(
+    () => this.isServiceEnabled(DirectoryServiceType.ActiveDirectory),
+  );
+
+  protected readonly isLdapEnabled = computed(() => this.isServiceEnabled(DirectoryServiceType.Ldap));
+  protected readonly isIpaEnabled = computed(() => this.isServiceEnabled(DirectoryServiceType.Ipa));
+
+  private readonly activeDirectoryDataCard = signal<DataCard | null>(null);
+  private readonly ldapDataCard = signal<DataCard | null>(null);
+  private readonly ipaDataCard = signal<DataCard | null>(null);
+
+  protected readonly activeCard = computed<DataCard | null>(() => {
+    if (this.isActiveDirectoryEnabled()) {
+      return this.activeDirectoryDataCard();
+    }
+    if (this.isLdapEnabled()) {
+      return this.ldapDataCard();
+    }
+    if (this.isIpaEnabled()) {
+      return this.ipaDataCard();
+    }
+    return null;
+  });
+
+  protected readonly cardMenu = computed<TnMenuItem[]>(() => {
+    const card = this.activeCard();
+    if (!card) {
+      return [];
+    }
+
+    const baseTestId = kebabCase(card.title);
+    const items: TnMenuItem[] = [
+      {
+        id: 'settings',
+        label: this.translate.instant('Settings'),
+        icon: 'cog',
+        iconLibrary: 'mdi',
+        testId: `button-${baseTestId}-settings`,
+        action: () => card.onSettingsPressed(),
+      },
+    ];
+
+    if (this.hasDirectoryServiceWrite()) {
+      items.push({
+        id: 'rebuild-cache',
+        label: this.translate.instant('Rebuild Directory Service Cache'),
+        icon: 'refresh',
+        iconLibrary: 'mdi',
+        disabled: this.isLoading(),
+        testId: `button-${baseTestId}-rebuild-cache`,
+        action: () => this.onRebuildCachePressed(),
+      });
+
+      if (card.showLeaveButton) {
+        items.push({
+          id: 'leave',
+          label: this.translate.instant('Leave'),
+          icon: 'close-circle',
+          iconLibrary: 'mdi',
+          testId: `button-${baseTestId}-leave`,
+          action: () => card.onLeavePressed(),
+        });
+      }
+    }
+
+    return items;
+  });
 
   private readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
   private readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
@@ -117,20 +176,9 @@ export class DirectoryServicesComponent implements OnInit {
     this.subscribeToDirectoryServicesStatus();
   }
 
-  protected getDataCard(): DataCard {
-    let dataCard: DataCard;
-    if (this.isActiveDirectoryEnabled) {
-      dataCard = this.activeDirectoryDataCard;
-    }
-
-    if (this.isLdapEnabled) {
-      dataCard = this.ldapDataCard;
-    }
-
-    if (this.isIpaEnabled) {
-      dataCard = this.ipaDataCard;
-    }
-    return dataCard;
+  private isServiceEnabled(type: DirectoryServiceType): boolean {
+    const status = this.directoryServicesStatus();
+    return status?.type === type && status.status !== DirectoryServiceStatus.Disabled;
   }
 
   protected refreshCards(): void {
@@ -146,13 +194,6 @@ export class DirectoryServicesComponent implements OnInit {
       .subscribe(([servicesState, directoryServicesConfig]) => {
         this.directoryServicesConfig.set(directoryServicesConfig);
         this.directoryServicesStatus.set(servicesState);
-        this.isActiveDirectoryEnabled = servicesState.type === DirectoryServiceType.ActiveDirectory
-          && servicesState.status !== DirectoryServiceStatus.Disabled;
-        this.isLdapEnabled = servicesState.type === DirectoryServiceType.Ldap
-          && servicesState.status !== DirectoryServiceStatus.Disabled;
-
-        this.isIpaEnabled = servicesState.type === DirectoryServiceType.Ipa
-          && servicesState.status !== DirectoryServiceStatus.Disabled;
         const adConfig = directoryServicesConfig?.configuration as ActiveDirectoryConfig;
         if (adConfig && directoryServicesConfig) {
           const items: Option[] = [
@@ -185,13 +226,13 @@ export class DirectoryServicesComponent implements OnInit {
             },
           );
 
-          this.activeDirectoryDataCard = {
+          this.activeDirectoryDataCard.set({
             title: this.translate.instant(helptextDashboard.activeDirectory.title),
             items,
             onSettingsPressed: () => this.openDirectoryServicesForm(),
             showLeaveButton: servicesState.status === DirectoryServiceStatus.Healthy,
             onLeavePressed: () => this.openLeaveDialog(),
-          };
+          });
         }
 
         const ldapConfig = directoryServicesConfig?.configuration as LdapConfig;
@@ -232,11 +273,11 @@ export class DirectoryServicesComponent implements OnInit {
             },
           );
 
-          this.ldapDataCard = {
+          this.ldapDataCard.set({
             title: this.translate.instant(helptextDashboard.ldap.title),
             items,
             onSettingsPressed: () => this.openDirectoryServicesForm(),
-          };
+          });
         }
 
         const ipaConfig = directoryServicesConfig?.configuration as IpaConfig;
@@ -273,13 +314,13 @@ export class DirectoryServicesComponent implements OnInit {
             },
           );
 
-          this.ipaDataCard = {
+          this.ipaDataCard.set({
             title: this.translate.instant(helptextDashboard.ipa.title),
             items,
             onSettingsPressed: () => this.openDirectoryServicesForm(),
             showLeaveButton: servicesState.status === DirectoryServiceStatus.Healthy,
             onLeavePressed: () => this.openLeaveDialog(),
-          };
+          });
         }
 
         this.refreshTables();
@@ -295,14 +336,6 @@ export class DirectoryServicesComponent implements OnInit {
       .subscribe((event) => {
         const status = event.fields as DirectoryServicesStatus;
         this.directoryServicesStatus.set(status);
-
-        // Update enabled states based on new status
-        this.isActiveDirectoryEnabled = status.type === DirectoryServiceType.ActiveDirectory
-          && status.status !== DirectoryServiceStatus.Disabled;
-        this.isLdapEnabled = status.type === DirectoryServiceType.Ldap
-          && status.status !== DirectoryServiceStatus.Disabled;
-        this.isIpaEnabled = status.type === DirectoryServiceType.Ipa
-          && status.status !== DirectoryServiceStatus.Disabled;
 
         // Refresh the cards to update the UI with new status
         this.refreshCards();
@@ -343,52 +376,6 @@ export class DirectoryServicesComponent implements OnInit {
     if (this.kerberosRealmsListComponent()) {
       this.kerberosRealmsListComponent().getKerberosRealms();
     }
-  }
-
-  /**
-   * All this does is provide correct typing in ng-template
-   */
-  protected typeCard(card: DataCard): DataCard {
-    return card;
-  }
-
-  protected getCardMenu(card: DataCard): TnMenuItem[] {
-    const baseTestId = kebabCase(card.title);
-    const items: TnMenuItem[] = [
-      {
-        id: 'settings',
-        label: this.translate.instant('Settings'),
-        icon: 'cog',
-        iconLibrary: 'mdi',
-        testId: `button-${baseTestId}-settings`,
-        action: () => card.onSettingsPressed(),
-      },
-    ];
-
-    if (this.hasDirectoryServiceWrite()) {
-      items.push({
-        id: 'rebuild-cache',
-        label: this.translate.instant('Rebuild Directory Service Cache'),
-        icon: 'refresh',
-        iconLibrary: 'mdi',
-        disabled: this.isLoading(),
-        testId: `button-${baseTestId}-rebuild-cache`,
-        action: () => this.onRebuildCachePressed(),
-      });
-
-      if (card.showLeaveButton) {
-        items.push({
-          id: 'leave',
-          label: this.translate.instant('Leave'),
-          icon: 'close-circle',
-          iconLibrary: 'mdi',
-          testId: `button-${baseTestId}-leave`,
-          action: () => card.onLeavePressed(),
-        });
-      }
-    }
-
-    return items;
   }
 
   protected openLeaveDialog(): void {

@@ -92,7 +92,10 @@ describe('KerberosKeytabsListComponent', () => {
   });
 
   it('deletes a keytab with confirmation when Delete button is pressed', () => {
-    spectator.click(spectator.query('[aria-label^="Delete"]'));
+    // The row action buttons live in ix-table-actions-cell (NAS-141029-owned, not part of
+    // this migration); TnTableHarness exposes no per-row action harness. Scope the query to
+    // keytab1's full row aria-label so it stays unambiguous with multiple rows present.
+    spectator.click(spectator.query('[aria-label="Delete keytab1 Kerberos Keytab"]'));
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       message: 'Are you sure you want to delete this item?',

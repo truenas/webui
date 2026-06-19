@@ -10,7 +10,13 @@
 
 .card-title {
   align-items: center;
+  // Match the library's projected-title-suppressed `.tn-card__title` typography,
+  // which is view-encapsulated and so doesn't reach projected `[tnCardHeader]` content.
+  color: var(--fg1);
   display: flex;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.5;
   margin: 0;
 
   .title-icon {

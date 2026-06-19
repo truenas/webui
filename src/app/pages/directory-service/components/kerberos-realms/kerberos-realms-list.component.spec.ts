@@ -66,6 +66,9 @@ describe('KerberosRealmsListComponent', () => {
   });
 
   it('opens form to edit a Kerberos Realm when Edit button is pressed', () => {
+    // The row action buttons live in ix-table-actions-cell (NAS-141029-owned, not part
+    // of this migration); TnTableHarness exposes no per-row action harness, so we query
+    // by aria-label. Safe here because the table renders a single data row.
     spectator.click(spectator.query('[aria-label^="Edit"]'));
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(KerberosRealmsFormComponent, {
@@ -74,6 +77,7 @@ describe('KerberosRealmsListComponent', () => {
   });
 
   it('deletes a Kerberos Realm with confirmation when Delete button is pressed', () => {
+    // See note above: ix-table-actions-cell row action, queried by aria-label.
     spectator.click(spectator.query('[aria-label^="Delete"]'));
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({

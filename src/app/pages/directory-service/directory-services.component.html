@@ -22,7 +22,24 @@
     class="services"
     [ixUiSearch]="searchableElements.elements.directoryServices"
   >
-    <ng-container *ngTemplateOutlet="dataCard; context: { card: getDataCard() }"></ng-container>
+    @if (activeCard(); as card) {
+      <tn-card
+        padding="small"
+        [title]="card.title"
+        [headerMenu]="cardMenu()"
+        [headerMenuTriggerTestId]="menuTriggerTestId"
+        [ixUiSearch]="searchableElements.elements.settings"
+      >
+        <tn-list>
+          @for (item of card.items; track item) {
+            <tn-list-item class="card-list-item">
+              <span class="label">{{ item.label | translate }}:</span>
+              <span class="value">{{ item.value || ('None' | translate) }}</span>
+            </tn-list-item>
+          }
+        </tn-list>
+      </tn-card>
+    }
   </div>
 }
 
@@ -46,28 +63,7 @@
   @if (expansionPanel.expanded) {
     <div class="advanced-settings-cards">
       <ix-kerberos-realms-list [paginator]="false" [inCard]="true"></ix-kerberos-realms-list>
-      <ix-kerberos-keytabs-list [paginator]="false" [inCard]="true" [showSyncButton]="isActiveDirectoryEnabled"></ix-kerberos-keytabs-list>
+      <ix-kerberos-keytabs-list [paginator]="false" [inCard]="true" [showSyncButton]="isActiveDirectoryEnabled()"></ix-kerberos-keytabs-list>
     </div>
   }
 </cdk-accordion-item>
-
-<ng-template #dataCard let-card="card">
-  @if (typeCard(card); as card) {
-    <tn-card
-      padding="small"
-      [title]="card.title"
-      [headerMenu]="getCardMenu(card)"
-      [headerMenuTriggerTestId]="menuTriggerTestId"
-      [ixUiSearch]="searchableElements.elements.settings"
-    >
-      <tn-list>
-        @for (item of card.items; track item) {
-          <tn-list-item class="card-list-item">
-            <span class="label">{{ item.label | translate }}:</span>
-            <span class="value">{{ item.value || ('None' | translate) }}</span>
-          </tn-list-item>
-        }
-      </tn-list>
-    </tn-card>
-  }
-</ng-template>

@@ -205,6 +205,8 @@ describe('DirectoryServicesComponent', () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
+      // tn-card content/title are read directly here because @truenas/ui-components 0.3.4
+      // ships no TnCardHarness/TnListHarness yet; revisit when those harnesses land.
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
 
