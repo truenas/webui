@@ -4,6 +4,7 @@ ix-app-card-logo {
   align-items: center;
   background: var(--bg1);
   display: inline-flex;
+  min-height: 0;
   padding: 0;
   place-content: center center;
 }
@@ -12,5 +13,9 @@ ix-app-network-info {
   align-items: center;
   background: var(--bg1);
   display: inline-flex;
+  max-width: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   place-content: center center;
 }

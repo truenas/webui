@@ -1,5 +1,11 @@
 @import 'scss-imports/cssvars';
 
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
 :host ::ng-deep ix-with-loading-state-error {
   align-items: center;
   box-sizing: border-box;
@@ -73,6 +79,15 @@
   &.quarter {
     padding: 8px;
   }
+}
+
+ix-app-card-info,
+ix-app-cpu-info,
+ix-app-network-info,
+ix-app-memory-info,
+ix-app-disk-info {
+  max-width: 100%;
+  min-height: 0;
 }
 
 ix-app-card-logo {

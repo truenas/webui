@@ -1,6 +1,17 @@
 
 @import 'scss-imports/cssvars';
 
+:host {
+  display: block;
+  min-height: 0;
+}
+
+form {
+  max-height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .half-width {
   width: 50%;
 

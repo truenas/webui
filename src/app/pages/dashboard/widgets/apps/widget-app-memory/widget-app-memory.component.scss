@@ -2,6 +2,9 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 ix-app-memory-info {
@@ -14,5 +17,8 @@ ix-app-memory-info {
   height: 100%;
   justify-content: space-evenly;
   max-width: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   text-align: center;
 }
