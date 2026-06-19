@@ -1,11 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnCardComponent, TnDialog } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
@@ -25,10 +22,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   styleUrls: ['./hardware-disk-encryption.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
+    TnCardComponent,
     HasRoleDirective,
     TestDirective,
     NavigateAndHighlightDirective,

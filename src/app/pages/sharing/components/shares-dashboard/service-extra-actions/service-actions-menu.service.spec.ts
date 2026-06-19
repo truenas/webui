@@ -148,41 +148,26 @@ describe('ServiceActionsMenuService', () => {
     });
   });
 
-  describe('buildServiceControl', () => {
-    it('returns undefined when there is no service', () => {
-      expect(spectator.service.buildServiceControl(undefined, true)).toBeUndefined();
-    });
-
-    it('returns undefined when the user lacks the control role', () => {
-      expect(
-        spectator.service.buildServiceControl(service({ service: ServiceName.Cifs }), false),
-      ).toBeUndefined();
-    });
-
-    it('reflects the running state with an empty label and stable test id', () => {
-      const control = spectator.service.buildServiceControl(
+  describe('service control helpers', () => {
+    it('reports whether the service is running', () => {
+      expect(spectator.service.isServiceRunning(
         service({ service: ServiceName.Cifs, state: ServiceStatus.Running }),
-        true,
-      );
-
-      expect(control).toMatchObject({ label: '', checked: true, testId: 'service-cifs' });
-    });
-
-    it('is unchecked when the service is stopped', () => {
-      const control = spectator.service.buildServiceControl(
+      )).toBe(true);
+      expect(spectator.service.isServiceRunning(
         service({ service: ServiceName.Cifs, state: ServiceStatus.Stopped }),
-        true,
-      );
-
-      expect(control?.checked).toBe(false);
+      )).toBe(false);
     });
 
-    it('stops a running service when toggled off', () => {
-      const control = spectator.service.buildServiceControl(
+    it('builds a stable control test id from the service name', () => {
+      expect(spectator.service.serviceControlTestId(
+        service({ service: ServiceName.Cifs }),
+      )).toBe('service-cifs');
+    });
+
+    it('stops a running service when toggled', () => {
+      spectator.service.toggleServiceState(
         service({ service: ServiceName.Cifs, state: ServiceStatus.Running }),
-        true,
       );
-      control?.handler(false);
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'service.control',
@@ -190,12 +175,10 @@ describe('ServiceActionsMenuService', () => {
       );
     });
 
-    it('starts a stopped service when toggled on', () => {
-      const control = spectator.service.buildServiceControl(
+    it('starts a stopped service when toggled', () => {
+      spectator.service.toggleServiceState(
         service({ service: ServiceName.Cifs, state: ServiceStatus.Stopped }),
-        true,
       );
-      control?.handler(true);
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'service.control',

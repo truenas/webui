@@ -64,19 +64,15 @@
               (click)="onRowGroupSelected(group, $event)"
             >
               <ix-vdev-group-node [vdevGroup]="group | cast">
-                <button
-                  mat-icon-button
+                <tn-icon-button
                   treeNodeToggle
                   class="vdev-group-toggle"
-                  [ixTest]="['toggle-vdev-group', group.guid]"
-                  [attr.aria-label]="'Toggle {row}' | translate: { row: group.guid }"
+                  library="mdi"
+                  [name]="treeControl.isExpanded(group) ? 'chevron-down' : 'chevron-right'"
+                  [testId]="['toggle-vdev-group', group.guid]"
+                  [ariaLabel]="'Toggle {row}' | translate: { row: group.guid }"
                   (click)="$event.preventDefault()"
-                >
-                  <tn-icon
-                    library="mdi"
-                    [name]="treeControl.isExpanded(group) ? 'chevron-down' : 'chevron-right'"
-                  ></tn-icon>
-                </button>
+                ></tn-icon-button>
               </ix-vdev-group-node>
             </div>
 
@@ -97,19 +93,15 @@
               (click)="viewDetails(poolId(), vdev.guid)"
               (keydown.enter)="viewDetails(poolId(), vdev.guid)"
             >
-              <button
-                mat-icon-button
+              <tn-icon-button
                 treeNodeToggle
-                [ixTest]="['toggle', vdev.guid]"
-                [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
+                library="mdi"
+                [name]="treeControl.isExpanded(vdev) ? 'chevron-down' : 'chevron-right'"
+                [testId]="['toggle', vdev.guid]"
+                [ariaLabel]="'Toggle {row}' | translate: { row: vdev.guid }"
                 (click)="$event.preventDefault()"
                 (keydown.enter)="$event.stopPropagation()"
-              >
-                <tn-icon
-                  library="mdi"
-                  [name]="treeControl.isExpanded(vdev) ? 'chevron-down' : 'chevron-right'"
-                ></tn-icon>
-              </button>
+              ></tn-icon-button>
 
               <ix-topology-item-node
                 [topologyItem]="vdev | cast"

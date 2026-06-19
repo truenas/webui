@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { findIndex, isEqual } from 'lodash-es';
+import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -97,8 +98,9 @@ export class GlobalSearchResultsComponent implements OnChanges {
       // exact. `createUrlTree` without `relativeTo` resolves from
       // `routerState.snapshot.root`, so even if a non-absolute route ever
       // sneaks in it serialises from root rather than the active route.
-      const targetPath = this.router.serializeUrl(this.router.createUrlTree(navigateTo))
-        .split('?')[0].split('#')[0];
+      const targetPath = stripQueryAndFragment(
+        this.router.serializeUrl(this.router.createUrlTree(navigateTo)),
+      );
 
       // Skip navigation when we're already on the target page — even same-URL
       // `router.navigate` calls fire `NavigationSkipped` events that
@@ -108,7 +110,7 @@ export class GlobalSearchResultsComponent implements OnChanges {
       // we'd treat sibling pages such as `/credentials/users/api-keys` as a
       // descendant of `/credentials/users` and skip the navigation the user
       // actually asked for.
-      const currentPath = this.router.url.split('?')[0].split('#')[0];
+      const currentPath = stripQueryAndFragment(this.router.url);
       const onTargetPath = currentPath === targetPath
         || (hasWildcard && currentPath.startsWith(`${targetPath}/`));
       if (!onTargetPath) {

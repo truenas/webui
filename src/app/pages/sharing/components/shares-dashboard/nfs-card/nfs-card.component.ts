@@ -11,6 +11,8 @@ import {
   tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
@@ -18,13 +20,14 @@ import {
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
+  TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
-  type TnCardAction,
   type TnSortEvent,
 } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
@@ -41,14 +44,14 @@ import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/ut
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import {
+  TableToggleCellComponent,
+} from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
-import {
-  ShareToggleCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-toggle-cell/share-toggle-cell.component';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -70,8 +73,12 @@ import { selectService } from 'app/store/services/services.selectors';
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
+    TnCardHeaderActionsDirective,
+    TnCardFooterActionsDirective,
+    TnSlideToggleComponent,
     TnSidePanelComponent,
     TnSidePanelActionDirective,
+    RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -86,8 +93,8 @@ import { selectService } from 'app/store/services/services.selectors';
     TnEmptyComponent,
     CardAlertBadgeComponent,
     ServiceNfsComponent,
-    ShareToggleCellComponent,
-    ShareActionsCellComponent,
+    TableToggleCellComponent,
+    TableActionsCellComponent,
     TierStatusComponent,
   ],
 })
@@ -102,30 +109,19 @@ export class NfsCardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
   private authService = inject(AuthService);
-  private actionsMenu = inject(ServiceActionsMenuService);
+  protected actionsMenu = inject(ServiceActionsMenuService);
   private tierService = inject(SharingTierService);
   private snackbar = inject(SnackbarService);
 
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   service$ = this.store$.select(selectService(ServiceName.Nfs));
-  private service = toSignal(this.service$);
+  protected service = toSignal(this.service$);
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
   protected serviceStatus = computed(() => this.actionsMenu.buildCardHeaderStatus(this.service()));
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
-
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      testId: 'button-nfs-share-add',
-      handler: () => this.openForm(),
-    };
-  });
 
   protected configOpen = signal(false);
   protected configForm = viewChild(ServiceNfsComponent);
@@ -138,8 +134,6 @@ export class NfsCardComponent implements OnInit {
     this.hasAddRole(),
     () => this.configOpen.set(true),
   ));
-
-  protected serviceControl = computed(() => this.actionsMenu.buildServiceControl(this.service(), this.hasAddRole()));
 
   protected onConfigClosed(): void {
     this.configOpen.set(false);

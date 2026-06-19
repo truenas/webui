@@ -4,6 +4,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
+  TnButtonHarness,
   TnDialog,
   TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
@@ -27,6 +28,9 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
+import {
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -140,6 +144,26 @@ describe('NfsCardComponent', () => {
       expect(await table.getAllRowTexts()).toEqual([
         ['/mnt/x', 'sweet', '', ''],
       ]);
+    });
+
+    it('opens the NFS form when the projected Add button is clicked', async () => {
+      const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+      await addButton.click();
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent, {
+        data: { existingNfsShare: undefined },
+      });
+    });
+
+    it('toggles the NFS service when the projected header toggle is changed', async () => {
+      const toggleState = jest.spyOn(spectator.inject(ServiceActionsMenuService), 'toggleServiceState')
+        .mockImplementation(() => {});
+      const toggle = await loader.getHarness(
+        TnSlideToggleHarness.with({ ancestor: '.tn-card__header-right' }),
+      );
+      await toggle.toggle();
+
+      expect(toggleState).toHaveBeenCalledWith(expect.objectContaining({ service: ServiceName.Nfs }));
     });
 
     it('shows form to edit an existing NFS Share when Edit button is pressed', async () => {

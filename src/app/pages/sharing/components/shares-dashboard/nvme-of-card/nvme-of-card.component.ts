@@ -8,6 +8,8 @@ import {
   tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
@@ -15,14 +17,15 @@ import {
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
+  TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
-  type TnCardAction,
   type TnSortEvent,
   TnDialog,
 } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -38,10 +41,10 @@ import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/ut
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -65,8 +68,12 @@ import { selectService } from 'app/store/services/services.selectors';
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
+    TnCardHeaderActionsDirective,
+    TnCardFooterActionsDirective,
+    TnSlideToggleComponent,
     TnSidePanelComponent,
     TnSidePanelActionDirective,
+    RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -82,7 +89,7 @@ import { selectService } from 'app/store/services/services.selectors';
     SubSystemNameCellComponent,
     CardAlertBadgeComponent,
     NvmeOfConfigurationComponent,
-    ShareActionsCellComponent,
+    TableActionsCellComponent,
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
@@ -98,30 +105,19 @@ export class NvmeOfCardComponent implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
-  private actionsMenu = inject(ServiceActionsMenuService);
+  protected actionsMenu = inject(ServiceActionsMenuService);
 
   requiredRoles = [Role.SharingNvmeTargetWrite];
   protected readonly isLoading = this.nvmeOfStore.isLoading;
   protected readonly cardMenuPath = ['sharing', 'nvme-of'];
 
   protected service$ = this.store$.select(selectService(ServiceName.NvmeOf));
-  private service = toSignal(this.service$);
+  protected service = toSignal(this.service$);
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
   protected serviceStatus = computed(() => this.actionsMenu.buildCardHeaderStatus(this.service()));
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
-
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      testId: 'button-nvme-of-share-add',
-      handler: () => this.openForm(),
-    };
-  });
 
   protected configOpen = signal(false);
   protected configForm = viewChild(NvmeOfConfigurationComponent);
@@ -134,8 +130,6 @@ export class NvmeOfCardComponent implements OnInit {
     this.hasAddRole(),
     () => this.configOpen.set(true),
   ));
-
-  protected serviceControl = computed(() => this.actionsMenu.buildServiceControl(this.service(), this.hasAddRole()));
 
   protected onConfigClosed(): void {
     this.configOpen.set(false);

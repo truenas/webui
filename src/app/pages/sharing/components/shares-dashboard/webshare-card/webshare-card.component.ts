@@ -11,6 +11,8 @@ import {
   TnBannerComponent,
   TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
@@ -18,6 +20,7 @@ import {
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
+  TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
@@ -28,6 +31,7 @@ import {
   filter, switchMap, map, of, catchError, shareReplay, Subject, startWith,
 } from 'rxjs';
 import { combineLatestWith } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -44,12 +48,12 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
-import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -71,8 +75,12 @@ import { selectService } from 'app/store/services/services.selectors';
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
+    TnCardHeaderActionsDirective,
+    TnCardFooterActionsDirective,
+    TnSlideToggleComponent,
     TnSidePanelComponent,
     TnSidePanelActionDirective,
+    RequiresRolesDirective,
     TnTooltipDirective,
     RouterLink,
     TnIconComponent,
@@ -86,7 +94,7 @@ import { selectService } from 'app/store/services/services.selectors';
     IxTablePagerShowMoreComponent,
     CardAlertBadgeComponent,
     ServiceWebshareComponent,
-    ShareActionsCellComponent,
+    TableActionsCellComponent,
   ],
 })
 export class WebShareCardComponent implements OnInit {
@@ -104,10 +112,10 @@ export class WebShareCardComponent implements OnInit {
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
   private authService = inject(AuthService);
-  private actionsMenu = inject(ServiceActionsMenuService);
+  protected actionsMenu = inject(ServiceActionsMenuService);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
-  private service = toSignal(this.service$);
+  protected service = toSignal(this.service$);
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
   protected dataProvider: AsyncDataProvider<WebShareTableRow>;
 
@@ -131,7 +139,7 @@ export class WebShareCardComponent implements OnInit {
     map((config) => config?.status === TruenasConnectStatus.Configured),
   );
 
-  private hasTruenasConnect = toSignal(this.hasTruenasConnect$, { initialValue: false });
+  protected hasTruenasConnect = toSignal(this.hasTruenasConnect$, { initialValue: false });
 
   showNoWebshareUsersNotice$ = this.hasTruenasConnect$.pipe(
     combineLatestWith(this.webShareService.hasWebshareUsers$),
@@ -153,18 +161,6 @@ export class WebShareCardComponent implements OnInit {
     };
   });
 
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      disabled: !this.hasTruenasConnect(),
-      testId: 'button-webshare-add',
-      handler: () => this.onAddClicked(),
-    };
-  });
-
   protected configOpen = signal(false);
   protected configForm = viewChild(ServiceWebshareComponent);
   protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
@@ -176,8 +172,6 @@ export class WebShareCardComponent implements OnInit {
     this.hasAddRole(),
     () => this.configOpen.set(true),
   ));
-
-  protected serviceControl = computed(() => this.actionsMenu.buildServiceControl(this.service(), this.hasAddRole()));
 
   protected onConfigClosed(): void {
     this.configOpen.set(false);

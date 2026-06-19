@@ -1,10 +1,8 @@
 <tn-card
   padding="small"
   [headerStatus]="serviceStatus()"
-  [headerControl]="serviceControl()"
   [headerMenu]="serviceMenu()"
   [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
-  [primaryAction]="addAction()"
 >
   <a
     tnCardHeader
@@ -25,10 +23,34 @@
     </h3>
   </a>
 
+  <ng-template tnCardHeaderActions>
+    @if (service(); as service) {
+      <tn-slide-toggle
+        *ixRequiresRoles="requiredRoles"
+        [checked]="actionsMenu.isServiceRunning(service)"
+        [testId]="actionsMenu.serviceControlTestId(service)"
+        [ariaLabel]="'Toggle service' | translate"
+        (change)="actionsMenu.toggleServiceState(service)"
+      ></tn-slide-toggle>
+    }
+  </ng-template>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="filled"
+      testId="smb-share-add"
+      [label]="'Add' | translate"
+      (onClick)="openForm()"
+    ></tn-button>
+  </ng-template>
+
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
       icon="smb-share"
       iconLibrary="custom"
+      iconSize="56px"
       [title]="'Well supported by all major operating systems, allows for easy authentication and authorization. Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.' | translate"
     ></tn-empty>
   } @else {
@@ -74,7 +96,7 @@
       <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
         <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <ix-share-toggle-cell
+          <ix-table-toggle-cell
             [title]="'Enabled' | translate"
             [uniqueRowTag]="uniqueRowTag(row)"
             [ariaLabel]="ariaLabel(row)"
@@ -83,7 +105,7 @@
             [tooltip]="getEnabledTooltip(row)"
             [requiredRoles]="requiredRoles"
             (toggled)="onChangeEnabledState(row)"
-          ></ix-share-toggle-cell>
+          ></ix-table-toggle-cell>
         </ng-template>
       </ng-container>
 
@@ -106,12 +128,12 @@
       <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
         <ng-template tnHeaderCellDef></ng-template>
         <ng-template let-row tnCellDef>
-          <ix-share-actions-cell
+          <ix-table-actions-cell
             [actions]="actions"
             [row]="row"
             [uniqueRowTag]="uniqueRowTag(row)"
             [ariaLabel]="ariaLabel(row)"
-          ></ix-share-actions-cell>
+          ></ix-table-actions-cell>
         </ng-template>
       </ng-container>
     </tn-table>
@@ -134,13 +156,15 @@
     <ix-service-smb (closed)="onConfigClosed()"></ix-service-smb>
   }
   @if (configForm(); as form) {
-    <tn-button
-      tnSidePanelAction
-      color="primary"
-      [ixTest]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="form.requiredRoles"
+        color="primary"
+        [ixTest]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
   }
 </tn-side-panel>
