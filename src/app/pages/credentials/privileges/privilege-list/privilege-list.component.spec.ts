@@ -89,6 +89,7 @@ describe('PrivilegeListComponent', () => {
   it('opens delete dialog when "Delete" button is pressed', async () => {
     // Second row (privilege2); TnTableHarness exposes no row-scoped harness lookup yet.
     const deleteButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' }));
+    expect(deleteButtons).toHaveLength(2); // both fixtures non-builtin; guards the [1] index below
     await deleteButtons[1].click();
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
