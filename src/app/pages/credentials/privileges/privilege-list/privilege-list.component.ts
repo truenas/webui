@@ -10,6 +10,7 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
+  TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -36,7 +37,6 @@ import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
@@ -57,7 +57,7 @@ import { privilegesListElements } from 'app/pages/credentials/privileges/privile
     TnCellDefDirective,
     TnTablePagerComponent,
     TableActionsCellComponent,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
     AsyncPipe,
     YesNoPipe,

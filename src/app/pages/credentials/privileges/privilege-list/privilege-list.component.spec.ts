@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnTableHarness } from '@truenas/ui-components';
+import { TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
@@ -76,18 +76,20 @@ describe('PrivilegeListComponent', () => {
     ]);
   });
 
-  it('opens form when "Edit" button is pressed', () => {
-    const editButton = spectator.query('[data-test="button-privilege-privilege1-mdi-pencil-row-action"]');
-    spectator.click(editButton);
+  it('opens form when "Edit" button is pressed', async () => {
+    // First row (privilege1); TnTableHarness exposes no row-scoped harness lookup yet.
+    const [editButton] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
+    await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PrivilegeFormComponent, {
       data: fakePrivilegeDataSource[0],
     });
   });
 
-  it('opens delete dialog when "Delete" button is pressed', () => {
-    const deleteButton = spectator.query('[data-test="button-privilege-privilege2-mdi-delete-row-action"]');
-    spectator.click(deleteButton);
+  it('opens delete dialog when "Delete" button is pressed', async () => {
+    // Second row (privilege2); TnTableHarness exposes no row-scoped harness lookup yet.
+    const deleteButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' }));
+    await deleteButtons[1].click();
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete Privilege',

@@ -531,8 +531,9 @@ describe('PrivilegeFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('directoryservices.status');
 
       // Button should NOT be visible since DS is disabled
-      const button = spectator.query('[data-test="button-enable-ds-auth"]');
-      expect(button).toBeFalsy();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const buttons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Enable DS Authentication' }));
+      expect(buttons).toHaveLength(0);
     });
 
     it('should NOT show button when ds_auth is already enabled', async () => {
@@ -588,8 +589,9 @@ describe('PrivilegeFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Should not show button since ds_auth is already enabled
-      const button = spectator.query('[data-test="button-enable-ds-auth"]');
-      expect(button).toBeFalsy();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const buttons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Enable DS Authentication' }));
+      expect(buttons).toHaveLength(0);
     });
 
     it('should NOT show button in non-enterprise mode', async () => {
@@ -639,8 +641,9 @@ describe('PrivilegeFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Should not show button in non-enterprise mode
-      const button = spectator.query('[data-test="button-enable-ds-auth"]');
-      expect(button).toBeFalsy();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const buttons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Enable DS Authentication' }));
+      expect(buttons).toHaveLength(0);
     });
 
     it('should show button and enable ds_auth when clicked', async () => {
@@ -691,12 +694,12 @@ describe('PrivilegeFormComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      // Button should be visible
-      const button = spectator.query('[data-test="button-enable-ds-auth"]');
-      expect(button).toBeTruthy();
+      // Button should be visible (getHarness throws if absent)
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Enable DS Authentication' }));
 
       // Click the button
-      spectator.click(button);
+      await button.click();
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
@@ -705,8 +708,8 @@ describe('PrivilegeFormComponent', () => {
 
       // Button should be hidden after enabling
       spectator.detectChanges();
-      const buttonAfter = spectator.query('[data-test="button-enable-ds-auth"]');
-      expect(buttonAfter).toBeFalsy();
+      const buttonsAfter = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Enable DS Authentication' }));
+      expect(buttonsAfter).toHaveLength(0);
     });
   });
 });
