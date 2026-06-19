@@ -18,7 +18,7 @@
       {{ app().title || app().name }}
 
       @if (!!app()?.popularity_rank) {
-        <span class="popularity-rank" [matTooltip]="'Popularity' | translate">
+        <span class="popularity-rank" [tnTooltip]="'Popularity' | translate">
           <tn-icon name="fire" library="mdi" customSize="14px"></tn-icon>
           {{ app()?.popularity_rank }}
         </span>
@@ -27,7 +27,7 @@
 
     <div
       class="version"
-      [matTooltip]="versionTooltip()"
+      [tnTooltip]="versionTooltip()"
     >
       {{ app().latest_app_version || ('N/A' | translate) }}
       <span class="catalog-version">({{ app().latest_version || ('N/A' | translate) }})</span>

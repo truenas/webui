@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { MockComponent, MockDirective } from 'ng-mocks';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -22,7 +21,7 @@ describe('ServiceStateButtonComponent', () => {
     ],
     declarations: [
       MockComponent(TnIconComponent),
-      MockDirective(MatTooltip),
+      MockDirective(TnTooltipDirective),
     ],
   });
 

@@ -2,9 +2,8 @@ import { Component, ChangeDetectionStrategy, input, computed, output, inject, De
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   filter, switchMap,
 } from 'rxjs';
@@ -38,7 +37,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnIconComponent,
     TestDirective,
     TranslateModule,
-    MatTooltipModule,
+    TnTooltipDirective,
     MatButtonModule,
     MatCheckboxModule,
     RequiresRolesDirective,

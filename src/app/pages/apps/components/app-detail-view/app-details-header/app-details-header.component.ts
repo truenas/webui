@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import createDOMPurify from 'dompurify';
 import type { DOMPurify as DOMPurifyType } from 'dompurify';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -23,7 +23,7 @@ import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-
     AppCardLogoComponent,
     CleanLinkPipe,
     TestDirective,
-    MatTooltip,
+    TnTooltipDirective,
     NgxSkeletonLoaderModule,
     InstalledAppBadgeComponent,
     OrNotAvailablePipe,

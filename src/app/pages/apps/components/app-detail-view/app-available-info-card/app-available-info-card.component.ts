@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy, Component,
   input,
 } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -18,7 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormatDateTimePipe,
-    MatTooltip,
+    TnTooltipDirective,
     NgxSkeletonLoaderModule,
     OrNotAvailablePipe,
     TranslateModule,

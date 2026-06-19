@@ -17,7 +17,7 @@
         mat-icon-button
         ixTest="app-info-menu"
         [matMenuTriggerFor]="appInfoMenu"
-        [matTooltip]="'More Options' | translate"
+        [tnTooltip]="'More Options' | translate"
         [attr.aria-label]="'More Options' | translate"
       >
         <tn-icon name="dots-vertical" library="mdi"></tn-icon>
@@ -59,13 +59,13 @@
           }
         </div>
         <div class="details-item">
-          <div class="label" [matTooltip]="'Upstream Application Version' | translate">{{ 'Version' | translate }}:</div>
+          <div class="label" [tnTooltip]="'Upstream Application Version' | translate">{{ 'Version' | translate }}:</div>
           <div class="value">
             {{ app().metadata.app_version | orNotAvailable }}
           </div>
         </div>
         <div class="details-item">
-          <div class="label" [matTooltip]="'TrueNAS Catalog Revision' | translate">{{ 'Revision' | translate }}:</div>
+          <div class="label" [tnTooltip]="'TrueNAS Catalog Revision' | translate">{{ 'Revision' | translate }}:</div>
           <div class="value">
             {{ app().version | orNotAvailable }}
           </div>
@@ -105,7 +105,7 @@
                 mat-button
                 class="portal-button"
                 [ixTest]="['portal', app().name, portal.label]"
-                [matTooltip]="portal.url"
+                [tnTooltip]="portal.url"
                 (click)="openPortalLink(app(), portal.label)"
               >
                 {{ portal.label }}
@@ -124,9 +124,9 @@
           @if (isAppStopped()) {
             <button
               mat-button
-              matTooltipPosition="above"
+              tnTooltipPosition="above"
               [ixTest]="[app().name, 'start']"
-              [matTooltip]="'Start' | translate"
+              [tnTooltip]="'Start' | translate"
               [disabled]="inProgress()"
               (click)="startApp.emit(); $event.stopPropagation()"
             >
@@ -138,9 +138,9 @@
           @if (!isAppStopped()) {
             <button
               mat-button
-              matTooltipPosition="above"
+              tnTooltipPosition="above"
               [ixTest]="[app().name, 'stop']"
-              [matTooltip]="'Stop' | translate"
+              [tnTooltip]="'Stop' | translate"
               [disabled]="inProgress()"
               (click)="stopApp.emit(); $event.stopPropagation()"
             >

@@ -19,14 +19,14 @@
           <div>
             <span
               class="with-tooltip"
-              [matTooltip]="'Host' | translate"
+              [tnTooltip]="'Host' | translate"
             >{{ port.protocol }}://{{ port.hostIp }}:{{ port.hostPort }}</span>
 
             <span class="separator">:</span>
 
             <span
               class="with-tooltip"
-              [matTooltip]="'Container' | translate"
+              [tnTooltip]="'Container' | translate"
             >{{ port.containerPort }}</span>
           </div>
         } @empty {
@@ -58,20 +58,20 @@
                 <a
                   *ixRequiresRoles="requiredRoles"
                   mat-icon-button
-                  matTooltipPosition="above"
+                  tnTooltipPosition="above"
                   [attr.aria-label]="'Shell' | translate"
                   [ixTest]="[container.service_name, 'shell']"
-                  [matTooltip]="'Shell' | translate"
+                  [tnTooltip]="'Shell' | translate"
                   [routerLink]="getShellLink(container)"
                 >
                   <tn-icon name="console" library="mdi"></tn-icon>
                 </a>
                 <button
                   mat-icon-button
-                  matTooltipPosition="above"
+                  tnTooltipPosition="above"
                   [attr.aria-label]="'Volume Mounts' | translate"
                   [ixTest]="[container.service_name, 'volume-mounts']"
-                  [matTooltip]="'Volume Mounts' | translate"
+                  [tnTooltip]="'Volume Mounts' | translate"
                   (click)="volumeButtonPressed(container)"
                 >
                   <tn-icon name="folder-outline" library="mdi"></tn-icon>
@@ -79,10 +79,10 @@
 
                 <a
                   mat-icon-button
-                  matTooltipPosition="above"
+                  tnTooltipPosition="above"
                   [attr.aria-label]="'View Logs' | translate"
                   [ixTest]="[container.service_name, 'view_logs']"
-                  [matTooltip]="'View Logs' | translate"
+                  [tnTooltip]="'View Logs' | translate"
                   [routerLink]="getViewLogsLink(container)"
                 >
                   <tn-icon name="text-box" library="mdi"></tn-icon>

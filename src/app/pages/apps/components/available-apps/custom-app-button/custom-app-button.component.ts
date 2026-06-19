@@ -4,10 +4,9 @@ import {
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnTooltipDirective, TnIconComponent } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -25,7 +24,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   styleUrls: ['./custom-app-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatTooltip,
+    TnTooltipDirective,
     MatButton,
     RequiresRolesDirective,
     TestDirective,

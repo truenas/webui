@@ -5,10 +5,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnTooltipDirective, TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, forkJoin, switchMap,
 } from 'rxjs';
@@ -42,7 +41,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     RequiresRolesDirective,
     MatMenuItem,
     RouterLink,
-    MatTooltipModule,
+    TnTooltipDirective,
     AsyncPipe,
   ],
 })

@@ -4,10 +4,9 @@ import { MatIconAnchor, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnTooltipDirective, TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -32,7 +31,7 @@ import {
     MatCardHeader,
     MatCardTitle,
     TranslateModule,
-    MatTooltip,
+    TnTooltipDirective,
     RequiresRolesDirective,
     TestDirective,
     TnIconComponent,

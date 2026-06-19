@@ -38,9 +38,9 @@
       type="button"
       color="primary"
       ixTest="move-selected-right"
-      matTooltipPosition="right"
+      tnTooltipPosition="right"
       [attr.aria-label]="'Move selected items to the right side list' | translate"
-      [matTooltip]="'Move selected items to the right side list' | translate"
+      [tnTooltip]="'Move selected items to the right side list' | translate"
       [disabled]="!hasAvailableSelection()"
       (click)="moveSelectedRight()"
     >
@@ -52,10 +52,10 @@
       type="button"
       color="primary"
       ixTest="move-all-right"
-      matTooltipPosition="right"
+      tnTooltipPosition="right"
       [disabled]="!canMoveAllRight()"
       [attr.aria-label]="'Move all items to the right side list' | translate"
-      [matTooltip]="'Move all items to the right side list' | translate"
+      [tnTooltip]="'Move all items to the right side list' | translate"
       (click)="moveAllRight()"
     >
       <tn-icon name="chevron-double-right" library="mdi"></tn-icon>
@@ -66,9 +66,9 @@
       type="button"
       color="primary"
       ixTest="move-selected-left"
-      matTooltipPosition="right"
+      tnTooltipPosition="right"
       [attr.aria-label]="'Move selected items to the left side list' | translate"
-      [matTooltip]="'Move selected items to the left side list' | translate"
+      [tnTooltip]="'Move selected items to the left side list' | translate"
       [disabled]="!hasSelectedSelection()"
       (click)="moveSelectedLeft()"
     >
@@ -80,9 +80,9 @@
       type="button"
       color="primary"
       ixTest="move-all-left"
-      matTooltipPosition="right"
+      tnTooltipPosition="right"
       [attr.aria-label]="'Move all items to the left side list' | translate"
-      [matTooltip]="'Move all items to the left side list' | translate"
+      [tnTooltip]="'Move all items to the left side list' | translate"
       [disabled]="!canMoveAllLeft()"
       (click)="moveAllLeft()"
     >

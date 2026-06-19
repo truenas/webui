@@ -28,21 +28,21 @@
     (click)="statusPressed(); $event.stopPropagation()"
   ></ix-app-state-cell>
 </div>
-<div class="cell cell-cpu" [matTooltip]="'Percentage of total core utilization' | translate">
+<div class="cell cell-cpu" [tnTooltip]="'Percentage of total core utilization' | translate">
   @if (hasStats()) {
     <span>{{ stats().cpu_usage.toFixed(0) }}%</span>
   } @else {
     {{ 'N/A' | translate }}
   }
 </div>
-<div class="cell cell-ram" [matTooltip]="'Memory usage of app' | translate">
+<div class="cell cell-ram" [tnTooltip]="'Memory usage of app' | translate">
   @if (hasStats()) {
     <span>{{ stats().memory | ixFileSize }}</span>
   } @else {
     {{ 'N/A' | translate }}
   }
 </div>
-<div class="cell cell-io" [matTooltip]="'Block I/O read and writes' | translate">
+<div class="cell cell-io" [tnTooltip]="'Block I/O read and writes' | translate">
   @if (hasStats()) {
     <span>
       {{ stats().blkio.read | ixFileSize }} - {{ stats().blkio.write | ixFileSize }}
@@ -51,7 +51,7 @@
     {{ 'N/A' | translate }}
   }
 </div>
-<div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
+<div class="cell cell-network" [tnTooltip]="'Incoming / Outgoing network traffic' | translate">
   @if (hasStats() && stats()?.networks?.length) {
     <span>
       {{ incomingTrafficBits() | ixNetworkSpeed }}
@@ -70,9 +70,9 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-icon-button
-      matTooltipPosition="above"
+      tnTooltipPosition="above"
       [ixTest]="[app().name, 'start']"
-      [matTooltip]="'Start' | translate"
+      [tnTooltip]="'Start' | translate"
       [disabled]="inProgress()"
       (click)="start(); $event.stopPropagation()"
     >
@@ -82,10 +82,10 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-icon-button
-      matTooltipPosition="above"
+      tnTooltipPosition="above"
       [ixTest]="[app().name, 'restart']"
       [attr.aria-label]="'Restart App' | translate"
-      [matTooltip]="'Restart App' | translate"
+      [tnTooltip]="'Restart App' | translate"
       (click)="restart(); $event.stopPropagation()"
     >
       <tn-icon name="restart" library="mdi"></tn-icon>
@@ -94,9 +94,9 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-icon-button
-      matTooltipPosition="above"
+      tnTooltipPosition="above"
       [ixTest]="[app().name, 'stop']"
-      [matTooltip]="'Stop' | translate"
+      [tnTooltip]="'Stop' | translate"
       (click)="stop(); $event.stopPropagation()"
     >
       <tn-icon name="stop-circle" library="mdi"></tn-icon>

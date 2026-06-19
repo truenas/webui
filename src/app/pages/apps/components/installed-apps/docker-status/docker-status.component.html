@@ -29,7 +29,7 @@
     }
 
     @case (DockerStatus.Failed) {
-      <div class="status-wrapper" [matTooltip]="statusDescription$ | async">
+      <div class="status-wrapper" [tnTooltip]="statusDescription$ | async">
         <tn-icon name="close-circle" library="mdi" class="error"></tn-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>

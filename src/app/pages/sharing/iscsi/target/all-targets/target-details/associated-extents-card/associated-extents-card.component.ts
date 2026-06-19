@@ -4,9 +4,8 @@ import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, finalize, forkJoin, switchMap, take,
@@ -39,7 +38,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     TnIconComponent,
     MatCardContent,
     RequiresRolesDirective,
-    MatTooltip,
+    TnTooltipDirective,
     NgxSkeletonLoaderModule,
   ],
 })

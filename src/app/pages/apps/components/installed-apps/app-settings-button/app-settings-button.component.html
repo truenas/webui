@@ -41,8 +41,8 @@
   <button
     mat-menu-item
     ixTest="docker-registries"
-    matTooltipPosition="right"
-    [matTooltip]="!(dockerStore.selectedPool$ | async) ? ('Choose pool first' | translate) : helptext.dockerRegistries.tooltip | translate"
+    tnTooltipPosition="right"
+    [tnTooltip]="!(dockerStore.selectedPool$ | async) ? ('Choose pool first' | translate) : helptext.dockerRegistries.tooltip | translate"
     [disabled]="!(dockerStore.selectedPool$ | async)"
     [routerLink]="['/apps', 'docker-registries']"
   >

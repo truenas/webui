@@ -4,9 +4,8 @@ import {
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnTooltipDirective, TnIconComponent } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -32,7 +31,7 @@ import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps
     ImgFallbackModule,
     AppStateCellComponent,
     TranslateModule,
-    MatTooltip,
+    TnTooltipDirective,
     NetworkSpeedPipe,
     FileSizePipe,
     AppUpdateCellComponent,

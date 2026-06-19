@@ -1,12 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnDialog } from '@truenas/ui-components';
+import { TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -168,8 +167,8 @@ describe('GroupDetailsRowComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     expect(deleteButton).toBeTruthy();
 
-    const tooltips = spectator.queryAll(MatTooltip);
-    const deleteTooltip = tooltips.find((tooltip) => tooltip.message === 'This group is managed by a directory service and cannot be deleted.');
+    const tooltips = spectator.queryAll(TnTooltipDirective);
+    const deleteTooltip = tooltips.find((tooltip) => String(tooltip.message) === 'This group is managed by a directory service and cannot be deleted.');
     expect(deleteTooltip).toBeTruthy();
   });
 
@@ -193,8 +192,8 @@ describe('GroupDetailsRowComponent', () => {
   it('should show privileges or members tooltip when group has roles or users', () => {
     spectator.setInput('group', { ...dummyGroup, roles: ['admin'], users: [1] });
 
-    const tooltips = spectator.queryAll(MatTooltip);
-    const deleteTooltip = tooltips.find((tooltip) => tooltip.message === 'Groups with privileges or members cannot be deleted.');
+    const tooltips = spectator.queryAll(TnTooltipDirective);
+    const deleteTooltip = tooltips.find((tooltip) => String(tooltip.message) === 'Groups with privileges or members cannot be deleted.');
     expect(deleteTooltip).toBeTruthy();
   });
 });

@@ -1,7 +1,7 @@
   <div
     class="custom-app-wrapper"
-    [matTooltip]="'Setup Pool To Create Custom App' | translate"
-    [matTooltipDisabled]="!(customAppDisabled$ | async)"
+    [tnTooltip]="'Setup Pool To Create Custom App' | translate"
+    [tnTooltipDisabled]="!(customAppDisabled$ | async)"
   >
     <button
       *ixRequiresRoles="requiredRoles"
@@ -17,7 +17,7 @@
       mat-icon-button
       ixTest="custom-app-menu"
       [matMenuTriggerFor]="customAppMenu"
-      [matTooltip]="'More Options' | translate"
+      [tnTooltip]="'More Options' | translate"
       [attr.aria-label]="'More Options' | translate"
     >
       <tn-icon name="dots-vertical" library="mdi"></tn-icon>

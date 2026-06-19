@@ -7,10 +7,9 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnTooltipDirective, TnDialog, TnIconComponent } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
@@ -63,7 +62,7 @@ import { RedirectService } from 'app/services/redirect.service';
     OrNotAvailablePipe,
     MatCardActions,
     CleanLinkPipe,
-    MatTooltip,
+    TnTooltipDirective,
     TnIconComponent,
     RouterLink,
   ],
