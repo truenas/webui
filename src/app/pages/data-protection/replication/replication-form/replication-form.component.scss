@@ -1,7 +1,12 @@
 @import 'scss-imports/variables';
 
+mat-card-content {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
 .form-actions {
-  margin: 8px 10px;
+  margin: 8px 0;
 
   button {
     margin-right: 8px;
@@ -11,20 +16,21 @@
 .fieldsets {
   display: flex;
   flex-wrap: wrap;
+  gap: 20px;
 
   @media (max-width: $breakpoint-tablet) {
     display: block;
   }
 
-  > * {
-    width: 50%;
+  >* {
+    width: 48%;
   }
 }
 
 .eligible-snapshots {
   font-size: 13px;
   margin-bottom: 15px;
-  margin-left: 10px;
+  margin-left: 0;
 
   &.danger {
     color: var(--red);
