@@ -1,93 +1,111 @@
-<mat-card [ixUiSearch]="searchableElements.elements.card">
-  <mat-toolbar-row>
-    <h3>{{ 'System Security' | translate }}</h3>
-    <div *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        color="default"
-        [ixTest]="['system-security', 'settings']"
-        [ixUiSearch]="searchableElements.elements.settings"
-        [attr.aria-label]="'System Security Settings' | translate"
-        (click)="openSystemSecuritySettings(systemSecurityConfig)"
-      >
-        {{ 'Settings' | translate }}
-      </button>
+<tn-card
+  padding="small"
+  [title]="'System Security' | translate"
+  [ixUiSearch]="searchableElements.elements.card"
+>
+  <div class="details">
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.enableFips">
+      <span class="label">{{ 'Enable FIPS' | translate }}:</span>
+      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+        {{ systemSecurityConfig?.enable_fips ? ('Yes' | translate) : ('No' | translate) }}
+      </span>
     </div>
-  </mat-toolbar-row>
 
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.enableFips">
-        <span class="label">{{ 'Enable FIPS' | translate }}:</span>
-        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
-          {{ systemSecurityConfig?.enable_fips ? ('Yes' | translate) : ('No' | translate) }}
-        </span>
-      </mat-list-item>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.enableGposStig">
+      <span class="label">{{ 'Enable General Purpose OS STIG compatibility mode' | translate }}:</span>
+      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+        {{ systemSecurityConfig?.enable_gpos_stig ? ('Yes' | translate) : ('No' | translate) }}
+      </span>
+    </div>
 
-      <mat-list-item [ixUiSearch]="searchableElements.elements.enableGposStig">
-        <span class="label">{{ 'Enable General Purpose OS STIG compatibility mode' | translate }}:</span>
-        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
-          {{ systemSecurityConfig?.enable_gpos_stig ? ('Yes' | translate) : ('No' | translate) }}
-        </span>
-      </mat-list-item>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.minPasswordAge">
+      <span class="label">{{ 'Min Password Age' | translate }}:</span>
+      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+        @if (systemSecurityConfig?.min_password_age) {
+          {{ '{n, plural, one {# day} other {# days} }' | translate: { n: systemSecurityConfig?.min_password_age } }}
+        } @else {
+          {{ '–' }}
+        }
+      </span>
+    </div>
 
-      <mat-list-item [ixUiSearch]="searchableElements.elements.minPasswordAge">
-        <span class="label">{{ 'Min Password Age' | translate }}:</span>
-        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
-          @if (systemSecurityConfig?.min_password_age) {
-            {{ '{n, plural, one {# day} other {# days} }' | translate: { n: systemSecurityConfig?.min_password_age } }}
-          } @else {
-            {{ '–' }}
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.maxPasswordAge">
+      <span class="label">{{ 'Max Password Age' | translate }}:</span>
+      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+        @if (systemSecurityConfig?.max_password_age) {
+          {{ '{n, plural, one {# day} other {# days} }' | translate: { n: systemSecurityConfig?.max_password_age } }}
+        } @else {
+          {{ '–' }}
+        }
+      </span>
+    </div>
+
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.passwordComplexityRuleset">
+      <span class="label">{{ 'Password Complexity Ruleset' | translate }}:</span>
+      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+        @if (systemSecurityConfig?.password_complexity_ruleset?.$set?.length) {
+          @for (rule of systemSecurityConfig.password_complexity_ruleset?.$set; let isLast = $last; track rule) {
+            {{ rulesetLabels.get(rule) | translate }}@if (!isLast) {,}
           }
-        </span>
-      </mat-list-item>
+        } @else {
+          {{ '–' }}
+        }
+      </span>
+    </div>
 
-      <mat-list-item [ixUiSearch]="searchableElements.elements.maxPasswordAge">
-        <span class="label">{{ 'Max Password Age' | translate }}:</span>
-        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
-          @if (systemSecurityConfig?.max_password_age) {
-            {{ '{n, plural, one {# day} other {# days} }' | translate: { n: systemSecurityConfig?.max_password_age } }}
-          } @else {
-            {{ '–' }}
-          }
-        </span>
-      </mat-list-item>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.minPasswordLength">
+      <span class="label">{{ 'Min Password Length' | translate }}:</span>
+      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+        @if (systemSecurityConfig?.min_password_length) {
+          {{ '{n, plural, one {# character} other {# characters} }' | translate: { n: systemSecurityConfig?.min_password_length } }}
+        } @else {
+          {{ '–' }}
+        }
+      </span>
+    </div>
 
-      <mat-list-item [ixUiSearch]="searchableElements.elements.passwordComplexityRuleset">
-        <span class="label">{{ 'Password Complexity Ruleset' | translate }}:</span>
-        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
-          @if (systemSecurityConfig?.password_complexity_ruleset?.$set?.length) {
-            @for (rule of systemSecurityConfig.password_complexity_ruleset?.$set; let isLast = $last; track rule) {
-              {{ rulesetLabels.get(rule) | translate }}@if (!isLast) {,}
-            }
-          } @else {
-            {{ '–' }}
-          }
-        </span>
-      </mat-list-item>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.passwordHistoryLength">
+      <span class="label">{{ 'Password History Length' | translate }}:</span>
+      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+        @if (systemSecurityConfig?.password_history_length) {
+          {{ '{n, plural, one {# entry} other {# entries} }' | translate: { n: systemSecurityConfig?.password_history_length } }}
+        } @else {
+          {{ '–' }}
+        }
+      </span>
+    </div>
+  </div>
 
-      <mat-list-item [ixUiSearch]="searchableElements.elements.minPasswordLength">
-        <span class="label">{{ 'Min Password Length' | translate }}:</span>
-        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
-          @if (systemSecurityConfig?.min_password_length) {
-            {{ '{n, plural, one {# character} other {# characters} }' | translate: { n: systemSecurityConfig?.min_password_length } }}
-          } @else {
-            {{ '–' }}
-          }
-        </span>
-      </mat-list-item>
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['system-security', 'settings']"
+      [ixUiSearch]="searchableElements.elements.settings"
+      [label]="'Configure' | translate"
+      (onClick)="onConfigure()"
+    ></tn-button>
+  </ng-template>
+</tn-card>
 
-      <mat-list-item [ixUiSearch]="searchableElements.elements.passwordHistoryLength">
-        <span class="label">{{ 'Password History Length' | translate }}:</span>
-        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
-          @if (systemSecurityConfig?.password_history_length) {
-            {{ '{n, plural, one {# entry} other {# entries} }' | translate: { n: systemSecurityConfig?.password_history_length } }}
-          } @else {
-            {{ '–' }}
-          }
-        </span>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+<tn-side-panel
+  [title]="'System Security' | translate"
+  [closeGuard]="closeGuard"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-system-security-form (closed)="onConfigClosed($event)"></ix-system-security-form>
+  }
+  @if (configForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>

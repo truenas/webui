@@ -1,3 +1,7 @@
+@import 'mixins/forms';
+
+@include tn-form-field-spacing-slide-in();
+
 .lockout-warning {
   display: block;
   margin-bottom: 10px;

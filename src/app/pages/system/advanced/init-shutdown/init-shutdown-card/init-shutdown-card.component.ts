@@ -1,15 +1,29 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
-  switchMap, tap,
-} from 'rxjs';
+  tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnIconComponent,
+  TnSidePanelActionDirective,
+  TnSidePanelComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
+import { Observable, of } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -17,18 +31,12 @@ import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interfac
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import {
-  yesNoColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { initShutdownCardElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.elements';
 import {
@@ -42,21 +50,28 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   styleUrls: ['./init-shutdown-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
-    TestDirective,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnCardFooterActionsDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
+    TnTestIdDirective,
+    TnTooltipDirective,
     RouterLink,
     TnIconComponent,
     RequiresRolesDirective,
-    MatButton,
-    TnTooltipDirective,
+    TnButtonComponent,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
+    TableActionsCellComponent,
+    InitShutdownFormComponent,
     TranslateModule,
     AsyncPipe,
+    YesNoPipe,
   ],
 })
 export class InitShutdownCardComponent implements OnInit {
@@ -65,62 +80,68 @@ export class InitShutdownCardComponent implements OnInit {
   private dialog = inject(DialogService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = initShutdownCardElements;
 
+  protected configOpen = signal(false);
+  protected editingScript = signal<InitShutdownScript | undefined>(undefined);
+  protected configForm = viewChild(InitShutdownFormComponent);
+
+  protected readonly panelTitle = computed(() => (
+    this.editingScript()
+      ? this.translate.instant('Edit Init/Shutdown Script')
+      : this.translate.instant('Add Init/Shutdown Script')
+  ));
+
   dataProvider: AsyncDataProvider<InitShutdownScript>;
 
-  columns = createTable<InitShutdownScript>([
-    textColumn({
-      title: this.translate.instant('Command / Script'),
-      propertyName: 'command',
-      getValue: (row) => row.script || row.command,
-    }),
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'comment',
-    }),
-    textColumn({
-      title: this.translate.instant('When'),
-      propertyName: 'when',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-    }),
-    textColumn({
-      title: this.translate.instant('Timeout'),
-      propertyName: 'timeout',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.onEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.onDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'card-init-shutdown-' + row.command + '-' + row.when,
-    ariaLabels: (row) => [row.command, this.translate.instant('Init/Shutdown Script')],
-  });
+  protected readonly displayedColumns = ['command', 'comment', 'when', 'enabled', 'timeout', 'actions'];
+
+  protected readonly trackBy = (_: number, row: InitShutdownScript): number => row.id;
+
+  protected readonly actions: IconActionConfig<InitShutdownScript>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.onEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.onDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected uniqueRowTag(row: InitShutdownScript): string {
+    return `card-init-shutdown-${row.command}-${row.when}`;
+  }
+
+  protected ariaLabel(row: InitShutdownScript): string {
+    return [row.command, this.translate.instant('Init/Shutdown Script')].join(' ');
+  }
+
+  protected readonly closeGuard = (): Observable<boolean> => {
+    return this.configForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
 
   ngOnInit(): void {
     this.loadScripts();
   }
 
   onAdd(): void {
-    this.openForm();
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.editingScript.set(undefined);
+      this.configOpen.set(true);
+    });
   }
 
   private loadScripts(): void {
@@ -149,14 +170,20 @@ export class InitShutdownCardComponent implements OnInit {
   }
 
   onEdit(row: InitShutdownScript): void {
-    this.openForm(row);
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.editingScript.set(row);
+      this.configOpen.set(true);
+    });
   }
 
-  private openForm(row?: InitShutdownScript): void {
-    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(InitShutdownFormComponent, { data: row }).success$),
-      tap(() => this.loadScripts()),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+  protected onConfigClosed(saved: boolean): void {
+    this.configOpen.set(false);
+    this.editingScript.set(undefined);
+    if (saved) {
+      this.loadScripts();
+    }
   }
 }

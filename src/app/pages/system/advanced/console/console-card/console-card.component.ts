@@ -1,22 +1,23 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnSidePanelActionDirective, TnSidePanelComponent,
+} from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
-  Subject, distinctUntilChanged, map, shareReplay, startWith, switchMap, tap,
+  Observable, Subject, distinctUntilChanged, map, of, shareReplay, startWith, switchMap, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { consoleCardElements } from 'app/pages/system/advanced/console/console-card/console-card.elements';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -33,33 +34,35 @@ export interface ConsoleConfig {
 
 @Component({
   selector: 'ix-console-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./console-card.component.scss'],
   templateUrl: './console-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnButtonComponent,
     WithLoadingStateDirective,
+    ConsoleFormComponent,
     TranslateModule,
   ],
 })
 export class ConsoleCardComponent {
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
-  private consoleConfig: ConsoleConfig;
   protected readonly searchableElements = consoleCardElements;
+
+  protected configOpen = signal(false);
+  protected configForm = viewChild(ConsoleFormComponent);
+
   readonly advancedConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.store$),
@@ -88,9 +91,6 @@ export class ConsoleCardComponent {
       serialspeed: config.serialspeed,
       motd: config.motd,
     })),
-    tap((consoleConfig) => {
-      this.consoleConfig = consoleConfig;
-    }),
     toLoadingState(),
     shareReplay({
       refCount: false,
@@ -98,11 +98,23 @@ export class ConsoleCardComponent {
     }),
   );
 
+  protected readonly closeGuard = (): Observable<boolean> => {
+    return this.configForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
+
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(ConsoleFormComponent, { data: this.consoleConfig }).success$),
-      tap(() => this.reloadConfig$.next()),
+      take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    ).subscribe(() => this.configOpen.set(true));
+  }
+
+  protected onConfigClosed(saved: boolean): void {
+    this.configOpen.set(false);
+    if (saved) {
+      this.reloadConfig$.next();
+    }
   }
 }

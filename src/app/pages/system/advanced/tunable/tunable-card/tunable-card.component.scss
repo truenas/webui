@@ -1,8 +1,9 @@
-.card-title {
-  align-items: center;
-  display: flex;
+.card-title-link {
+  color: inherit;
+  display: inline-flex;
+  text-decoration: none;
 
-  tn-icon {
+  .title-icon {
     margin-left: 5px;
   }
 }

@@ -1,17 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 
@@ -33,9 +32,6 @@ describe('TunableFormComponent', () => {
           UDEV: 'UDEV',
         }),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef, {
         close: jest.fn(),
@@ -54,16 +50,22 @@ describe('TunableFormComponent', () => {
     });
 
     it('sends a create payload to websocket and closes modal form is saved', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Type: 'UDEV',
-        Variable: 'some.var',
-        Value: '42',
-        Description: 'Answer to the question',
-        Enabled: true,
-      });
+      const typeSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="type"]' }));
+      await typeSelect.selectOption('UDEV');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const varInput = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="var"]' }));
+      await varInput.setValue('some.var');
+
+      const valueInput = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="value"]' }));
+      await valueInput.setValue('42');
+
+      const commentInput = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="comment"]' }));
+      await commentInput.setValue('Answer to the question');
+
+      const enabledCheckbox = await loader.getHarness(TnCheckboxHarness.with({ selector: '[formControlName="enabled"]' }));
+      await enabledCheckbox.check();
+
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.job).toHaveBeenCalledWith('tunable.create', [{
@@ -99,26 +101,26 @@ describe('TunableFormComponent', () => {
     });
 
     it('shows current group values when form is being edited', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const varInput = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="var"]' }));
+      const valueInput = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="value"]' }));
+      const commentInput = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="comment"]' }));
+      const enabledCheckbox = await loader.getHarness(TnCheckboxHarness.with({ selector: '[formControlName="enabled"]' }));
 
-      expect(values).toEqual({
-        Type: 'SYSCTL',
-        Variable: 'var.exist',
-        Description: 'Existing variable',
-        Value: 'Existing value',
-        Enabled: false,
-      });
+      expect(await varInput.getValue()).toBe('var.exist');
+      expect(await valueInput.getValue()).toBe('Existing value');
+      expect(await commentInput.getValue()).toBe('Existing variable');
+      expect(await enabledCheckbox.isChecked()).toBe(false);
+      expect(spectator.component.form.controls.type.value).toBe('SYSCTL');
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Enabled: true,
-        Value: 'New value',
-      });
+      const enabledCheckbox = await loader.getHarness(TnCheckboxHarness.with({ selector: '[formControlName="enabled"]' }));
+      await enabledCheckbox.check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const valueInput = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="value"]' }));
+      await valueInput.setValue('New value');
+
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.job).toHaveBeenCalledWith('tunable.update', [

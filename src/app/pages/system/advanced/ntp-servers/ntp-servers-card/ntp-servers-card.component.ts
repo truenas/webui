@@ -1,11 +1,23 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnSidePanelActionDirective,
+  TnSidePanelComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+} from '@truenas/ui-components';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -13,18 +25,12 @@ import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import {
-  yesNoColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ntpServersElements } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.elements';
 import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
@@ -34,18 +40,23 @@ import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/n
   templateUrl: './ntp-servers-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
+    TableActionsCellComponent,
+    NtpServersFormComponent,
     TranslateModule,
     AsyncPipe,
+    YesNoPipe,
   ],
 })
 export class NtpServersCardComponent implements OnInit {
@@ -53,59 +64,56 @@ export class NtpServersCardComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
-  private slideIn = inject(SlideIn);
+  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
   protected readonly searchableElements = ntpServersElements;
 
+  protected configOpen = signal(false);
+  protected editingServer = signal<NtpServer | undefined>(undefined);
+  protected configForm = viewChild(NtpServersFormComponent);
+
+  protected readonly panelTitle = computed(() => (
+    this.editingServer()
+      ? this.translate.instant('Edit NTP Server')
+      : this.translate.instant('Add NTP Server')
+  ));
+
   dataProvider: AsyncDataProvider<NtpServer>;
 
-  columns = createTable<NtpServer>([
-    textColumn({
-      title: this.translate.instant('Address'),
-      propertyName: 'address',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Burst'),
-      propertyName: 'burst',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('IBurst'),
-      propertyName: 'iburst',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Prefer'),
-      propertyName: 'prefer',
-    }),
-    textColumn({
-      title: this.translate.instant('Min Poll'),
-      propertyName: 'minpoll',
-    }),
-    textColumn({
-      title: this.translate.instant('Max Poll'),
-      propertyName: 'maxpoll',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => `ntp-server-${row.address}-${row.minpoll}-${row.maxpoll}`,
-    ariaLabels: (row) => [row.address, this.translate.instant('NTP Server')],
-  });
+  protected readonly displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
+
+  protected readonly trackByNtpId = (_: number, row: NtpServer): number => row.id;
+
+  protected readonly actions: IconActionConfig<NtpServer>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected uniqueRowTag(row: NtpServer): string {
+    return `ntp-server-${row.address}-${row.minpoll}-${row.maxpoll}`;
+  }
+
+  protected ariaLabel(row: NtpServer): string {
+    return [row.address, this.translate.instant('NTP Server')].join(' ');
+  }
+
+  protected readonly closeGuard = (): Observable<boolean> => {
+    return this.configForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
 
   ngOnInit(): void {
     const ntpServers$ = this.api.call('system.ntpserver.query').pipe(takeUntilDestroyed(this.destroyRef));
@@ -132,11 +140,21 @@ export class NtpServersCardComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
-    this.slideIn.open(NtpServersFormComponent).onSuccess(() => this.loadItems(), this.destroyRef);
+  doEdit(server: NtpServer): void {
+    this.editingServer.set(server);
+    this.configOpen.set(true);
   }
 
-  doEdit(server: NtpServer): void {
-    this.slideIn.open(NtpServersFormComponent, { data: server }).onSuccess(() => this.loadItems(), this.destroyRef);
+  protected onConfigClosed(saved: boolean): void {
+    this.configOpen.set(false);
+    this.editingServer.set(undefined);
+    if (saved) {
+      this.loadItems();
+    }
+  }
+
+  doAdd(): void {
+    this.editingServer.set(undefined);
+    this.configOpen.set(true);
   }
 }

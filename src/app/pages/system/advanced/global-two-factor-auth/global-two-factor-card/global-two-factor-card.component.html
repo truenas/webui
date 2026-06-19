@@ -1,45 +1,73 @@
-<mat-card [ixUiSearch]="searchableElements.elements.globalTwoFA">
-  <mat-toolbar-row>
-    <h3>{{ 'Global Two Factor Authentication' | translate }}</h3>
-    <div *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        id="global-two-factor-auth"
-        mat-button
-        [ixTest]="['two-factor-auth', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
-        (click)="onConfigurePressed(twoFactorAuthConfig)"
-      >
-        {{ 'Configure' | translate }}
-      </button>
+<tn-card
+  padding="small"
+  [title]="'Global Two Factor Authentication' | translate"
+  [ixUiSearch]="searchableElements.elements.globalTwoFA"
+>
+  <div class="details" [ixUiSearch]="searchableElements.elements.globallyEnabled">
+    <div class="details-item">
+      <span class="label">{{ 'Global 2FA' | translate }}:</span>
+      <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+        {{ twoFactorAuthConfig?.enabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
+      </span>
     </div>
-  </mat-toolbar-row>
 
-  <mat-card-content>
-    <mat-list [ixUiSearch]="searchableElements.elements.globallyEnabled">
-      <mat-list-item>
-        <span class="label">{{ 'Global 2FA' | translate }}:</span>
-        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig?.enabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
-        </span>
-      </mat-list-item>
+    <div
+      class="details-item"
+      [ixUiSearch]="searchableElements.elements.toleranceWindow"
+    >
+      <span class="label">
+        {{ 'Tolerance Window' | translate }}:
+        <ix-tooltip
+          class="tooltip"
+          [header]="'Tolerance Window' | translate"
+          [message]="helpText.card.toleranceWindowTooltip | translate"
+        ></ix-tooltip>
+      </span>
+      <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+        {{ twoFactorAuthConfig?.window }}
+      </span>
+    </div>
 
-      <mat-list-item
-        [tnTooltip]="helpText.card.toleranceWindowTooltip | translate"
-        [ixUiSearch]="searchableElements.elements.toleranceWindow"
-      >
-        <span class="label">{{ 'Tolerance Window' | translate }}:</span>
-        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig?.window }}
-        </span>
-      </mat-list-item>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.enableForSsh">
+      <span class="label">{{ 'Two Factor Authentication for SSH' | translate }}:</span>
+      <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+        {{ twoFactorAuthConfig?.services?.ssh ? ('Enabled' | translate) : ('Disabled' | translate) }}
+      </span>
+    </div>
+  </div>
 
-      <mat-list-item [ixUiSearch]="searchableElements.elements.enableForSsh">
-        <span class="label">{{ 'Two Factor Authentication for SSH' | translate }}:</span>
-        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig?.services?.ssh ? ('Enabled' | translate) : ('Disabled' | translate) }}
-        </span>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+  <ng-template tnCardFooterActions>
+    <ng-container *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig">
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="['two-factor-auth', 'configure']"
+        [ixUiSearch]="searchableElements.elements.configure"
+        [label]="'Configure' | translate"
+        (onClick)="onConfigurePressed()"
+      ></tn-button>
+    </ng-container>
+  </ng-template>
+</tn-card>
+
+<tn-side-panel
+  [title]="'Global Two Factor Authentication' | translate"
+  [closeGuard]="closeGuard"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-global-two-factor-auth-form (closed)="onConfigClosed($event)"></ix-global-two-factor-auth-form>
+  }
+  @if (configForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>

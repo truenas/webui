@@ -1,27 +1,47 @@
-<mat-card [ixUiSearch]="searchableElements.elements.selfEncryptingDrive">
-  <mat-toolbar-row>
-    <h3>{{ 'Self-Encrypting Drive' | translate }}</h3>
-    <div class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['self-encrypted-drive', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
-        (click)="onConfigure()"
-      >
-        {{ 'Configure' | translate }}
-      </button>
+<tn-card
+  padding="small"
+  [title]="'Self-Encrypting Drive' | translate"
+  [ixUiSearch]="searchableElements.elements.selfEncryptingDrive"
+>
+  <div class="details">
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.sedPassword">
+      <span class="label">{{ 'Password' | translate }}:</span>
+      <span *ixWithLoadingState="sedConfig$ as sedConfig" class="value">
+        {{ sedConfig.sedPassword }}
+      </span>
     </div>
-  </mat-toolbar-row>
+  </div>
 
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.sedPassword">
-        <span class="label">{{ 'Password' | translate }}:</span>
-        <span *ixWithLoadingState="sedConfig$ as sedConfig" class="value">
-          {{ sedConfig.sedPassword }}
-        </span>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['self-encrypted-drive', 'configure']"
+      [ixUiSearch]="searchableElements.elements.configure"
+      [label]="'Configure' | translate"
+      (onClick)="onConfigure()"
+    ></tn-button>
+  </ng-template>
+</tn-card>
+
+<tn-side-panel
+  [title]="'Self-Encrypting Drive' | translate"
+  [closeGuard]="closeGuard"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-self-encrypting-drive-form (closed)="onConfigClosed($event)"></ix-self-encrypting-drive-form>
+  }
+  @if (configForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>

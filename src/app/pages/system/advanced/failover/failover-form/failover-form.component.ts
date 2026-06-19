@@ -2,28 +2,25 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of, startWith } from 'rxjs';
+import {
+  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent,
+} from '@truenas/ui-components';
+import { startWith } from 'rxjs';
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
-import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -32,24 +29,22 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 @Component({
   selector: 'ix-failover-form',
   templateUrl: './failover-form.component.html',
+  styleUrls: ['./failover-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
-    MatCard,
-    MatCardContent,
     ModalHeaderComponent,
     ReactiveFormsModule,
     TranslateModule,
-    IxCheckboxComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
     FormActionsComponent,
     AsyncPipe,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
   ],
 })
-export class FailoverFormComponent {
-  slideInRef = inject<SlideInRef<FailoverConfig, boolean>>(SlideInRef);
+export class FailoverFormComponent extends SidePanelForm {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
@@ -71,6 +66,9 @@ export class FailoverFormComponent {
 
   protected isLoading = signal(false);
   protected readonly helptext = helptextSystemFailover;
+  protected readonly InputType = InputType;
+
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   submitButtonText$ = this.form.controls.master.valueChanges.pipe(
     startWith(true),
@@ -82,16 +80,14 @@ export class FailoverFormComponent {
   );
 
   constructor() {
-    const config = this.slideInRef.getData();
+    super();
 
-    this.form.patchValue({
-      enabled: !config.disabled,
-      master: config.master,
-      timeout: config.timeout,
-    });
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
+    this.api.call('failover.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
+      this.form.patchValue({
+        enabled: !config.disabled,
+        master: config.master,
+        timeout: config.timeout,
+      });
     });
 
     this.setFormRelations();
@@ -120,9 +116,7 @@ export class FailoverFormComponent {
             return;
           }
 
-          this.slideInRef.close({
-            response: true,
-          });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);

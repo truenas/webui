@@ -2,16 +2,18 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ConfirmDeleteJobOptions } from 'app/interfaces/dialog.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -20,7 +22,7 @@ import { TunableCardComponent } from './tunable-card.component';
 describe('TunableCardComponent', () => {
   let spectator: Spectator<TunableCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const items = [
     {
@@ -43,69 +45,71 @@ describe('TunableCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: TunableCardComponent,
-    imports: [
-    ],
     providers: [
       mockApi([
         mockCall('tunable.query', items),
         mockJob('tunable.delete', fakeSuccessfulJob()),
+        mockJob('tunable.create', fakeSuccessfulJob()),
+        mockJob('tunable.update', fakeSuccessfulJob()),
+        mockCall('tunable.tunable_type_choices', {
+          SYSCTL: 'SYSCTL',
+          UDEV: 'UDEV',
+        }),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteJobOptions) => options.job()),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockProvider(SlideInRef, { close: jest.fn() }),
+      mockProvider(SnackbarService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(FirstTimeWarningService, {
-        showFirstTimeWarningIfNeeded: jest.fn(() => Promise.resolve()),
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockAuth(),
     ],
   });
 
+  async function openFirstRowMenu(): Promise<TnMenuHarness> {
+    spectator.click(spectator.query('[data-test$="more-action"]') as HTMLElement);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Var', 'Value', 'Enabled', 'Description', ''],
-      [
-        'zfs_arc_max',
-        '1073741824',
-        'Yes',
-        'Max ZFS ARC size',
-        '',
-      ],
-      [
-        'vfs.zfs.arc_min',
-        '10000000',
-        'Yes',
-        'Min ZFS ARC size',
-        '',
-      ],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    expect(await table.getHeaderTexts()).toEqual(['Var', 'Value', 'Enabled', 'Description', '']);
+    expect(await table.getAllRowTexts()).toEqual([
+      ['zfs_arc_max', '1073741824', 'Yes', 'Max ZFS ARC size', ''],
+      ['vfs.zfs.arc_min', '10000000', 'Yes', 'Min ZFS ARC size', ''],
+    ]);
   });
 
-  it('shows form to edit a tunable variable when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 4);
-    await editButton.click();
+  it('opens the Add Tunable form in a side panel when Add is pressed', async () => {
+    expect(spectator.query('ix-tunable-form')).toBeNull();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      TunableFormComponent,
-      { data: expect.objectContaining(items[0]) },
-    );
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-tunable-form')).not.toBeNull();
+  });
+
+  it('opens the Edit Tunable form in the side panel with the selected row', async () => {
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Edit' });
+    spectator.detectChanges();
+
+    const form = spectator.query(TunableFormComponent);
+    expect(form).not.toBeNull();
+    expect(form.editTunable()).toEqual(items[0]);
   });
 
   it('deletes a tunable variable with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 4);
-    await deleteIcon.click();
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete Tunable (ZFS)',

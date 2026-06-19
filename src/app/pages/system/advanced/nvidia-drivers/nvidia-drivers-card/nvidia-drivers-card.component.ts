@@ -1,22 +1,23 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
 import {
-  distinctUntilChanged, map, shareReplay, startWith, switchMap, tap,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnSidePanelActionDirective, TnSidePanelComponent,
+} from '@truenas/ui-components';
+import { Observable, Subject, of } from 'rxjs';
+import {
+  distinctUntilChanged, map, shareReplay, startWith, switchMap, take,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { nvidiaDriversCardElements } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-card/nvidia-drivers-card.elements';
 import { NvidiaDriversFormComponent } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-form/nvidia-drivers-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -25,34 +26,34 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 
 @Component({
   selector: 'ix-nvidia-drivers-card',
-  styleUrls: ['./nvidia-drivers-card.component.scss', '../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./nvidia-drivers-card.component.scss'],
   templateUrl: './nvidia-drivers-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     UiSearchDirective,
-    MatToolbarRow,
     WithLoadingStateDirective,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnButtonComponent,
+    NvidiaDriversFormComponent,
     TranslateModule,
   ],
 })
 export class NvidiaDriversCardComponent {
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = nvidiaDriversCardElements;
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
+
+  protected configOpen = signal(false);
+  protected configForm = viewChild(NvidiaDriversFormComponent);
 
   readonly nvidiaEnabled$ = this.reloadConfig$.pipe(
     startWith(undefined),
@@ -68,11 +69,23 @@ export class NvidiaDriversCardComponent {
     }),
   );
 
-  onConfigurePressed(nvidiaEnabled: boolean): void {
+  protected readonly closeGuard = (): Observable<boolean> => {
+    return this.configForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
+
+  onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(NvidiaDriversFormComponent, { data: nvidiaEnabled }).success$),
-      tap(() => this.reloadConfig$.next()),
+      take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    ).subscribe(() => this.configOpen.set(true));
+  }
+
+  protected onConfigClosed(saved: boolean): void {
+    this.configOpen.set(false);
+    if (saved) {
+      this.reloadConfig$.next();
+    }
   }
 }

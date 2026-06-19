@@ -1,33 +1,53 @@
-<mat-card id="configure-isolated-gpus" [ixUiSearch]="searchableElements.elements.isolatedGpus">
-  <mat-toolbar-row>
-    <h3>{{ 'Isolated GPU Device(s)' | translate }}</h3>
-    <div class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['isolated-gpus-devices', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
-        (click)="onConfigurePressed()"
-      >
-        {{ 'Configure' | translate }}
-      </button>
+<tn-card
+  padding="small"
+  id="configure-isolated-gpus"
+  [title]="'Isolated GPU Device(s)' | translate"
+  [ixUiSearch]="searchableElements.elements.isolatedGpus"
+>
+  @if (isolatedGpus.length === 0) {
+    <tn-empty
+      [title]="'No Isolated GPU Device(s) configured' | translate"
+      [description]="'To configure Isolated GPU Device(s), click the &quot;Configure&quot; button.' | translate"
+    ></tn-empty>
+  } @else {
+    <div class="details">
+      <div class="details-item" [ixUiSearch]="searchableElements.elements.isolatedGpuPciIds">
+        <span class="label">{{ 'Isolated GPU Device(s)' | translate }}:</span>
+        <span class="value">{{ isolatedGpuNames }}</span>
+      </div>
     </div>
-  </mat-toolbar-row>
+  }
 
-  <mat-card-content>
-    @if (isolatedGpus.length === 0) {
-      <ix-empty
-        [conf]="emptyConfig"
-      ></ix-empty>
-    } @else {
-      <mat-list>
-        <mat-list-item [ixUiSearch]="searchableElements.elements.isolatedGpuPciIds">
-          <span class="label">{{ 'Isolated GPU Device(s)' | translate }}:</span>
-          <span class="value">
-            {{ isolatedGpuNames }}
-          </span>
-        </mat-list-item>
-      </mat-list>
-    }
-  </mat-card-content>
-</mat-card>
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['isolated-gpus-devices', 'configure']"
+      [ixUiSearch]="searchableElements.elements.configure"
+      [label]="'Configure' | translate"
+      (onClick)="onConfigurePressed()"
+    ></tn-button>
+  </ng-template>
+</tn-card>
+
+<tn-side-panel
+  [title]="'Isolated GPU Device(s)' | translate"
+  [closeGuard]="closeGuard"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-isolated-gpus-form (closed)="onConfigClosed($event)"></ix-isolated-gpus-form>
+  }
+  @if (configForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>

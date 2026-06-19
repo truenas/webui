@@ -1,28 +1,24 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnFormSectionComponent } from '@truenas/ui-components';
 import {
-  of, switchMap, tap,
+  switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { ipv4or6OptionalCidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -36,8 +32,6 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxListComponent,
     IxListItemComponent,
@@ -45,22 +39,19 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
     WarningComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
   ],
 })
-export class AllowedAddressesFormComponent implements OnInit {
+export class AllowedAddressesFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
-  private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private systemGeneralService = inject(SystemGeneralService);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
@@ -73,13 +64,9 @@ export class AllowedAddressesFormComponent implements OnInit {
     addresses: this.fb.nonNullable.array<string>([]),
   });
 
-  protected isLockoutWarningShown = signal(false);
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  protected isLockoutWarningShown = signal(false);
 
   ngOnInit(): void {
     this.api.call('system.general.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -116,10 +103,9 @@ export class AllowedAddressesFormComponent implements OnInit {
     this.form.controls.addresses.removeAt(index);
   }
 
-
-  onSubmit(): void {
+  protected onSubmit(): void {
     if (!this.form.dirty) {
-      this.slideInRef.close({ response: undefined });
+      this.close(false);
       return;
     }
 
@@ -134,7 +120,7 @@ export class AllowedAddressesFormComponent implements OnInit {
       }),
       switchMap(() => this.systemGeneralService.handleUiServiceRestart()),
       tap(() => {
-        this.slideInRef.close({ response: true });
+        this.close(true);
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({

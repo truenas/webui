@@ -1,27 +1,48 @@
-<mat-card id="nvidia-drivers" [ixUiSearch]="searchableElements.elements.nvidiaDrivers">
-  <mat-toolbar-row>
-    <h3>{{ 'NVIDIA Drivers' | translate }}</h3>
-    <div *ixWithLoadingState="nvidiaEnabled$ as nvidiaEnabled" class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['nvidia-drivers', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
-        (click)="onConfigurePressed(nvidiaEnabled)"
-      >
-        {{ 'Configure' | translate }}
-      </button>
+<tn-card
+  id="nvidia-drivers"
+  padding="small"
+  [title]="'NVIDIA Drivers' | translate"
+  [ixUiSearch]="searchableElements.elements.nvidiaDrivers"
+>
+  <div class="details">
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.enableNvidiaGpuSupport">
+      <span class="label">{{ 'Enable NVIDIA GPU Support' | translate }}:</span>
+      <span *ixWithLoadingState="nvidiaEnabled$ as nvidiaEnabled" class="value">
+        {{ nvidiaEnabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
+      </span>
     </div>
-  </mat-toolbar-row>
+  </div>
 
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.enableNvidiaGpuSupport">
-        <span class="label">{{ 'Enable NVIDIA GPU Support' | translate }}:</span>
-        <span *ixWithLoadingState="nvidiaEnabled$ as nvidiaEnabled" class="value">
-          {{ nvidiaEnabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
-        </span>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['nvidia-drivers', 'configure']"
+      [ixUiSearch]="searchableElements.elements.configure"
+      [label]="'Configure' | translate"
+      (onClick)="onConfigurePressed()"
+    ></tn-button>
+  </ng-template>
+</tn-card>
+
+<tn-side-panel
+  [title]="'NVIDIA Drivers' | translate"
+  [closeGuard]="closeGuard"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-nvidia-drivers-form (closed)="onConfigClosed($event)"></ix-nvidia-drivers-form>
+  }
+  @if (configForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>

@@ -1,13 +1,15 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent,
+} from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
-  EMPTY, catchError, filter, of, switchMap, tap,
+  EMPTY, catchError, filter, of, switchMap, take, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -16,50 +18,44 @@ import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfac
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-global-two-factor-auth-form',
   templateUrl: './global-two-factor-form.component.html',
+  styleUrls: ['./global-two-factor-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxCheckboxComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class GlobalTwoFactorAuthFormComponent implements OnInit {
+export class GlobalTwoFactorAuthFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
-  private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private authService = inject(AuthService);
   private router = inject(Router);
-  slideInRef = inject<SlideInRef<GlobalTwoFactorConfig, boolean>>(SlideInRef);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
+  protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);
   form = this.fb.nonNullable.group({
@@ -68,30 +64,27 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     ssh: [false],
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   enableWarning: string = this.translate.instant('Once enabled, users will be prompted to set up two-factor authentication next time they login. They can choose to skip the setup if desired.');
 
   protected twoFactorConfig: GlobalTwoFactorConfig;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.twoFactorConfig = this.slideInRef.getData();
-  }
-
   ngOnInit(): void {
-    this.setupForm();
-  }
-
-  setupForm(): void {
-    this.form.patchValue({
-      enabled: this.twoFactorConfig.enabled,
-      window: this.twoFactorConfig.window,
-      ssh: this.twoFactorConfig.services.ssh,
+    this.api.call('auth.twofactor.config').pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
+      this.twoFactorConfig = config;
+      this.form.patchValue({
+        enabled: config.enabled,
+        window: config.window,
+        ssh: config.services.ssh,
+      });
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     let shouldWarn = true;
     if (!this.twoFactorConfig.enabled || !this.form.value.enabled) {
       shouldWarn = false;
@@ -123,7 +116,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
         if (!isEqual(this.twoFactorConfig, payload) && payload.enabled) {
           this.router.navigate(['/two-factor-auth']);
         }
-        this.slideInRef.close({ response: true });
+        this.close(true);
       }),
       catchError((error: unknown) => {
         this.isFormLoading.set(false);

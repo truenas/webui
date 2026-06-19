@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -75,7 +75,7 @@ describe('AllowedAddressesComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({ 'IP Address/Subnet': '2.2.2.2' });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('system.general.update', [
@@ -87,7 +87,7 @@ describe('AllowedAddressesComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({ 'IP Address/Subnet': '192.168.1.0/24' });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('system.general.update', [
@@ -96,11 +96,11 @@ describe('AllowedAddressesComponent', () => {
   });
 
   it('closes the form normally when no changes are made', async () => {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).not.toHaveBeenCalledWith('system.general.update');
-    expect(componentRef.close).toHaveBeenCalledWith({ response: undefined });
+    expect(componentRef.close).toHaveBeenCalledWith({ response: false });
   });
 
   describe('warnings', () => {
@@ -139,7 +139,7 @@ describe('AllowedAddressesComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({ 'IP Address/Subnet': '2.2.2.2' });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
@@ -148,7 +148,7 @@ describe('AllowedAddressesComponent', () => {
     it('should not call SystemGeneralService.handleUiServiceRestart when no changes are made', async () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(systemGeneralService.handleUiServiceRestart).not.toHaveBeenCalled();
@@ -159,7 +159,7 @@ describe('AllowedAddressesComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({ 'IP Address/Subnet': '3.3.3.3' });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('system.general.update', [
@@ -172,7 +172,7 @@ describe('AllowedAddressesComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({ 'IP Address/Subnet': '4.4.4.4' });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(componentRef.close).toHaveBeenCalledWith({ response: true });
@@ -185,7 +185,7 @@ describe('AllowedAddressesComponent', () => {
       // Test with a valid IP address format
       await form.fillForm({ 'IP Address/Subnet': '10.0.0.1/24' });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('system.general.update', [
@@ -199,7 +199,7 @@ describe('AllowedAddressesComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({ 'IP Address/Subnet': '5.5.5.5' });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       // Verify the flow: update -> restart -> close
@@ -218,7 +218,7 @@ describe('AllowedAddressesComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({ 'IP Address/Subnet': '6.6.6.6' });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       // Even if restart is cancelled, the form should still close successfully
