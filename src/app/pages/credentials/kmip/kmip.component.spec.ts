@@ -1,9 +1,11 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
@@ -12,11 +14,9 @@ import {
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -26,7 +26,6 @@ import { KmipComponent } from './kmip.component';
 describe('KmipComponent', () => {
   let spectator: Spectator<KmipComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: KmipComponent,
     imports: [
@@ -73,40 +72,48 @@ describe('KmipComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   it('loads current KMIP config and shows it in the form', async () => {
-    const values = await form.getValues();
-
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kmip.config');
-    expect(values).toEqual({
-      Server: 'kmip.truenas.com',
-      Port: '5696',
-      Certificate: 'Main Certificate',
 
-      'Manage SED Passwords': true,
-      'Manage ZFS Keys': false,
-      Enabled: false,
-      'Change Server': false,
-      'Validate Connection': false,
-      'Force Clear': false,
-    });
+    const serverInput = await loader.getHarness(TnInputHarness.with({ name: 'server' }));
+    const portInput = await loader.getHarness(TnInputHarness.with({ name: 'port' }));
+    const certificateSelect = await loader.getHarness(TnSelectHarness);
+
+    expect(await serverInput.getValue()).toBe('kmip.truenas.com');
+    expect(await portInput.getValue()).toBe('5696');
+    expect(await certificateSelect.getDisplayText()).toBe('Main Certificate');
+
+    const sedManage = await loader.getHarness(TnCheckboxHarness.with({ label: 'Manage SED Passwords' }));
+    const zfsKeys = await loader.getHarness(TnCheckboxHarness.with({ label: 'Manage ZFS Keys' }));
+    const enabled = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }));
+
+    expect(await sedManage.isChecked()).toBe(true);
+    expect(await zfsKeys.isChecked()).toBe(false);
+    expect(await enabled.isChecked()).toBe(false);
   });
 
   it('saves updated KMIP config when form is submitted', async () => {
-    await form.fillForm({
-      Server: 'newkmip.truenas.com',
-      Port: 5697,
-      Certificate: 'Secondary Certificate',
-      'Manage ZFS Keys': true,
-      'Validate Connection': true,
-    });
+    const serverInput = await loader.getHarness(TnInputHarness.with({ name: 'server' }));
+    await serverInput.setValue('newkmip.truenas.com');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const portInput = await loader.getHarness(TnInputHarness.with({ name: 'port' }));
+    await portInput.setValue('5697');
+
+    const certificateSelect = await loader.getHarness(TnSelectHarness);
+    await certificateSelect.selectOption('Secondary Certificate');
+
+    const zfsKeys = await loader.getHarness(TnCheckboxHarness.with({ label: 'Manage ZFS Keys' }));
+    await zfsKeys.check();
+
+    const validate = await loader.getHarness(TnCheckboxHarness.with({ label: 'Validate Connection' }));
+    await validate.check();
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -144,15 +151,15 @@ describe('KmipComponent', () => {
     });
 
     it('enables Sync Keys and Clear Sync Keys when there is a pending KMIP sync', async () => {
-      const syncKeysButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sync Keys' }));
-      const clearSyncKeysButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Sync Keys' }));
+      const syncKeysButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sync Keys' }));
+      const clearSyncKeysButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear Sync Keys' }));
 
       expect(await syncKeysButton.isDisabled()).toBe(false);
       expect(await clearSyncKeysButton.isDisabled()).toBe(false);
     });
 
     it('syncs keys when Sync Keys button is pressed', async () => {
-      const syncKeysButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sync Keys' }));
+      const syncKeysButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sync Keys' }));
       await syncKeysButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kmip.sync_keys');
@@ -163,7 +170,7 @@ describe('KmipComponent', () => {
     });
 
     it('clears sync keys when Clear Sync Keys is pressed', async () => {
-      const clearSyncKeysButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Sync Keys' }));
+      const clearSyncKeysButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear Sync Keys' }));
       await clearSyncKeysButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kmip.clear_sync_pending_keys');
@@ -178,10 +185,10 @@ describe('KmipComponent', () => {
     const store$ = spectator.inject(MockStore);
     store$.overrideSelector(selectIsEnterprise, false);
     store$.refreshState();
+    spectator.detectChanges();
 
-    const checkboxes = await loader.getAllHarnesses(IxCheckboxHarness);
-    const checkLabels = await parallel(() => checkboxes.map((control) => control.getLabelText()));
+    const hasSedManage = await loader.hasHarness(TnCheckboxHarness.with({ label: 'Manage SED Passwords' }));
 
-    expect(checkLabels.find((label) => label === 'Manage SED Passwords')).not.toExist();
+    expect(hasSedManage).toBe(false);
   });
 });
