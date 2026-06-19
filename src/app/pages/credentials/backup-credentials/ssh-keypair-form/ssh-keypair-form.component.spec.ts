@@ -1,11 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnIconButtonHarness, TnMenuHarness, TnMenuTesting,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -76,7 +77,7 @@ describe('SshKeypairFormComponent', () => {
         'Public Key': 'New public key',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('keychaincredential.create', [{
@@ -91,7 +92,7 @@ describe('SshKeypairFormComponent', () => {
 
     describe('other', () => {
       it('fills textareas for public and private textareas when Generate Keypair is pressed', async () => {
-        const generateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate Keypair' }));
+        const generateButton = await loader.getHarness(TnButtonHarness.with({ label: 'Generate Keypair' }));
         await generateButton.click();
 
         const form = await loader.getHarness(IxFormHarness);
@@ -111,9 +112,10 @@ describe('SshKeypairFormComponent', () => {
           'Public Key': 'Downloaded public key',
         });
 
-        const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download Actions"]' }));
-        await actionsMenu.open();
-        await actionsMenu.clickItem({ text: 'Download Public Key' });
+        const actionsTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+        await actionsTrigger.click();
+        const actionsMenu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+        await actionsMenu.clickItem({ label: 'Download Public Key' });
 
         expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(
           new Blob(['Downloaded public key'], { type: 'text/plain' }),
@@ -128,9 +130,10 @@ describe('SshKeypairFormComponent', () => {
           'Private Key': 'Downloaded private key',
         });
 
-        const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download Actions"]' }));
-        await actionsMenu.open();
-        await actionsMenu.clickItem({ text: 'Download Private Key' });
+        const actionsTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+        await actionsTrigger.click();
+        const actionsMenu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+        await actionsMenu.clickItem({ label: 'Download Private Key' });
 
         expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(
           new Blob(['Downloaded private key'], { type: 'text/plain' }),
@@ -170,7 +173,7 @@ describe('SshKeypairFormComponent', () => {
         'Public Key': 'New public key',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('keychaincredential.update', [

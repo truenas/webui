@@ -3,10 +3,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -167,7 +167,7 @@ describe('CloudCredentialsFormComponent', () => {
           Provider: 'Amazon S3',
         });
 
-        const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
+        const verifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Verify Credential' }));
         await verifyButton.click();
 
         expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
@@ -182,7 +182,7 @@ describe('CloudCredentialsFormComponent', () => {
           Provider: 'Amazon S3',
         });
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Verify Credential' }));
         await saveButton.click();
 
         const providerForm = spectator.query(S3ProviderFormComponent)!;
@@ -202,7 +202,7 @@ describe('CloudCredentialsFormComponent', () => {
           Provider: 'Amazon S3',
         });
 
-        const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
+        const verifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Verify Credential' }));
         await verifyButton.click();
 
         expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
@@ -220,7 +220,7 @@ describe('CloudCredentialsFormComponent', () => {
           Provider: 'Amazon S3',
         });
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         const providerForm = spectator.query(S3ProviderFormComponent)!;
@@ -233,7 +233,7 @@ describe('CloudCredentialsFormComponent', () => {
           Provider: 'Amazon S3',
         });
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
@@ -315,7 +315,7 @@ describe('CloudCredentialsFormComponent', () => {
         Name: 'My updated server',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.update', [

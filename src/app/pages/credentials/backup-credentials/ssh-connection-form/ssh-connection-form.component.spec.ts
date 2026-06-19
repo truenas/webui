@@ -2,10 +2,10 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -113,7 +113,7 @@ describe('SshConnectionFormComponent', () => {
         'Remote Host Key': 'ssh-rsaAAAAUpdated',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('keychaincredential.update', [11, {
@@ -153,7 +153,7 @@ describe('SshConnectionFormComponent', () => {
         },
       );
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(KeychainCredentialService).addSshConnection).toHaveBeenCalledWith({
@@ -190,7 +190,7 @@ describe('SshConnectionFormComponent', () => {
         },
       );
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(KeychainCredentialService).addSshConnection).toHaveBeenCalledWith({
@@ -224,7 +224,7 @@ describe('SshConnectionFormComponent', () => {
         },
       );
 
-      const discoverButton = await loader.getHarness(MatButtonHarness.with({ text: 'Discover Remote Host Key' }));
+      const discoverButton = await loader.getHarness(TnButtonHarness.with({ label: 'Discover Remote Host Key' }));
       await discoverButton.click();
 
       const values = await form.getValues();
@@ -244,7 +244,7 @@ describe('SshConnectionFormComponent', () => {
         'Private Key': 'Generate New',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(KeychainCredentialService).addSshConnection).toHaveBeenCalledWith({

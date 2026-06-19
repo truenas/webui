@@ -1,15 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
@@ -25,7 +24,13 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
 describe('SshKeypairCardComponent', () => {
   let spectator: Spectator<SshKeypairCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+
+  async function openRowMenu(rowIndex = 0): Promise<TnMenuHarness> {
+    const triggers = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await triggers[rowIndex].click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
 
   const credentials = [
     {
@@ -90,7 +95,7 @@ describe('SshKeypairCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('checks page title', () => {
@@ -99,16 +104,15 @@ describe('SshKeypairCardComponent', () => {
   });
 
   it('opens form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SshKeypairFormComponent);
   });
 
   it('opens form when "Edit" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit' });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SshKeypairFormComponent, {
       data: credentials[0],
@@ -124,9 +128,8 @@ describe('SshKeypairCardComponent', () => {
     });
     jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true) as never);
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [10]);
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
@@ -158,9 +161,8 @@ describe('SshKeypairCardComponent', () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true) as never);
     const refetchSpy = jest.spyOn(spectator.inject(KeychainCredentialService).refetchSshConnections, 'next');
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [10]);
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
@@ -174,22 +176,18 @@ describe('SshKeypairCardComponent', () => {
 
   it('checks when "Download" button is pressed', async () => {
     const storage = spectator.inject(DownloadService);
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Download' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Download' });
 
     expect(storage.downloadBlob).toHaveBeenCalledWith(new Blob(), 'test1234_private_key_rsa');
     expect(storage.downloadBlob).toHaveBeenCalledWith(new Blob(), 'test1234_public_key_rsa');
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Name', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['test1234', ''],
       ['test4321', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 });
