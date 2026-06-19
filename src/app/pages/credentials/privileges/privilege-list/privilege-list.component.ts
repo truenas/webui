@@ -1,21 +1,29 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
   map, shareReplay, take,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { Option } from 'app/interfaces/option.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
@@ -23,17 +31,13 @@ import { booleanProperty, searchProperties, textProperty } from 'app/modules/for
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { privilegesListElements } from 'app/pages/credentials/privileges/privilege-list/privilege-list.elements';
@@ -44,17 +48,19 @@ import { privilegesListElements } from 'app/pages/credentials/privileges/privile
   styleUrls: ['./privilege-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     RequiresRolesDirective,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
     TnTablePagerComponent,
+    TableActionsCellComponent,
+    TestDirective,
     TranslateModule,
     AsyncPipe,
+    YesNoPipe,
     PageHeaderComponent,
     SearchInputComponent,
   ],
@@ -64,7 +70,6 @@ export class PrivilegeListComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
-  protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
@@ -74,52 +79,68 @@ export class PrivilegeListComponent implements OnInit {
   protected searchProperties: SearchProperty<Privilege>[] = [];
   protected readonly searchableElements = privilegesListElements;
 
-  columns = createTable<Privilege>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Roles'),
-      getValue: (row) => row.roles.map((role) => {
-        return this.translate.instant(roleNames.get(role) || role);
-      }).join(', ') || this.translate.instant('N/A'),
-      disableSorting: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Local Groups'),
-      getValue: (row) => row.local_groups.length,
-      disableSorting: true,
-    }),
-    textColumn({
-      title: this.translate.instant('DS Groups'),
-      getValue: (row) => row.ds_groups.length,
-      disableSorting: true,
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Web Shell Access'),
-      propertyName: 'web_shell',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.openForm(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          hidden: (row) => of(!!row.builtin_name),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'privilege-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('Privilege')],
-  });
+  protected readonly displayedColumns = ['name', 'roles', 'local_groups', 'ds_groups', 'web_shell', 'actions'];
+
+  protected readonly trackByPrivilegeId = (_index: number, row: Privilege): number => row.id;
+
+  protected readonly actions: IconActionConfig<Privilege>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.openForm(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      hidden: (row) => of(!!row.builtin_name),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected uniqueRowTag(row: Privilege): string {
+    return 'privilege-' + row.name;
+  }
+
+  protected ariaLabel(row: Privilege): string {
+    return [row.name, this.translate.instant('Privilege')].join(' ');
+  }
+
+  protected getRolesValue(row: Privilege): string {
+    return row.roles
+      .map((role) => this.translate.instant(roleNames.get(role) || role))
+      .join(', ') || this.translate.instant('N/A');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<Privilege>(event, this.displayedColumns));
+  }
+
+  protected emptyMessage(type: EmptyType | null | undefined): string {
+    switch (type) {
+      case EmptyType.Loading:
+        return this.translate.instant('Loading…');
+      case EmptyType.Errors:
+        return this.translate.instant('Cannot retrieve response');
+      case EmptyType.NoSearchResults:
+        return this.translate.instant('No Search Results.');
+      default:
+        return this.translate.instant('No Privileges');
+    }
+  }
+
+  protected emptyIcon(type: EmptyType | null | undefined): string {
+    switch (type) {
+      case EmptyType.Loading:
+        return 'mdi-loading';
+      case EmptyType.Errors:
+        return 'mdi-alert-octagon';
+      case EmptyType.NoSearchResults:
+        return 'mdi-magnify-scan';
+      default:
+        return 'mdi-format-list-text';
+    }
+  }
 
   searchQuery: SearchQuery<Privilege>;
   privileges: Privilege[] = [];

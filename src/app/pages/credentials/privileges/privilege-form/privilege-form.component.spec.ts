@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { lastValueFrom, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -164,7 +164,7 @@ describe('PrivilegeFormComponent', () => {
         'Web Shell Access': true,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('privilege.create', [{
@@ -209,7 +209,7 @@ describe('PrivilegeFormComponent', () => {
         'Web Shell Access': false,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       // Wait for all pending async operations
@@ -252,7 +252,7 @@ describe('PrivilegeFormComponent', () => {
         'Web Shell Access': false,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       // Wait for all pending async operations
@@ -531,7 +531,7 @@ describe('PrivilegeFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('directoryservices.status');
 
       // Button should NOT be visible since DS is disabled
-      const button = spectator.query('button[ixTest="enable-ds-auth"]');
+      const button = spectator.query('[data-test="button-enable-ds-auth"]');
       expect(button).toBeFalsy();
     });
 
@@ -588,7 +588,7 @@ describe('PrivilegeFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Should not show button since ds_auth is already enabled
-      const button = spectator.query('button[ixTest="enable-ds-auth"]');
+      const button = spectator.query('[data-test="button-enable-ds-auth"]');
       expect(button).toBeFalsy();
     });
 
@@ -639,7 +639,7 @@ describe('PrivilegeFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Should not show button in non-enterprise mode
-      const button = spectator.query('button[ixTest="enable-ds-auth"]');
+      const button = spectator.query('[data-test="button-enable-ds-auth"]');
       expect(button).toBeFalsy();
     });
 
@@ -692,7 +692,7 @@ describe('PrivilegeFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Button should be visible
-      const button = spectator.query('button[ixTest="enable-ds-auth"]');
+      const button = spectator.query('[data-test="button-enable-ds-auth"]');
       expect(button).toBeTruthy();
 
       // Click the button
@@ -705,7 +705,7 @@ describe('PrivilegeFormComponent', () => {
 
       // Button should be hidden after enabling
       spectator.detectChanges();
-      const buttonAfter = spectator.query('button[ixTest="enable-ds-auth"]');
+      const buttonAfter = spectator.query('[data-test="button-enable-ds-auth"]');
       expect(buttonAfter).toBeFalsy();
     });
   });
