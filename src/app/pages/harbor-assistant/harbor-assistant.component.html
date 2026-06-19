@@ -142,64 +142,67 @@
 
   @if (isTab('camera')) {
     <section class="tab-panel assistant-camera-tab">
-      <ix-harbor-assistant-camera></ix-harbor-assistant-camera>
-      <mat-card class="settings-card native-panel event-intelligence-panel">
-        <mat-card-header>
-          <mat-card-title>{{ 'Event intelligence' | translate }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          @if (endpointError('localVisionEvents')) {
-            <div class="notice error">{{ endpointErrorNotice('localVisionEvents') | translate }}</div>
-          }
-          <div class="event-intelligence-status-grid">
-            @for (card of eventIntelligenceStatusCards(); track card.id) {
-              <article class="status-block" [ngClass]="'tone-' + card.tone">
-                <span>{{ card.label | translate }}</span>
-                <strong>{{ card.status | translate }}</strong>
-                <p>{{ card.detail | translate }}</p>
-              </article>
-            }
-          </div>
-
-          @if (localVisionEvents().length === 0) {
-            <div class="empty-state">{{ 'No local vision events yet.' | translate }}</div>
-          } @else {
-            <div class="event-intelligence-list">
-              @for (stored of localVisionEvents(); track stored.event.event_id) {
-                <article class="event-intelligence-row">
-                  <div class="event-intelligence-main">
-                    <div class="event-intelligence-meta">
-                      <span class="pill" [ngClass]="toneClass(stored.event.event_type)">{{ stored.event.event_type }}</span>
-                      <span class="pill">{{ stored.event.camera_id }}</span>
-                      <span class="pill">{{ eventConfidenceLabel(stored) }}</span>
-                    </div>
-                    <h2>{{ eventVlmSummary(stored) }}</h2>
-                    <p class="muted">{{ eventLabelPreview(stored) }}</p>
-                  </div>
-                  <div class="event-intelligence-metrics">
-                    <span>
-                      <strong>{{ eventLatencyLabel(stored) }}</strong>
-                      {{ 'event' | translate }}
-                    </span>
-                    <span>
-                      <strong>{{ eventMetricLabel(stored, 'capture_read_ms') }}</strong>
-                      {{ 'capture' | translate }}
-                    </span>
-                    <span>
-                      <strong>{{ eventMetricLabel(stored, 'frame_age_ms') }}</strong>
-                      {{ 'frame age' | translate }}
-                    </span>
-                    <span>
-                      <strong [ngClass]="toneClass(eventVlmStatus(stored))">{{ eventVlmStatus(stored) | translate }}</strong>
-                      {{ 'VLM' | translate }}
-                    </span>
-                  </div>
-                </article>
+      <ix-harbor-assistant-camera>
+        <section camera-live-secondary class="camera-live-event-intelligence">
+          <mat-card class="settings-card native-panel event-intelligence-panel">
+            <mat-card-header>
+              <mat-card-title>{{ 'Event intelligence' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @if (endpointError('localVisionEvents')) {
+                <div class="notice error">{{ endpointErrorNotice('localVisionEvents') | translate }}</div>
               }
-            </div>
-          }
-        </mat-card-content>
-      </mat-card>
+              <div class="event-intelligence-status-grid">
+                @for (card of eventIntelligenceStatusCards(); track card.id) {
+                  <article class="status-block" [ngClass]="'tone-' + card.tone">
+                    <span>{{ card.label | translate }}</span>
+                    <strong>{{ card.status | translate }}</strong>
+                    <p>{{ card.detail | translate }}</p>
+                  </article>
+                }
+              </div>
+
+              @if (localVisionEvents().length === 0) {
+                <div class="empty-state">{{ 'No local vision events yet.' | translate }}</div>
+              } @else {
+                <div class="event-intelligence-list">
+                  @for (stored of localVisionEvents(); track stored.event.event_id) {
+                    <article class="event-intelligence-row">
+                      <div class="event-intelligence-main">
+                        <div class="event-intelligence-meta">
+                          <span class="pill" [ngClass]="toneClass(stored.event.event_type)">{{ stored.event.event_type }}</span>
+                          <span class="pill">{{ stored.event.camera_id }}</span>
+                          <span class="pill">{{ eventConfidenceLabel(stored) }}</span>
+                        </div>
+                        <h2>{{ eventVlmSummary(stored) }}</h2>
+                        <p class="muted">{{ eventLabelPreview(stored) }}</p>
+                      </div>
+                      <div class="event-intelligence-metrics">
+                        <span>
+                          <strong>{{ eventLatencyLabel(stored) }}</strong>
+                          {{ 'event' | translate }}
+                        </span>
+                        <span>
+                          <strong>{{ eventMetricLabel(stored, 'capture_read_ms') }}</strong>
+                          {{ 'capture' | translate }}
+                        </span>
+                        <span>
+                          <strong>{{ eventMetricLabel(stored, 'frame_age_ms') }}</strong>
+                          {{ 'frame age' | translate }}
+                        </span>
+                        <span>
+                          <strong [ngClass]="toneClass(eventVlmStatus(stored))">{{ eventVlmStatus(stored) | translate }}</strong>
+                          {{ 'VLM' | translate }}
+                        </span>
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        </section>
+      </ix-harbor-assistant-camera>
     </section>
   }
 
@@ -481,6 +484,51 @@
                 </div>
               </section>
             }
+            @if (modelRuntimeCards().length) {
+              <section class="ai-settings-panel runtime-manager-panel">
+                <div class="runtime-manager-heading">
+                  <div>
+                    <span class="field-label">{{ 'Runtime Manager' | translate }}</span>
+                    <strong>{{ (modelRuntimeManagerResponse()?.status || modelCapabilitiesResponse()?.runtime_manager?.status || 'unknown') | translate }}</strong>
+                  </div>
+                  @if (modelRuntimeManagerResponse()?.blockers?.length || modelCapabilitiesResponse()?.runtime_manager?.blockers?.length) {
+                    <p class="muted warn">
+                      {{ (modelRuntimeManagerResponse()?.blockers || modelCapabilitiesResponse()?.runtime_manager?.blockers || [])[0] | translate }}
+                    </p>
+                  }
+                </div>
+                <div class="runtime-card-grid">
+                  @for (runtime of modelRuntimeCards(); track runtime.runtime_id) {
+                    <article class="runtime-card">
+                      <div>
+                        <strong>{{ runtime.display_name }}</strong>
+                        <p class="muted">{{ runtimeCapabilitiesLabel(runtime) | translate }}</p>
+                        @if (runtime.model_store_path) {
+                          <p class="muted mono-text">{{ runtime.model_store_path }}</p>
+                        }
+                        @if (runtime.message) {
+                          <p class="muted">{{ runtime.message | translate }}</p>
+                        }
+                      </div>
+                      <div class="runtime-card-actions">
+                        <span class="pill" [ngClass]="runtimeToneClass(runtime)">
+                          {{ runtime.status | translate }}
+                        </span>
+                        <button
+                          mat-button
+                          color="primary"
+                          type="button"
+                          [disabled]="runtimeActionDisabled(runtime)"
+                          (click)="installModelRuntime(runtime)"
+                        >
+                          {{ actionBusy('model-runtime-install:' + runtime.runtime_id) ? ('Installing...' | translate) : (runtimeActionLabel(runtime) | translate) }}
+                        </button>
+                      </div>
+                    </article>
+                  }
+                </div>
+              </section>
+            }
 
             <section class="ai-settings-panel model-capability-list">
               <div class="model-capability-header">
@@ -500,6 +548,9 @@
                     <div class="model-current-cell">
                       <strong>{{ workflowCurrentModelName(capability.capabilityId) }}</strong>
                       <p class="muted">{{ workflowCurrentModelDetail(capability.capabilityId) }}</p>
+                      @if (workflowRuntimeNotice(capability.capabilityId); as runtimeNotice) {
+                        <p class="muted warn">{{ runtimeNotice | translate }}</p>
+                      }
                     </div>
                     <span class="pill" [ngClass]="workflowCapabilityToneClass(capability.capabilityId)">
                       {{ workflowCapabilityStatusLabel(capability.capabilityId) | translate }}
@@ -511,6 +562,17 @@
                       <button mat-button type="button" (click)="openModelCapabilityMoreModels(capability)">
                         {{ 'More models' | translate }}
                       </button>
+                      @if (workflowRuntimeInstallCandidate(capability.capabilityId); as runtime) {
+                        <button
+                          mat-button
+                          color="primary"
+                          type="button"
+                          [disabled]="runtimeActionDisabled(runtime)"
+                          (click)="installModelRuntime(runtime)"
+                        >
+                          {{ 'Install runtime' | translate }}
+                        </button>
+                      }
                       @if (workflowTestEndpoint(capability.capabilityId); as endpoint) {
                         <button
                           mat-button

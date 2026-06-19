@@ -685,6 +685,44 @@ export interface ModelEndpointsResponse {
   endpoints: ModelEndpointRecord[];
 }
 
+export interface ModelRuntimeStatus {
+  runtime_id: string;
+  display_name: string;
+  runtime_kind: string;
+  provider_key: string;
+  status: string;
+  managed?: boolean;
+  installable?: boolean;
+  enabled?: boolean;
+  capabilities?: string[];
+  runtime_profiles?: string[];
+  bind_url?: string | null;
+  healthz_url?: string | null;
+  model_store_path?: string;
+  message?: string;
+  installed_at?: string | null;
+  updated_at?: string | null;
+  metadata?: Record<string, unknown>;
+  installed: boolean;
+  active: boolean;
+  next_action: string;
+}
+
+export interface ModelRuntimeManagerResponse {
+  generated_at: string;
+  checked_at: string;
+  status: string;
+  runtimes: ModelRuntimeStatus[];
+  blockers?: string[];
+  warnings?: string[];
+}
+
+export interface ModelRuntimeInstallResponse {
+  runtime: ModelRuntimeStatus;
+  runtime_manager: ModelRuntimeManagerResponse;
+  message: string;
+}
+
 export interface ModelEndpointPayload {
   model_endpoint_id: string;
   workspace_id?: string | null;
@@ -755,6 +793,7 @@ export interface LocalModelCatalogItem {
   revision?: string;
   file_policy?: string;
   default_hf_endpoint?: string | null;
+  runtime_profiles?: string[];
   expected_capabilities?: string[];
   recommended_hardware: string;
   status: string;
@@ -806,6 +845,7 @@ export interface HardwareReadinessComponent {
 export type ModelCapabilityStatusValue =
   | 'ready'
   | 'needs_model'
+  | 'needs_runtime'
   | 'downloading'
   | 'installed_not_running'
   | 'degraded'
@@ -836,6 +876,7 @@ export interface ModelCapabilityInstallableModel {
   repo_id?: string | null;
   file_policy?: string;
   default_hf_endpoint?: string | null;
+  runtime_profiles?: string[];
   expected_capabilities?: string[];
 }
 
@@ -852,6 +893,11 @@ export interface ModelCapabilityStatus {
   download_jobs: LocalModelDownloadJob[];
   next_action: string;
   runtime_ready?: boolean;
+  required_runtime_profile?: string | null;
+  runtime_installed?: boolean;
+  runtime_installable?: boolean;
+  runtime_status?: string | null;
+  runtime_next_action?: string | null;
   source_of_truth?: string;
   evidence?: string[];
 }
@@ -871,6 +917,7 @@ export interface ModelCapabilitiesResponse {
   checked_at: string;
   status: string;
   model_store?: ModelStoreStatusResponse;
+  runtime_manager?: ModelRuntimeManagerResponse;
   capabilities: ModelCapabilityStatus[];
   blockers?: string[];
   warnings?: string[];

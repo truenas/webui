@@ -66,7 +66,7 @@
 .ha-entity-filters {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
 .ha-entity-filters {

@@ -305,6 +305,54 @@ describe('Harbor Assistant API service', () => {
     await installPromise;
   });
 
+  it('keeps automation review APIs under /api/harbor-beacon', async () => {
+    const response = {
+      generated_at: '1',
+      pending_count: 1,
+      reviews: [{
+        review_id: 'review/1',
+        workspace_id: 'local',
+        source: 'harbor_assistant_chat',
+        original_prompt: 'Turn on hallway lights when motion is detected.',
+        status: 'pending',
+      }],
+    };
+
+    const listPromise = firstValueFrom(spectator.service.getAutomationReviews());
+    const listReq = httpMock.expectOne('/api/harbor-beacon/automation/reviews');
+    expect(listReq.request.method).toBe('GET');
+    listReq.flush(response);
+    await listPromise;
+
+    const createPromise = firstValueFrom(spectator.service.createAutomationReview({
+      original_prompt: 'Turn on hallway lights when motion is detected.',
+      status: 'pending',
+    }));
+    const createReq = httpMock.expectOne('/api/harbor-beacon/automation/reviews');
+    expect(createReq.request.method).toBe('POST');
+    expect(createReq.request.body.original_prompt).toContain('hallway');
+    createReq.flush(response);
+    await createPromise;
+
+    const enablePromise = firstValueFrom(spectator.service.enableAutomationReview('review/1'));
+    const enableReq = httpMock.expectOne('/api/harbor-beacon/automation/reviews/review%2F1/enable');
+    expect(enableReq.request.method).toBe('POST');
+    enableReq.flush({ ...response, pending_count: 0, reviews: [{ ...response.reviews[0], status: 'active' }] });
+    await enablePromise;
+
+    const pausePromise = firstValueFrom(spectator.service.pauseAutomationReview('review/1'));
+    const pauseReq = httpMock.expectOne('/api/harbor-beacon/automation/reviews/review%2F1/pause');
+    expect(pauseReq.request.method).toBe('POST');
+    pauseReq.flush({ ...response, pending_count: 0, reviews: [{ ...response.reviews[0], status: 'paused' }] });
+    await pausePromise;
+
+    const discardPromise = firstValueFrom(spectator.service.discardAutomationReview('review/1'));
+    const discardReq = httpMock.expectOne('/api/harbor-beacon/automation/reviews/review%2F1/discard');
+    expect(discardReq.request.method).toBe('POST');
+    discardReq.flush({ ...response, pending_count: 0, reviews: [{ ...response.reviews[0], status: 'discarded' }] });
+    await discardPromise;
+  });
+
   it('keeps model management APIs under /api/harbor-beacon', async () => {
     const endpointId = 'llm/local';
 
@@ -319,6 +367,22 @@ describe('Harbor Assistant API service', () => {
     expect(capabilitiesReq.request.method).toBe('GET');
     capabilitiesReq.flush({ generated_at: '1', checked_at: '1', status: 'ready', capabilities: [] });
     expect((await capabilitiesPromise).capabilities).toEqual([]);
+
+    const runtimesPromise = firstValueFrom(spectator.service.getModelRuntimes());
+    const runtimesReq = httpMock.expectOne('/api/harbor-beacon/models/runtimes');
+    expect(runtimesReq.request.method).toBe('GET');
+    runtimesReq.flush({ generated_at: '1', checked_at: '1', status: 'needs-runtime', runtimes: [] });
+    expect((await runtimesPromise).runtimes).toEqual([]);
+
+    const runtimeInstallPromise = firstValueFrom(spectator.service.installModelRuntime('harbor-candle'));
+    const runtimeInstallReq = httpMock.expectOne('/api/harbor-beacon/models/runtimes/harbor-candle/install');
+    expect(runtimeInstallReq.request.method).toBe('POST');
+    runtimeInstallReq.flush({
+      runtime: { runtime_id: 'harbor-candle', display_name: 'Harbor Candle Runtime', runtime_kind: 'embedded_candle', provider_key: 'harbor', status: 'installed', installed: true, active: false, next_action: 'ready' },
+      runtime_manager: { generated_at: '1', checked_at: '1', status: 'installed', runtimes: [] },
+      message: 'enabled',
+    });
+    await runtimeInstallPromise;
 
     const patchPromise = firstValueFrom(spectator.service.updateModelEndpoint(endpointId, {
       status: 'disabled',
@@ -458,13 +522,12 @@ describe('Harbor Assistant API service', () => {
       'utf8',
     );
 
-    const literalApiUrls = Array.from(source.matchAll(/['`]([^'`]*\/api\/[^'`]*)['`]/g))
-      .map((match) => match[1])
-      .filter((url) => !url.startsWith('app/'));
-
-    expect(literalApiUrls.length).toBeGreaterThan(0);
-    literalApiUrls.forEach((url) => expect(url).toContain('/api/harbor-beacon'));
-    expect(source).toContain('/api/harbor-beacon/inference/healthz');
+    expect(source).toContain('harborAssistantBeaconApiUrl');
+    expect(source).toContain("this.apiUrl('/inference/healthz')");
+    expect(source).not.toContain("'/api/beacon");
+    expect(source).not.toContain('`/api/beacon');
+    expect(source).not.toContain("'/api/harbor-beacon");
+    expect(source).not.toContain('`/api/harbor-beacon');
     [':4174', ':4175', ':4176', ':4196', ':8787', '/api/turns', '/api/web/turns'].forEach((forbidden) => {
       expect(source).not.toContain(forbidden);
     });

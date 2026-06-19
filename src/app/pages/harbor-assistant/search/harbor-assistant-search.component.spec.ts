@@ -31,7 +31,7 @@ describe('Harbor Assistant search component', () => {
     localStorage.clear();
     api = {
       search: jest.fn(() => of(searchResponse())),
-      previewUrl: jest.fn((path: string) => `/api/harbor-beacon/knowledge/preview?path=${encodeURIComponent(path)}`),
+      previewUrl: jest.fn((path: string) => `/api/beacon/knowledge/preview?path=${encodeURIComponent(path)}`),
     };
   });
 

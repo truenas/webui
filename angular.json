@@ -75,6 +75,44 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
+            },
+            "harbornavi-k3": {
+              "optimization": true,
+              "outputHashing": "all",
+              "namedChunks": false,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "tsConfig": "src/tsconfig.harbornavi.app.json",
+              "fileReplacements": [
+                {
+                  "replace": "src/main.ts",
+                  "with": "src/main.harbornavi.ts"
+                },
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/app/app.component.ts",
+                  "with": "src/app/app.component.harbornavi.ts"
+                },
+                {
+                  "replace": "src/app/app.routes.ts",
+                  "with": "src/app/app.routes.harbornavi.ts"
+                },
+                {
+                  "replace": "src/app/pages/harbor-assistant/services/harbor-assistant-api-prefix.ts",
+                  "with": "src/app/pages/harbor-assistant/services/harbor-assistant-api-prefix.harbornavi.ts"
+                },
+                {
+                  "replace": "src/app/modules/page-header/page-title-header/page-header.component.ts",
+                  "with": "src/app/modules/page-header/page-title-header/page-header.component.harbornavi.ts"
+                },
+                {
+                  "replace": "src/app/pages/file-manager/folder-picker-dialog/folder-picker-dialog.component.ts",
+                  "with": "src/app/pages/file-manager/folder-picker-dialog/folder-picker-dialog.component.harbornavi.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": ""

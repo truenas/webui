@@ -826,3 +826,45 @@ $fm-transition-normal: 200ms ease;
     }
   }
 }
+
+// =============================================================================
+// Read-Only Warning Banner
+// =============================================================================
+
+.read-only-banner {
+  display: flex;
+  align-items: center;
+  gap: $fm-space-3;
+  padding: $fm-space-3 $fm-space-4;
+  margin: $fm-space-4;
+  background-color: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 10px;
+  color: #b45309;
+  font-size: $fm-font-size-base;
+  font-weight: $fm-font-weight-medium;
+  animation: slideDown 250ms ease-out;
+
+  .banner-icon {
+    font-size: 20px;
+    color: #f59e0b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .banner-message {
+    line-height: 1.4;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
