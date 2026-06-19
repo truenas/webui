@@ -43,7 +43,7 @@ export class UserListComponent {
   readonly dataProvider = input.required<UsersDataProvider>();
 
   protected readonly displayedColumns = ['username', 'full_name', 'builtin', 'roles'];
-  protected readonly emptyIcon = 'mdi-account-outline';
+  protected readonly emptyIcon = 'mdi-account-multiple';
   protected readonly trackByUid = (_index: number, row: User): number => row.uid;
 
   protected userType(row: User): string {

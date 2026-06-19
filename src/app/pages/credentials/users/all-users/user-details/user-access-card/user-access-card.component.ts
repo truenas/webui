@@ -5,7 +5,8 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnIconComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -37,6 +38,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   imports: [
     TnButtonComponent,
     TnCardComponent,
+    TnCardFooterActionsDirective,
     TnIconComponent,
     TnTooltipDirective,
     TranslateModule,
