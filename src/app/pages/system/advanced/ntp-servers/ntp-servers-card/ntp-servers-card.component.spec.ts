@@ -95,6 +95,18 @@ describe('NtpServersCardComponent', () => {
     expect(spectator.query('ix-ntp-servers-form')).not.toBeNull();
   });
 
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-ntp-servers-form')).not.toBeNull();
+
+    spectator.query(NtpServersFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-ntp-servers-form')).toBeNull();
+  });
+
   it('opens the Edit NTP Server form in the side panel with the selected row', async () => {
     const menu = await openFirstRowMenu();
     await menu.clickItem({ label: 'Edit' });

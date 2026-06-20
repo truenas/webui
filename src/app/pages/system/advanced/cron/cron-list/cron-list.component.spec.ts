@@ -134,6 +134,18 @@ describe('CronListComponent', () => {
     expect(spectator.query('ix-cron-form')).not.toBeNull();
   });
 
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-cron-form')).not.toBeNull();
+
+    spectator.query(CronFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-cron-form')).toBeNull();
+  });
+
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     await table.toggleRowExpansion(0);
 

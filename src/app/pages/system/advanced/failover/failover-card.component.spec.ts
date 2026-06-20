@@ -10,6 +10,7 @@ import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverCardComponent } from 'app/pages/system/advanced/failover/failover-card.component';
+import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
@@ -69,5 +70,17 @@ describe('FailoverCardComponent', () => {
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.query('ix-failover-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-failover-form')).not.toBeNull();
+
+    spectator.query(FailoverFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-failover-form')).toBeNull();
   });
 });

@@ -134,13 +134,7 @@ export class TunableCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.editingTunable.set(undefined);
-      this.configOpen.set(true);
-    });
+    this.openForm(undefined);
   }
 
   loadItems(): void {
@@ -163,6 +157,10 @@ export class TunableCardComponent implements OnInit {
   }
 
   onEdit(row: Tunable): void {
+    this.openForm(row);
+  }
+
+  private openForm(row: Tunable | undefined): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       take(1),
       takeUntilDestroyed(this.destroyRef),

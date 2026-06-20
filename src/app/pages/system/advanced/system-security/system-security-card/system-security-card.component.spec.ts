@@ -8,6 +8,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
+import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
@@ -68,5 +69,17 @@ describe('SystemSecurityCardComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.query('ix-system-security-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await button.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-system-security-form')).not.toBeNull();
+
+    spectator.query(SystemSecurityFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-system-security-form')).toBeNull();
   });
 });

@@ -10,6 +10,7 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
+import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -73,5 +74,17 @@ describe('ConsoleCardComponent', () => {
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.query('ix-console-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-console-form')).not.toBeNull();
+
+    spectator.query(ConsoleFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-console-form')).toBeNull();
   });
 });

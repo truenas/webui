@@ -11,6 +11,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   ReplicationSettingsCardComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.component';
+import { ReplicationSettingsFormComponent } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 describe('ReplicationSettingsCardComponent', () => {
@@ -54,5 +55,17 @@ describe('ReplicationSettingsCardComponent', () => {
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.query('ix-replication-settings-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-replication-settings-form')).not.toBeNull();
+
+    spectator.query(ReplicationSettingsFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-replication-settings-form')).toBeNull();
   });
 });

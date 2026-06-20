@@ -15,6 +15,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllowedAddressesCardComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
+import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -86,6 +87,18 @@ describe('AllowedAddressesCardComponent', () => {
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.query('ix-allowed-addresses-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-allowed-addresses-form')).not.toBeNull();
+
+    spectator.query(AllowedAddressesFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-allowed-addresses-form')).toBeNull();
   });
 
   it('deletes a Allowed IP Address with confirmation when Delete icon is pressed', async () => {

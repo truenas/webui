@@ -21,11 +21,12 @@
           [label]="'Allowed IP Addresses' | translate"
           (delete)="removeAddress(i)"
         >
-          <ix-input
-            [formControlName]="i"
+          <tn-form-field
             [label]="'IP Address/Subnet' | translate"
             [required]="true"
-          ></ix-input>
+          >
+            <tn-input [formControlName]="i"></tn-input>
+          </tn-form-field>
         </ix-list-item>
       }
     </ix-list>

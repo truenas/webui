@@ -20,6 +20,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
+import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -129,6 +130,18 @@ describe('AccessCardComponent', () => {
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.query('ix-access-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configure = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configure.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-access-form')).not.toBeNull();
+
+    spectator.query(AccessFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-access-form')).toBeNull();
   });
 
   it('terminates the session when corresponding Terminate is pressed', async () => {

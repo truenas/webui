@@ -10,6 +10,7 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
+import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 describe('GlobalTwoFactorAuthCardComponent', () => {
@@ -66,5 +67,17 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.query('ix-global-two-factor-auth-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-global-two-factor-auth-form')).not.toBeNull();
+
+    spectator.query(GlobalTwoFactorAuthFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-global-two-factor-auth-form')).toBeNull();
   });
 });

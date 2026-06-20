@@ -11,6 +11,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
+import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -67,5 +68,17 @@ describe('SelfEncryptingDriveCardComponent', () => {
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.query('ix-self-encrypting-drive-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-self-encrypting-drive-form')).not.toBeNull();
+
+    spectator.query(SelfEncryptingDriveFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-self-encrypting-drive-form')).toBeNull();
   });
 });

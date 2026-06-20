@@ -98,6 +98,18 @@ describe('InitShutdownListComponent', () => {
     expect(spectator.query('ix-init-shutdown-form')).not.toBeNull();
   });
 
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-init-shutdown-form')).not.toBeNull();
+
+    spectator.query(InitShutdownFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-init-shutdown-form')).toBeNull();
+  });
+
   it('opens an edit form in the side panel with the selected row when Edit is pressed', async () => {
     const menu = await openFirstRowMenu();
     await menu.clickItem({ label: 'Edit' });

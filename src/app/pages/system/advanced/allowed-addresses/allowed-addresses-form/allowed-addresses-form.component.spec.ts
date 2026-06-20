@@ -5,7 +5,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -13,7 +13,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -58,6 +57,10 @@ describe('AllowedAddressesComponent', () => {
     ],
   });
 
+  const getAddressInput = async (index = 0): Promise<TnInputHarness> => {
+    return (await loader.getAllHarnesses(TnInputHarness))[index];
+  };
+
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -65,15 +68,11 @@ describe('AllowedAddressesComponent', () => {
   });
 
   it('shows allowed addresses when editing a form', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
-
-    expect(values).toEqual({ 'IP Address/Subnet': '1.1.1.1/32' });
+    expect(await (await getAddressInput()).getValue()).toBe('1.1.1.1/32');
   });
 
   it('sends an update payload with specific IP address', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'IP Address/Subnet': '2.2.2.2' });
+    await (await getAddressInput()).setValue('2.2.2.2');
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -84,8 +83,7 @@ describe('AllowedAddressesComponent', () => {
   });
 
   it('sends an update payload with an IP address and a subnet mask', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'IP Address/Subnet': '192.168.1.0/24' });
+    await (await getAddressInput()).setValue('192.168.1.0/24');
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -107,8 +105,7 @@ describe('AllowedAddressesComponent', () => {
     it('does not show a warning when user already has allowed IPs and adds more', async () => {
       expect(spectator.query(WarningComponent)).not.toExist();
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({ 'IP Address/Subnet': '192.168.1.0/24' });
+      await (await getAddressInput()).setValue('192.168.1.0/24');
 
       expect(spectator.query(WarningComponent)).not.toExist();
     });
@@ -122,8 +119,7 @@ describe('AllowedAddressesComponent', () => {
 
       expect(spectator.query(WarningComponent)).not.toExist();
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({ 'IP Address/Subnet': '192.168.1.0/24' });
+      await (await getAddressInput()).setValue('192.168.1.0/24');
 
       const warning = spectator.query(WarningComponent);
       expect(warning.color()).toBe('red');
@@ -136,8 +132,7 @@ describe('AllowedAddressesComponent', () => {
   describe('SystemGeneralService integration', () => {
     it('should call SystemGeneralService.handleUiServiceRestart when saving changes', async () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({ 'IP Address/Subnet': '2.2.2.2' });
+      await (await getAddressInput()).setValue('2.2.2.2');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -156,8 +151,7 @@ describe('AllowedAddressesComponent', () => {
 
     it('should call SystemGeneralService.handleUiServiceRestart after system.general.update succeeds', async () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({ 'IP Address/Subnet': '3.3.3.3' });
+      await (await getAddressInput()).setValue('3.3.3.3');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -169,8 +163,7 @@ describe('AllowedAddressesComponent', () => {
     });
 
     it('should close slide-in after successful restart handling', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({ 'IP Address/Subnet': '4.4.4.4' });
+      await (await getAddressInput()).setValue('4.4.4.4');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -180,10 +173,9 @@ describe('AllowedAddressesComponent', () => {
 
     it('should handle form validation and submission correctly', async () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
-      const form = await loader.getHarness(IxFormHarness);
 
       // Test with a valid IP address format
-      await form.fillForm({ 'IP Address/Subnet': '10.0.0.1/24' });
+      await (await getAddressInput()).setValue('10.0.0.1/24');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -196,8 +188,7 @@ describe('AllowedAddressesComponent', () => {
 
     it('should show success message and handle restart flow', async () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({ 'IP Address/Subnet': '5.5.5.5' });
+      await (await getAddressInput()).setValue('5.5.5.5');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -215,8 +206,7 @@ describe('AllowedAddressesComponent', () => {
       // Mock restart to return false (user cancelled)
       (systemGeneralService.handleUiServiceRestart as jest.Mock) = jest.fn(() => of(true));
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({ 'IP Address/Subnet': '6.6.6.6' });
+      await (await getAddressInput()).setValue('6.6.6.6');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();

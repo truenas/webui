@@ -10,6 +10,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   NvidiaDriversCardComponent,
 } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-card/nvidia-drivers-card.component';
+import { NvidiaDriversFormComponent } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-form/nvidia-drivers-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -70,5 +71,17 @@ describe('NvidiaDriversCardComponent', () => {
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.query('ix-nvidia-drivers-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-nvidia-drivers-form')).not.toBeNull();
+
+    spectator.query(NvidiaDriversFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-nvidia-drivers-form')).toBeNull();
   });
 });

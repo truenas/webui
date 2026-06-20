@@ -9,6 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
+import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 describe('AuditCardComponent', () => {
@@ -64,5 +65,17 @@ describe('AuditCardComponent', () => {
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.query('ix-audit-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-audit-form')).not.toBeNull();
+
+    spectator.query(AuditFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-audit-form')).toBeNull();
   });
 });

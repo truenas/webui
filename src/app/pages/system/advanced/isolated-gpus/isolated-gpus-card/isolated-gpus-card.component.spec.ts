@@ -13,6 +13,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   IsolatedGpusCardComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.component';
+import { IsolatedGpusFormComponent } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prevention.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -82,6 +83,18 @@ describe('IsolatedGpusCardComponent', () => {
 
       expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
       expect(spectator.query('ix-isolated-gpus-form')).not.toBeNull();
+    });
+
+    it('closes the side panel when the hosted form emits closed', async () => {
+      const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+      await configureButton.click();
+      spectator.detectChanges();
+      expect(spectator.query('ix-isolated-gpus-form')).not.toBeNull();
+
+      spectator.query(IsolatedGpusFormComponent).closed.emit(true);
+      spectator.detectChanges();
+
+      expect(spectator.query('ix-isolated-gpus-form')).toBeNull();
     });
   });
 
