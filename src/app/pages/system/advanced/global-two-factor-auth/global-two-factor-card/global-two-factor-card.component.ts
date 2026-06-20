@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
@@ -56,15 +56,27 @@ export class GlobalTwoFactorAuthCardComponent {
   protected configForm = viewChild(GlobalTwoFactorAuthFormComponent);
 
   private readonly reloadConfig$ = new Subject<void>();
-  readonly twoFactorConfig$ = this.reloadConfig$.pipe(
+
+  // Single shared fetch feeds both the read-only summary (via loading state) and the
+  // signal passed into the form, so opening the panel does not re-fetch the same config.
+  private readonly config$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.api.call('auth.twofactor.config')),
+    shareReplay({
+      refCount: false,
+      bufferSize: 1,
+    }),
+  );
+
+  readonly twoFactorConfig$ = this.config$.pipe(
     toLoadingState(),
     shareReplay({
       refCount: false,
       bufferSize: 1,
     }),
   );
+
+  protected readonly loadedConfig = toSignal(this.config$);
 
   protected readonly closeGuard = (): Observable<boolean> => {
     return this.configForm()?.hasUnsavedChanges()

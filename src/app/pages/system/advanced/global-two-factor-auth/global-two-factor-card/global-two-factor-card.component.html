@@ -56,7 +56,10 @@
   [(open)]="configOpen"
 >
   @if (configOpen()) {
-    <ix-global-two-factor-auth-form (closed)="onConfigClosed($event)"></ix-global-two-factor-auth-form>
+    <ix-global-two-factor-auth-form
+      [config]="loadedConfig()"
+      (closed)="onConfigClosed($event)"
+    ></ix-global-two-factor-auth-form>
   }
   @if (configForm(); as form) {
     <div tnSidePanelAction>

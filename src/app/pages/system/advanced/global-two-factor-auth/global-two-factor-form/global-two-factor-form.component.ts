@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, signal, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -70,17 +70,36 @@ export class GlobalTwoFactorAuthFormComponent extends SidePanelForm implements O
 
   protected twoFactorConfig: GlobalTwoFactorConfig;
 
+  /**
+   * Config supplied by a `<tn-side-panel>` host (which has no `SlideInRef` to carry data).
+   * The legacy SlideIn host passes the same payload via `slideInRef.getData()`. When neither
+   * host provides it, the form fetches the config itself. Avoids a redundant
+   * `auth.twofactor.config` round-trip when the host already has the config in hand.
+   */
+  readonly config = input<GlobalTwoFactorConfig | undefined>(undefined);
+
   ngOnInit(): void {
+    const providedConfig = this.slideInRef
+      ? this.slideInRef.getData() as GlobalTwoFactorConfig | undefined
+      : this.config();
+
+    if (providedConfig) {
+      this.applyConfig(providedConfig);
+      return;
+    }
+
     this.api.call('auth.twofactor.config').pipe(
       take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((config) => {
-      this.twoFactorConfig = config;
-      this.form.patchValue({
-        enabled: config.enabled,
-        window: config.window,
-        ssh: config.services.ssh,
-      });
+    ).subscribe((config) => this.applyConfig(config));
+  }
+
+  private applyConfig(config: GlobalTwoFactorConfig): void {
+    this.twoFactorConfig = config;
+    this.form.patchValue({
+      enabled: config.enabled,
+      window: config.window,
+      ssh: config.services.ssh,
     });
   }
 
