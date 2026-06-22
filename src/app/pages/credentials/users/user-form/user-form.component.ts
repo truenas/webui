@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { tooltips } from '@codemirror/view';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnFormFieldComponent, TnInputComponent } from '@truenas/ui-components';
@@ -84,7 +83,6 @@ export class UserFormComponent implements OnInit {
   protected password = signal<string>('');
   protected passwordDisabled = signal<boolean>(false);
 
-  protected readonly tooltips = tooltips;
   protected readonly Role = Role;
   protected readonly requiredRoles = [Role.AccountWrite];
 
