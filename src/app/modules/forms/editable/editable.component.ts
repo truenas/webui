@@ -137,6 +137,10 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
       // CDK overlay outside the editable's DOM, so without this a click on a
       // tn-select option / tn-chip-input suggestion counts as "outside" and
       // prematurely closes the editable.
+      // TEMP: these are internal library class names, not part of the
+      // @truenas/ui-components public API, and may break on a library bump.
+      // Replace once the library exposes a stable overlay hook (tracked under
+      // Epic NAS-141021 as a library follow-up).
       '.tn-select-dropdown',
       '.tn-chip-input__dropdown',
       '.tn-autocomplete__dropdown',

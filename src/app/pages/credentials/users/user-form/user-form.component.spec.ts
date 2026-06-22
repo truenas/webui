@@ -197,7 +197,7 @@ describe('UserFormComponent', () => {
     });
 
     it('checks username field is disabled when user immutable', async () => {
-      const usernameField = await loader.getHarness(TnInputHarness);
+      const usernameField = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
       expect(await usernameField.isDisabled()).toBeTruthy();
     });
   });
@@ -233,7 +233,7 @@ describe('UserFormComponent', () => {
     });
 
     async function setUsername(value: string): Promise<TnFormFieldHarness> {
-      const usernameInput = await loader.getHarness(TnInputHarness);
+      const usernameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
       if (value === '') {
         // The harness can't type an empty string; type a value then clear the native
         // input to leave the field dirty and empty so the required error surfaces.
@@ -281,12 +281,12 @@ describe('UserFormComponent', () => {
     });
 
     it('should populate username field with existing user data', async () => {
-      const usernameInput = await loader.getHarness(TnInputHarness);
+      const usernameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
       expect(await usernameInput.getValue()).toBe('test');
     });
 
     it('should disable username field for immutable user', async () => {
-      const usernameInput = await loader.getHarness(TnInputHarness);
+      const usernameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
       expect(await usernameInput.isDisabled()).toBe(true);
     });
   });
@@ -304,7 +304,7 @@ describe('UserFormComponent', () => {
       });
 
       it('should be enabled when form has valid username', async () => {
-        const usernameInput = await loader.getHarness(TnInputHarness);
+        const usernameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
         await usernameInput.setValue('validuser');
 
         const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
@@ -319,7 +319,7 @@ describe('UserFormComponent', () => {
       });
 
       it('should call user.create API when saving new user', async () => {
-        const usernameInput = await loader.getHarness(TnInputHarness);
+        const usernameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
         await usernameInput.setValue('newuser');
 
         spectator.detectChanges();
@@ -339,7 +339,7 @@ describe('UserFormComponent', () => {
       });
 
       it('should close slide-in after successful creation', async () => {
-        const usernameInput = await loader.getHarness(TnInputHarness);
+        const usernameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
         await usernameInput.setValue('newuser');
 
         spectator.detectChanges();
