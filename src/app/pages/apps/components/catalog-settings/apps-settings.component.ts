@@ -7,7 +7,9 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+} from '@truenas/ui-components';
 import {
   combineLatest,
   filter,
@@ -22,7 +24,6 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -46,7 +47,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   imports: [
     ReactiveFormsModule,
     ModalHeaderComponent,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     IxCheckboxListComponent,
     IxListItemComponent,
     IxListComponent,
@@ -55,6 +56,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
     IxCheckboxComponent,
     FormActionsComponent,
     TnButtonComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],

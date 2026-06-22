@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
@@ -72,7 +73,7 @@ describe('PortalFormComponent', () => {
     });
 
     it('sends an create payload to websocket and closes modal when save is pressed', async () => {
-      const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+      const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
 
       expect(spectator.query('.list-item')).toBeVisible();
@@ -139,8 +140,8 @@ describe('PortalFormComponent', () => {
     });
 
     it('adds and removes blocks when Add or Delete button is pressed', async () => {
-      const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
-      let deleteButton: MatButtonHarness;
+      const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+      let deleteButton: TnIconButtonHarness;
       expect(spectator.queryAll('.list-item')).toHaveLength(0);
       expect(spectator.component.form.value.ip).toHaveLength(0);
 
@@ -152,12 +153,12 @@ describe('PortalFormComponent', () => {
       expect(spectator.queryAll('.list-item')).toHaveLength(2);
       expect(spectator.component.form.value.ip).toHaveLength(2);
 
-      deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '.delete-btn' }));
+      deleteButton = await loader.getHarness(TnIconButtonHarness.with({ selector: '.delete-btn' }));
       await deleteButton.click();
       expect(spectator.queryAll('.list-item')).toHaveLength(1);
       expect(spectator.component.form.value.ip).toHaveLength(1);
 
-      deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '.delete-btn' }));
+      deleteButton = await loader.getHarness(TnIconButtonHarness.with({ selector: '.delete-btn' }));
       await deleteButton.click();
       expect(spectator.queryAll('.list-item')).toHaveLength(0);
       expect(spectator.component.form.value.ip).toHaveLength(0);

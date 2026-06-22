@@ -1,17 +1,25 @@
 <ix-page-header>
-  <ix-checkbox
-    [formControl]="autoScrollControl"
-    [label]="'Auto Scroll' | translate"
-    [tooltip]="'Automatically scroll to the latest log entry' | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="'Automatically scroll to the latest log entry' | translate">
+    <tn-checkbox
+      testId="auto-scroll"
+      [formControl]="autoScrollControl"
+      [label]="'Auto Scroll' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-toolbar-slider
-    [label]="'Set font size' | translate"
-    [min]="10"
-    [max]="20"
-    [value]="fontSize()"
-    (valueChange)="onFontSizeChanged($event)"
-  ></ix-toolbar-slider>
+  <div class="font-size-control">
+    <span class="font-size-label">{{ 'Set font size' | translate }}</span>
+    <tn-slider
+      class="font-size-slider"
+      testId="font-size"
+      labelType="none"
+      [min]="minFontSize"
+      [max]="maxFontSize"
+      [step]="1"
+    >
+      <input tnSliderThumb [formControl]="fontSizeControl" />
+    </tn-slider>
+  </div>
 
   <tn-button
     testId="reconnect"

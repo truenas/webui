@@ -5,44 +5,58 @@
 ></ix-modal-header>
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset>
+  <tn-form-section>
     @if (!isLoggedInToDockerHub && !existingDockerRegistry) {
-      <ix-select
-        formControlName="registry"
-        [label]="'URI' | translate"
-        [options]="registriesOptions$"
-        [hideEmpty]="true"
-      ></ix-select>
+      <tn-form-field [label]="'URI' | translate">
+        <tn-select
+          testId="registry"
+          formControlName="registry"
+          [options]="(registriesOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     }
 
     @if (existingDockerRegistry || isLoggedInToDockerHub || !form.controls.registry.value) {
-      <ix-input
-        formControlName="uri"
-        [label]="'URI' | translate"
-        [placeholder]="dockerHubRegistry"
-        [required]="true"
-      ></ix-input>
+      <tn-form-field [label]="'URI' | translate" [required]="true">
+        <tn-input
+          name="uri"
+          testId="uri"
+          formControlName="uri"
+          [required]="true"
+          [placeholder]="dockerHubRegistry"
+        ></tn-input>
+      </tn-form-field>
 
-      <ix-input
-        formControlName="name"
-        [label]="'Name' | translate"
-        [required]="true"
-      ></ix-input>
+      <tn-form-field [label]="'Name' | translate">
+        <tn-input
+          name="name"
+          testId="name"
+          formControlName="name"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
     }
 
-    <ix-input
-      formControlName="username"
-      [label]="'Username' | translate"
-      [required]="true"
-    ></ix-input>
+    <tn-form-field [label]="'Username' | translate">
+      <tn-input
+        name="username"
+        testId="username"
+        formControlName="username"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="password"
-      type="password"
-      [label]="'Password' | translate"
-      [required]="true"
-    ></ix-input>
-  </ix-fieldset>
+    <tn-form-field [label]="'Password' | translate">
+      <tn-input
+        name="password"
+        testId="password"
+        formControlName="password"
+        [inputType]="InputType.Password"
+        [required]="true"
+        [showPasswordToggle]="true"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
 
   <ix-form-actions>
     <tn-button

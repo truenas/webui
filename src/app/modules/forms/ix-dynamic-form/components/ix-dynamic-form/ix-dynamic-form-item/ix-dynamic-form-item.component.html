@@ -101,38 +101,54 @@
 
         @case (DynamicFormSchemaType.Input) {
           @let inputSchema = asInputSchema(schema);
-          <ix-input
-            [formControlName]="inputSchema.controlName"
+          <tn-form-field
             [label]="inputSchema.title ? (inputSchema.title | translate) : ''"
-            [placeholder]="inputSchema.placeholder ? (inputSchema.placeholder | translate) : ''"
             [tooltip]="inputSchema.tooltip ? (inputSchema.tooltip | translate) : ''"
             [required]="inputSchema.required || false"
-            [type]="inputSchema.inputType || 'text'"
-          ></ix-input>
+          >
+            <tn-input
+              [name]="inputSchema.controlName"
+              [testId]="inputSchema.controlName"
+              [formControlName]="inputSchema.controlName"
+              [placeholder]="inputSchema.placeholder ? (inputSchema.placeholder | translate) : ''"
+              [required]="inputSchema.required || false"
+              [inputType]="toInputType(inputSchema.inputType)"
+              [showPasswordToggle]="inputSchema.inputType === 'password'"
+            ></tn-input>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Uri) {
           @let uriSchema = asUriSchema(schema);
-          <ix-input
-            [formControlName]="uriSchema.controlName"
+          <tn-form-field
             [label]="uriSchema.title ? (uriSchema.title | translate) : ''"
-            [placeholder]="uriSchema.placeholder ? (uriSchema.placeholder | translate) : ''"
             [tooltip]="uriSchema.tooltip ? (uriSchema.tooltip | translate) : ''"
             [required]="uriSchema.required || false"
-            [type]="uriSchema.inputType || 'text'"
-          ></ix-input>
+          >
+            <tn-input
+              [name]="uriSchema.controlName"
+              [testId]="uriSchema.controlName"
+              [formControlName]="uriSchema.controlName"
+              [placeholder]="uriSchema.placeholder ? (uriSchema.placeholder | translate) : ''"
+              [required]="uriSchema.required || false"
+              [inputType]="toInputType(uriSchema.inputType)"
+            ></tn-input>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Select) {
           @let selectSchema = asSelectSchema(schema);
-          <ix-select
-            [formControlName]="selectSchema.controlName"
+          <tn-form-field
             [label]="selectSchema.title ? (selectSchema.title | translate) : ''"
-            [options]="selectSchema.options"
             [tooltip]="selectSchema.tooltip ? (selectSchema.tooltip | translate) : ''"
             [required]="selectSchema.required || false"
-            [hideEmpty]="selectSchema.hideEmpty || false"
-          ></ix-select>
+          >
+            <tn-select
+              [testId]="selectSchema.controlName"
+              [formControlName]="selectSchema.controlName"
+              [options]="(selectSchema.options | async) ?? []"
+            ></tn-select>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Enum) {
@@ -162,12 +178,18 @@
         }
 
         @case (DynamicFormSchemaType.Checkbox) {
-          <ix-checkbox
-            [formControlName]="schema.controlName"
-            [label]="schema.title ? (schema.title | translate) : ''"
+          <tn-form-field
+            class="checkbox-field"
             [tooltip]="schema.tooltip ? (schema.tooltip | translate) : ''"
             [required]="schema.required || false"
-          ></ix-checkbox>
+          >
+            <tn-checkbox
+              [testId]="schema.controlName"
+              [formControlName]="schema.controlName"
+              [label]="schema.title ? (schema.title | translate) : ''"
+              [required]="schema.required || false"
+            ></tn-checkbox>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Ipaddr) {

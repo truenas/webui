@@ -4,7 +4,10 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  InputType,
+  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -13,8 +16,6 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,8 +31,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     ModalHeaderComponent,
     TnButtonComponent,
-    IxFieldsetComponent,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnFormSectionComponent,
+    TnInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
   ],
@@ -46,6 +48,7 @@ export class PullImageFormComponent {
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
+  protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);
 

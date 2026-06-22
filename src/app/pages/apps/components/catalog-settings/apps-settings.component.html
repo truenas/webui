@@ -5,7 +5,7 @@
 ></ix-modal-header>
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset>
+  <tn-form-section>
     <ix-checkbox-list
       class="trains"
       formControlName="preferred_trains"
@@ -82,18 +82,23 @@
     </ix-list>
 
     @if (showNvidiaCheckbox()) {
-      <ix-checkbox
-        formControlName="nvidia"
-        [label]="'Enable NVIDIA GPU Support' | translate"
-        [tooltip]="tooltips.install_nvidia_driver | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="tooltips.install_nvidia_driver | translate">
+        <tn-checkbox
+          testId="nvidia"
+          formControlName="nvidia"
+          [label]="'Enable NVIDIA GPU Support' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
     }
 
-    <ix-checkbox
-      formControlName="enable_image_updates"
-      [label]="'Check for docker image updates' | translate"
-    ></ix-checkbox>
-  </ix-fieldset>
+    <tn-form-field>
+      <tn-checkbox
+        testId="enable-image-updates"
+        formControlName="enable_image_updates"
+        [label]="'Check for docker image updates' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
 
   <div class="actions">
     <ix-form-actions>

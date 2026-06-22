@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -14,8 +14,6 @@ import { App, ChartFormValue } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxCodeEditorHarness } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.harness';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -65,7 +63,6 @@ describe('CustomAppFormComponent', () => {
   const createComponent = createComponentFactory({
     component: CustomAppFormComponent,
     imports: [
-      IxInputComponent,
       IxCodeEditorComponent,
       MockComponent(PageHeaderComponent),
       ReactiveFormsModule,
@@ -110,7 +107,7 @@ describe('CustomAppFormComponent', () => {
     });
 
     it('checks save and closes slide in when successfully submitted', async () => {
-      const appNameControl = await loader.getHarness(IxInputHarness);
+      const appNameControl = await loader.getHarness(TnInputHarness);
       await appNameControl.setValue('test');
       const configControl = await loader.getHarness(IxCodeEditorHarness);
       await configControl.setValue('config');
@@ -131,7 +128,7 @@ describe('CustomAppFormComponent', () => {
     });
 
     it('forbidden app names are not allowed', async () => {
-      const appNameControl = await loader.getHarness(IxInputHarness);
+      const appNameControl = await loader.getHarness(TnInputHarness);
       await appNameControl.setValue('test-app-one');
       spectator.detectChanges();
 

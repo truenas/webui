@@ -1,18 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  InputType,
+  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { dockerHubRegistry, DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -25,13 +26,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './docker-registry-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
     TranslateModule,
     ModalHeaderComponent,
     TnButtonComponent,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnFormSectionComponent,
+    TnInputComponent,
+    TnSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
   ],
@@ -50,6 +53,7 @@ export class DockerRegistryFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
+  protected readonly InputType = InputType;
 
   protected existingDockerRegistry: DockerRegistry | undefined;
   protected isLoggedInToDockerHub = false;

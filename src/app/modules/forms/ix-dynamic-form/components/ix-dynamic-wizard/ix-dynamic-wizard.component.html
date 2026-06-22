@@ -4,7 +4,7 @@
       [id]="section.name"
       [title]="section.name | translate"
     >
-      <mat-divider class="divider" inset></mat-divider>
+      <tn-divider class="divider" [inset]="true"></tn-divider>
       <div class="section">
         <div class="fieldset">
           @for (schema of section.schema; track schema) {

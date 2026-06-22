@@ -5,34 +5,50 @@
 ></ix-modal-header>
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset>
-    <ix-input
-      formControlName="image"
+  <tn-form-section>
+    <tn-form-field
       [label]="'Image Name' | translate"
       [required]="true"
       [tooltip]="tooltips.image | translate"
-    ></ix-input>
+    >
+      <tn-input
+        name="image"
+        testId="image"
+        formControlName="image"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="tag"
-      [label]="'Image Tag' | translate"
-    ></ix-input>
-  </ix-fieldset>
-  <ix-fieldset [title]="'Docker Registry Authentication' | translate">
+    <tn-form-field [label]="'Image Tag' | translate">
+      <tn-input
+        name="tag"
+        testId="tag"
+        formControlName="tag"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
+  <tn-form-section [heading]="'Docker Registry Authentication' | translate">
     <p class="hint">
       {{ 'Optional. Only needed for private images.' | translate }}
     </p>
-    <ix-input
-      formControlName="username"
-      [label]="'Username' | translate"
-    ></ix-input>
+    <tn-form-field [label]="'Username' | translate">
+      <tn-input
+        name="username"
+        testId="username"
+        formControlName="username"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="password"
-      type="password"
-      [label]="'Password' | translate"
-    ></ix-input>
-  </ix-fieldset>
+    <tn-form-field [label]="'Password' | translate">
+      <tn-input
+        name="password"
+        testId="password"
+        formControlName="password"
+        [inputType]="InputType.Password"
+        [showPasswordToggle]="true"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
 
   <ix-form-actions>
     <tn-button

@@ -2,13 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -53,13 +52,10 @@ describe('PullImageFormComponent', () => {
   });
 
   it('pulls docker image when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Username: 'john',
-      Password: '12345678',
-      'Image Name': 'private/redis',
-      'Image Tag': 'stable',
-    });
+    await (await loader.getHarness(TnInputHarness.with({ name: 'image' }))).setValue('private/redis');
+    await (await loader.getHarness(TnInputHarness.with({ name: 'tag' }))).setValue('stable');
+    await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).setValue('john');
+    await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).setValue('12345678');
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();

@@ -4,14 +4,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { dockerHubRegistry } from 'app/interfaces/docker-registry.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
@@ -58,19 +58,13 @@ describe('DockerRegistryFormComponent', () => {
     });
 
     it('initializes the form with default values for Docker Hub as a URI and submits with default values', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const uriSelect = await loader.getHarness(TnSelectHarness);
+      expect(await uriSelect.getDisplayText()).toBe('Docker Hub');
+      expect(await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).getValue()).toBe('');
+      expect(await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).getValue()).toBe('');
 
-      expect(values).toEqual({
-        URI: 'Docker Hub',
-        Username: '',
-        Password: '',
-      });
-
-      await form.fillForm({
-        Username: 'admin',
-        Password: 'password',
-      });
+      await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).setValue('admin');
+      await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).setValue('password');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -87,17 +81,13 @@ describe('DockerRegistryFormComponent', () => {
     });
 
     it('sends a create payload and closes the modal when the save button is clicked', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        URI: 'Other Registry',
-      });
+      const uriSelect = await loader.getHarness(TnSelectHarness);
+      await uriSelect.selectOption('Other Registry');
 
-      await form.fillForm({
-        URI: 'https://ghcr.io/',
-        Name: 'New GHCR Registry',
-        Username: 'admin',
-        Password: 'password',
-      });
+      await (await loader.getHarness(TnInputHarness.with({ name: 'uri' }))).setValue('https://ghcr.io/');
+      await (await loader.getHarness(TnInputHarness.with({ name: 'name' }))).setValue('New GHCR Registry');
+      await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).setValue('admin');
+      await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).setValue('password');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -131,28 +121,20 @@ describe('DockerRegistryFormComponent', () => {
     });
 
     it('populates the form with existing registry values', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      expect(await (await loader.getHarness(TnInputHarness.with({ name: 'uri' }))).getValue()).toBe(dockerHubRegistry);
+      expect(await (await loader.getHarness(TnInputHarness.with({ name: 'name' }))).getValue()).toBe('Old Registry');
+      expect(await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).getValue()).toBe('old_user');
+      expect(await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).getValue()).toBe('');
 
-      expect(values).toEqual({
-        URI: dockerHubRegistry,
-        Name: 'Old Registry',
-        Username: 'old_user',
-        Password: '',
-      });
-
-      const uriSelector = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'URI' }));
+      const uriSelector = await loader.getHarnessOrNull(TnSelectHarness);
       expect(uriSelector).toBeNull();
     });
 
     it('sends an update payload and closes the modal when the save button is clicked', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        URI: dockerHubRegistry,
-        Name: 'Updated Registry',
-        Username: 'updated_user',
-        Password: 'updated_password',
-      });
+      await (await loader.getHarness(TnInputHarness.with({ name: 'uri' }))).setValue(dockerHubRegistry);
+      await (await loader.getHarness(TnInputHarness.with({ name: 'name' }))).setValue('Updated Registry');
+      await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).setValue('updated_user');
+      await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).setValue('updated_password');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -186,18 +168,13 @@ describe('DockerRegistryFormComponent', () => {
       api = spectator.inject(ApiService);
     });
 
-    it('initializes the form with empty string and does not show URI ix-select', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+    it('initializes the form with empty string and does not show URI select', async () => {
+      expect(await (await loader.getHarness(TnInputHarness.with({ name: 'uri' }))).getValue()).toBe('');
+      expect(await (await loader.getHarness(TnInputHarness.with({ name: 'name' }))).getValue()).toBe('');
+      expect(await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).getValue()).toBe('');
+      expect(await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).getValue()).toBe('');
 
-      expect(values).toEqual({
-        URI: '',
-        Name: '',
-        Username: '',
-        Password: '',
-      });
-
-      const uriSelector = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'URI' }));
+      const uriSelector = await loader.getHarnessOrNull(TnSelectHarness);
       expect(uriSelector).toBeNull();
     });
   });
