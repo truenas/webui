@@ -355,16 +355,16 @@ div.line-chart-tools {
   gap: 8px;
   justify-content: flex-end;
 
+  .zoom-group {
+    display: flex;
+  }
+
   tn-icon-button {
     align-items: center;
     display: inline-flex;
     font-size: 18px;
     justify-content: center;
     width: 40px;
-
-    &:not(:first-child) {
-      margin-left: 8px;
-    }
   }
 }
 
