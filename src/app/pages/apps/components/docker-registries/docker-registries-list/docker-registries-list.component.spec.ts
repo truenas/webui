@@ -1,17 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { dockerHubRegistry, DockerRegistry } from 'app/interfaces/docker-registry.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -23,7 +22,7 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 describe('DockerRegistriesListComponent', () => {
   let spectator: Spectator<DockerRegistriesListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const dockerRegistries: DockerRegistry[] = [
     {
@@ -41,8 +40,6 @@ describe('DockerRegistriesListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
-    ],
-    declarations: [
     ],
     providers: [
       mockAuth(),
@@ -71,21 +68,21 @@ describe('DockerRegistriesListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
-  it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Username', 'URI', ''],
-      ['Docker Hub', 'docker', dockerHubRegistry, ''],
-    ];
-
+  it('queries the registries and shows them as table rows', async () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.registry.query');
-    expect(await table.getCellTexts()).toEqual(expectedRows);
+
+    expect(await table.getRowCount()).toBe(1);
+    expect(await table.getHeaderTexts()).toEqual(expect.arrayContaining(['Name', 'Username', 'URI']));
+    expect(await table.getCellText(0, 'name')).toBe('Docker Hub');
+    expect(await table.getCellText(0, 'username')).toBe('docker');
+    expect(await table.getCellText(0, 'uri')).toBe(dockerHubRegistry);
   });
 
-  it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'Docker Hub');
+  it('opens delete dialog when the row "Delete" button is pressed', async () => {
+    const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
@@ -97,9 +94,21 @@ describe('DockerRegistriesListComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.registry.delete', [1]);
   });
 
+  it('opens form when the row "Edit" button is pressed', async () => {
+    const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'pencil' }));
+    await editButton.click();
+
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DockerRegistryFormComponent, {
+      data: {
+        registry: dockerRegistries[0],
+        isLoggedInToDockerHub: true,
+      },
+    });
+  });
+
   it('opens form when "Add Registry" button is pressed', async () => {
-    const pullImageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Registry' }));
-    await pullImageButton.click();
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Registry' }));
+    await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DockerRegistryFormComponent, {
       data: {

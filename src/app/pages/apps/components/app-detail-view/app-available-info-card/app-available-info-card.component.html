@@ -1,53 +1,54 @@
-<h3>{{ 'Application Info' | translate }}</h3>
-
-<div class="app-list-item">
-  <span class="label" [tnTooltip]="'Upstream Application Version' | translate">{{ 'Version' | translate }}:</span>
-  @if (isLoading()) {
-    <ngx-skeleton-loader></ngx-skeleton-loader>
-  } @else {
-    {{ app()?.latest_app_version | orNotAvailable }}
-  }
-</div>
-<div class="app-list-item">
-  <span class="label" [tnTooltip]="'TrueNAS Catalog Revision' | translate">{{ 'Revision' | translate }}:</span>
-  @if (isLoading()) {
-    <ngx-skeleton-loader></ngx-skeleton-loader>
-  } @else {
-    {{ app()?.latest_version | orNotAvailable }}
-  }
-</div>
-<div class="app-list-item sources">
-  <span class="label">{{ 'Source' | translate }}:</span>
-  @if (isLoading()) {
-    <ngx-skeleton-loader></ngx-skeleton-loader>
-  } @else {
-    <div>
-      @for (source of app()?.sources; track source; let last = $last) {
-        <a
-          class="source-link"
-          target="_blank"
-          [href]="source"
-          [title]="source"
-          [ixTest]="[app()?.name, 'source']"
-        >{{ source | cleanLink }}</a>
-        @if (!last) {
-          <span>, </span>
+<tn-card padding="small" elevation="none" [title]="'Application Info' | translate">
+  <div class="app-list-item">
+    <span class="label" [tnTooltip]="'Upstream Application Version' | translate">{{ 'Version' | translate }}:</span>
+    @if (isLoading()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      {{ app()?.latest_app_version | orNotAvailable }}
+    }
+  </div>
+  <div class="app-list-item">
+    <span class="label" [tnTooltip]="'TrueNAS Catalog Revision' | translate">{{ 'Revision' | translate }}:</span>
+    @if (isLoading()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      {{ app()?.latest_version | orNotAvailable }}
+    }
+  </div>
+  <div class="app-list-item sources">
+    <span class="label">{{ 'Source' | translate }}:</span>
+    @if (isLoading()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      <div>
+        @for (source of app()?.sources; track source; let last = $last) {
+          <a
+            class="source-link"
+            target="_blank"
+            tnTestIdType="link"
+            [href]="source"
+            [title]="source"
+            [tnTestId]="[app()?.name, 'source']"
+          >{{ source | cleanLink }}</a>
+          @if (!last) {
+            <span>, </span>
+          }
+        } @empty {
+          {{ 'N/A' | translate }}
         }
-      } @empty {
+      </div>
+    }
+  </div>
+  <div class="app-list-item">
+    <span class="label">{{ 'Last App Update' | translate }}:</span>
+    @if (isLoading()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @if (app()?.last_update) {
+        {{ app().last_update.$date | formatDateTime }}
+      } @else {
         {{ 'N/A' | translate }}
       }
-    </div>
-  }
-</div>
-<div class="app-list-item">
-  <span class="label">{{ 'Last App Update' | translate }}:</span>
-  @if (isLoading()) {
-    <ngx-skeleton-loader></ngx-skeleton-loader>
-  } @else {
-    @if (app()?.last_update) {
-      {{ app().last_update.$date | formatDateTime }}
-    } @else {
-      {{ 'N/A' | translate }}
     }
-  }
-</div>
+  </div>
+</tn-card>

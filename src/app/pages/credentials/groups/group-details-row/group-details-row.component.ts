@@ -1,17 +1,12 @@
 import { Component, ChangeDetectionStrategy, computed, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
-import {
-  IxTableExpandableRowComponent,
-} from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DeleteGroupDialog,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
@@ -23,10 +18,7 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
   styleUrls: ['./group-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxTableExpandableRowComponent,
-    MatButton,
-    TestDirective,
-    TnIconComponent,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
     TnTooltipDirective,
@@ -40,7 +32,6 @@ export class GroupDetailsRowComponent {
   private translate = inject(TranslateService);
 
   readonly group = input.required<Group>();
-  readonly colspan = input<number>();
 
   readonly delete = output<number>();
   protected readonly Role = Role;
@@ -64,7 +55,7 @@ export class GroupDetailsRowComponent {
     if (group?.roles?.length || group?.users?.length) {
       return this.translate.instant('Groups with privileges or members cannot be deleted.');
     }
-    return null;
+    return '';
   });
 
   protected openGroupMembersForm(): void {

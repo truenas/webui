@@ -1,59 +1,51 @@
-<button
-  mat-button
-  ixTest="apps-settings"
-  [matMenuTriggerFor]="menu"
-  [ixUiSearch]="searchableElements.elements.settings"
->
-  {{ 'Configuration' | translate }}
-  <tn-icon name="menu-down" library="mdi" class="menu-caret"></tn-icon>
-</button>
+<span class="config-button">
+  <tn-button
+    testId="apps-settings"
+    [label]="'Configuration' | translate"
+    [tnMenuTriggerFor]="menu"
+    [ixUiSearch]="searchableElements.elements.settings"
+  ></tn-button>
+  <tn-icon class="config-caret" name="menu-down" library="mdi" aria-hidden="true"></tn-icon>
+</span>
 
-<mat-menu #menu="matMenu" overlapTrigger="false">
-  <button
+<tn-menu #menu>
+  <tn-menu-item
     *ixRequiresRoles="updateDockerRoles"
-    mat-menu-item
-    ixTest="choose-pool"
+    testId="choose-pool"
+    [label]="'Choose Pool' | translate"
     [ixUiSearch]="searchableElements.elements.choosePool"
-    (click)="onChoosePool()"
-  >
-    {{ 'Choose Pool' | translate }}
-  </button>
+    (itemClick)="onChoosePool()"
+  ></tn-menu-item>
 
   @if (!!(dockerStore.selectedPool$ | async)) {
-    <button
+    <tn-menu-item
       *ixRequiresRoles="updateDockerRoles"
-      mat-menu-item
-      ixTest="unset-pool"
-      (click)="onUnsetPool()"
-    >
-      {{ 'Unset Pool' | translate }}
-    </button>
+      testId="unset-pool"
+      [label]="'Unset Pool' | translate"
+      (itemClick)="onUnsetPool()"
+    ></tn-menu-item>
   }
 
-  <button
-    mat-menu-item
-    ixTest="container-images"
-    [routerLink]="['/apps', 'manage-container-images']"
-  >
-    {{ 'Manage Container Images' | translate }}
-  </button>
+  <tn-menu-item
+    testId="container-images"
+    [label]="'Manage Container Images' | translate"
+    (itemClick)="goTo(['/apps', 'manage-container-images'])"
+  ></tn-menu-item>
 
-  <button
-    mat-menu-item
-    ixTest="docker-registries"
+  <tn-menu-item
+    testId="docker-registries"
     tnTooltipPosition="right"
-    [tnTooltip]="!(dockerStore.selectedPool$ | async) ? ('Choose pool first' | translate) : helptext.dockerRegistries.tooltip | translate"
+    [label]="'Sign-in to a Docker registry' | translate"
+    [tnTooltip]="!(dockerStore.selectedPool$ | async)
+      ? ('Choose pool first' | translate)
+      : (helptext.dockerRegistries.tooltip | translate)"
     [disabled]="!(dockerStore.selectedPool$ | async)"
-    [routerLink]="['/apps', 'docker-registries']"
-  >
-    {{ 'Sign-in to a Docker registry' | translate }}
-  </button>
+    (itemClick)="goTo(['/apps', 'docker-registries'])"
+  ></tn-menu-item>
 
-  <button
-    mat-menu-item
-    ixTest="update-preferred-trains"
-    (click)="manageCatalog()"
-  >
-    {{ 'Settings' | translate }}
-  </button>
-</mat-menu>
+  <tn-menu-item
+    testId="update-preferred-trains"
+    [label]="'Settings' | translate"
+    (itemClick)="manageCatalog()"
+  ></tn-menu-item>
+</tn-menu>

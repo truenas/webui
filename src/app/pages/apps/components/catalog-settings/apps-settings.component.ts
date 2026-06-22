@@ -5,10 +5,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
   combineLatest,
   filter,
@@ -34,7 +33,6 @@ import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { AppState } from 'app/store';
@@ -48,8 +46,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   imports: [
     ReactiveFormsModule,
     ModalHeaderComponent,
-    MatCardContent,
-    MatCard,
     IxFieldsetComponent,
     IxCheckboxListComponent,
     IxListItemComponent,
@@ -58,9 +54,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
     IxInputComponent,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
     TranslateModule,
   ],
   providers: [

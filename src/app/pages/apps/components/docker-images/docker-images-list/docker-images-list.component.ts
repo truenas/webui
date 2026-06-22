@@ -1,148 +1,70 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
-import {
-  filter, map, take, tap,
-} from 'rxjs/operators';
+import { TnDialog, TnTablePagerComponent,
+  TnButtonComponent, TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
+  TnSortEvent, TnTableColumnDirective, TnTableComponent } from '@truenas/ui-components';
+import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { mapTnSortToProviderSorting } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
-
-// TODO: Exclude AnythingUi when NAS-127632 is done
-export interface ContainerImageUi extends ContainerImage {
-  selected?: boolean;
-}
 
 @Component({
   selector: 'ix-docker-images-list',
   templateUrl: './docker-images-list.component.html',
   styleUrls: ['./docker-images-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [FileSizePipe],
   imports: [
     TranslateModule,
     PageHeaderComponent,
     BasicSearchComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    TnIconComponent,
-    AsyncPipe,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnIconButtonComponent,
     TnTablePagerComponent,
+    FileSizePipe,
+    AsyncPipe,
   ],
 })
 export class DockerImagesListComponent implements OnInit {
-  emptyService = inject(EmptyService);
-  formatter = inject(IxFormatterService);
+  protected emptyService = inject(EmptyService);
   private api = inject(ApiService);
   private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
-  private fileSizePipe = inject(FileSizePipe);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = dockerImagesListElements;
 
-  dataProvider: AsyncDataProvider<ContainerImageUi>;
-  containerImages: ContainerImageUi[] = [];
+  dataProvider: AsyncDataProvider<ContainerImage>;
   searchQuery = signal('');
-  columns = createTable<ContainerImageUi>([
-    checkboxColumn({
-      propertyName: 'selected',
-      onRowCheck: (row, checked) => {
-        const imageToSelect = this.containerImages.find((image) => row.id === image.id);
-        if (imageToSelect) {
-          imageToSelect.selected = checked;
-        }
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.searchQuery());
-      },
-      onColumnCheck: (checked) => {
-        this.dataProvider.currentPage$.pipe(
-          take(1),
-          takeUntilDestroyed(this.destroyRef),
-        ).subscribe((images) => {
-          images.forEach((image) => image.selected = checked);
-          this.dataProvider.setRows([]);
-          this.onListFiltered(this.searchQuery());
-        });
-      },
-      cssClass: 'checkboxs-column',
-    }),
-    textColumn({
-      title: this.translate.instant('Image ID'),
-      propertyName: 'id',
-    }),
-    textColumn({
-      title: this.translate.instant('Tags'),
-      propertyName: 'repo_tags',
-      getValue: (row) => row.repo_tags.join(', '),
-    }),
-    textColumn({
-      title: this.translate.instant('Image Size'),
-      propertyName: 'size',
-      getValue: (row) => {
-        return row.size
-          ? this.fileSizePipe.transform(row.size)
-          : this.translate.instant('Unknown');
-      },
-      sortBy: (row) => row.size,
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.doDelete([row]),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'container-image-' + row.id,
-    ariaLabels: (row) => [row.id, this.translate.instant('Docker Image')],
-  });
+  protected selectedImages = signal<ContainerImage[]>([]);
 
-  get selectedImages(): ContainerImageUi[] {
-    return this.containerImages.filter((image) => image.selected);
-  }
+  protected readonly displayedColumns = ['id', 'repo_tags', 'size', 'actions'];
+
+  private readonly tnTable = viewChild(TnTableComponent);
 
   ngOnInit(): void {
-    const containerImages$ = this.api.call('app.image.query').pipe(
-      map((images) => images.map((image) => ({ ...image, selected: false } as ContainerImageUi))),
-      tap((images) => this.containerImages = images),
-    );
-    this.dataProvider = new AsyncDataProvider(containerImages$);
+    this.dataProvider = new AsyncDataProvider(this.api.call('app.image.query'));
     this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -154,10 +76,10 @@ export class DockerImagesListComponent implements OnInit {
       .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
-  doDelete(images: ContainerImageUi[]): void {
-    this.tnDialog.open(DockerImageDeleteDialog, { data: this.prepareImages(images) })
+  doDelete(images: ContainerImage[]): void {
+    this.tnDialog.open(DockerImageDeleteDialog, { data: images })
       .closed
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
+      .pipe(filter(Boolean), take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }
 
@@ -171,14 +93,17 @@ export class DockerImagesListComponent implements OnInit {
     });
   }
 
-  private refresh(): void {
-    this.dataProvider.load();
+  protected onSelectionChange(images: ContainerImage[]): void {
+    this.selectedImages.set(images);
   }
 
-  private prepareImages(images: ContainerImageUi[]): ContainerImage[] {
-    return images.map((image) => {
-      delete image.selected;
-      return image as ContainerImage;
-    });
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToProviderSorting<ContainerImage>(event));
+  }
+
+  private refresh(): void {
+    this.tnTable()?.selection.clear();
+    this.selectedImages.set([]);
+    this.dataProvider.load();
   }
 }

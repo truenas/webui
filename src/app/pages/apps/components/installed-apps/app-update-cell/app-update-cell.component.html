@@ -1,17 +1,20 @@
 @if (showIcon()) {
   @if (hasUpdate()) {
     <tn-icon
-      class="icon"
+      class="icon icon--update"
       tnTooltipPosition="above"
       name="alert-circle"
       library="mdi"
+      customSize="14px"
       [tnTooltip]="getUpdateMessage()"
     ></tn-icon>
   } @else {
     <tn-icon
+      class="icon"
       tnTooltipPosition="above"
       name="check-circle"
       library="mdi"
+      customSize="14px"
       [tnTooltip]="'Up to date' | translate"
     ></tn-icon>
   }

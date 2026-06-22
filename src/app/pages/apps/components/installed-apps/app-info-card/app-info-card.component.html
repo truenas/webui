@@ -1,174 +1,170 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Application Info' | translate }}
-    </h3>
-    <div class="actions">
-      <button
-        id="edit-app"
-        mat-button
-        [ixTest]="[app().name, 'edit']"
-        (click)="editButtonPressed()"
-      >
-        {{ 'Edit' | translate }}
-      </button>
+<tn-card
+  class="card"
+  padding="small"
+  elevation="none"
+>
+  <div tnCardHeader class="card-header">
+    <h3 class="detail-card-title">{{ 'Application Info' | translate }}</h3>
+    <div class="header-actions">
+      <tn-button
+        variant="outline"
+        [testId]="[app().name, 'edit']"
+        [label]="'Edit' | translate"
+        (onClick)="editButtonPressed()"
+      ></tn-button>
 
-      <button
-        mat-icon-button
-        ixTest="app-info-menu"
-        [matMenuTriggerFor]="appInfoMenu"
-        [tnTooltip]="'More Options' | translate"
-        [attr.aria-label]="'More Options' | translate"
-      >
-        <tn-icon name="dots-vertical" library="mdi"></tn-icon>
-      </button>
-      <mat-menu #appInfoMenu="matMenu">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-menu-item
-          [ixTest]="[app().name, 'update']"
-          [disabled]="!app().upgrade_available"
-          (click)="updateButtonPressed()"
-        >
-          {{ 'Update' | translate }}
-        </button>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-menu-item
-          [ixTest]="[app().name, 'convert']"
-          [disabled]="app().custom_app"
-          (click)="openConvertDialog()"
-        >{{ 'Convert to custom app' | translate}}</button>
-      </mat-menu>
+      <tn-icon-button
+        name="dots-vertical"
+        library="mdi"
+        testId="app-info-menu"
+        [ariaLabel]="'More Options' | translate"
+        [tooltip]="'More Options' | translate"
+        [tnMenuTriggerFor]="appInfoMenu"
+      ></tn-icon-button>
     </div>
-  </mat-card-header>
-  <mat-card-content>
-    <div class="info-container">
-      <a class="app-logo" [ixTest]="[app().name, 'image-details']" [routerLink]="appDetailsRouterUrl()">
-        <img [src]="app().metadata.icon" [src-fallback]="imagePlaceholder" />
-      </a>
-      <div class="details-list">
-        <div class="details-item">
-          <div class="label">{{ 'Name' | translate }}:</div>
-          @if (app().custom_app) {
-            <span class="value">{{ name() | orNotAvailable }}</span>
-          } @else {
-            <a class="value" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl()">
-              {{ name() | orNotAvailable }}
-            </a>
-          }
-        </div>
-        <div class="details-item">
-          <div class="label" [tnTooltip]="'Upstream Application Version' | translate">{{ 'Version' | translate }}:</div>
-          <div class="value">
-            {{ app().metadata.app_version | orNotAvailable }}
-          </div>
-        </div>
-        <div class="details-item">
-          <div class="label" [tnTooltip]="'TrueNAS Catalog Revision' | translate">{{ 'Revision' | translate }}:</div>
-          <div class="value">
-            {{ app().version | orNotAvailable }}
-          </div>
-        </div>
-        <div class="details-item sources">
-          <div class="label">{{ 'Source' | translate }}:</div>
-          <div class="value">
-            <div>
-              @for (source of app().metadata.sources; track source; let last = $last) {
-                <a
-                  class="source-link"
-                  target="_blank"
-                  [href]="source"
-                  [title]="source"
-                  [ixTest]="[app().name, 'source']"
-                >{{ source | cleanLink }}</a>
-                @if (!last) {
-                  <span>, </span>
-                }
-              } @empty {
-                {{ 'N/A' | translate }}
-              }
-            </div>
-        </div>
-        </div>
+  </div>
 
-        <div class="details-item">
-          <div class="label">{{ 'Train' | translate }}:</div>
-          <div class="value">
-            {{ app().metadata.train | orNotAvailable }}
-          </div>
-        </div>
-        @if (sortedPortals().length > 0) {
-          <div class="portals" [class.has-many]="sortedPortals().length > 1">
-            @for (portal of sortedPortals(); track portal.label) {
-              <button
-                mat-button
-                class="portal-button"
-                [ixTest]="['portal', app().name, portal.label]"
-                [tnTooltip]="portal.url"
-                (click)="openPortalLink(app(), portal.label)"
-              >
-                {{ portal.label }}
-              </button>
-            }
-          </div>
+  <!--
+    The overflow menu trigger shares the projected header with the custom Edit button
+    (see .header-actions above), so we host the menu inline rather than via tn-card's
+    [headerMenu] slot — that slot renders its own trigger and can't sit beside Edit.
+    Start/Stop, Roll Back and Delete stay in the footer (see [tnCardFooterActions]).
+  -->
+  <tn-menu #appInfoMenu>
+    <tn-menu-item
+      *ixRequiresRoles="requiredRoles"
+      [testId]="[app().name, 'update']"
+      [label]="'Update' | translate"
+      [disabled]="!app().upgrade_available"
+      (itemClick)="updateButtonPressed()"
+    ></tn-menu-item>
+    <tn-menu-item
+      *ixRequiresRoles="requiredRoles"
+      [testId]="[app().name, 'convert']"
+      [label]="'Convert to custom app' | translate"
+      [disabled]="app().custom_app"
+      (itemClick)="openConvertDialog()"
+    ></tn-menu-item>
+  </tn-menu>
+
+  <div class="info-container">
+    <a class="app-logo" tnTestIdType="link" [tnTestId]="[app().name, 'image-details']" [routerLink]="appDetailsRouterUrl()">
+      <img [src]="app().metadata.icon" [src-fallback]="imagePlaceholder" />
+    </a>
+    <div class="details-list">
+      <div class="details-item">
+        <div class="label">{{ 'Name' | translate }}:</div>
+        @if (app().custom_app) {
+          <span class="value">{{ name() | orNotAvailable }}</span>
+        } @else {
+          <a class="value" tnTestIdType="link" [tnTestId]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl()">
+            {{ name() | orNotAvailable }}
+          </a>
         }
       </div>
-    </div>
-  </mat-card-content>
+      <div class="details-item">
+        <div class="label" [tnTooltip]="'Upstream Application Version' | translate">{{ 'Version' | translate }}:</div>
+        <div class="value">
+          {{ app().metadata.app_version | orNotAvailable }}
+        </div>
+      </div>
+      <div class="details-item">
+        <div class="label" [tnTooltip]="'TrueNAS Catalog Revision' | translate">{{ 'Revision' | translate }}:</div>
+        <div class="value">
+          {{ app().version | orNotAvailable }}
+        </div>
+      </div>
+      <div class="details-item sources">
+        <div class="label">{{ 'Source' | translate }}:</div>
+        <div class="value">
+          <div>
+            @for (source of app().metadata.sources; track source; let last = $last) {
+              <a
+                class="source-link"
+                target="_blank"
+                tnTestIdType="link"
+                [href]="source"
+                [title]="source"
+                [tnTestId]="[app().name, 'source']"
+              >{{ source | cleanLink }}</a>
+              @if (!last) {
+                <span>, </span>
+              }
+            } @empty {
+              {{ 'N/A' | translate }}
+            }
+          </div>
+      </div>
+      </div>
 
-  @if (app()) {
-    <mat-card-actions>
-      <div class="cell cell-action cell-status-actions">
-        <ng-container *ixRequiresRoles="requiredRoles">
-          @if (isAppStopped()) {
-            <button
-              mat-button
-              tnTooltipPosition="above"
-              [ixTest]="[app().name, 'start']"
-              [tnTooltip]="'Start' | translate"
-              [disabled]="inProgress()"
-              (click)="startApp.emit(); $event.stopPropagation()"
-            >
-              <tn-icon name="play-circle" library="mdi"></tn-icon> {{ 'Start' | translate }}
-            </button>
+      <div class="details-item">
+        <div class="label">{{ 'Train' | translate }}:</div>
+        <div class="value">
+          {{ app().metadata.train | orNotAvailable }}
+        </div>
+      </div>
+      @if (sortedPortals().length > 0) {
+        <div class="portals" [class.has-many]="sortedPortals().length > 1">
+          @for (portal of sortedPortals(); track portal.label) {
+            <tn-button
+              class="portal-button"
+              [testId]="['portal', app().name, portal.label]"
+              [tnTooltip]="portal.url"
+              [label]="portal.label"
+              (onClick)="openPortalLink(app(), portal.label)"
+            ></tn-button>
           }
-        </ng-container>
-        <ng-container *ixRequiresRoles="requiredRoles">
-          @if (!isAppStopped()) {
-            <button
-              mat-button
-              tnTooltipPosition="above"
-              [ixTest]="[app().name, 'stop']"
-              [tnTooltip]="'Stop' | translate"
-              [disabled]="inProgress()"
-              (click)="stopApp.emit(); $event.stopPropagation()"
-            >
-              <tn-icon name="stop-circle" library="mdi"></tn-icon> {{ 'Stop' | translate }}
-            </button>
-          }
-        </ng-container>
+        </div>
+      }
+    </div>
+  </div>
+
+  <ng-template tnCardFooterActions>
+    <div class="footer-actions">
+      <!--
+        Start/Stop live in the installed-apps list's controls column on desktop;
+        the detail card only surfaces them when that list is hidden (the mobile/
+        tablet master-detail view), matching the pre-migration .cell-status-actions.
+      -->
+      <div class="status-actions">
+        @if (isAppStopped()) {
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            variant="outline"
+            [testId]="[app().name, 'start']"
+            [label]="'Start' | translate"
+            [disabled]="inProgress()"
+            (onClick)="startApp.emit()"
+          ></tn-button>
+        } @else {
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            variant="outline"
+            [testId]="[app().name, 'stop']"
+            [label]="'Stop' | translate"
+            [disabled]="inProgress()"
+            (onClick)="stopApp.emit()"
+          ></tn-button>
+        }
       </div>
 
       @if (isRollbackPossible()) {
-        <button
+        <tn-button
           *ixRequiresRoles="requiredRoles"
-          mat-button
-          [ixTest]="[app().name, 'rollback']"
-          (click)="rollbackApp()"
-        >
-          {{ 'Roll Back' | translate }}
-        </button>
+          variant="outline"
+          [testId]="[app().name, 'rollback']"
+          [label]="'Roll Back' | translate"
+          (onClick)="rollbackApp()"
+        ></tn-button>
       }
 
-      <button
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="[app().name, 'delete']"
-        (click)="deleteButtonPressed()"
-      >
-        {{ 'Delete' | translate }}
-      </button>
-    </mat-card-actions>
-  }
-</mat-card>
+        variant="outline"
+        [testId]="[app().name, 'delete']"
+        [label]="'Delete' | translate"
+        (onClick)="deleteButtonPressed()"
+      ></tn-button>
+    </div>
+  </ng-template>
+</tn-card>

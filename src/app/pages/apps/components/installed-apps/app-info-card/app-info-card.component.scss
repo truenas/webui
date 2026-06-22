@@ -1,6 +1,8 @@
 @import 'mixins/cards';
 @import 'scss-imports/variables';
 
+@include tn-detail-card();
+
 .app-logo {
   cursor: pointer;
   flex: 0 0 auto;
@@ -16,18 +18,19 @@
 }
 
 .card {
-  @include details-card();
   margin: 0;
 
-  mat-card-header {
-    button {
-      margin-left: 8px;
-    }
-  }
-
-  .actions {
+  .card-header {
     align-items: center;
     display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .header-actions {
+    align-items: center;
+    display: flex;
+    gap: 8px;
   }
 
   .info-container {
@@ -75,14 +78,25 @@
   }
 }
 
+.footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.status-actions {
+  // Hidden on desktop (Start/Stop live in the list's controls column there);
+  // surfaced only in the mobile/tablet master-detail view, where the list is gone.
+  display: none;
+
+  @media (max-width: $breakpoint-tablet) {
+    display: contents;
+  }
+}
+
 .source-link {
   white-space: normal;
   word-break: break-word;
-}
-
-.cell-status-actions {
-  @media (max-width: $breakpoint-tablet) {
-    display: inline-block;
-  }
-  display: none;
 }
