@@ -25,7 +25,7 @@ type SelectHarnesses = Partial<{
   devicesSelect: TnSelectHarness;
   metricsSelect: TnSelectHarness;
   categorySelect: TnSelectHarness;
-}>
+}>;
 
 describe('ReportsGlobalControlsComponent', () => {
   let spectator: Spectator<ReportsGlobalControlsComponent>;
