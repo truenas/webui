@@ -957,9 +957,6 @@ mat-form-field {
   z-index: 999 !important;
 }
 
-// The app loader opens via the bare CDK dialog (not MatDialog), so the dialog
-// container has no surface and shows a stray focus outline. The surface is on
-// ix-app-loader; just remove the container outline and let it fill the panel.
 .app-loader-overlay .cdk-dialog-container {
   height: 100%;
   outline: none;
