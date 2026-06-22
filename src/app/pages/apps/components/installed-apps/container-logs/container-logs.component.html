@@ -11,13 +11,17 @@
     <span class="font-size-label">{{ 'Set font size' | translate }}</span>
     <tn-slider
       class="font-size-slider"
-      testId="font-size"
+      testId="set-font-size"
       labelType="none"
       [min]="minFontSize"
       [max]="maxFontSize"
       [step]="1"
     >
-      <input tnSliderThumb [formControl]="fontSizeControl" />
+      <input
+        tnSliderThumb
+        [formControl]="fontSizeControl"
+        [attr.aria-label]="'Set font size' | translate"
+      />
     </tn-slider>
   </div>
 
@@ -41,7 +45,7 @@
     [style.font-size]="fontSize() + 'px'"
   >
     @if (isLoading()) {
-      <tn-spinner class="spinner" [diameter]="40"></tn-spinner>
+      <tn-spinner class="spinner" [diameter]="40" [ariaLabel]="'Loading logs' | translate"></tn-spinner>
     } @else {
       @for (podLog of logs(); track podLog) {
         <div class="log-row">

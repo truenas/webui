@@ -58,13 +58,11 @@
     margin: 23px auto 0;
   }
 
-  // tn-slider has no intrinsic host size; its inner container is width/height 100%.
-  // Give the host a fixed box so the track and thumb lay out correctly in the toolbar.
   tn-slider.font-size-slider {
     display: inline-block;
-    width: 140px;
+    width: 100px;
     height: 24px;
-    margin: 0 16px;
+    margin: 0 8px;
     vertical-align: middle;
   }
 }

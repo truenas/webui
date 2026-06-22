@@ -94,7 +94,7 @@ describe('CustomAppFormComponent', () => {
       providers: [
         mockProvider(SlideInRef, {
           ...slideInRef,
-          getData: app ? jest.fn(() => app) : slideInRef.getData,
+          getData: jest.fn(() => app),
         }),
       ],
     });
@@ -130,10 +130,11 @@ describe('CustomAppFormComponent', () => {
     it('forbidden app names are not allowed', async () => {
       const appNameControl = await loader.getHarness(TnInputHarness);
       await appNameControl.setValue('test-app-one');
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
       const button = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(button.isDisabled()).toBeTruthy();
+      expect(await button.isDisabled()).toBeTruthy();
     });
   });
 
