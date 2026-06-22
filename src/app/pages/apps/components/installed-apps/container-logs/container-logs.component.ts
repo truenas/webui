@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, OnInit, signal, Signal, viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -53,10 +53,10 @@ export class ContainerLogsComponent implements OnInit {
 
   protected readonly minFontSize = 10;
   protected readonly maxFontSize = 20;
-  protected fontSize = signal(14);
   protected isLoading = signal(false);
   protected autoScrollControl = new FormControl<boolean>(true);
   protected fontSizeControl = new FormControl(14, { nonNullable: true });
+  protected fontSize = toSignal(this.fontSizeControl.valueChanges, { initialValue: this.fontSizeControl.value });
 
   protected train: string;
   protected appName: string;
@@ -67,10 +67,6 @@ export class ContainerLogsComponent implements OnInit {
   private logsChangedListener: Subscription;
 
   ngOnInit(): void {
-    this.fontSizeControl.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((size) => this.fontSize.set(size));
-
     if (!this.aroute.parent) {
       throw new Error('Parent route is not found');
     }

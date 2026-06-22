@@ -52,6 +52,21 @@ describe('ContainerLogsComponent', () => {
       const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Auto Scroll' }));
       expect(await checkbox.isChecked()).toBe(true);
     });
+
+    it('applies the default font size to the logs container', () => {
+      const logs = spectator.query('.logs') as HTMLElement;
+      expect(logs.style.fontSize).toBe('14px');
+    });
+
+    it('updates the logs font size when the slider changes', () => {
+      const thumb = spectator.query('input[tnSliderThumb]') as HTMLInputElement;
+      thumb.value = '18';
+      spectator.dispatchFakeEvent(thumb, 'input');
+      spectator.detectChanges();
+
+      const logs = spectator.query('.logs') as HTMLElement;
+      expect(logs.style.fontSize).toBe('18px');
+    });
   });
 
   describe('auto-scroll behavior', () => {

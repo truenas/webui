@@ -147,6 +147,7 @@
               [testId]="selectSchema.controlName"
               [formControlName]="selectSchema.controlName"
               [options]="(selectSchema.options | async) ?? []"
+              [allowEmpty]="!selectSchema.required && !selectSchema.hideEmpty"
             ></tn-select>
           </tn-form-field>
         }
