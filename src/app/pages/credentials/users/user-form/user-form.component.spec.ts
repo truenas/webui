@@ -5,10 +5,12 @@ import { signal } from '@angular/core';
 import {
   FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonHarness, TnFormFieldComponent, TnFormFieldHarness, TnInputComponent, TnInputHarness,
+} from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -19,9 +21,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -67,7 +67,6 @@ describe('UserFormComponent', () => {
 
   let spectator: Spectator<UserFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -121,6 +120,8 @@ describe('UserFormComponent', () => {
     imports: [
       ReactiveFormsModule,
       TranslateModule.forRoot(),
+      TnFormFieldComponent,
+      TnInputComponent,
     ],
     declarations: [
       MockComponents(
@@ -196,7 +197,7 @@ describe('UserFormComponent', () => {
     });
 
     it('checks username field is disabled when user immutable', async () => {
-      const usernameField = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));
+      const usernameField = await loader.getHarness(TnInputHarness);
       expect(await usernameField.isDisabled()).toBeTruthy();
     });
   });
@@ -226,60 +227,66 @@ describe('UserFormComponent', () => {
   });
 
   describe('username field', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
-    it('should show error when username is empty', async () => {
-      await form.fillForm({ Username: '' });
+    async function setUsername(value: string): Promise<TnFormFieldHarness> {
+      const usernameInput = await loader.getHarness(TnInputHarness);
+      if (value === '') {
+        // The harness can't type an empty string; type a value then clear the native
+        // input to leave the field dirty and empty so the required error surfaces.
+        await usernameInput.setValue('a');
+        const input = spectator.query<HTMLInputElement>('input');
+        input.value = '';
+        spectator.dispatchFakeEvent(input, 'input');
+        spectator.dispatchFakeEvent(input, 'blur');
+        spectator.detectChanges();
+      } else {
+        await usernameInput.setValue(value);
+      }
+      return loader.getHarness(TnFormFieldHarness.with({ label: 'Username' }));
+    }
 
-      const usernameInput = await form.getControl('Username') as IxInputHarness;
-      expect(await usernameInput.getErrorText()).toBe('Username is required');
+    it('should show error when username is empty', async () => {
+      const usernameField = await setUsername('');
+      expect(await usernameField.getErrorMessage()).toBe('This field is required');
     });
 
     it('should show error for invalid username pattern', async () => {
-      await form.fillForm({ Username: 'invalid@user' });
-
-      const usernameInput = await form.getControl('Username') as IxInputHarness;
-      const error = await usernameInput.getErrorText();
-      expect(error).toBe('Invalid format or character');
+      const usernameField = await setUsername('invalid@user');
+      expect(await usernameField.getErrorMessage()).toBe('Please enter a valid format');
     });
 
     it('should show error for username exceeding 32 characters', async () => {
-      await form.fillForm({ Username: 'a'.repeat(33) });
-
-      const usernameInput = await form.getControl('Username') as IxInputHarness;
-      expect(await usernameInput.getErrorText()).toBe('The length of Username should be no more than 32');
+      const usernameField = await setUsername('a'.repeat(33));
+      expect(await usernameField.getErrorMessage()).toBe('Maximum length is 32');
     });
 
     it('should accept valid username', async () => {
-      await form.fillForm({ Username: 'validuser' });
-
-      const usernameInput = await form.getControl('Username') as IxInputHarness;
-      expect(await usernameInput.getErrorText()).toBe('');
+      const usernameField = await setUsername('validuser');
+      expect(await usernameField.getErrorMessage()).toBeNull();
     });
   });
 
   describe('editing existing user', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, { ...slideInRef, getData: () => mockUser }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('should populate username field with existing user data', async () => {
-      const usernameInput = await form.getControl('Username') as IxInputHarness;
+      const usernameInput = await loader.getHarness(TnInputHarness);
       expect(await usernameInput.getValue()).toBe('test');
     });
 
     it('should disable username field for immutable user', async () => {
-      const usernameInput = await form.getControl('Username') as IxInputHarness;
+      const usernameInput = await loader.getHarness(TnInputHarness);
       expect(await usernameInput.isDisabled()).toBe(true);
     });
   });
@@ -292,37 +299,33 @@ describe('UserFormComponent', () => {
       });
 
       it('should be disabled when form is invalid', async () => {
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         expect(await saveButton.isDisabled()).toBe(true);
       });
 
       it('should be enabled when form has valid username', async () => {
-        const testForm = await loader.getHarness(IxFormHarness);
-        await testForm.fillForm({
-          Username: 'validuser',
-        });
+        const usernameInput = await loader.getHarness(TnInputHarness);
+        await usernameInput.setValue('validuser');
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         expect(await saveButton.isDisabled()).toBe(false);
       });
     });
 
     describe('creating new user', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
       });
 
       it('should call user.create API when saving new user', async () => {
-        await form.fillForm({
-          Username: 'newuser',
-        });
+        const usernameInput = await loader.getHarness(TnInputHarness);
+        await usernameInput.setValue('newuser');
 
         spectator.detectChanges();
         await spectator.fixture.whenStable();
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         spectator.detectChanges();
@@ -336,14 +339,13 @@ describe('UserFormComponent', () => {
       });
 
       it('should close slide-in after successful creation', async () => {
-        await form.fillForm({
-          Username: 'newuser',
-        });
+        const usernameInput = await loader.getHarness(TnInputHarness);
+        await usernameInput.setValue('newuser');
 
         spectator.detectChanges();
         await spectator.fixture.whenStable();
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         spectator.detectChanges();
@@ -356,18 +358,17 @@ describe('UserFormComponent', () => {
     });
 
     describe('editing existing user', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           providers: [
             mockProvider(SlideInRef, { ...slideInRef, getData: () => mockUser }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
       });
 
       it('should call user.update API when saving changes', async () => {
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [
@@ -379,7 +380,7 @@ describe('UserFormComponent', () => {
       });
 
       it('should close slide-in after successful update', async () => {
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         expect(slideInRef.close).toHaveBeenCalledWith({

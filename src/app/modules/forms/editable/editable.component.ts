@@ -128,16 +128,27 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     if (editableEl.contains(target)) return true;
 
     const allowedOverlaySelectors = [
+      // Angular Material (ix-* form controls) overlays.
       '.mat-mdc-autocomplete-panel',
       '.mat-mdc-select-panel',
       '.mat-mdc-menu-panel',
       '.mat-datepicker-content',
+      // @truenas/ui-components (tn-* form controls) overlays. These render in a
+      // CDK overlay outside the editable's DOM, so without this a click on a
+      // tn-select option / tn-chip-input suggestion counts as "outside" and
+      // prematurely closes the editable.
+      '.tn-select-dropdown',
+      '.tn-chip-input__dropdown',
+      '.tn-autocomplete__dropdown',
+      '.tn-menu-panel',
+      '.tn-datepicker-overlay',
     ];
 
     try {
       if (
         allowedOverlaySelectors.some((sel) => document.querySelector(sel)?.contains(target))
         || document.querySelector('.mat-mdc-dialog-container')
+        || document.querySelector('.tn-dialog-panel')
       ) {
         return true;
       }

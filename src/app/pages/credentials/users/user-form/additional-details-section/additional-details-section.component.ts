@@ -1,8 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject, Signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   combineLatest,
   debounceTime, distinctUntilChanged, filter, map,
@@ -29,21 +33,15 @@ import { DetailsItemComponent } from 'app/modules/details-table/details-item/det
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 import { SudoCommandsValidatorService } from 'app/pages/credentials/users/user-form/validators/sudo-commands-validator.service';
@@ -57,20 +55,21 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './additional-details-section.component.html',
   styleUrl: './additional-details-section.component.scss',
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TnChipInputComponent,
+    TnFormFieldComponent,
     TranslateModule,
-    IxChipsComponent,
     IxComboboxComponent,
     IxExplorerComponent,
     IxPermissionsComponent,
     DetailsTableComponent,
     DetailsItemComponent,
     EditableComponent,
-    IxSelectComponent,
-    TestDirective,
     ExplorerCreateDatasetComponent,
   ],
   providers: [
@@ -93,6 +92,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   editingUser = input<User>();
+  protected readonly InputType = InputType;
   protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
   protected sshAccess = this.userFormStore.sshAccess;
   protected shellAccess = this.userFormStore.shellAccess;
@@ -198,8 +198,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
     homeControl.updateValueAndValidity();
   }
-
-  protected groupsProvider: ChipsProvider = this.createGroupsProvider();
 
   readonly form = this.fb.group({
     full_name: ['' as string],
@@ -370,20 +368,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return this.form.controls.sudo_commands_nopasswd.value?.join(', ') || '';
   }
 
-  private createGroupsProvider(): ChipsProvider {
-    return (query: string) => {
-      return this.api.call('group.query', [[
-        ['name', '^', query],
-        ['local', '=', true],
-        ['immutable', '=', false],
-      ]]).pipe(
-        map((groups) => {
-          return groups.map((group) => group.group);
-        }),
-      );
-    };
-  }
-
   private resolveGroupNames(ids: number[]): void {
     const missingIds = ids.filter((groupId) => !this.groupNameCache.has(groupId));
     if (!missingIds.length) {
@@ -501,9 +485,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.form.controls.group.valueChanges
       .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe((primaryGroupId) => {
-        this.groupsProvider = this.createGroupsProvider();
-        this.cdr.markForCheck();
-
         if (primaryGroupId == null) return;
         const auxGroups = this.form.controls.groups.value;
         const filtered = auxGroups.filter((id) => id !== primaryGroupId);

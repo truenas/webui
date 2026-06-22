@@ -3,17 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnCheckboxHarness, TnInputHarness, TnRadioHarness } from '@truenas/ui-components';
 import { AuthSectionComponent } from 'app/pages/credentials/users/user-form/auth-section/auth-section.component';
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
 describe('AuthSectionComponent', () => {
   let spectator: Spectator<AuthSectionComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const smbAccess = signal(false);
   const sshAccess = signal(false);
@@ -35,10 +31,17 @@ describe('AuthSectionComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(TnInputHarness.with({ name }));
+  const getInputOrNull = (name: string): Promise<TnInputHarness | null> => loader.getHarnessOrNull(
+    TnInputHarness.with({ name }),
+  );
+  const getCheckbox = (label: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ label }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
 
     smbAccess.set(false);
     sshAccess.set(false);
@@ -47,44 +50,35 @@ describe('AuthSectionComponent', () => {
 
   describe('password fields', () => {
     it('shows Password, Confirm Password and "Disable Password" fields when creating a new user', async () => {
-      expect(await form.getValues()).toMatchObject({
-        Password: '',
-        'Confirm Password': '',
-        'Disable Password': false,
-      });
+      expect(await (await getInput('password')).getValue()).toBe('');
+      expect(await (await getInput('password_confirm')).getValue()).toBe('');
+      expect(await (await getCheckbox('Disable Password')).isChecked()).toBe(false);
     });
 
     it('updates the store when password fields are changed', async () => {
-      await form.fillForm({ Password: 'new-password' });
+      await (await getInput('password')).setValue('new-password');
 
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
         password: 'new-password',
       }));
 
-      await form.fillForm({ 'Disable Password': true });
+      await (await getCheckbox('Disable Password')).check();
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
         password_disabled: true,
       }));
     });
 
     it('disables password fields when Disable Password is ticked', async () => {
-      await form.fillForm({ 'Disable Password': true });
+      await (await getCheckbox('Disable Password')).check();
 
-      expect(await form.getDisabledState()).toMatchObject({
-        Password: true,
-        'Confirm Password': true,
-        'Disable Password': false,
-      });
+      expect(await (await getInput('password')).isDisabled()).toBe(true);
+      expect(await (await getInput('password_confirm')).isDisabled()).toBe(true);
+      expect(await (await getCheckbox('Disable Password')).isDisabled()).toBe(false);
     });
 
     it('shows validation error when passwords do not match', async () => {
-      await form.fillForm({
-        Password: 'password123',
-        'Confirm Password': 'different-password',
-      });
-
-      const confirmPasswordInput = spectator.query('[formControlName="password_confirm"]');
-      confirmPasswordInput?.dispatchEvent(new Event('blur'));
+      await (await getInput('password')).setValue('password123');
+      await (await getInput('password_confirm')).setValue('different-password');
       spectator.detectChanges();
 
       // Check that the validator sets the correct error
@@ -95,13 +89,8 @@ describe('AuthSectionComponent', () => {
     });
 
     it('does not show validation error when passwords match', async () => {
-      await form.fillForm({
-        Password: 'password123',
-        'Confirm Password': 'password123',
-      });
-
-      const confirmPasswordInput = spectator.query('[formControlName="password_confirm"]');
-      confirmPasswordInput?.dispatchEvent(new Event('blur'));
+      await (await getInput('password')).setValue('password123');
+      await (await getInput('password_confirm')).setValue('password123');
       spectator.detectChanges();
 
       expect(spectator.component.form.controls.password_confirm.hasError('matchOther')).toBe(false);
@@ -112,21 +101,16 @@ describe('AuthSectionComponent', () => {
       spectator.detectChanges();
 
       // Initially, no confirmation field should be visible
-      const labels = await form.getLabels();
-      expect(labels).not.toContain('Confirm Password');
+      expect(await getInputOrNull('password_confirm')).toBeNull();
 
       // After entering password, confirmation field should appear
-      await form.fillForm({ 'Change Password': 'newpassword' });
-      const labelsAfter = await form.getLabels();
-      expect(labelsAfter).toContain('Confirm Password');
+      await (await getInput('password')).setValue('newpassword');
+      expect(await getInputOrNull('password_confirm')).not.toBeNull();
     });
 
-    it('validates password confirmation is required for new users', async () => {
+    it('validates password confirmation is required for new users', () => {
       // For new users, password_confirm should be required
       expect(spectator.component.form.controls.password_confirm.hasValidator(Validators.required)).toBe(true);
-
-      // Clear the confirmation field
-      await form.fillForm({ 'Confirm Password': '' });
 
       spectator.component.form.controls.password_confirm.markAsTouched();
       spectator.detectChanges();
@@ -144,21 +128,23 @@ describe('AuthSectionComponent', () => {
 
     it('checks stig mode fields when "STIG Mode" is true', async () => {
       isStigMode.set(true);
+      spectator.detectChanges();
 
-      const password = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Password' }));
-      await password.setValue('Generate Temporary One-Time Password');
+      const option = await loader.getHarness(
+        TnRadioHarness.with({ label: 'Generate Temporary One-Time Password' }),
+      );
+      await option.check();
 
-      const value = await password.getValue();
-      expect(value).toBe('Generate Temporary One-Time Password');
+      expect(await option.isChecked()).toBe(true);
     });
 
     it('shows "Disable Password" as disabled and unchecked when smbAccess is enabled', async () => {
       smbAccess.set(true);
       spectator.detectChanges();
 
-      const disablePasswordCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Disable Password' }));
+      const disablePasswordCheckbox = await getCheckbox('Disable Password');
       expect(await disablePasswordCheckbox.isDisabled()).toBe(true);
-      expect(await disablePasswordCheckbox.getValue()).toBe(false);
+      expect(await disablePasswordCheckbox.isChecked()).toBe(false);
     });
 
     it('enables "Disable Password" checkbox when smbAccess is disabled', async () => {
@@ -166,19 +152,19 @@ describe('AuthSectionComponent', () => {
       smbAccess.set(true);
       spectator.detectChanges();
 
-      const disablePasswordCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Disable Password' }));
-      expect(await disablePasswordCheckbox.isDisabled()).toBe(true);
+      expect(await (await getCheckbox('Disable Password')).isDisabled()).toBe(true);
 
       // Disable SMB access
       smbAccess.set(false);
       spectator.detectChanges();
 
       // Checkbox should now be enabled
+      const disablePasswordCheckbox = await getCheckbox('Disable Password');
       expect(await disablePasswordCheckbox.isDisabled()).toBe(false);
 
       // Should be able to toggle the checkbox
-      await disablePasswordCheckbox.setValue(true);
-      expect(await disablePasswordCheckbox.getValue()).toBe(true);
+      await disablePasswordCheckbox.check();
+      expect(await disablePasswordCheckbox.isChecked()).toBe(true);
     });
 
     // TODO: it shows "Change Password" field when editing a user that has a password
@@ -192,14 +178,9 @@ describe('AuthSectionComponent', () => {
       });
       spectator.detectChanges();
 
-      expect(await form.getValues()).toMatchObject({
-        'Disable Password': true,
-      });
-
-      expect(await form.getDisabledState()).toMatchObject({
-        'Disable Password': false,
-        'Allow SSH Login with Password (not recommended)': true,
-      });
+      expect(await (await getCheckbox('Disable Password')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('Disable Password')).isDisabled()).toBe(false);
+      expect(await (await getCheckbox('Allow SSH Login with Password (not recommended)')).isDisabled()).toBe(true);
     });
 
     it('shows Disable Password ticked when editing a user with password disabled and ssh_password_enabled inconsistency', async () => {
@@ -211,22 +192,18 @@ describe('AuthSectionComponent', () => {
       });
       spectator.detectChanges();
 
-      expect(await form.getValues()).toMatchObject({
-        'Disable Password': true,
-      });
-
-      expect(await form.getDisabledState()).toMatchObject({
-        'Disable Password': false,
-        'Allow SSH Login with Password (not recommended)': true,
-      });
+      expect(await (await getCheckbox('Disable Password')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('Disable Password')).isDisabled()).toBe(false);
+      expect(await (await getCheckbox('Allow SSH Login with Password (not recommended)')).isDisabled()).toBe(true);
     });
 
     it('shows different set of fields when system is in STIG mode', async () => {
       isStigMode.set(true);
+      spectator.detectChanges();
 
-      const passwordGroup = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Password' }));
-      expect(passwordGroup).toBeTruthy();
-      expect(await passwordGroup.getOptionLabels()).toEqual([
+      const radios = await loader.getAllHarnesses(TnRadioHarness);
+      const labels = await Promise.all(radios.map((radio) => radio.getLabelText()));
+      expect(labels).toEqual([
         'Disable Password',
         'Generate Temporary One-Time Password',
       ]);
@@ -241,19 +218,21 @@ describe('AuthSectionComponent', () => {
     });
 
     it('shows SSH fields when SSH Access is enabled', async () => {
-      expect(await loader.getHarness(IxTextareaHarness.with({ label: 'SSH Public Keys (Authorized Keys)' }))).toBeTruthy();
-      expect(await loader.getHarness(IxCheckboxHarness.with({ label: 'Allow SSH Login with Password (not recommended)' }))).toBeTruthy();
+      expect(await getInputOrNull('sshpubkey')).not.toBeNull();
+      expect(await loader.getHarnessOrNull(
+        TnCheckboxHarness.with({ label: 'Allow SSH Login with Password (not recommended)' }),
+      )).not.toBeNull();
     });
 
     it('provides SSH access through key-based authentication when password is disabled', async () => {
       // When password is disabled, users can still get SSH access via SSH keys
-      await form.fillForm({ 'Disable Password': true });
+      await (await getCheckbox('Disable Password')).check();
 
       // SSH key field should still be available for SSH access
-      expect(await loader.getHarness(IxTextareaHarness.with({ label: 'SSH Public Keys (Authorized Keys)' }))).toBeTruthy();
+      expect(await getInputOrNull('sshpubkey')).not.toBeNull();
 
       // User can enter an SSH key to enable SSH access
-      await form.fillForm({ 'SSH Public Keys (Authorized Keys)': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...' });
+      await (await getInput('sshpubkey')).setValue('ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...');
 
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
         sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
@@ -261,33 +240,27 @@ describe('AuthSectionComponent', () => {
     });
 
     it('disables Disable Password when "Allow SSH Login with Password" is set', async () => {
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).check();
 
-      expect(await form.getDisabledState()).toMatchObject({
-        'Disable Password': true,
-      });
+      expect(await (await getCheckbox('Disable Password')).isDisabled()).toBe(true);
     });
 
     it('requires validation when SSH access is enabled but no authentication method is provided', async () => {
       // SSH password should not be automatically enabled - users need to choose
-      expect(await form.getValues()).toMatchObject({
-        'Allow SSH Login with Password (not recommended)': false,
-      });
+      expect(await (await getCheckbox('Allow SSH Login with Password (not recommended)')).isChecked()).toBe(false);
 
       // Without any authentication method, form should have validation error
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
     });
 
     it('updates the store when SSH fields are changed', async () => {
-      await form.fillForm({
-        'SSH Public Keys (Authorized Keys)': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
-      });
+      await (await getInput('sshpubkey')).setValue('ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...');
 
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
         sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
       }));
 
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).check();
 
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
         ssh_password_enabled: true,
@@ -300,10 +273,8 @@ describe('AuthSectionComponent', () => {
         ssh_password_enabled: true,
       });
 
-      expect(await form.getValues()).toMatchObject({
-        'SSH Public Keys (Authorized Keys)': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
-        'Allow SSH Login with Password (not recommended)': true,
-      });
+      expect(await (await getInput('sshpubkey')).getValue()).toBe('ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...');
+      expect(await (await getCheckbox('Allow SSH Login with Password (not recommended)')).isChecked()).toBe(true);
     });
 
     it('validates that SSH access requires at least one authentication method', async () => {
@@ -314,15 +285,15 @@ describe('AuthSectionComponent', () => {
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
 
       // Enable SSH password authentication should remove the error
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).check();
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
 
       // Disable SSH password authentication should bring back the error
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': false });
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).uncheck();
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
 
       // Adding SSH key should remove SSH access error
-      await form.fillForm({ 'SSH Public Keys (Authorized Keys)': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...' });
+      await (await getInput('sshpubkey')).setValue('ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...');
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
     });
   });
@@ -337,7 +308,7 @@ describe('AuthSectionComponent', () => {
       spectator.setInput('shell', '/usr/bin/bash');
       spectator.detectChanges();
 
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).check();
 
       expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
       expect(spectator.component.form.getError('ssh_password_enabled')).toEqual({
@@ -350,7 +321,7 @@ describe('AuthSectionComponent', () => {
       spectator.setInput('shell', '/usr/sbin/nologin');
       spectator.detectChanges();
 
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).check();
 
       expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
       expect(spectator.component.form.getError('ssh_password_enabled')).toEqual({
@@ -363,7 +334,7 @@ describe('AuthSectionComponent', () => {
       spectator.setInput('shell', '/usr/bin/bash');
       spectator.detectChanges();
 
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).check();
 
       expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
     });
@@ -371,7 +342,7 @@ describe('AuthSectionComponent', () => {
     it('revalidates when home directory changes', async () => {
       spectator.setInput('homeDirectory', '');
       spectator.setInput('shell', '/usr/bin/bash');
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).check();
       spectator.detectChanges();
 
       expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
@@ -385,7 +356,7 @@ describe('AuthSectionComponent', () => {
     it('revalidates when shell changes', async () => {
       spectator.setInput('homeDirectory', '/mnt/tank/user');
       spectator.setInput('shell', '/usr/sbin/nologin');
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).check();
       spectator.detectChanges();
 
       expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
@@ -401,7 +372,7 @@ describe('AuthSectionComponent', () => {
       spectator.setInput('shell', '/usr/sbin/nologin');
       spectator.detectChanges();
 
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': false });
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).uncheck();
 
       expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
     });
@@ -413,11 +384,9 @@ describe('AuthSectionComponent', () => {
       spectator.detectChanges();
 
       // Fill in required password fields to make form valid
-      await form.fillForm({
-        Password: 'test-password',
-        'Confirm Password': 'test-password',
-        'Allow SSH Login with Password (not recommended)': true,
-      });
+      await (await getInput('password')).setValue('test-password');
+      await (await getInput('password_confirm')).setValue('test-password');
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).check();
       expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
 
       // Now disable SSH access (simulating unchecking SSH Access in allowed-access-section)
@@ -440,12 +409,10 @@ describe('AuthSectionComponent', () => {
       spectator.detectChanges();
 
       // Set SSH key and enable SSH password login
-      await form.fillForm({
-        Password: 'test-password',
-        'Confirm Password': 'test-password',
-        'SSH Public Keys (Authorized Keys)': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
-        'Allow SSH Login with Password (not recommended)': true,
-      });
+      await (await getInput('password')).setValue('test-password');
+      await (await getInput('password_confirm')).setValue('test-password');
+      await (await getInput('sshpubkey')).setValue('ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...');
+      await (await getCheckbox('Allow SSH Login with Password (not recommended)')).check();
 
       expect(spectator.component.form.value.sshpubkey).toBe('ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...');
       expect(spectator.component.form.value.ssh_password_enabled).toBe(true);

@@ -221,6 +221,31 @@ describe('EditableComponent', () => {
 
       expect(spectator.component.isElementWithin(innerElement)).toBe(true);
     });
+
+    it('returns true for clicks inside a tn-* control overlay so the editable stays open', () => {
+      const overlayClasses = ['tn-select-dropdown', 'tn-chip-input__dropdown', 'tn-autocomplete__dropdown'];
+
+      for (const overlayClass of overlayClasses) {
+        const overlay = document.createElement('div');
+        overlay.className = overlayClass;
+        const option = document.createElement('div');
+        overlay.appendChild(option);
+        document.body.appendChild(overlay);
+
+        expect(spectator.component.isElementWithin(option)).toBe(true);
+
+        overlay.remove();
+      }
+    });
+
+    it('returns false for a genuine outside element when no overlay or dialog is open', () => {
+      const outside = document.createElement('div');
+      document.body.appendChild(outside);
+
+      expect(spectator.component.isElementWithin(outside)).toBe(false);
+
+      outside.remove();
+    });
   });
 
   describe('click outside functionality', () => {
