@@ -21,4 +21,15 @@
     margin: 12px 0;
     padding: 8px 0;
   }
+
+  // `tn-form-section` has no outer margin and its internal `gap` only spaces
+  // fields *within* a section, so two adjacent sections butt together in the
+  // `<tn-side-panel>` host (a section heading sits flush under the previous
+  // field). The legacy SlideIn host happens to avoid this because the per-field
+  // margin above gives the last field bottom spacing. Space sibling sections to
+  // match the section's own internal rhythm, host-agnostically.
+  tn-form-section + tn-form-section {
+    display: block;
+    margin-top: 1.25rem;
+  }
 }

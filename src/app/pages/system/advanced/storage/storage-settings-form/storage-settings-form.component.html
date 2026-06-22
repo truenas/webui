@@ -26,7 +26,10 @@
     [heading]="'Priority Resilvering' | translate"
     [formGroup]="form.controls.priorityResilver"
   >
-    <tn-form-field [tooltip]="helptext.priorityResilverEnabled | translate">
+    <tn-form-field
+      subscriptSizing="dynamic"
+      [tooltip]="helptext.priorityResilverEnabled | translate"
+    >
       <tn-checkbox
         formControlName="enabled"
         [label]="'Run Resilvering At Higher Priority At Certain Times' | translate"

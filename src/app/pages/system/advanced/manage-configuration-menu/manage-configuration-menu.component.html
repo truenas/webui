@@ -1,43 +1,33 @@
-<button
+<tn-button
   *ixRequiresRoles="[Role.FullAdmin]"
-  mat-button
-  class="menu-toggle"
-  ixTest="manage-configuration-menu"
-  [matMenuTriggerFor]="menu"
+  [testId]="'manage-configuration-menu'"
+  [label]="'Manage Configuration' | translate"
   [ixUiSearch]="searchableElements.elements.manageConfiguration"
->
-  {{ 'Manage Configuration' | translate }}
-  <tn-icon name="menu-down" library="mdi" class="menu-caret"></tn-icon>
-</button>
+  [tnMenuTriggerFor]="menu"
+></tn-button>
 
-<mat-menu #menu="matMenu">
-  <button
+<tn-menu #menu>
+  <tn-menu-item
     *ixRequiresRoles="[Role.FullAdmin]"
-    mat-menu-item
-    ixTest="download-configuration"
+    [testId]="'download-configuration'"
+    [label]="'Download File' | translate"
     [ixUiSearch]="searchableElements.elements.downloadFile"
-    (click)="onDownloadConfig()"
-  >
-    {{ 'Download File' | translate }}
-  </button>
-  <button
+    (itemClick)="onDownloadConfig()"
+  ></tn-menu-item>
+  <tn-menu-item
     *ixRequiresRoles="[Role.FullAdmin]"
-    mat-menu-item
-    ixTest="upload-configuration"
+    [testId]="'upload-configuration'"
+    [label]="'Upload File' | translate"
     [ixUiSearch]="searchableElements.elements.uploadFile"
-    (click)="onUploadConfig()"
-  >
-    {{ 'Upload File' | translate }}
-  </button>
+    (itemClick)="onUploadConfig()"
+  ></tn-menu-item>
   @if (isSysAdmin$ | async) {
-    <button
+    <tn-menu-item
       *ixRequiresRoles="[Role.FullAdmin]"
-      mat-menu-item
-      ixTest="reset-configuration"
+      [testId]="'reset-configuration'"
+      [label]="'Reset to Defaults' | translate"
       [ixUiSearch]="searchableElements.elements.resetToDefaults"
-      (click)="onResetToDefaults()"
-    >
-      {{ 'Reset to Defaults' | translate }}
-    </button>
+      (itemClick)="onResetToDefaults()"
+    ></tn-menu-item>
   }
-</mat-menu>
+</tn-menu>
