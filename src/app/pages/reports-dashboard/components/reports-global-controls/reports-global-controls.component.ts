@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnSelectComponent, TnSlideToggleComponent } from '@truenas/ui-components';
 import { BehaviorSubject, debounceTime, take } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { SelectOption } from 'app/interfaces/option.interface';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { reportingGlobalControlsElements } from 'app/pages/reports-dashboard/components/reports-global-controls/reports-global-controls.elements';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
@@ -39,11 +37,10 @@ const supportedReportTypes = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxSelectComponent,
-    IxSlideToggleComponent,
     TnButtonComponent,
+    TnSelectComponent,
+    TnSlideToggleComponent,
     RouterLink,
-    TestDirective,
     UiSearchDirective,
     TranslateModule,
   ],
@@ -71,8 +68,11 @@ export class ReportsGlobalControlsComponent implements OnInit {
 
   protected activeTab: ReportTab | undefined;
   protected allTabs: ReportTab[];
-  protected diskDevices$ = this.reportsService.getDiskDevices();
-  protected diskMetrics$ = this.reportsService.getDiskMetrics();
+  private diskDevices$ = this.reportsService.getDiskDevices();
+  private diskMetrics$ = this.reportsService.getDiskMetrics();
+  protected diskDevices = toSignal(this.diskDevices$, { initialValue: [] });
+  protected diskMetrics = toSignal(this.diskMetrics$, { initialValue: [] });
+  protected tabOptions = toSignal(this.tabOptions$, { initialValue: [] });
 
   protected readonly ReportType = ReportType;
   protected readonly searchableElements = reportingGlobalControlsElements;

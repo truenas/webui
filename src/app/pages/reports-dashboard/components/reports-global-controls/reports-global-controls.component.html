@@ -1,36 +1,36 @@
 @if (allTabs.length) {
   <form class="reports-toolbar" [formGroup]="form">
     @if (activeTab?.value === ReportType.Disk) {
-      <ix-select
+      <tn-select
         formControlName="devices"
-        [label]="'Devices' | translate"
-        [options]="diskDevices$"
+        [ariaLabel]="'Devices' | translate"
+        [options]="diskDevices()"
         [multiple]="true"
-        [showSelectAll]="true"
-      ></ix-select>
+        testId="devices"
+      ></tn-select>
 
-      <ix-select
+      <tn-select
         formControlName="metrics"
-        [label]="'Metrics' | translate"
-        [options]="diskMetrics$"
+        [ariaLabel]="'Metrics' | translate"
+        [options]="diskMetrics()"
         [multiple]="true"
-      ></ix-select>
+        testId="metrics"
+      ></tn-select>
     }
 
-    <ix-slide-toggle
+    <tn-slide-toggle
       formControlName="autoRefresh"
       color="primary"
       [label]="'Auto Refresh' | translate"
-    ></ix-slide-toggle>
+    ></tn-slide-toggle>
 
-    <ix-select
+    <tn-select
       formControlName="tab"
-      [label]="'Category' | translate"
-      [options]="tabOptions$"
-      [required]="true"
-      [ixTest]="'category'"
+      [ariaLabel]="'Category' | translate"
+      [options]="tabOptions()"
+      testId="category"
       [ixUiSearch]="searchableElements.elements.selectReporting"
-    ></ix-select>
+    ></tn-select>
     <tn-button
       testId="exporters-nav"
       [label]="'Exporters' | translate"
