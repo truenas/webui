@@ -6,52 +6,46 @@
 
   <div class="bulk-button-wrapper">
     <label>{{ 'Bulk Actions' | translate }}</label>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="bulk-actions-menu"
-      [matMenuTriggerFor]="menu"
-    >
-      {{ 'Select action' | translate }}
-      <tn-icon name="menu-down" library="mdi" class="menu-caret"></tn-icon>
-    </button>
+    <span class="bulk-actions-button">
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        variant="outline"
+        color="default"
+        testId="bulk-actions-menu"
+        [label]="'Select action' | translate"
+        [tnMenuTriggerFor]="menu"
+      ></tn-button>
+      <tn-icon class="bulk-actions-caret" name="menu-down" library="mdi" aria-hidden="true"></tn-icon>
+    </span>
   </div>
 
-  <mat-menu #menu="matMenu">
-    <button
+  <tn-menu #menu>
+    <tn-menu-item
       *ixRequiresRoles="requiredRoles"
-      mat-menu-item
-      ixTest="start-selected"
+      testId="start-selected"
+      [label]="'Start All Selected' | translate"
       [disabled]="isBulkStartDisabled()"
-      (click)="bulkStart.emit()"
-    >
-      <span>{{ 'Start All Selected' | translate }}</span>
-    </button>
-    <button
+      (itemClick)="bulkStart.emit()"
+    ></tn-menu-item>
+    <tn-menu-item
       *ixRequiresRoles="requiredRoles"
-      mat-menu-item
-      ixTest="stop-selected"
+      testId="stop-selected"
+      [label]="'Stop All Selected' | translate"
       [disabled]="isBulkStopDisabled()"
-      (click)="bulkStop.emit()"
-    >
-      <span>{{ 'Stop All Selected' | translate }}</span>
-    </button>
-    <button
+      (itemClick)="bulkStop.emit()"
+    ></tn-menu-item>
+    <tn-menu-item
       *ixRequiresRoles="requiredRoles"
-      mat-menu-item
-      ixTest="update-selected"
+      testId="update-selected"
+      [label]="'Update All Selected' | translate"
       [disabled]="isBulkUpdateDisabled()"
-      (click)="bulkUpdate.emit()"
-    >
-      <span>{{ 'Update All Selected' | translate }}</span>
-    </button>
-    <button
+      (itemClick)="bulkUpdate.emit()"
+    ></tn-menu-item>
+    <tn-menu-item
       *ixRequiresRoles="requiredRoles"
-      mat-menu-item
-      ixTest="delete-selected"
-      (click)="bulkDelete.emit()"
-    >
-      <span>{{ 'Delete All Selected' | translate }}</span>
-    </button>
-  </mat-menu>
+      testId="delete-selected"
+      [label]="'Delete All Selected' | translate"
+      (itemClick)="bulkDelete.emit()"
+    ></tn-menu-item>
+  </tn-menu>
 </div>

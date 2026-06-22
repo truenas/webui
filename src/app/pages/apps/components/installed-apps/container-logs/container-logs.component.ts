@@ -3,11 +3,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnSpinnerComponent } from '@truenas/ui-components';
 import {
   combineLatest, filter, map, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -16,7 +14,6 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { DownloadService } from 'app/services/download.service';
@@ -32,12 +29,11 @@ import { ShellService } from 'app/services/shell.service';
   imports: [
     PageHeaderComponent,
     ToolbarSliderComponent,
-    MatButton,
+    TnButtonComponent,
     ReactiveFormsModule,
     IxCheckboxComponent,
-    TestDirective,
     TranslateModule,
-    MatProgressSpinner,
+    TnSpinnerComponent,
   ],
 })
 export class ContainerLogsComponent implements OnInit {
