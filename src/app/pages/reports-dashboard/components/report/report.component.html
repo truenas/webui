@@ -113,9 +113,9 @@
 
             @if (report() && data?.legend) {
               <div class="legend-group-wrapper">
-                <table class="legend-table" [tnTestId]="['reports-table', report().title]">
+                <table class="legend-table" [tnTestId]="['reports-table', report().title]" tnTestIdType="table">
                   <!-- Table Header-->
-                  <tr class="legend-group header" [tnTestId]="'table-header'">
+                  <tr class="legend-group header" [tnTestId]="'table-header'" tnTestIdType="row">
                     <th class="legend-label">
                       <strong>{{ 'Key' | translate }}</strong>
                     </th>
@@ -129,7 +129,7 @@
                   </tr>
                   <!-- Table Rows -->
                   @for (legendItem of data.legend; track legendItem; let i = $index) {
-                    <tr class="legend-group" [tnTestId]="legendItem">
+                    <tr class="legend-group" [tnTestId]="legendItem" tnTestIdType="row">
                       <td class="legend-label">
                         <!--Legend Label-->
                         @if (chartColors && legendItem) {
