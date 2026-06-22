@@ -108,11 +108,13 @@
   width: 35%;
 }
 
-:host ::ng-deep {
-  .dataset-path-tooltip {
-    word-break: break-all;
-  }
+// The tooltip overlay renders at the document-body level (cdk-overlay-container),
+// outside this component's host, so the class must be global rather than :host-scoped.
+::ng-deep .dataset-path-tooltip {
+  word-break: break-all;
+}
 
+:host ::ng-deep {
   .mat-mdc-card-header-text {
     width: 100%;
   }
