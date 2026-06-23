@@ -4,9 +4,10 @@ import { signal } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
 import { BehaviorSubject, map } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -119,6 +120,7 @@ describe('AdditionalDetailsSectionComponent', () => {
           mode: 16889,
         } as FileSystemStat),
       ]),
+      provideTnFormFieldErrors(),
     ],
   });
 
@@ -206,6 +208,20 @@ describe('AdditionalDetailsSectionComponent', () => {
         home_create: true,
         uid: 1234,
       });
+    });
+
+    it('shows a validation message when the Email editable holds an invalid address', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const editable = await table.getHarnessForItem('Email', EditableHarness);
+      await editable.open();
+
+      const input = await loader.getHarness(TnInputHarness.with({ name: 'email' }));
+      await input.setValue('not-an-email');
+
+      // The Email editable is the only one open, so its wrapping field is the only
+      // tn-form-field rendered; without the wrapper the validation message has nowhere to surface.
+      const field = await loader.getHarness(TnFormFieldHarness);
+      expect(await field.getErrorMessage()).toBe('Value must be a valid email address');
     });
 
     it('clears default path and adds required validator when home editable is opened', async () => {
