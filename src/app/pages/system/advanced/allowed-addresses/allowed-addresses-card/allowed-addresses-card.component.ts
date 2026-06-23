@@ -6,7 +6,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
   TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective, TnSidePanelActionDirective,
   TnSidePanelComponent, TnTableColumnDirective, TnTableComponent, tnIconMarker,
 } from '@truenas/ui-components';
@@ -24,7 +24,6 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.elements';
@@ -43,17 +42,14 @@ interface AllowedAddressRow {
 
 @Component({
   selector: 'ix-allowed-addresses-card',
-  styleUrls: ['./allowed-addresses-card.component.scss'],
   templateUrl: './allowed-addresses-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
     TnCardFooterActionsDirective,
-    TnCardHeaderDirective,
     TnSidePanelComponent,
     TnSidePanelActionDirective,
     UiSearchDirective,
-    TooltipComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     TnTableComponent,

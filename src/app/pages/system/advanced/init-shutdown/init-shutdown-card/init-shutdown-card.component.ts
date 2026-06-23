@@ -3,24 +3,19 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
   TnCardFooterActionsDirective,
-  TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
-  TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
   TnTableColumnDirective,
   TnTableComponent,
-  TnTestIdDirective,
-  TnTooltipDirective,
 } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -47,18 +42,12 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 @Component({
   selector: 'ix-init-shutdown-card',
   templateUrl: './init-shutdown-card.component.html',
-  styleUrls: ['./init-shutdown-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    TnCardHeaderDirective,
     TnCardFooterActionsDirective,
     TnSidePanelComponent,
     TnSidePanelActionDirective,
-    TnTestIdDirective,
-    TnTooltipDirective,
-    RouterLink,
-    TnIconComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     UiSearchDirective,

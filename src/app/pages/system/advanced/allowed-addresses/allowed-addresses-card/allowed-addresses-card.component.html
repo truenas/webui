@@ -1,12 +1,9 @@
-<tn-card padding="small" [ixUiSearch]="searchableElements.elements.allowedIpAddresses">
-  <h3 tnCardHeader class="tn-card__title card-title">
-    {{ 'Allowed IP Addresses' | translate }}
-    <ix-tooltip
-      class="tooltip"
-      [header]="'Allowed IP Addresses' | translate"
-      [message]="'IP addresses and networks that are allowed to use API and UI. If this list is empty, then all IP addresses are allowed to use API and UI.' | translate"
-    ></ix-tooltip>
-  </h3>
+<tn-card
+  padding="small"
+  [ixUiSearch]="searchableElements.elements.allowedIpAddresses"
+  [title]="'Allowed IP Addresses' | translate"
+  [titleTooltip]="'IP addresses and networks that are allowed to use API and UI. If this list is empty, then all IP addresses are allowed to use API and UI.' | translate"
+>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty

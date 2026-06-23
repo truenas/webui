@@ -1,22 +1,8 @@
-<tn-card padding="small">
-  <a
-    tnCardHeader
-    class="card-title-link"
-    tnTestIdType="link"
-    [tnTestId]="['init-shutdown', 'open-in-new']"
-    [routerLink]="['/system', 'initshutdown']"
-    [tnTooltip]="'Open Init/Shutdown Scripts list in full page' | translate"
-  >
-    <h3 class="tn-card__title">
-      {{ 'Init/Shutdown Scripts' | translate }}
-      <tn-icon
-        name="open-in-new"
-        library="mdi"
-        class="title-icon"
-        [attr.aria-label]="'Open Init/Shutdown Scripts list in full page' | translate"
-      ></tn-icon>
-    </h3>
-  </a>
+<tn-card
+  padding="small"
+  [title]="'Init/Shutdown Scripts' | translate"
+  [titleRouterLink]="['/system', 'initshutdown']"
+>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty [title]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async).title | translate"></tn-empty>

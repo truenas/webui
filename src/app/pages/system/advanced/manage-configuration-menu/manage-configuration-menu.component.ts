@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
+  tnIconMarker,
   TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
@@ -47,6 +48,7 @@ export class ManageConfigurationMenuComponent {
   protected readonly Role = Role;
   protected isSysAdmin$ = this.authService.isSysAdmin$;
   protected readonly searchableElements = manageConfigurationElements;
+  protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
   onDownloadConfig(): void {
     this.tnDialog.open(SaveConfigDialog);

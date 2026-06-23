@@ -11,7 +11,6 @@ import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllowedAddressesCardComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
@@ -37,9 +36,6 @@ describe('AllowedAddressesCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AllowedAddressesCardComponent,
-    imports: [
-      TooltipComponent,
-    ],
     providers: [
       mockAuth(),
       provideMockStore(),
