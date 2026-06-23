@@ -1,38 +1,42 @@
-<div class="left-column">
-  @if (app().installed) {
-    <ix-installed-app-badge [app]="app()"></ix-installed-app-badge>
-  }
-
-  <ix-app-card-logo [url]="app().icon_url"></ix-app-card-logo>
-
-  <div>
-    <div class="train">
-      {{ app().train || ('N/A' | translate) }}
-    </div>
-  </div>
-</div>
-
-<div class="right-column">
-  <div class="header">
-    <h3 class="name">
-      {{ app().title || app().name }}
-
-      @if (!!app()?.popularity_rank) {
-        <span class="popularity-rank" [matTooltip]="'Popularity' | translate">
-          <tn-icon name="fire" library="mdi" customSize="14px"></tn-icon>
-          {{ app()?.popularity_rank }}
-        </span>
+<tn-card class="app-card" padding="medium" elevation="none">
+  <div class="card-content">
+    <div class="left-column">
+      @if (app().installed) {
+        <ix-installed-app-badge [app]="app()"></ix-installed-app-badge>
       }
-    </h3>
 
-    <div
-      class="version"
-      [matTooltip]="versionTooltip()"
-    >
-      {{ app().latest_app_version || ('N/A' | translate) }}
-      <span class="catalog-version">({{ app().latest_version || ('N/A' | translate) }})</span>
+      <ix-app-card-logo [url]="app().icon_url"></ix-app-card-logo>
+
+      <div>
+        <div class="train">
+          {{ app().train || ('N/A' | translate) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="header">
+        <h3 class="name">
+          {{ app().title || app().name }}
+
+          @if (!!app()?.popularity_rank) {
+            <span class="popularity-rank" [tnTooltip]="'Popularity' | translate">
+              <tn-icon name="fire" library="mdi" customSize="14px"></tn-icon>
+              {{ app()?.popularity_rank }}
+            </span>
+          }
+        </h3>
+
+        <div
+          class="version"
+          [tnTooltip]="versionTooltip()"
+        >
+          {{ app().latest_app_version || ('N/A' | translate) }}
+          <span class="catalog-version">({{ app().latest_version || ('N/A' | translate) }})</span>
+        </div>
+      </div>
+
+      <div class="description">{{ description() }}</div>
     </div>
   </div>
-
-  <div class="description">{{ description() }}</div>
-</div>
+</tn-card>

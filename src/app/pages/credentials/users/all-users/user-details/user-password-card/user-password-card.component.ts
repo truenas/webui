@@ -5,9 +5,8 @@ import {
   MatCard, MatCardTitle, MatCardHeader, MatCardContent,
   MatCardActions,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -37,7 +36,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     FormatDateTimePipe,
     MatCardActions,
-    MatTooltip,
+    TnTooltipDirective,
     RequiresRolesDirective,
     TestDirective,
     TnIconComponent,

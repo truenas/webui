@@ -1,10 +1,5 @@
 :host {
   display: block;
-
-  ::ng-deep .checkboxs-column {
-    text-overflow: unset !important;
-    width: 20px;
-  }
 }
 
 .batch-actions-toolbar {
@@ -13,12 +8,12 @@
   color: var(--fg1);
 
   .title {
-    padding: 16px 28px 8px;
+    padding: 16px 16px 8px;
   }
 
   .actions {
     display: flex;
     gap: 8px;
-    padding: 0 28px 16px;
+    padding: 0 16px 16px;
   }
 }

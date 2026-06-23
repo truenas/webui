@@ -1,11 +1,13 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
+  TnSortEvent, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent,
+} from '@truenas/ui-components';
 import { tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -15,19 +17,11 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import {
-  actionsColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { createTable, mapTnSortToProviderSorting } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.elements';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
@@ -40,13 +34,13 @@ import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-re
     PageHeaderComponent,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnIconButtonComponent,
     TnTablePagerComponent,
     BasicSearchComponent,
     TranslateModule,
@@ -59,7 +53,6 @@ export class DockerRegistriesListComponent implements OnInit {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
-  private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
@@ -69,38 +62,20 @@ export class DockerRegistriesListComponent implements OnInit {
   searchQuery = signal('');
   protected isLoggedIntoDockerHub = signal(false);
 
+  // Column-config model consumed by ix-table-columns-selector. The tn-table body
+  // renders its own column templates; we derive its displayedColumns from the
+  // selector's visibility state below.
   columns = createTable<DockerRegistry>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Username'),
-      propertyName: 'username',
-    }),
-    textColumn({
-      title: this.translate.instant('URI'),
-      propertyName: 'uri',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.onEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.onDelete(row),
-        },
-      ],
-    }),
+    textColumn({ title: this.translate.instant('Name'), propertyName: 'name' }),
+    textColumn({ title: this.translate.instant('Username'), propertyName: 'username' }),
+    textColumn({ title: this.translate.instant('URI'), propertyName: 'uri' }),
   ], {
     uniqueRowTag: (row) => `docker-registry-${row.uri}-${row.name}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Docker Registry')],
   });
+
+  protected readonly visibleColumns = signal(this.getVisibleColumns(this.columns));
+  protected readonly displayedColumns = computed(() => [...this.visibleColumns(), 'actions']);
 
   ngOnInit(): void {
     this.dataProvider = new AsyncDataProvider(
@@ -117,8 +92,7 @@ export class DockerRegistriesListComponent implements OnInit {
 
   protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+    this.visibleColumns.set(this.getVisibleColumns(this.columns));
   }
 
   protected onListFiltered(query: string): void {
@@ -129,19 +103,23 @@ export class DockerRegistriesListComponent implements OnInit {
     });
   }
 
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToProviderSorting<DockerRegistry>(event));
+  }
+
   protected onAdd(): void {
     this.slideIn.open(DockerRegistryFormComponent, {
       data: { isLoggedInToDockerHub: this.isLoggedIntoDockerHub() },
     }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
-  private onEdit(row: DockerRegistry): void {
+  protected onEdit(row: DockerRegistry): void {
     this.slideIn.open(DockerRegistryFormComponent, {
       data: { registry: row, isLoggedInToDockerHub: this.isLoggedIntoDockerHub() },
     }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
-  private onDelete(row: DockerRegistry): void {
+  protected onDelete(row: DockerRegistry): void {
     this.dialogService.confirmDelete({
       title: this.translate.instant('Delete Docker Registry'),
       message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> registry?', {
@@ -151,5 +129,11 @@ export class DockerRegistriesListComponent implements OnInit {
     }).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.dataProvider.load());
+  }
+
+  private getVisibleColumns(columns: typeof this.columns): string[] {
+    return columns
+      .filter((column) => !column.hidden && column.propertyName)
+      .map((column) => column.propertyName as string);
   }
 }

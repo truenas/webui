@@ -6,7 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -23,6 +23,7 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('SnapshotTaskCardComponent', () => {
@@ -115,6 +116,7 @@ describe('SnapshotTaskCardComponent', () => {
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
+      mockProvider(ErrorHandlerService),
     ],
   });
 
@@ -184,6 +186,25 @@ describe('SnapshotTaskCardComponent', () => {
       'pool.snapshottask.update',
       [1, { enabled: true }],
     );
+  });
+
+  it('reverts the Enabled toggle when the update fails', async () => {
+    // A pending subject keeps the update in flight so the optimistic flip is observable
+    // before the error is delivered.
+    const update$ = new Subject<unknown>();
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce(() => update$);
+
+    const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
+    expect(await toggle.isChecked()).toBe(false);
+
+    await toggle.check();
+    expect(await toggle.isChecked()).toBe(true);
+
+    update$.error(new Error('update failed'));
+    spectator.detectChanges();
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    expect(await toggle.isChecked()).toBe(false);
   });
 
   it('subscribes to pool.snapshottask.query websocket events on init', () => {

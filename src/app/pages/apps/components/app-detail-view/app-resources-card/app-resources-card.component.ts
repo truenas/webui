@@ -1,9 +1,9 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map, throttleTime } from 'rxjs';
 import { MemoryUpdate } from 'app/interfaces/reporting.interface';
@@ -18,9 +18,9 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
+    TnCardComponent,
     NgxSkeletonLoaderModule,
     FileSizePipe,
-    AsyncPipe,
   ],
 })
 export class AppResourcesCardComponent implements OnInit {
@@ -32,7 +32,7 @@ export class AppResourcesCardComponent implements OnInit {
   readonly cpuPercentage = signal(0);
   readonly memoryUsed = signal(0);
   readonly memoryTotal = signal(0);
-  readonly availableSpace$ = this.api.call('app.available_space');
+  readonly availableSpace = toSignal(this.api.call('app.available_space'));
   readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
 
   ngOnInit(): void {

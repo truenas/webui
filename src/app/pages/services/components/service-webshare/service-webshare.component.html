@@ -7,31 +7,28 @@
 }
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset>
-    <ix-checkbox
-      formControlName="search"
-      [label]="'Enable TrueSearch' | translate"
-      [tooltip]="helptext.search_enabled_tooltip | translate"
-    ></ix-checkbox>
+  <tn-form-section>
+    <tn-form-field [tooltip]="helptext.search_enabled_tooltip | translate">
+      <tn-checkbox formControlName="search" [label]="'Enable TrueSearch' | translate"></tn-checkbox>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="passkey"
+    <tn-form-field
       [label]="'Passkey' | translate"
       [tooltip]="helptext.passkey_tooltip | translate"
-      [options]="passkeyOptions$"
-      [required]="true"
-    ></ix-select>
-  </ix-fieldset>
+    >
+      <tn-select formControlName="passkey" [options]="passkeyOptions"></tn-select>
+    </tn-form-field>
+  </tn-form-section>
 
   @if (slideInRef) {
     <ix-form-actions>
       <tn-button
         *ixRequiresRoles="requiredRoles"
         color="primary"
-        [ixTest]="'save'"
+        type="submit"
+        [testId]="'save'"
         [label]="'Save' | translate"
         [disabled]="form.invalid || isFormLoading()"
-        (onClick)="onSubmit()"
       ></tn-button>
     </ix-form-actions>
   }

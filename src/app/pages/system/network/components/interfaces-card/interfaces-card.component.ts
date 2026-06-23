@@ -4,10 +4,9 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { tnIconMarker, TnTooltipDirective } from '@truenas/ui-components';
 import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import {
   filter, map, throttleTime,
@@ -52,7 +51,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   imports: [
     MatCard,
     MatToolbarRow,
-    MatTooltip,
+    TnTooltipDirective,
     RequiresRolesDirective,
     MatButton,
     TestDirective,

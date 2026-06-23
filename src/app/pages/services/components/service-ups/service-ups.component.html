@@ -1,165 +1,175 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="'UPS' | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles"
+    [title]="'UPS' | translate"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
 
-<mat-card class="card">
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <div class="two-columns">
-        <ix-fieldset [title]="helptext.fieldsetGeneral | translate">
-          <ix-input
-            formControlName="identifier"
-            [label]="labels.identifier | translate"
-            [tooltip]="tooltips.identifier | translate"
-            [required]="true"
-          ></ix-input>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <div class="two-columns">
+    <tn-form-section [heading]="helptext.fieldsetGeneral | translate">
+      <tn-form-field
+        [label]="labels.identifier | translate"
+        [tooltip]="tooltips.identifier | translate"
+      >
+        <tn-input formControlName="identifier"></tn-input>
+      </tn-form-field>
 
-          <ix-select
-            formControlName="mode"
-            [label]="labels.mode | translate"
-            [options]="modeOptions$"
-            [tooltip]="tooltips.mode | translate"
-          ></ix-select>
+      <tn-form-field
+        [label]="labels.mode | translate"
+        [tooltip]="tooltips.mode | translate"
+      >
+        <tn-select formControlName="mode" [options]="modeOptions"></tn-select>
+      </tn-form-field>
 
-          @if (isMasterMode) {
-            <ix-combobox
-              formControlName="driver"
-              [label]="labels.driver | translate"
-              [tooltip]="tooltips.driver | translate"
-              [provider]="providers.driver"
-              [required]="true"
-            ></ix-combobox>
-          } @else {
-            <ix-input
-              formControlName="remotehost"
-              [label]="labels.remotehost | translate"
-              [tooltip]="tooltips.remotehost | translate"
-              [required]="true"
-            ></ix-input>
-
-            <ix-input
-              formControlName="remoteport"
-              type="number"
-              [label]="labels.remoteport | translate"
-              [tooltip]="tooltips.remoteport | translate"
-              [required]="true"
-            ></ix-input>
-          }
-
-          <ix-combobox
-            formControlName="port"
-            [label]="labels.port | translate"
-            [tooltip]="tooltips.port | translate"
-            [provider]="providers.port"
-            [required]="isMasterMode"
-            [allowCustomValue]="true"
-          ></ix-combobox>
-        </ix-fieldset>
-
-        <ix-fieldset [title]="helptext.fieldsetMonitor | translate">
-          <ix-input
-            formControlName="monuser"
-            [label]="labels.monuser | translate"
-            [tooltip]="tooltips.monuser | translate"
-            [required]="true"
-          ></ix-input>
-
-          <ix-input
-            formControlName="monpwd"
-            type="password"
-            [label]="labels.monpwd | translate"
-            [tooltip]="tooltips.monpwd | translate"
-            [required]="true"
-          ></ix-input>
-
-          <ix-textarea
-            formControlName="extrausers"
-            [label]="labels.extrausers | translate"
-            [tooltip]="tooltips.extrausers | translate"
-          ></ix-textarea>
-
-          <ix-checkbox
-            formControlName="rmonitor"
-            [label]="labels.rmonitor | translate"
-            [tooltip]="tooltips.rmonitor | translate"
-          ></ix-checkbox>
-        </ix-fieldset>
-      </div>
-
-      <div class="one-column">
-        <ix-fieldset [title]="helptext.fieldsetShutdown | translate">
-          <ix-select
-            formControlName="shutdown"
-            [label]="labels.shutdown | translate"
-            [options]="shutdownOptions$"
-            [tooltip]="tooltips.shutdown | translate"
-          ></ix-select>
-
-          <ix-input
-            formControlName="shutdowntimer"
-            type="number"
-            [label]="labels.shutdowntimer | translate"
-            [tooltip]="tooltips.shutdowntimer | translate"
-          ></ix-input>
-
-          <ix-input
-            formControlName="shutdowncmd"
-            [label]="labels.shutdowncmd | translate"
-            [tooltip]="tooltips.shutdowncmd | translate"
-          ></ix-input>
-
-          <ix-checkbox
-            formControlName="powerdown"
-            [label]="labels.powerdown | translate"
-            [tooltip]="tooltips.powerdown | translate"
-          ></ix-checkbox>
-        </ix-fieldset>
-      </div>
-
-      <div class="one-column">
-        <ix-fieldset [title]="helptext.fieldsetOther | translate">
-          <ix-input
-            formControlName="nocommwarntime"
-            type="number"
-            [label]="labels.nocommwarntime | translate"
-            [tooltip]="tooltips.nocommwarntime | translate"
-          ></ix-input>
-
-          <ix-input
-            formControlName="hostsync"
-            type="number"
-            [label]="labels.hostsync | translate"
-            [tooltip]="tooltips.hostsync | translate"
-          ></ix-input>
-
-          <ix-textarea
-            formControlName="options"
-            [label]="labels.options | translate"
-            [tooltip]="tooltips.options | translate"
-          ></ix-textarea>
-
-          <ix-textarea
-            formControlName="optionsupsd"
-            [label]="labels.optionsupsd | translate"
-            [tooltip]="tooltips.optionsupsd | translate"
-          ></ix-textarea>
-        </ix-fieldset>
-      </div>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isFormLoading()"
+      @if (isMasterMode) {
+        <tn-form-field
+          [label]="labels.driver | translate"
+          [tooltip]="tooltips.driver | translate"
+          [required]="true"
         >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+          <tn-autocomplete
+            formControlName="driver"
+            placeholder=""
+            [options]="(driverOptions$ | async) ?? []"
+            [requireSelection]="true"
+          ></tn-autocomplete>
+        </tn-form-field>
+      } @else {
+        <tn-form-field
+          [label]="labels.remotehost | translate"
+          [tooltip]="tooltips.remotehost | translate"
+          [required]="true"
+        >
+          <tn-input formControlName="remotehost"></tn-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="labels.remoteport | translate"
+          [tooltip]="tooltips.remoteport | translate"
+          [required]="true"
+        >
+          <tn-input formControlName="remoteport" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+        </tn-form-field>
+      }
+
+      <tn-form-field
+        [label]="labels.port | translate"
+        [tooltip]="tooltips.port | translate"
+        [required]="isMasterMode"
+      >
+        <tn-autocomplete
+          formControlName="port"
+          placeholder=""
+          [options]="(portOptions$ | async) ?? []"
+          [allowCustomValue]="true"
+        ></tn-autocomplete>
+      </tn-form-field>
+    </tn-form-section>
+
+    <tn-form-section [heading]="helptext.fieldsetMonitor | translate">
+      <tn-form-field
+        [label]="labels.monuser | translate"
+        [tooltip]="tooltips.monuser | translate"
+      >
+        <tn-input formControlName="monuser"></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="labels.monpwd | translate"
+        [tooltip]="tooltips.monpwd | translate"
+        [required]="true"
+      >
+        <tn-input formControlName="monpwd" [inputType]="InputType.Password"></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="labels.extrausers | translate"
+        [tooltip]="tooltips.extrausers | translate"
+      >
+        <tn-input formControlName="extrausers" [multiline]="true"></tn-input>
+      </tn-form-field>
+
+      <tn-form-field [tooltip]="tooltips.rmonitor | translate">
+        <tn-checkbox formControlName="rmonitor" [label]="labels.rmonitor | translate"></tn-checkbox>
+      </tn-form-field>
+    </tn-form-section>
+  </div>
+
+  <div class="one-column">
+    <tn-form-section [heading]="helptext.fieldsetShutdown | translate">
+      <tn-form-field
+        [label]="labels.shutdown | translate"
+        [tooltip]="tooltips.shutdown | translate"
+      >
+        <tn-select formControlName="shutdown" [options]="shutdownOptions"></tn-select>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="labels.shutdowntimer | translate"
+        [tooltip]="tooltips.shutdowntimer | translate"
+      >
+        <tn-input formControlName="shutdowntimer" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="labels.shutdowncmd | translate"
+        [tooltip]="tooltips.shutdowncmd | translate"
+      >
+        <tn-input formControlName="shutdowncmd"></tn-input>
+      </tn-form-field>
+
+      <tn-form-field [tooltip]="tooltips.powerdown | translate">
+        <tn-checkbox formControlName="powerdown" [label]="labels.powerdown | translate"></tn-checkbox>
+      </tn-form-field>
+    </tn-form-section>
+  </div>
+
+  <div class="one-column">
+    <tn-form-section [heading]="helptext.fieldsetOther | translate">
+      <tn-form-field
+        [label]="labels.nocommwarntime | translate"
+        [tooltip]="tooltips.nocommwarntime | translate"
+      >
+        <tn-input formControlName="nocommwarntime" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="labels.hostsync | translate"
+        [tooltip]="tooltips.hostsync | translate"
+      >
+        <tn-input formControlName="hostsync" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="labels.options | translate"
+        [tooltip]="tooltips.options | translate"
+      >
+        <tn-input formControlName="options" [multiline]="true"></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="labels.optionsupsd | translate"
+        [tooltip]="tooltips.optionsupsd | translate"
+      >
+        <tn-input formControlName="optionsupsd" [multiline]="true"></tn-input>
+      </tn-form-field>
+    </tn-form-section>
+  </div>
+
+  <ix-form-actions>
+    @if (slideInRef) {
+      <div>
+        <tn-button
+          *ixRequiresRoles="requiredRoles"
+          color="primary"
+          type="submit"
+          [testId]="'save'"
+          [disabled]="form.invalid || isFormLoading()"
+          [label]="'Save' | translate"
+        ></tn-button>
+      </div>
+    }
+  </ix-form-actions>
+</form>

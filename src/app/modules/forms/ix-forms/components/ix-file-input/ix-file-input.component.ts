@@ -3,9 +3,8 @@ import {
   ControlValueAccessor, NgControl,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -21,7 +20,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxLabelComponent,
-    MatTooltip,
+    TnTooltipDirective,
     TnIconComponent,
     ReactiveFormsModule,
     IxErrorsComponent,

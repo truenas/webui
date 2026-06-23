@@ -5,7 +5,7 @@
     [class.critical]="badgeType() === AlertBadgeType.Critical"
     [class.warning]="badgeType() === AlertBadgeType.Warning"
     [class.info]="badgeType() === AlertBadgeType.Info"
-    [matTooltip]="tooltip() | translate"
+    [tnTooltip]="tooltip() | translate"
     [attr.aria-label]="tooltip() | translate"
   >
     <tn-icon [name]="getIconForBadgeType()"></tn-icon>

@@ -6,7 +6,7 @@
         @if (hasDuplicates(alert)) {
           <span
             class="duplicate-count-badge"
-            [matTooltip]="getDuplicateTooltip(alert)"
+            [tnTooltip]="getDuplicateTooltip(alert)"
           >
             {{ getDuplicateCount(alert) }}
           </span>
@@ -58,7 +58,7 @@
           type="button"
           class="dismiss-btn"
           [attr.aria-label]="getDismissAriaLabel(alert)"
-          [matTooltip]="getDismissTooltip(alert)"
+          [tnTooltip]="getDismissTooltip(alert)"
           (click)="onDismiss(alert)"
         >
           <tn-icon name="clear" library="material" [attr.aria-hidden]="true"></tn-icon>

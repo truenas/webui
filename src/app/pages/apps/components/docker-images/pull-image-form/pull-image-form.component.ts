@@ -3,9 +3,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -18,7 +17,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -31,14 +29,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     ReactiveFormsModule,
     TranslateModule,
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
-    MatButton,
+    TnButtonComponent,
     IxFieldsetComponent,
     IxInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    TestDirective,
   ],
 })
 export class PullImageFormComponent {

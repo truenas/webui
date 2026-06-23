@@ -3,10 +3,9 @@ import { MatAnchor } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -25,7 +24,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     MatAnchor,
     TestDirective,
     TnIconComponent,
-    MatTooltip,
+    TnTooltipDirective,
     RouterLink,
   ],
 })

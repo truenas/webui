@@ -13,9 +13,11 @@
     (valueChange)="onFontSizeChanged($event)"
   ></ix-toolbar-slider>
 
-  <button mat-button ixTest="reconnect" (click)="reconnect()">
-    {{ 'Reconnect' | translate }}
-  </button>
+  <tn-button
+    testId="reconnect"
+    [label]="'Reconnect' | translate"
+    (onClick)="reconnect()"
+  ></tn-button>
 </ix-page-header>
 
 <div class="logs-wrapper">
@@ -31,7 +33,7 @@
     [style.font-size]="fontSize() + 'px'"
   >
     @if (isLoading()) {
-      <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
+      <tn-spinner class="spinner" [diameter]="40"></tn-spinner>
     } @else {
       @for (podLog of logs(); track podLog) {
         <div class="log-row">

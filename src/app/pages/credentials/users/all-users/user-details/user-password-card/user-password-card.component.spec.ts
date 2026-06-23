@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -137,9 +136,9 @@ describe('UserPasswordCardComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: /Generate One-Time Password/ }));
     expect(await button.isDisabled()).toBe(true);
 
-    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltips = spectator.queryAll(TnTooltipDirective);
     const tooltip = tooltips.find(
-      (tip) => tip.message === 'Generating a one-time password requires the user to have TrueNAS access roles.',
+      (tip) => String(tip.message) === 'Generating a one-time password requires the user to have TrueNAS access roles.',
     );
     expect(tooltip).toBeTruthy();
   });

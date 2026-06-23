@@ -22,7 +22,7 @@
   <span>{{ container().autostart | yesNo }}</span>
 </div>
 
-<div class="cell" [matTooltip]="'Percentage of total core utilization' | translate">
+<div class="cell" [tnTooltip]="'Percentage of total core utilization' | translate">
   @if (hasMetrics()) {
     <span>{{ metrics()?.cpu.cpu_user_percentage.toFixed(0) }}%</span>
   } @else {
@@ -30,7 +30,7 @@
   }
 </div>
 
-<div class="cell" [matTooltip]="'Memory Usage' | translate">
+<div class="cell" [tnTooltip]="'Memory Usage' | translate">
   @if (hasMetrics()) {
     <span>{{ metrics()?.mem_usage.mem_usage_ram_mib.toFixed(0) }} MiB</span>
   } @else {
@@ -38,7 +38,7 @@
   }
 </div>
 
-<div class="cell" [matTooltip]="'Disk I/O Full Pressure' | translate">
+<div class="cell" [tnTooltip]="'Disk I/O Full Pressure' | translate">
   @if (hasMetrics()) {
     <span>{{ metrics()?.io_full_pressure.io_full_pressure_full_60_percentage.toFixed(0) }}%</span>
   } @else {
@@ -51,9 +51,9 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-icon-button
-      matTooltipPosition="above"
+      tnTooltipPosition="above"
       [ixTest]="[container().name, 'start']"
-      [matTooltip]="'Start' | translate"
+      [tnTooltip]="'Start' | translate"
       (click)="$event.stopPropagation(); start()"
     >
       <tn-icon name="play-circle" library="mdi"></tn-icon>
@@ -62,9 +62,9 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-icon-button
-      matTooltipPosition="above"
+      tnTooltipPosition="above"
       [ixTest]="[container().name, 'restart']"
-      [matTooltip]="'Restart' | translate"
+      [tnTooltip]="'Restart' | translate"
       (click)="$event.stopPropagation(); restart()"
     >
       <tn-icon name="restart" library="mdi"></tn-icon>
@@ -73,9 +73,9 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-icon-button
-      matTooltipPosition="above"
+      tnTooltipPosition="above"
       [ixTest]="[container().name, 'stop']"
-      [matTooltip]="'Stop' | translate"
+      [tnTooltip]="'Stop' | translate"
       (click)="$event.stopPropagation(); stop();"
     >
       <tn-icon name="stop-circle" library="mdi"></tn-icon>
