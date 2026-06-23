@@ -37,7 +37,7 @@
         color="primary"
         testId="save"
         [label]="'Save' | translate"
-        [disabled]="!form.valid || isLoading()"
+        [disabled]="!canSubmit()"
       ></tn-button>
     </ix-form-actions>
   }
