@@ -33,7 +33,7 @@
                   *ixRequiresRoles="requiredRoles"
                   mat-icon-button
                   [ixTest]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
-                  [matTooltip]="'Remove port from the subsystem' | translate"
+                  [tnTooltip]="'Remove port from the subsystem' | translate"
                   (click)="onRemoveAssociation(port)"
                 >
                   <tn-icon class="icon" name="link-variant-off" library="mdi"></tn-icon>

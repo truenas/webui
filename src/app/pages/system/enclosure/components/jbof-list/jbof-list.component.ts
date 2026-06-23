@@ -2,9 +2,8 @@ import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import { tnIconMarker, TnTablePagerComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   filter, forkJoin, map, switchMap, tap,
 } from 'rxjs';
@@ -43,7 +42,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
     MatButton,
     TestDirective,
-    MatTooltip,
+    TnTooltipDirective,
     UiSearchDirective,
     IxTableComponent,
     IxTableEmptyDirective,

@@ -4,10 +4,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { tnIconMarker, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   switchMap, tap,
 } from 'rxjs';
@@ -50,7 +49,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
     TnIconComponent,
     RequiresRolesDirective,
     MatButton,
-    MatTooltip,
+    TnTooltipDirective,
     UiSearchDirective,
     IxTableComponent,
     IxTableEmptyDirective,

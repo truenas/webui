@@ -4,9 +4,9 @@ import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -48,7 +48,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     EmptyComponent,
     TranslateModule,
     CastPipe,
-    MatTooltip,
+    TnTooltipDirective,
   ],
   providers: [
     PermissionsCardStore,

@@ -6,8 +6,8 @@ import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-i
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
   Subject, of, map, debounceTime, catchError,
@@ -44,7 +44,7 @@ const searchDebounceTime = 250;
     FakeProgressBarComponent,
     MatButton,
     MatSlideToggle,
-    MatTooltip,
+    TnTooltipDirective,
     AsyncPipe,
     FormsModule,
     SearchInputComponent,

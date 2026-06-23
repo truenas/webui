@@ -17,11 +17,11 @@
           @if (item.type === MenuItemType.Link) {
             @let badgeCount = getBadgeCount(item);
             <a
-              matTooltipPosition="right"
+              tnTooltipPosition="right"
               [ixTest]="getItemName(item)"
               [routerLink]="getRouterLink(item.state)"
               [name]="getItemName(item)"
-              [matTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
+              [tnTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
               (click)="closeMenu()"
             >
               <tn-icon size="lg" [name]="item.icon"></tn-icon>
@@ -33,7 +33,7 @@
                     [class.critical]="getBadgeType(item) === AlertBadgeType.Critical"
                     [class.warning]="getBadgeType(item) === AlertBadgeType.Warning"
                     [class.info]="getBadgeType(item) === AlertBadgeType.Info"
-                    [matTooltip]="getBadgeTooltip(item) | translate"
+                    [tnTooltip]="getBadgeTooltip(item) | translate"
                     [attr.aria-label]="getBadgeTooltip(item) | translate"
                   >
                     <tn-icon size="sm" [name]="getBadgeIcon(item)"></tn-icon>
@@ -46,12 +46,12 @@
             <a
               tabindex="0"
               role="button"
-              matTooltipPosition="right"
+              tnTooltipPosition="right"
               [ixTest]="getItemName(item)"
               [name]="getItemName(item)"
               [attr.aria-expanded]="isMenuExpanded(item.state)"
               [attr.aria-label]="(item.name | translate) + ' submenu'"
-              [matTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
+              [tnTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
               (click)="toggleMenu(item.state, item.sub || [])"
               (keydown.enter)="toggleMenu(item.state, item.sub || [])"
               (keydown.space)="$event.preventDefault(); toggleMenu(item.state, item.sub || [])"
@@ -65,7 +65,7 @@
                     [class.critical]="getBadgeType(item) === AlertBadgeType.Critical"
                     [class.warning]="getBadgeType(item) === AlertBadgeType.Warning"
                     [class.info]="getBadgeType(item) === AlertBadgeType.Info"
-                    [matTooltip]="getBadgeTooltip(item) | translate"
+                    [tnTooltip]="getBadgeTooltip(item) | translate"
                     [attr.aria-label]="getBadgeTooltip(item) | translate"
                   >
                     <tn-icon size="sm" [name]="getBadgeIcon(item)"></tn-icon>

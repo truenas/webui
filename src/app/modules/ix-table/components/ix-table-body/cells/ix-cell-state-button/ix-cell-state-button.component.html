@@ -2,10 +2,10 @@
   <button
     mat-stroked-button
     class="state-button"
-    matTooltipPosition="above"
+    tnTooltipPosition="above"
     [ixTest]="[title, uniqueRowTag(row()), 'row-state']"
     [ngClass]="getButtonClass()"
-    [matTooltip]="tooltip"
+    [tnTooltip]="tooltip"
     [attr.aria-label]="getAriaLabel(row())"
     (click)="$event.stopPropagation(); onButtonClick()"
   >

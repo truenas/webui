@@ -4,8 +4,8 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import {
   Subject, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
@@ -39,7 +39,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
     MatCardContent,
     MatList,
     MatListItem,
-    MatTooltip,
+    TnTooltipDirective,
     TranslateModule,
   ],
 })

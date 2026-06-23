@@ -6,10 +6,9 @@ import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
@@ -65,7 +64,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     ReactiveFormsModule,
     FormsModule,
     MatButton,
-    MatTooltip,
+    TnTooltipDirective,
     TranslateModule,
     SaveDebugButtonComponent,
   ],
