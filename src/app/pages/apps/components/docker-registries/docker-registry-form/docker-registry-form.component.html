@@ -29,7 +29,7 @@
         ></tn-input>
       </tn-form-field>
 
-      <tn-form-field [label]="'Name' | translate">
+      <tn-form-field [label]="'Name' | translate" [required]="true">
         <tn-input
           name="name"
           testId="name"
@@ -39,7 +39,7 @@
       </tn-form-field>
     }
 
-    <tn-form-field [label]="'Username' | translate">
+    <tn-form-field [label]="'Username' | translate" [required]="true">
       <tn-input
         name="username"
         testId="username"
@@ -48,7 +48,7 @@
       ></tn-input>
     </tn-form-field>
 
-    <tn-form-field [label]="'Password' | translate">
+    <tn-form-field [label]="'Password' | translate" [required]="true">
       <tn-input
         name="password"
         testId="password"

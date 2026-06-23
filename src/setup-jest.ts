@@ -33,6 +33,7 @@ import {
 import {
   LabelMarkupPipe,
   TN_TEST_ATTR, TnButtonComponent, TnIconButtonComponent, TnIconComponent, TnIconTesting,
+  TnInputComponent,
   TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTablePagerComponent,
 } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
@@ -103,6 +104,16 @@ setupZoneTestEnv();
 // every *real* tn-button in the same TestBed. Keep the pure pipe real everywhere
 // so mocking a card-bearing component never corrupts a sibling button's label.
 ngMocks.globalKeep(LabelMarkupPipe);
+
+// `TnInputComponent` exposes its `<input>` through a signal `viewChild('inputEl')`,
+// which real consumers read (e.g. `BasicSearchComponent.focusInput()` calls
+// `searchInput().inputEl()`, and harnesses query the rendered `input.tn-input`).
+// When ng-mocks deep-mocks any component whose graph transitively imports
+// `tn-input`, it replaces `TnInputComponent` across the whole TestBed with an empty
+// mock — silently breaking sibling *real* search inputs that depend on the rendered
+// element. Keep the lightweight input real everywhere so a deep-mocked parent never
+// blanks an unrelated real search field.
+ngMocks.globalKeep(TnInputComponent);
 
 const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
   return (
