@@ -3,18 +3,18 @@
     @if (activeTab?.value === ReportType.Disk) {
       <tn-select
         formControlName="devices"
+        testId="devices"
         [ariaLabel]="'Devices' | translate"
         [options]="diskDevices()"
         [multiple]="true"
-        testId="devices"
       ></tn-select>
 
       <tn-select
         formControlName="metrics"
+        testId="metrics"
         [ariaLabel]="'Metrics' | translate"
         [options]="diskMetrics()"
         [multiple]="true"
-        testId="metrics"
       ></tn-select>
     }
 
@@ -26,9 +26,9 @@
 
     <tn-select
       formControlName="tab"
+      testId="category"
       [ariaLabel]="'Category' | translate"
       [options]="tabOptions()"
-      testId="category"
       [ixUiSearch]="searchableElements.elements.selectReporting"
     ></tn-select>
     <tn-button
