@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, effect, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
@@ -6,7 +5,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCheckboxComponent, TnCheckboxLabelDirective, TnIconComponent, TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
@@ -19,7 +17,6 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-for
   templateUrl: './allowed-access-section.component.html',
   styleUrl: './allowed-access-section.component.scss',
   imports: [
-    AsyncPipe,
     TnIconComponent,
     TnSelectComponent,
     IxErrorsComponent,
@@ -44,11 +41,11 @@ export class AllowedAccessSectionComponent {
 
   protected sshAccess = this.userFormStore.sshAccess;
 
-  protected readonly roles$ = of([
+  protected readonly roles = [
     { label: roleNames.get(Role.FullAdmin), value: Role.FullAdmin },
     { label: roleNames.get(Role.SharingAdmin), value: Role.SharingAdmin },
     { label: roleNames.get(Role.ReadonlyAdmin), value: Role.ReadonlyAdmin },
-  ]);
+  ];
 
   form = this.formBuilder.group({
     smb: [true],

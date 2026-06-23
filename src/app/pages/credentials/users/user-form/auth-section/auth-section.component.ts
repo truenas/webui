@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
@@ -6,7 +5,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { User } from 'app/interfaces/user.interface';
@@ -19,7 +17,6 @@ import { UserFormStore, UserStigPasswordOption, defaultHomePath } from 'app/page
   styleUrl: './auth-section.component.scss',
   templateUrl: './auth-section.component.html',
   imports: [
-    AsyncPipe,
     ReactiveFormsModule,
     TnInputComponent,
     TnFormFieldComponent,
@@ -80,7 +77,7 @@ export class AuthSectionComponent implements OnInit {
     return helptextUsers.disablePasswordTooltip;
   });
 
-  protected stigPasswordOptions$ = of([
+  protected readonly stigPasswordOptions = [
     {
       label: this.translate.instant('Disable Password'),
       value: UserStigPasswordOption.DisablePassword,
@@ -91,7 +88,7 @@ export class AuthSectionComponent implements OnInit {
       value: UserStigPasswordOption.OneTimePassword,
       tooltip: this.translate.instant(this.tooltips.one_time_password),
     },
-  ]);
+  ];
 
   constructor() {
     this.form.valueChanges.pipe(
