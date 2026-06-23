@@ -41,7 +41,7 @@
     [(open)]="customAppOpen"
   >
     @if (customAppOpen()) {
-      <ix-custom-app-form (closed)="onCustomAppClosed($event)"></ix-custom-app-form>
+      <ix-custom-app-form (closed)="onCustomAppClosed()"></ix-custom-app-form>
     }
     @if (customAppForm(); as form) {
       <div tnSidePanelAction>

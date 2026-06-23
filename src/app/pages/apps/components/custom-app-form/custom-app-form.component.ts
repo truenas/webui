@@ -106,6 +106,10 @@ export class CustomAppFormComponent extends SidePanelForm implements OnInit {
   }
 
   protected onSubmit(): void {
+    if (!this.canSubmit()) {
+      return;
+    }
+
     this.isLoading.set(true);
     const data = this.form.value;
 

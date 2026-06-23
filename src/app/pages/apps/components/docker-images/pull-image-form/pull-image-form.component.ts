@@ -65,6 +65,10 @@ export class PullImageFormComponent extends SidePanelForm {
   };
 
   protected onSubmit(): void {
+    if (!this.canSubmit()) {
+      return;
+    }
+
     const values = this.form.getRawValue();
 
     const params: PullContainerImageParams = {

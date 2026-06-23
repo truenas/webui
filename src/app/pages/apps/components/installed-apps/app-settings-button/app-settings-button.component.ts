@@ -10,13 +10,14 @@ import {
   TnMenuTriggerDirective, TnSidePanelActionDirective, TnSidePanelComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import {
-  filter, forkJoin, Observable, of,
+  filter, forkJoin,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
@@ -65,11 +66,7 @@ export class AppSettingsButtonComponent {
 
   protected readonly settingsOpen = signal(false);
   protected readonly settingsForm = viewChild(AppsSettingsComponent);
-  protected readonly settingsCloseGuard = (): Observable<boolean> => {
-    return this.settingsForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
+  protected readonly settingsCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, this.settingsForm);
 
   // tn-menu-item renders as a button, not an anchor, so these navigation items
   // can't use [routerLink] — route programmatically instead of from the template.

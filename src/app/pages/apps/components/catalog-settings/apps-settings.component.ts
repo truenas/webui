@@ -181,6 +181,10 @@ export class AppsSettingsComponent extends SidePanelForm implements OnInit {
   }
 
   protected onSubmit(): void {
+    if (!this.canSubmit()) {
+      return;
+    }
+
     const values = this.form.getRawValue();
 
     this.isFormLoading.set(true);

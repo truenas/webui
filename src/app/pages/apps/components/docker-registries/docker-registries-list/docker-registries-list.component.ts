@@ -9,7 +9,6 @@ import {
   TnSidePanelActionDirective, TnSidePanelComponent,
   TnSortEvent, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent,
 } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -23,6 +22,7 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { createTable, mapTnSortToProviderSorting } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.elements';
@@ -74,11 +74,7 @@ export class DockerRegistriesListComponent implements OnInit {
     ? this.translate.instant('Edit Docker Registry')
     : this.translate.instant('Create Docker Registry')));
 
-  protected readonly registryCloseGuard = (): Observable<boolean> => {
-    return this.registryForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
+  protected readonly registryCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, this.registryForm);
 
   // Column-config model consumed by ix-table-columns-selector. The tn-table body
   // renders its own column templates; we derive its displayedColumns from the

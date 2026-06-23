@@ -116,6 +116,10 @@ export class DockerRegistryFormComponent extends SidePanelForm implements OnInit
   }
 
   onSubmit(): void {
+    if (!this.canSubmit()) {
+      return;
+    }
+
     const payload = this.getPayload();
 
     let request$: Observable<DockerRegistryPayload>;

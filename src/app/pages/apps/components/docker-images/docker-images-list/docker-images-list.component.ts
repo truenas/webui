@@ -8,7 +8,6 @@ import { TnDialog, TnTablePagerComponent,
   TnButtonComponent, TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
   TnSidePanelActionDirective, TnSidePanelComponent,
   TnSortEvent, TnTableColumnDirective, TnTableComponent } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -19,6 +18,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { mapTnSortToProviderSorting } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
@@ -70,11 +70,7 @@ export class DockerImagesListComponent implements OnInit {
 
   protected readonly pullImageOpen = signal(false);
   protected readonly pullImageForm = viewChild(PullImageFormComponent);
-  protected readonly pullImageCloseGuard = (): Observable<boolean> => {
-    return this.pullImageForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
+  protected readonly pullImageCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, this.pullImageForm);
 
   ngOnInit(): void {
     this.dataProvider = new AsyncDataProvider(this.api.call('app.image.query'));

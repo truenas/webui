@@ -9,7 +9,7 @@ import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCar
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
-  filter, Observable, of, switchMap, tap,
+  filter, switchMap, tap,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -23,6 +23,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
+import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
@@ -84,11 +85,7 @@ export class AppInfoCardComponent {
 
   protected readonly customAppEditOpen = signal(false);
   protected readonly customAppForm = viewChild(CustomAppFormComponent);
-  protected readonly customAppCloseGuard = (): Observable<boolean> => {
-    return this.customAppForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
+  protected readonly customAppCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, this.customAppForm);
 
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
