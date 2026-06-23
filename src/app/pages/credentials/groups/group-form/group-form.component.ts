@@ -3,10 +3,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { Observable, combineLatest, of, shareReplay } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -26,7 +25,6 @@ import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
@@ -39,8 +37,6 @@ import { UserService } from 'app/services/user.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -48,8 +44,7 @@ import { UserService } from 'app/services/user.service';
     IxCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -66,18 +61,18 @@ export class GroupFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.AccountWrite];
 
-  get isNew(): boolean {
+  private get isNew(): boolean {
     return !this.editingGroup;
   }
 
-  get title(): string {
+  protected get title(): string {
     return this.isNew ? this.translate.instant('Add Group') : this.translate.instant('Edit Group');
   }
 
   protected isFormLoading = signal(false);
   protected editingGroup: Group | undefined;
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     gid: [null as number | null, [Validators.required, Validators.pattern(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
     sudo_commands: [[] as string[]],
@@ -88,7 +83,7 @@ export class GroupFormComponent implements OnInit {
     privileges: [[] as string[] | number[]],
   });
 
-  readonly tooltips = {
+  protected readonly tooltips = {
     gid: helptextGroups.groupIdTooltip,
     name: helptextGroups.nameTooltip,
     privileges: helptextGroups.privilegesTooltip,

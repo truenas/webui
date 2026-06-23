@@ -2,15 +2,14 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockJob, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AppState } from 'app/enums/app-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
@@ -113,6 +112,11 @@ describe('AppInfoCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
+  async function openMenu(): Promise<TnMenuHarness> {
+    spectator.click('[data-test="button-app-info-menu"]');
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   describe('name', () => {
     it('shows app name as a link when app name matches image name', () => {
       setupTest({
@@ -184,23 +188,21 @@ describe('AppInfoCardComponent', () => {
   it('shows header', async () => {
     setupTest(fakeApp);
     spectator.detectChanges();
-    expect(spectator.query('mat-card-header h3')).toHaveText('Application Info');
-    expect(spectator.query('mat-card-header button#edit-app')).toHaveText('Edit');
+    expect(spectator.query('.detail-card-title')).toHaveText('Application Info');
+    expect(await (await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }))).getLabel()).toBe('Edit');
 
-    const menu = await loader.getHarness(MatMenuHarness.with({ selector: '[ixTest="app-info-menu"]' }));
-    await menu.open();
+    const menu = await openMenu();
 
-    const menuItems = await menu.getItems();
-    expect(menuItems).toHaveLength(2);
-    expect(await menuItems[0].getText()).toContain('Update');
-    expect(await menuItems[1].getText()).toContain('Convert to custom app');
+    const menuItems = await menu.getItemLabels();
+    expect(menuItems.some((label) => label.includes('Update'))).toBe(true);
+    expect(menuItems.some((label) => label.includes('Convert to custom app'))).toBe(true);
   });
 
   it('opens update app dialog when Update button is pressed', async () => {
     setupTest(fakeApp);
 
-    const menu = await loader.getHarness(MatMenuHarness.with({ selector: '[ixTest="app-info-menu"]' }));
-    await menu.clickItem({ text: 'Update' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Update' });
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppUpdateDialog, {
       maxWidth: '750px',
@@ -216,8 +218,8 @@ describe('AppInfoCardComponent', () => {
   it('converts app to custom when Convert button is pressed', async () => {
     setupTest(fakeApp);
 
-    const menu = await loader.getHarness(MatMenuHarness.with({ selector: '[ixTest="app-info-menu"]' }));
-    await menu.clickItem({ text: 'Convert to custom app' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Convert to custom app' });
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('app.convert_to_custom', ['test-user-app-name']);
@@ -229,7 +231,7 @@ describe('AppInfoCardComponent', () => {
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockImplementation();
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
     expect(router.navigate).toHaveBeenCalledWith(['/apps', 'installed', fakeApp.metadata.train, fakeApp.id, 'edit']);
@@ -241,7 +243,7 @@ describe('AppInfoCardComponent', () => {
     const slideIn = spectator.inject(SlideIn);
     jest.spyOn(slideIn, 'open').mockImplementation();
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
     expect(slideIn.open).toHaveBeenCalledWith(CustomAppFormComponent, {
@@ -256,7 +258,7 @@ describe('AppInfoCardComponent', () => {
       closed: of({ removeVolumes: true, removeImages: true }),
     } as DialogRef);
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -273,11 +275,11 @@ describe('AppInfoCardComponent', () => {
   it('shows portal buttons and opens a URL when one of the button is clicked', async () => {
     setupTest(fakeApp);
 
-    const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ ancestor: '.portals' }));
+    const buttons = await loader.getAllHarnesses(TnButtonHarness.with({ ancestor: '.portals' }));
 
     expect(buttons).toHaveLength(2);
-    expect(await buttons[0].getText()).toBe('Web UI');
-    expect(await buttons[1].getText()).toBe('Admin Panel');
+    expect(await buttons[0].getLabel()).toBe('Web UI');
+    expect(await buttons[1].getLabel()).toBe('Admin Panel');
 
     await buttons[0].click();
 
@@ -293,11 +295,11 @@ describe('AppInfoCardComponent', () => {
       },
     });
 
-    const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ ancestor: '.portals' }));
+    const buttons = await loader.getAllHarnesses(TnButtonHarness.with({ ancestor: '.portals' }));
 
     expect(buttons).toHaveLength(2);
-    expect(await buttons[0].getText()).toBe('Web UI');
-    expect(await buttons[1].getText()).toBe('Admin Panel');
+    expect(await buttons[0].getLabel()).toBe('Web UI');
+    expect(await buttons[1].getLabel()).toBe('Admin Panel');
 
     await buttons[0].click();
     expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://localhost:8000/ui?q=ui#yes');
@@ -309,12 +311,32 @@ describe('AppInfoCardComponent', () => {
   it('opens rollback app dialog when Roll Back button is pressed', async () => {
     setupTest(fakeApp);
 
-    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Roll Back' }));
+    const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Roll Back' }));
     await rollbackButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppRollbackModalComponent, {
       data: fakeApp,
     });
+  });
+
+  it('emits (stopApp) from the footer Stop button when the app is running', async () => {
+    setupTest({ ...fakeApp, state: AppState.Running });
+    jest.spyOn(spectator.component.stopApp, 'emit');
+
+    const stopButton = await loader.getHarness(TnButtonHarness.with({ label: 'Stop' }));
+    await stopButton.click();
+
+    expect(spectator.component.stopApp.emit).toHaveBeenCalled();
+  });
+
+  it('emits (startApp) from the footer Start button when the app is stopped', async () => {
+    setupTest({ ...fakeApp, state: AppState.Stopped });
+    jest.spyOn(spectator.component.startApp, 'emit');
+
+    const startButton = await loader.getHarness(TnButtonHarness.with({ label: 'Start' }));
+    await startButton.click();
+
+    expect(spectator.component.startApp.emit).toHaveBeenCalled();
   });
 
   it('handles malformed URLs gracefully', () => {

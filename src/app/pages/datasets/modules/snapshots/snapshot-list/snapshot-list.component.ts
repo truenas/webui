@@ -4,12 +4,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import { TnTooltipDirective, TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, combineLatest, of,
 } from 'rxjs';
@@ -74,7 +73,7 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
     RequiresRolesDirective,
     TestDirective,
     AsyncPipe,
-    MatTooltip,
+    TnTooltipDirective,
     IxTableEmptyDirective,
     TnIconComponent,
     IxTableComponent,

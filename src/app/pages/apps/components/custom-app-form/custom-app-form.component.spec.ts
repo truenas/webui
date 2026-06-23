@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -116,7 +116,7 @@ describe('CustomAppFormComponent', () => {
       await configControl.setValue('config');
       spectator.detectChanges();
 
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await button.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -135,7 +135,7 @@ describe('CustomAppFormComponent', () => {
       await appNameControl.setValue('test-app-one');
       spectator.detectChanges();
 
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(button.isDisabled()).toBeTruthy();
     });
   });
@@ -146,7 +146,7 @@ describe('CustomAppFormComponent', () => {
     });
 
     it('checks save and closes slide in when successfully submitted', async () => {
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await button.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('app.update', [

@@ -1,35 +1,34 @@
   <div
     class="custom-app-wrapper"
-    [matTooltip]="'Setup Pool To Create Custom App' | translate"
-    [matTooltipDisabled]="!(customAppDisabled$ | async)"
+    [tnTooltip]="'Setup Pool To Create Custom App' | translate"
+    [tnTooltipDisabled]="!(customAppDisabled$ | async)"
   >
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
       color="primary"
-      ixTest="custom-app"
+      testId="custom-app"
       [disabled]="customAppDisabled$ | async"
       [ixUiSearch]="searchableElements.elements.customApp"
-      (click)="openAppWizardCreation()"
-    >{{ 'Custom App' | translate }}</button>
+      [label]="'Custom App' | translate"
+      (onClick)="openAppWizardCreation()"
+    ></tn-button>
 
-    <button
-      mat-icon-button
-      ixTest="custom-app-menu"
-      [matMenuTriggerFor]="customAppMenu"
-      [matTooltip]="'More Options' | translate"
-      [attr.aria-label]="'More Options' | translate"
-    >
-      <tn-icon name="dots-vertical" library="mdi"></tn-icon>
-    </button>
-    <mat-menu #customAppMenu="matMenu">
-      <button
+    <tn-icon-button
+      name="dots-vertical"
+      library="mdi"
+      testId="custom-app-menu"
+      [ariaLabel]="'More Options' | translate"
+      [tooltip]="'More Options' | translate"
+      [tnMenuTriggerFor]="customAppMenu"
+    ></tn-icon-button>
+    <tn-menu #customAppMenu>
+      <tn-menu-item
         *ixRequiresRoles="requiredRoles"
-        mat-menu-item
-        ixTest="custom-app-yaml"
+        testId="custom-app-yaml"
+        [label]="'Install via YAML' | translate"
         [disabled]="customAppDisabled$ | async"
         [ixUiSearch]="searchableElements.elements.customAppYaml"
-        (click)="openCustomAppYamlCreation()"
-      >{{ 'Install via YAML' | translate}}</button>
-    </mat-menu>
+        (itemClick)="openCustomAppYamlCreation()"
+      ></tn-menu-item>
+    </tn-menu>
   </div>

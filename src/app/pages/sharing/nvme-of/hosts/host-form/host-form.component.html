@@ -59,7 +59,7 @@
               type="button"
               ixTest="generate-key"
               [disabled]="!hasNqn || isGeneratingHostKey()"
-              [matTooltip]="!hasNqn ? (helptext.generateHostKeyDisabled | translate) : ''"
+              [tnTooltip]="!hasNqn ? (helptext.generateHostKeyDisabled | translate) : ''"
               (click)="generateHostKey()"
             >{{ 'Generate Key' | translate }}</button>
           </div>

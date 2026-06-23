@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, computed, inject, input,
 } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 
@@ -15,7 +14,7 @@ import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badg
   standalone: true,
   imports: [
     TnIconComponent,
-    MatTooltip,
+    TnTooltipDirective,
     TranslateModule,
   ],
 })

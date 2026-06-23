@@ -9,14 +9,14 @@
 
     @case (DockerStatus.Initializing) {
       <div class="status-wrapper">
-        <mat-spinner [diameter]="20"></mat-spinner>
+        <tn-spinner [diameter]="20"></tn-spinner>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
 
     @case (DockerStatus.Stopping) {
       <div class="status-wrapper">
-        <mat-spinner [diameter]="20"></mat-spinner>
+        <tn-spinner [diameter]="20"></tn-spinner>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
@@ -29,7 +29,7 @@
     }
 
     @case (DockerStatus.Failed) {
-      <div class="status-wrapper" [matTooltip]="statusDescription$ | async">
+      <div class="status-wrapper" [tnTooltip]="(statusDescription$ | async) || ''">
         <tn-icon name="close-circle" library="mdi" class="error"></tn-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>

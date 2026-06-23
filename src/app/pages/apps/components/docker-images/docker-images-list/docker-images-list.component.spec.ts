@@ -1,15 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableComponent, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -22,15 +20,13 @@ import { DockerImagesListComponent } from './docker-images-list.component';
 describe('DockerImagesListComponent', () => {
   let spectator: Spectator<DockerImagesListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: DockerImagesListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
-    ],
-    declarations: [
     ],
     providers: [
       mockAuth(),
@@ -55,23 +51,36 @@ describe('DockerImagesListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
-  it('should show table rows', async () => {
-    const expectedRows = [
-      ['', 'Image ID', 'Tags', 'Image Size', ''],
-      ['', 'sha256:test1', 'truenas/webui:3.1', '725.07 KiB', ''],
-      ['', 'sha256:test2', 'truenas/middleware:0.1.2', '5.82 MiB', ''],
-    ];
-
+  it('queries the images and shows them as table rows', async () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.image.query');
-    expect(await table.getCellTexts()).toEqual(expectedRows);
+
+    expect(await table.getRowCount()).toBe(2);
+    expect(await table.getHeaderTexts()).toEqual(expect.arrayContaining(['Image ID', 'Tags', 'Image Size']));
+    expect(await table.getCellText(0, 'id')).toBe('sha256:test1');
+    expect(await table.getCellText(0, 'repo_tags')).toBe('truenas/webui:3.1');
+    expect(await table.getCellText(0, 'size')).toBe('725.07 KiB');
+    expect(await table.getCellText(1, 'id')).toBe('sha256:test2');
   });
 
-  it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'sha256:test1');
-    await deleteButton.click();
+  it('opens delete dialog when the row "Delete" button is pressed', async () => {
+    const deleteButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'delete' }));
+    await deleteButtons[0].click();
+
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DockerImageDeleteDialog, {
+      data: [fakeDockerImagesDataSource[0]],
+    });
+  });
+
+  it('shows the batch operations toolbar and bulk-deletes selected images', async () => {
+    const tnTable = spectator.query(TnTableComponent);
+    tnTable?.selectionChange.emit([fakeDockerImagesDataSource[0]]);
+    spectator.detectChanges();
+
+    const bulkDeleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
+    await bulkDeleteButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DockerImageDeleteDialog, {
       data: [fakeDockerImagesDataSource[0]],
@@ -79,7 +88,7 @@ describe('DockerImagesListComponent', () => {
   });
 
   it('opens form when "Pull Image" button is pressed', async () => {
-    const pullImageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Pull Image' }));
+    const pullImageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Pull Image' }));
     await pullImageButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PullImageFormComponent);

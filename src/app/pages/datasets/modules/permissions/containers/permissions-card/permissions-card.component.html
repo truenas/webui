@@ -7,7 +7,7 @@
         mat-button
         ixTest="edit-permissions"
         [disabled]="!canEditPermissions()"
-        [matTooltip]="reasonEditIsDisabled()"
+        [tnTooltip]="reasonEditIsDisabled()"
         (click)="redirectToEditPermissions()"
       >
         {{ 'Edit' | translate }}

@@ -4,10 +4,6 @@
   display: block;
 
   &::ng-deep {
-    mat-list mat-list-item:focus .mdc-list-item__primary-text {
-      color: var(--fg2);
-    }
-
     // CDK drag-drop styles
     .cdk-drag-preview {
       background-color: var(--bg2);
@@ -26,7 +22,7 @@
       transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
     }
 
-    .cdk-drop-list-dragging mat-list-item:not(.cdk-drag-placeholder) {
+    .cdk-drop-list-dragging tn-list-item:not(.cdk-drag-placeholder) {
       transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
     }
   }
@@ -38,7 +34,8 @@
   overflow-y: auto;
   position: relative;
 
-  mat-list {
+  tn-list {
+    display: block;
     margin: 0;
     padding: 0 0 1px;
 
@@ -46,19 +43,16 @@
       background-color: var(--bg2);
     }
 
-    mat-list-item {
-      align-items: center;
+    tn-list-item {
       background-color: var(--bg2);
       border-bottom: 1px solid var(--lines);
       border-top: thin solid var(--lines);
       color: var(--fg2);
       cursor: pointer;
-      display: flex;
+      display: block;
       margin-bottom: -1px;
       min-height: 23px;
-      padding: 12px 16px;
       text-align: left;
-      white-space: nowrap;
 
       &:first-child {
         border-top: none;
@@ -82,8 +76,23 @@
         opacity: 0.5;
       }
 
-      tn-icon {
+      // tn-list-item is opinionated for standard lists (48px rows, 16px leading gap,
+      // single-line ellipsis). Override its internals to reproduce the compact, wrapping
+      // rows this drag-drop widget has always used. Revisit if the library exposes a
+      // dense / wrapping variant. See NAS-141021.
+      ::ng-deep .tn-list-item__content {
+        min-height: 23px;
+        padding: 12px 16px;
+      }
+
+      ::ng-deep .tn-list-item__leading {
         margin-right: 5px;
+      }
+
+      ::ng-deep .tn-list-item__primary-text {
+        color: var(--fg2);
+        overflow: visible;
+        white-space: normal;
       }
 
       label {

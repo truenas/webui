@@ -245,7 +245,7 @@ export class NfsCardComponent implements OnInit {
     });
   }
 
-  protected onChangeEnabledState(row: NfsShare): void {
+  protected onChangeEnabledState(row: NfsShare, toggle: TableToggleCellComponent): void {
     const enabled = !row.enabled;
 
     this.api.call('sharing.nfs.update', [row.id, { enabled }]).pipe(
@@ -261,7 +261,7 @@ export class NfsCardComponent implements OnInit {
         );
       },
       error: (error: unknown) => {
-        this.dataProvider.load();
+        toggle.revert();
         this.errorHandler.showErrorModal(error);
       },
     });

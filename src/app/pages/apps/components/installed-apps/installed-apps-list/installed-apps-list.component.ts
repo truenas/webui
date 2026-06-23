@@ -1,25 +1,28 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef,
+  inject, OnInit, output, signal, viewChild,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
-import { MatColumnDef } from '@angular/material/table';
 import {
   ActivatedRoute, Router,
 } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective,
+  TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
+  TnSortEvent, TnTableColumnDirective, TnTableComponent } from '@truenas/ui-components';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
-  combineLatest, filter, forkJoin, map, Observable, switchMap,
+  combineLatest, filter, forkJoin, map, Observable, shareReplay, switchMap,
 } from 'rxjs';
+import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -31,21 +34,24 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
+import { AppActionRequiredBadgeComponent } from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
 import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
-import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
+import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
 import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/installed-apps.constants';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { AppsSort, InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState as WebuiAppState } from 'app/store';
 
@@ -70,14 +76,20 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     BasicSearchComponent,
     TnIconComponent,
     TnTooltipDirective,
-    MatSort,
     AsyncPipe,
-    MatCheckbox,
-    MatColumnDef,
-    MatSortHeader,
-    AppRowComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnIconButtonComponent,
+    RequiresRolesDirective,
+    ImgFallbackModule,
+    AppStateCellComponent,
+    AppUpdateCellComponent,
+    AppActionRequiredBadgeComponent,
+    FileSizePipe,
+    NetworkSpeedPipe,
     EmptyComponent,
-    TestDirective,
     TranslateModule,
   ],
 })
@@ -108,14 +120,40 @@ export class InstalledAppsListComponent implements OnInit {
   protected readonly searchableElements = installedAppsElements;
   readonly isLoading = toSignal(this.installedAppsStore.isLoading$, { requireSync: true });
 
-  dataSource: App[] = [];
+  readonly dataSource = signal<App[]>([]);
   selectedApp: App | undefined;
   searchQuery = toSignal(this.installedAppsStore.searchQuery$, { requireSync: true });
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
-  selection = new SelectionModel<string>(true, []);
+  // Track the selection as ids and derive checkedApps from the live dataSource
+  // rather than storing the App objects tn-table emits. The table is keyed by
+  // trackByAppId, so the bulk-action getters (active/stoppedCheckedApps) always
+  // read current state/upgrade_available for the selected ids instead of a
+  // detached snapshot that could drift if the row objects are replaced.
+  private readonly checkedAppIds = signal<Set<string>>(new Set());
+  readonly checkedApps = computed(() => {
+    const ids = this.checkedAppIds();
+    return this.dataSource().filter((app) => ids.has(app.id));
+  });
+
   sortingInfo = toSignal(this.installedAppsStore.sortingInfo$, { requireSync: true });
 
+  protected readonly table = viewChild(TnTableComponent);
+
   readonly sortableField = SortableField;
+  protected readonly requiredRoles = [Role.AppsWrite];
+  protected readonly imagePlaceholder = appImagePlaceholder;
+  protected readonly trackByAppId = (_: number, app: App): string => app.id;
+
+  protected readonly displayedColumns = [
+    SortableField.Application,
+    SortableField.State,
+    'cpu',
+    'ram',
+    'io',
+    'network',
+    SortableField.Updates,
+    'controls',
+  ];
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -124,56 +162,97 @@ export class InstalledAppsListComponent implements OnInit {
   };
 
   get isSelectedAppVisible(): boolean {
-    return this.filteredApps?.some((app) => app.id === this.selectedApp?.id);
+    return this.filteredApps().some((app) => app.id === this.selectedApp?.id);
   }
 
-  get filteredApps(): App[] {
-    return this.dataSource
-      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
-  }
-
-  get allAppsChecked(): boolean {
-    return this.selection.selected.length === this.filteredApps.length;
-  }
+  readonly filteredApps = computed(() => {
+    const query = this.searchQuery();
+    return this.dataSource()
+      .filter((app) => app?.name?.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+  });
 
   get hasCheckedApps(): boolean {
-    return this.checkedAppsNames.length > 0;
+    return this.checkedApps().length > 0;
   }
 
   get appsUpdateAvailable(): number {
-    return this.dataSource
+    return this.dataSource()
       .filter((app) => app.upgrade_available).length;
   }
 
   get hasUpdates(): boolean {
-    return this.dataSource.some((app) => app.upgrade_available);
+    return this.dataSource().some((app) => app.upgrade_available);
   }
 
   get checkedAppsNames(): string[] {
-    return this.selection.selected;
-  }
-
-  get checkedApps(): App[] {
-    return this.checkedAppsNames
-      .map((id) => this.dataSource.find((app) => app.id === id))
-      .filter((app): app is App => !!app);
+    return this.checkedApps().map((app) => app.id);
   }
 
   get activeCheckedApps(): App[] {
-    return this.dataSource.filter(
-      (app) => [AppState.Running, AppState.Deploying].includes(app.state) && this.selection.isSelected(app.id),
+    return this.checkedApps().filter(
+      (app) => [AppState.Running, AppState.Deploying].includes(app.state),
     );
   }
 
   get stoppedCheckedApps(): App[] {
-    return this.dataSource.filter(
-      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state) && this.selection.isSelected(app.id),
+    return this.checkedApps().filter(
+      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state),
     );
   }
 
   ngOnInit(): void {
     this.loadInstalledApps();
     this.listenForStatusUpdates();
+  }
+
+  protected onSelectionChange(apps: App[]): void {
+    this.checkedAppIds.set(new Set(apps.map((app) => app.id)));
+    this.cdr.markForCheck();
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    // tn-table has no disableClear, so a third click on a sorted column emits an
+    // empty direction (the "cleared" state). Replicate the pre-migration
+    // matSortDisableClear behaviour by falling back to the default sort rather than
+    // silently ordering descending with no header indicator.
+    const sort: AppsSort = event.direction
+      ? { active: event.column, direction: event.direction }
+      : { active: SortableField.Application, direction: 'asc' };
+    this.setDatasourceWithSort(sort);
+    this.cdr.markForCheck();
+  }
+
+  private clearSelection(): void {
+    // selection.clear() resets the table's own SelectionModel without emitting
+    // (selectionChange) (that output only fires on user interaction), so mirror
+    // the cleared state into checkedAppIds ourselves. Matches docker-images-list.
+    this.table()?.selection.clear();
+    this.checkedAppIds.set(new Set());
+    this.cdr.markForCheck();
+  }
+
+  protected isAppStopped(app: App): boolean {
+    return app.state === AppState.Stopped || app.state === AppState.Crashed;
+  }
+
+  protected hasStats(app: App, stats: AppStats | null | undefined): stats is AppStats {
+    return app.state === AppState.Running && !!stats;
+  }
+
+  protected inProgress(app: App): boolean {
+    return app.state === AppState.Deploying;
+  }
+
+  protected incomingTrafficBits(stats: AppStats): number {
+    return stats.networks.reduce((sum, networkStats) => sum + this.bytesToBits(networkStats.rx_bytes), 0);
+  }
+
+  protected outgoingTrafficBits(stats: AppStats): number {
+    return stats.networks.reduce((sum, networkStats) => sum + this.bytesToBits(networkStats.tx_bytes), 0);
+  }
+
+  private bytesToBits(bytes: number): number {
+    return bytes == null ? 0 : bytes * 8;
   }
 
   viewDetails(app: App): void {
@@ -194,16 +273,8 @@ export class InstalledAppsListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.installedAppsStore.setSearchQuery(query);
 
-    if (!this.filteredApps.length) {
+    if (!this.filteredApps().length) {
       this.showLoadStatus(EmptyType.NoSearchResults);
-    }
-  }
-
-  toggleAppsChecked(checked: boolean): void {
-    if (checked) {
-      this.filteredApps.forEach((app) => this.selection.select(app.id));
-    } else {
-      this.selection.clear();
     }
   }
 
@@ -249,7 +320,7 @@ export class InstalledAppsListComponent implements OnInit {
     ]).pipe(
       filter(([pool]) => {
         if (!pool) {
-          this.dataSource = [];
+          this.dataSource.set([]);
           this.showLoadStatus(EmptyType.FirstUse);
           this.cdr.markForCheck();
           this.redirectToInstalledApps();
@@ -258,7 +329,7 @@ export class InstalledAppsListComponent implements OnInit {
       }),
       filter(([,dockerStarted]) => {
         if (!dockerStarted) {
-          this.dataSource = [];
+          this.dataSource.set([]);
           this.showLoadStatus(EmptyType.Errors);
           this.cdr.markForCheck();
           this.redirectToInstalledApps();
@@ -267,7 +338,7 @@ export class InstalledAppsListComponent implements OnInit {
       }),
       filter(([,, apps]) => {
         if (!apps.length) {
-          this.dataSource = [];
+          this.dataSource.set([]);
           this.showLoadStatus(EmptyType.NoPageData);
           this.cdr.markForCheck();
           this.redirectToInstalledApps();
@@ -278,7 +349,13 @@ export class InstalledAppsListComponent implements OnInit {
     ).subscribe({
       next: ([,, apps]) => {
         this.setDatasourceWithSort(this.sortingInfo(), apps);
-        this.selectAppForDetails(this.appId());
+        // Preserve the user's current selection across data refreshes (e.g. after
+        // start/stop, which re-emits installedApps$). viewDetails() updates the URL
+        // via replaceState without touching the route params, so this.appId() only
+        // reflects the initial deep-link — falling back to it on every refresh would
+        // snap the selection back to the wrong app (or selectFirstApp) and rewrite
+        // the URL. Only use it when nothing is selected yet.
+        this.selectAppForDetails(this.selectedApp?.id ?? this.appId() ?? null);
         this.cdr.markForCheck();
       },
     });
@@ -368,24 +445,26 @@ export class InstalledAppsListComponent implements OnInit {
   onBulkStart(): void {
     this.stoppedCheckedApps.forEach((app) => this.start(app.name));
     this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
-    this.toggleAppsChecked(false);
+    this.clearSelection();
   }
 
   onBulkStop(): void {
     this.activeCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
-    this.toggleAppsChecked(false);
+    this.clearSelection();
   }
 
   onBulkUpdate(updateAll = false): void {
-    const apps = this.dataSource.filter((app) => (
-      updateAll ? app.upgrade_available : this.selection.isSelected(app.id)
+    const apps = this.dataSource().filter((app) => (
+      updateAll ? app.upgrade_available : this.checkedAppIds().has(app.id)
     ));
     this.tnDialog.open(AppBulkUpdateComponent, { data: apps })
       .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.toggleAppsChecked(false);
+        // Clear selection whether the dialog was confirmed or dismissed, to stay
+        // consistent with onBulkStart/onBulkStop and the pre-migration behavior.
+        this.clearSelection();
       });
   }
 
@@ -413,10 +492,13 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));
   }
 
-  setDatasourceWithSort(sort: Sort, apps?: App[]): void {
+  setDatasourceWithSort(sort: AppsSort, apps?: App[]): void {
     this.installedAppsStore.setSortingInfo(sort);
-    const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
-    this.dataSource = [...sourceArray].sort((a, b) => {
+    // `apps` is the override list (e.g. a fresh load); when omitted we re-sort the
+    // current rows. Use ?? (not a truthy-length check) so an explicit empty array
+    // clears the table instead of resurrecting stale rows.
+    const sourceArray = apps ?? this.dataSource();
+    this.dataSource.set([...sourceArray].sort((a, b) => {
       const isAsc = sort.direction === 'asc';
 
       switch (sort.active as SortableField) {
@@ -433,7 +515,7 @@ export class InstalledAppsListComponent implements OnInit {
         default:
           return doSortCompare(a.name, b.name, isAsc);
       }
-    });
+    }));
   }
 
   private executeBulkDeletion(options: AppDeleteDialogOutputData): Observable<Job<CoreBulkResponse[]>> {
@@ -453,7 +535,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private handleDeletionResult(job: Job<CoreBulkResponse[]>): void {
-    if (!this.dataSource.length) {
+    if (!this.dataSource().length) {
       this.redirectToInstalledApps();
     }
 
@@ -464,7 +546,7 @@ export class InstalledAppsListComponent implements OnInit {
       this.dialogService.error({ title: helptextApps.bulkActions.title, message: errorMessages });
     }
 
-    this.toggleAppsChecked(false);
+    this.clearSelection();
   }
 
   private getErrorMessages(results: CoreBulkResponse[]): string {
@@ -474,11 +556,11 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private selectAppForDetails(appId: string | null): void {
-    if (!this.dataSource.length) {
+    if (!this.dataSource().length) {
       return;
     }
 
-    const selectedApp = appId && this.dataSource.find((app) => app.id === appId);
+    const selectedApp = appId && this.dataSource().find((app) => app.id === appId);
     if (selectedApp) {
       this.selectedApp = selectedApp;
       this.toggleShowMobileDetails.emit(true);
@@ -491,7 +573,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private selectFirstApp(): void {
-    const [firstApp] = this.dataSource;
+    const [firstApp] = this.dataSource();
     if (firstApp.metadata.train && firstApp.id) {
       this.location.replaceState(['/apps', 'installed', firstApp.metadata.train, firstApp.id].join('/'));
     } else {
@@ -526,7 +608,20 @@ export class InstalledAppsListComponent implements OnInit {
       });
   }
 
+  private readonly statsCache = new Map<string, Observable<AppStats>>();
+
+  // De-dupes the per-row stats subscription across the CPU/RAM/I-O/Network cells that
+  // each read `getAppStats(row.name) | async`. `refCount: true` tears the shared
+  // subscription down once a row leaves the list (search filtering, app removal) and
+  // re-attaches cheaply from the backing ComponentStore state on the next render.
+  // The Map entry itself is retained (an idle shareReplay factory, not a live
+  // subscription); growth is bounded by the number of distinct app names ever rendered.
   getAppStats(name: string): Observable<AppStats> {
-    return this.appsStats.getStatsForApp(name);
+    let stats$ = this.statsCache.get(name);
+    if (!stats$) {
+      stats$ = this.appsStats.getStatsForApp(name).pipe(shareReplay({ bufferSize: 1, refCount: true }));
+      this.statsCache.set(name, stats$);
+    }
+    return stats$;
   }
 }

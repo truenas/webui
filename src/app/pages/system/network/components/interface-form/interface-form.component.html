@@ -225,7 +225,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [matTooltip]="(isHaEnabled$ | async) ? ('Editing interfaces is not allowed while HA is enabled' | translate) : ''"
+          [tnTooltip]="(isHaEnabled$ | async) ? ('Editing interfaces is not allowed while HA is enabled' | translate) : ''"
           [disabled]="form.invalid || isLoading() || (isHaEnabled$ | async)"
         >
           {{ 'Save' | translate }}

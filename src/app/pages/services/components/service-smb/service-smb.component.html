@@ -7,13 +7,13 @@
 }
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset [title]="'NetBIOS' | translate">
-    <ix-input
-      formControlName="netbiosname"
+  <tn-form-section [heading]="'NetBIOS' | translate">
+    <tn-form-field
       [label]="'NetBIOS Name' | translate"
       [tooltip]="tooltips.netbiosname | translate"
-      [required]="true"
-    ></ix-input>
+    >
+      <tn-input formControlName="netbiosname"></tn-input>
+    </tn-form-field>
 
     <ix-chips
       formControlName="netbiosalias"
@@ -21,93 +21,81 @@
       [tooltip]="tooltips.netbiosalias | translate"
     ></ix-chips>
 
-    <ix-input
-      formControlName="workgroup"
+    <tn-form-field
       [label]="'Workgroup' | translate"
       [tooltip]="tooltips.workgroup | translate"
-    ></ix-input>
+    >
+      <tn-input formControlName="workgroup"></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="description"
+    <tn-form-field
       [label]="'Description' | translate"
       [tooltip]="tooltips.description | translate"
-    ></ix-input>
+    >
+      <tn-input formControlName="description"></tn-input>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="minimum_protocol"
+    <tn-form-field
       [label]="'Minimum Protocol' | translate"
       [tooltip]="tooltips.minimum_protocol | translate"
-      [options]="minimumProtocolOptions$"
-      [required]="true"
-    ></ix-select>
+    >
+      <tn-select formControlName="minimum_protocol" [options]="minimumProtocolOptions"></tn-select>
+    </tn-form-field>
 
-    <ix-checkbox
-      formControlName="ntlmv1_auth"
-      [label]="'NTLMv1 Auth' | translate"
-      [tooltip]="tooltips.ntlmv1_auth | translate"
-    ></ix-checkbox>
-  </ix-fieldset>
+    <tn-form-field [tooltip]="tooltips.ntlmv1_auth | translate">
+      <tn-checkbox formControlName="ntlmv1_auth" [label]="'NTLMv1 Auth' | translate"></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
 
   @if (!isBasicMode) {
-    <ix-fieldset [title]="'Other Options' | translate">
-      <ix-select
-        formControlName="unixcharset"
+    <tn-form-section [heading]="'Other Options' | translate">
+      <tn-form-field
         [label]="'UNIX Charset' | translate"
         [tooltip]="tooltips.unixcharset | translate"
-        [options]="unixCharsetOptions$"
-      ></ix-select>
+      >
+        <tn-select formControlName="unixcharset" [options]="(unixCharsetOptions$ | async) ?? []"></tn-select>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="encryption"
+      <tn-form-field
         [label]="'Transport Encryption Behavior' | translate"
-        [options]="encryptionOptions$"
         [required]="true"
-      ></ix-select>
+      >
+        <tn-select formControlName="encryption" [options]="encryptionOptions"></tn-select>
+      </tn-form-field>
 
-      <ix-checkbox
-        formControlName="debug"
-        [label]="'Use Debug' | translate"
-        [tooltip]="tooltips.debug | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="tooltips.debug | translate">
+        <tn-checkbox formControlName="debug" [label]="'Use Debug' | translate"></tn-checkbox>
+      </tn-form-field>
 
-      <ix-checkbox
-        formControlName="syslog"
-        [label]="'Use Syslog Only' | translate"
-        [tooltip]="tooltips.syslog | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="tooltips.syslog | translate">
+        <tn-checkbox formControlName="syslog" [label]="'Use Syslog Only' | translate"></tn-checkbox>
+      </tn-form-field>
 
-      <ix-checkbox
-        formControlName="localmaster"
-        [label]="'Local Master' | translate"
-        [tooltip]="tooltips.localmaster | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="tooltips.localmaster | translate">
+        <tn-checkbox formControlName="localmaster" [label]="'Local Master' | translate"></tn-checkbox>
+      </tn-form-field>
 
-      <ix-checkbox
-        formControlName="aapl_extensions"
-        [label]="'Enable Apple SMB2/3 Protocol Extensions' | translate"
-        [tooltip]="tooltips.aapl_extensions | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="tooltips.aapl_extensions | translate">
+        <tn-checkbox formControlName="aapl_extensions" [label]="'Enable Apple SMB2/3 Protocol Extensions' | translate"></tn-checkbox>
+      </tn-form-field>
 
-      <ix-checkbox
-        formControlName="multichannel"
-        [label]="'Multichannel' | translate"
-        [tooltip]="tooltips.multichannel | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="tooltips.multichannel | translate">
+        <tn-checkbox formControlName="multichannel" [label]="'Multichannel' | translate"></tn-checkbox>
+      </tn-form-field>
 
       @if (isHaLicensed()) {
-        <ix-checkbox
-          formControlName="stateful_failover"
-          [label]="'Stateful Failover' | translate"
-          [tooltip]="tooltips.stateful_failover | translate"
-        ></ix-checkbox>
+        <tn-form-field [tooltip]="tooltips.stateful_failover | translate">
+          <tn-checkbox formControlName="stateful_failover" [label]="'Stateful Failover' | translate"></tn-checkbox>
+        </tn-form-field>
       }
 
-      <ix-checkbox
-        formControlName="spotlight_search"
-        [label]="'Enable Search (Spotlight)' | translate"
-        [tooltip]="tooltips.spotlight_search | translate"
-        [attr.aria-describedby]="shouldShowTruenasConnectNotice() ? 'truenas-connect-notice' : null"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="tooltips.spotlight_search | translate">
+        <tn-checkbox
+          formControlName="spotlight_search"
+          [label]="'Enable Search (Spotlight)' | translate"
+          [attr.aria-describedby]="shouldShowTruenasConnectNotice() ? 'truenas-connect-notice' : null"
+        ></tn-checkbox>
+      </tn-form-field>
 
       @if (shouldShowTruenasConnectNotice()) {
         <div id="truenas-connect-notice" class="truenas-connect-notice">
@@ -115,7 +103,7 @@
             class="truenas-connect-link"
             role="button"
             tabindex="0"
-            [aria-label]="'Configure TrueNAS Connect to enable Spotlight Search feature' | translate"
+            [attr.aria-label]="'Configure TrueNAS Connect to enable Spotlight Search feature' | translate"
             (click)="openTruenasConnectModal()"
             (keydown)="onTruenasConnectLinkKeydown($event)"
           >
@@ -136,17 +124,19 @@
         [tooltip]="tooltips.guest | translate"
       ></ix-user-combobox>
 
-      <ix-input
-        formControlName="filemask"
+      <tn-form-field
         [label]="'File Mask' | translate"
         [tooltip]="tooltips.filemask | translate"
-      ></ix-input>
+      >
+        <tn-input formControlName="filemask"></tn-input>
+      </tn-form-field>
 
-      <ix-input
-        formControlName="dirmask"
+      <tn-form-field
         [label]="'Directory Mask' | translate"
         [tooltip]="tooltips.dirmask | translate"
-      ></ix-input>
+      >
+        <tn-input formControlName="dirmask"></tn-input>
+      </tn-form-field>
 
       <ix-list
         formArrayName="bindip"
@@ -160,16 +150,13 @@
             [formGroupName]="i"
             (delete)="removeBindIp(i)"
           >
-            <ix-select
-              formControlName="bindIp"
-              [label]="'IP Address' | translate"
-              [options]="bindIpAddressOptions$"
-              [required]="true"
-            ></ix-select>
+            <tn-form-field [label]="'IP Address' | translate">
+              <tn-select formControlName="bindIp" [options]="(bindIpAddressOptions$ | async) ?? []"></tn-select>
+            </tn-form-field>
           </ix-list-item>
         }
       </ix-list>
-    </ix-fieldset>
+    </tn-form-section>
   }
 
   <ix-form-actions>
@@ -177,15 +164,15 @@
       <tn-button
         *ixRequiresRoles="requiredRoles"
         color="primary"
-        [ixTest]="'save'"
+        type="submit"
+        [testId]="'save'"
         [label]="'Save' | translate"
         [disabled]="form.invalid || isFormLoading()"
-        (onClick)="onSubmit()"
       ></tn-button>
     }
 
     <tn-button
-      [ixTest]="'toggle-advanced-settings'"
+      [testId]="'toggle-advanced-settings'"
       [label]="(isBasicMode ? 'Advanced Settings' : 'Basic Settings') | translate"
       (onClick)="onAdvancedSettingsToggled()"
     ></tn-button>

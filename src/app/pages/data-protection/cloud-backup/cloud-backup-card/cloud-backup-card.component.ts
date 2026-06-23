@@ -196,7 +196,7 @@ export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
     ).subscribe(() => this.reload());
   }
 
-  protected onChangeEnabledState(cloudBackup: CloudBackup): void {
+  protected onChangeEnabledState(cloudBackup: CloudBackup, toggle: TableToggleCellComponent): void {
     this.updatedCount.update((count) => count + 1);
     this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled }])
@@ -209,6 +209,7 @@ export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
           }
         },
         error: (error: unknown) => {
+          toggle.revert();
           this.updatedCount.update((count) => count - 1);
           if (!this.updatedCount()) {
             this.reload();

@@ -1,9 +1,8 @@
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import {
   filter, Observable, switchMap, take,
 } from 'rxjs';
@@ -16,7 +15,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -31,10 +29,8 @@ import { ServicesService } from 'app/services/services.service';
   imports: [
     TranslateModule,
     MapValuePipe,
-    TestDirective,
-    TnIconComponent,
+    TnIconButtonComponent,
     RequiresRolesDirective,
-    MatIconButton,
     NgClass,
   ],
 })

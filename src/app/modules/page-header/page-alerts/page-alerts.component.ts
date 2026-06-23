@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
+import { TnIconComponent, tnIconMarker, TnTooltipDirective } from '@truenas/ui-components';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -31,7 +30,7 @@ import { AppState } from 'app/store';
   standalone: true,
   imports: [
     TnIconComponent,
-    MatTooltip,
+    TnTooltipDirective,
     TranslateModule,
   ],
 })

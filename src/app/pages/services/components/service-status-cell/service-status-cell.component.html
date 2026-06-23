@@ -3,24 +3,21 @@
 </span>
 
 @if (isRunning()) {
-  <button
+  <tn-icon-button
     *ixRequiresRoles="requiredRoles()"
-    mat-icon-button
-    [ixTest]="[uniqueRowTag(), 'stop-service']"
-    [attr.aria-label]="'Stop Service' | translate"
-    (click)="$event.stopPropagation(); stopServiceClicked()"
-  >
-    <tn-icon name="stop-circle" library="mdi"></tn-icon>
-  </button>
+    name="stop-circle"
+    library="mdi"
+    [testId]="[uniqueRowTag(), 'stop-service']"
+    [ariaLabel]="'Stop Service' | translate"
+    (onClick)="$event.stopPropagation(); stopServiceClicked()"
+  ></tn-icon-button>
 } @else {
-  <button
+  <tn-icon-button
     *ixRequiresRoles="requiredRoles()"
-    mat-icon-button
-    [ixTest]="[uniqueRowTag(), 'start-service']"
-    [attr.aria-label]="'Start Service' | translate"
-    (click)="$event.stopPropagation(); startService()"
-  >
-    <tn-icon name="play-circle" library="mdi"></tn-icon>
-  </button>
+    name="play-circle"
+    library="mdi"
+    [testId]="[uniqueRowTag(), 'start-service']"
+    [ariaLabel]="'Start Service' | translate"
+    (onClick)="$event.stopPropagation(); startService()"
+  ></tn-icon-button>
 }
-
