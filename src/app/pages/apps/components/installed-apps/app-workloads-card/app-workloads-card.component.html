@@ -1,103 +1,89 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Workloads' | translate }}
-    </h3>
-  </mat-card-header>
-  <mat-card-content>
-    <div class="details-item">
-      <div class="label">
-        {{ 'Ports' | translate }}
-        <ix-tooltip
-          class="ports-tooltip"
-          placement="left"
-          [message]="helptext.ports"
-        ></ix-tooltip>
-      </div>
-      <div class="value">
-        @for (port of hostPorts(); track port.hostPort) {
-          <div>
-            <span
-              class="with-tooltip"
-              [matTooltip]="'Host' | translate"
-            >{{ port.protocol }}://{{ port.hostIp }}:{{ port.hostPort }}</span>
-
-            <span class="separator">:</span>
-
-            <span
-              class="with-tooltip"
-              [matTooltip]="'Container' | translate"
-            >{{ port.containerPort }}</span>
-          </div>
-        } @empty {
-          {{ 'N/A' | translate }}
-        }
-      </div>
+<tn-card class="card" padding="small" elevation="none" [title]="'Workloads' | translate">
+  <div class="details-item">
+    <div class="label">
+      {{ 'Ports' | translate }}
+      <ix-tooltip
+        class="ports-tooltip"
+        placement="left"
+        [message]="helptext.ports"
+      ></ix-tooltip>
     </div>
+    <div class="value">
+      @for (port of hostPorts(); track port.hostPort) {
+        <div>
+          <span
+            class="with-tooltip"
+            [tnTooltip]="'Host' | translate"
+          >{{ port.protocol }}://{{ port.hostIp }}:{{ port.hostPort }}</span>
 
-    <div class="containers">
-      <h4>
-        {{ 'Containers' | translate }}
+          <span class="separator">:</span>
 
-        @if (app().active_workloads.container_details.length > 0) {
-          <span class="containers-count">
-            {{ app().active_workloads.containers | number }}
-          </span>
-        }
-      </h4>
-      <div class="container-list">
-        @for (container of app().active_workloads.container_details; track container.id) {
-          <div class="container">
-            <div class="service-name">{{ container.service_name }}</div>
-            <div>&ndash;</div>
-            <div class="container-state">
-              {{ container.state | mapValue: appContainerStateLabels | translate  }}
+          <span
+            class="with-tooltip"
+            [tnTooltip]="'Container' | translate"
+          >{{ port.containerPort }}</span>
+        </div>
+      } @empty {
+        {{ 'N/A' | translate }}
+      }
+    </div>
+  </div>
+
+  <div class="containers">
+    <h4>
+      {{ 'Containers' | translate }}
+
+      @if (app().active_workloads.container_details.length > 0) {
+        <span class="containers-count">
+          {{ app().active_workloads.containers | number }}
+        </span>
+      }
+    </h4>
+    <div class="container-list">
+      @for (container of app().active_workloads.container_details; track container.id) {
+        <div class="container">
+          <div class="service-name">{{ container.service_name }}</div>
+          <div>&ndash;</div>
+          <div class="container-state">
+            {{ container.state | mapValue: appContainerStateLabels | translate  }}
+          </div>
+          @if (app().state === AppState.Running || app().state === AppState.Deploying || app().state === AppState.Crashed) {
+            <div class="container-action">
+              <tn-icon-button
+                *ixRequiresRoles="requiredRoles"
+                name="console"
+                library="mdi"
+                tooltipPosition="above"
+                [testId]="[container.service_name, 'shell']"
+                [ariaLabel]="'Shell' | translate"
+                [tooltip]="'Shell' | translate"
+                (onClick)="goTo(getShellLink(container))"
+              ></tn-icon-button>
+              <tn-icon-button
+                name="folder-outline"
+                library="mdi"
+                tooltipPosition="above"
+                [testId]="[container.service_name, 'volume-mounts']"
+                [ariaLabel]="'Volume Mounts' | translate"
+                [tooltip]="'Volume Mounts' | translate"
+                (onClick)="volumeButtonPressed(container)"
+              ></tn-icon-button>
+
+              <tn-icon-button
+                name="text-box"
+                library="mdi"
+                tooltipPosition="above"
+                [testId]="[container.service_name, 'view_logs']"
+                [ariaLabel]="'View Logs' | translate"
+                [tooltip]="'View Logs' | translate"
+                (onClick)="goTo(getViewLogsLink(container))"
+              ></tn-icon-button>
             </div>
-            @if (app().state === AppState.Running || app().state === AppState.Deploying || app().state === AppState.Crashed) {
-              <div class="container-action">
-                <a
-                  *ixRequiresRoles="requiredRoles"
-                  mat-icon-button
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'Shell' | translate"
-                  [ixTest]="[container.service_name, 'shell']"
-                  [matTooltip]="'Shell' | translate"
-                  [routerLink]="getShellLink(container)"
-                >
-                  <tn-icon name="console" library="mdi"></tn-icon>
-                </a>
-                <button
-                  mat-icon-button
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'Volume Mounts' | translate"
-                  [ixTest]="[container.service_name, 'volume-mounts']"
-                  [matTooltip]="'Volume Mounts' | translate"
-                  (click)="volumeButtonPressed(container)"
-                >
-                  <tn-icon name="folder-outline" library="mdi"></tn-icon>
-                </button>
-
-                <a
-                  mat-icon-button
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'View Logs' | translate"
-                  [ixTest]="[container.service_name, 'view_logs']"
-                  [matTooltip]="'View Logs' | translate"
-                  [routerLink]="getViewLogsLink(container)"
-                >
-                  <tn-icon name="text-box" library="mdi"></tn-icon>
-                </a>
-              </div>
-            }
-          </div>
-        } @empty {
-          {{ 'No containers are available.' | translate }}
-        }
-      </div>
+          }
+        </div>
+      } @empty {
+        {{ 'No containers are available.' | translate }}
+      }
     </div>
-  </mat-card-content>
-</mat-card>
-
-
-
-
+  </div>
+</tn-card>

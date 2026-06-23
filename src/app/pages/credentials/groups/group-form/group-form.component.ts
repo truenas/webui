@@ -44,7 +44,7 @@ type GroupFormValue = GroupFormComponent['form']['value'];
     TranslateModule,
   ],
 })
-export class GroupFormComponent implements OnInit {
+export class GroupFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
@@ -52,7 +52,8 @@ export class GroupFormComponent implements OnInit {
   slideInRef = inject<SlideInRef<Group | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.AccountWrite];
+  /** Group to edit when hosted in a `<tn-side-panel>`. Legacy SlideIn host passes it via `SlideInRef`. */
+  readonly group = input<Group>();
 
   protected editingGroup = this.slideInRef.getData();
 
@@ -70,7 +71,9 @@ export class GroupFormComponent implements OnInit {
     privileges: [[] as string[] | number[]],
   });
 
-  readonly tooltips = {
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
+  protected readonly tooltips = {
     gid: helptextGroups.groupIdTooltip,
     name: helptextGroups.nameTooltip,
     privileges: helptextGroups.privilegesTooltip,
@@ -107,6 +110,9 @@ export class GroupFormComponent implements OnInit {
   );
 
   ngOnInit(): void {
+    this.editingGroup = this.slideInRef
+      ? this.slideInRef.getData() as Group | undefined
+      : this.group();
     this.setupForm();
     this.initialLoading.set(true);
     this.privilegeOptions$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

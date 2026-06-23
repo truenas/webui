@@ -2,20 +2,21 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
@@ -77,9 +78,20 @@ describe('GroupFormComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       ...ixFormTestingProviders(),
       provideMockStore(),
+      provideTnFormFieldErrors(),
       mockAuth(),
     ],
   });
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getChipInput = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
+    TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   describe('adding a group', () => {
     beforeEach(() => {
@@ -89,31 +101,28 @@ describe('GroupFormComponent', () => {
     });
 
     it('loads names of existing groups and makes sure new name is unique', async () => {
-      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      const nameInput = await getInput('name');
       await nameInput.setValue('existing');
 
       expect(api.call).toHaveBeenCalledWith('group.query');
-      expect(await nameInput.getErrorText()).toBe('The name "existing" is already in use.');
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+      expect(await nameField.getErrorMessage()).toBe('The name "existing" is already in use.');
     });
 
     it('loads next gid and puts it in gid field', async () => {
-      const gidInput = await loader.getHarness(IxInputHarness.with({ label: 'GID' }));
-      const value = await gidInput.getValue();
+      const value = await (await getInput('gid')).getValue();
 
       expect(api.call).toHaveBeenCalledWith('group.get_next_gid');
       expect(value).toBe('1234');
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Name: 'new',
-        'SMB Group': true,
-        'Allow All Sudo Commands': true,
-        'Allowed Sudo Commands with No Password': ['ls'],
-      });
+      await (await getInput('name')).setValue('new');
+      await (await getCheckbox('smb')).check();
+      await (await getCheckbox('sudo_commands_all')).check();
+      await (await getChipInput('sudo_commands_nopasswd')).addChip('ls');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('group.create', [{
@@ -138,36 +147,28 @@ describe('GroupFormComponent', () => {
     });
 
     it('does not show Allow Duplicate Gid on edit', async () => {
-      const input = await loader.getAllHarnesses(IxInputHarness.with({ label: 'Allow Duplicate Gid' }));
-      expect(input).toHaveLength(0);
+      const fields = await loader.getAllHarnesses(TnFormFieldHarness.with({ label: 'Allow Duplicate Gid' }));
+      expect(fields).toHaveLength(0);
     });
 
     it('shows current group values when form is being edited', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      expect(await (await getInput('gid')).getValue()).toBe('1111');
+      expect(await (await getInput('name')).getValue()).toBe('editing');
+      expect(await (await getCheckbox('sudo_commands_all')).isChecked()).toBe(false);
+      expect(await (await getCheckbox('sudo_commands_nopasswd_all')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('smb')).isChecked()).toBe(false);
 
-      expect(values).toEqual({
-        GID: '1111',
-        Name: 'editing',
-        'Allow All Sudo Commands': false,
-        'Allowed Sudo Commands': [],
-        'Allow All Sudo Commands with No Password': true,
-        'Allowed Sudo Commands with No Password': [],
-        'SMB Group': false,
-        Privileges: ['Privilege 1'],
-      });
+      expect(await (await getChipInput('sudo_commands')).getChips()).toEqual([]);
+      expect(await (await getChipInput('sudo_commands_nopasswd')).getChips()).toEqual([]);
+      expect(await (await getChipInput('privileges')).getChips()).toEqual(['Privilege 1']);
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Name: 'updated',
-        'SMB Group': true,
-        'Allow All Sudo Commands with No Password': false,
-        Privileges: ['Privilege 1'],
-      });
+      await (await getInput('name')).setValue('updated');
+      await (await getCheckbox('smb')).check();
+      await (await getCheckbox('sudo_commands_nopasswd_all')).uncheck();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('group.update', [
@@ -180,26 +181,54 @@ describe('GroupFormComponent', () => {
         },
       ]);
 
+      // Privilege 1 is kept, so the group's gid is re-saved on it.
       expect(api.call).toHaveBeenCalledWith('privilege.update', [1, {
-        ds_groups: [1223], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
+        ds_groups: [1223], local_groups: [1111, 2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
       }]);
     });
 
     it('updates privilege items when removed privilege from the group', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Name: 'updated',
-        'SMB Group': true,
-        'Allow All Sudo Commands with No Password': false,
-        Privileges: ['Privilege 2'],
-      });
+      await (await getInput('name')).setValue('updated');
+      await (await getCheckbox('smb')).check();
+      await (await getCheckbox('sudo_commands_nopasswd_all')).uncheck();
+      await (await getChipInput('privileges')).removeChip('Privilege 1');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('privilege.update', [1, {
         ds_groups: [1223], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
       }]);
+    });
+  });
+
+  describe('hosted in a side panel (no SlideInRef)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: { group: fakeDataGroup },
+        providers: [{ provide: SlideInRef, useValue: null }],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+    });
+
+    it('reads the group to edit from the input', async () => {
+      expect(await (await getInput('name')).getValue()).toBe('editing');
+    });
+
+    it('does not render the in-form Save button (the panel host owns it)', async () => {
+      const saveButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }));
+      expect(saveButton).toBeNull();
+    });
+
+    it('emits closed after a successful submit driven by the host', async () => {
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+      await (await getInput('name')).setValue('updated');
+
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('group.update', [13, expect.objectContaining({ name: 'updated' })]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

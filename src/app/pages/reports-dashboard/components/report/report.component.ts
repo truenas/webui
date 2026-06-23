@@ -4,10 +4,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   add, Duration, isToday, sub,
 } from 'date-fns';
@@ -58,7 +57,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
     MatToolbarRow,
     MatCardTitle,
     MatButton,
-    MatTooltip,
+    TnTooltipDirective,
     TestDirective,
     TnIconComponent,
     MatCardContent,

@@ -228,7 +228,7 @@ export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTas
       ).subscribe();
   }
 
-  protected onChangeEnabledState(replicationTask: ReplicationTask): void {
+  protected onChangeEnabledState(replicationTask: ReplicationTask, toggle: TableToggleCellComponent): void {
     this.api
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -237,7 +237,7 @@ export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTas
           this.reload();
         },
         error: (error: unknown) => {
-          this.reload();
+          toggle.revert();
           this.errorHandler.showErrorModal(error);
         },
       });

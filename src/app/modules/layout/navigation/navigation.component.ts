@@ -4,10 +4,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatNavList, MatListItem } from '@angular/material/list';
-import { MatTooltip } from '@angular/material/tooltip';
 import { NavigationEnd, Router, RouterLinkActive, RouterLink, isActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
@@ -26,7 +25,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
     MatListItem,
     RouterLinkActive,
     RouterLink,
-    MatTooltip,
+    TnTooltipDirective,
     TnIconComponent,
     AsyncPipe,
     TranslateModule,

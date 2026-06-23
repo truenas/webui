@@ -1,27 +1,24 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceSsh } from 'app/helptext/services/components/service-ssh';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -31,24 +28,22 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./service-ssh.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     IxGroupChipsComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
-    IxTextareaComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class ServiceSshComponent implements OnInit {
+export class ServiceSshComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -56,9 +51,9 @@ export class ServiceSshComponent implements OnInit {
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SshWrite];
+  protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);
   isBasicMode = true;
@@ -91,16 +86,14 @@ export class ServiceSshComponent implements OnInit {
     options: helptextServiceSsh.optionsTooltip,
   };
 
-  readonly sftpLogLevels$ = of(helptextServiceSsh.sftpLogLevelOptions);
-  readonly sftpLogFacilities$ = of(helptextServiceSsh.sftpLogFacilityOptions);
-  readonly sshWeakCiphers$ = of(helptextServiceSsh.weakCiphersOptions);
+  // tn-select does not translate option labels, so translate up-front.
+  readonly sftpLogLevelOptions = translateOptions(this.translate, helptextServiceSsh.sftpLogLevelOptions);
+  readonly sftpLogFacilityOptions = translateOptions(this.translate, helptextServiceSsh.sftpLogFacilityOptions);
+  readonly weakCiphersOptions = translateOptions(this.translate, helptextServiceSsh.weakCiphersOptions);
+
   readonly bindInterfaces$ = this.api.call('ssh.bindiface_choices').pipe(choicesToOptions());
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
@@ -122,6 +115,8 @@ export class ServiceSshComponent implements OnInit {
 
   onSubmit(): void {
     const values = this.form.value;
+    // Clearing the tn-select empty option writes null; the API expects ''.
+    values.sftp_log_level = values.sftp_log_level ?? ('' as SshSftpLogLevel);
 
     this.isFormLoading.set(true);
     this.api.call('ssh.update', [values])
@@ -130,7 +125,7 @@ export class ServiceSshComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

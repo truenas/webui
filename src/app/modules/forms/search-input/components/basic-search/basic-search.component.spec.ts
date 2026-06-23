@@ -27,9 +27,9 @@ describe('BasicSearchComponent', () => {
     expect(spectator.component.queryChange.emit).toHaveBeenCalledWith('test');
   });
 
-  it('resets text area when reset icon is pressed', async () => {
-    await searchHarness.setValue('test');
-    await (await searchHarness.getResetIcon()).click();
+  it('resets the field when the clear action is pressed', async () => {
+    spectator.setInput('query', 'test');
+    await searchHarness.clearInput();
 
     expect(await searchHarness.getValue()).toBe('');
     expect(spectator.component.queryChange.emit).toHaveBeenCalledWith('');
@@ -55,33 +55,18 @@ describe('BasicSearchComponent', () => {
   });
 
   describe('accessibility', () => {
-    it('should have proper accessibility attributes on clear button', async () => {
-      await searchHarness.setValue('test');
-      spectator.detectChanges();
+    it('exposes an accessible clear action when the field has a value', () => {
+      spectator.setInput('query', 'test');
 
-      const clearButton = spectator.query('[ixTest="clear-search"]');
+      const clearButton = spectator.query('[data-test="button-clear-search"]');
       expect(clearButton).toExist();
-      expect(clearButton.getAttribute('role')).toBe('button');
+      expect(clearButton.tagName.toLowerCase()).toBe('button');
       expect(clearButton.getAttribute('aria-label')).toBe('Clear search');
-      expect(clearButton.getAttribute('tabindex')).toBe('0');
     });
 
-    it('should hide clear button when search is empty', () => {
-      const clearButton = spectator.query('[ixTest="clear-search"]');
+    it('hides the clear action when the field is empty', () => {
+      const clearButton = spectator.query('[data-test="button-clear-search"]');
       expect(clearButton).not.toExist();
-    });
-
-    it('should support keyboard interaction on clear button', async () => {
-      await searchHarness.setValue('test');
-      spectator.detectChanges();
-
-      const clearButton = spectator.query('[ixTest="clear-search"]');
-      expect(clearButton).toExist();
-
-      clearButton.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
-      spectator.detectChanges();
-
-      expect(await searchHarness.getValue()).toBe('');
     });
   });
 });

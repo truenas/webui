@@ -2,11 +2,10 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnIn
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
   BehaviorSubject,
@@ -87,7 +86,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
     IxExplorerComponent,
     TestDirective,
     TnIconComponent,
-    MatTooltip,
+    TnTooltipDirective,
     CloudCredentialsSelectComponent,
     IxCheckboxComponent,
     SchedulerComponent,

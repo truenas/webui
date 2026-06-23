@@ -12,13 +12,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
-import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
-import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
-import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
-import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
-import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { UrlOptionsService } from 'app/services/url-options.service';
@@ -89,8 +82,30 @@ describe('ServiceActionsCellComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/system/audit/{"service":"SMB"}']);
   });
 
+  it('navigates to SMB sessions when "View Sessions" is clicked for CIFS', () => {
+    setup({ service: ServiceName.Cifs, state: ServiceStatus.Running });
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    const link = spectator.queryAll('a').find((el) => el.textContent?.includes('View Sessions')) as HTMLElement;
+    spectator.click(link);
+
+    expect(router.navigate).toHaveBeenCalledWith(['/sharing', 'smb', 'status', 'sessions']);
+  });
+
+  it('navigates to NFS sessions when "View Sessions" is clicked for NFS', () => {
+    setup({ service: ServiceName.Nfs, state: ServiceStatus.Running });
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    const link = spectator.queryAll('a').find((el) => el.textContent?.includes('View Sessions')) as HTMLElement;
+    spectator.click(link);
+
+    expect(router.navigate).toHaveBeenCalledWith(['/sharing', 'nfs', 'sessions']);
+  });
+
   describe('edit', () => {
-    it('should open NVMe-oF global configuration form', async () => {
+    it('should open NVMe-oF global configuration form via SlideIn', async () => {
       setup({ service: ServiceName.NvmeOf, state: ServiceStatus.Stopped });
 
       const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
@@ -99,7 +114,7 @@ describe('ServiceActionsCellComponent', () => {
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
     });
 
-    it('should open iSCSI global configuration form', async () => {
+    it('should open iSCSI global configuration form via SlideIn', async () => {
       setup({ service: ServiceName.Iscsi, state: ServiceStatus.Stopped });
 
       const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
@@ -108,67 +123,31 @@ describe('ServiceActionsCellComponent', () => {
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
     });
 
-    it('should open FTP configuration when edit button is pressed', async () => {
-      setup({ service: ServiceName.Ftp, state: ServiceStatus.Stopped });
+    // The remaining service forms are hosted in the page-level side panel, so the
+    // cell emits `configure` instead of opening a SlideIn.
+    const panelServices = [
+      ServiceName.Ftp,
+      ServiceName.Nfs,
+      ServiceName.Snmp,
+      ServiceName.Ups,
+      ServiceName.Ssh,
+      ServiceName.Cifs,
+      ServiceName.WebShare,
+    ];
 
-      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
-      await editIcon.click();
+    panelServices.forEach((service) => {
+      it(`emits configure (and does not open a SlideIn) for ${service}`, async () => {
+        setup({ service, state: ServiceStatus.Stopped });
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
-    });
+        const emitted: Service[] = [];
+        spectator.component.configure.subscribe((value) => emitted.push(value));
 
-    it('should open NFS configuration when edit button is pressed', async () => {
-      setup({ service: ServiceName.Nfs, state: ServiceStatus.Stopped });
+        const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
+        await editIcon.click();
 
-      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
-      await editIcon.click();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
-    });
-
-    it('should open SNMP configuration when edit button is pressed', async () => {
-      setup({ service: ServiceName.Snmp, state: ServiceStatus.Stopped });
-
-      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
-      await editIcon.click();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
-    });
-
-    it('should open UPS configuration when edit button is pressed', async () => {
-      setup({ service: ServiceName.Ups, state: ServiceStatus.Stopped });
-
-      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
-      await editIcon.click();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
-    });
-
-    it('should open SSH configuration when edit button is pressed', async () => {
-      setup({ service: ServiceName.Ssh, state: ServiceStatus.Stopped });
-
-      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
-      await editIcon.click();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSshComponent);
-    });
-
-    it('should open SMB configuration when edit button is pressed', async () => {
-      setup({ service: ServiceName.Cifs, state: ServiceStatus.Stopped });
-
-      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
-      await editIcon.click();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSmbComponent);
-    });
-
-    it('should open WebShare configuration when edit button is pressed', async () => {
-      setup({ service: ServiceName.WebShare, state: ServiceStatus.Stopped });
-
-      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
-      await editIcon.click();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceWebshareComponent);
+        expect(emitted).toEqual([expect.objectContaining({ service })]);
+        expect(spectator.inject(SlideIn).open).not.toHaveBeenCalled();
+      });
     });
   });
 });

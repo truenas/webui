@@ -23,7 +23,7 @@
         @if (acesWithError().includes(i)) {
           <span
             class="warning"
-            [matTooltip]="'Ace has errors.' | translate"
+            [tnTooltip]="'Ace has errors.' | translate"
             (click)="onRemoveAcePressed(i)"
           >
             <tn-icon name="alert" library="mdi"></tn-icon>

@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatTooltip } from '@angular/material/tooltip';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -214,8 +213,8 @@ describe('UserAccessCardComponent', () => {
     const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
     expect(await lockButton.isDisabled()).toBe(true);
 
-    const tooltips = spectator.queryAll(MatTooltip);
-    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    const tooltips = spectator.queryAll(TnTooltipDirective);
+    const tooltip = tooltips.find((tip) => String(tip.message) === 'This user is managed by a directory service and cannot be modified.');
     expect(tooltip).toBeTruthy();
   });
 
@@ -225,8 +224,8 @@ describe('UserAccessCardComponent', () => {
     const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock User' }));
     expect(await unlockButton.isDisabled()).toBe(true);
 
-    const tooltips = spectator.queryAll(MatTooltip);
-    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    const tooltips = spectator.queryAll(TnTooltipDirective);
+    const tooltip = tooltips.find((tip) => String(tip.message) === 'This user is managed by a directory service and cannot be modified.');
     expect(tooltip).toBeTruthy();
   });
 
@@ -236,8 +235,8 @@ describe('UserAccessCardComponent', () => {
     const clearTfaButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
     expect(await clearTfaButton.isDisabled()).toBe(true);
 
-    const tooltips = spectator.queryAll(MatTooltip);
-    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    const tooltips = spectator.queryAll(TnTooltipDirective);
+    const tooltip = tooltips.find((tip) => String(tip.message) === 'This user is managed by a directory service and cannot be modified.');
     expect(tooltip).toBeTruthy();
   });
 

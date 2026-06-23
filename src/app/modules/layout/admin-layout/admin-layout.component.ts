@@ -7,11 +7,10 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   MatDrawerMode, MatSidenav, MatSidenavContainer, MatSidenavContent,
 } from '@angular/material/sidenav';
-import { MatTooltip } from '@angular/material/tooltip';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter, map, pairwise, startWith } from 'rxjs';
 import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
 import { productTypeLabels } from 'app/enums/product-type.enum';
@@ -54,7 +53,7 @@ import {
     TnIconComponent,
     NavigationComponent,
     SecondaryMenuComponent,
-    MatTooltip,
+    TnTooltipDirective,
     CopyrightLineComponent,
     MatSidenavContent,
     TopbarComponent,

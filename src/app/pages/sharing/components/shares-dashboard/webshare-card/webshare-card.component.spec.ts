@@ -5,7 +5,7 @@ import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnBannerHarness, TnButtonHarness, TnTableHarness, type TnMenuItem,
+  TnBannerHarness, TnButtonHarness, TnSlideToggleHarness, TnTableHarness, type TnMenuItem,
 } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -31,6 +31,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
+import {
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebShareCardComponent } from './webshare-card.component';
@@ -178,6 +181,17 @@ describe('WebShareCardComponent', () => {
     await addButton.click();
 
     expect(slideIn.open).toHaveBeenCalled();
+  });
+
+  it('toggles the WebShare service when the projected header toggle is changed', async () => {
+    const toggleState = jest.spyOn(spectator.inject(ServiceActionsMenuService), 'toggleServiceState')
+      .mockImplementation(() => {});
+    const toggle = await loader.getHarness(
+      TnSlideToggleHarness.with({ ancestor: '.tn-card__header-right' }),
+    );
+    await toggle.toggle();
+
+    expect(toggleState).toHaveBeenCalledWith(expect.objectContaining({ service: ServiceName.WebShare }));
   });
 
   it('shows delete confirmation and deletes WebShare', () => {

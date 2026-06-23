@@ -5,8 +5,8 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { omit } from 'lodash-es';
 import { finalize, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -53,7 +53,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     EditableComponent,
     DetailsTableComponent,
     DetailsItemComponent,
-    MatTooltip,
+    TnTooltipDirective,
     RequiresRolesDirective,
   ],
 })

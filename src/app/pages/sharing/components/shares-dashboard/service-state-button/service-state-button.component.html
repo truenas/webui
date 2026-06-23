@@ -2,11 +2,11 @@
   mat-stroked-button
   [attr.aria-roledescription]="'Service status' | translate"
   [ixTest]="['service-status', service()?.service]"
-  [matTooltip]="'The {name} service is {status}' | translate: {
+  [tnTooltip]="'The {name} service is {status}' | translate: {
     name: service()?.service | mapValue: serviceNames,
     status: service()?.state | lowercase
   }"
-  [matTooltipDisabled]="!service()"
+  [tnTooltipDisabled]="!service()"
   [ngClass]="statusClass()"
 >
   {{ service()?.state | titlecase }}

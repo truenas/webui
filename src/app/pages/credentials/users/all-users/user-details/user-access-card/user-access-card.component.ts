@@ -7,10 +7,9 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -47,7 +46,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     MatCardHeader,
     MatCardActions,
     MatCardContent,
-    MatTooltip,
+    TnTooltipDirective,
     TranslateModule,
     RequiresRolesDirective,
     TestDirective,

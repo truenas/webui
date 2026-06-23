@@ -1,11 +1,15 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import {
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal, viewChild, effect,
+  computed,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnSlideToggleComponent, TnTableComponent, TnTableColumnDirective,
+  TnHeaderCellDefDirective, TnCellDefDirective, TnDetailRowDefDirective, TnTablePagerComponent, TnSortEvent,
+  TnSidePanelComponent, TnSidePanelActionDirective,
+} from '@truenas/ui-components';
 import {
   Observable, combineLatest, of,
 } from 'rxjs';
@@ -18,18 +22,9 @@ import { Group } from 'app/interfaces/group.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 import { groupListElements } from 'app/pages/credentials/groups/group-list/group-list.elements';
@@ -46,73 +41,102 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BasicSearchComponent,
-    MatSlideToggle,
-    TestDirective,
+    TnSlideToggleComponent,
     UiSearchDirective,
     RequiresRolesDirective,
-    MatButton,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
     GroupDetailsRowComponent,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
     PageHeaderComponent,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
+    GroupFormComponent,
   ],
 })
 export class GroupListComponent implements OnInit {
   private emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private unsavedChanges = inject(UnsavedChangesService);
 
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = groupListElements;
 
-  dataProvider = new ArrayDataProvider<Group>();
-  columns = createTable<Group>([
-    textColumn({
-      title: this.translate.instant('Group'),
-      propertyName: 'group',
-    }),
-    textColumn({
-      title: this.translate.instant('GID'),
-      propertyName: 'gid',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Builtin'),
-      propertyName: 'builtin',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Allows sudo commands'),
-      getValue: (row) => !!row.sudo_commands?.length,
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Samba Authentication'),
-      propertyName: 'smb',
-    }),
-    textColumn({
-      title: this.translate.instant('Roles'),
-      getValue: (row) => row.roles
-        .map((role) => this.translate.instant(roleNames.get(role) || role))
-        .join(', ') || this.translate.instant('N/A'),
-    }),
-  ], {
-    uniqueRowTag: (row) => 'group-' + row.group,
-    ariaLabels: (row) => [row.group, this.translate.instant('Group')],
-  });
+  protected readonly dataProvider = new ArrayDataProvider<Group>();
+  protected readonly currentPage = toSignal(this.dataProvider.currentPage$, { initialValue: [] as Group[] });
+  protected readonly table = viewChild(TnTableComponent<Group>);
 
-  hideBuiltinGroups = true;
-  searchQuery = signal('');
-  groups: Group[] = [];
+  // SlideIn-free form hosting: the Add/Edit form opens in a tn-side-panel instead of the
+  // legacy SlideIn. `editingGroup` is undefined for Add, the row's group for Edit.
+  protected readonly formOpen = signal(false);
+  protected readonly editingGroup = signal<Group | undefined>(undefined);
+  protected readonly configForm = viewChild(GroupFormComponent);
+  protected readonly formTitle = computed(() => (
+    this.editingGroup() ? this.translate.instant('Edit Group') : this.translate.instant('Add Group')
+  ));
 
-  isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
-  emptyType$: Observable<EmptyType> = combineLatest([
+  protected readonly closeFormGuard = (): Observable<boolean> => (
+    this.configForm()?.hasUnsavedChanges() ? this.unsavedChanges.showConfirmDialog() : of(true)
+  );
+
+  protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
+  protected readonly trackById = (_: number, row: Group): number => row.id;
+
+  // tn-table allows multiple rows expanded at once and exposes no single-expand input or
+  // row-expand output to hook into, so we restore the single-expand behavior of the previous
+  // ix-table here: whenever a second row opens (via row click or the expand chevron) we collapse
+  // back to just the newly-opened one. We diff against the previous set rather than caching a
+  // single row reference, so a data reload (which swaps in fresh row objects) can't leave a stale
+  // reference behind — the set tracking stays consistent with whatever tn-table currently holds.
+  private previousExpandedRows = new Set<unknown>();
+  private defaultSortReflected = false;
+
+  constructor() {
+    effect(() => {
+      const table = this.table();
+      if (!table) {
+        return;
+      }
+      const expanded = table.expandedRows();
+      if (expanded.size <= 1) {
+        this.previousExpandedRows = new Set(expanded);
+        return;
+      }
+      const newest = [...expanded].find((row) => !this.previousExpandedRows.has(row));
+      const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
+      this.previousExpandedRows = collapsed;
+      table.expandedRows.set(collapsed);
+    });
+
+    // The data provider sorts the rows, but tn-table tracks its own sort-arrow state, so reflect
+    // the default sort in the header indicator once the table view is available.
+    effect(() => {
+      const table = this.table();
+      if (!table || this.defaultSortReflected) {
+        return;
+      }
+      this.defaultSortReflected = true;
+      table.sortColumn.set('gid');
+      table.sortDirection.set('asc');
+    });
+  }
+
+  protected hideBuiltinGroups = true;
+  protected readonly searchQuery = signal('');
+  private groups: Group[] = [];
+
+  private readonly isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
+  protected readonly isLoading = toSignal(this.isLoading$, { initialValue: false });
+
+  private readonly emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
     this.store$.select(selectGroupsTotal).pipe(map((total) => total === 0)),
     this.store$.select(selectGroupState).pipe(map((state) => state.error)),
@@ -131,8 +155,29 @@ export class GroupListComponent implements OnInit {
     }),
   );
 
-  protected get emptyConfigService(): EmptyService {
-    return this.emptyService;
+  private readonly emptyMessage$: Observable<string> = this.emptyType$.pipe(
+    map((type) => this.translate.instant(this.emptyService.defaultEmptyConfig(type).title)),
+  );
+
+  protected readonly emptyMessage = toSignal(this.emptyMessage$, { initialValue: '' });
+
+  protected getRolesValue(row: Group): string {
+    return row.roles
+      .map((role) => this.translate.instant(roleNames.get(role) || role))
+      .join(', ') || this.translate.instant('N/A');
+  }
+
+  protected onRowClick(row: Group): void {
+    this.table()?.toggleRowExpansion(row);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    const direction = event.direction === '' ? null : (event.direction as SortDirection);
+    this.dataProvider.setSorting({
+      propertyName: direction ? (event.column as keyof Group) : null,
+      direction,
+      active: null,
+    });
   }
 
   ngOnInit(): void {
@@ -147,7 +192,17 @@ export class GroupListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(GroupFormComponent);
+    this.editingGroup.set(undefined);
+    this.formOpen.set(true);
+  }
+
+  protected doEdit(group: Group): void {
+    this.editingGroup.set(group);
+    this.formOpen.set(true);
+  }
+
+  protected onFormClosed(): void {
+    this.formOpen.set(false);
   }
 
   protected onListFiltered(query: string): void {
