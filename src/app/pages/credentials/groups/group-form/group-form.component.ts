@@ -1,11 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, computed,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, computed, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  InputType, TnButtonComponent, TnCheckboxComponent, TnChipInputComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { Observable, combineLatest, of, shareReplay } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -15,15 +19,10 @@ import { helptextGroups } from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -38,17 +37,19 @@ import { UserService } from 'app/services/user.service';
   imports: [
     ModalHeaderComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxChipsComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnChipInputComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     TnButtonComponent,
+    AsyncPipe,
     TranslateModule,
   ],
 })
-export class GroupFormComponent implements OnInit {
+export class GroupFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
@@ -56,10 +57,13 @@ export class GroupFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private store$ = inject<Store<GroupSlice>>(Store);
   private snackbar = inject(SnackbarService);
-  slideInRef = inject<SlideInRef<Group | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.AccountWrite];
+  /** Group to edit when hosted in a `<tn-side-panel>`. Legacy SlideIn host passes it via `SlideInRef`. */
+  readonly group = input<Group>();
+
+  readonly requiredRoles = [Role.AccountWrite];
+  protected readonly InputType = InputType;
 
   private get isNew(): boolean {
     return !this.editingGroup;
@@ -82,6 +86,8 @@ export class GroupFormComponent implements OnInit {
     smb: [false],
     privileges: [[] as string[] | number[]],
   });
+
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   protected readonly tooltips = {
     gid: helptextGroups.groupIdTooltip,
@@ -120,26 +126,12 @@ export class GroupFormComponent implements OnInit {
     });
   });
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingGroup = this.slideInRef.getData();
-  }
-
   ngOnInit(): void {
+    this.editingGroup = this.slideInRef
+      ? this.slideInRef.getData() as Group | undefined
+      : this.group();
     this.setupForm();
   }
-
-  protected readonly privilegesProvider: ChipsProvider = (query: string) => {
-    return this.privilegeOptions$.pipe(
-      map((options) => {
-        return options
-          .map((option) => option.label)
-          .filter((label) => label.trim().toLowerCase().includes(query.trim().toLowerCase()));
-      }),
-    );
-  };
 
   protected setupForm(): void {
     this.setFormRelations();
@@ -212,7 +204,7 @@ export class GroupFormComponent implements OnInit {
         }
 
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);
