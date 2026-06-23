@@ -14,6 +14,7 @@ import {
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -156,6 +157,7 @@ describe('UserFormComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(SlideInRef, slideInRef),
+      provideTnFormFieldErrors(),
       provideMockStore({
         selectors: [{
           selector: selectUsers,
@@ -238,7 +240,7 @@ describe('UserFormComponent', () => {
         // The harness can't type an empty string; type a value then clear the native
         // input to leave the field dirty and empty so the required error surfaces.
         await usernameInput.setValue('a');
-        const input = spectator.query<HTMLInputElement>('input');
+        const input = spectator.query<HTMLInputElement>('input[name="username"]');
         input.value = '';
         spectator.dispatchFakeEvent(input, 'input');
         spectator.dispatchFakeEvent(input, 'blur');
@@ -251,17 +253,17 @@ describe('UserFormComponent', () => {
 
     it('should show error when username is empty', async () => {
       const usernameField = await setUsername('');
-      expect(await usernameField.getErrorMessage()).toBe('This field is required');
+      expect(await usernameField.getErrorMessage()).toBe('Field is required');
     });
 
     it('should show error for invalid username pattern', async () => {
       const usernameField = await setUsername('invalid@user');
-      expect(await usernameField.getErrorMessage()).toBe('Please enter a valid format');
+      expect(await usernameField.getErrorMessage()).toBe('Invalid format or character');
     });
 
     it('should show error for username exceeding 32 characters', async () => {
       const usernameField = await setUsername('a'.repeat(33));
-      expect(await usernameField.getErrorMessage()).toBe('Maximum length is 32');
+      expect(await usernameField.getErrorMessage()).toBe('The length of the field should be no more than 32');
     });
 
     it('should accept valid username', async () => {
