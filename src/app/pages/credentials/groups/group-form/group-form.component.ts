@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, computed,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, computed, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
@@ -22,7 +22,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -49,7 +49,7 @@ import { UserService } from 'app/services/user.service';
     TranslateModule,
   ],
 })
-export class GroupFormComponent implements OnInit {
+export class GroupFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
@@ -57,10 +57,12 @@ export class GroupFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private store$ = inject<Store<GroupSlice>>(Store);
   private snackbar = inject(SnackbarService);
-  slideInRef = inject<SlideInRef<Group | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.AccountWrite];
+  /** Group to edit when hosted in a `<tn-side-panel>`. Legacy SlideIn host passes it via `SlideInRef`. */
+  readonly group = input<Group>();
+
+  readonly requiredRoles = [Role.AccountWrite];
   protected readonly InputType = InputType;
 
   private get isNew(): boolean {
@@ -84,6 +86,8 @@ export class GroupFormComponent implements OnInit {
     smb: [false],
     privileges: [[] as string[] | number[]],
   });
+
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   protected readonly tooltips = {
     gid: helptextGroups.groupIdTooltip,
@@ -122,14 +126,10 @@ export class GroupFormComponent implements OnInit {
     });
   });
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingGroup = this.slideInRef.getData();
-  }
-
   ngOnInit(): void {
+    this.editingGroup = this.slideInRef
+      ? this.slideInRef.getData() as Group | undefined
+      : this.group();
     this.setupForm();
   }
 
@@ -204,7 +204,7 @@ export class GroupFormComponent implements OnInit {
         }
 
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

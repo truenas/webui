@@ -200,4 +200,34 @@ describe('GroupFormComponent', () => {
       }]);
     });
   });
+
+  describe('hosted in a side panel (no SlideInRef)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: { group: fakeDataGroup },
+        providers: [{ provide: SlideInRef, useValue: null }],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+    });
+
+    it('reads the group to edit from the input', async () => {
+      expect(await (await getInput('name')).getValue()).toBe('editing');
+    });
+
+    it('does not render the in-form Save button (the panel host owns it)', async () => {
+      const saveButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }));
+      expect(saveButton).toBeNull();
+    });
+
+    it('emits closed after a successful submit driven by the host', async () => {
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+      await (await getInput('name')).setValue('updated');
+
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('group.update', [13, expect.objectContaining({ name: 'updated' })]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
+    });
+  });
 });
