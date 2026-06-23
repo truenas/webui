@@ -11,25 +11,13 @@
   margin-bottom: 0;
 
   // TEMP: ix-list / ix-list-item are still Angular Material (owned by
-  // NAS-141028). The list-item's column layout strands the delete button on its
-  // own row above the projected tn-form-field, leaving dead vertical space in
-  // the box. Float the button into the top-right corner so the field fills the
-  // box, and even out the box padding the item host drops (`padding: 5px 10px 0`)
-  // so the field/delete row isn't flush against the top border and the input
-  // isn't flush against the bottom one now that tn-form-field's reserved
-  // subscript is collapsed. Remove once NAS-141028 migrates ix-list.
+  // NAS-141028). The list-item host drops its bottom padding (`padding: 5px 10px
+  // 0`), so the delete button (its own top row) sits near the top border and the
+  // input sits flush against the bottom one once tn-form-field's reserved
+  // subscript is collapsed. Even out the box. Remove once NAS-141028 migrates
+  // ix-list to a tn-* list.
   ::ng-deep ix-list-item {
-    padding-top: 20px;
+    padding-top: 12px;
     padding-bottom: 12px;
-
-    .list-item {
-      position: relative;
-    }
-
-    .delete-btn {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
   }
 }
