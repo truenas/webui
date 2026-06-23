@@ -1,14 +1,15 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, output, signal, WritableSignal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, output, signal, viewChild,
+  WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnDialog, TnIconButtonComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnDialog, TnIconButtonComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnSidePanelActionDirective, TnSidePanelComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
-  filter, switchMap, tap,
+  filter, Observable, of, switchMap, tap,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -22,7 +23,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
@@ -56,6 +57,9 @@ import { RedirectService } from 'app/services/redirect.service';
     CleanLinkPipe,
     TnTooltipDirective,
     RouterLink,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
+    CustomAppFormComponent,
   ],
 })
 export class AppInfoCardComponent {
@@ -69,7 +73,7 @@ export class AppInfoCardComponent {
   private translate = inject(TranslateService);
   private router = inject(Router);
   private installedAppsStore = inject(InstalledAppsStore);
-  private slideIn = inject(SlideIn);
+  private unsavedChanges = inject(UnsavedChangesService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
@@ -77,6 +81,15 @@ export class AppInfoCardComponent {
   readonly startApp = output();
   readonly stopApp = output();
   protected readonly requiredRoles = [Role.AppsWrite];
+
+  protected readonly customAppEditOpen = signal(false);
+  protected readonly customAppForm = viewChild(CustomAppFormComponent);
+  protected readonly customAppCloseGuard = (): Observable<boolean> => {
+    return this.customAppForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
+
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
 
@@ -165,10 +178,14 @@ export class AppInfoCardComponent {
   editButtonPressed(): void {
     const app = this.app();
     if (app.custom_app) {
-      this.slideIn.open(CustomAppFormComponent, { data: app });
+      this.customAppEditOpen.set(true);
     } else {
       this.router.navigate(['/apps', 'installed', app.metadata.train, app.id, 'edit']);
     }
+  }
+
+  protected onCustomAppEditClosed(): void {
+    this.customAppEditOpen.set(false);
   }
 
   deleteButtonPressed(): void {

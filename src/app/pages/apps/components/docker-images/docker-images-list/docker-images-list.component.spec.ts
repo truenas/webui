@@ -1,20 +1,21 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableComponent, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnIconButtonHarness, TnSidePanelHarness, TnTableComponent, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
-import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DockerImagesListComponent } from './docker-images-list.component';
 
 describe('DockerImagesListComponent', () => {
@@ -33,13 +34,16 @@ describe('DockerImagesListComponent', () => {
       mockApi([
         mockCall('app.image.query', fakeDockerImagesDataSource),
         mockCall('app.image.delete'),
+        mockJob('app.image.pull'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
+      mockProvider(FormErrorHandlerService),
+      mockProvider(ErrorHandlerService),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
           closed: of(true),
@@ -87,10 +91,12 @@ describe('DockerImagesListComponent', () => {
     });
   });
 
-  it('opens form when "Pull Image" button is pressed', async () => {
+  it('opens the Pull Image form in a side panel when the "Pull Image" button is pressed', async () => {
     const pullImageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Pull Image' }));
     await pullImageButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PullImageFormComponent);
+    const panel = await loader.getHarness(TnSidePanelHarness);
+    expect(await panel.isOpen()).toBe(true);
+    expect(spectator.query('ix-pull-image-form')).toBeTruthy();
   });
 });

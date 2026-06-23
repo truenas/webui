@@ -14,7 +14,6 @@ import {
   combineLatest,
   filter,
   forkJoin,
-  of,
   take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -32,7 +31,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -65,11 +64,10 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
     DockerStore,
   ],
 })
-export class AppsSettingsComponent implements OnInit {
+export class AppsSettingsComponent extends SidePanelForm implements OnInit {
   private dockerStore = inject(DockerStore);
   private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private errorHandler = inject(FormErrorHandlerService);
   private fb = inject(FormBuilder);
   private snackbar = inject(SnackbarService);
@@ -77,11 +75,11 @@ export class AppsSettingsComponent implements OnInit {
   private urlValidationService = inject(UrlValidationService);
   private destroyRef = inject(DestroyRef);
 
-  protected isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
   protected showNvidiaCheckbox = signal(false);
-  protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
+  readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
-  protected form = this.fb.nonNullable.group({
+  protected readonly form = this.fb.nonNullable.group({
     preferred_trains: [[] as string[], Validators.required],
     nvidia: [false],
     enable_image_updates: [true],
@@ -94,6 +92,9 @@ export class AppsSettingsComponent implements OnInit {
       insecure: FormControl<boolean>;
     }>>([]),
   });
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   protected allTrains$ = this.api.call('catalog.trains').pipe(
     singleArrayToOptions(),
@@ -110,9 +111,7 @@ export class AppsSettingsComponent implements OnInit {
   }
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+    super();
     this.dockerStore.initialize();
   }
 
@@ -204,7 +203,7 @@ export class AppsSettingsComponent implements OnInit {
             this.store$.dispatch(advancedConfigUpdated());
           }
           this.snackbar.success(this.translate.instant('Settings saved'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

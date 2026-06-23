@@ -1,12 +1,14 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="title | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles"
+    [title]="title | translate"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <tn-form-section>
-    @if (!isLoggedInToDockerHub && !existingDockerRegistry) {
+    @if (!loggedInToDockerHub && !existingDockerRegistry) {
       <tn-form-field [label]="'URI' | translate">
         <tn-select
           testId="registry"
@@ -16,7 +18,7 @@
       </tn-form-field>
     }
 
-    @if (existingDockerRegistry || isLoggedInToDockerHub || !form.controls.registry.value) {
+    @if (existingDockerRegistry || loggedInToDockerHub || !form.controls.registry.value) {
       <tn-form-field [label]="'URI' | translate" [required]="true">
         <tn-input
           name="uri"
@@ -58,14 +60,16 @@
     </tn-form-field>
   </tn-form-section>
 
-  <ix-form-actions>
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      type="submit"
-      color="primary"
-      testId="save"
-      [label]="'Save' | translate"
-      [disabled]="form.invalid || isFormLoading()"
-    ></tn-button>
-  </ix-form-actions>
+  @if (slideInRef) {
+    <ix-form-actions>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        type="submit"
+        color="primary"
+        testId="save"
+        [label]="'Save' | translate"
+        [disabled]="form.invalid || isFormLoading()"
+      ></tn-button>
+    </ix-form-actions>
+  }
 </form>

@@ -6,7 +6,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnDialog, TnTablePagerComponent,
   TnButtonComponent, TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
+  TnSidePanelActionDirective, TnSidePanelComponent,
   TnSortEvent, TnTableColumnDirective, TnTableComponent } from '@truenas/ui-components';
+import { Observable, of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -17,7 +19,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { mapTnSortToProviderSorting } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
@@ -40,6 +42,9 @@ import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/
     TnCellDefDirective,
     TnIconButtonComponent,
     TnTablePagerComponent,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
+    PullImageFormComponent,
     FileSizePipe,
     AsyncPipe,
   ],
@@ -48,7 +53,7 @@ export class DockerImagesListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private api = inject(ApiService);
   private tnDialog = inject(TnDialog);
-  private slideIn = inject(SlideIn);
+  private unsavedChanges = inject(UnsavedChangesService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
@@ -63,6 +68,14 @@ export class DockerImagesListComponent implements OnInit {
 
   private readonly tnTable = viewChild(TnTableComponent);
 
+  protected readonly pullImageOpen = signal(false);
+  protected readonly pullImageForm = viewChild(PullImageFormComponent);
+  protected readonly pullImageCloseGuard = (): Observable<boolean> => {
+    return this.pullImageForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
+
   ngOnInit(): void {
     this.dataProvider = new AsyncDataProvider(this.api.call('app.image.query'));
     this.refresh();
@@ -72,8 +85,14 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(PullImageFormComponent)
-      .onSuccess(() => this.refresh(), this.destroyRef);
+    this.pullImageOpen.set(true);
+  }
+
+  protected onPullImageClosed(saved: boolean): void {
+    this.pullImageOpen.set(false);
+    if (saved) {
+      this.refresh();
+    }
   }
 
   doDelete(images: ContainerImage[]): void {

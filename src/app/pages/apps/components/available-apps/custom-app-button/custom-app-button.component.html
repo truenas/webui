@@ -32,3 +32,27 @@
       ></tn-menu-item>
     </tn-menu>
   </div>
+
+  <tn-side-panel
+    width="800px"
+    testId="custom-app"
+    [title]="'Install via YAML' | translate"
+    [closeGuard]="customAppCloseGuard"
+    [(open)]="customAppOpen"
+  >
+    @if (customAppOpen()) {
+      <ix-custom-app-form (closed)="onCustomAppClosed($event)"></ix-custom-app-form>
+    }
+    @if (customAppForm(); as form) {
+      <div tnSidePanelAction>
+        <tn-button
+          *ixRequiresRoles="form.requiredRoles"
+          color="primary"
+          testId="save"
+          [label]="'Save' | translate"
+          [disabled]="!form.canSubmit()"
+          (onClick)="form.submit()"
+        ></tn-button>
+      </div>
+    }
+  </tn-side-panel>

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,7 +9,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { filter, map, of } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { Role } from 'app/enums/role.enum';
@@ -20,7 +20,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -43,20 +43,22 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnButtonComponent,
   ],
 })
-export class CustomAppFormComponent implements OnInit {
+export class CustomAppFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private appService = inject(ApplicationsService);
-  slideInRef = inject<SlideInRef<App | undefined, boolean>>(SlideInRef);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
-  protected requiredRoles = [Role.AppsWrite];
+  /** Provided by a `<tn-side-panel>` host (edit mode); the legacy SlideIn host passes it via `getData()`. */
+  readonly app = input<App | undefined>(undefined);
+
+  readonly requiredRoles = [Role.AppsWrite];
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
-  protected form = this.fb.group({
+  protected readonly form = this.fb.group({
     release_name: ['', Validators.required],
     custom_compose_config_string: ['\n\n', Validators.required],
   });
@@ -67,22 +69,21 @@ export class CustomAppFormComponent implements OnInit {
 
   protected existingApp: App | undefined;
 
-  protected isLoading = signal(false);
+  readonly isLoading = signal(false);
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+
   protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-
-    this.existingApp = this.slideInRef.getData();
+  ngOnInit(): void {
+    // Legacy SlideIn host passes the app via getData(); a tn-side-panel host passes it via the input.
+    this.existingApp = this.slideInRef ? this.slideInRef.getData() as App | undefined : this.app();
 
     if (this.existingApp?.id) {
       this.handleExistingApp(this.existingApp);
     }
-  }
 
-  ngOnInit(): void {
     if (!this.existingApp) {
       this.setNewApp();
     }
@@ -137,7 +138,7 @@ export class CustomAppFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
-        this.slideInRef.close({ response: true });
+        this.close(true);
         if (this.existingApp) {
           this.router.navigate(['/apps', 'installed', this.existingApp.metadata.train, this.existingApp.name]);
         } else {
@@ -164,7 +165,7 @@ export class CustomAppFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.slideInRef.close({ response: undefined });
+        this.close(false);
       },
       complete: () => {
         this.isLoading.set(false);

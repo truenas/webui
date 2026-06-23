@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,7 +16,7 @@ import { dockerHubRegistry, DockerRegistry, DockerRegistryPayload } from 'app/in
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -39,25 +39,25 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
   ],
 })
-export class DockerRegistryFormComponent implements OnInit {
+export class DockerRegistryFormComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
-  slideInRef = inject<SlideInRef<{
-    isLoggedInToDockerHub?: boolean;
-    registry?: DockerRegistry;
-  } | undefined, boolean>>(SlideInRef);
-
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
   private urlValidationService = inject(UrlValidationService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.AppsWrite];
+  /** Provided by a `<tn-side-panel>` host; the legacy SlideIn host passes these via `getData()`. */
+  readonly registry = input<DockerRegistry | undefined>(undefined);
+  readonly isLoggedInToDockerHub = input(false);
+
+  readonly requiredRoles = [Role.AppsWrite];
   protected readonly InputType = InputType;
 
   protected existingDockerRegistry: DockerRegistry | undefined;
-  protected isLoggedInToDockerHub = false;
-  protected isFormLoading = signal(false);
+  /** Resolved from the input (panel host) or `getData()` (legacy host); read by the template. */
+  protected loggedInToDockerHub = false;
+  readonly isFormLoading = signal(false);
   protected readonly dockerHubRegistry = ignoreTranslation(dockerHubRegistry);
 
   protected registriesOptions$ = of([
@@ -65,7 +65,7 @@ export class DockerRegistryFormComponent implements OnInit {
     { label: this.translate.instant('Other Registry'), value: '' },
   ]);
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     registry: [dockerHubRegistry],
     name: ['', Validators.required],
     username: ['', Validators.required],
@@ -76,26 +76,30 @@ export class DockerRegistryFormComponent implements OnInit {
     }],
   });
 
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   get title(): string {
     return this.existingDockerRegistry
       ? this.translate.instant('Edit Docker Registry')
       : this.translate.instant('Create Docker Registry');
   }
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+  ngOnInit(): void {
+    // Legacy SlideIn host passes data via getData(); a tn-side-panel host passes it via inputs.
+    const data = this.slideInRef?.getData() as {
+      isLoggedInToDockerHub?: boolean;
+      registry?: DockerRegistry;
+    } | undefined;
+    this.existingDockerRegistry = this.slideInRef ? data?.registry : this.registry();
+    this.loggedInToDockerHub = this.slideInRef
+      ? Boolean(data?.isLoggedInToDockerHub)
+      : this.isLoggedInToDockerHub();
 
-    this.existingDockerRegistry = this.slideInRef.getData()?.registry;
-    this.isLoggedInToDockerHub = Boolean(this.slideInRef.getData()?.isLoggedInToDockerHub);
-
-    if (!this.isLoggedInToDockerHub && !this.existingDockerRegistry) {
+    if (!this.loggedInToDockerHub && !this.existingDockerRegistry) {
       this.setNameForDockerHub();
     }
-  }
 
-  ngOnInit(): void {
     if (this.existingDockerRegistry) {
       this.setRegistryForEdit();
     }
@@ -128,7 +132,7 @@ export class DockerRegistryFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

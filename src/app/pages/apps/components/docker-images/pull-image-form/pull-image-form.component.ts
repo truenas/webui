@@ -8,7 +8,6 @@ import {
   InputType,
   TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -17,7 +16,7 @@ import { PullContainerImageParams } from 'app/interfaces/container-image.interfa
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -38,36 +37,32 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
   ],
 })
-export class PullImageFormComponent {
+export class PullImageFormComponent extends SidePanelForm {
   private api = inject(ApiService);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.AppsWrite];
+  readonly requiredRoles = [Role.AppsWrite];
   protected readonly InputType = InputType;
 
-  protected isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     image: ['', Validators.required],
     tag: [latestVersion],
     username: [''],
     password: [''],
   });
 
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   readonly tooltips = {
     image: helptextApps.pullImageForm.imageName.tooltip,
   };
-
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
 
   protected onSubmit(): void {
     const values = this.form.getRawValue();
@@ -96,7 +91,7 @@ export class PullImageFormComponent {
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

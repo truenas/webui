@@ -80,3 +80,26 @@
 </tn-table>
 
 <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+
+<tn-side-panel
+  testId="pull-image"
+  [title]="'Pull Image' | translate"
+  [closeGuard]="pullImageCloseGuard"
+  [(open)]="pullImageOpen"
+>
+  @if (pullImageOpen()) {
+    <ix-pull-image-form (closed)="onPullImageClosed($event)"></ix-pull-image-form>
+  }
+  @if (pullImageForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="form.requiredRoles"
+        color="primary"
+        testId="save"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>

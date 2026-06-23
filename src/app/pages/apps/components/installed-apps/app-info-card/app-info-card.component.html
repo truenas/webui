@@ -168,3 +168,30 @@
     </div>
   </ng-template>
 </tn-card>
+
+<tn-side-panel
+  width="800px"
+  testId="custom-app-edit"
+  [title]="'Edit App YAML' | translate"
+  [closeGuard]="customAppCloseGuard"
+  [(open)]="customAppEditOpen"
+>
+  @if (customAppEditOpen()) {
+    <ix-custom-app-form
+      [app]="app()"
+      (closed)="onCustomAppEditClosed()"
+    ></ix-custom-app-form>
+  }
+  @if (customAppForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="form.requiredRoles"
+        color="primary"
+        testId="save"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>
