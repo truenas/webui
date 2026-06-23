@@ -5,6 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonComponent, TnButtonHarness, TnSidePanelComponent, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent, MockInstance } from 'ng-mocks';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -178,5 +179,52 @@ describe('GroupListComponent', () => {
 
     expect(localSpectator.query(TnSidePanelComponent).open()).toBe(true);
     expect(localSpectator.query(GroupFormComponent)).toBeTruthy();
+  });
+
+  it('closes without a discard prompt when the form has no unsaved changes', async () => {
+    MockInstance(GroupFormComponent, (instance) => {
+      Object.assign(instance, {
+        requiredRoles: [Role.AccountWrite],
+        canSubmit: signal(false),
+        hasUnsavedChanges: () => false,
+      });
+    });
+    const localSpectator = createComponent();
+    const localLoader = TestbedHarnessEnvironment.loader(localSpectator.fixture);
+    const unsavedChanges = localSpectator.inject(UnsavedChangesService);
+
+    const addButton = await localLoader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+    localSpectator.detectChanges();
+
+    const guard$ = (localSpectator.component as unknown as {
+      closeFormGuard: () => Observable<boolean>;
+    }).closeFormGuard();
+    await expect(firstValueFrom(guard$)).resolves.toBe(true);
+    expect(unsavedChanges.showConfirmDialog).not.toHaveBeenCalled();
+  });
+
+  it('prompts to discard when closing the form with unsaved changes', async () => {
+    MockInstance(GroupFormComponent, (instance) => {
+      Object.assign(instance, {
+        requiredRoles: [Role.AccountWrite],
+        canSubmit: signal(false),
+        hasUnsavedChanges: () => true,
+      });
+    });
+    const localSpectator = createComponent();
+    const localLoader = TestbedHarnessEnvironment.loader(localSpectator.fixture);
+    const unsavedChanges = localSpectator.inject(UnsavedChangesService);
+    jest.spyOn(unsavedChanges, 'showConfirmDialog').mockReturnValue(of(false));
+
+    const addButton = await localLoader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+    localSpectator.detectChanges();
+
+    const guard$ = (localSpectator.component as unknown as {
+      closeFormGuard: () => Observable<boolean>;
+    }).closeFormGuard();
+    await expect(firstValueFrom(guard$)).resolves.toBe(false);
+    expect(unsavedChanges.showConfirmDialog).toHaveBeenCalled();
   });
 });
