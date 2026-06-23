@@ -3,7 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnInputHarness, TnRadioHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness } from '@truenas/ui-components';
+import { helptextUsers } from 'app/helptext/account/user-form';
 import { AuthSectionComponent } from 'app/pages/credentials/users/user-form/auth-section/auth-section.component';
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
@@ -207,6 +208,18 @@ describe('AuthSectionComponent', () => {
         'Disable Password',
         'Generate Temporary One-Time Password',
       ]);
+    });
+
+    it('shows a per-option tooltip for the STIG password options', async () => {
+      isStigMode.set(true);
+      spectator.detectChanges();
+
+      // Each radio is wrapped in a label-less tn-form-field whose tooltip renders as
+      // an inline help icon; collect the tooltips those wrappers expose.
+      const fields = await loader.getAllHarnesses(TnFormFieldHarness);
+      const tooltips = await Promise.all(fields.map((field) => field.getTooltip()));
+      expect(tooltips).toContain(helptextUsers.oneTimePasswordTooltip);
+      expect(tooltips).toContain(helptextUsers.disablePasswordTooltip);
     });
 
     // TODO: Expand on test case for Generate Temporary One-Time Password.

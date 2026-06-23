@@ -63,7 +63,6 @@ export class AuthSectionComponent implements OnInit {
   protected readonly InputType = InputType;
 
   protected readonly tooltips = {
-    one_time_password: helptextUsers.oneTimePasswordTooltip,
     password: helptextUsers.passwordTooltip,
     password_edit: helptextUsers.passwordTooltip,
     password_confirm: helptextUsers.passwordConfirmTooltip,
@@ -86,7 +85,7 @@ export class AuthSectionComponent implements OnInit {
     {
       label: this.translate.instant('Generate Temporary One-Time Password'),
       value: UserStigPasswordOption.OneTimePassword,
-      tooltip: this.translate.instant(this.tooltips.one_time_password),
+      tooltip: this.translate.instant(helptextUsers.oneTimePasswordTooltip),
     },
   ];
 
