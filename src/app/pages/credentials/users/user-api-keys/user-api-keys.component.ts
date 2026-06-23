@@ -80,7 +80,6 @@ export class UserApiKeysComponent implements OnInit {
   dataProvider: ApiDataProvider<'api_key.query'>;
 
   protected readonly displayedColumns = ['name', 'username', 'local', 'revoked', 'created_at', 'expires_at', 'actions'];
-  protected readonly emptyIcon = 'mdi-key-outline';
   protected readonly trackById = (_index: number, row: ApiKey): number => row.id;
 
   private readonly canWriteApiKeys = toSignal(this.authService.hasRole([Role.ApiKeyWrite]));
