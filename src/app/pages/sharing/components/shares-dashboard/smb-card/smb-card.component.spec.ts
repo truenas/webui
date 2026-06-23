@@ -5,6 +5,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
+  TnButtonHarness,
   TnDialog,
   TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
@@ -26,6 +27,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
@@ -145,6 +149,26 @@ describe('SmbCardComponent', () => {
       expect(await table.getAllRowTexts()).toEqual([
         ['smb123', '/mnt/APPS/smb1', 'pool', '', 'Yes', ''],
       ]);
+    });
+
+    it('opens the SMB form when the projected Add button is clicked', async () => {
+      const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+      await addButton.click();
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbFormComponent, {
+        data: { existingSmbShare: undefined },
+      });
+    });
+
+    it('toggles the SMB service when the projected header toggle is changed', async () => {
+      const toggleState = jest.spyOn(spectator.inject(ServiceActionsMenuService), 'toggleServiceState')
+        .mockImplementation(() => {});
+      const toggle = await loader.getHarness(
+        TnSlideToggleHarness.with({ ancestor: '.tn-card__header-right' }),
+      );
+      await toggle.toggle();
+
+      expect(toggleState).toHaveBeenCalledWith(expect.objectContaining({ service: ServiceName.Cifs }));
     });
 
     it('shows form to edit an existing SMB Share when Edit button is pressed', async () => {

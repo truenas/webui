@@ -22,7 +22,7 @@
       @if (showDefaultBridge()) {
         <div
           class="device default-device"
-          [matTooltip]="'Default network interface, always active' | translate"
+          [tnTooltip]="'Default network interface, always active' | translate"
         >
           <span class="device-description">
             {{ defaultBridge() }} ({{ 'Default' | translate }})

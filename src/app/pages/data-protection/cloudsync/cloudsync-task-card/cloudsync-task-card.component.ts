@@ -274,7 +274,7 @@ export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi>
       });
   }
 
-  protected onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi): void {
+  protected onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi, toggle: TableToggleCellComponent): void {
     this.api
       .call('cloudsync.update', [cloudsyncTask.id, { enabled: !cloudsyncTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -283,7 +283,7 @@ export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi>
           this.reload();
         },
         error: (error: unknown) => {
-          this.reload();
+          toggle.revert();
           this.errorHandler.showErrorModal(error);
         },
       });

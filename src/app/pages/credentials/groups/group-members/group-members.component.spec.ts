@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -66,42 +65,41 @@ describe('GroupMembersComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.query', [[['local', '=', true]]]);
   });
 
-  it('shows current group values when form is being edited', async () => {
-    const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All Users"]' }));
-    const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group Members"]' }));
+  it('shows current group values when form is being edited', () => {
+    spectator.detectChanges();
 
-    expect(spectator.query('mat-card-title')).toHaveText('dummy-group');
+    expect(spectator.query('[tnCardHeader]')).toHaveText('dummy-group');
 
-    expect(await userList.getItems()).toHaveLength(1);
-    expect(await memberList.getItems()).toHaveLength(1);
+    expect(spectator.queryAll('tn-list[aria-label="All Users"] tn-list-item')).toHaveLength(1);
+    expect(spectator.queryAll('tn-list[aria-label="Group Members"] tn-list-item')).toHaveLength(1);
 
     expect(api.call).toHaveBeenCalledWith('group.query', [[['id', '=', 1]]]);
   });
 
   it('redirects to Group List page when Cancel button is pressed', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
     await button.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
   });
 
   it('sends an update payload to websocket and closes modal when Save button is pressed', async () => {
-    const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All Users"]' }));
-    const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group Members"]' }));
-    const users = await userList.getItems();
+    spectator.detectChanges();
 
-    expect(users).toHaveLength(1);
-    expect(await memberList.getItems()).toHaveLength(1);
+    const availableItems = spectator.queryAll('tn-list[aria-label="All Users"] tn-list-item');
+    expect(availableItems).toHaveLength(1);
+    expect(spectator.queryAll('tn-list[aria-label="Group Members"] tn-list-item')).toHaveLength(1);
 
-    await (await users[0].host()).click();
+    spectator.click(availableItems[0]);
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="move-selected-right"]' }));
+    const addButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'chevron-right' }));
     await addButton.click();
+    spectator.detectChanges();
 
-    expect(await userList.getItems()).toHaveLength(0);
-    expect(await memberList.getItems()).toHaveLength(2);
+    expect(spectator.queryAll('tn-list[aria-label="All Users"] tn-list-item')).toHaveLength(0);
+    expect(spectator.queryAll('tn-list[aria-label="Group Members"] tn-list-item')).toHaveLength(2);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('group.update', [1, { users: [41, 42] }]);

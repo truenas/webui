@@ -205,12 +205,16 @@ export class SnapshotTaskCardComponent implements OnInit {
       .onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
   }
 
-  protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
+  protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi, toggle: TableToggleCellComponent): void {
     this.api
       .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
+        next: () => {
+          this.getSnapshotTasks();
+        },
         error: (error: unknown) => {
+          toggle.revert();
           this.errorHandler.showErrorModal(error);
         },
       });

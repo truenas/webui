@@ -8,6 +8,8 @@ import {
   tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
@@ -15,16 +17,17 @@ import {
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
+  TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
-  type TnCardAction,
   type TnSortEvent,
   TnDialog,
 } from '@truenas/ui-components';
 import {
   filter, startWith, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
@@ -68,8 +71,12 @@ import { selectService } from 'app/store/services/services.selectors';
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
+    TnCardHeaderActionsDirective,
+    TnCardFooterActionsDirective,
+    TnSlideToggleComponent,
     TnSidePanelComponent,
     TnSidePanelActionDirective,
+    RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -99,10 +106,10 @@ export class IscsiCardComponent implements OnInit {
   private license = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
-  private actionsMenu = inject(ServiceActionsMenuService);
+  protected actionsMenu = inject(ServiceActionsMenuService);
 
   service$ = this.store$.select(selectService(ServiceName.Iscsi));
-  private service = toSignal(this.service$);
+  protected service = toSignal(this.service$);
   requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
@@ -124,17 +131,6 @@ export class IscsiCardComponent implements OnInit {
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
-  protected wizardAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasWriteRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Wizard'),
-      testId: 'button-iscsi-share-wizard',
-      handler: () => this.openForm(undefined, true),
-    };
-  });
-
   protected configOpen = signal(false);
   protected configForm = viewChild(GlobalTargetConfigurationComponent);
   protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
@@ -146,8 +142,6 @@ export class IscsiCardComponent implements OnInit {
     this.hasWriteRole(),
     () => this.configOpen.set(true),
   ));
-
-  protected serviceControl = computed(() => this.actionsMenu.buildServiceControl(this.service(), this.hasWriteRole()));
 
   protected onConfigClosed(): void {
     this.configOpen.set(false);

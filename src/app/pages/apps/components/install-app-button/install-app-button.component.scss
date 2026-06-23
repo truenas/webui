@@ -1,5 +1,17 @@
-button {
-  width: 100%;
+:host {
+  display: block;
+
+  // TEMP: tn-button hosts as inline-block/fit-content. Force the install/setup
+  // buttons to span the full width as the previous mat-button did. Remove once
+  // tn-button exposes a full-width input.
+  ::ng-deep tn-button {
+    display: block;
+    width: 100%;
+
+    button {
+      width: 100%;
+    }
+  }
 }
 
 ::ng-deep {

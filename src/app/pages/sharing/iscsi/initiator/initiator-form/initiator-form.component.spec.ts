@@ -2,9 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -55,12 +55,10 @@ describe('InitiatorFormComponent', () => {
 
   it('shows current initiator values when form is being edited', async () => {
     spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
 
-    const availableList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Connected Initiators"]' }));
-    const selectedList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Allowed Initiators"]' }));
-
-    expect(await availableList.getItems()).toHaveLength(1);
-    expect(await selectedList.getItems()).toHaveLength(2);
+    expect(spectator.queryAll('tn-list[aria-label="Connected Initiators"] tn-list-item')).toHaveLength(1);
+    expect(spectator.queryAll('tn-list[aria-label="Allowed Initiators"] tn-list-item')).toHaveLength(2);
 
     expect(api.call).toHaveBeenCalledWith('iscsi.global.sessions');
     expect(api.call).toHaveBeenCalledWith('iscsi.initiator.query', [[['id', '=', 1]]]);
@@ -74,22 +72,21 @@ describe('InitiatorFormComponent', () => {
 
   it('sends an update payload to websocket and closes modal when Save button is pressed', async () => {
     spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
 
-    const availableList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Connected Initiators"]' }));
-    const selectedList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Allowed Initiators"]' }));
-
-    const available = await availableList.getItems();
+    const available = spectator.queryAll('tn-list[aria-label="Connected Initiators"] tn-list-item');
 
     expect(available).toHaveLength(1);
-    expect(await selectedList.getItems()).toHaveLength(2);
+    expect(spectator.queryAll('tn-list[aria-label="Allowed Initiators"] tn-list-item')).toHaveLength(2);
 
-    await (await available[0].host()).click();
+    spectator.click(available[0]);
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="move-selected-right"]' }));
+    const addButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'chevron-right' }));
     await addButton.click();
+    spectator.detectChanges();
 
-    expect(await availableList.getItems()).toHaveLength(0);
-    expect(await selectedList.getItems()).toHaveLength(3);
+    expect(spectator.queryAll('tn-list[aria-label="Connected Initiators"] tn-list-item')).toHaveLength(0);
+    expect(spectator.queryAll('tn-list[aria-label="Allowed Initiators"] tn-list-item')).toHaveLength(3);
 
     await form.fillForm({
       Description: 'new_comment',
@@ -124,11 +121,10 @@ describe('InitiatorFormComponent', () => {
   });
 
   it('adds a new initiator and closes modal when Save button is pressed', async () => {
-    const availableList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Connected Initiators"]' }));
-    const selectedList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Allowed Initiators"]' }));
+    spectator.detectChanges();
 
-    expect(await availableList.getItems()).toHaveLength(1);
-    expect(await selectedList.getItems()).toHaveLength(0);
+    expect(spectator.queryAll('tn-list[aria-label="Connected Initiators"] tn-list-item')).toHaveLength(1);
+    expect(spectator.queryAll('tn-list[aria-label="Allowed Initiators"] tn-list-item')).toHaveLength(0);
 
     const addNewInitiatorButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="add-initiator"]' }));
 
@@ -137,9 +133,10 @@ describe('InitiatorFormComponent', () => {
 
     await form.fillForm({ 'Add Allowed Initiators (IQN)': 'new_initiator_2' });
     await addNewInitiatorButton.click();
+    spectator.detectChanges();
 
-    expect(await availableList.getItems()).toHaveLength(1);
-    expect(await selectedList.getItems()).toHaveLength(2);
+    expect(spectator.queryAll('tn-list[aria-label="Connected Initiators"] tn-list-item')).toHaveLength(1);
+    expect(spectator.queryAll('tn-list[aria-label="Allowed Initiators"] tn-list-item')).toHaveLength(2);
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

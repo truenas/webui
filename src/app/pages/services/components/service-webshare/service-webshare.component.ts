@@ -4,8 +4,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { WebSharePasskey, webSharePasskeyLabels } from 'app/enums/webshare-passkey.enum';
@@ -13,30 +14,27 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceWebshare } from 'app/helptext/services/components/service-webshare';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-service-webshare',
   templateUrl: './service-webshare.component.html',
+  styleUrls: ['./service-webshare.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     ModalHeaderComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
     RequiresRolesDirective,
   ],
@@ -59,7 +57,7 @@ export class ServiceWebshareComponent extends SidePanelForm implements OnInit {
   });
 
   readonly helptext = helptextServiceWebshare;
-  readonly passkeyOptions$ = of(mapToOptions(webSharePasskeyLabels, this.translate));
+  readonly passkeyOptions = mapToOptions(webSharePasskeyLabels, this.translate);
 
   /** Public signal hosts can read to disable a Save action while invalid or loading. */
   readonly canSubmit = this.trackCanSubmit(this.isFormLoading);

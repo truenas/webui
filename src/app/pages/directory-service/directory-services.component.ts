@@ -9,9 +9,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, tnIconMarker, TnTooltipDirective } from '@truenas/ui-components';
 import {
   forkJoin,
 } from 'rxjs';
@@ -81,7 +80,7 @@ interface DataCard {
     MatList,
     MatListItem,
     TranslateModule,
-    MatTooltip,
+    TnTooltipDirective,
   ],
 })
 export class DirectoryServicesComponent implements OnInit {

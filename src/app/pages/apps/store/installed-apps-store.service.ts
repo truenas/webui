@@ -2,7 +2,6 @@ import {
   DestroyRef, inject, Injectable, OnDestroy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Sort, SortDirection } from '@angular/material/sort';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY, Observable, Subscription, catchError,
@@ -25,11 +24,18 @@ enum SortableField {
   Updates = 'updates',
 }
 
+export type AppsSortDirection = 'asc' | 'desc' | '';
+
+export interface AppsSort {
+  active: string;
+  direction: AppsSortDirection;
+}
+
 export interface InstalledAppsState {
   installedApps: App[];
   isLoading: boolean;
   searchQuery: string;
-  sortingInfo: Sort;
+  sortingInfo: AppsSort;
 }
 
 const initialState: InstalledAppsState = {
@@ -38,7 +44,7 @@ const initialState: InstalledAppsState = {
   searchQuery: '',
   sortingInfo: {
     active: SortableField.Application,
-    direction: 'asc' as SortDirection,
+    direction: 'asc',
   },
 };
 
@@ -211,7 +217,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     this.patchState({ searchQuery });
   }
 
-  setSortingInfo(sortingInfo: Sort): void {
+  setSortingInfo(sortingInfo: AppsSort): void {
     this.patchState({ sortingInfo });
   }
 }
