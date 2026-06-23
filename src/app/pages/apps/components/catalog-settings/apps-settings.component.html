@@ -1,11 +1,3 @@
-@if (slideInRef) {
-  <ix-modal-header
-    [title]="'Settings' | translate"
-    [loading]="isFormLoading()"
-    [requiredRoles]="requiredRoles"
-  ></ix-modal-header>
-}
-
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <tn-form-section>
     <ix-checkbox-list
@@ -101,19 +93,4 @@
       ></tn-checkbox>
     </tn-form-field>
   </tn-form-section>
-
-  @if (slideInRef) {
-    <div class="actions">
-      <ix-form-actions>
-        <tn-button
-          *ixRequiresRoles="requiredRoles"
-          type="submit"
-          color="primary"
-          testId="save"
-          [label]="'Save' | translate"
-          [disabled]="!canSubmit()"
-        ></tn-button>
-      </ix-form-actions>
-    </div>
-  }
 </form>

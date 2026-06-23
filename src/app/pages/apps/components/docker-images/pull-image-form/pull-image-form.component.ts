@@ -6,16 +6,13 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { latestVersion } from 'app/constants/catalog.constants';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -28,13 +25,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     ReactiveFormsModule,
     TranslateModule,
-    ModalHeaderComponent,
-    TnButtonComponent,
     TnFormFieldComponent,
     TnFormSectionComponent,
     TnInputComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
   ],
 })
 export class PullImageFormComponent extends SidePanelForm {

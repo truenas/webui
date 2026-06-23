@@ -8,7 +8,7 @@
   </tn-form-field>
 
   <div class="font-size-control">
-    <span class="font-size-label">{{ 'Set font size' | translate }}</span>
+    <span id="container-logs-font-size-label" class="font-size-label">{{ 'Set font size' | translate }}</span>
     <tn-slider
       class="font-size-slider"
       testId="set-font-size"
@@ -19,8 +19,8 @@
     >
       <input
         tnSliderThumb
+        aria-labelledby="container-logs-font-size-label"
         [formControl]="fontSizeControl"
-        [attr.aria-label]="'Set font size' | translate"
       />
     </tn-slider>
   </div>

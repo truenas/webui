@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnInputHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -15,7 +15,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxCodeEditorHarness } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -49,12 +48,6 @@ const fakeApp = {
     version: '3.8',
   } as Record<string, ChartFormValue>,
 } as App;
-
-const slideInRef: SlideInRef<App | undefined, unknown> = {
-  close: jest.fn(),
-  requireConfirmationWhen: jest.fn(),
-  getData: jest.fn(() => fakeApp),
-};
 
 describe('CustomAppFormComponent', () => {
   let spectator: Spectator<CustomAppFormComponent>;
@@ -91,12 +84,7 @@ describe('CustomAppFormComponent', () => {
 
   function setupTest(app?: App): void {
     spectator = createComponent({
-      providers: [
-        mockProvider(SlideInRef, {
-          ...slideInRef,
-          getData: jest.fn(() => app),
-        }),
-      ],
+      props: { app },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
@@ -113,8 +101,7 @@ describe('CustomAppFormComponent', () => {
       await configControl.setValue('config');
       spectator.detectChanges();
 
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await button.click();
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
@@ -133,8 +120,7 @@ describe('CustomAppFormComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(await button.isDisabled()).toBeTruthy();
+      expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 
@@ -143,9 +129,8 @@ describe('CustomAppFormComponent', () => {
       setupTest(fakeApp);
     });
 
-    it('checks save and closes slide in when successfully submitted', async () => {
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await button.click();
+    it('checks save and closes slide in when successfully submitted', () => {
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('app.update', [
         'test-app-one',

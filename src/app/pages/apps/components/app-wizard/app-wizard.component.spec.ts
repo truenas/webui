@@ -9,6 +9,7 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
@@ -295,6 +296,7 @@ describe('AppWizardComponent', () => {
       mockProvider(TnDialog),
     ],
     providers: [
+      provideTnFormFieldErrors(),
       mockProvider(SlideIn),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -423,8 +425,7 @@ describe('AppWizardComponent', () => {
       await applicationName.setValue('app-name');
 
       const applicationNameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Application Name' }));
-      expect(await applicationNameField.hasError()).toBe(true);
-      expect(spectator.component.form.controls.release_name.errors).toEqual({ forbidden: true, value: 'app-name' });
+      expect(await applicationNameField.getErrorMessage()).toBe('The name "app-name" is already in use.');
     });
 
     it('shows values for app when form is opened for create', async () => {

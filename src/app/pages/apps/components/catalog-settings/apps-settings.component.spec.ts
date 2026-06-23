@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -18,7 +18,6 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -68,12 +67,6 @@ describe('AppsSettingsComponent', () => {
     dataset: 'test-dataset',
   } as DockerConfig;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: AppsSettingsComponent,
     imports: [
@@ -100,7 +93,6 @@ describe('AppsSettingsComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(FormErrorHandlerService),
       mockAuth(),
       mockProvider(DockerStore, {
@@ -142,8 +134,7 @@ describe('AppsSettingsComponent', () => {
       'Preferred Trains': ['stable', 'community'],
     });
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('catalog.update', [
       { preferred_trains: ['stable', 'community'] },
@@ -222,8 +213,7 @@ describe('AppsSettingsComponent', () => {
       Insecure: true,
     });
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('docker.update', [{
       enable_image_updates: true,
@@ -247,8 +237,7 @@ describe('AppsSettingsComponent', () => {
     );
     await nvidiaCheckbox.check();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: true }]);
   });
@@ -258,19 +247,11 @@ describe('AppsSettingsComponent - nvidia drivers installed without GPU', () => {
   let spectator: Spectator<AppsSettingsComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: AppsSettingsComponent,
     imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
     providers: [
       ...getNvidiaProviders({ nvidia: true }, false),
-
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -290,19 +271,11 @@ describe('AppsSettingsComponent - no nvidia GPU and no drivers', () => {
   let spectator: Spectator<AppsSettingsComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: AppsSettingsComponent,
     imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
     providers: [
       ...getNvidiaProviders({ nvidia: false }, false),
-
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 

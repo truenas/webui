@@ -2,14 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 
@@ -17,12 +16,6 @@ describe('PullImageFormComponent', () => {
   let spectator: Spectator<PullImageFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const createComponent = createComponentFactory({
     component: PullImageFormComponent,
@@ -34,7 +27,6 @@ describe('PullImageFormComponent', () => {
         mockJob('app.image.pull'),
       ]),
       mockProvider(SlideIn),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -57,8 +49,7 @@ describe('PullImageFormComponent', () => {
     await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).setValue('john');
     await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).setValue('12345678');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(api.job).toHaveBeenCalledWith('app.image.pull', [{

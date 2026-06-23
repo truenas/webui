@@ -7,15 +7,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { dockerHubRegistry, DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -29,14 +26,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AsyncPipe,
     ReactiveFormsModule,
     TranslateModule,
-    ModalHeaderComponent,
-    TnButtonComponent,
     TnFormFieldComponent,
     TnFormSectionComponent,
     TnInputComponent,
     TnSelectComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
   ],
 })
 export class DockerRegistryFormComponent extends SidePanelForm implements OnInit {
@@ -47,7 +40,7 @@ export class DockerRegistryFormComponent extends SidePanelForm implements OnInit
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  /** Provided by a `<tn-side-panel>` host; the legacy SlideIn host passes these via `getData()`. */
+  /** Provided by the `<tn-side-panel>` host. */
   readonly registry = input<DockerRegistry | undefined>(undefined);
   readonly isLoggedInToDockerHub = input(false);
 
@@ -55,7 +48,7 @@ export class DockerRegistryFormComponent extends SidePanelForm implements OnInit
   protected readonly InputType = InputType;
 
   protected existingDockerRegistry: DockerRegistry | undefined;
-  /** Resolved from the input (panel host) or `getData()` (legacy host); read by the template. */
+  /** Resolved from the input; read by the template. */
   protected loggedInToDockerHub = false;
   readonly isFormLoading = signal(false);
   protected readonly dockerHubRegistry = ignoreTranslation(dockerHubRegistry);
@@ -79,22 +72,9 @@ export class DockerRegistryFormComponent extends SidePanelForm implements OnInit
   /** Public signal hosts can read to disable a Save action while invalid or loading. */
   readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
-  get title(): string {
-    return this.existingDockerRegistry
-      ? this.translate.instant('Edit Docker Registry')
-      : this.translate.instant('Create Docker Registry');
-  }
-
   ngOnInit(): void {
-    // Legacy SlideIn host passes data via getData(); a tn-side-panel host passes it via inputs.
-    const data = this.slideInRef?.getData() as {
-      isLoggedInToDockerHub?: boolean;
-      registry?: DockerRegistry;
-    } | undefined;
-    this.existingDockerRegistry = this.slideInRef ? data?.registry : this.registry();
-    this.loggedInToDockerHub = this.slideInRef
-      ? Boolean(data?.isLoggedInToDockerHub)
-      : this.isLoggedInToDockerHub();
+    this.existingDockerRegistry = this.registry();
+    this.loggedInToDockerHub = this.isLoggedInToDockerHub();
 
     if (!this.loggedInToDockerHub && !this.existingDockerRegistry) {
       this.setNameForDockerHub();

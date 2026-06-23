@@ -7,19 +7,16 @@ import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { filter, map } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { Role } from 'app/enums/role.enum';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { App, AppCreate } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -33,14 +30,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     ReactiveFormsModule,
     TranslateModule,
-    ModalHeaderComponent,
     TnFormFieldComponent,
     TnFormSectionComponent,
     TnInputComponent,
     IxCodeEditorComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
   ],
 })
 export class CustomAppFormComponent extends SidePanelForm implements OnInit {
@@ -53,7 +46,7 @@ export class CustomAppFormComponent extends SidePanelForm implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
-  /** Provided by a `<tn-side-panel>` host (edit mode); the legacy SlideIn host passes it via `getData()`. */
+  /** Provided by the `<tn-side-panel>` host in edit mode. */
   readonly app = input<App | undefined>(undefined);
 
   readonly requiredRoles = [Role.AppsWrite];
@@ -77,8 +70,7 @@ export class CustomAppFormComponent extends SidePanelForm implements OnInit {
   protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
   ngOnInit(): void {
-    // Legacy SlideIn host passes the app via getData(); a tn-side-panel host passes it via the input.
-    this.existingApp = this.slideInRef ? this.slideInRef.getData() as App | undefined : this.app();
+    this.existingApp = this.app();
 
     if (this.existingApp?.id) {
       this.handleExistingApp(this.existingApp);

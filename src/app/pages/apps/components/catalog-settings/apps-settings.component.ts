@@ -8,7 +8,7 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
 } from '@truenas/ui-components';
 import {
   combineLatest,
@@ -16,11 +16,9 @@ import {
   forkJoin,
   take,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -30,7 +28,6 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -45,7 +42,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    ModalHeaderComponent,
     TnFormSectionComponent,
     IxCheckboxListComponent,
     IxListItemComponent,
@@ -53,11 +49,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
     IxIpInputWithNetmaskComponent,
     IxInputComponent,
     IxCheckboxComponent,
-    FormActionsComponent,
-    TnButtonComponent,
     TnCheckboxComponent,
     TnFormFieldComponent,
-    RequiresRolesDirective,
     TranslateModule,
   ],
   providers: [

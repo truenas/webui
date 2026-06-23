@@ -5,14 +5,13 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnInputHarness, TnSelectHarness,
+  TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { dockerHubRegistry } from 'app/interfaces/docker-registry.interface';
+import { DockerRegistry, dockerHubRegistry } from 'app/interfaces/docker-registry.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
 
@@ -27,13 +26,7 @@ describe('DockerRegistryFormComponent', () => {
     name: 'Old Registry',
     username: 'old_user',
     password: '',
-  };
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
+  } as DockerRegistry;
 
   const createComponent = createComponentFactory({
     component: DockerRegistryFormComponent,
@@ -43,7 +36,6 @@ describe('DockerRegistryFormComponent', () => {
         mockCall('app.registry.create'),
         mockCall('app.registry.update'),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService),
       mockProvider(FormErrorHandlerService),
       mockAuth(),
@@ -66,8 +58,8 @@ describe('DockerRegistryFormComponent', () => {
       await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).setValue('admin');
       await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).setValue('password');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('app.registry.create', [
         {
@@ -77,7 +69,7 @@ describe('DockerRegistryFormComponent', () => {
           password: 'password',
         },
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalledWith(true);
     });
 
     it('sends a create payload and closes the modal when the save button is clicked', async () => {
@@ -89,8 +81,8 @@ describe('DockerRegistryFormComponent', () => {
       await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).setValue('admin');
       await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).setValue('password');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('app.registry.create', [
         {
@@ -100,21 +92,14 @@ describe('DockerRegistryFormComponent', () => {
           password: 'password',
         },
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalledWith(true);
     });
   });
 
   describe('editing a Docker registry', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => {
-              return { registry: mockRegistry };
-            }),
-          }),
-        ],
+        props: { registry: mockRegistry },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
@@ -136,8 +121,8 @@ describe('DockerRegistryFormComponent', () => {
       await (await loader.getHarness(TnInputHarness.with({ name: 'username' }))).setValue('updated_user');
       await (await loader.getHarness(TnInputHarness.with({ name: 'password' }))).setValue('updated_password');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('app.registry.update', [
         1,
@@ -148,21 +133,14 @@ describe('DockerRegistryFormComponent', () => {
           password: 'updated_password',
         },
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalledWith(true);
     });
   });
 
   describe('when user is logged in to Docker Hub', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => {
-              return { isLoggedInToDockerHub: true };
-            }),
-          }),
-        ],
+        props: { isLoggedInToDockerHub: true },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
