@@ -59,7 +59,6 @@ export class GroupFormComponent extends SidePanelForm implements OnInit {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
-  /** Group to edit when hosted in a `<tn-side-panel>`. Legacy SlideIn host passes it via `SlideInRef`. */
   readonly group = input<Group>();
 
   readonly requiredRoles = [Role.AccountWrite];

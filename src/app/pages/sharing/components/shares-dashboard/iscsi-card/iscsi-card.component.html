@@ -116,25 +116,3 @@
     [routerLink]="['/sharing', 'iscsi', 'targets']"
   ></ix-table-pager-show-more>
 </tn-card>
-
-<tn-side-panel
-  [title]="'iSCSI Global Configuration' | translate"
-  [closeGuard]="closeConfigGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-global-target-configuration (closed)="onConfigClosed()"></ix-global-target-configuration>
-  }
-  @if (configForm(); as form) {
-    <div tnSidePanelAction>
-      <tn-button
-        *ixRequiresRoles="form.requiredRoles"
-        color="primary"
-        [ixTest]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="!form.canSubmit()"
-        (onClick)="form.submit()"
-      ></tn-button>
-    </div>
-  }
-</tn-side-panel>

@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, inject, signal, viewChild, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -15,8 +15,6 @@ import {
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
   TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
@@ -39,6 +37,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -71,8 +70,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCardHeaderActionsDirective,
     TnCardFooterActionsDirective,
     TnSlideToggleComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
@@ -88,12 +85,12 @@ import { selectService } from 'app/store/services/services.selectors';
     TnEmptyComponent,
     SubSystemNameCellComponent,
     CardAlertBadgeComponent,
-    NvmeOfConfigurationComponent,
     TableActionsCellComponent,
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
   private store$ = inject<Store<ServicesState>>(Store);
@@ -119,20 +116,16 @@ export class NvmeOfCardComponent implements OnInit {
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
-  protected configOpen = signal(false);
-  protected configForm = viewChild(NvmeOfConfigurationComponent);
-  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
-    () => this.configForm()?.hasUnsavedChanges() ?? false,
-  );
-
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
     this.hasAddRole(),
-    () => this.configOpen.set(true),
+    () => this.openConfig(),
   ));
 
-  protected onConfigClosed(): void {
-    this.configOpen.set(false);
+  protected openConfig(): void {
+    this.formPanel.open(NvmeOfConfigurationComponent, {
+      title: this.translate.instant('NVMe-oF Global Configuration'),
+    });
   }
 
   protected readonly subsystems = this.nvmeOfStore.subsystems;
