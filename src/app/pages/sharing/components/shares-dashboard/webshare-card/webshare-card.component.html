@@ -143,25 +143,3 @@
     [routerLink]="['/sharing', 'webshare']"
   ></ix-table-pager-show-more>
 </tn-card>
-
-<tn-side-panel
-  [title]="'WebShare' | translate"
-  [closeGuard]="closeConfigGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-service-webshare (closed)="onConfigClosed()"></ix-service-webshare>
-  }
-  @if (configForm(); as form) {
-    <div tnSidePanelAction>
-      <tn-button
-        *ixRequiresRoles="form.requiredRoles"
-        color="primary"
-        [ixTest]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="!form.canSubmit()"
-        (onClick)="form.submit()"
-      ></tn-button>
-    </div>
-  }
-</tn-side-panel>

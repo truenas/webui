@@ -1,11 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnButtonComponent, TnButtonHarness, TnSidePanelComponent, TnTableHarness } from '@truenas/ui-components';
-import { MockComponent, MockInstance } from 'ng-mocks';
-import { firstValueFrom, Observable, of } from 'rxjs';
+import { TnButtonComponent, TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
+import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -13,7 +11,8 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
@@ -45,8 +44,6 @@ const fakeGroupDataSource: Group[] = [{
 }] as Group[];
 
 describe('GroupListComponent', () => {
-  MockInstance.scope();
-
   let spectator: Spectator<GroupListComponent>;
   let loader: HarnessLoader;
   let store$: MockStore<GroupsState>;
@@ -61,19 +58,13 @@ describe('GroupListComponent', () => {
     declarations: [
       MockComponent(GroupDetailsRowComponent),
     ],
-    // GroupFormComponent imports tn-* form controls whose signal view-queries crash when
-    // ng-mocks deep-mocks them; swap the real standalone import for a shallow mock instead.
-    overrideComponents: [
-      [GroupListComponent, {
-        remove: { imports: [GroupFormComponent] },
-        add: { imports: [MockComponent(GroupFormComponent)] },
-      }],
-    ],
     providers: [
       mockAuth(),
       mockProvider(ApiService),
       mockProvider(DialogService),
-      mockProvider(UnsavedChangesService),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.empty()),
+      }),
       provideMockStore({
         selectors: [
           {
@@ -164,67 +155,29 @@ describe('GroupListComponent', () => {
     expect(await table.getSortDirection('gid')).toBe('ascending');
   });
 
-  it('opens the form side panel for adding when Add is clicked', async () => {
-    // Stub the host-facing members the panel's Save action reads on the mocked form.
-    MockInstance(GroupFormComponent, (instance) => {
-      Object.assign(instance, { requiredRoles: [Role.AccountWrite], canSubmit: signal(false) });
-    });
-    const localSpectator = createComponent();
-    const localLoader = TestbedHarnessEnvironment.loader(localSpectator.fixture);
-    expect(localSpectator.query(GroupFormComponent)).toBeNull();
-
-    const addButton = await localLoader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+  it('opens the group form in a side panel for adding when Add is clicked', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
-    localSpectator.detectChanges();
 
-    expect(localSpectator.query(TnSidePanelComponent).open()).toBe(true);
-    expect(localSpectator.query(GroupFormComponent)).toBeTruthy();
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      GroupFormComponent,
+      { title: 'Add Group', inputs: { group: undefined } },
+    );
   });
 
-  it('closes without a discard prompt when the form has no unsaved changes', async () => {
-    MockInstance(GroupFormComponent, (instance) => {
-      Object.assign(instance, {
-        requiredRoles: [Role.AccountWrite],
-        canSubmit: signal(false),
-        hasUnsavedChanges: () => false,
-      });
-    });
-    const localSpectator = createComponent();
-    const localLoader = TestbedHarnessEnvironment.loader(localSpectator.fixture);
-    const unsavedChanges = localSpectator.inject(UnsavedChangesService);
+  it('opens the group form in a side panel for editing with the group as input', async () => {
+    const group = fakeGroupDataSource[1];
+    store$.overrideSelector(selectGroups, fakeGroupDataSource);
+    store$.refreshState();
 
-    const addButton = await localLoader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    await addButton.click();
-    localSpectator.detectChanges();
+    const table = await loader.getHarness(TnTableHarness);
+    await table.clickRow(1);
 
-    const guard$ = (localSpectator.component as unknown as {
-      closeFormGuard: () => Observable<boolean>;
-    }).closeFormGuard();
-    await expect(firstValueFrom(guard$)).resolves.toBe(true);
-    expect(unsavedChanges.showConfirmDialog).not.toHaveBeenCalled();
-  });
+    spectator.query(GroupDetailsRowComponent).edit.emit(group);
 
-  it('prompts to discard when closing the form with unsaved changes', async () => {
-    MockInstance(GroupFormComponent, (instance) => {
-      Object.assign(instance, {
-        requiredRoles: [Role.AccountWrite],
-        canSubmit: signal(false),
-        hasUnsavedChanges: () => true,
-      });
-    });
-    const localSpectator = createComponent();
-    const localLoader = TestbedHarnessEnvironment.loader(localSpectator.fixture);
-    const unsavedChanges = localSpectator.inject(UnsavedChangesService);
-    jest.spyOn(unsavedChanges, 'showConfirmDialog').mockReturnValue(of(false));
-
-    const addButton = await localLoader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    await addButton.click();
-    localSpectator.detectChanges();
-
-    const guard$ = (localSpectator.component as unknown as {
-      closeFormGuard: () => Observable<boolean>;
-    }).closeFormGuard();
-    await expect(firstValueFrom(guard$)).resolves.toBe(false);
-    expect(unsavedChanges.showConfirmDialog).toHaveBeenCalled();
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      GroupFormComponent,
+      { title: 'Edit Group', inputs: { group } },
+    );
   });
 });

@@ -1,6 +1,5 @@
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal, viewChild, effect,
-  computed,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { select, Store } from '@ngrx/store';
@@ -8,7 +7,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnSlideToggleComponent, TnTableComponent, TnTableColumnDirective,
   TnHeaderCellDefDirective, TnCellDefDirective, TnDetailRowDefDirective, TnTablePagerComponent, TnSortEvent,
-  TnSidePanelComponent, TnSidePanelActionDirective,
 } from '@truenas/ui-components';
 import {
   Observable, combineLatest, of,
@@ -24,7 +22,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 import { groupListElements } from 'app/pages/credentials/groups/group-list/group-list.elements';
@@ -54,9 +52,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     TnTablePagerComponent,
     TranslateModule,
     PageHeaderComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
-    GroupFormComponent,
   ],
 })
 export class GroupListComponent implements OnInit {
@@ -65,7 +60,7 @@ export class GroupListComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
 
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = groupListElements;
@@ -73,19 +68,6 @@ export class GroupListComponent implements OnInit {
   protected readonly dataProvider = new ArrayDataProvider<Group>();
   protected readonly currentPage = toSignal(this.dataProvider.currentPage$, { initialValue: [] as Group[] });
   protected readonly table = viewChild(TnTableComponent<Group>);
-
-  // SlideIn-free form hosting: the Add/Edit form opens in a tn-side-panel instead of the
-  // legacy SlideIn. `editingGroup` is undefined for Add, the row's group for Edit.
-  protected readonly formOpen = signal(false);
-  protected readonly editingGroup = signal<Group | undefined>(undefined);
-  protected readonly configForm = viewChild(GroupFormComponent);
-  protected readonly formTitle = computed(() => (
-    this.editingGroup() ? this.translate.instant('Edit Group') : this.translate.instant('Add Group')
-  ));
-
-  protected readonly closeFormGuard = (): Observable<boolean> => (
-    this.configForm()?.hasUnsavedChanges() ? this.unsavedChanges.showConfirmDialog() : of(true)
-  );
 
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
@@ -192,17 +174,18 @@ export class GroupListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.editingGroup.set(undefined);
-    this.formOpen.set(true);
+    this.openGroupForm(undefined);
   }
 
   protected doEdit(group: Group): void {
-    this.editingGroup.set(group);
-    this.formOpen.set(true);
+    this.openGroupForm(group);
   }
 
-  protected onFormClosed(): void {
-    this.formOpen.set(false);
+  private openGroupForm(group: Group | undefined): void {
+    this.formPanel.open(GroupFormComponent, {
+      title: group ? this.translate.instant('Edit Group') : this.translate.instant('Add Group'),
+      inputs: { group },
+    });
   }
 
   protected onListFiltered(query: string): void {

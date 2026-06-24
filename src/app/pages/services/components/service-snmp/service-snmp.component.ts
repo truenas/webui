@@ -49,7 +49,7 @@ export class ServiceSnmpComponent extends SidePanelForm implements OnInit {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.SystemGeneralWrite];
+  readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);
