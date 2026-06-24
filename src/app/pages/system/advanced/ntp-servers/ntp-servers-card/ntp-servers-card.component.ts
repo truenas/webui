@@ -23,7 +23,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ntpServersElements } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.elements';
@@ -53,7 +53,7 @@ export class NtpServersCardComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
@@ -133,10 +133,15 @@ export class NtpServersCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(NtpServersFormComponent).onSuccess(() => this.loadItems(), this.destroyRef);
+    this.formPanel.open(NtpServersFormComponent, {
+      title: this.translate.instant('Add NTP Server'),
+    }).onSuccess(() => this.loadItems(), this.destroyRef);
   }
 
   doEdit(server: NtpServer): void {
-    this.slideIn.open(NtpServersFormComponent, { data: server }).onSuccess(() => this.loadItems(), this.destroyRef);
+    this.formPanel.open(NtpServersFormComponent, {
+      title: this.translate.instant('Edit NTP Server'),
+      inputs: { server },
+    }).onSuccess(() => this.loadItems(), this.destroyRef);
   }
 }

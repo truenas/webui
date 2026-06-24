@@ -9,7 +9,7 @@ import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NtpServersCardComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
@@ -49,7 +49,7 @@ describe('NtpServerCardComponent', () => {
   let spectator: Spectator<NtpServersCardComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  let slideInRef: SlideIn;
+  let formPanel: FormSidePanelService;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -63,7 +63,7 @@ describe('NtpServerCardComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -73,7 +73,7 @@ describe('NtpServerCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
-    slideInRef = spectator.inject(SlideIn);
+    formPanel = spectator.inject(FormSidePanelService);
     table = await loader.getHarness(IxTableHarness);
   });
 
@@ -94,14 +94,19 @@ describe('NtpServerCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(slideInRef.open).toHaveBeenCalledWith(NtpServersFormComponent);
+    expect(formPanel.open).toHaveBeenCalledWith(NtpServersFormComponent, {
+      title: 'Add NTP Server',
+    });
   });
 
   it('should open edit ntp server form', async () => {
     const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 6);
     await editButton.click();
 
-    expect(slideInRef.open).toHaveBeenCalledWith(NtpServersFormComponent, { data: fakeDataSource[0] });
+    expect(formPanel.open).toHaveBeenCalledWith(NtpServersFormComponent, {
+      title: 'Edit NTP Server',
+      inputs: { server: fakeDataSource[0] },
+    });
   });
 
   it('should display confirm dialog of deleting ntp server', async () => {
