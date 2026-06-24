@@ -112,4 +112,23 @@ describe('FormSidePanelService', () => {
 
     expect(document.querySelector('.tn-side-panel__panel')).toBeNull();
   });
+
+  it('closeAll tears down open panels immediately and resolves them as cancelled', async () => {
+    const onCancel = jest.fn();
+    const onSuccess = jest.fn();
+    const destroyRef = fixture.componentRef.injector.get(DestroyRef);
+    const result$ = service.open(TestFormComponent, { title: 'NFS' });
+    result$.onCancel(onCancel, destroyRef);
+    result$.onSuccess(onSuccess, destroyRef);
+    fixture.detectChanges();
+
+    expect(await rootLoader.hasHarness(TnSidePanelHarness)).toBe(true);
+
+    service.closeAll();
+    fixture.detectChanges();
+
+    expect(document.querySelector('.tn-side-panel__panel')).toBeNull();
+    expect(onCancel).toHaveBeenCalled();
+    expect(onSuccess).not.toHaveBeenCalled();
+  });
 });

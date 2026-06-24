@@ -20,6 +20,8 @@ export interface FormSidePanelOptions {
   wide?: boolean;
   /** Test-id applied to the panel root. */
   testId?: string;
+  /** Footer submit-button label; defaults to `Save`. */
+  saveLabel?: string;
   /** Inputs set on the hosted form before its `ngOnInit` (e.g. the record being edited). */
   inputs?: Record<string, unknown>;
 }
@@ -44,10 +46,16 @@ export class FormSidePanelService {
   private injector = inject(Injector);
   private document = inject(DOCUMENT);
 
-  open<R = boolean>(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): SlideInResult<R> {
-    const close$ = new Subject<SlideInResponse<R>>();
+  /**
+   * Teardown for each live panel. Panels are hosted on `document.body` (not in any route's
+   * view), so they outlive navigation unless explicitly torn down — {@link closeAll} does that.
+   */
+  private readonly openPanels = new Set<() => void>();
+
+  open(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): SlideInResult<boolean> {
+    const close$ = new Subject<SlideInResponse<boolean>>();
     // Defaults to a cancel; overwritten with the form's response when it closes itself via save.
-    let pendingResponse: R | undefined;
+    let pendingResponse: boolean | undefined;
 
     const portal = new ComponentPortal<SidePanelForm>(component, null, this.injector);
     const containerRef = createComponent(FormSidePanelContainerComponent, {
@@ -58,23 +66,37 @@ export class FormSidePanelService {
     containerRef.setInput('width', options.width ?? (options.wide ? '800px' : '480px'));
     containerRef.setInput('testId', options.testId);
     containerRef.setInput('formInputs', options.inputs ?? {});
+    if (options.saveLabel) {
+      containerRef.setInput('saveLabel', options.saveLabel);
+    }
     containerRef.setInput('portal', portal);
+
+    // Single, idempotent teardown so the animated close and a forced (navigation) close
+    // can never double-detach or double-destroy the host.
+    let isTornDown = false;
+    const teardown = (): void => {
+      if (isTornDown) {
+        return;
+      }
+      isTornDown = true;
+      this.openPanels.delete(teardown);
+      close$.next({ response: pendingResponse });
+      close$.complete();
+      this.appRef.detachView(containerRef.hostView);
+      containerRef.destroy();
+    };
+    this.openPanels.add(teardown);
 
     containerRef.instance.formAttached.subscribe((form) => {
       // Form-initiated close (save / cancel). `saved === true` is the only success; everything
       // else is a cancellation, matching SlideInResult's `=== undefined` convention.
       form.closed.subscribe((saved) => {
-        pendingResponse = saved ? (saved as unknown as R) : undefined;
+        pendingResponse = saved || undefined;
         containerRef.setInput('open', false);
       });
     });
 
-    containerRef.instance.panelClosed.subscribe(() => {
-      close$.next({ response: pendingResponse });
-      close$.complete();
-      this.appRef.detachView(containerRef.hostView);
-      containerRef.destroy();
-    });
+    containerRef.instance.panelClosed.subscribe(() => teardown());
 
     this.appRef.attachView(containerRef.hostView);
     this.document.body.appendChild(containerRef.location.nativeElement as HTMLElement);
@@ -88,6 +110,18 @@ export class FormSidePanelService {
       }
     }));
 
-    return new SlideInResult<R>(close$);
+    return new SlideInResult<boolean>(close$);
+  }
+
+  /**
+   * Tears down every open panel immediately (no close animation), resolving each as a cancel.
+   * Called on navigation, mirroring `SlideIn.closeAll()`, so a config form never orphans on
+   * `document.body` after its originating route is gone.
+   */
+  closeAll(): void {
+    // Each teardown deletes only its own entry, which is safe to do while iterating the Set.
+    for (const teardown of this.openPanels) {
+      teardown();
+    }
   }
 }
