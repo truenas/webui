@@ -16,7 +16,7 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -62,7 +62,7 @@ describe('AuthorizedAccessListComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -94,7 +94,9 @@ describe('AuthorizedAccessListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent, {
+      title: 'Add Authorized Access',
+    });
   });
 
   it('opens authorized access form when "Edit" button is pressed', async () => {
@@ -102,8 +104,9 @@ describe('AuthorizedAccessListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent, {
-      data: authAccess[0],
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent, {
+      title: 'Edit Authorized Access',
+      inputs: { access: authAccess[0] },
     });
   });
 

@@ -24,7 +24,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -60,7 +60,7 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
 export class StaticRoutesCardComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
@@ -122,12 +122,16 @@ export class StaticRoutesCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(StaticRouteFormComponent).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
+    this.formPanel.open(StaticRouteFormComponent, {
+      title: this.translate.instant('Add Static Route'),
+    }).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
   }
 
   doEdit(route: StaticRoute): void {
-    this.slideIn.open(StaticRouteFormComponent, { data: route })
-      .onSuccess(() => this.getStaticRoutes(), this.destroyRef);
+    this.formPanel.open(StaticRouteFormComponent, {
+      title: this.translate.instant('Edit Static Route'),
+      inputs: { route },
+    }).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
   }
 
   doDelete(route: StaticRoute): void {

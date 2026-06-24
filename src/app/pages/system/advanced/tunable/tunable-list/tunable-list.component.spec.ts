@@ -16,7 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
@@ -109,7 +109,7 @@ describe('TunableListComponent', () => {
       BasicSearchComponent,
     ],
     providers: [
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
@@ -151,24 +151,29 @@ describe('TunableListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(TunableFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(TunableFormComponent, {
+      title: 'Add Tunable',
+    });
   });
 
   it('shows edit form with an existing sysctl when Edit button is pressed', async () => {
     const editIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 5);
     await editIcon.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       TunableFormComponent,
       {
-        data: {
-          comment: 'Description text',
-          enabled: true,
-          id: 12,
-          orig_value: 'truenas',
-          type: 'SYSCTL',
-          value: 'truenas',
-          var: 'kernel.hostname',
+        title: 'Edit Tunable (SYSCTL)',
+        inputs: {
+          tunable: {
+            comment: 'Description text',
+            enabled: true,
+            id: 12,
+            orig_value: 'truenas',
+            type: 'SYSCTL',
+            value: 'truenas',
+            var: 'kernel.hostname',
+          },
         },
       },
     );

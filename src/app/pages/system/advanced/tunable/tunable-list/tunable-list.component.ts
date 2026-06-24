@@ -23,7 +23,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
@@ -56,7 +56,7 @@ export class TunableListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemTunableWrite];
@@ -124,11 +124,16 @@ export class TunableListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(TunableFormComponent).onSuccess(() => this.getTunables(), this.destroyRef);
+    this.formPanel.open(TunableFormComponent, {
+      title: this.translate.instant('Add Tunable'),
+    }).onSuccess(() => this.getTunables(), this.destroyRef);
   }
 
   protected doEdit(tunable: Tunable): void {
-    this.slideIn.open(TunableFormComponent, { data: tunable }).onSuccess(() => this.getTunables(), this.destroyRef);
+    this.formPanel.open(TunableFormComponent, {
+      title: this.translate.instant('Edit Tunable ({type})', { type: tunable.type?.toUpperCase() || '' }),
+      inputs: { tunable },
+    }).onSuccess(() => this.getTunables(), this.destroyRef);
   }
 
   protected doDelete(tunable: Tunable): void {

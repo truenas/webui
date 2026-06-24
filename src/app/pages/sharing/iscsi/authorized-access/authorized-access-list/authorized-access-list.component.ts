@@ -24,7 +24,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
@@ -62,7 +62,7 @@ export class AuthorizedAccessListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   private iscsiService = inject(IscsiService);
   private destroyRef = inject(DestroyRef);
@@ -100,8 +100,10 @@ export class AuthorizedAccessListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            this.slideIn.open(AuthorizedAccessFormComponent, { data: row })
-              .onSuccess(() => this.refresh(), this.destroyRef);
+            this.formPanel.open(AuthorizedAccessFormComponent, {
+              title: this.translate.instant('Edit Authorized Access'),
+              inputs: { access: row },
+            }).onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
@@ -142,8 +144,9 @@ export class AuthorizedAccessListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(AuthorizedAccessFormComponent)
-      .onSuccess(() => this.refresh(), this.destroyRef);
+    this.formPanel.open(AuthorizedAccessFormComponent, {
+      title: this.translate.instant('Add Authorized Access'),
+    }).onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {
