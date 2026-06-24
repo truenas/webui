@@ -962,12 +962,18 @@ mat-form-field {
   outline: none;
 }
 
-// ix-input / ix-select wrapped their controls with this vertical rhythm
-// (margin: 12px 0; padding: 8px 0). tn-form-field has no default spacing, so
-// dialogs migrated to tn-form-field render their fields flush against each other
-// and against adjacent checkboxes. Restore the original ix-* field spacing.
-// Scoped to `tn-dialog-shell` so it only touches migrated dialogs and leaves the
-// vertical rhythm of non-dialog forms (signin, feedback, etc.) untouched.
+// tn-form-field carries no default spacing, so migrated forms render their
+// fields flush against each other (and against adjacent checkboxes). Give every
+// field the vertical rhythm the old ix-* controls had. The `tn-dialog-shell`
+// override below keeps the tighter spacing dialogs used.
+tn-form-field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+// Dialogs migrated to tn-form-field want the original ix-* dialog rhythm
+// (margin: 12px 0; padding: 8px 0), slightly tighter than the global default.
+// Scoped to `tn-dialog-shell` so it only touches migrated dialogs.
 tn-dialog-shell tn-form-field {
   display: block;
   margin-top: 12px;

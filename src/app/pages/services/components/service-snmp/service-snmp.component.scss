@@ -1,7 +1,4 @@
 @import 'scss-imports/variables';
-@import 'mixins/forms';
-
-@include tn-form-field-spacing();
 
 .columns {
   display: flex;

@@ -144,7 +144,9 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
       '.tn-select-dropdown',
       '.tn-chip-input__dropdown',
       '.tn-autocomplete__dropdown',
-      '.tn-menu-panel',
+      // tn-menu attaches a `<tn-menu-panel>` element to the overlay with no
+      // panelClass, so this is an element selector, not a `.class` selector.
+      'tn-menu-panel',
       '.tn-datepicker-overlay',
     ];
 

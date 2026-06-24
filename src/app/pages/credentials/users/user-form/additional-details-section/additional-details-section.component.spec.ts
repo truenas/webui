@@ -4,7 +4,9 @@ import { signal } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { BehaviorSubject, map } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
@@ -208,6 +210,21 @@ describe('AdditionalDetailsSectionComponent', () => {
         home_create: true,
         uid: 1234,
       });
+    });
+
+    it('resolves a selected auxiliary group label to its id in the form control', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const groupsEditable = await table.getHarnessForItem('Groups', EditableHarness);
+      await groupsEditable.open();
+
+      // tn-chip-input is fed { label, value } options; selecting by label must
+      // commit the group's numeric id (the control is typed number[]).
+      // Only the aux-groups chip-input is rendered here (shell access is off, so
+      // no sudo-command chip-inputs exist).
+      const chipInput = await loader.getHarness(TnChipInputHarness);
+      await chipInput.selectSuggestion('test-group-2');
+
+      expect(spectator.component.form.controls.groups.value).toEqual([102]);
     });
 
     it('shows a validation message when the Email editable holds an invalid address', async () => {
