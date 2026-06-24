@@ -31,7 +31,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   StaticRouteDeleteDialog,
 } from 'app/pages/system/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
-import { StaticRouteFormComponent } from 'app/pages/system/network/components/static-route-form/static-route-form.component';
+import { getStaticRouteFormConfig } from 'app/pages/system/network/components/static-route-form/static-route.form-config';
 import { staticRoutesCardElements } from 'app/pages/system/network/components/static-routes-card/static-routes-card.elements';
 
 @Component({
@@ -122,15 +122,15 @@ export class StaticRoutesCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.formPanel.open(StaticRouteFormComponent, {
+    this.formPanel.openForm(getStaticRouteFormConfig(this.api, this.translate, undefined), {
       title: this.translate.instant('Add Static Route'),
     }).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
   }
 
   doEdit(route: StaticRoute): void {
-    this.formPanel.open(StaticRouteFormComponent, {
+    this.formPanel.openForm(getStaticRouteFormConfig(this.api, this.translate, route), {
       title: this.translate.instant('Edit Static Route'),
-      inputs: { route },
+      editData: route,
     }).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
   }
 

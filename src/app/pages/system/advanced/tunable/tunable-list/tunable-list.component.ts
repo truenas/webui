@@ -26,7 +26,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
+import { getTunableFormConfig } from 'app/pages/system/advanced/tunable/tunable-form/tunable.form-config';
 import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.elements';
 
 @Component({
@@ -124,15 +124,15 @@ export class TunableListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.formPanel.open(TunableFormComponent, {
+    this.formPanel.openForm(getTunableFormConfig(this.api, this.translate, undefined), {
       title: this.translate.instant('Add Tunable'),
     }).onSuccess(() => this.getTunables(), this.destroyRef);
   }
 
   protected doEdit(tunable: Tunable): void {
-    this.formPanel.open(TunableFormComponent, {
+    this.formPanel.openForm(getTunableFormConfig(this.api, this.translate, tunable), {
       title: this.translate.instant('Edit Tunable ({type})', { type: tunable.type?.toUpperCase() || '' }),
-      inputs: { tunable },
+      editData: tunable,
     }).onSuccess(() => this.getTunables(), this.destroyRef);
   }
 

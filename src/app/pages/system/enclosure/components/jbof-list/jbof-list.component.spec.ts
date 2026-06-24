@@ -16,7 +16,6 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
 
 const fakeJbofDataSource: Jbof[] = [
@@ -59,7 +58,7 @@ describe('JbofListComponent', () => {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
       mockProvider(FormSidePanelService, {
-        open: jest.fn(() => SlideInResult.empty()),
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockAuth(),
     ],
@@ -86,9 +85,9 @@ describe('JbofListComponent', () => {
     const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'description 1');
     await editButton.click();
 
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(JbofFormComponent, {
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
       title: 'Edit Expansion Shelf',
-      inputs: { jbof: fakeJbofDataSource[0] },
+      editData: fakeJbofDataSource[0],
     });
   });
 

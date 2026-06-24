@@ -27,7 +27,9 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
+import {
+  getAuthorizedAccessFormConfig,
+} from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access.form-config';
 import {
   authorizedAccessListElements,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.elements';
@@ -100,9 +102,14 @@ export class AuthorizedAccessListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            this.formPanel.open(AuthorizedAccessFormComponent, {
+            this.formPanel.openForm(getAuthorizedAccessFormConfig(this.api, this.translate, row), {
               title: this.translate.instant('Edit Authorized Access'),
-              inputs: { access: row },
+              // Confirm fields aren't persisted, so seed them from the saved secrets.
+              editData: {
+                ...row,
+                secret_confirm: row.secret,
+                peersecret_confirm: row.peersecret,
+              },
             }).onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
@@ -144,7 +151,7 @@ export class AuthorizedAccessListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.formPanel.open(AuthorizedAccessFormComponent, {
+    this.formPanel.openForm(getAuthorizedAccessFormConfig(this.api, this.translate, undefined), {
       title: this.translate.instant('Add Authorized Access'),
     }).onSuccess(() => this.refresh(), this.destroyRef);
   }

@@ -25,11 +25,11 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { tunableCardElements } from 'app/pages/system/advanced/tunable/tunable-card/tunable-card.elements';
-import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
+import { getTunableFormConfig } from 'app/pages/system/advanced/tunable/tunable-form/tunable.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 @Component({
@@ -61,7 +61,7 @@ export class TunableCardComponent implements OnInit {
   private dialog = inject(DialogService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemTunableWrite];
@@ -140,8 +140,14 @@ export class TunableCardComponent implements OnInit {
   }
 
   private openForm(row?: Tunable): void {
+    const title = row
+      ? this.translate.instant('Edit Tunable ({type})', { type: row.type?.toUpperCase() || '' })
+      : this.translate.instant('Add Tunable');
     from(this.firstTimeWarning.showFirstTimeWarningIfNeeded()).pipe(
-      switchMap(() => this.slideIn.open(TunableFormComponent, { data: row }).success$),
+      switchMap(() => this.formPanel.openForm(
+        getTunableFormConfig(this.api, this.translate, row),
+        { title, editData: row },
+      ).success$),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.loadItems();

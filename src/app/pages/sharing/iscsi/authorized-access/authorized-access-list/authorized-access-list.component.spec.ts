@@ -20,7 +20,6 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -63,7 +62,7 @@ describe('AuthorizedAccessListComponent', () => {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(FormSidePanelService, {
-        open: jest.fn(() => SlideInResult.empty()),
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
         open: jest.fn(),
@@ -94,7 +93,7 @@ describe('AuthorizedAccessListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent, {
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
       title: 'Add Authorized Access',
     });
   });
@@ -104,9 +103,13 @@ describe('AuthorizedAccessListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Edit' });
 
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent, {
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
       title: 'Edit Authorized Access',
-      inputs: { access: authAccess[0] },
+      editData: {
+        ...authAccess[0],
+        secret_confirm: authAccess[0].secret,
+        peersecret_confirm: authAccess[0].peersecret,
+      },
     });
   });
 

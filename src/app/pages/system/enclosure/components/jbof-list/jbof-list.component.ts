@@ -28,7 +28,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
+import { getJbofFormConfig } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof.form-config';
 import { jbofListElements } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -121,11 +121,11 @@ export class JbofListComponent implements OnInit {
   }
 
   protected openForm(jbof?: Jbof): void {
-    this.formPanel.open(JbofFormComponent, {
+    this.formPanel.openForm(getJbofFormConfig(this.api, this.translate, jbof), {
       title: jbof
         ? this.translate.instant('Edit Expansion Shelf')
         : this.translate.instant('Add Expansion Shelf'),
-      inputs: jbof ? { jbof } : undefined,
+      ...(jbof ? { editData: jbof } : {}),
     }).onSuccess(() => this.getJbofs(), this.destroyRef);
   }
 

@@ -15,7 +15,6 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { StaticRouteDeleteDialog } from 'app/pages/system/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
-import { StaticRouteFormComponent } from 'app/pages/system/network/components/static-route-form/static-route-form.component';
 import { StaticRoutesCardComponent } from 'app/pages/system/network/components/static-routes-card/static-routes-card.component';
 
 const staticRoutes = Array.from({ length: 10 }).map((val, index) => ({
@@ -50,7 +49,7 @@ describe('StaticRoutesCardComponent', () => {
         confirm: () => of(true),
       }),
       mockProvider(FormSidePanelService, {
-        open: jest.fn(() => SlideInResult.empty()),
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(TnDialog, {
@@ -77,7 +76,7 @@ describe('StaticRoutesCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(StaticRouteFormComponent, {
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
       title: 'Add Static Route',
     });
   });
@@ -86,15 +85,13 @@ describe('StaticRoutesCardComponent', () => {
     const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 2);
     await editButton.click();
 
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(StaticRouteFormComponent, {
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
       title: 'Edit Static Route',
-      inputs: {
-        route: {
-          description: 'Test description for route 0',
-          destination: '192.168.1.1',
-          gateway: '192.168.1.1',
-          id: 0,
-        },
+      editData: {
+        description: 'Test description for route 0',
+        destination: '192.168.1.1',
+        gateway: '192.168.1.1',
+        id: 0,
       },
     });
   });

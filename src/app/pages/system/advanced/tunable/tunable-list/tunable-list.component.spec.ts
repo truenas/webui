@@ -19,7 +19,6 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.component';
 
 describe('TunableListComponent', () => {
@@ -110,7 +109,7 @@ describe('TunableListComponent', () => {
     ],
     providers: [
       mockProvider(FormSidePanelService, {
-        open: jest.fn(() => SlideInResult.empty()),
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteJobOptions) => options.job()),
@@ -151,7 +150,7 @@ describe('TunableListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(TunableFormComponent, {
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
       title: 'Add Tunable',
     });
   });
@@ -160,20 +159,18 @@ describe('TunableListComponent', () => {
     const editIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 5);
     await editIcon.click();
 
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
-      TunableFormComponent,
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
       {
         title: 'Edit Tunable (SYSCTL)',
-        inputs: {
-          tunable: {
-            comment: 'Description text',
-            enabled: true,
-            id: 12,
-            orig_value: 'truenas',
-            type: 'SYSCTL',
-            value: 'truenas',
-            var: 'kernel.hostname',
-          },
+        editData: {
+          comment: 'Description text',
+          enabled: true,
+          id: 12,
+          orig_value: 'truenas',
+          type: 'SYSCTL',
+          value: 'truenas',
+          var: 'kernel.hostname',
         },
       },
     );
