@@ -2,12 +2,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
+  TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
@@ -84,13 +85,13 @@ describe('GroupFormComponent', () => {
   });
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
-    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+    TnInputHarness.with({ selector: `[data-control-name="${name}"]` }),
   );
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
-    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+    TnCheckboxHarness.with({ selector: `[data-control-name="${name}"]` }),
   );
   const getChipInput = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
-    TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
+    TnChipInputHarness.with({ selector: `[data-control-name="${name}"]` }),
   );
 
   describe('adding a group', () => {
@@ -122,7 +123,7 @@ describe('GroupFormComponent', () => {
       await (await getCheckbox('sudo_commands_all')).check();
       await (await getChipInput('sudo_commands_nopasswd')).addChip('ls');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('group.create', [{
@@ -168,7 +169,7 @@ describe('GroupFormComponent', () => {
       await (await getCheckbox('smb')).check();
       await (await getCheckbox('sudo_commands_nopasswd_all')).uncheck();
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('group.update', [
@@ -193,7 +194,7 @@ describe('GroupFormComponent', () => {
       await (await getCheckbox('sudo_commands_nopasswd_all')).uncheck();
       await (await getChipInput('privileges')).removeChip('Privilege 1');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('privilege.update', [1, {
@@ -217,7 +218,7 @@ describe('GroupFormComponent', () => {
     });
 
     it('does not render the in-form Save button (the panel host owns it)', async () => {
-      const saveButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }));
+      const saveButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Save' }));
       expect(saveButton).toBeNull();
     });
 

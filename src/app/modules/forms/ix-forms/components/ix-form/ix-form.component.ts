@@ -7,15 +7,16 @@ import {
   input,
   isDevMode,
   OnInit,
+  output,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControlStatus, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  defer, Observable, of, take,
+  defer, Observable, of, startWith, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -87,7 +88,6 @@ export interface SubmitResult {
 @Component({
   selector: 'ix-form',
   templateUrl: './ix-form.component.html',
-  styleUrls: ['./ix-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -174,14 +174,35 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   /** Submit OR externalLoading. Consumer-stable. */
   readonly isLoading = computed(() => this.isSubmitting() || this.externalLoading());
 
+  /**
+   * Emitted on a successful submit when hosted OUTSIDE a SlideIn (i.e. inside a
+   * `<tn-side-panel>`, where {@link slideInRef} is absent). The host listens to
+   * close its panel and reload. In SlideIn mode this never fires — the slide-in
+   * is closed directly via {@link slideInRef}.
+   */
+  readonly closed = output<boolean>();
+
+  /**
+   * Live form validity for hosts that own the Save action (the `<tn-side-panel>`
+   * footer Save reads this through the wrapping form's `canSubmit`). Tracked as a
+   * signal because `FormGroup.status` is not reactive under OnPush.
+   */
+  private readonly formStatus = signal<FormControlStatus>('INVALID');
+
+  /** True while the form may be submitted; drives a host-owned Save button. */
+  readonly canSubmit = computed(
+    () => this.formStatus() === 'VALID' && !this.isLoading() && !this.extraDisabled(),
+  );
+
   private readonly internalSnapshot = signal<Partial<T> | null>(null);
 
   // Set on successful emit; read by the DestroyRef hook to gate onCancel.
   private hadSuccessfulSubmit = false;
 
-  // Required: <ix-modal-header> injects SlideInRef non-optionally too, so a
-  // non-slide-in render fails regardless. Tests mock it via ixFormTestingProviders().
-  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef);
+  // Optional: present when hosted in a legacy SlideIn (the `<ix-modal-header>`
+  // and in-form Save are gated on it). Absent inside a `<tn-side-panel>`, where
+  // the host owns the header + Save and close happens via {@link closed}.
+  protected slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef, { optional: true });
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
@@ -217,9 +238,26 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
       || this.extraDisabled();
   }
 
+  /** Public entry point for a host (e.g. `<tn-side-panel>` footer) to submit. */
+  submit(): void {
+    this.onFormSubmit();
+  }
+
+  /** Whether the form has edits a host should confirm before discarding. */
+  hasUnsavedChanges(): boolean {
+    return this.formGroup().dirty;
+  }
+
   ngOnInit(): void {
+    // Track validity reactively for host-owned Save buttons (side-panel host).
+    this.formGroup().statusChanges.pipe(
+      startWith(this.formGroup().status),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((status) => this.formStatus.set(status));
+
     // `defer` keeps the read lazy and picks up a dirtyPredicate set after init.
-    this.slideInRef.requireConfirmationWhen(() => defer(() => {
+    // No-op without a SlideIn host — the side-panel host guards discards itself.
+    this.slideInRef?.requireConfirmationWhen(() => defer(() => {
       const predicate = this.dirtyPredicate();
       return predicate ? predicate() : of(this.formGroup().dirty);
     }));
@@ -283,21 +321,7 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
         }
         onSuccess?.(result);
         const payload = closeWith ? closeWith(result) : result;
-        // Coerce undefined→true so void-endpoint success isn't read as a cancel;
-        // warn in dev so callers add closeWith when listeners need the real value.
-        if (payload === undefined) {
-          if (isDevMode()) {
-            console.warn(
-              '[ix-form] submitHandler close payload resolved to undefined (request$ emitted undefined '
-              + 'and closeWith is absent or also returned undefined); slide-in will close with `true` so '
-              + 'upstream listeners don\'t observe a cancel. Provide a closeWith that returns a defined '
-              + 'value in SubmitResult to silence this warning.',
-            );
-          }
-          this.slideInRef.close({ response: true });
-        } else {
-          this.slideInRef.close({ response: payload });
-        }
+        this.finishClose(payload);
         // Reset after close so a sync-complete observable doesn't flash Save enabled.
         this.isSubmitting.set(false);
       },
@@ -315,6 +339,34 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
         }
       },
     });
+  }
+
+  /**
+   * Closes through whichever host opened the form. SlideIn host: closes the
+   * slide-in with the payload (coercing `undefined`→`true` so a void-endpoint
+   * success isn't read as a cancel). Side-panel host: emits {@link closed} so the
+   * host tears down its panel; the payload isn't forwarded (the host reloads from
+   * its own source / the submit's `onSuccess` already updated any store).
+   */
+  private finishClose(payload: unknown): void {
+    if (!this.slideInRef) {
+      this.closed.emit(true);
+      return;
+    }
+
+    if (payload === undefined) {
+      if (isDevMode()) {
+        console.warn(
+          '[ix-form] submitHandler close payload resolved to undefined (request$ emitted undefined '
+          + 'and closeWith is absent or also returned undefined); slide-in will close with `true` so '
+          + 'upstream listeners don\'t observe a cancel. Provide a closeWith that returns a defined '
+          + 'value in SubmitResult to silence this warning.',
+        );
+      }
+      this.slideInRef.close({ response: true });
+    } else {
+      this.slideInRef.close({ response: payload });
+    }
   }
 
   private getChangedValues(current: T): Partial<T> {

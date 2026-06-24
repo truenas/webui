@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { NEVER, Observable, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -12,7 +13,6 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -83,7 +83,16 @@ jest.mock('./alert-services/ops-genie-service/ops-genie-service.component', () =
 describe('AlertServiceComponent', () => {
   let spectator: Spectator<AlertServiceComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -124,28 +133,23 @@ describe('AlertServiceComponent', () => {
   });
 
   describe('creates a new alert service', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('shows form fields specific to an alert service when Type is changed', async () => {
-      await form.fillForm({
-        Type: 'OpsGenie',
-      });
+      await (await getSelect('type')).selectOption('OpsGenie');
 
       const opsGenieForm = spectator.query(OpsGenieServiceComponent);
       expect(opsGenieForm).toBeTruthy();
     });
 
     it('creates a new alert service when new form is submitted', async () => {
-      await form.fillForm({
-        Name: 'My Alert Service',
-        Enabled: true,
-        Type: 'AWS SNS',
-        Level: 'Error',
-      });
+      await (await getInput('name')).setValue('My Alert Service');
+      await (await getCheckbox('enabled')).check();
+      await (await getSelect('type')).selectOption('AWS SNS');
+      await (await getSelect('level')).selectOption('Error');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -178,12 +182,10 @@ describe('AlertServiceComponent', () => {
         return method === 'alertservice.test' ? NEVER : of(undefined);
       });
 
-      await form.fillForm({
-        Name: 'My Alert Service',
-        Enabled: true,
-        Type: 'AWS SNS',
-        Level: 'Error',
-      });
+      await (await getInput('name')).setValue('My Alert Service');
+      await (await getCheckbox('enabled')).check();
+      await (await getSelect('type')).selectOption('AWS SNS');
+      await (await getSelect('level')).selectOption('Error');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
@@ -195,12 +197,10 @@ describe('AlertServiceComponent', () => {
     });
 
     it('sends a test alert when Send Test Alert is pressed and shows validation result', async () => {
-      await form.fillForm({
-        Name: 'My Alert Service',
-        Enabled: true,
-        Type: 'AWS SNS',
-        Level: 'Error',
-      });
+      await (await getInput('name')).setValue('My Alert Service');
+      await (await getCheckbox('enabled')).check();
+      await (await getSelect('type')).selectOption('AWS SNS');
+      await (await getSelect('level')).selectOption('Error');
 
       const sendTestAlertButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Alert' }));
       await sendTestAlertButton.click();
@@ -225,24 +225,20 @@ describe('AlertServiceComponent', () => {
   });
 
   describe('edits alert service', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, { ...slideInRef, getData: () => existingService }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('shows values for an existing alert service', async () => {
-      const values = await form.getValues();
-      expect(values).toEqual({
-        Enabled: true,
-        Level: 'Warning',
-        Name: 'Existing Service',
-        Type: 'AWS SNS',
-      });
+      expect(await (await getInput('name')).getValue()).toBe('Existing Service');
+      expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
+      expect(await (await getSelect('type')).getDisplayText()).toBe('AWS SNS');
+      expect(await (await getSelect('level')).getDisplayText()).toBe('Warning');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -267,11 +263,9 @@ describe('AlertServiceComponent', () => {
     });
 
     it('updates an existing alert service when update form is submitted', async () => {
-      await form.fillForm({
-        Name: 'Updated Service',
-        Enabled: false,
-        Type: 'OpsGenie',
-      });
+      await (await getInput('name')).setValue('Updated Service');
+      await (await getCheckbox('enabled')).uncheck();
+      await (await getSelect('type')).selectOption('OpsGenie');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

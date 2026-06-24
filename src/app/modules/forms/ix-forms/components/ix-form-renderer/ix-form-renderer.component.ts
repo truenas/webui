@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input, isDevMode, OnInit, signal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, isDevMode, OnInit,
+  output, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -8,7 +9,7 @@ import {
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent,
+  InputType, TnAutocompleteComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
   TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
@@ -53,6 +54,10 @@ interface RenderField {
   multiple: boolean;
   requireSelection: boolean;
   options: Observable<TnSelectOption[]> | undefined;
+  /** Free-text chip suggestions (chips field, string mode). */
+  suggestions: Observable<string[]> | undefined;
+  /** Whether typed values become chips (chips field); false = options-only. */
+  allowCustomValue: boolean;
   /** Shows the field only when true; while false the control is disabled. */
   visibleWhen: ((value: object) => boolean) | undefined;
   /** Enables the (visible) field only when true. */
@@ -81,7 +86,6 @@ interface RenderSection {
 @Component({
   selector: 'ix-form-renderer',
   templateUrl: './ix-form-renderer.component.html',
-  styleUrl: './ix-form-renderer.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
@@ -93,6 +97,7 @@ interface RenderSection {
     TnCheckboxComponent,
     TnSelectComponent,
     TnAutocompleteComponent,
+    TnChipInputComponent,
     TranslateModule,
   ],
 })
@@ -106,6 +111,30 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
   /** Explicit edit-mode override; forwarded to `<ix-form>`. */
   readonly isEditMode = input<boolean | null>(null);
 
+  /**
+   * Emitted on a successful submit when hosted in a `<tn-side-panel>` (forwarded
+   * from the inner `<ix-form>`). Never fires in legacy SlideIn mode — there the
+   * inner `<ix-form>` closes the slide-in directly.
+   */
+  readonly closed = output<boolean>();
+
+  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  /**
+   * Whether the form can be submitted right now — a `<tn-side-panel>` host reads
+   * this to enable/disable its footer Save. Delegates to the inner `<ix-form>`;
+   * false until the view (and thus the child) initializes.
+   */
+  readonly canSubmit = computed(() => this.ixForm()?.canSubmit() ?? false);
+
+  /**
+   * Reactive mirror of {@link canSubmit} for hosts that can't read a child signal
+   * directly (a `<tn-side-panel>` wrapper whose ref to this component is a
+   * non-signal `@ViewChild`, e.g. because it gets ng-mocks-mocked elsewhere).
+   */
+  readonly canSubmitChange = output<boolean>();
+
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -116,7 +145,8 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
   protected title = '';
   protected addTitle = '';
   protected editTitle = '';
-  protected requiredRoles: Role[] = [];
+  /** Public so a `<tn-side-panel>` host can role-gate its footer Save. */
+  requiredRoles: Role[] = [];
 
   /** True while `loadData` is in flight; forwarded to `<ix-form>`. */
   protected readonly externalLoading = signal(false);
@@ -132,6 +162,11 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
    */
   protected readonly fieldVisible = signal<Record<string, boolean>>({});
   protected readonly sectionVisible = signal<Record<number, boolean>>({});
+
+  constructor() {
+    // Re-emit validity to a host that mirrors it into its own signal.
+    effect(() => this.canSubmitChange.emit(this.canSubmit()));
+  }
 
   ngOnInit(): void {
     const definition = this.definition();
@@ -161,6 +196,16 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
     if (definition.loadData) {
       this.runLoadData(definition.loadData);
     }
+  }
+
+  /** Host entry point (e.g. `<tn-side-panel>` footer Save) to trigger submission. */
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding edits. */
+  hasUnsavedChanges(): boolean {
+    return Boolean(this.form?.dirty);
   }
 
   /**
@@ -334,6 +379,8 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
         return field.multiple ? [] : null;
       case 'combobox':
         return null;
+      case 'chips':
+        return [];
       default:
         return '';
     }
@@ -367,7 +414,11 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
       rows: field.type === 'textarea' ? (field.rows ?? 4) : 4,
       multiple: field.type === 'select' ? Boolean(field.multiple) : false,
       requireSelection: field.type === 'combobox' ? (field.requireSelection ?? true) : true,
-      options: field.type === 'select' || field.type === 'combobox' ? field.options : undefined,
+      options: field.type === 'select' || field.type === 'combobox' || field.type === 'chips'
+        ? field.options
+        : undefined,
+      suggestions: field.type === 'chips' ? field.suggestions : undefined,
+      allowCustomValue: field.type === 'chips' ? (field.allowCustomValue ?? true) : true,
       visibleWhen: field.visibleWhen as ((value: object) => boolean) | undefined,
       enabledWhen: field.enabledWhen as ((value: object) => boolean) | undefined,
     };

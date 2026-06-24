@@ -9,38 +9,36 @@
   [externalLoading]="testAlertLoading()"
   [submitHandler]="handleSubmit"
 >
-  <ix-fieldset [title]="'Name and Type' | translate">
-    <ix-input
-      formControlName="name"
-      [label]="'Name' | translate"
-      [required]="true"
-    ></ix-input>
+  <tn-form-section [heading]="'Name and Type' | translate">
+    <tn-form-field [label]="'Name' | translate">
+      <tn-input formControlName="name"></tn-input>
+    </tn-form-field>
 
-    <ix-checkbox
-      formControlName="enabled"
-      [label]="'Enabled' | translate"
-    ></ix-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="enabled"
+        [label]="'Enabled' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="type"
-      [label]="'Type' | translate"
-      [options]="services$"
-      [required]="true"
-      [tooltip]="helptext.typeTooltip | translate"
-    ></ix-select>
+    <tn-form-field [label]="'Type' | translate" [tooltip]="helptext.typeTooltip | translate">
+      <tn-select
+        formControlName="type"
+        [options]="(services$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="level"
-      [label]="'Level' | translate"
-      [options]="levels$"
-      [required]="true"
-      [tooltip]="helptext.levelTooltip | translate"
-    ></ix-select>
-  </ix-fieldset>
+    <tn-form-field [label]="'Level' | translate" [tooltip]="helptext.levelTooltip | translate">
+      <tn-select
+        formControlName="level"
+        [options]="(levels$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+  </tn-form-section>
 
-  <ix-fieldset [title]="'Settings' | translate">
+  <tn-form-section [heading]="'Settings' | translate">
     <ng-container #alertServiceContainer></ng-container>
-  </ix-fieldset>
+  </tn-form-section>
 
   <button
     *ixRequiresRoles="requiredRoles"

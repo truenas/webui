@@ -9,6 +9,7 @@
   [editTitle]="editTitle"
   [requiredRoles]="requiredRoles"
   [submitHandler]="definition().submit"
+  (closed)="closed.emit($event)"
 >
   @for (section of sections; track $index) {
     @if (isSectionVisible($index, section)) {
@@ -20,6 +21,7 @@
                 <tn-form-field [tooltip]="field.tooltip" [hint]="field.hint">
                   <tn-checkbox
                     [formControlName]="field.name"
+                    [attr.data-control-name]="field.name"
                     [label]="field.label"
                     [required]="field.required"
                     [testId]="field.name"
@@ -31,6 +33,7 @@
                 <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
                   <tn-select
                     [formControlName]="field.name"
+                    [attr.data-control-name]="field.name"
                     [options]="(field.options | async) ?? []"
                     [multiple]="field.multiple"
                     [testId]="field.name"
@@ -42,6 +45,7 @@
                 <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
                   <tn-autocomplete
                     [formControlName]="field.name"
+                    [attr.data-control-name]="field.name"
                     [options]="(field.options | async) ?? []"
                     [requireSelection]="field.requireSelection"
                     [allowCustomValue]="!field.requireSelection"
@@ -51,10 +55,25 @@
                   ></tn-autocomplete>
                 </tn-form-field>
               }
+              @case ('chips') {
+                <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
+                  <tn-chip-input
+                    [formControlName]="field.name"
+                    [attr.data-control-name]="field.name"
+                    [options]="(field.options | async) ?? []"
+                    [suggestions]="(field.suggestions | async) ?? []"
+                    [allowCustomValue]="field.allowCustomValue"
+                    [placeholder]="field.placeholder"
+                    [testId]="field.name"
+                    [attr.id]="field.id || null"
+                  ></tn-chip-input>
+                </tn-form-field>
+              }
               @default {
                 <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
                   <tn-input
                     [formControlName]="field.name"
+                    [attr.data-control-name]="field.name"
                     [name]="field.name"
                     [inputType]="field.inputType"
                     [multiline]="field.multiline"

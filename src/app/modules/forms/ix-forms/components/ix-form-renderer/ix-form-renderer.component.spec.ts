@@ -4,7 +4,8 @@ import { AsyncValidatorFn, ReactiveFormsModule, Validators } from '@angular/form
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnAutocompleteHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness, TnSelectOption,
+  TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
+  TnSelectHarness, TnSelectOption,
 } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -259,6 +260,68 @@ describe('IxFormRendererComponent', () => {
       await saveButton.click();
 
       expect(submitHandler.mock.calls[0][0].allValues).toMatchObject({ name: 'chocolate' });
+    });
+  });
+
+  describe('chips field (free text)', () => {
+    const chipsDefinition = {
+      title: asTranslated('Chips'),
+      fields: [{
+        name: 'name', type: 'chips', label: asTranslated('Commands'),
+      }],
+      submit: submitHandler,
+    } as unknown as FormDefinition<SampleForm>;
+
+    beforeEach(() => {
+      spectator = createComponent({ props: { definition: chipsDefinition } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('renders a tn-chip-input that commits typed values as a string array', async () => {
+      const chips = await loader.getHarness(TnChipInputHarness);
+      await chips.addChip('ls');
+      await chips.addChip('cat');
+
+      expect(await chips.getChips()).toEqual(['ls', 'cat']);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(submitHandler.mock.calls[0][0].allValues).toMatchObject({ name: ['ls', 'cat'] });
+    });
+  });
+
+  describe('chips field (value mode)', () => {
+    const chipsDefinition = {
+      title: asTranslated('Chips'),
+      fields: [{
+        name: 'flavor',
+        type: 'chips',
+        label: asTranslated('Flavor'),
+        allowCustomValue: false,
+        options: of([
+          { label: 'Vanilla', value: 'vanilla' },
+          { label: 'Chocolate', value: 'chocolate' },
+        ]),
+      }],
+      submit: submitHandler,
+    } as unknown as FormDefinition<SampleForm>;
+
+    beforeEach(() => {
+      spectator = createComponent({ props: { definition: chipsDefinition } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('displays option labels but commits their underlying values', async () => {
+      const chips = await loader.getHarness(TnChipInputHarness);
+      await chips.addChip('Chocolate');
+
+      expect(await chips.getChips()).toEqual(['Chocolate']);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(submitHandler.mock.calls[0][0].allValues).toMatchObject({ flavor: ['chocolate'] });
     });
   });
 

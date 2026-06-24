@@ -12,7 +12,7 @@ import { FormSubmitEvent, SubmitResult } from 'app/modules/forms/ix-forms/compon
  * grouped into titled sections, with a submit handler. It covers CRUD forms
  * whose fields are static, plus single-field conditional visibility/enablement
  * (`visibleWhen`/`enabledWhen`) and read-only fields. Anything needing dynamic
- * field sets, custom widgets (explorer/scheduler/chips/...), FormArrays,
+ * field sets, custom widgets (explorer/scheduler/...), FormArrays,
  * wizards, imperative `valueChanges` side-effects, or per-field reactive
  * attributes should stay on the hand-written `<ix-form>` + template approach.
  *
@@ -112,7 +112,7 @@ export interface FormSectionDefinition<T extends object = Record<string, unknown
   fields: FormFieldDefinition<T>[];
 }
 
-export type FormFieldType = 'input' | 'textarea' | 'checkbox' | 'select' | 'combobox';
+export type FormFieldType = 'input' | 'textarea' | 'checkbox' | 'select' | 'combobox' | 'chips';
 
 interface BaseFieldDefinition<T extends object> {
   /** Form control name; also the key in the submitted value object. */
@@ -172,7 +172,7 @@ interface BaseFieldDefinition<T extends object> {
   /**
    * Initial control value. Defaults per type when omitted:
    * input/textarea → '', checkbox → false, select/combobox → null
-   * (multi-select → []).
+   * (multi-select → []), chips → [].
    */
   value?: unknown;
 }
@@ -217,8 +217,32 @@ export interface ComboboxFieldDefinition<T extends object> extends BaseFieldDefi
   requireSelection?: boolean;
 }
 
+export interface ChipsFieldDefinition<T extends object> extends BaseFieldDefinition<T> {
+  type: 'chips';
+  /**
+   * Value-mode options (`{ label, value }`). When provided, chips display the
+   * resolved `label` while the form model holds the `value`s (e.g. privilege
+   * names shown, privilege ids stored). Omit for free-text chips, where the
+   * model holds the typed strings. Set `allowCustomValue: false` alongside this
+   * to restrict input to these options.
+   */
+  options?: Observable<TnSelectOption[]>;
+  /**
+   * Free-text suggestions offered as the user types (string mode only; ignored
+   * when `options` is set). For a static list wrap in `of([...])`.
+   */
+  suggestions?: Observable<string[]>;
+  /**
+   * Allow arbitrary typed values to become chips. Defaults to `true` (free-text
+   * tags). Set `false` to restrict input to `options`/`suggestions` — required
+   * when using value-mode `options`.
+   */
+  allowCustomValue?: boolean;
+}
+
 export type FormFieldDefinition<T extends object = Record<string, unknown>> = InputFieldDefinition<T>
   | TextareaFieldDefinition<T>
   | CheckboxFieldDefinition<T>
   | SelectFieldDefinition<T>
-  | ComboboxFieldDefinition<T>;
+  | ComboboxFieldDefinition<T>
+  | ChipsFieldDefinition<T>;

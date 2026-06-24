@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, ViewContainerRef, viewChild, inject, signal,
 } from '@angular/core';
@@ -7,6 +8,9 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   finalize, Observable, of, startWith, Subscription,
 } from 'rxjs';
@@ -19,13 +23,9 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAlertService } from 'app/helptext/system/alert-service';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -70,15 +70,17 @@ import {
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
     IxFormComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
     TranslateModule,
+    AsyncPipe,
   ],
 })
 export class AlertServiceComponent implements OnInit {

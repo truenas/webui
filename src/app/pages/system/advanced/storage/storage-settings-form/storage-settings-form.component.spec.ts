@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -16,7 +17,6 @@ import { Service } from 'app/interfaces/service.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { WarningHarness } from 'app/modules/forms/ix-forms/components/warning/warning.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -74,6 +74,13 @@ describe('StorageSettingsFormComponent', () => {
     ],
   });
 
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -81,20 +88,12 @@ describe('StorageSettingsFormComponent', () => {
   });
 
   it('loads and shows current storage settings', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
-
-    expect(values).toEqual({
-      'System Dataset Pool': 'current-pool',
-      'Run Resilvering At Higher Priority At Certain Times': false,
-    });
+    expect(await (await getSelect('systemDatasetPool')).getDisplayText()).toBe('current-pool');
+    expect(await (await getCheckbox('enabled')).isChecked()).toBe(false);
   });
 
   it('updates system dataset and refreshes settings when system dataset pool is changed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'System Dataset Pool': 'new-pool',
-    });
+    await (await getSelect('systemDatasetPool')).selectOption('new-pool');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -106,13 +105,16 @@ describe('StorageSettingsFormComponent', () => {
   });
 
   it('updates resilver settings when they are changed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Run Resilvering At Higher Priority At Certain Times': true,
-      From: '19:00:00',
-      To: '22:00:00',
-      'Days of the Week': ['Monday', 'Friday'],
-    });
+    await (await getCheckbox('enabled')).check();
+    await (await getSelect('begin')).selectOption('19:00:00');
+    await (await getSelect('end')).selectOption('22:00:00');
+    // weekday defaults to every day; deselect all but Monday and Friday.
+    const weekday = await getSelect('weekday');
+    await weekday.selectOption('Tuesday');
+    await weekday.selectOption('Wednesday');
+    await weekday.selectOption('Thursday');
+    await weekday.selectOption('Saturday');
+    await weekday.selectOption('Sunday');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -127,14 +129,17 @@ describe('StorageSettingsFormComponent', () => {
   });
 
   it('updates both system dataset and resilver config when they are changed together', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'System Dataset Pool': 'new-pool',
-      'Run Resilvering At Higher Priority At Certain Times': true,
-      From: '19:00:00',
-      To: '22:00:00',
-      'Days of the Week': ['Monday', 'Friday'],
-    });
+    await (await getSelect('systemDatasetPool')).selectOption('new-pool');
+    await (await getCheckbox('enabled')).check();
+    await (await getSelect('begin')).selectOption('19:00:00');
+    await (await getSelect('end')).selectOption('22:00:00');
+    // weekday defaults to every day; deselect all but Monday and Friday.
+    const weekday = await getSelect('weekday');
+    await weekday.selectOption('Tuesday');
+    await weekday.selectOption('Wednesday');
+    await weekday.selectOption('Thursday');
+    await weekday.selectOption('Saturday');
+    await weekday.selectOption('Sunday');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -169,9 +174,8 @@ describe('StorageSettingsFormComponent', () => {
   it('closes silently without snackbar when user touches a field and reverts it', async () => {
     // requireDirty only checks form.pristine — typing and reverting flips dirty
     // to true but leaves changedValues empty. preSubmit catches this case.
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'System Dataset Pool': 'new-pool' });
-    await form.fillForm({ 'System Dataset Pool': 'current-pool' });
+    await (await getSelect('systemDatasetPool')).selectOption('new-pool');
+    await (await getSelect('systemDatasetPool')).selectOption('current-pool');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

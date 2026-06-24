@@ -6,6 +6,9 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import {
   forkJoin, map, Observable, of,
 } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -18,12 +21,9 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -44,9 +44,10 @@ export interface StorageSettingsData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     IxFormComponent,
     TranslateModule,
     AsyncPipe,

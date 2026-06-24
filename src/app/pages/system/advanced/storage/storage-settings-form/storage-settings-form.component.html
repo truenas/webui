@@ -8,53 +8,56 @@
   [preSubmit]="preSubmit"
   [submitHandler]="handleSubmit"
 >
-  <ix-fieldset>
-    <ix-select
-      formControlName="systemDatasetPool"
-      [label]="'System Dataset Pool' | translate"
-      [required]="true"
-      [options]="poolOptions$"
-    ></ix-select>
+  <tn-form-section>
+    <tn-form-field [label]="'System Dataset Pool' | translate">
+      <tn-select
+        formControlName="systemDatasetPool"
+        [options]="(poolOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
     @if (isSmbRunning$ | async) {
       <ix-warning
         [message]="helptext.smbRebootWarning | translate"
       ></ix-warning>
     }
-  </ix-fieldset>
+  </tn-form-section>
 
-  <ix-fieldset
-    [title]="'Priority Resilvering' | translate"
+  <tn-form-section
+    [heading]="'Priority Resilvering' | translate"
     [formGroup]="form.controls.priorityResilver"
   >
-    <ix-checkbox
-      formControlName="enabled"
-      [label]="'Run Resilvering At Higher Priority At Certain Times' | translate"
-      [tooltip]="helptext.priorityResilverEnabled | translate"
-    ></ix-checkbox>
+    <tn-form-field [tooltip]="helptext.priorityResilverEnabled | translate">
+      <tn-checkbox
+        formControlName="enabled"
+        [label]="'Run Resilvering At Higher Priority At Certain Times' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
     @if (this.form.value.priorityResilver.enabled) {
-      <ix-select
-        formControlName="weekday"
-        [label]="'Days of the Week' | translate"
-        [options]="daysOfWeek$"
-        [multiple]="true"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field [label]="'Days of the Week' | translate">
+        <tn-select
+          formControlName="weekday"
+          [multiple]="true"
+          [options]="(daysOfWeek$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
       <div class="priority-times">
-        <ix-select
-          formControlName="begin"
-          [label]="'From' | translate"
-          [options]="timeOptions$"
-        ></ix-select>
+        <tn-form-field [label]="'From' | translate">
+          <tn-select
+            formControlName="begin"
+            [options]="(timeOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
 
-        <ix-select
-          formControlName="end"
-          [label]="'To' | translate"
-          [options]="timeOptions$"
-        ></ix-select>
+        <tn-form-field [label]="'To' | translate">
+          <tn-select
+            formControlName="end"
+            [options]="(timeOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
       </div>
     }
-  </ix-fieldset>
+  </tn-form-section>
 </ix-form>
