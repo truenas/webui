@@ -184,15 +184,11 @@ export class GroupListComponent implements OnInit {
   }
 
   private openGroupForm(group: Group | undefined): void {
-    // The group form needs async setup (privilege list + selection, forbidden names, next GID)
-    // before its declarative definition can be built; resolve it, then host the renderer.
-    buildGroupForm(this.api, this.translate, this.store$, group).pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(({ definition, editData }) => {
-      this.formPanel.openForm(definition, {
-        title: group ? this.translate.instant('Edit Group') : this.translate.instant('Add Group'),
-        editData,
-      });
+    // The group form needs async setup (privilege list + selection, forbidden names, next GID);
+    // pass the builder straight to openForm, which opens the panel immediately (with a loading
+    // bar) and attaches the form once it resolves — no pre-open delay.
+    this.formPanel.openForm(buildGroupForm(this.api, this.translate, this.store$, group), {
+      title: group ? this.translate.instant('Edit Group') : this.translate.instant('Add Group'),
     });
   }
 

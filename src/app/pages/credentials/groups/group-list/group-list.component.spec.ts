@@ -164,7 +164,7 @@ describe('GroupListComponent', () => {
 
     expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
       expect.anything(),
-      { title: 'Add Group', editData: undefined },
+      { title: 'Add Group' },
     );
   });
 
@@ -180,7 +180,7 @@ describe('GroupListComponent', () => {
 
     expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
       expect.anything(),
-      expect.objectContaining({ title: 'Edit Group', editData: expect.objectContaining({ name: group.group }) }),
+      { title: 'Edit Group' },
     );
   });
 });
