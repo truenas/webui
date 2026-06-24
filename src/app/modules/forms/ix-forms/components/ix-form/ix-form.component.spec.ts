@@ -299,6 +299,27 @@ describe('IxFormComponent', () => {
 
       expect(submitHandlerSpy.mock.calls[0][0].changedValues).not.toHaveProperty('name');
     });
+
+    it('dev-warns once when a top-level control is a nested FormGroup', async () => {
+      const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      (spectator.component.form as unknown as FormGroup).addControl(
+        'attributes',
+        new FormGroup({ host: new FormControl('') }),
+      );
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+      await saveButton.click();
+
+      // Spy catches other dev warnings too; count only the nested-group one,
+      // which must fire exactly once across both submits.
+      const nestedWarnings = warnSpy.mock.calls.filter(
+        ([message]) => typeof message === 'string' && message.includes('nested FormGroup/FormArray'),
+      );
+      expect(nestedWarnings).toHaveLength(1);
+      expect(nestedWarnings[0][0]).toContain('"attributes"');
+      warnSpy.mockRestore();
+    });
   });
 
   describe('dirty confirmation', () => {

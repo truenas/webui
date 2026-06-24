@@ -11,7 +11,9 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControlStatus, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray, FormControlStatus, FormGroup, ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
@@ -199,6 +201,9 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   // Set on successful emit; read by the DestroyRef hook to gate onCancel.
   private hadSuccessfulSubmit = false;
 
+  // Dev-only: ensures the nested-group changedValues warning fires at most once.
+  private warnedNestedChangedValues = false;
+
   // Optional: present when hosted in a legacy SlideIn (the `<ix-modal-header>`
   // and in-form Save are gated on it). Absent inside a `<tn-side-panel>`, where
   // the host owns the header + Save and close happens via {@link closed}.
@@ -372,6 +377,11 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   private getChangedValues(current: T): Partial<T> {
     const snapshot = this.snapshot();
     const controls = this.formGroup().controls;
+
+    if (isDevMode()) {
+      this.warnNestedChangedValues(controls);
+    }
+
     // Disabled controls (incl. ones hidden by visibleWhen/enabledWhen) are
     // omitted so a stale value the user can no longer see never reaches the diff.
     const isActive = (key: keyof T): boolean => !controls[key as string]?.disabled;
@@ -396,5 +406,33 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
       }
     }
     return changed;
+  }
+
+  /**
+   * Dev-only guard. `changedValues` diffs per top-level key with a shallow deep
+   * equality, so a nested `FormGroup`/`FormArray` reports as a single whole-object
+   * entry: change one inner control and the entire subtree lands in the payload.
+   * That silently defeats a "send only what changed" submit, so warn the author
+   * to build the payload from `allValues` (or diff the subtree themselves) for
+   * those keys. Fires once per form instance.
+   */
+  private warnNestedChangedValues(controls: FormGroup['controls']): void {
+    if (this.warnedNestedChangedValues) {
+      return;
+    }
+    const nestedKeys = Object.keys(controls).filter(
+      (key) => controls[key] instanceof FormGroup || controls[key] instanceof FormArray,
+    );
+    if (nestedKeys.length === 0) {
+      return;
+    }
+    this.warnedNestedChangedValues = true;
+    const quotedKeys = nestedKeys.map((key) => `"${key}"`).join(', ');
+    console.warn(
+      `[ix-form] changedValues diffs top-level keys shallowly, but ${quotedKeys} `
+      + `${nestedKeys.length === 1 ? 'is a' : 'are'} nested FormGroup/FormArray. Editing any inner control makes the `
+      + 'whole subtree appear changed, so a "send only changed" payload would send all of it. Build the payload from '
+      + '`allValues` (or diff the subtree yourself) for those keys instead of relying on `changedValues`.',
+    );
   }
 }

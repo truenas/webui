@@ -188,9 +188,13 @@ export class AlertServiceComponent implements OnInit {
     }, { emitEvent: false });
     this.renderAlertServiceForm();
 
-    setTimeout(() => {
+    // Defer one tick so the freshly-rendered child form is wired before patching.
+    // Guard the callback: if the slide-in closes within the same tick the timer is
+    // cleared, so it never fires against a torn-down child form.
+    const timeoutId = setTimeout(() => {
       this.alertServiceForm.setValues(alertService.attributes);
     });
+    this.destroyRef.onDestroy(() => clearTimeout(timeoutId));
   }
 
   protected onSendTestAlert(): void {
