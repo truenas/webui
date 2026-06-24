@@ -26,6 +26,7 @@ import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -37,13 +38,16 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
+import {
+  getGlobalTwoFactorFormConfig,
+} from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor.form-config';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 import { refreshRebootInfo } from 'app/store/reboot-info/reboot-info.actions';
@@ -135,8 +139,10 @@ export class SystemSecurityFormComponent implements OnInit {
   private authService = inject(AuthService);
   private errorHandler = inject(ErrorHandlerService);
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private navigateAndHighlightService = inject(NavigateAndHighlightService);
   private document = inject(DOCUMENT);
+  private window = inject<Window>(WINDOW);
   private router = inject(Router);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   slideInRef = inject<SlideInRef<SystemSecurityConfig, boolean>>(SlideInRef);
@@ -705,8 +711,25 @@ export class SystemSecurityFormComponent implements OnInit {
     const config = this.twoFactorConfig();
     if (config) {
       const elementName = highlight === 'global' ? 'enable-2fa-global' : 'enable-2fa-ssh';
-      this.slideIn.open(GlobalTwoFactorAuthFormComponent, { data: config })
-        .onClose(() => this.setupStigRequirements(), this.destroyRef);
+      this.formPanel.openForm(
+        getGlobalTwoFactorFormConfig(
+          this.api,
+          this.translate,
+          this.dialogService,
+          this.authService,
+          this.router,
+          this.window,
+          config,
+        ),
+        {
+          title: this.translate.instant('Global Two Factor Authentication'),
+          editData: {
+            enabled: config.enabled,
+            window: config.window,
+            ssh: config.services.ssh,
+          },
+        },
+      ).onClose(() => this.setupStigRequirements(), this.destroyRef);
       this.delayHighlightElement(elementName);
     }
   }

@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import {
   map, shareReplay, startWith, switchMap, tap,
@@ -15,13 +15,11 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { replicationSettingsCardElements } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.elements';
-import {
-  ReplicationSettingsFormComponent,
-} from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
+import { getReplicationSettingsFormConfig } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 @Component({
@@ -45,7 +43,8 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 })
 export class ReplicationSettingsCardComponent {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private formPanel = inject(FormSidePanelService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private destroyRef = inject(DestroyRef);
 
@@ -67,9 +66,9 @@ export class ReplicationSettingsCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(
-        ReplicationSettingsFormComponent,
-        { data: this.replicationConfig },
+      switchMap(() => this.formPanel.openForm(
+        getReplicationSettingsFormConfig(this.api, this.translate),
+        { title: this.translate.instant('Replication'), editData: this.replicationConfig },
       ).success$),
       tap(() => this.reloadConfig$.next()),
       takeUntilDestroyed(this.destroyRef),

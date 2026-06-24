@@ -7,10 +7,9 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
-import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 describe('GlobalTwoFactorAuthCardComponent', () => {
@@ -20,8 +19,8 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     component: GlobalTwoFactorAuthCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -57,14 +56,15 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      GlobalTwoFactorAuthFormComponent,
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
       {
-        data: {
-          window: 3,
+        title: 'Global Two Factor Authentication',
+        editData: {
           enabled: false,
-          services: { ssh: false },
-        } as GlobalTwoFactorConfig,
+          window: 3,
+          ssh: false,
+        },
       },
     );
   });

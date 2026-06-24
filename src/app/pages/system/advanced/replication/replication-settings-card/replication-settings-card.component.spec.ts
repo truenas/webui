@@ -6,15 +6,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   ReplicationSettingsCardComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.component';
-import {
-  ReplicationSettingsFormComponent,
-} from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 describe('ReplicationSettingsCardComponent', () => {
@@ -32,8 +29,8 @@ describe('ReplicationSettingsCardComponent', () => {
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn((): undefined => undefined) }),
     ],
@@ -59,10 +56,10 @@ describe('ReplicationSettingsCardComponent', () => {
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(
-      spectator.inject(SlideIn).open,
+      spectator.inject(FormSidePanelService).openForm,
     ).toHaveBeenCalledWith(
-      ReplicationSettingsFormComponent,
-      { data: { max_parallel_replication_tasks: 5 } },
+      expect.anything(),
+      { title: 'Replication', editData: { max_parallel_replication_tasks: 5 } },
     );
   });
 });

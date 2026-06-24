@@ -21,13 +21,13 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
@@ -1112,6 +1112,9 @@ describe('SystemSecurityFormComponent', () => {
         mockProvider(SlideIn, {
           open: jest.fn(),
         }),
+        mockProvider(FormSidePanelService, {
+          openForm: jest.fn(() => SlideInResult.empty()),
+        }),
         mockProvider(NavigateAndHighlightService, {
           navigateAndHighlight: jest.fn(),
           scrollIntoView: jest.fn(),
@@ -1160,8 +1163,7 @@ describe('SystemSecurityFormComponent', () => {
 
     it('navigates to Advanced Settings and opens Global Two-Factor Auth form when clicking Configure', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
-      const slideIn = navigationSpectator.inject(SlideIn);
-      const slideInOpenSpy = jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
+      const formPanel = navigationSpectator.inject(FormSidePanelService);
 
       // Trigger setupStigRequirements - should show "Global Two-Factor Authentication" requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1184,17 +1186,18 @@ describe('SystemSecurityFormComponent', () => {
       await navigationSpectator.fixture.whenStable();
 
       // Verify the Global 2FA form was opened after navigation
-      expect(slideInOpenSpy).toHaveBeenCalledWith(
-        GlobalTwoFactorAuthFormComponent,
-        { data: { enabled: false, services: { ssh: false } } },
+      expect(formPanel.openForm).toHaveBeenCalledWith(
+        expect.anything(),
+        {
+          title: 'Global Two Factor Authentication',
+          editData: { enabled: false, window: undefined, ssh: false },
+        },
       );
     });
 
     it('opens Global Two-Factor Auth form when clicking SSH 2FA configure button', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
-      const slideIn = navigationSpectator.inject(SlideIn);
-
-      const openSpy = jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
+      const formPanel = navigationSpectator.inject(FormSidePanelService);
 
       // Trigger setupStigRequirements - should show SSH 2FA requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1213,9 +1216,12 @@ describe('SystemSecurityFormComponent', () => {
       configureButton.click();
 
       // Verify the Global 2FA form was opened with the correct data
-      expect(openSpy).toHaveBeenCalledWith(
-        GlobalTwoFactorAuthFormComponent,
-        { data: { enabled: false, services: { ssh: false } } },
+      expect(formPanel.openForm).toHaveBeenCalledWith(
+        expect.anything(),
+        {
+          title: 'Global Two Factor Authentication',
+          editData: { enabled: false, window: undefined, ssh: false },
+        },
       );
     });
 
@@ -1335,10 +1341,10 @@ describe('SystemSecurityFormComponent', () => {
           mockProvider(ApiService, apiServiceMock),
         ],
       });
-      const slideIn = reevaluationSpectator.inject(SlideIn);
+      const formPanel = reevaluationSpectator.inject(FormSidePanelService);
 
-      // Simulate the slidein closing with a successful save
-      jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
+      // Simulate the side panel closing with a successful save
+      jest.spyOn(formPanel, 'openForm').mockReturnValue(SlideInResult.success(true));
 
       // Enable STIG mode to trigger requirement check
       reevaluationSpectator.component.form.patchValue({ enable_gpos_stig: true });

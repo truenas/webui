@@ -7,14 +7,11 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
-import {
-  SelfEncryptingDriveFormComponent,
-} from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -38,8 +35,8 @@ describe('SelfEncryptingDriveCardComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -66,10 +63,10 @@ describe('SelfEncryptingDriveCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      SelfEncryptingDriveFormComponent,
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
       {
-        data: { sedPassword: '' },
+        title: 'Self-Encrypting Drive',
       },
     );
   });
