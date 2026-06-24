@@ -1,11 +1,13 @@
 // cspell:ignore nopasswd
-import { Validators } from '@angular/forms';
+import { AsyncValidatorFn, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { TnSelectOption } from '@truenas/ui-components';
 import { Observable, combineLatest, of } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import {
+  map, shareReplay, switchMap, take, tap,
+} from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
 import { helptextGroups } from 'app/helptext/account/groups';
@@ -32,33 +34,53 @@ export interface GroupFormValue {
 }
 
 /**
- * Everything the config needs, resolved upfront by {@link buildGroupForm}. The async
- * setup (privilege.query, group.query, group.get_next_gid) is done there so the declarative
- * definition can stay synchronous: `privileges`/`initialPrivilegeIds` are read at submit
- * time to diff which privileges to (un)assign, `gidDefault` pre-fills the GID in add mode,
- * and `forbiddenNames` powers the uniqueness rule.
+ * Self-contained declarative config for the group form — no up-front fetch, no wrapper
+ * component. The form renders immediately; the few values that depend on an API call load
+ * on the fly into their own fields rather than blocking the whole panel:
+ *
+ * - **privileges options** — a live `privilege.query` observable bound to the chips field
+ *   (shared via `shareReplay`, so the same result feeds `loadData` and `submit` — one call).
+ * - **name uniqueness** — an async validator that checks a cached `group.query`, instead of
+ *   pre-fetching a forbidden-names list.
+ * - **initial values** — `loadData` patches the next GID (add) or the current privilege
+ *   selection (edit) once their query resolves; everything else is sync from `editingGroup`.
+ *
+ * `loadData` makes the renderer treat the form as an edit, so submit branches on
+ * `editingGroup` (the closure) rather than `event.isEdit`.
  */
-export interface GroupFormConfigDeps {
-  api: ApiService;
-  translate: TranslateService;
-  store$: Store<AppState>;
-  editingGroup: Group | undefined;
-  privilegeOptions$: Observable<TnSelectOption[]>;
-  privileges: Privilege[];
-  initialPrivilegeIds: number[];
-  forbiddenNames: string[];
-  gidDefault: number | null;
-}
+export function getGroupFormConfig(
+  api: ApiService,
+  translate: TranslateService,
+  store$: Store<AppState>,
+  editingGroup: Group | undefined,
+): FormDefinition<GroupFormValue> {
+  // One privilege.query, shared by the chips options, loadData (current selection) and submit.
+  const privileges$ = api.call('privilege.query').pipe(
+    shareReplay({ bufferSize: 1, refCount: false }),
+  );
+  const privilegeOptions$ = privileges$.pipe(
+    map((privileges): TnSelectOption[] => privileges.map((privilege) => ({
+      label: privilege.name,
+      value: privilege.id,
+    }))),
+  );
+  // Cached existing group names for the async uniqueness check (fetched once on first edit).
+  const existingNames$ = api.call('group.query').pipe(
+    map((groups) => groups.map((group) => group.group)),
+    shareReplay({ bufferSize: 1, refCount: false }),
+  );
 
-export function getGroupFormConfig(deps: GroupFormConfigDeps): FormDefinition<GroupFormValue> {
-  const {
-    api, translate, store$, editingGroup, privilegeOptions$, forbiddenNames, gidDefault,
-  } = deps;
+  const allSudo = !!editingGroup?.sudo_commands?.includes(allCommands);
+  const allSudoNoPass = !!editingGroup?.sudo_commands_nopasswd?.includes(allCommands);
 
   return {
     addTitle: T('Add Group'),
     editTitle: T('Edit Group'),
     requiredRoles: [Role.AccountWrite],
+    // Patch only the value that needs a fetch — the form is already on screen and interactive.
+    loadData: () => (editingGroup
+      ? privileges$.pipe(take(1), map((privileges) => ({ privileges: selectedPrivilegeIds(privileges, editingGroup) })))
+      : api.call('group.get_next_gid').pipe(map((gid) => ({ gid })))),
     sections: [{
       title: T('Group Configuration'),
       fields: [
@@ -71,7 +93,7 @@ export function getGroupFormConfig(deps: GroupFormConfigDeps): FormDefinition<Gr
           required: true,
           // GID is fixed once the group exists; editable only when creating.
           disabled: !!editingGroup,
-          value: editingGroup ? editingGroup.gid : (gidDefault ?? undefined),
+          value: editingGroup?.gid,
           validators: [Validators.pattern(/^\d+$/)],
         },
         {
@@ -80,7 +102,9 @@ export function getGroupFormConfig(deps: GroupFormConfigDeps): FormDefinition<Gr
           label: T('Name'),
           tooltip: helptextGroups.nameTooltip,
           required: true,
-          validators: [Validators.pattern(UserService.namePattern), forbiddenValues(forbiddenNames)],
+          value: editingGroup?.group ?? '',
+          validators: [Validators.pattern(UserService.namePattern)],
+          asyncValidators: [groupNameInUseValidator(existingNames$, editingGroup?.group)],
         },
         {
           name: 'privileges',
@@ -94,29 +118,34 @@ export function getGroupFormConfig(deps: GroupFormConfigDeps): FormDefinition<Gr
           name: 'sudo_commands',
           type: 'chips',
           label: T('Allowed Sudo Commands'),
+          value: allSudo ? [] : (editingGroup?.sudo_commands ?? []),
           enabledWhen: (value) => !value.sudo_commands_all,
         },
         {
           name: 'sudo_commands_all',
           type: 'checkbox',
           label: T('Allow All Sudo Commands'),
+          value: allSudo,
         },
         {
           name: 'sudo_commands_nopasswd',
           type: 'chips',
           label: T('Allowed Sudo Commands with No Password'),
+          value: allSudoNoPass ? [] : (editingGroup?.sudo_commands_nopasswd ?? []),
           enabledWhen: (value) => !value.sudo_commands_nopasswd_all,
         },
         {
           name: 'sudo_commands_nopasswd_all',
           type: 'checkbox',
           label: T('Allow All Sudo Commands with No Password'),
+          value: allSudoNoPass,
         },
         {
           name: 'smb',
           type: 'checkbox',
           label: T('SMB Group'),
           tooltip: helptextGroups.smbTooltip,
+          value: editingGroup?.smb ?? false,
         },
       ],
     }],
@@ -137,41 +166,64 @@ export function getGroupFormConfig(deps: GroupFormConfigDeps): FormDefinition<Gr
       ).pipe(
         switchMap((id) => api.call('group.query', [[['id', '=', id]]])),
         map((groups) => groups[0]),
-        switchMap((group) => togglePrivilegesForGroup(deps, group.gid, values.privileges).pipe(map(() => group))),
+        // Re-uses the shared (cached) privilege list to diff assignments and derive roles.
+        switchMap((group) => privileges$.pipe(
+          take(1),
+          switchMap((privileges) => {
+            const initialPrivilegeIds = editingGroup ? selectedPrivilegeIds(privileges, editingGroup) : [];
+            const roles = privileges
+              .filter((privilege) => values.privileges.some((id) => id === privilege.id))
+              .map((privilege) => privilege.builtin_name) as Role[];
+            return togglePrivilegesForGroup(api, privileges, initialPrivilegeIds, group.gid, values.privileges).pipe(
+              tap(() => {
+                const updated = { ...group, roles };
+                store$.dispatch(editingGroup ? groupChanged({ group: updated }) : groupAdded({ group: updated }));
+              }),
+              map(() => group),
+            );
+          }),
+        )),
       );
 
       return {
         request$,
-        successMessage: event.isEdit
+        successMessage: editingGroup
           ? translate.instant('Group updated')
           : translate.instant('Group added'),
-        onSuccess: (result: unknown) => {
-          const group = result as Group;
-          const roles = deps.privileges
-            .filter((privilege) => values.privileges.some((id) => id === privilege.id))
-            .map((privilege) => privilege.builtin_name) as Role[];
-
-          if (event.isEdit) {
-            store$.dispatch(groupChanged({ group: { ...group, roles } }));
-          } else {
-            store$.dispatch(groupAdded({ group: { ...group, roles } }));
-          }
-        },
       };
     },
   };
 }
 
+/** Privilege ids currently assigned to the group (those whose local_groups include its GID). */
+function selectedPrivilegeIds(privileges: Privilege[], group: Group): number[] {
+  return privileges
+    .filter((privilege) => privilege.local_groups.some((local) => local.gid === group.gid))
+    .map((privilege) => privilege.id);
+}
+
+/** Async name-uniqueness check against the cached group list (excludes the edited group's own name). */
+function groupNameInUseValidator(
+  existingNames$: Observable<string[]>,
+  currentName: string | undefined,
+): AsyncValidatorFn {
+  return (control) => existingNames$.pipe(
+    take(1),
+    map((names) => forbiddenValues(names.filter((name) => name !== currentName))(control)),
+  );
+}
+
 /** Adds the group to newly-selected privileges and removes it from de-selected ones. */
 function togglePrivilegesForGroup(
-  deps: GroupFormConfigDeps,
+  api: ApiService,
+  privileges: Privilege[],
+  initialPrivilegeIds: number[],
   groupId: number,
-  selectedPrivilegeIds: (string | number)[],
+  selectedIds: (string | number)[],
 ): Observable<Privilege[]> {
-  const { api, privileges, initialPrivilegeIds } = deps;
   const requests$: Observable<Privilege>[] = [];
 
-  const added = privileges.filter((privilege) => selectedPrivilegeIds.some((id) => id === privilege.id));
+  const added = privileges.filter((privilege) => selectedIds.some((id) => id === privilege.id));
   added.forEach((privilege) => {
     requests$.push(
       api.call('privilege.update', [
@@ -185,7 +237,7 @@ function togglePrivilegesForGroup(
   });
 
   const removedIds = Array.from(new Set(
-    initialPrivilegeIds.filter((id) => !selectedPrivilegeIds.includes(id)),
+    initialPrivilegeIds.filter((id) => !selectedIds.includes(id)),
   ));
   const removed = privileges.filter((privilege) => removedIds.some((id) => id === privilege.id));
   removed.forEach((privilege) => {
@@ -210,70 +262,5 @@ function mapPrivilegeToPrivilegeUpdate(privilege: Privilege, localGroups: number
     name: privilege.name,
     roles: privilege.roles,
     web_shell: privilege.web_shell,
-  };
-}
-
-/**
- * Resolves the async data the declarative config can't express (privilege list +
- * current selection, forbidden names, next GID) and returns the ready-to-host
- * definition + edit data. Callers fetch this, then `formPanel.openForm(...)`.
- */
-export function buildGroupForm(
-  api: ApiService,
-  translate: TranslateService,
-  store$: Store<AppState>,
-  editingGroup: Group | undefined,
-): Observable<{ definition: FormDefinition<GroupFormValue>; editData: Partial<GroupFormValue> | undefined }> {
-  return combineLatest([
-    api.call('privilege.query'),
-    api.call('group.query'),
-    editingGroup ? of(null) : api.call('group.get_next_gid'),
-  ]).pipe(
-    take(1),
-    map(([privileges, groups, gidDefault]) => {
-      const initialPrivilegeIds = editingGroup
-        ? privileges
-            .filter((privilege) => privilege.local_groups.some((local) => local.gid === editingGroup.gid))
-            .map((privilege) => privilege.id)
-        : [];
-
-      const privilegeOptions$ = of<TnSelectOption[]>(
-        privileges.map((privilege) => ({ label: privilege.name, value: privilege.id })),
-      );
-
-      const forbiddenNames = groups
-        .map((group) => group.group)
-        .filter((name) => name !== editingGroup?.group);
-
-      const definition = getGroupFormConfig({
-        api,
-        translate,
-        store$,
-        editingGroup,
-        privilegeOptions$,
-        privileges,
-        initialPrivilegeIds,
-        forbiddenNames,
-        gidDefault,
-      });
-
-      const editData = editingGroup ? toEditData(editingGroup, initialPrivilegeIds) : undefined;
-      return { definition, editData };
-    }),
-  );
-}
-
-/** Maps a Group entity onto the form shape (GID comes from the config's value). */
-function toEditData(group: Group, privilegeIds: number[]): Partial<GroupFormValue> {
-  const allSudo = !!group.sudo_commands?.includes(allCommands);
-  const allSudoNoPass = !!group.sudo_commands_nopasswd?.includes(allCommands);
-  return {
-    name: group.group,
-    sudo_commands: allSudo ? [] : (group.sudo_commands ?? []),
-    sudo_commands_all: allSudo,
-    sudo_commands_nopasswd: allSudoNoPass ? [] : (group.sudo_commands_nopasswd ?? []),
-    sudo_commands_nopasswd_all: allSudoNoPass,
-    smb: group.smb,
-    privileges: privilegeIds,
   };
 }

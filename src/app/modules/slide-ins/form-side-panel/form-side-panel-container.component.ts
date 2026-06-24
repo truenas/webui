@@ -2,7 +2,6 @@ import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import {
   ChangeDetectionStrategy, Component, ComponentRef, inject, input, model, output, signal,
 } from '@angular/core';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -42,7 +41,6 @@ export type HostedSidePanelForm = SidePanelForm & { readonly requiredRoles?: Rol
     RequiresRolesDirective,
     CdkPortalOutlet,
     TranslateModule,
-    MatProgressBar,
   ],
 })
 export class FormSidePanelContainerComponent {

@@ -25,7 +25,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
-import { buildGroupForm } from 'app/pages/credentials/groups/group-form/group.form-config';
+import { getGroupFormConfig } from 'app/pages/credentials/groups/group-form/group.form-config';
 import { groupListElements } from 'app/pages/credentials/groups/group-list/group-list.elements';
 import { groupPageEntered, groupRemoved } from 'app/pages/credentials/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/credentials/groups/store/group.selectors';
@@ -184,10 +184,9 @@ export class GroupListComponent implements OnInit {
   }
 
   private openGroupForm(group: Group | undefined): void {
-    // The group form needs async setup (privilege list + selection, forbidden names, next GID);
-    // pass the builder straight to openForm, which opens the panel immediately (with a loading
-    // bar) and attaches the form once it resolves — no pre-open delay.
-    this.formPanel.openForm(buildGroupForm(this.api, this.translate, this.store$, group), {
+    // Self-contained config — the form renders immediately and loads its async bits (privilege
+    // options/selection, name check, next GID) on the fly into their own fields, no panel block.
+    this.formPanel.openForm(getGroupFormConfig(this.api, this.translate, this.store$, group), {
       title: group ? this.translate.instant('Edit Group') : this.translate.instant('Add Group'),
     });
   }

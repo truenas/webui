@@ -8,10 +8,6 @@
   (openChange)="open.set($event)"
   (closed)="panelClosed.emit()"
 >
-  @if (!form()) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  }
-
   <ng-template
     [cdkPortalOutlet]="portal()"
     (attached)="onPortalAttached($event)"

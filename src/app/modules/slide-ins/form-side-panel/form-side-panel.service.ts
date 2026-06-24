@@ -3,8 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import {
   ApplicationRef, createComponent, EnvironmentInjector, inject, Injectable, Injector, Type,
 } from '@angular/core';
-import { isObservable, Observable, Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import {
   FormDefinition,
 } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
@@ -76,56 +75,28 @@ export class FormSidePanelService {
    * ```
    */
   openForm<T extends object>(
-    // Union of a ready definition OR an async builder — not always an observable, so no `$`.
-    // eslint-disable-next-line @smarttools/rxjs/finnish
-    source: FormDefinition<T> | Observable<{ definition: FormDefinition<T>; editData?: Partial<T> | object | null }>,
+    definition: FormDefinition<T>,
     options: Omit<FormSidePanelOptions, 'inputs'> & { editData?: Partial<T> | object | null } = {},
   ): SlideInResult<boolean> {
     const { editData, ...chrome } = options;
     // The renderer structurally provides the host surface (closed/canSubmit/submit/
     // hasUnsavedChanges/requiredRoles) the container reads; cast past the nominal base type.
-    const renderer = IxFormRendererComponent as unknown as Type<SidePanelForm>;
-    const { result$, attachForm } = this.openContainer(chrome);
-
-    if (isObservable(source)) {
-      // Open the panel immediately (the container shows a loading bar) and attach the
-      // renderer once the form's async setup resolves — no pre-open delay.
-      source.pipe(take(1)).subscribe((resolved) => {
-        attachForm(renderer, { definition: resolved.definition, editData: resolved.editData ?? null });
-      });
-    } else {
-      attachForm(renderer, { definition: source, editData: editData ?? null });
-    }
-
-    return result$;
+    return this.open(IxFormRendererComponent as unknown as Type<SidePanelForm>, {
+      ...chrome,
+      inputs: { definition, editData: editData ?? null },
+    });
   }
 
   open(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): SlideInResult<boolean> {
-    const { result$, attachForm } = this.openContainer(options);
-    attachForm(component, options.inputs ?? {});
-    return result$;
-  }
-
-  /**
-   * Creates and opens the panel chrome immediately, returning the close result plus an
-   * `attachForm` callback that portals the form (with its inputs) into it — synchronously
-   * for {@link open}, or after an async resolve for {@link openForm}. Until `attachForm`
-   * runs, the container renders a loading bar.
-   */
-  private openContainer(
-    options: Pick<FormSidePanelOptions, 'title' | 'width' | 'wide' | 'testId' | 'saveLabel'>,
-  ): {
-    result$: SlideInResult<boolean>;
-    attachForm: (component: Type<SidePanelForm>, inputs: Record<string, unknown>) => void;
-  } {
     if (this.currentResult) {
-      return { result$: this.currentResult, attachForm: () => { /* one panel at a time */ } };
+      return this.currentResult;
     }
 
     const close$ = new Subject<SlideInResponse<boolean>>();
     // Defaults to a cancel; overwritten with the form's response when it closes itself via save.
     let pendingResponse: boolean | undefined;
 
+    const portal = new ComponentPortal<SidePanelForm>(component, null, this.injector);
     const containerRef = createComponent(FormSidePanelContainerComponent, {
       environmentInjector: this.environmentInjector,
     });
@@ -133,9 +104,11 @@ export class FormSidePanelService {
     containerRef.setInput('title', options.title ?? '');
     containerRef.setInput('width', options.width ?? (options.wide ? '800px' : '480px'));
     containerRef.setInput('testId', options.testId);
+    containerRef.setInput('formInputs', options.inputs ?? {});
     if (options.saveLabel) {
       containerRef.setInput('saveLabel', options.saveLabel);
     }
+    containerRef.setInput('portal', portal);
 
     // Single, idempotent teardown so the animated close and a forced (navigation) close
     // can never double-detach or double-destroy the host.
@@ -176,18 +149,9 @@ export class FormSidePanelService {
       }
     }));
 
-    // Portals the form once its inputs are ready (immediately, or after an async resolve).
-    const attachForm = (component: Type<SidePanelForm>, inputs: Record<string, unknown>): void => {
-      if (containerRef.hostView.destroyed) {
-        return;
-      }
-      containerRef.setInput('formInputs', inputs);
-      containerRef.setInput('portal', new ComponentPortal<SidePanelForm>(component, null, this.injector));
-    };
-
     this.closeCurrent = teardown;
     this.currentResult = new SlideInResult<boolean>(close$);
-    return { result$: this.currentResult, attachForm };
+    return this.currentResult;
   }
 
   /**
