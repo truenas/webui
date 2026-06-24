@@ -13,7 +13,6 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NtpServersCardComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
-import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
 
 const fakeDataSource: NtpServer[] = [
   {
@@ -64,7 +63,7 @@ describe('NtpServerCardComponent', () => {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(FormSidePanelService, {
-        open: jest.fn(() => SlideInResult.empty()),
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });
@@ -94,7 +93,7 @@ describe('NtpServerCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(formPanel.open).toHaveBeenCalledWith(NtpServersFormComponent, {
+    expect(formPanel.openForm).toHaveBeenCalledWith(expect.anything(), {
       title: 'Add NTP Server',
     });
   });
@@ -103,9 +102,9 @@ describe('NtpServerCardComponent', () => {
     const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 6);
     await editButton.click();
 
-    expect(formPanel.open).toHaveBeenCalledWith(NtpServersFormComponent, {
+    expect(formPanel.openForm).toHaveBeenCalledWith(expect.anything(), {
       title: 'Edit NTP Server',
-      inputs: { server: fakeDataSource[0] },
+      editData: fakeDataSource[0],
     });
   });
 

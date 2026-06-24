@@ -5,6 +5,10 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import {
+  FormDefinition,
+} from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
+import { IxFormRendererComponent } from 'app/modules/forms/ix-forms/components/ix-form-renderer/ix-form-renderer.component';
+import {
   FormSidePanelContainerComponent,
 } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -57,6 +61,31 @@ export class FormSidePanelService {
    */
   private currentResult: SlideInResult<boolean> | null = null;
   private closeCurrent: (() => void) | null = null;
+
+  /**
+   * Opens a declarative {@link FormDefinition} in the side panel without a per-form wrapper
+   * component — hosts {@link IxFormRendererComponent} directly with the definition (and optional
+   * `editData`) as inputs. Use this for config forms whose only per-form code is their
+   * `*.form-config.ts`; reach for {@link open} only when a form needs bespoke component logic.
+   *
+   * ```ts
+   * this.formPanel.openForm(getNtpServersFormConfig(this.api, this.translate, server), {
+   *   title: 'Edit NTP Server', editData: server,
+   * }).onSuccess(() => this.reload(), this.destroyRef);
+   * ```
+   */
+  openForm<T extends object>(
+    definition: FormDefinition<T>,
+    options: Omit<FormSidePanelOptions, 'inputs'> & { editData?: Partial<T> | object | null } = {},
+  ): SlideInResult<boolean> {
+    const { editData, ...chrome } = options;
+    // The renderer structurally provides the host surface (closed/canSubmit/submit/
+    // hasUnsavedChanges/requiredRoles) the container reads; cast past the nominal base type.
+    return this.open(IxFormRendererComponent as unknown as Type<SidePanelForm>, {
+      ...chrome,
+      inputs: { definition, editData: editData ?? null },
+    });
+  }
 
   open(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): SlideInResult<boolean> {
     if (this.currentResult) {

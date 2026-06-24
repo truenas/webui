@@ -27,7 +27,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ntpServersElements } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.elements';
-import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
+import { getNtpServersFormConfig } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers.form-config';
 
 @Component({
   selector: 'ix-ntp-servers-card',
@@ -133,15 +133,15 @@ export class NtpServersCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.formPanel.open(NtpServersFormComponent, {
+    this.formPanel.openForm(getNtpServersFormConfig(this.api, this.translate, undefined), {
       title: this.translate.instant('Add NTP Server'),
     }).onSuccess(() => this.loadItems(), this.destroyRef);
   }
 
   doEdit(server: NtpServer): void {
-    this.formPanel.open(NtpServersFormComponent, {
+    this.formPanel.openForm(getNtpServersFormConfig(this.api, this.translate, server), {
       title: this.translate.instant('Edit NTP Server'),
-      inputs: { server },
+      editData: server,
     }).onSuccess(() => this.loadItems(), this.destroyRef);
   }
 }
