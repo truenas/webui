@@ -8,9 +8,9 @@
     <label>{{ 'Bulk Actions' | translate }}</label>
     <tn-button
       *ixRequiresRoles="requiredRoles"
-      icon="mdi-menu-down"
       iconPosition="right"
       testId="bulk-actions-menu"
+      [icon]="menuDownIcon"
       [label]="'Select action' | translate"
       [tnMenuTriggerFor]="menu"
     ></tn-button>

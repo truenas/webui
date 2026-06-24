@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCardComponent, TnCardHeaderDirective, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
@@ -22,6 +24,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
+    TnCardFooterActionsDirective,
     TnCardHeaderDirective,
     TranslateModule,
     TnTooltipDirective,

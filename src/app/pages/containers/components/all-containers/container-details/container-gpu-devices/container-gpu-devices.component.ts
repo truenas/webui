@@ -3,7 +3,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnIconComponent,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnIconComponent,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
@@ -34,6 +34,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
+    TnCardFooterActionsDirective,
     TnCardHeaderDirective,
     TranslateModule,
     NgxSkeletonLoaderModule,

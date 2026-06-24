@@ -1,15 +1,24 @@
 @if (container(); as container) {
-  <tn-card [title]="'Tools' | translate">
-    <div [tnTooltip]="isContainerStopped() ? ('Container is not running' | translate) : ''">
-      <tn-button
-        variant="filled"
-        color="default"
-        class="tool"
-        [testId]="'open-shell'"
-        [label]="'Shell' | translate"
-        [disabled]="isContainerStopped()"
-        [routerLink]="['/containers', 'view', container.id, 'shell']"
-      ></tn-button>
-    </div>
+  <tn-card
+    padding="small"
+    [title]="'Tools' | translate"
+    [padContent]="false"
+  >
+    <tn-list>
+      <div [tnTooltip]="isContainerStopped() ? ('Container is not running' | translate) : ''">
+        <tn-list-item
+          [tnTestId]="'open-shell'"
+          [class.is-clickable]="!isContainerStopped()"
+          [clickable]="!isContainerStopped()"
+          [disabled]="isContainerStopped()"
+          (itemClick)="openShell(container.id)"
+        >
+          <div class="shell-row">
+            <span>{{ 'Shell' | translate }}</span>
+            <tn-icon name="console-line" library="mdi"></tn-icon>
+          </div>
+        </tn-list-item>
+      </div>
+    </tn-list>
   </tn-card>
 }

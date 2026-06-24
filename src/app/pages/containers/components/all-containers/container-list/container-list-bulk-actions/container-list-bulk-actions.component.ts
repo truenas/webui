@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, computed, input, output, inject, De
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective,
+  TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective, tnIconMarker,
 } from '@truenas/ui-components';
 import {
   filter,
@@ -50,6 +50,7 @@ export class ContainerListBulkActionsComponent {
   readonly resetBulkSelection = output();
 
   protected readonly requiredRoles = [Role.ContainerWrite];
+  protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
   private readonly bulkActionStartedMessage = this.translate.instant('Requested action performed for selected Containers');
 

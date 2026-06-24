@@ -1,7 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCardComponent,
+  TnIconComponent,
+  TnListComponent,
+  TnListItemComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
@@ -12,18 +19,25 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    TnButtonComponent,
-    TranslateModule,
+    TnListComponent,
+    TnListItemComponent,
+    TnIconComponent,
     TnTooltipDirective,
-    RouterLink,
+    TnTestIdDirective,
+    TranslateModule,
   ],
 })
 export class ContainerToolsComponent {
   private containersStore = inject(ContainersStore);
+  private router = inject(Router);
 
   protected readonly container = this.containersStore.selectedContainer;
 
   protected readonly isContainerStopped = computed(() => {
     return this.container()?.status?.state !== ContainerStatus.Running;
   });
+
+  protected openShell(containerId: number): void {
+    this.router.navigate(['/containers', 'view', containerId, 'shell']);
+  }
 }

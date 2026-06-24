@@ -4,7 +4,9 @@
   </h3>
 
   @if (!hasPendingInterfaceChanges()) {
-    <ix-add-nic-menu tnCardHeader [defaultBridge]="defaultBridge()"></ix-add-nic-menu>
+    <ng-template tnCardFooterActions>
+      <ix-add-nic-menu [defaultBridge]="defaultBridge()"></ix-add-nic-menu>
+    </ng-template>
   }
 
   @if (hasPendingInterfaceChanges()) {

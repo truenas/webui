@@ -9,6 +9,7 @@ import {
   TnMenuTriggerDirective,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
+  tnIconMarker,
 } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -59,6 +60,7 @@ export class AllContainersHeaderComponent {
   protected readonly searchableElements = allContainersHeaderElements;
   protected readonly config = this.configStore.config;
   protected readonly requiredRoles = [Role.ContainerWrite];
+  protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
   protected readonly configOpen = signal(false);
   protected readonly configForm = viewChild(GlobalConfigFormComponent);

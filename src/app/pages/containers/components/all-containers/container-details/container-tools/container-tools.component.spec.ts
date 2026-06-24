@@ -1,8 +1,6 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 import {
@@ -13,59 +11,49 @@ import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
 describe('ContainerToolsComponent', () => {
   let spectator: Spectator<ContainerToolsComponent>;
-  let loader: HarnessLoader;
-  const selectedContainer = signal<Container>(fakeContainer({
+
+  const runningContainer = fakeContainer({
     id: 1,
-    status: {
-      state: ContainerStatus.Running,
-      pid: 123,
-      domain_state: null,
-    },
-  }));
+    status: { state: ContainerStatus.Running, pid: 123, domain_state: null },
+  });
+
+  const selectedContainer = signal<Container>(runningContainer);
 
   const createComponent = createComponentFactory({
     component: ContainerToolsComponent,
     providers: [
-      mockProvider(ContainersStore, {
-        selectedContainer,
-      }),
+      mockProvider(ContainersStore, { selectedContainer }),
+      mockProvider(Router, { navigate: jest.fn() }),
     ],
   });
 
   beforeEach(() => {
-    selectedContainer.set(fakeContainer({
-      id: 1,
-      status: {
-        state: ContainerStatus.Running,
-        pid: 123,
-        domain_state: null,
-      },
-    }));
+    selectedContainer.set(runningContainer);
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('shell', () => {
-    it('shows a link to shell', async () => {
-      const shellLink = await loader.getHarness(TnButtonHarness.with({ label: 'Shell' }));
-
-      expect(shellLink).toBeTruthy();
-      expect(await shellLink.getHref()).toBe('/containers/view/1/shell');
+    it('shows a Shell row with a trailing icon', () => {
+      expect(spectator.query('tn-list-item')).toHaveText('Shell');
+      expect(spectator.query('tn-icon')).toBeTruthy();
     });
 
-    it('show shell link as disabled when container is not running', async () => {
+    it('navigates to the shell when the Shell row is clicked', () => {
+      spectator.click('tn-list-item');
+
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers', 'view', 1, 'shell']);
+    });
+
+    it('does not navigate when the container is not running', () => {
       selectedContainer.set(fakeContainer({
         id: 1,
-        status: {
-          state: ContainerStatus.Stopped,
-          pid: null,
-          domain_state: null,
-        },
+        status: { state: ContainerStatus.Stopped, pid: null, domain_state: null },
       }));
       spectator.detectChanges();
 
-      const shellLink = await loader.getHarness(TnButtonHarness.with({ label: 'Shell' }));
-      expect(await shellLink.isDisabled()).toBe(true);
+      spectator.click('tn-list-item');
+
+      expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
     });
   });
 });

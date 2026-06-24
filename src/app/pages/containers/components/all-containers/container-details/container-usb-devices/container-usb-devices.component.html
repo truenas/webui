@@ -3,7 +3,9 @@
     {{ 'USB Devices' | translate }}
   </h3>
 
-  <ix-add-usb-device-menu tnCardHeader></ix-add-usb-device-menu>
+  <ng-template tnCardFooterActions>
+    <ix-add-usb-device-menu></ix-add-usb-device-menu>
+  </ng-template>
 
   @if (isLoadingDevices()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
