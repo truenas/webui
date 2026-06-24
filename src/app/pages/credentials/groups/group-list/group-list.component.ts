@@ -23,8 +23,9 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
-import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
+import { buildGroupForm } from 'app/pages/credentials/groups/group-form/group.form-config';
 import { groupListElements } from 'app/pages/credentials/groups/group-list/group-list.elements';
 import { groupPageEntered, groupRemoved } from 'app/pages/credentials/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/credentials/groups/store/group.selectors';
@@ -61,6 +62,7 @@ export class GroupListComponent implements OnInit {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private formPanel = inject(FormSidePanelService);
+  private api = inject(ApiService);
 
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = groupListElements;
@@ -182,9 +184,15 @@ export class GroupListComponent implements OnInit {
   }
 
   private openGroupForm(group: Group | undefined): void {
-    this.formPanel.open(GroupFormComponent, {
-      title: group ? this.translate.instant('Edit Group') : this.translate.instant('Add Group'),
-      inputs: { group },
+    // The group form needs async setup (privilege list + selection, forbidden names, next GID)
+    // before its declarative definition can be built; resolve it, then host the renderer.
+    buildGroupForm(this.api, this.translate, this.store$, group).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(({ definition, editData }) => {
+      this.formPanel.openForm(definition, {
+        title: group ? this.translate.instant('Edit Group') : this.translate.instant('Add Group'),
+        editData,
+      });
     });
   }
 

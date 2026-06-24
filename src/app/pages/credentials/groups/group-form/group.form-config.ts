@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { TnSelectOption } from '@truenas/ui-components';
 import { Observable, combineLatest, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
 import { helptextGroups } from 'app/helptext/account/groups';
@@ -16,8 +16,8 @@ import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
-import { GroupSlice } from 'app/pages/credentials/groups/store/group.selectors';
 import { UserService } from 'app/services/user.service';
+import { AppState } from 'app/store';
 
 /** Shape of the group form built by the renderer (matches the field list below). */
 export interface GroupFormValue {
@@ -32,16 +32,16 @@ export interface GroupFormValue {
 }
 
 /**
- * Everything the config needs, resolved upfront by the host wrapper. The wrapper
- * does the async setup (privilege.query, group.query, group.get_next_gid) so the
- * declarative definition can stay synchronous: `privileges`/`initialPrivilegeIds`
- * are read at submit time to diff which privileges to (un)assign, `gidDefault`
- * pre-fills the GID in add mode, and `forbiddenNames` powers the uniqueness rule.
+ * Everything the config needs, resolved upfront by {@link buildGroupForm}. The async
+ * setup (privilege.query, group.query, group.get_next_gid) is done there so the declarative
+ * definition can stay synchronous: `privileges`/`initialPrivilegeIds` are read at submit
+ * time to diff which privileges to (un)assign, `gidDefault` pre-fills the GID in add mode,
+ * and `forbiddenNames` powers the uniqueness rule.
  */
 export interface GroupFormConfigDeps {
   api: ApiService;
   translate: TranslateService;
-  store$: Store<GroupSlice>;
+  store$: Store<AppState>;
   editingGroup: Group | undefined;
   privilegeOptions$: Observable<TnSelectOption[]>;
   privileges: Privilege[];
@@ -210,5 +210,70 @@ function mapPrivilegeToPrivilegeUpdate(privilege: Privilege, localGroups: number
     name: privilege.name,
     roles: privilege.roles,
     web_shell: privilege.web_shell,
+  };
+}
+
+/**
+ * Resolves the async data the declarative config can't express (privilege list +
+ * current selection, forbidden names, next GID) and returns the ready-to-host
+ * definition + edit data. Callers fetch this, then `formPanel.openForm(...)`.
+ */
+export function buildGroupForm(
+  api: ApiService,
+  translate: TranslateService,
+  store$: Store<AppState>,
+  editingGroup: Group | undefined,
+): Observable<{ definition: FormDefinition<GroupFormValue>; editData: Partial<GroupFormValue> | undefined }> {
+  return combineLatest([
+    api.call('privilege.query'),
+    api.call('group.query'),
+    editingGroup ? of(null) : api.call('group.get_next_gid'),
+  ]).pipe(
+    take(1),
+    map(([privileges, groups, gidDefault]) => {
+      const initialPrivilegeIds = editingGroup
+        ? privileges
+            .filter((privilege) => privilege.local_groups.some((local) => local.gid === editingGroup.gid))
+            .map((privilege) => privilege.id)
+        : [];
+
+      const privilegeOptions$ = of<TnSelectOption[]>(
+        privileges.map((privilege) => ({ label: privilege.name, value: privilege.id })),
+      );
+
+      const forbiddenNames = groups
+        .map((group) => group.group)
+        .filter((name) => name !== editingGroup?.group);
+
+      const definition = getGroupFormConfig({
+        api,
+        translate,
+        store$,
+        editingGroup,
+        privilegeOptions$,
+        privileges,
+        initialPrivilegeIds,
+        forbiddenNames,
+        gidDefault,
+      });
+
+      const editData = editingGroup ? toEditData(editingGroup, initialPrivilegeIds) : undefined;
+      return { definition, editData };
+    }),
+  );
+}
+
+/** Maps a Group entity onto the form shape (GID comes from the config's value). */
+function toEditData(group: Group, privilegeIds: number[]): Partial<GroupFormValue> {
+  const allSudo = !!group.sudo_commands?.includes(allCommands);
+  const allSudoNoPass = !!group.sudo_commands_nopasswd?.includes(allCommands);
+  return {
+    name: group.group,
+    sudo_commands: allSudo ? [] : (group.sudo_commands ?? []),
+    sudo_commands_all: allSudo,
+    sudo_commands_nopasswd: allSudoNoPass ? [] : (group.sudo_commands_nopasswd ?? []),
+    sudo_commands_nopasswd_all: allSudoNoPass,
+    smb: group.smb,
+    privileges: privilegeIds,
   };
 }
