@@ -5,7 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
+  TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
@@ -15,7 +16,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -437,7 +437,7 @@ describe('AppWizardComponent', () => {
       const hostNetwork = await loader.getHarness(
         TnCheckboxHarness.with({ label: 'Provide access to node network namespace for the workload' }),
       );
-      const updateStrategy = await loader.getHarness(IxComboboxHarness.with({ label: 'Update Strategy' }));
+      const updateStrategy = await loader.getHarness(TnAutocompleteHarness);
 
       expect(await releaseName.getValue()).toBe('ipfs');
       expect(await version.getDisplayText()).toBe('Version: 0.9.1 / Revision: 1.2.1');
@@ -445,7 +445,7 @@ describe('AppWizardComponent', () => {
       expect(await gatewayPort.getValue()).toBe('9880');
       expect(await swarmPort.getValue()).toBe('9401');
       expect(await hostNetwork.isChecked()).toBe(false);
-      expect(await updateStrategy.getValue()).toBe('Create new containers and then kill old ones');
+      expect(await updateStrategy.getInputValue()).toBe('Create new containers and then kill old ones');
     });
 
     it('creating when form is submitted', async () => {
@@ -455,13 +455,16 @@ describe('AppWizardComponent', () => {
       const hostNetwork = await loader.getHarness(
         TnCheckboxHarness.with({ label: 'Provide access to node network namespace for the workload' }),
       );
-      const updateStrategy = await loader.getHarness(IxComboboxHarness.with({ label: 'Update Strategy' }));
+      const updateStrategy = await loader.getHarness(TnAutocompleteHarness);
 
       await releaseName.setValue('appname');
       await apiPort.setValue('9599');
       await gatewayPort.setValue('9822');
       await hostNetwork.check();
-      await updateStrategy.setValue('Kill existing containers before creating new ones');
+      // The input holds the current value, which filters the panel; clear it via a search
+      // term before selecting a different option.
+      await updateStrategy.setInputValue('Kill');
+      await updateStrategy.selectOption('Kill existing containers before creating new ones');
 
       const version = await loader.getHarness(TnSelectHarness.with({ displayText: /Version:/ }));
       const swarmPort = await loader.getHarness(TnInputHarness.with({ name: 'swarmPort' }));
@@ -471,7 +474,7 @@ describe('AppWizardComponent', () => {
       expect(await apiPort.getValue()).toBe('9599');
       expect(await gatewayPort.getValue()).toBe('9822');
       expect(await swarmPort.getValue()).toBe('9401');
-      expect(await updateStrategy.getValue()).toBe('Kill existing containers before creating new ones');
+      expect(await updateStrategy.getInputValue()).toBe('Kill existing containers before creating new ones');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
       await saveButton.click();

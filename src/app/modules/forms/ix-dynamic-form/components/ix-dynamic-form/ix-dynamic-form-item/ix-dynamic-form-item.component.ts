@@ -4,9 +4,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  InputType, TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent, TnIconComponent,
+  TnInputComponent, TnSelectComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -19,11 +20,8 @@ import {
   DynamicFormSchemaNode, DynamicFormSchemaSelect, DynamicFormSchemaText,
   DynamicFormSchemaUri,
 } from 'app/interfaces/dynamic-form-schema.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import {
   ExplorerCreateDatasetComponent,
@@ -34,7 +32,6 @@ import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-li
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @Component({
   selector: 'ix-dynamic-form-item',
@@ -44,7 +41,8 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   imports: [
     ReactiveFormsModule,
     SchedulerComponent,
-    TooltipComponent,
+    TnTooltipDirective,
+    TnIconComponent,
     IxCodeEditorComponent,
     IxListComponent,
     IxListItemComponent,
@@ -53,7 +51,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
-    IxComboboxComponent,
+    TnAutocompleteComponent,
     IxExplorerComponent,
     IxIpInputWithNetmaskComponent,
     TranslateModule,
@@ -140,10 +138,6 @@ export class IxDynamicFormItemComponent implements OnInit {
 
   removeControlNext(event: DeleteListItemEvent): void {
     this.deleteListItem.emit(event);
-  }
-
-  getEnumTypeProvider(options$: Observable<Option[]>): SimpleAsyncComboboxProvider {
-    return new SimpleAsyncComboboxProvider(options$);
   }
 
   protected asInputSchema(schema: DynamicFormSchemaNode): DynamicFormSchemaInput {

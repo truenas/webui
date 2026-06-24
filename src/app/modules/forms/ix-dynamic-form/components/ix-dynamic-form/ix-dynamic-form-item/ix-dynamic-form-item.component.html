@@ -25,11 +25,14 @@
 
               @if (dictSchema.tooltip) {
                 <div class="label-tooltip">
-                  <ix-tooltip
+                  <button
+                    type="button"
                     class="tooltip"
-                    [header]="dictSchema.title"
-                    [message]="dictSchema.tooltip"
-                  ></ix-tooltip>
+                    [attr.aria-label]="dictSchema.tooltip"
+                    [tnTooltip]="dictSchema.tooltip"
+                  >
+                    <tn-icon name="help-circle" library="mdi" size="sm"></tn-icon>
+                  </button>
                 </div>
               }
             </div>
@@ -154,13 +157,18 @@
 
         @case (DynamicFormSchemaType.Enum) {
           @let enumSchema = asEnumSchema(schema);
-          <ix-combobox
-            [formControlName]="enumSchema.controlName"
+          <tn-form-field
             [label]="enumSchema.title ? (enumSchema.title | translate) : ''"
-            [provider]="getEnumTypeProvider(enumSchema.options)"
             [tooltip]="enumSchema.tooltip ? (enumSchema.tooltip | translate) : ''"
             [required]="enumSchema.required || false"
-          ></ix-combobox>
+          >
+            <tn-autocomplete
+              [testId]="enumSchema.controlName"
+              [formControlName]="enumSchema.controlName"
+              [options]="(enumSchema.options | async) ?? []"
+              [requireSelection]="true"
+            ></tn-autocomplete>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Explorer) {
