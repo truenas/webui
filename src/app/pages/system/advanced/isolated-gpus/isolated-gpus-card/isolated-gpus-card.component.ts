@@ -1,21 +1,18 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, ViewEncapsulation, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { switchMap, tap } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnEmptyComponent,
+  TnSidePanelActionDirective, TnSidePanelComponent,
+} from '@truenas/ui-components';
+import { Observable, of, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { Device } from 'app/interfaces/device.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { isolatedGpusCardElements } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.elements';
 import {
   IsolatedGpusFormComponent,
@@ -28,28 +25,24 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   styleUrls: ['./isolated-gpus-card.component.scss'],
   templateUrl: './isolated-gpus-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
+    TnEmptyComponent,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnButtonComponent,
+    IsolatedGpusFormComponent,
     TranslateModule,
-    EmptyComponent,
   ],
 })
 export class IsolatedGpusCardComponent implements OnInit {
   private firstTimeWarning = inject(FirstTimeWarningService);
   private gpuService = inject(GpuService);
   private cdr = inject(ChangeDetectorRef);
-  private slideIn = inject(SlideIn);
-  private translate = inject(TranslateService);
+  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
@@ -57,12 +50,8 @@ export class IsolatedGpusCardComponent implements OnInit {
   isolatedGpus: Device[] = [];
   protected readonly searchableElements = isolatedGpusCardElements;
 
-  readonly emptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No Isolated GPU Device(s) configured'),
-    large: false,
-    message: this.translate.instant('To configure Isolated GPU Device(s), click the "Configure" button.'),
-  };
+  protected configOpen = signal(false);
+  protected configForm = viewChild(IsolatedGpusFormComponent);
 
   get isolatedGpuNames(): string {
     return this.isolatedGpus.map((gpu) => gpu.description).join(', ');
@@ -72,12 +61,24 @@ export class IsolatedGpusCardComponent implements OnInit {
     this.loadIsolatedGpus();
   }
 
+  protected readonly closeGuard = (): Observable<boolean> => {
+    return this.configForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
+
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(IsolatedGpusFormComponent).success$),
-      tap(() => this.loadIsolatedGpus()),
+      take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    ).subscribe(() => this.configOpen.set(true));
+  }
+
+  protected onConfigClosed(saved: boolean): void {
+    this.configOpen.set(false);
+    if (saved) {
+      this.loadIsolatedGpus();
+    }
   }
 
   private loadIsolatedGpus(): void {

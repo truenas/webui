@@ -1,21 +1,22 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnSidePanelActionDirective, TnSidePanelComponent,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  finalize, switchMap,
+  Observable, finalize, of, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { failoverCardElements } from 'app/pages/system/advanced/failover/failover-card.elements';
 import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
@@ -25,30 +26,27 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 @Component({
   selector: 'ix-failover-card',
   templateUrl: './failover-card.component.html',
-  styleUrls: [
-    '../../general-settings/common-settings-card.scss',
-  ],
+  styleUrls: ['./failover-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatCard,
-    MatCardContent,
-    MatList,
-    MatListItem,
-    MatToolbarRow,
+    TnButtonComponent,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     RequiresRolesDirective,
     TranslateModule,
-    TestDirective,
     YesNoPipe,
     NgxSkeletonLoaderModule,
     UiSearchDirective,
+    FailoverFormComponent,
   ],
 })
 export class FailoverCardComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = failoverCardElements;
@@ -57,9 +55,18 @@ export class FailoverCardComponent implements OnInit {
   protected isLoading = signal(false);
   protected config = signal<FailoverConfig | null>(null);
 
+  protected configOpen = signal(false);
+  protected configForm = viewChild(FailoverFormComponent);
+
   ngOnInit(): void {
     this.loadConfig();
   }
+
+  protected readonly closeGuard = (): Observable<boolean> => {
+    return this.configForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
 
   private loadConfig(): void {
     this.isLoading.set(true);
@@ -77,9 +84,16 @@ export class FailoverCardComponent implements OnInit {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(FailoverFormComponent, { data: this.config() }).success$),
+      take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadConfig());
+    ).subscribe(() => this.configOpen.set(true));
+  }
+
+  protected onConfigClosed(saved: boolean): void {
+    this.configOpen.set(false);
+    if (saved) {
+      this.loadConfig();
+    }
   }
 
   // TODO: Add search elements

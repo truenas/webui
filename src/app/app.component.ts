@@ -2,15 +2,14 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import { filter, tap } from 'rxjs';
 import { isSigninUrl } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { PingService } from 'app/modules/websocket/ping.service';
 import { WebSocketDebugPanelComponent } from 'app/modules/websocket-debug-panel/websocket-debug-panel.component';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
@@ -29,10 +28,9 @@ export class AppComponent implements OnInit {
   private detectBrowser = inject(DetectBrowserService);
   private layoutService = inject(LayoutService);
   private dialog = inject(DialogService);
-  private snackbar = inject(SnackbarService);
-  private translate = inject(TranslateService);
   private window = inject<Window>(WINDOW);
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private pingService = inject(PingService);
   private destroyRef = inject(DestroyRef);
 
@@ -71,6 +69,7 @@ export class AppComponent implements OnInit {
       // save currenturl
       if (event instanceof NavigationEnd) {
         this.slideIn.closeAll();
+        this.formPanel.closeAll();
         const navigation = this.router.currentNavigation();
         if (this.isAuthenticated && !isSigninUrl(event.url) && !navigation?.extras?.skipLocationChange) {
           this.window.sessionStorage.setItem('redirectUrl', event.url);

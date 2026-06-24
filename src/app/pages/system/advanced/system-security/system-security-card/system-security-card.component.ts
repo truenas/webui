@@ -1,53 +1,53 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { ChangeDetectionStrategy, Component, inject, viewChild, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  Subject, shareReplay, startWith, switchMap,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnSidePanelActionDirective, TnSidePanelComponent,
+} from '@truenas/ui-components';
+import {
+  Observable, Subject, of, shareReplay, startWith, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { systemSecurityCardElements } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.elements';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 
 @Component({
   selector: 'ix-system-security-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./system-security-card.component.scss'],
   templateUrl: './system-security-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     WithLoadingStateDirective,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnButtonComponent,
     TranslateModule,
     UiSearchDirective,
+    SystemSecurityFormComponent,
   ],
 })
 export class SystemSecurityCardComponent {
   protected readonly searchableElements = systemSecurityCardElements;
 
-  private slideIn = inject(SlideIn);
   private api = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
+  private unsavedChanges = inject(UnsavedChangesService);
 
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
+
+  protected configOpen = signal(false);
+  protected configForm = viewChild(SystemSecurityFormComponent);
+
   readonly systemSecurityConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.api.call('system.security.config').pipe(toLoadingState())),
@@ -59,9 +59,20 @@ export class SystemSecurityCardComponent {
 
   protected readonly rulesetLabels = passwordComplexityRulesetLabels;
 
-  openSystemSecuritySettings(config: SystemSecurityConfig): void {
-    this.slideIn.open(SystemSecurityFormComponent, { data: config }).onSuccess(() => {
+  protected readonly closeGuard = (): Observable<boolean> => {
+    return this.configForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
+
+  onConfigure(): void {
+    this.configOpen.set(true);
+  }
+
+  protected onConfigClosed(saved: boolean): void {
+    this.configOpen.set(false);
+    if (saved) {
       this.reloadConfig$.next();
-    }, this.destroyRef);
+    }
   }
 }

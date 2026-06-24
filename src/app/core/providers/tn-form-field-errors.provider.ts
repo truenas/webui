@@ -132,6 +132,16 @@ export function provideTnFormFieldErrors(): Provider {
           return customMessage;
         }
 
+        // Backend (API) validation errors are mapped onto controls by
+        // `FormErrorHandlerService`, which sets `manualValidateError: true` (a bare
+        // flag, rendered first by tn-form-field) alongside the real message in the
+        // sibling `manualValidateErrorMsg` key. Surface that sibling message — the
+        // legacy `ix-errors` component had equivalent special-casing.
+        if (errorKey === 'manualValidateError') {
+          const message = control?.errors?.['manualValidateErrorMsg'];
+          return typeof message === 'string' ? message : null;
+        }
+
         return translateError(translate, errorKey, control?.errors ?? { [errorKey]: errorValue });
       };
     },

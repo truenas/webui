@@ -52,7 +52,7 @@ export class ServiceUpsComponent extends SidePanelForm implements OnInit {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.SystemGeneralWrite];
+  readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);

@@ -1,12 +1,13 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -18,9 +19,8 @@ describe('AuditCardComponent', () => {
     component: AuditCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => of(true)),
-      }),
+      mockProvider(SnackbarService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
@@ -32,7 +32,9 @@ describe('AuditCardComponent', () => {
           quota_fill_warning: 80,
           quota_fill_critical: 95,
         }),
+        mockCall('audit.update'),
       ]),
+      provideMockStore(),
     ],
   });
 
@@ -41,9 +43,9 @@ describe('AuditCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows audit related settings', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+  it('shows audit related settings', () => {
+    const rows = spectator.queryAll('.details-item');
+    const itemTexts = rows.map((row) => row.textContent.replace(/\s+/g, ' ').trim());
 
     expect(itemTexts).toEqual([
       'Retention: 30 days',
@@ -54,10 +56,26 @@ describe('AuditCardComponent', () => {
     ]);
   });
 
-  it('opens Audit form when Configure button is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
-    await configureButton.click();
+  it('opens the Audit form in a side panel when Configure is pressed', async () => {
+    expect(spectator.query('ix-audit-form')).toBeNull();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AuditFormComponent);
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+
+    expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
+    expect(spectator.query('ix-audit-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-audit-form')).not.toBeNull();
+
+    spectator.query(AuditFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-audit-form')).toBeNull();
   });
 });

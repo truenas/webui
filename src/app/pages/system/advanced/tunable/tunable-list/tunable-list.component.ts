@@ -1,10 +1,24 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit,
+  computed, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnSidePanelActionDirective,
+  TnSidePanelComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { Observable, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -13,18 +27,15 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.elements';
@@ -38,16 +49,21 @@ import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-l
     PageHeaderComponent,
     BasicSearchComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
     UiSearchDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
+    TableActionsCellComponent,
     TnTablePagerComponent,
+    TunableFormComponent,
     TranslateModule,
     AsyncPipe,
+    YesNoPipe,
   ],
 })
 export class TunableListComponent implements OnInit {
@@ -56,55 +72,60 @@ export class TunableListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemTunableWrite];
   protected readonly searchableElements = tunableListElements;
 
+  protected configOpen = signal(false);
+  protected editingTunable = signal<Tunable | undefined>(undefined);
+  protected configForm = viewChild(TunableFormComponent);
+
+  protected readonly panelTitle = computed(() => {
+    const tunable = this.editingTunable();
+    if (!tunable) {
+      return this.translate.instant('Add Tunable');
+    }
+    const type = tunable.type?.toUpperCase() || '';
+    return this.translate.instant('Edit Tunable ({type})', { type });
+  });
+
   dataProvider: AsyncDataProvider<Tunable>;
   searchQuery = signal('');
   tunables: Tunable[] = [];
-  columns = createTable<Tunable>([
-    textColumn({
-      title: this.translate.instant('Variable'),
-      propertyName: 'var',
-    }),
-    textColumn({
-      title: this.translate.instant('Value'),
-      propertyName: 'value',
-    }),
-    textColumn({
-      title: this.translate.instant('Type'),
-      propertyName: 'type',
-    }),
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'comment',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'tunable-' + row.var + '-' + row.value,
-    ariaLabels: (row) => [row.var, this.translate.instant('Tunable')],
-  });
+
+  protected readonly displayedColumns = ['var', 'value', 'type', 'comment', 'enabled', 'actions'];
+
+  protected readonly trackByTunableId = (_: number, row: Tunable): number => row.id;
+
+  protected readonly actions: IconActionConfig<Tunable>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected uniqueRowTag(row: Tunable): string {
+    return convertStringToId('tunable-' + row.var + '-' + row.value);
+  }
+
+  protected ariaLabel(row: Tunable): string {
+    return [row.var, this.translate.instant('Tunable')].join(' ');
+  }
+
+  protected readonly closeGuard = (): Observable<boolean> => {
+    return this.configForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
 
   ngOnInit(): void {
     const tunables$ = this.api.call('tunable.query').pipe(
@@ -124,11 +145,21 @@ export class TunableListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(TunableFormComponent).onSuccess(() => this.getTunables(), this.destroyRef);
+    this.editingTunable.set(undefined);
+    this.configOpen.set(true);
   }
 
   protected doEdit(tunable: Tunable): void {
-    this.slideIn.open(TunableFormComponent, { data: tunable }).onSuccess(() => this.getTunables(), this.destroyRef);
+    this.editingTunable.set(tunable);
+    this.configOpen.set(true);
+  }
+
+  protected onConfigClosed(saved: boolean): void {
+    this.configOpen.set(false);
+    this.editingTunable.set(undefined);
+    if (saved) {
+      this.getTunables();
+    }
   }
 
   protected doDelete(tunable: Tunable): void {
@@ -155,9 +186,13 @@ export class TunableListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<Tunable>(event, this.displayedColumns));
+  }
+
   protected setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 1,
+      active: 0,
       direction: SortDirection.Asc,
       propertyName: 'var',
     });

@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
+  InputType, TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
+import {
   EMPTY,
-  of,
 } from 'rxjs';
 import {
   catchError, tap,
@@ -16,14 +16,11 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -32,22 +29,21 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 @Component({
   selector: 'ix-audit-form',
   templateUrl: 'audit-form.component.html',
+  styleUrls: ['./audit-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class AuditFormComponent implements OnInit {
+export class AuditFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -55,10 +51,11 @@ export class AuditFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private formErrorHandler = inject(FormErrorHandlerService);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAuditWrite];
+
+  protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);
 
@@ -78,6 +75,8 @@ export class AuditFormComponent implements OnInit {
     ],
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   readonly tooltips = {
     retention: helptext.retentionTooltip,
     reservation: helptext.reservationTooltip,
@@ -85,12 +84,6 @@ export class AuditFormComponent implements OnInit {
     quota_fill_warning: helptext.quotaFillWarningTooltip,
     quota_fill_critical: helptext.quotaFillCriticalTooltip,
   };
-
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
 
   ngOnInit(): void {
     this.loadForm();
@@ -104,7 +97,7 @@ export class AuditFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       }),
       catchError((error: unknown) => {
         this.isFormLoading.set(false);

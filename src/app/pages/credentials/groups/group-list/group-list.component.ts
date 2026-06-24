@@ -22,7 +22,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 import { groupListElements } from 'app/pages/credentials/groups/group-list/group-list.elements';
@@ -56,11 +56,11 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 })
 export class GroupListComponent implements OnInit {
   private emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private formPanel = inject(FormSidePanelService);
 
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = groupListElements;
@@ -68,6 +68,7 @@ export class GroupListComponent implements OnInit {
   protected readonly dataProvider = new ArrayDataProvider<Group>();
   protected readonly currentPage = toSignal(this.dataProvider.currentPage$, { initialValue: [] as Group[] });
   protected readonly table = viewChild(TnTableComponent<Group>);
+
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
 
@@ -173,7 +174,18 @@ export class GroupListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(GroupFormComponent);
+    this.openGroupForm(undefined);
+  }
+
+  protected doEdit(group: Group): void {
+    this.openGroupForm(group);
+  }
+
+  private openGroupForm(group: Group | undefined): void {
+    this.formPanel.open(GroupFormComponent, {
+      title: group ? this.translate.instant('Edit Group') : this.translate.instant('Add Group'),
+      inputs: { group },
+    });
   }
 
   protected onListFiltered(query: string): void {

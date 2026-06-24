@@ -1,59 +1,64 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  Component, ChangeDetectionStrategy, DestroyRef, OnInit, signal, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import {
+  InputType,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
+import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-ntp-servers-form',
   templateUrl: './ntp-servers-form.component.html',
+  styleUrls: ['./ntp-servers-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class NtpServersFormComponent implements OnInit {
+export class NtpServersFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private errorHandler = inject(FormErrorHandlerService);
-  slideInRef = inject<SlideInRef<NtpServer | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
+  protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);
   protected editingServer: NtpServer | undefined;
 
-  formGroup = this.fb.nonNullable.group({
+  /**
+   * Row to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
+   * carry data). Absent for Add, and unused in the legacy SlideIn host (which
+   * supplies the row via `slideInRef.getData()`).
+   */
+  readonly editServer = input<NtpServer | undefined>(undefined);
+
+  form = this.fb.nonNullable.group({
     address: [''],
     burst: [false],
     iburst: [true],
@@ -71,6 +76,8 @@ export class NtpServersFormComponent implements OnInit {
     ],
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   readonly helptext = helptext;
 
   get isNew(): boolean {
@@ -81,14 +88,10 @@ export class NtpServersFormComponent implements OnInit {
     return this.isNew ? this.translate.instant('Add NTP Server') : this.translate.instant('Edit NTP Server');
   }
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.formGroup.dirty);
-    });
-    this.editingServer = this.slideInRef.getData();
-  }
-
   ngOnInit(): void {
+    this.editingServer = this.slideInRef
+      ? this.slideInRef.getData() as NtpServer | undefined
+      : this.editServer();
     if (this.editingServer) {
       this.setupForm(this.editingServer);
     }
@@ -98,7 +101,7 @@ export class NtpServersFormComponent implements OnInit {
    * @param server Skip argument to add new server.
    */
   protected setupForm(server: NtpServer): void {
-    this.formGroup.patchValue({
+    this.form.patchValue({
       address: server.address,
       burst: server.burst,
       iburst: server.iburst,
@@ -109,7 +112,7 @@ export class NtpServersFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const values = this.formGroup.getRawValue();
+    const values = this.form.getRawValue();
     const body: CreateNtpServer = {
       address: values.address,
       burst: values.burst,
@@ -131,11 +134,11 @@ export class NtpServersFormComponent implements OnInit {
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.form);
       },
     });
   }

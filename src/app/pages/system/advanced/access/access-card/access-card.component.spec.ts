@@ -1,10 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -12,15 +10,14 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
@@ -65,6 +62,8 @@ describe('AccessCardComponent', () => {
         mockCall('auth.sessions', sessions),
         mockCall('auth.terminate_session'),
         mockCall('auth.terminate_other_sessions'),
+        mockCall('system.general.update'),
+        mockCall('system.advanced.update'),
       ]),
       provideMockStore({
         initialState: {
@@ -93,13 +92,15 @@ describe('AccessCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInRef),
+      mockProvider(SnackbarService),
+      mockProvider(FormErrorHandlerService),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
+      }),
       mockProvider(SystemGeneralService),
       mockAuth(),
     ],
@@ -110,22 +111,37 @@ describe('AccessCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows whether DS users are allowed access to WebUI', async () => {
-    const allowed = (await loader.getAllHarnesses(MatListItemHarness))[0];
-    expect(await allowed.getFullText()).toBe('Allow Directory Service users to access WebUI: Yes');
+  it('shows whether DS users are allowed access to WebUI', () => {
+    const allowed = spectator.queryAll('.details-item')[0];
+    expect(allowed.textContent.replace(/\s+/g, ' ').trim()).toBe('Allow Directory Service users to access WebUI: Yes');
   });
 
-  it('shows current login banner', async () => {
-    const loginBanner = (await loader.getAllHarnesses(MatListItemHarness))[1];
-    expect(await loginBanner.getFullText()).toBe('Login Banner: Hello World!');
+  it('shows current login banner', () => {
+    const loginBanner = spectator.queryAll('.details-item')[1];
+    expect(loginBanner.textContent.replace(/\s+/g, ' ').trim()).toBe('Login Banner: Hello World!');
   });
 
-  it('opens Token settings form when Configure is pressed', async () => {
-    const configure = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+  it('opens the Access settings form in a side panel when Configure is pressed', async () => {
+    expect(spectator.query('ix-access-form')).toBeNull();
+
+    const configure = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configure.click();
+    spectator.detectChanges();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AccessFormComponent);
+    expect(spectator.query('ix-access-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configure = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configure.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-access-form')).not.toBeNull();
+
+    spectator.query(AccessFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-access-form')).toBeNull();
   });
 
   it('terminates the session when corresponding Terminate is pressed', async () => {
@@ -140,7 +156,7 @@ describe('AccessCardComponent', () => {
   });
 
   it('terminates other sessions when corresponding Terminate Other Sessions is pressed', async () => {
-    const terminateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Terminate Other Sessions' }));
+    const terminateButton = await loader.getHarness(TnButtonHarness.with({ label: 'Terminate Other Sessions' }));
     await terminateButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.terminate_other_sessions');
@@ -148,7 +164,6 @@ describe('AccessCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Username', 'Start session time', ''],
       ['user-0', '2023-08-24 03:00:27', ''],
       ['user-1', '2023-08-24 03:00:27', ''],
       ['user-2', '2023-08-24 03:00:27', ''],
@@ -156,8 +171,8 @@ describe('AccessCardComponent', () => {
       ['user-4', '2023-08-24 03:00:27', ''],
     ];
 
-    const table = await loader.getHarness(IxTableHarness);
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.getHeaderTexts()).toEqual(['Username', 'Start session time', '']);
+    expect(await table.getAllRowTexts()).toEqual(expectedRows);
   });
 });

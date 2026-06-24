@@ -1,19 +1,31 @@
+@import 'mixins/forms';
+
+@include tn-form-field-spacing-slide-in();
+
 .form-actions {
   button {
     margin-top: 10px;
   }
 }
 
-mat-hint {
+.stig-hints {
+  color: var(--fg2);
+  display: block;
   font-size: 12px;
 
   .stig-info {
     color: var(--orange);
     font-weight: 500;
   }
+
+  &.stig-info {
+    color: var(--orange);
+    font-weight: 500;
+  }
 }
 
-mat-error {
+.stig-errors {
+  color: var(--red);
   display: block;
   font-size: 12px;
   margin-top: 5px;
