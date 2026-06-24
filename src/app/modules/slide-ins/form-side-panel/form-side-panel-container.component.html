@@ -1,0 +1,27 @@
+<tn-side-panel
+  closeButtonTestId="close-side-panel"
+  [title]="title()"
+  [width]="width()"
+  [testId]="testId()"
+  [closeGuard]="closeGuard"
+  [open]="open()"
+  (openChange)="open.set($event)"
+  (closed)="panelClosed.emit()"
+>
+  <ng-template
+    [cdkPortalOutlet]="portal()"
+    (attached)="onPortalAttached($event)"
+  ></ng-template>
+
+  @if (form(); as form) {
+    <tn-button
+      *ixRequiresRoles="form.requiredRoles || []"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="saveLabel() | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

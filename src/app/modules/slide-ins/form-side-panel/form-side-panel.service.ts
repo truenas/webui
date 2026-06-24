@@ -1,0 +1,93 @@
+import { ComponentPortal } from '@angular/cdk/portal';
+import { DOCUMENT } from '@angular/common';
+import {
+  ApplicationRef, createComponent, EnvironmentInjector, inject, Injectable, Injector, Type,
+} from '@angular/core';
+import { Subject } from 'rxjs';
+import {
+  FormSidePanelContainerComponent,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
+
+export interface FormSidePanelOptions {
+  /** Panel header text. */
+  title?: string;
+  /** Explicit panel width; overrides {@link wide}. */
+  width?: string;
+  /** Convenience for two-column forms — `800px` instead of the default `480px`. */
+  wide?: boolean;
+  /** Test-id applied to the panel root. */
+  testId?: string;
+  /** Inputs set on the hosted form before its `ngOnInit` (e.g. the record being edited). */
+  inputs?: Record<string, unknown>;
+}
+
+/**
+ * Opens a {@link SidePanelForm} in a `tn-side-panel`, imperatively — the form's host-agnostic
+ * "side-panel" mode (no {@link SlideInRef}; exposes `closed` / `canSubmit` / `submit`).
+ *
+ * This is the go-forward replacement for declaring a `<tn-side-panel>` in every card/page that
+ * hosts a config form: callers just `open(FormComponent)` and the chrome (header, close button,
+ * focus trap, footer Save, unsaved-changes guard) lives in one place.
+ *
+ * ```ts
+ * this.formPanel.open(ServiceNfsComponent, { title: 'NFS', wide: true })
+ *   .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+ * ```
+ */
+@Injectable({ providedIn: 'root' })
+export class FormSidePanelService {
+  private appRef = inject(ApplicationRef);
+  private environmentInjector = inject(EnvironmentInjector);
+  private injector = inject(Injector);
+  private document = inject(DOCUMENT);
+
+  open<R = boolean>(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): SlideInResult<R> {
+    const close$ = new Subject<SlideInResponse<R>>();
+    // Defaults to a cancel; overwritten with the form's response when it closes itself via save.
+    let pendingResponse: R | undefined;
+
+    const portal = new ComponentPortal<SidePanelForm>(component, null, this.injector);
+    const containerRef = createComponent(FormSidePanelContainerComponent, {
+      environmentInjector: this.environmentInjector,
+    });
+
+    containerRef.setInput('title', options.title ?? '');
+    containerRef.setInput('width', options.width ?? (options.wide ? '800px' : '480px'));
+    containerRef.setInput('testId', options.testId);
+    containerRef.setInput('formInputs', options.inputs ?? {});
+    containerRef.setInput('portal', portal);
+
+    containerRef.instance.formAttached.subscribe((form) => {
+      // Form-initiated close (save / cancel). `saved === true` is the only success; everything
+      // else is a cancellation, matching SlideInResult's `=== undefined` convention.
+      form.closed.subscribe((saved) => {
+        pendingResponse = saved ? (saved as unknown as R) : undefined;
+        containerRef.setInput('open', false);
+      });
+    });
+
+    containerRef.instance.panelClosed.subscribe(() => {
+      close$.next({ response: pendingResponse });
+      close$.complete();
+      this.appRef.detachView(containerRef.hostView);
+      containerRef.destroy();
+    });
+
+    this.appRef.attachView(containerRef.hostView);
+    this.document.body.appendChild(containerRef.location.nativeElement as HTMLElement);
+
+    // Defer opening until the panel has painted in its closed (off-screen) state, otherwise
+    // tn-side-panel's transform transition has nothing to animate from and the panel just
+    // appears. Two frames guarantee a paint with the `--initialized` class applied first.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (!containerRef.hostView.destroyed) {
+        containerRef.setInput('open', true);
+      }
+    }));
+
+    return new SlideInResult<R>(close$);
+  }
+}

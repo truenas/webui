@@ -111,25 +111,3 @@
     ></ix-table-pager-show-more>
   }
 </tn-card>
-
-<tn-side-panel
-  [title]="'NVMe-oF Global Configuration' | translate"
-  [closeGuard]="closeConfigGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-nvme-of-configuration (closed)="onConfigClosed()"></ix-nvme-of-configuration>
-  }
-  @if (configForm(); as form) {
-    <div tnSidePanelAction>
-      <tn-button
-        *ixRequiresRoles="form.requiredRoles"
-        color="primary"
-        [ixTest]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="!form.canSubmit()"
-        (onClick)="form.submit()"
-      ></tn-button>
-    </div>
-  }
-</tn-side-panel>

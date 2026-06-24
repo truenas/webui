@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, viewChild, DestroyRef,
+  ChangeDetectionStrategy, Component, computed, inject, OnInit, DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -18,8 +18,6 @@ import {
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
   TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
@@ -46,6 +44,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -78,8 +77,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCardHeaderActionsDirective,
     TnCardFooterActionsDirective,
     TnSlideToggleComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     RequiresRolesDirective,
     TnTooltipDirective,
     RouterLink,
@@ -93,7 +90,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCellDefDirective,
     IxTablePagerShowMoreComponent,
     CardAlertBadgeComponent,
-    ServiceWebshareComponent,
     TableActionsCellComponent,
   ],
 })
@@ -103,6 +99,7 @@ export class WebShareCardComponent implements OnInit {
 
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private router = inject(Router);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
@@ -161,20 +158,14 @@ export class WebShareCardComponent implements OnInit {
     };
   });
 
-  protected configOpen = signal(false);
-  protected configForm = viewChild(ServiceWebshareComponent);
-  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
-    () => this.configForm()?.hasUnsavedChanges() ?? false,
-  );
-
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
     this.hasAddRole(),
-    () => this.configOpen.set(true),
+    () => this.openConfig(),
   ));
 
-  protected onConfigClosed(): void {
-    this.configOpen.set(false);
+  protected openConfig(): void {
+    this.formPanel.open(ServiceWebshareComponent, { title: this.translate.instant('WebShare') });
   }
 
   protected readonly actions: IconActionConfig<WebShareTableRow>[] = [

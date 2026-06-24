@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed,
-  inject, DestroyRef, signal, viewChild,
+  inject, DestroyRef, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -18,8 +18,6 @@ import {
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
   TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
@@ -41,6 +39,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -76,8 +75,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCardHeaderActionsDirective,
     TnCardFooterActionsDirective,
     TnSlideToggleComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
@@ -92,7 +89,6 @@ import { selectService } from 'app/store/services/services.selectors';
     RouterLink,
     TnEmptyComponent,
     CardAlertBadgeComponent,
-    ServiceNfsComponent,
     TableToggleCellComponent,
     TableActionsCellComponent,
     TierStatusComponent,
@@ -100,6 +96,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class NfsCardComponent implements OnInit {
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
@@ -123,21 +120,11 @@ export class NfsCardComponent implements OnInit {
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
-  protected configOpen = signal(false);
-  protected configForm = viewChild(ServiceNfsComponent);
-  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
-    () => this.configForm()?.hasUnsavedChanges() ?? false,
-  );
-
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
     this.hasAddRole(),
-    () => this.configOpen.set(true),
+    () => this.openConfig(),
   ));
-
-  protected onConfigClosed(): void {
-    this.configOpen.set(false);
-  }
 
   dataProvider: AsyncDataProvider<NfsShare>;
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -232,6 +219,10 @@ export class NfsCardComponent implements OnInit {
   protected openForm(row?: NfsShare): void {
     this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } })
       .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+  }
+
+  protected openConfig(): void {
+    this.formPanel.open(ServiceNfsComponent, { title: this.translate.instant('NFS'), wide: true });
   }
 
   protected doDelete(nfs: NfsShare): void {

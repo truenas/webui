@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed,
-  inject, DestroyRef, signal, viewChild,
+  inject, DestroyRef, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -18,8 +18,6 @@ import {
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
   TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
@@ -46,6 +44,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -83,8 +82,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCardHeaderActionsDirective,
     TnCardFooterActionsDirective,
     TnSlideToggleComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
@@ -100,7 +97,6 @@ import { selectService } from 'app/store/services/services.selectors';
     RouterLink,
     TnEmptyComponent,
     CardAlertBadgeComponent,
-    ServiceSmbComponent,
     TableToggleCellComponent,
     TableActionsCellComponent,
     TierStatusComponent,
@@ -108,6 +104,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbCardComponent implements OnInit {
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
@@ -134,21 +131,11 @@ export class SmbCardComponent implements OnInit {
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
-  protected configOpen = signal(false);
-  protected configForm = viewChild(ServiceSmbComponent);
-  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
-    () => this.configForm()?.hasUnsavedChanges() ?? false,
-  );
-
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
     this.hasAddRole(),
-    () => this.configOpen.set(true),
+    () => this.openConfig(),
   ));
-
-  protected onConfigClosed(): void {
-    this.configOpen.set(false);
-  }
 
   dataProvider: AsyncDataProvider<SmbShare>;
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -263,6 +250,10 @@ export class SmbCardComponent implements OnInit {
   protected openForm(row?: SmbShare): void {
     this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } })
       .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+  }
+
+  protected openConfig(): void {
+    this.formPanel.open(ServiceSmbComponent, { title: this.translate.instant('SMB') });
   }
 
   protected doDelete(smb: SmbShare): void {
