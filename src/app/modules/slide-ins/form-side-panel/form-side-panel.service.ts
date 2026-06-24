@@ -47,17 +47,16 @@ export class FormSidePanelService {
   private document = inject(DOCUMENT);
 
   /**
-   * Teardown for each live panel. Panels are hosted on `document.body` (not in any route's
-   * view), so they outlive navigation unless explicitly torn down — {@link closeAll} does that.
-   */
-  private readonly openPanels = new Set<() => void>();
-
-  /**
-   * The in-flight panel's result, if one is open. A config side panel is modal — only one is
-   * meaningful at a time — so re-entrant opens (e.g. a double-fired menu click) return this
-   * instead of stacking a second host on `document.body`. Cleared on teardown.
+   * State for the single live panel, if one is open. A config side panel is modal — only one is
+   * meaningful at a time — so re-entrant opens (e.g. a double-fired menu click) return the same
+   * {@link FormSidePanelService.currentResult} instead of stacking a second host on `document.body`.
+   *
+   * The panel is hosted on `document.body` (not in any route's view), so it outlives navigation
+   * unless {@link FormSidePanelService.closeCurrent} is invoked explicitly — {@link closeAll} does
+   * that. Both fields are set together when a panel opens and cleared together on teardown.
    */
   private currentResult: SlideInResult<boolean> | null = null;
+  private closeCurrent: (() => void) | null = null;
 
   open(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): SlideInResult<boolean> {
     if (this.currentResult) {
@@ -90,14 +89,13 @@ export class FormSidePanelService {
         return;
       }
       isTornDown = true;
-      this.openPanels.delete(teardown);
       this.currentResult = null;
+      this.closeCurrent = null;
       close$.next({ response: pendingResponse });
       close$.complete();
       this.appRef.detachView(containerRef.hostView);
       containerRef.destroy();
     };
-    this.openPanels.add(teardown);
 
     containerRef.instance.formAttached.subscribe((form) => {
       // Form-initiated close (save / cancel). `saved === true` is the only success; everything
@@ -122,19 +120,17 @@ export class FormSidePanelService {
       }
     }));
 
+    this.closeCurrent = teardown;
     this.currentResult = new SlideInResult<boolean>(close$);
     return this.currentResult;
   }
 
   /**
-   * Tears down every open panel immediately (no close animation), resolving each as a cancel.
+   * Tears down the open panel immediately (no close animation), resolving it as a cancel.
    * Called on navigation, mirroring `SlideIn.closeAll()`, so a config form never orphans on
    * `document.body` after its originating route is gone.
    */
   closeAll(): void {
-    // Each teardown deletes only its own entry, which is safe to do while iterating the Set.
-    for (const teardown of this.openPanels) {
-      teardown();
-    }
+    this.closeCurrent?.();
   }
 }
