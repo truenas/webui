@@ -165,9 +165,15 @@ describe('GroupListComponent', () => {
     );
   });
 
-  it('opens the group form in a side panel for editing with the group as input', () => {
+  it('opens the group form in a side panel for editing with the group as input', async () => {
     const group = fakeGroupDataSource[1];
-    (spectator.component as unknown as { doEdit: (group: Group) => void }).doEdit(group);
+    store$.overrideSelector(selectGroups, fakeGroupDataSource);
+    store$.refreshState();
+
+    const table = await loader.getHarness(TnTableHarness);
+    await table.clickRow(1);
+
+    spectator.query(GroupDetailsRowComponent).edit.emit(group);
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       GroupFormComponent,

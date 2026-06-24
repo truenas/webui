@@ -27,7 +27,7 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
@@ -222,7 +222,7 @@ export class NfsCardComponent implements OnInit {
   }
 
   protected openConfig(): void {
-    this.formPanel.open(ServiceNfsComponent, { title: this.translate.instant('NFS'), wide: true });
+    this.formPanel.open(ServiceNfsComponent, { title: serviceNames.get(ServiceName.Nfs), wide: true });
   }
 
   protected doDelete(nfs: NfsShare): void {

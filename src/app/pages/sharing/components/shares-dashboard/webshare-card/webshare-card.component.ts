@@ -31,7 +31,7 @@ import {
 import { combineLatestWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
@@ -165,7 +165,7 @@ export class WebShareCardComponent implements OnInit {
   ));
 
   protected openConfig(): void {
-    this.formPanel.open(ServiceWebshareComponent, { title: this.translate.instant('WebShare') });
+    this.formPanel.open(ServiceWebshareComponent, { title: serviceNames.get(ServiceName.WebShare) });
   }
 
   protected readonly actions: IconActionConfig<WebShareTableRow>[] = [

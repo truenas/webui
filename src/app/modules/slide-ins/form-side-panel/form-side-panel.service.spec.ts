@@ -113,6 +113,33 @@ describe('FormSidePanelService', () => {
     expect(document.querySelector('.tn-side-panel__panel')).toBeNull();
   });
 
+  it('does not stack a second panel while one is open, returning the in-flight result', async () => {
+    const first$ = service.open(TestFormComponent, { title: 'NFS' });
+    fixture.detectChanges();
+
+    const second$ = service.open(TestFormComponent, { title: 'SMB' });
+    fixture.detectChanges();
+
+    expect(second$).toBe(first$);
+    expect(document.querySelectorAll('.tn-side-panel__panel')).toHaveLength(1);
+
+    const panel = await rootLoader.getHarness(TnSidePanelHarness);
+    expect(await panel.getTitle()).toBe('NFS');
+  });
+
+  it('allows opening a new panel after the previous one closed', async () => {
+    service.open(TestFormComponent, { title: 'NFS' });
+    fixture.detectChanges();
+    service.closeAll();
+    fixture.detectChanges();
+
+    service.open(TestFormComponent, { title: 'SMB' });
+    fixture.detectChanges();
+
+    const panel = await rootLoader.getHarness(TnSidePanelHarness);
+    expect(await panel.getTitle()).toBe('SMB');
+  });
+
   it('closeAll tears down open panels immediately and resolves them as cancelled', async () => {
     const onCancel = jest.fn();
     const onSuccess = jest.fn();

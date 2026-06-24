@@ -52,7 +52,18 @@ export class FormSidePanelService {
    */
   private readonly openPanels = new Set<() => void>();
 
+  /**
+   * The in-flight panel's result, if one is open. A config side panel is modal — only one is
+   * meaningful at a time — so re-entrant opens (e.g. a double-fired menu click) return this
+   * instead of stacking a second host on `document.body`. Cleared on teardown.
+   */
+  private currentResult: SlideInResult<boolean> | null = null;
+
   open(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): SlideInResult<boolean> {
+    if (this.currentResult) {
+      return this.currentResult;
+    }
+
     const close$ = new Subject<SlideInResponse<boolean>>();
     // Defaults to a cancel; overwritten with the form's response when it closes itself via save.
     let pendingResponse: boolean | undefined;
@@ -80,6 +91,7 @@ export class FormSidePanelService {
       }
       isTornDown = true;
       this.openPanels.delete(teardown);
+      this.currentResult = null;
       close$.next({ response: pendingResponse });
       close$.complete();
       this.appRef.detachView(containerRef.hostView);
@@ -110,7 +122,8 @@ export class FormSidePanelService {
       }
     }));
 
-    return new SlideInResult<boolean>(close$);
+    this.currentResult = new SlideInResult<boolean>(close$);
+    return this.currentResult;
   }
 
   /**
