@@ -1,15 +1,14 @@
-<ix-form
-  [formGroup]="form"
-  [initialFormSnapshot]="initialSnapshot()"
-  [isEditMode]="true"
-  [requireDirty]="true"
-  [title]="'Storage Settings' | translate"
-  [requiredRoles]="anyRoles"
-  [preSubmit]="preSubmit"
-  [submitHandler]="handleSubmit"
->
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="anyRoles"
+    [title]="'Storage Settings' | translate"
+    [loading]="isLoading()"
+  ></ix-modal-header>
+}
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <tn-form-section>
-    <tn-form-field [label]="'System Dataset Pool' | translate">
+    <tn-form-field [label]="'System Dataset Pool' | translate" [required]="true">
       <tn-select
         formControlName="systemDatasetPool"
         [options]="(poolOptions$ | async) ?? []"
@@ -27,7 +26,10 @@
     [heading]="'Priority Resilvering' | translate"
     [formGroup]="form.controls.priorityResilver"
   >
-    <tn-form-field [tooltip]="helptext.priorityResilverEnabled | translate">
+    <tn-form-field
+      subscriptSizing="dynamic"
+      [tooltip]="helptext.priorityResilverEnabled | translate"
+    >
       <tn-checkbox
         formControlName="enabled"
         [label]="'Run Resilvering At Higher Priority At Certain Times' | translate"
@@ -35,7 +37,7 @@
     </tn-form-field>
 
     @if (this.form.value.priorityResilver.enabled) {
-      <tn-form-field [label]="'Days of the Week' | translate">
+      <tn-form-field [label]="'Days of the Week' | translate" [required]="true">
         <tn-select
           formControlName="weekday"
           [multiple]="true"
@@ -60,4 +62,17 @@
       </div>
     }
   </tn-form-section>
-</ix-form>
+
+  <ix-form-actions>
+    @if (slideInRef) {
+      <tn-button
+        *ixRequiresRoles="anyRoles"
+        type="submit"
+        color="primary"
+        [testId]="'save'"
+        [disabled]="form.invalid || isLoading()"
+        [label]="'Save' | translate"
+      ></tn-button>
+    }
+  </ix-form-actions>
+</form>

@@ -1,14 +1,13 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
@@ -31,15 +30,15 @@ describe('SelfEncryptingDriveCardComponent', () => {
             selector: selectAdvancedConfig,
             value: {
               sed_user: 'admin',
-            },
+            } as AdvancedConfig,
           },
         ],
       }),
       mockProvider(FormSidePanelService, {
-        openForm: jest.fn(() => SlideInResult.empty()),
+        openForm: jest.fn(() => ({ success$: of(true) })),
       }),
       mockProvider(FirstTimeWarningService, {
-        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(undefined)),
       }),
     ],
   });
@@ -49,17 +48,17 @@ describe('SelfEncryptingDriveCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows Self Encrypting Drive settings', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+  it('shows Self Encrypting Drive settings', () => {
+    const items = spectator.queryAll('.details-item');
+    const itemTexts = items.map((item) => item.textContent.replace(/\s+/g, ' ').trim());
 
     expect(itemTexts).toEqual([
       'Password: ********',
     ]);
   });
 
-  it('shows SED form when Configure is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+  it('opens the SED form when Configure is pressed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();

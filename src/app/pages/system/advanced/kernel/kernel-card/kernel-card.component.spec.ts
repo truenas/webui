@@ -1,9 +1,8 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -31,7 +30,7 @@ describe('KernelCardComponent', () => {
             selector: selectAdvancedConfig,
             value: {
               debugkernel: true,
-            },
+            } as AdvancedConfig,
           },
         ],
       }),
@@ -43,18 +42,21 @@ describe('KernelCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows kernel related settings', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+  it('shows kernel related settings', () => {
+    const items = spectator.queryAll('.details-item');
+    const itemTexts = items.map((item) => item.textContent.replace(/\s+/g, ' ').trim());
 
     expect(itemTexts).toEqual([
       'Enable Debug Kernel: Enabled',
     ]);
   });
 
-  it('opens Kernel form when Configure button is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+  it('opens the Kernel form in a side panel when Configure is pressed', async () => {
+    expect(spectator.query('ix-kernel-form')).toBeNull();
+
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
+    spectator.detectChanges();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(

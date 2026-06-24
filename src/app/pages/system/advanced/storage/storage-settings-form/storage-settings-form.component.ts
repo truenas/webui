@@ -1,17 +1,17 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  forkJoin, map, Observable, of,
+  finalize, forkJoin, map, Observable, of, take,
 } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -21,11 +21,12 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import {
-  FormSubmitEvent, IxFormComponent, SubmitResult,
-} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
@@ -43,30 +44,37 @@ export interface StorageSettingsData {
   templateUrl: './storage-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,
     TnCheckboxComponent,
-    IxFormComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
     WarningComponent,
   ],
 })
-export class StorageSettingsFormComponent implements OnInit {
+export class StorageSettingsFormComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
+  private formErrorHandler = inject(FormErrorHandlerService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
   private taskService = inject(TaskService);
   private auth = inject(AuthService);
-  slideInRef = inject<SlideInRef<StorageSettingsData, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly rolesToEditPool = [Role.DatasetWrite];
   protected readonly rolesToEditPriorityResilver = [Role.PoolWrite];
 
   protected readonly anyRoles = [...this.rolesToEditPool, ...this.rolesToEditPriorityResilver];
+
+  protected isLoading = signal(false);
 
   protected readonly helptext = helptextSystemAdvanced.storageSettings;
 
@@ -88,11 +96,7 @@ export class StorageSettingsFormComponent implements OnInit {
     }),
   });
 
-  // Snapshot is set after we patch and selectively disable controls, so the
-  // wrapper's diff sees the post-role-disable shape as the baseline. Using
-  // `initialFormSnapshot` (instead of `editData`) because Angular's
-  // `patchValue` skips disabled controls — we must patch before disabling.
-  protected initialSnapshot = signal<StorageSettingsData | null>(null);
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   protected poolOptions$ = this.api.call('systemdataset.pool_choices').pipe(choicesToOptions());
   protected daysOfWeek$ = of(mapToOptions(weekdayLabels, this.translate));
@@ -103,9 +107,23 @@ export class StorageSettingsFormComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.form.patchValue(this.slideInRef.getData());
+    this.setFormData();
     this.disableControlsBasedOnRoles();
-    this.initialSnapshot.set(this.form.getRawValue() as StorageSettingsData);
+  }
+
+  private setFormData(): void {
+    forkJoin([
+      this.api.call('systemdataset.config'),
+      this.api.call('pool.resilver.config'),
+    ]).pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(([systemDatasetConfig, resilverConfig]) => {
+      this.form.patchValue({
+        systemDatasetPool: systemDatasetConfig.pool,
+        priorityResilver: resilverConfig,
+      });
+    });
   }
 
   private disableControlsBasedOnRoles(): void {
@@ -118,42 +136,42 @@ export class StorageSettingsFormComponent implements OnInit {
     }
   }
 
-  // User can mark the form dirty without changing any value (e.g., type into a
-  // field then revert). `requireDirty` lets that case reach Save, but
-  // `changedValues` will be empty — short-circuit before forkJoin([]) emits an
-  // empty array synchronously and the wrapper shows a misleading success
-  // snackbar. Returning `false` cancels the wrapper's submit lifecycle; the
-  // manual close mirrors the pre-migration "close with undefined response".
-  protected preSubmit = (
-    event: FormSubmitEvent<StorageSettingsData>,
-  ): FormSubmitEvent<StorageSettingsData> | false => {
-    if (Object.keys(event.changedValues).length === 0) {
-      this.slideInRef.close({ response: undefined });
-      return false;
-    }
-    return event;
-  };
-
-  protected handleSubmit = (event: FormSubmitEvent<StorageSettingsData>): SubmitResult => {
+  protected onSubmit(): void {
     const requests: Observable<unknown>[] = [];
 
-    if ('priorityResilver' in event.changedValues) {
-      requests.push(
-        this.api.call('pool.resilver.update', [this.form.controls.priorityResilver.getRawValue()]),
-      );
+    if (this.form.controls.priorityResilver.dirty) {
+      const updateResilver$ = this.api.call('pool.resilver.update', [this.form.controls.priorityResilver.getRawValue()]);
+      requests.push(updateResilver$);
     }
 
-    if ('systemDatasetPool' in event.changedValues) {
-      requests.push(
-        this.api.job('systemdataset.update', [{ pool: event.allValues.systemDatasetPool }]).pipe(
-          tap(() => this.store$.dispatch(advancedConfigUpdated())),
-        ),
+    if (this.form.controls.systemDatasetPool.dirty) {
+      const updatePool$ = this.api.job('systemdataset.update', [{ pool: this.form.controls.systemDatasetPool.value }]).pipe(
+        tap(() => this.store$.dispatch(advancedConfigUpdated())),
       );
+      requests.push(updatePool$);
     }
 
-    return {
-      request$: forkJoin(requests),
-      successMessage: this.translate.instant('Storage Settings Updated.'),
-    };
-  };
+    if (requests.length === 0) {
+      // No changes made
+      this.close(false);
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    forkJoin(requests)
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        complete: () => {
+          this.snackbar.success(this.translate.instant('Storage Settings Updated.'));
+          this.close(true);
+        },
+        error: (error: unknown) => {
+          this.formErrorHandler.handleValidationErrors(error, this.form);
+        },
+      });
+  }
 }

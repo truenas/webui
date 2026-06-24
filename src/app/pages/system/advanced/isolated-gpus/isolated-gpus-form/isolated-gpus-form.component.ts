@@ -1,24 +1,20 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, ChangeDetectorRef, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  of, take,
-} from 'rxjs';
+  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import { take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prevention.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -30,22 +26,22 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 @Component({
   selector: 'ix-isolated-gpus-form',
   templateUrl: './isolated-gpus-form.component.html',
+  styleUrls: ['./isolated-gpus-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
+    AsyncPipe,
   ],
 })
-export class IsolatedGpusFormComponent implements OnInit {
+export class IsolatedGpusFormComponent extends SidePanelForm implements OnInit {
   protected api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
@@ -54,31 +50,25 @@ export class IsolatedGpusFormComponent implements OnInit {
   private gpuValidator = inject(IsolatedGpuValidatorService);
   private gpuService = inject(GpuService);
   private snackbar = inject(SnackbarService);
-  private dialog = inject(DialogService);
   private criticalGpuPrevention = inject(CriticalGpuPreventionService);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   protected isFormLoading = signal(false);
 
-  formGroup = new FormGroup({
+  form = new FormGroup({
     isolated_gpu_pci_ids: new FormControl<string[]>([], {
       nonNullable: true,
       asyncValidators: [this.gpuValidator.validateGpu],
     }),
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   criticalGpus = new Map<string, string>(); // Maps pci_slot to critical_reason
 
   readonly options$ = this.gpuService.getGpuOptions();
-
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.formGroup.dirty);
-    });
-  }
 
   ngOnInit(): void {
     this.store$.pipe(
@@ -86,7 +76,7 @@ export class IsolatedGpusFormComponent implements OnInit {
       take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
-      this.formGroup.setValue({
+      this.form.setValue({
         isolated_gpu_pci_ids: config.isolated_gpu_pci_ids,
       });
       this.cdr.markForCheck();
@@ -94,16 +84,16 @@ export class IsolatedGpusFormComponent implements OnInit {
 
     // Setup critical GPU prevention
     this.criticalGpus = this.criticalGpuPrevention.setupCriticalGpuPrevention(
-      this.formGroup.controls.isolated_gpu_pci_ids,
+      this.form.controls.isolated_gpu_pci_ids,
       this.destroyRef,
       this.translate.instant('Cannot Isolate GPU'),
       this.translate.instant('System critical GPUs cannot be isolated'),
     );
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isFormLoading.set(true);
-    const { isolated_gpu_pci_ids: isolatedGpuPciIds } = this.formGroup.value;
+    const { isolated_gpu_pci_ids: isolatedGpuPciIds } = this.form.value;
 
     this.api.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -112,11 +102,11 @@ export class IsolatedGpusFormComponent implements OnInit {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.form);
       },
     });
   }

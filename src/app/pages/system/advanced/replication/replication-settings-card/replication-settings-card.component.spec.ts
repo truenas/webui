@@ -1,14 +1,11 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   ReplicationSettingsCardComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.component';
@@ -30,9 +27,8 @@ describe('ReplicationSettingsCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(FormSidePanelService, {
-        openForm: jest.fn(() => SlideInResult.empty()),
+        openForm: jest.fn(() => ({ success$: of(true) })),
       }),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn((): undefined => undefined) }),
     ],
   });
 
@@ -41,23 +37,17 @@ describe('ReplicationSettingsCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows Replication related settings', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
-
-    expect(itemTexts).toEqual([
-      'Replication Tasks Limit: 5',
-    ]);
+  it('shows Replication related settings', () => {
+    const item = spectator.queryAll('.details-item')[0];
+    expect(item.textContent.replace(/\s+/g, ' ').trim()).toBe('Replication Tasks Limit: 5');
   });
 
-  it('opens Replication Settings form when Configure button is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+  it('opens the Replication Settings form when Configure is pressed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(
-      spectator.inject(FormSidePanelService).openForm,
-    ).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
       expect.anything(),
       { title: 'Replication', editData: { max_parallel_replication_tasks: 5 } },
     );

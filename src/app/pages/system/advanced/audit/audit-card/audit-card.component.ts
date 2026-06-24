@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+} from '@truenas/ui-components';
 import {
   Subject, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
@@ -15,7 +16,6 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { auditCardElements } from 'app/pages/system/advanced/audit/audit-card/audit-card.elements';
 import { getAuditFormConfig } from 'app/pages/system/advanced/audit/audit-form/audit.form-config';
@@ -24,19 +24,15 @@ import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-audit-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./audit-card.component.scss'],
   templateUrl: './audit-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnButtonComponent,
     WithLoadingStateDirective,
     TranslateModule,
   ],
@@ -52,6 +48,7 @@ export class AuditCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = auditCardElements;
   protected readonly requiredRoles = [Role.SystemAuditWrite];
+
   auditConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.api.call('audit.config')),

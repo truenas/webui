@@ -1,13 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   NvidiaDriversCardComponent,
 } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-card/nvidia-drivers-card.component';
@@ -22,6 +21,7 @@ describe('NvidiaDriversCardComponent', () => {
     component: NvidiaDriversCardComponent,
     providers: [
       mockAuth(),
+      mockApi(),
       provideMockStore({
         selectors: [
           {
@@ -31,10 +31,10 @@ describe('NvidiaDriversCardComponent', () => {
         ],
       }),
       mockProvider(FirstTimeWarningService, {
-        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(undefined)),
       }),
       mockProvider(FormSidePanelService, {
-        openForm: jest.fn(() => SlideInResult.empty()),
+        openForm: jest.fn(() => ({ success$: of(true) })),
       }),
     ],
   });
@@ -44,24 +44,23 @@ describe('NvidiaDriversCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows NVIDIA drivers status as disabled when nvidia config is false', async () => {
-    const statusItem = await loader.getHarness(MatListItemHarness);
-    expect(await statusItem.getFullText()).toContain('Enable NVIDIA GPU Support:');
-    expect(await statusItem.getFullText()).toContain('Disabled');
+  it('shows NVIDIA drivers status as disabled when nvidia config is false', () => {
+    const item = spectator.query('.details-item');
+    expect(item.textContent.replace(/\s+/g, ' ').trim()).toBe('Enable NVIDIA GPU Support: Disabled');
   });
 
-  it('shows NVIDIA drivers status as enabled when nvidia config is true', async () => {
+  it('shows NVIDIA drivers status as enabled when nvidia config is true', () => {
     const store$ = spectator.inject(MockStore);
     store$.overrideSelector(selectAdvancedConfig, { nvidia: true });
     store$.refreshState();
     spectator.detectChanges();
 
-    const statusItem = await loader.getHarness(MatListItemHarness);
-    expect(await statusItem.getFullText()).toContain('Enabled');
+    const item = spectator.query('.details-item');
+    expect(item.textContent.replace(/\s+/g, ' ').trim()).toBe('Enable NVIDIA GPU Support: Enabled');
   });
 
   it('opens NVIDIA Drivers form when Configure is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
@@ -77,7 +76,7 @@ describe('NvidiaDriversCardComponent', () => {
     store$.refreshState();
     spectator.detectChanges();
 
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
 
     expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(

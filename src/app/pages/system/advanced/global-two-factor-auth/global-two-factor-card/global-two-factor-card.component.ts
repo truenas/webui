@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+} from '@truenas/ui-components';
 import {
   Subject, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
@@ -21,7 +21,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { globalTwoFactorCardElements } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.elements';
 import {
@@ -31,21 +31,17 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 
 @Component({
   selector: 'ix-global-two-factor-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./global-two-factor-card.component.scss'],
   templateUrl: './global-two-factor-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatToolbarRow,
     WithLoadingStateDirective,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
-    TnTooltipDirective,
+    TnButtonComponent,
+    TooltipComponent,
     TranslateModule,
   ],
 })
@@ -65,6 +61,7 @@ export class GlobalTwoFactorAuthCardComponent {
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
   private readonly reloadConfig$ = new Subject<void>();
+
   readonly twoFactorConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.api.call('auth.twofactor.config')),

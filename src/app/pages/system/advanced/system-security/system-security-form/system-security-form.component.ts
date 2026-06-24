@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, DOCUMENT,
 } from '@angular/core';
@@ -9,15 +10,16 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatError, MatHint } from '@angular/material/form-field';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, finalize, map, of, tap, forkJoin, zip,
+  InputType,
+  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnProgressBarComponent, TnSelectComponent, TnSlideToggleComponent,
+} from '@truenas/ui-components';
+import {
+  filter, finalize, map, of, tap, forkJoin, zip, take,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
@@ -34,15 +36,11 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import {
@@ -113,22 +111,20 @@ interface MissingStigRequirement {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxSlideToggleComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSlideToggleComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnProgressBarComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
-    MatError,
-    MatHint,
-    IxInputComponent,
-    IxSelectComponent,
-    MatProgressBar,
+    AsyncPipe,
   ],
 })
-export class SystemSecurityFormComponent implements OnInit {
+export class SystemSecurityFormComponent extends SidePanelForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
@@ -145,8 +141,8 @@ export class SystemSecurityFormComponent implements OnInit {
   private window = inject<Window>(WINDOW);
   private router = inject(Router);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
-  slideInRef = inject<SlideInRef<SystemSecurityConfig, boolean>>(SlideInRef);
 
+  protected readonly InputType = InputType;
   protected readonly stigRequirements = stigPasswordRequirements;
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
@@ -182,26 +178,30 @@ export class SystemSecurityFormComponent implements OnInit {
     map((rulesets) => mapToOptions(rulesets, this.translate)),
   );
 
-  private systemSecurityConfig = signal<SystemSecurityConfig>(this.slideInRef.getData());
+  private systemSecurityConfig = signal<SystemSecurityConfig | null>(null);
   protected isStigEnabled = signal<boolean>(false);
   loadingStigRequirements = signal<boolean>(false);
   protected missingStigRequirements = signal<MissingStigRequirement[]>([]);
   protected missingStigWarnings = signal<MissingStigRequirement[]>([]);
   private twoFactorConfig = signal<GlobalTwoFactorConfig | null>(null);
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  readonly canSubmit = this.trackCanSubmit(this.loadingStigRequirements);
 
   ngOnInit(): void {
-    if (this.systemSecurityConfig()) {
+    const config$ = this.slideInRef
+      ? of(this.slideInRef.getData() as SystemSecurityConfig)
+      : this.api.call('system.security.config');
+
+    config$.pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
+      this.systemSecurityConfig.set(config);
       this.initSystemSecurityForm();
-      if (this.systemSecurityConfig().enable_gpos_stig) {
+      if (config.enable_gpos_stig) {
         this.setupStigRequirements();
       }
-    }
+    });
   }
 
   /**
@@ -211,7 +211,7 @@ export class SystemSecurityFormComponent implements OnInit {
    */
   private setupStigRequirements(): void {
     // bail early if stig mode is already enabled, since all requirements must already be satisfied.
-    if (this.slideInRef.getData().enable_gpos_stig) {
+    if (this.systemSecurityConfig()?.enable_gpos_stig) {
       return;
     }
 
@@ -388,7 +388,11 @@ export class SystemSecurityFormComponent implements OnInit {
 
       // prevent saving the form if we have any STIG requirements unmet
       if (requirements.length > 0) {
-        this.form.controls.enable_gpos_stig.setErrors({ stigRequirementsNotMet: true });
+        this.form.controls.enable_gpos_stig.setErrors({
+          stigRequirementsNotMet: {
+            message: this.translate.instant('STIG mode cannot be enabled until the requirements below are met.'),
+          },
+        });
       } else {
         this.clearStigRequirementsError();
       }
@@ -510,7 +514,7 @@ export class SystemSecurityFormComponent implements OnInit {
 
   protected onSubmit(): void {
     const values = this.form.value as unknown as SystemSecurityConfig;
-    const isEnablingStig = values.enable_gpos_stig && !this.systemSecurityConfig().enable_gpos_stig;
+    const isEnablingStig = values.enable_gpos_stig && !this.systemSecurityConfig()?.enable_gpos_stig;
 
     if (isEnablingStig) {
       this.checkUsersWithoutTwoFactorAuth(() => this.saveSettings(values));
@@ -593,13 +597,16 @@ export class SystemSecurityFormComponent implements OnInit {
           this.authService.clearAuthToken();
         }
 
-        this.slideInRef.close({ response: true });
+        this.close(true);
         this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
       });
   }
 
   private initSystemSecurityForm(): void {
     const config = this.systemSecurityConfig();
+    if (!config) {
+      return;
+    }
     this.isStigEnabled.set(config.enable_gpos_stig);
 
     this.form.patchValue({
