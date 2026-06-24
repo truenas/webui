@@ -15,52 +15,8 @@
 }
 
 .support-banner {
-  background-color: var(--bg1);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  display: block;
   margin: 0 1rem 0.5rem;
-  padding: 12px 16px;
-
-  &.proactive {
-    border-left: 3px solid var(--green);
-  }
-
-  &.upsell {
-    border-left: 3px solid var(--primary);
-  }
-
-  &.community {
-    border-left: 3px solid var(--primary);
-    margin: 1rem;
-  }
-
-  &.warning {
-    border-left: 3px solid var(--orange);
-
-    .banner-subheading {
-      color: var(--fg1);
-      opacity: 1;
-    }
-  }
-
-  .banner-text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .banner-heading {
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .banner-subheading {
-    font-size: 0.9rem;
-    opacity: 0.85;
-  }
 
   a {
     color: var(--primary);
@@ -70,11 +26,6 @@
     &:hover {
       text-decoration: underline;
     }
-  }
-
-  button {
-    flex-shrink: 0;
-    white-space: nowrap;
   }
 }
 

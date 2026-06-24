@@ -6,6 +6,8 @@ import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
+  TnBannerActionDirective,
+  TnBannerComponent,
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderActionsDirective,
@@ -62,6 +64,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     RequiresRolesDirective,
     ReactiveFormsModule,
     FormsModule,
+    TnBannerActionDirective,
+    TnBannerComponent,
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderActionsDirective,

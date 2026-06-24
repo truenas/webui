@@ -34,12 +34,14 @@
 
     <!-- EXPIRATION WARNING BANNER -->
     @if (hasLicense && isContractExpiringSoon()) {
-      <div class="support-banner warning">
-        <div class="banner-text">
-          <strong class="banner-heading">{{ 'Your support contract expires in {n, plural, one {# day} other {# days}}' | translate: { n: licenseInfo.daysLeftInContract } }}</strong>
-          <span class="banner-subheading">{{ 'You will be unable to contact support after {date}. Contact your account team to renew.' | translate: { date: licenseInfo.expirationDateDisplay } }}</span>
-        </div>
+      <tn-banner
+        class="support-banner"
+        type="warning"
+        [heading]="'Your support contract expires in {n, plural, one {# day} other {# days}}' | translate: { n: licenseInfo.daysLeftInContract }"
+        [message]="'You will be unable to contact support after {date}. Contact your account team to renew.' | translate: { date: licenseInfo.expirationDateDisplay }"
+      >
         <a
+          tnBannerAction
           href="https://www.truenas.com/contact-us/"
           target="_blank"
           rel="noopener noreferrer"
@@ -47,35 +49,39 @@
         >
           {{ 'Contact Us' | translate }}
         </a>
-      </div>
+      </tn-banner>
     }
 
     <!-- SUPPORT BANNER (varies by tier and status) -->
     @if (hasLicense) {
       @if (isProactiveSupportAvailable() && !isProactiveSupportEnabled()) {
         <!-- Silver/Gold: Proactive support available but not yet enabled -->
-        <div class="support-banner proactive">
-          <div class="banner-text">
-            <strong class="banner-heading">{{ 'Set up Proactive Support' | translate }}</strong>
-            <span class="banner-subheading">{{ 'Let the TrueNAS team monitor your system and contact you if issues are detected.' | translate }}</span>
-          </div>
+        <tn-banner
+          class="support-banner"
+          type="info"
+          [heading]="'Set up Proactive Support' | translate"
+          [message]="'Let the TrueNAS team monitor your system and contact you if issues are detected.' | translate"
+        >
           <tn-button
             *ixRequiresRoles="[Role.SupportWrite]"
+            tnBannerAction
             color="primary"
-            variant="filled"
+            variant="outline"
             [testId]="'proactive-support'"
             [label]="'Enable' | translate"
             (onClick)="openProactive()"
           ></tn-button>
-        </div>
+        </tn-banner>
       }
       @if (!isProactiveSupportAvailable()) {
         <!-- Bronze: Support options -->
-        <div class="support-banner upsell">
-          <div class="banner-text">
-            <strong class="banner-heading">{{ 'Need help? Looking for support?' | translate }}</strong>
-          </div>
+        <tn-banner
+          class="support-banner"
+          type="info"
+          [heading]="'Need help? Looking for support?' | translate"
+        >
           <a
+            tnBannerAction
             href="https://www.truenas.com/support/"
             target="_blank"
             rel="noopener noreferrer"
@@ -83,16 +89,18 @@
           >
             {{ 'Explore your options' | translate }}
           </a>
-        </div>
+        </tn-banner>
       }
     } @else {
       <!-- Community/Unlicensed: Forums -->
-      <div class="support-banner community">
-        <div class="banner-text">
-          <strong class="banner-heading">{{ 'Need help?' | translate }}</strong>
-          <span class="banner-subheading">{{ 'Get support and join discussions on our forums.' | translate }}</span>
-        </div>
+      <tn-banner
+        class="support-banner"
+        type="info"
+        [heading]="'Need help?' | translate"
+        [message]="'Get support and join discussions on our forums.' | translate"
+      >
         <a
+          tnBannerAction
           href="https://forums.truenas.com/"
           target="_blank"
           rel="noopener noreferrer"
@@ -100,7 +108,7 @@
         >
           {{ 'Join our community' | translate }}
         </a>
-      </div>
+      </tn-banner>
     }
 
     <!-- SYSTEM/LICENSE INFO -->
