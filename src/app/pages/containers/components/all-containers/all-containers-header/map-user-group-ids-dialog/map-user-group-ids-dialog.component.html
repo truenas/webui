@@ -30,34 +30,35 @@
     </div>
   } @else {
     <div class="table-wrapper">
-      <table mat-table tnTestIdType="table" [dataSource]="mappings()" [tnTestId]="['mapping-table']">
-        <ng-container matColumnDef="name">
-          <th *matHeaderCellDef mat-header-cell>{{ 'Name' | translate }}</th>
-          <td *matCellDef="let mapping" mat-cell>{{ mapping.name }}</td>
+      <tn-table testId="table-mapping-table" [dataSource]="mappings()" [displayedColumns]="columns">
+        <ng-container [tnColumnDef]="'name'">
+          <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+          <ng-template let-mapping tnCellDef>{{ mapping.name }}</ng-template>
         </ng-container>
 
-        <ng-container matColumnDef="hostUidOrGid">
-          <th *matHeaderCellDef mat-header-cell>
+        <ng-container [tnColumnDef]="'hostUidOrGid'">
+          <ng-template tnHeaderCellDef>
             {{ typeControl.value === ViewType.Users ? ('Host UID' | translate) : ('Host GID' | translate) }}
-          </th>
-          <td *matCellDef="let mapping" mat-cell>{{ mapping.hostUidOrGid }}</td>
+          </ng-template>
+          <ng-template let-mapping tnCellDef>{{ mapping.hostUidOrGid }}</ng-template>
         </ng-container>
 
-        <ng-container matColumnDef="instanceUidOrGid">
-          <th *matHeaderCellDef mat-header-cell>
-            {{ typeControl.value === ViewType.Users ? ('Container UID' | translate) : ('Container GID' | translate) }}</th>
-          <td *matCellDef="let mapping" mat-cell>
+        <ng-container [tnColumnDef]="'instanceUidOrGid'">
+          <ng-template tnHeaderCellDef>
+            {{ typeControl.value === ViewType.Users ? ('Container UID' | translate) : ('Container GID' | translate) }}
+          </ng-template>
+          <ng-template let-mapping tnCellDef>
             @if (mapping.instanceUidOrGid === directIdMapping) {
               {{ 'Same' | translate }}
             } @else {
               {{ mapping.instanceUidOrGid }}
             }
-          </td>
+          </ng-template>
         </ng-container>
 
-        <ng-container matColumnDef="actions">
-          <th *matHeaderCellDef mat-header-cell></th>
-          <td *matCellDef="let mapping" mat-cell>
+        <ng-container [tnColumnDef]="'actions'">
+          <ng-template tnHeaderCellDef></ng-template>
+          <ng-template let-mapping tnCellDef>
             <tn-icon-button
               name="mdi-delete"
               [ariaLabel]="'Clear mapping' | translate"
@@ -65,15 +66,15 @@
               [testId]="['clear-mapping', mapping.description]"
               (onClick)="onClearMapping(mapping)"
             ></tn-icon-button>
-          </td>
+          </ng-template>
         </ng-container>
-
-        <tr *matHeaderRowDef="columns" mat-header-row tnTestIdType="row" [tnTestId]="['image-table-header']"></tr>
-        <tr *matRowDef="let row; columns: columns" mat-row tnTestIdType="row" [tnTestId]="['image-table-row', row]"></tr>
-      </table>
+      </tn-table>
 
       @if (!mappings().length) {
-        <ix-empty [conf]="noEntries"></ix-empty>
+        <tn-empty
+          [title]="'No ID Mappings' | translate"
+          [description]="'No entries have been mapped yet.' | translate"
+        ></tn-empty>
       }
     </div>
 

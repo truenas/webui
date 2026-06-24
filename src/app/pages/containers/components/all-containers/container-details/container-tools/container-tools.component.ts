@@ -1,13 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatAnchor } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnCardComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { ContainerStatus } from 'app/enums/container.enum';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 @Component({
@@ -16,14 +11,9 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   styleUrls: ['./container-tools.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCardTitle,
-    MatCardHeader,
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
+    TnButtonComponent,
     TranslateModule,
-    MatAnchor,
-    TestDirective,
-    TnIconComponent,
     TnTooltipDirective,
     RouterLink,
   ],

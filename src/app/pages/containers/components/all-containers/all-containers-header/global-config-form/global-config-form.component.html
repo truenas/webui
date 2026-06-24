@@ -1,60 +1,62 @@
-<ix-modal-header
-  [title]="'Settings' | translate"
-  [requiredRoles]="requiredRoles"
-  [loading]="isLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [title]="'Settings' | translate"
+    [requiredRoles]="requiredRoles"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
 
-      <ix-fieldset [title]="'Preferred Pool' | translate">
-        <ix-select
-          formControlName="preferred_pool"
-          [label]="'Preferred Pool' | translate"
-          [tooltip]="'Default pool to use when creating containers if pool is not explicitly specified.' | translate"
-          [options]="poolOptions$"
-        ></ix-select>
-      </ix-fieldset>
+  <tn-form-section [heading]="'Preferred Pool' | translate">
+    <tn-form-field
+      [label]="'Preferred Pool' | translate"
+      [tooltip]="'Default pool to use when creating containers if pool is not explicitly specified.' | translate"
+    >
+      <tn-select
+        formControlName="preferred_pool"
+        [allowEmpty]="true"
+        [options]="(poolOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+  </tn-form-section>
 
-      <ix-fieldset [title]="'Default Network' | translate">
-        <ix-select
-          formControlName="bridge"
-          [label]="'Bridge' | translate"
-          [options]="bridgeOptions$"
-          [hideEmpty]="true"
-        ></ix-select>
+  <tn-form-section [heading]="'Default Network' | translate">
+    <tn-form-field [label]="'Bridge' | translate">
+      <tn-select
+        formControlName="bridge"
+        [options]="(bridgeOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-        @if (isAutoBridge) {
-          <ix-ip-input-with-netmask
-            formControlName="v4_network"
-            [label]="'IPv4 Network' | translate"
-          ></ix-ip-input-with-netmask>
+    @if (isAutoBridge) {
+      <ix-ip-input-with-netmask
+        formControlName="v4_network"
+        [label]="'IPv4 Network' | translate"
+      ></ix-ip-input-with-netmask>
 
-          <ix-ip-input-with-netmask
-            formControlName="v6_network"
-            [label]="'IPv6 Network' | translate"
-          ></ix-ip-input-with-netmask>
+      <ix-ip-input-with-netmask
+        formControlName="v6_network"
+        [label]="'IPv6 Network' | translate"
+      ></ix-ip-input-with-netmask>
 
-          <p class="hint">
-            <strong>{{ 'Note' | translate }}:</strong>
-            {{ 'At least one network (IPv4 or IPv6) must be specified.' | translate }}
-          </p>
-        }
-      </ix-fieldset>
+      <p class="hint">
+        <strong>{{ 'Note' | translate }}:</strong>
+        {{ 'At least one network (IPv4 or IPv6) must be specified.' | translate }}
+      </p>
+    }
+  </tn-form-section>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <ix-form-actions>
+    @if (slideInRef) {
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        type="submit"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="form.invalid || isFormLoading()"
+      ></tn-button>
+    }
+  </ix-form-actions>
+</form>

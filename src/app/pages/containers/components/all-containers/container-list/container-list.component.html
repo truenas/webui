@@ -20,20 +20,35 @@
 </div>
 
 @if (containers() !== undefined && !filteredContainers().length && !isLoading()) {
-  <ix-empty [conf]="emptyConfig()"></ix-empty>
+  @if (searchQuery().length) {
+    <tn-empty
+      icon="magnify"
+      iconLibrary="mdi"
+      [title]="'No Search Results.' | translate"
+      [description]="'No matching results found' | translate"
+    ></tn-empty>
+  } @else {
+    <tn-empty
+      icon="laptop"
+      iconLibrary="mdi"
+      [title]="'No containers' | translate"
+      [description]="'Containers you create will automatically appear here.' | translate"
+    ></tn-empty>
+  }
 } @else {
   <div class="containers">
     <div class="containers-header-row">
       <div class="cell checkbox">
         @if (containers().length) {
-          <mat-checkbox
-            color="primary"
-            ixTest="select-all-containers"
+          <tn-checkbox
+            testId="select-all-containers"
+            [hideLabel]="true"
+            [label]="'Select all containers' | translate"
             [checked]="isAllSelected"
             [indeterminate]="!isAllSelected && !!selection.selected.length"
             [disabled]="filteredContainers().length === 0"
-            (change)="toggleAllChecked($event.checked)"
-          ></mat-checkbox>
+            (change)="toggleAllChecked($event)"
+          ></tn-checkbox>
         }
       </div>
       <div class="cell">{{ 'Name' | translate }}</div>
@@ -54,6 +69,7 @@
         (click)="navigateToDetails(container)"
         (selectionChange)="selection.toggle(container.id)"
         (keydown.enter)="navigateToDetails(container)"
+        (keydown.space)="$event.preventDefault(); navigateToDetails(container)"
       ></ix-container-row>
     }
   </div>

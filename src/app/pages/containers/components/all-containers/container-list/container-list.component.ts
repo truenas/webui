@@ -7,20 +7,16 @@ import {
   DestroyRef,
 } from '@angular/core';
 import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCheckboxComponent, TnEmptyComponent } from '@truenas/ui-components';
 import { distinctUntilChanged, map, tap } from 'rxjs';
-import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Container } from 'app/interfaces/container.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
 import { ContainerRowComponent } from 'app/pages/containers/components/all-containers/container-list/container-row/container-row.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -35,9 +31,8 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     BasicSearchComponent,
     FakeProgressBarComponent,
     ContainerRowComponent,
-    MatCheckboxModule,
-    EmptyComponent,
-    TestDirective,
+    TnCheckboxComponent,
+    TnEmptyComponent,
     ContainerListBulkActionsComponent,
   ],
 })
@@ -63,11 +58,11 @@ export class ContainerListComponent {
   protected readonly metrics = this.containersStore.metrics;
 
   protected readonly selectedContainer = this.containersStore.selectedContainer;
-  get isAllSelected(): boolean {
+  protected get isAllSelected(): boolean {
     return this.selection.selected.length === this.filteredContainers().length;
   }
 
-  get checkedContainers(): Container[] {
+  protected get checkedContainers(): Container[] {
     return this.selection.selected
       .map((id: number) => this.containers().find((container) => container.id === id))
       .filter((container) => !!container);
@@ -87,13 +82,6 @@ export class ContainerListComponent {
     });
   });
 
-  protected readonly emptyConfig = computed<EmptyConfig>(() => {
-    if (this.searchQuery()?.length && !this.filteredContainers()?.length) {
-      return noSearchResultsConfig;
-    }
-    return containersEmptyConfig;
-  });
-
   constructor() {
     toObservable(this.containerId).pipe(
       distinctUntilChanged(),
@@ -110,7 +98,7 @@ export class ContainerListComponent {
     });
   }
 
-  toggleAllChecked(checked: boolean): void {
+  protected toggleAllChecked(checked: boolean): void {
     if (checked) {
       this.filteredContainers().forEach((container) => this.selection.select(container.id));
     } else {
@@ -118,13 +106,13 @@ export class ContainerListComponent {
     }
   }
 
-  navigateToDetails(container: Container): void {
+  protected navigateToDetails(container: Container): void {
     this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', container.id]);
 
     this.toggleShowMobileDetails.emit(true);
   }
 
-  resetSelection(): void {
+  protected resetSelection(): void {
     this.selection.clear();
   }
 

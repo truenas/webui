@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 import {
@@ -47,10 +47,10 @@ describe('ContainerToolsComponent', () => {
 
   describe('shell', () => {
     it('shows a link to shell', async () => {
-      const shellLink = await loader.getHarness(MatButtonHarness.with({ text: 'Shell' }));
+      const shellLink = await loader.getHarness(TnButtonHarness.with({ label: 'Shell' }));
 
       expect(shellLink).toBeTruthy();
-      expect(await (await shellLink.host()).getAttribute('href')).toBe('/containers/view/1/shell');
+      expect(await shellLink.getHref()).toBe('/containers/view/1/shell');
     });
 
     it('show shell link as disabled when container is not running', async () => {
@@ -64,7 +64,7 @@ describe('ContainerToolsComponent', () => {
       }));
       spectator.detectChanges();
 
-      const shellLink = await loader.getHarness(MatButtonHarness.with({ text: 'Shell' }));
+      const shellLink = await loader.getHarness(TnButtonHarness.with({ label: 'Shell' }));
       expect(await shellLink.isDisabled()).toBe(true);
     });
   });

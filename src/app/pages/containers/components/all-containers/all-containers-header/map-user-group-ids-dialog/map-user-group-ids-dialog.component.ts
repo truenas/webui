@@ -4,35 +4,24 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  MatCell,
-  MatCellDef,
-  MatColumnDef,
-  MatHeaderCell,
-  MatHeaderCellDef,
-  MatHeaderRow,
-  MatHeaderRowDef,
-  MatRow,
-  MatRowDef,
-  MatTable,
-} from '@angular/material/table';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
+  TnCellDefDirective,
   TnDialogShellComponent,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
   TnIconButtonComponent,
   TnIconComponent,
   TnSpinnerComponent,
-  TnTestIdDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
   TnTooltipDirective,
 } from '@truenas/ui-components';
 import {
   finalize, map, Observable, of,
 } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { containersHelptext } from 'app/helptext/containers/containers';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { directIdMapping } from 'app/interfaces/user.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import {
   IxButtonGroupComponent,
 } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
@@ -63,20 +52,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnSpinnerComponent,
     TnTooltipDirective,
     TranslateModule,
-    TnTestIdDirective,
-    EmptyComponent,
+    TnEmptyComponent,
     FormsModule,
-    MatCell,
-    MatCellDef,
-    MatColumnDef,
-    MatHeaderCell,
-    MatHeaderRow,
-    MatHeaderRowDef,
-    MatRow,
-    MatRowDef,
-    MatTable,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
     ReactiveFormsModule,
-    MatHeaderCellDef,
     NewMappingFormComponent,
     IxButtonGroupComponent,
   ],
@@ -95,13 +77,6 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
 
   protected readonly isLoading = signal(true);
   protected readonly mappings = signal<IdMapping[]>([]);
-
-  protected readonly noEntries: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant('No ID Mappings'),
-    message: this.translate.instant('No entries have been mapped yet.'),
-  };
 
   protected readonly typeControl = new FormControl(ViewType.Users);
 

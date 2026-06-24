@@ -1,5 +1,6 @@
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -25,6 +26,7 @@ describe('ContainerListComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: ContainerListComponent,
+    imports: [TnCheckboxComponent],
     declarations: [MockComponent(ContainerRowComponent)],
     providers: [
       mockAuth(),

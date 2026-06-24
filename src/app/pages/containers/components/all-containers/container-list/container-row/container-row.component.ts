@@ -1,9 +1,9 @@
 import { Component, ChangeDetectionStrategy, input, computed, output, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCheckboxComponent, TnDialog, TnIconButtonComponent, TnIconComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import {
   filter, switchMap,
 } from 'rxjs';
@@ -19,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerStatusCellComponent } from 'app/pages/containers/components/all-containers/container-list/container-row/container-status-cell/container-status-cell.component';
 import {
@@ -33,13 +32,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './container-row.component.html',
   styleUrls: ['./container-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    tabindex: '0',
+    role: 'button',
+  },
   imports: [
     TnIconComponent,
-    TestDirective,
     TranslateModule,
     TnTooltipDirective,
-    MatButtonModule,
-    MatCheckboxModule,
+    TnIconButtonComponent,
+    TnCheckboxComponent,
     RequiresRolesDirective,
     ContainerStatusCellComponent,
     YesNoPipe,
@@ -72,7 +74,7 @@ export class ContainerRowComponent {
 
   readonly selectionChange = output();
 
-  start(): void {
+  protected start(): void {
     const containerId = this.container().id;
 
     this.api.call('container.start', [containerId])
@@ -87,7 +89,7 @@ export class ContainerRowComponent {
       });
   }
 
-  stop(): void {
+  protected stop(): void {
     const containerId = this.container().id;
 
     this.tnDialog
@@ -110,7 +112,7 @@ export class ContainerRowComponent {
       });
   }
 
-  restart(): void {
+  protected restart(): void {
     const containerId = this.container().id;
 
     this.tnDialog

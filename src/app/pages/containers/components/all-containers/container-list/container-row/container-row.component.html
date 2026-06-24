@@ -1,11 +1,11 @@
-<div class="cell checkbox">
-  <mat-checkbox
-    color="primary"
-    [ixTest]="container().name"
+<div class="cell checkbox" (click)="$event.stopPropagation()">
+  <tn-checkbox
+    [testId]="container().name"
+    [hideLabel]="true"
+    [label]="'Select {name}' | translate: { name: container().name }"
     [checked]="selected()"
-    (click)="$event.stopPropagation()"
     (change)="selectionChange.emit()"
-  ></mat-checkbox>
+  ></tn-checkbox>
 </div>
 
 <div class="cell cell-name">
@@ -48,38 +48,38 @@
 
 <div class="cell actions">
   @if (isStopped()) {
-    <button
+    <tn-icon-button
       *ixRequiresRoles="requiredRoles"
-      mat-icon-button
-      tnTooltipPosition="above"
-      [ixTest]="[container().name, 'start']"
-      [tnTooltip]="'Start' | translate"
-      (click)="$event.stopPropagation(); start()"
-    >
-      <tn-icon name="play-circle" library="mdi"></tn-icon>
-    </button>
+      name="play-circle"
+      library="mdi"
+      tooltipPosition="above"
+      [testId]="[container().name, 'start']"
+      [ariaLabel]="'Start' | translate"
+      [tooltip]="'Start' | translate"
+      (onClick)="$event.stopPropagation(); start()"
+    ></tn-icon-button>
   } @else {
-    <button
+    <tn-icon-button
       *ixRequiresRoles="requiredRoles"
-      mat-icon-button
-      tnTooltipPosition="above"
-      [ixTest]="[container().name, 'restart']"
-      [tnTooltip]="'Restart' | translate"
-      (click)="$event.stopPropagation(); restart()"
-    >
-      <tn-icon name="restart" library="mdi"></tn-icon>
-    </button>
+      name="restart"
+      library="mdi"
+      tooltipPosition="above"
+      [testId]="[container().name, 'restart']"
+      [ariaLabel]="'Restart' | translate"
+      [tooltip]="'Restart' | translate"
+      (onClick)="$event.stopPropagation(); restart()"
+    ></tn-icon-button>
 
-    <button
+    <tn-icon-button
       *ixRequiresRoles="requiredRoles"
-      mat-icon-button
-      tnTooltipPosition="above"
-      [ixTest]="[container().name, 'stop']"
-      [tnTooltip]="'Stop' | translate"
-      (click)="$event.stopPropagation(); stop();"
-    >
-      <tn-icon name="stop-circle" library="mdi"></tn-icon>
-    </button>
+      name="stop-circle"
+      library="mdi"
+      tooltipPosition="above"
+      [testId]="[container().name, 'stop']"
+      [ariaLabel]="'Stop' | translate"
+      [tooltip]="'Stop' | translate"
+      (onClick)="$event.stopPropagation(); stop()"
+    ></tn-icon-button>
   }
   <tn-icon class="container-details" name="chevron-right" library="mdi"></tn-icon>
 </div>

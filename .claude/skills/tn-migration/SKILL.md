@@ -38,6 +38,56 @@ their own tickets and migrating them piecemeal will cause conflicts:
 Also leave alone: `ix-card-alert-badge`, `RequiresRolesDirective` where still used outside
 declarative actions, and `tn-icon` (already migrated — always `tn-icon`, never `ix-icon`).
 
+> ### ⚠ SCOPE UPDATE (2026-06) — forms, tables, and SlideIn are now IN scope
+>
+> As of mid-2026 the epic has progressed past the "leave as-is" deferrals above. For
+> **active feature-area tickets**, the `ix-forms`, `ix-table`, and `SlideIn` rows in the
+> table above are **superseded** — migrate them in-place alongside the Material work:
+>
+> - **`ix-table` → `tn-table`.** Use `*tnColumnDef` + `<ng-template tnHeaderCellDef>` /
+>   `<ng-template tnCellDef let-row>`. Reuse `TableActionsCellComponent` /
+>   `TableToggleCellComponent` from `app/modules/tn-table-cells/`. `[expandable]="true"` +
+>   `*tnDetailRowDef` for detail rows. No column-selector equivalent. Reference: `cron-list`,
+>   `map-user-group-ids-dialog`.
+> - **`ix-*` form controls → `tn-form` primitives.** `ix-fieldset` → `<tn-form-section
+>   [heading]>` (there is **no `tn-fieldset`**). Wrap each control in `<tn-form-field [label]
+>   [tooltip] [required]>` containing `tn-input` / `tn-checkbox` / `tn-select`. `tn-input
+>   [multiline]="true"` replaces `ix-textarea`; `[inputType]="InputType.Number"` for numbers.
+>   `tn-select` takes a **synchronous** `TnSelectOption[]` (unwrap observables with `| async`)
+>   and does **not** translate labels — pre-translate with `translateOptions(this.translate,
+>   …)`. `tn-select` has no `[required]` — put the indicator on the wrapping `tn-form-field`.
+>   Controls with no `tn-*` equivalent (`ix-explorer`, `ix-permissions`, `ix-chips`,
+>   `ix-ip-input-with-netmask`, `ix-user/group-combobox`) **stay `ix-*`**. Reference:
+>   `service-ftp`, `global-config-form`.
+> - **SlideIn forms → `tn-side-panel` via the `SidePanelForm` base class**
+>   (`app/modules/slide-ins/side-panel-form.directive.ts`). The form `extends SidePanelForm`:
+>   the base injects `slideInRef` `{ optional: true }`, exposes the `closed` output, public
+>   `submit()` / `hasUnsavedChanges()`, and `trackCanSubmit(isLoading)` → `canSubmit`. The
+>   subclass provides `form` + `onSubmit()` and calls `this.close(saved)`. Gate
+>   `ix-modal-header` and the in-form Save with `@if (slideInRef)` (the panel host renders its
+>   own footer Save). Forms must **self-load** their data (the panel host has no `SlideInRef`);
+>   for row-edit add a typed `input()` and resolve from either host. Host: `<tn-side-panel
+>   [title] [(open)] [closeGuard]>` + `viewChild(FormComponent)` + a `tnSidePanelAction` Save.
+>   Build `closeGuard` from `UnsavedChangesService.showConfirmDialog()`. Cross-feature
+>   `slideIn.open(OtherForm)` navigations stay on SlideIn. Reference: `ntp-servers-card` +
+>   `ntp-servers-form`, `global-config-form`, `container-filesystem-device-form`.
+> - **`ix-empty` → `tn-empty`** (Recipe 3): `[title]` (required), `[description]`, `icon` +
+>   `iconLibrary`, `iconSize` (the input now exists in 0.3.7 — no `::ng-deep` workaround
+>   needed). Inline the `*EmptyConfig` and drop the `EmptyComponent` import.
+>
+> **Specs:** a `tn-side-panel`-hosting parent that **mocks** a child carrying a signal
+> `viewChild()` query hits ng-mocks #8634 (`bindQueryToSignal` reads `undefined`). Seed it in
+> `beforeEach`: `MockInstance(ChildComponent, 'configForm', signal(undefined));`.
+>
+> **`jest-axe` is not installed in webui** (absent from `package.json`, 0 specs import it) —
+> the per-spec `toHaveNoViolations()` mandate does not apply; assert accessible names via
+> harnesses instead. Track at the epic level.
+>
+> Still genuinely off-limits: `DialogService` / dialog **hosting** (NAS-141022) and
+> `SnackbarService` (NAS-141027) — keep calling those services; only migrate Material **inside**
+> a dialog body. Verify all component APIs against the installed `.d.ts` — the library version
+> moves and this table lags.
+
 ## Core principles
 
 - **Manual, file-by-file. No codemods.** Read each component in full context and make
