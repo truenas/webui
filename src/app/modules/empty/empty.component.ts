@@ -1,16 +1,13 @@
 import {
   ChangeDetectionStrategy, Component, computed, inject, input,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconComponent, TnSpinnerComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 // TODO: Similar to ix-empty-row
 @Component({
@@ -19,12 +16,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./empty.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButtonModule,
     TranslateModule,
-    MatProgressSpinnerModule,
+    TnButtonComponent,
     TnIconComponent,
+    TnSpinnerComponent,
     RequiresRolesDirective,
-    TestDirective,
   ],
 })
 export class EmptyComponent {
