@@ -3,7 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnButtonComponent,
+import { TnBannerActionDirective,
+  TnBannerComponent,
+  TnBannerHarness,
+  TnButtonComponent,
   TnButtonHarness,
   TnCardComponent,
   TnCardHeaderDirective,
@@ -67,6 +70,8 @@ describe('SupportCardComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxSlideToggleComponent,
+      TnBannerComponent,
+      TnBannerActionDirective,
       TnButtonComponent,
       TnCardComponent,
       TnCardHeaderDirective,
@@ -165,9 +170,11 @@ describe('SupportCardComponent', () => {
     });
 
     describe('Proactive support banner', () => {
-      it('shows proactive support banner when support is available but not enabled', () => {
-        const banner = spectator.query('.support-banner.proactive');
-        expect(banner).toExist();
+      it('shows proactive support banner when support is available but not enabled', async () => {
+        const banner = await loader.getHarnessOrNull(
+          TnBannerHarness.with({ textContains: /Set up Proactive Support/ }),
+        );
+        expect(banner).not.toBeNull();
       });
 
       it('has Enable button that opens ProactiveComponent', async () => {
@@ -194,7 +201,7 @@ describe('SupportCardComponent', () => {
         expect(apiCallSpy).toHaveBeenCalledWith('support.is_available');
       });
 
-      it('hides proactive support banner when enabled', () => {
+      it('hides proactive support banner when enabled', async () => {
         const api = spectator.inject(ApiService);
         jest.spyOn(api, 'call').mockImplementation((method: string) => {
           if (method === 'support.is_available_and_enabled') {
@@ -205,8 +212,10 @@ describe('SupportCardComponent', () => {
 
         emitSystemInfo();
 
-        const banner = spectator.query('.support-banner.proactive');
-        expect(banner).not.toExist();
+        const banner = await loader.getHarnessOrNull(
+          TnBannerHarness.with({ textContains: /Set up Proactive Support/ }),
+        );
+        expect(banner).toBeNull();
       });
     });
 
@@ -218,25 +227,28 @@ describe('SupportCardComponent', () => {
         });
       });
 
-      it('shows warning banner when contract expires within 14 days', () => {
-        const banner = spectator.query('.support-banner.warning');
-        expect(banner).toExist();
+      it('shows warning banner when contract expires within 14 days', async () => {
+        const banner = await loader.getHarnessOrNull(
+          TnBannerHarness.with({ textContains: /Your support contract expires in/ }),
+        );
+        expect(banner).not.toBeNull();
       });
 
       it('has Contact Us link in warning banner', () => {
-        const link = spectator.query('.support-banner.warning a');
+        const link = spectator.query('a[href="https://www.truenas.com/contact-us/"]');
         expect(link).toExist();
-        expect(link).toHaveAttribute('href', 'https://www.truenas.com/contact-us/');
       });
 
-      it('does not show warning banner when contract expires in more than 14 days', () => {
+      it('does not show warning banner when contract expires in more than 14 days', async () => {
         emitSystemInfo({
           datetime: { $date: 1767830400000 } as SystemInfo['datetime'], // 2026-01-08
           license: makeLicense('2026-02-01'), // 24 days away
         });
 
-        const banner = spectator.query('.support-banner.warning');
-        expect(banner).not.toExist();
+        const banner = await loader.getHarnessOrNull(
+          TnBannerHarness.with({ textContains: /Your support contract expires in/ }),
+        );
+        expect(banner).toBeNull();
       });
     });
 
@@ -268,20 +280,23 @@ describe('SupportCardComponent', () => {
       spectator.detectChanges();
     });
 
-    it('shows community support banner', () => {
-      const banner = spectator.query('.support-banner.community');
-      expect(banner).toExist();
+    it('shows community support banner', async () => {
+      const banner = await loader.getHarnessOrNull(
+        TnBannerHarness.with({ textContains: /join discussions on our forums/ }),
+      );
+      expect(banner).not.toBeNull();
     });
 
     it('has link to forums in community banner', () => {
-      const link = spectator.query('.support-banner.community a');
+      const link = spectator.query('a[href="https://forums.truenas.com/"]');
       expect(link).toExist();
-      expect(link).toHaveAttribute('href', 'https://forums.truenas.com/');
     });
 
-    it('does not show expiration warning banner', () => {
-      const banner = spectator.query('.support-banner.warning');
-      expect(banner).not.toExist();
+    it('does not show expiration warning banner', async () => {
+      const banner = await loader.getHarnessOrNull(
+        TnBannerHarness.with({ textContains: /support contract expires/ }),
+      );
+      expect(banner).toBeNull();
     });
   });
 
@@ -298,20 +313,23 @@ describe('SupportCardComponent', () => {
       emitSystemInfo();
     });
 
-    it('shows upsell banner for support options', () => {
-      const banner = spectator.query('.support-banner.upsell');
-      expect(banner).toExist();
+    it('shows upsell banner for support options', async () => {
+      const banner = await loader.getHarnessOrNull(
+        TnBannerHarness.with({ textContains: /Looking for support/ }),
+      );
+      expect(banner).not.toBeNull();
     });
 
     it('has link to support page in upsell banner', () => {
-      const link = spectator.query('.support-banner.upsell a');
+      const link = spectator.query('a[href="https://www.truenas.com/support/"]');
       expect(link).toExist();
-      expect(link).toHaveAttribute('href', 'https://www.truenas.com/support/');
     });
 
-    it('does not show proactive support banner', () => {
-      const banner = spectator.query('.support-banner.proactive');
-      expect(banner).not.toExist();
+    it('does not show proactive support banner', async () => {
+      const banner = await loader.getHarnessOrNull(
+        TnBannerHarness.with({ textContains: /Set up Proactive Support/ }),
+      );
+      expect(banner).toBeNull();
     });
   });
 });
