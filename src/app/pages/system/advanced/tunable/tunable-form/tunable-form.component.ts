@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -12,44 +15,36 @@ import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
 import { Job } from 'app/interfaces/job.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-tunable-form',
   templateUrl: './tunable-form.component.html',
+  styleUrls: ['./tunable-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxTextareaComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
-    IxSelectComponent,
+    AsyncPipe,
   ],
 })
-export class TunableFormComponent implements OnInit {
+export class TunableFormComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
-  slideInRef = inject<SlideInRef<Tunable | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemTunableWrite];
@@ -76,6 +71,8 @@ export class TunableFormComponent implements OnInit {
     enabled: [true],
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   readonly tooltips = {
     var: helptext.varTooltip,
     value: helptext.valueTooltip,
@@ -83,22 +80,21 @@ export class TunableFormComponent implements OnInit {
 
   private editingTunable: Tunable;
 
+  /**
+   * Row to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
+   * carry data). Absent for Add, and unused in the legacy SlideIn host (which
+   * supplies the row via `slideInRef.getData()`).
+   */
+  readonly editTunable = input<Tunable | undefined>(undefined);
+
   protected types$ = this.api.call('tunable.tunable_type_choices').pipe(
     choicesToOptions(),
   );
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-
-    const tunable = this.slideInRef.getData();
-    if (tunable) {
-      this.editingTunable = tunable;
-    }
-  }
-
   ngOnInit(): void {
+    this.editingTunable = this.slideInRef
+      ? this.slideInRef.getData() as Tunable | undefined
+      : this.editTunable();
     if (this.editingTunable) {
       this.setTunableForEdit();
     }
@@ -117,7 +113,7 @@ export class TunableFormComponent implements OnInit {
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       complete: () => {
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

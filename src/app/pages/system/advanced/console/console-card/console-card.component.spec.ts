@@ -1,14 +1,14 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -21,9 +21,12 @@ describe('ConsoleCardComponent', () => {
     component: ConsoleCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
+      mockApi([
+        mockCall('system.advanced.serial_port_choices', { ttyS0: 'ttyS0', ttyS1: 'ttyS1' }),
+        mockCall('system.advanced.update'),
+      ]),
+      mockProvider(SnackbarService),
+      mockProvider(FormErrorHandlerService),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
@@ -49,9 +52,9 @@ describe('ConsoleCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows console related settings', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+  it('shows console related settings', () => {
+    const items = spectator.queryAll('.details-item');
+    const itemTexts = items.map((item) => item.textContent.replace(/\s+/g, ' ').trim());
 
     expect(itemTexts).toEqual([
       'Show Text Console without Password Prompt: Enabled',
@@ -62,22 +65,26 @@ describe('ConsoleCardComponent', () => {
     ]);
   });
 
-  it('opens Console form when Configure is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+  it('opens the Console form in a side panel when Configure is pressed', async () => {
+    expect(spectator.query('ix-console-form')).toBeNull();
+
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
+    spectator.detectChanges();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      ConsoleFormComponent,
-      {
-        data: {
-          consolemenu: true,
-          motd: 'Welcome back',
-          serialconsole: true,
-          serialport: 'ttyS0',
-          serialspeed: '9600',
-        },
-      },
-    );
+    expect(spectator.query('ix-console-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
+    await configureButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-console-form')).not.toBeNull();
+
+    spectator.query(ConsoleFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-console-form')).toBeNull();
   });
 });

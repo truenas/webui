@@ -1,21 +1,28 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
-describe('SedFormComponent', () => {
+describe('SelfEncryptingDriveFormComponent', () => {
   let spectator: Spectator<SelfEncryptingDriveFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
   const createComponent = createComponentFactory({
     component: SelfEncryptingDriveFormComponent,
     imports: [
@@ -26,12 +33,20 @@ describe('SedFormComponent', () => {
         mockCall('system.advanced.update'),
         mockCall('system.advanced.sed_global_password', '***'),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(SnackbarService),
+      mockProvider(ErrorHandlerService),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectAdvancedConfig,
+            value: {
+              sed_user: 'admin',
+            } as AdvancedConfig,
+          },
+        ],
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),
-        getData: jest.fn(() => ({ sedPassword: '***' })),
         requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
@@ -44,24 +59,16 @@ describe('SedFormComponent', () => {
     api = spectator.inject(ApiService);
   });
 
-  it('shows current system advanced sed values when form is being edited without *** content', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
-
-    expect(values).toEqual({
-      'SED Password': '',
-      'Confirm SED Password': '',
-    });
+  it('shows empty SED password fields when form is being edited', async () => {
+    expect(await (await getInput('sed_passwd')).getValue()).toBe('');
+    expect(await (await getInput('sed_passwd2')).getValue()).toBe('');
   });
 
-  it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'SED Password': 'pleasechange',
-      'Confirm SED Password': 'pleasechange',
-    });
+  it('sends an update payload to websocket and closes the form when Save is pressed', async () => {
+    await (await getInput('sed_passwd')).setValue('pleasechange');
+    await (await getInput('sed_passwd2')).setValue('pleasechange');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
@@ -69,5 +76,6 @@ describe('SedFormComponent', () => {
         sed_passwd: 'pleasechange',
       },
     ]);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
   });
 });

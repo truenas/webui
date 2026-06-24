@@ -53,6 +53,20 @@ describe('provideTnFormFieldErrors', () => {
     expect(resolve('someUnknownKey', true, null)).toBeNull();
   });
 
+  it('surfaces backend validation errors stored under manualValidateError', () => {
+    const resolve = setup();
+    const control = new FormControl(null);
+    control.setErrors({
+      manualValidateError: true,
+      manualValidateErrorMsg: 'Server could not be reached. Check "Force" to continue regardless.',
+      ixManualValidateError: { message: 'Server could not be reached. Check "Force" to continue regardless.' },
+    });
+
+    expect(resolve('manualValidateError', true, control)).toBe(
+      'Server could not be reached. Check "Force" to continue regardless.',
+    );
+  });
+
   it('ignores a blank custom message and falls through to the translated default', () => {
     const resolve = setup();
 

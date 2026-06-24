@@ -1,24 +1,21 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, finalize, forkJoin, Observable, of, take,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
+import {
+  filter, finalize, forkJoin, Observable, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -32,23 +29,22 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 @Component({
   selector: 'ix-access-form',
   templateUrl: 'access-form.component.html',
+  styleUrls: ['./access-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxCheckboxComponent,
-    IxTextareaComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class AccessFormComponent implements OnInit {
+export class AccessFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
@@ -56,7 +52,6 @@ export class AccessFormComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private authService = inject(AuthService);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
@@ -69,11 +64,7 @@ export class AccessFormComponent implements OnInit {
     login_banner: [null as string | null],
   });
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
     this.store$.pipe(waitForGeneralConfig, takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
@@ -140,6 +131,6 @@ export class AccessFormComponent implements OnInit {
 
   private showSuccessNotificationAndClose(): void {
     this.snackbar.success(this.translate.instant('Settings saved'));
-    this.slideInRef.close({ response: true });
+    this.close(true);
   }
 }

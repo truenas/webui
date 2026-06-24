@@ -1,59 +1,56 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of, Subscription } from 'rxjs';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import { of, Subscription, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @Component({
   selector: 'ix-console-form',
   templateUrl: './console-form.component.html',
+  styleUrls: ['./console-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
-    IxTextareaComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TnInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
+    AsyncPipe,
   ],
 })
-export class ConsoleFormComponent implements OnInit {
+export class ConsoleFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<ConsoleConfig, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
@@ -67,6 +64,8 @@ export class ConsoleFormComponent implements OnInit {
     serialspeed: [''],
     motd: [''],
   });
+
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   private subscriptions: Subscription[] = [];
 
@@ -88,31 +87,28 @@ export class ConsoleFormComponent implements OnInit {
 
   readonly serialPortOptions$ = this.api.call('system.advanced.serial_port_choices').pipe(choicesToOptions());
 
-  private consoleConfig: ConsoleConfig;
-
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.consoleConfig = this.slideInRef.getData();
-    this.destroyRef.onDestroy(() => {
-      this.subscriptions.forEach((sub) => sub.unsubscribe());
-    });
-  }
-
   ngOnInit(): void {
-    this.form.patchValue({
-      consolemenu: this.consoleConfig.consolemenu,
-      serialconsole: this.consoleConfig.serialconsole,
-      serialport: this.consoleConfig.serialport,
-      serialspeed: this.consoleConfig.serialspeed,
-      motd: this.consoleConfig.motd,
+    this.store$.pipe(
+      waitForAdvancedConfig,
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
+      this.form.patchValue({
+        consolemenu: config.consolemenu,
+        serialconsole: config.serialconsole,
+        serialport: config.serialport,
+        serialspeed: config.serialspeed,
+        motd: config.motd,
+      });
     });
 
     this.subscriptions.push(
       this.form.controls.serialport.enabledWhile(this.form.controls.serialconsole.value$),
       this.form.controls.serialspeed.enabledWhile(this.form.controls.serialconsole.value$),
     );
+    this.destroyRef.onDestroy(() => {
+      this.subscriptions.forEach((sub) => sub.unsubscribe());
+    });
   }
 
   protected onSubmit(): void {
@@ -124,7 +120,7 @@ export class ConsoleFormComponent implements OnInit {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

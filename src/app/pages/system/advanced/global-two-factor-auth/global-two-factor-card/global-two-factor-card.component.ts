@@ -1,23 +1,23 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnTooltipDirective } from '@truenas/ui-components';
 import {
-  Subject, shareReplay, startWith, switchMap, tap,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnSidePanelActionDirective, TnSidePanelComponent,
+} from '@truenas/ui-components';
+import {
+  Observable, Subject, of, shareReplay, startWith, switchMap, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
-import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { globalTwoFactorCardElements } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.elements';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
@@ -25,38 +25,50 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 
 @Component({
   selector: 'ix-global-two-factor-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./global-two-factor-card.component.scss'],
   templateUrl: './global-two-factor-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     UiSearchDirective,
-    MatToolbarRow,
     WithLoadingStateDirective,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
-    TnTooltipDirective,
+    TnButtonComponent,
+    TooltipComponent,
+    GlobalTwoFactorAuthFormComponent,
     TranslateModule,
   ],
 })
 export class GlobalTwoFactorAuthCardComponent {
   private api = inject(ApiService);
   private firstTimeWarning = inject(FirstTimeWarningService);
-  private slideIn = inject(SlideIn);
+  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   readonly helpText = helptext2fa;
   protected readonly searchableElements = globalTwoFactorCardElements;
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
+  protected configOpen = signal(false);
+  protected configForm = viewChild(GlobalTwoFactorAuthFormComponent);
+
   private readonly reloadConfig$ = new Subject<void>();
-  readonly twoFactorConfig$ = this.reloadConfig$.pipe(
+
+  // Single shared fetch feeds both the read-only summary (via loading state) and the
+  // signal passed into the form, so opening the panel does not re-fetch the same config.
+  private readonly config$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.api.call('auth.twofactor.config')),
+    shareReplay({
+      refCount: false,
+      bufferSize: 1,
+    }),
+  );
+
+  readonly twoFactorConfig$ = this.config$.pipe(
     toLoadingState(),
     shareReplay({
       refCount: false,
@@ -64,14 +76,25 @@ export class GlobalTwoFactorAuthCardComponent {
     }),
   );
 
-  onConfigurePressed(twoFactorAuthConfig: GlobalTwoFactorConfig): void {
+  protected readonly loadedConfig = toSignal(this.config$);
+
+  protected readonly closeGuard = (): Observable<boolean> => {
+    return this.configForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
+
+  onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(
-        GlobalTwoFactorAuthFormComponent,
-        { data: twoFactorAuthConfig },
-      ).success$),
-      tap(() => this.reloadConfig$.next()),
+      take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    ).subscribe(() => this.configOpen.set(true));
+  }
+
+  protected onConfigClosed(saved: boolean): void {
+    this.configOpen.set(false);
+    if (saved) {
+      this.reloadConfig$.next();
+    }
   }
 }

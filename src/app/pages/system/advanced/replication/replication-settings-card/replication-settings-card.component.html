@@ -1,27 +1,47 @@
-<mat-card [ixUiSearch]="searchableElements.elements.replication">
-  <mat-toolbar-row>
-    <h3>{{ 'Replication' | translate }}</h3>
-    <div class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['replication', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
-        (click)="onConfigurePressed()"
-      >
-        {{ 'Configure' | translate }}
-      </button>
+<tn-card
+  padding="small"
+  [title]="'Replication' | translate"
+  [ixUiSearch]="searchableElements.elements.replication"
+>
+  <div class="details">
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.replicationTasksLimit">
+      <span class="label">{{ 'Replication Tasks Limit' | translate }}:</span>
+      <span *ixWithLoadingState="taskLimit$ as taskLimit" class="value">
+        {{ taskLimit || '–' }}
+      </span>
     </div>
-  </mat-toolbar-row>
+  </div>
 
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.replicationTasksLimit">
-        <span class="label">{{ 'Replication Tasks Limit' | translate }}:</span>
-        <span *ixWithLoadingState="taskLimit$ as taskLimit" class="value">
-          {{ taskLimit || '–' }}
-        </span>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['replication', 'configure']"
+      [ixUiSearch]="searchableElements.elements.configure"
+      [label]="'Configure' | translate"
+      (onClick)="onConfigurePressed()"
+    ></tn-button>
+  </ng-template>
+</tn-card>
+
+<tn-side-panel
+  [title]="'Replication' | translate"
+  [closeGuard]="closeGuard"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-replication-settings-form (closed)="onConfigClosed($event)"></ix-replication-settings-form>
+  }
+  @if (configForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>
