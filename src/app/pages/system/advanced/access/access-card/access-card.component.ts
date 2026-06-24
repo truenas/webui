@@ -32,12 +32,12 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
-import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
+import { getAccessFormConfig } from 'app/pages/system/advanced/access/access-form/access.form-config';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { AppState } from 'app/store';
@@ -73,7 +73,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class AccessCardComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
@@ -143,7 +143,10 @@ export class AccessCardComponent implements OnInit {
 
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(AccessFormComponent).success$),
+      switchMap(() => this.formPanel.openForm(
+        getAccessFormConfig(this.api, this.translate, this.store$, () => Boolean(this.isEnterprise())),
+        { title: this.translate.instant('Access') },
+      ).success$),
       tap(() => {
         this.updateSessions();
       }),

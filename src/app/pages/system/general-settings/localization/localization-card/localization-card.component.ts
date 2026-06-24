@@ -4,7 +4,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -13,10 +13,11 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { localizationCardElements } from 'app/pages/system/general-settings/localization/localization-card/localization-card.elements';
-import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
+import { getLocalizationFormConfig } from 'app/pages/system/general-settings/localization/localization-form/localization.form-config';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -42,8 +43,10 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 })
 export class LocalizationCardComponent {
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private sysGeneralService = inject(SystemGeneralService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
 
   protected readonly searchableElements = localizationCardElements;
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
@@ -65,11 +68,15 @@ export class LocalizationCardComponent {
   }
 
   openSettings(config: SystemGeneralConfig): void {
-    this.slideIn.open(LocalizationFormComponent, {
-      data: {
-        kbdMap: config.kbdmap,
-        timezone: config.timezone,
+    this.formPanel.openForm(
+      getLocalizationFormConfig(this.sysGeneralService, this.api, this.translate, this.store$),
+      {
+        title: this.translate.instant('Localization Settings'),
+        editData: {
+          kbdmap: config.kbdmap,
+          timezone: config.timezone,
+        },
       },
-    });
+    );
   }
 }

@@ -18,12 +18,11 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
-import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -93,8 +92,8 @@ describe('AccessCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -125,7 +124,10 @@ describe('AccessCardComponent', () => {
     await configure.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AccessFormComponent);
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      { title: 'Access' },
+    );
   });
 
   it('terminates the session when corresponding Terminate is pressed', async () => {

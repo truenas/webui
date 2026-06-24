@@ -5,7 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
   Subject, distinctUntilChanged, map, shareReplay, startWith, switchMap, tap,
@@ -15,10 +15,11 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { consoleCardElements } from 'app/pages/system/advanced/console/console-card/console-card.elements';
-import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
+import { getConsoleFormConfig } from 'app/pages/system/advanced/console/console-form/console.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -52,7 +53,9 @@ export interface ConsoleConfig {
 })
 export class ConsoleCardComponent {
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private formPanel = inject(FormSidePanelService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private destroyRef = inject(DestroyRef);
 
@@ -100,7 +103,10 @@ export class ConsoleCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(ConsoleFormComponent, { data: this.consoleConfig }).success$),
+      switchMap(() => this.formPanel.openForm(getConsoleFormConfig(this.api, this.translate, this.store$), {
+        title: this.translate.instant('Console'),
+        editData: this.consoleConfig,
+      }).success$),
       tap(() => this.reloadConfig$.next()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();

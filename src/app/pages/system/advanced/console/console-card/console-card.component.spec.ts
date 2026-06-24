@@ -7,10 +7,9 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
-import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -21,8 +20,8 @@ describe('ConsoleCardComponent', () => {
     component: ConsoleCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -67,10 +66,11 @@ describe('ConsoleCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      ConsoleFormComponent,
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
       {
-        data: {
+        title: 'Console',
+        editData: {
           consolemenu: true,
           motd: 'Welcome back',
           serialconsole: true,

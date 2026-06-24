@@ -6,10 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { KernelCardComponent } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.component';
-import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -20,8 +19,8 @@ describe('KernelCardComponent', () => {
     component: KernelCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -58,9 +57,9 @@ describe('KernelCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      KernelFormComponent,
-      { data: true },
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      { title: 'Kernel', editData: { debugkernel: true } },
     );
   });
 });

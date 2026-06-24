@@ -4,6 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Subject, shareReplay, startWith, switchMap, tap,
@@ -13,12 +14,13 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { auditCardElements } from 'app/pages/system/advanced/audit/audit-card/audit-card.elements';
-import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
+import { getAuditFormConfig } from 'app/pages/system/advanced/audit/audit-form/audit.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-audit-card',
@@ -40,9 +42,10 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class AuditCardComponent {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private destroyRef = inject(DestroyRef);
 
@@ -61,7 +64,9 @@ export class AuditCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(AuditFormComponent).success$),
+      switchMap(() => this.formPanel.openForm(getAuditFormConfig(this.api, this.translate, this.store$), {
+        title: this.translate.instant('Audit'),
+      }).success$),
       tap(() => {
         this.reloadConfig$.next();
       }),

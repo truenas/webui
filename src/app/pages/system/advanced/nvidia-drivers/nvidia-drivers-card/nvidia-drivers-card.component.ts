@@ -5,7 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import {
   distinctUntilChanged, map, shareReplay, startWith, switchMap, tap,
@@ -15,10 +15,11 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { nvidiaDriversCardElements } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-card/nvidia-drivers-card.elements';
-import { NvidiaDriversFormComponent } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-form/nvidia-drivers-form.component';
+import { getNvidiaDriversFormConfig } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-form/nvidia-drivers.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -46,7 +47,9 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class NvidiaDriversCardComponent {
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private formPanel = inject(FormSidePanelService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private destroyRef = inject(DestroyRef);
 
@@ -70,7 +73,13 @@ export class NvidiaDriversCardComponent {
 
   onConfigurePressed(nvidiaEnabled: boolean): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(NvidiaDriversFormComponent, { data: nvidiaEnabled }).success$),
+      switchMap(() => this.formPanel.openForm(
+        getNvidiaDriversFormConfig(this.api, this.translate, this.store$, nvidiaEnabled),
+        {
+          title: this.translate.instant('NVIDIA Drivers'),
+          editData: { nvidia: nvidiaEnabled },
+        },
+      ).success$),
       tap(() => this.reloadConfig$.next()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();

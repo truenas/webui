@@ -6,14 +6,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   NvidiaDriversCardComponent,
 } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-card/nvidia-drivers-card.component';
-import {
-  NvidiaDriversFormComponent,
-} from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-form/nvidia-drivers-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -36,8 +33,8 @@ describe('NvidiaDriversCardComponent', () => {
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });
@@ -68,7 +65,10 @@ describe('NvidiaDriversCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvidiaDriversFormComponent, { data: false });
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      { title: 'NVIDIA Drivers', editData: { nvidia: false } },
+    );
   });
 
   it('passes current nvidia enabled state to form', async () => {
@@ -80,6 +80,9 @@ describe('NvidiaDriversCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configureButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvidiaDriversFormComponent, { data: true });
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      { title: 'NVIDIA Drivers', editData: { nvidia: true } },
+    );
   });
 });
