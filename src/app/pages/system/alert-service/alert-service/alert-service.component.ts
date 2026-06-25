@@ -1,12 +1,13 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, ViewContainerRef, viewChild, inject, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, ViewContainerRef,
+  viewChild, inject, input, output, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Validators, ReactiveFormsModule, FormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
@@ -15,7 +16,6 @@ import {
   finalize, Observable, of, startWith, Subscription,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { alertServiceNames, AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -27,9 +27,11 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import {
+  SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AwsSnsServiceComponent,
@@ -76,9 +78,6 @@ import {
     TnCheckboxComponent,
     TnSelectComponent,
     IxFormComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
     AsyncPipe,
   ],
@@ -90,10 +89,22 @@ export class AlertServiceComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
-  slideInRef = inject<SlideInRef<AlertService | undefined, boolean>>(SlideInRef);
+  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
+  // `<tn-side-panel>` form panel, where data arrives via {@link alertServiceToEdit}
+  // and close happens through {@link closed}.
+  private slideInRef = inject<SlideInRef<AlertService | undefined, boolean>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.AlertWrite];
+  /** The record being edited, supplied by the `<tn-side-panel>` host (null = create). */
+  readonly alertServiceToEdit = input<AlertService | undefined>(undefined);
+
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
+  readonly closed = output<boolean>();
+
+  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  readonly requiredRoles = [Role.AlertWrite];
 
   commonForm = this.formBuilder.group({
     name: ['', Validators.required],
@@ -110,7 +121,11 @@ export class AlertServiceComponent implements OnInit {
   // Drives the modal-header progress bar while a Send Test Alert call is in
   // flight. Submit's own loading state is handled by the wrapper internally.
   protected readonly testAlertLoading = signal(false);
-  protected readonly existingAlertService = this.slideInRef.getData();
+
+  // Resolved in ngOnInit (not a field initializer): the SlideIn host exposes it via
+  // `slideInRef.getData()`, the side-panel host via the `alertServiceToEdit` input —
+  // and inputs aren't set until after construction.
+  private existingAlertService: AlertService | undefined;
 
   // Mirrors the dynamic child form's `invalid` state into a signal so the
   // wrapper's OnPush `[extraDisabled]` binding (and the Send Test Alert
@@ -136,9 +151,34 @@ export class AlertServiceComponent implements OnInit {
     return !this.existingAlertService;
   }
 
-  get canSubmit(): boolean {
-    return this.commonForm.valid && !this.childFormInvalid();
+  /**
+   * Whether the form may be submitted right now. Delegates to the inner `<ix-form>`, which already
+   * folds in `commonForm` validity, the child form's invalid state (via `extraDisabled`) and the
+   * loading state. The `<tn-side-panel>` host reads this to enable/disable its footer Save and the
+   * Send Test Alert action. False until the view (and thus the child) initializes.
+   */
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
   }
+
+  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) — combined dirty across both forms (see {@link dirtyPredicate}). */
+  hasUnsavedChanges(): boolean {
+    return Boolean(this.commonForm.dirty || this.alertServiceForm?.form.dirty || this.hadTypeChange);
+  }
+
+  /** Secondary footer action rendered by the `<tn-side-panel>` host beside Save. */
+  readonly footerActions: SidePanelFooterAction[] = [{
+    label: T('Send Test Alert'),
+    testId: 'send-test-alert',
+    requiredRoles: this.requiredRoles,
+    disabled: () => !this.canSubmit(),
+    onClick: () => this.onSendTestAlert(),
+  }];
 
   // True once the user has ever caused the child form to re-render by
   // changing `type`. The new child form starts pristine even though the
@@ -169,6 +209,7 @@ export class AlertServiceComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.existingAlertService = this.slideInRef?.getData() ?? this.alertServiceToEdit();
     if (this.existingAlertService) {
       this.setAlertServiceForEdit(this.existingAlertService);
     } else {

@@ -190,8 +190,10 @@ describe('AlertServiceComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
 
-      const sendTestAlertButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Alert' }));
-      await sendTestAlertButton.click();
+      // Send Test Alert is now a side-panel footer action (rendered by the host
+      // container, not this component), so trigger it via the exposed action.
+      spectator.component.footerActions[0].onClick();
+      spectator.detectChanges();
 
       expect(await saveButton.isDisabled()).toBe(true);
     });
@@ -202,8 +204,10 @@ describe('AlertServiceComponent', () => {
       await (await getSelect('type')).selectOption('AWS SNS');
       await (await getSelect('level')).selectOption('Error');
 
-      const sendTestAlertButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Alert' }));
-      await sendTestAlertButton.click();
+      // Send Test Alert is now a side-panel footer action (rendered by the host
+      // container, not this component), so trigger it via the exposed action.
+      spectator.component.footerActions[0].onClick();
+      spectator.detectChanges();
 
       const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();

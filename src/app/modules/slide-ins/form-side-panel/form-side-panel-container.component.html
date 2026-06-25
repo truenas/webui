@@ -13,6 +13,28 @@
     (attached)="onPortalAttached($event)"
   ></ng-template>
 
+  <!--
+    Each `tnSidePanelAction` host sits in its OWN `@if` block (one projectable node per block) so it
+    projects into the footer slot — multiple projected nodes sharing one `@if`, or a `@for` of them,
+    fall through to the default content slot (named `ng-content` projection doesn't route them).
+    Secondary actions are grouped under ONE `display: contents` host so the loop's buttons still flex
+    directly in the footer (gap + Save layout intact) without each needing its own projection.
+  -->
+  @if ((form()?.footerActions ?? []).length) {
+    <div tnSidePanelAction class="footer-actions-group">
+      @for (action of form()?.footerActions ?? []; track action.testId) {
+        <tn-button
+          *ixRequiresRoles="action.requiredRoles ?? []"
+          [color]="action.color ?? 'default'"
+          [testId]="action.testId"
+          [label]="action.label | translate"
+          [disabled]="action.disabled?.() ?? false"
+          (onClick)="action.onClick()"
+        ></tn-button>
+      }
+    </div>
+  }
+
   @if (form(); as form) {
     <tn-button
       *ixRequiresRoles="form.requiredRoles || []"

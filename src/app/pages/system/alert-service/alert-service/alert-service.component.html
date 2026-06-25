@@ -8,6 +8,7 @@
   [extraDisabled]="childFormInvalid()"
   [externalLoading]="testAlertLoading()"
   [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
 >
   <tn-form-section [heading]="'Name and Type' | translate">
     <tn-form-field [label]="'Name' | translate">
@@ -39,16 +40,4 @@
   <tn-form-section [heading]="'Settings' | translate">
     <ng-container #alertServiceContainer></ng-container>
   </tn-form-section>
-
-  <button
-    *ixRequiresRoles="requiredRoles"
-    ixExtraActions
-    mat-button
-    type="button"
-    ixTest="send-test-alert"
-    [disabled]="!canSubmit || testAlertLoading()"
-    (click)="onSendTestAlert()"
-  >
-    {{ 'Send Test Alert' | translate }}
-  </button>
 </ix-form>
