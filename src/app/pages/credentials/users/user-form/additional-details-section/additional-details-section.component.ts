@@ -5,7 +5,8 @@ import { ReactiveFormsModule, ValidationErrors, Validators } from '@angular/form
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import {
   combineLatest,
@@ -38,7 +39,6 @@ import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -57,7 +57,7 @@ import { UserService } from 'app/services/user.service';
   imports: [
     AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,

@@ -3,13 +3,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnCheckboxLabelDirective, TnIconComponent, TnSelectComponent, TnTestIdDirective,
+  TnCheckboxComponent, TnCheckboxLabelDirective, TnFormSectionComponent, TnIconComponent, TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
 @Component({
@@ -23,7 +23,7 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-for
     TnTestIdDirective,
     TnCheckboxComponent,
     TnCheckboxLabelDirective,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     ReactiveFormsModule,
     TranslateModule,
   ],

@@ -1,11 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { AllUsersHeaderComponent } from './all-users-header.component';
 
 describe('AllUsersHeaderComponent', () => {
@@ -16,9 +13,6 @@ describe('AllUsersHeaderComponent', () => {
     component: AllUsersHeaderComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
     ],
   });
 
@@ -27,13 +21,12 @@ describe('AllUsersHeaderComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('should render Create New User button and open create user form', async () => {
-    const createNewUserButton = await loader.getHarness(MatButtonHarness.with({ text: /Add/ }));
-    await createNewUserButton.click();
+  it('emits addUser when the Add button is clicked', async () => {
+    const emitSpy = jest.spyOn(spectator.component.addUser, 'emit');
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      UserFormComponent,
-      { wide: false },
-    );
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: /Add/ }));
+    await addButton.click();
+
+    expect(emitSpy).toHaveBeenCalledWith();
   });
 });

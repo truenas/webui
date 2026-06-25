@@ -3,12 +3,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent,
 } from '@truenas/ui-components';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { User } from 'app/interfaces/user.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { UserFormStore, UserStigPasswordOption, defaultHomePath } from 'app/pages/credentials/users/user-form/user.store';
 
@@ -22,7 +21,7 @@ import { UserFormStore, UserStigPasswordOption, defaultHomePath } from 'app/page
     TnFormFieldComponent,
     TnRadioComponent,
     TnCheckboxComponent,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     TranslateModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -37,6 +37,7 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -360,7 +361,10 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
       switchMap(() => {
-        const result$ = this.slideIn.open(UserFormComponent, { wide: true });
+        // UserFormComponent is dual-host: its SidePanelForm base types the slide-in response as
+        // `boolean`, but in this legacy SlideIn host it closes with the created User (see
+        // UserFormComponent.closeWithUser), which this picker needs to select the new entry.
+        const result$ = this.slideIn.open(UserFormComponent, { wide: true }) as unknown as SlideInResult<User>;
         return merge(
           result$.success$.pipe(
             tap((newUser) => {

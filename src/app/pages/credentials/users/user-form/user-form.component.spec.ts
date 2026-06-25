@@ -204,6 +204,30 @@ describe('UserFormComponent', () => {
     });
   });
 
+  describe('side panel host (no SlideInRef)', () => {
+    beforeEach(() => {
+      // No SlideInRef → hosted in a <tn-side-panel>, which owns the header + footer Save.
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+        ],
+      });
+    });
+
+    it('does not render the in-form header (the panel host renders its own)', () => {
+      expect(spectator.query(ModalHeaderComponent)).toBeNull();
+    });
+
+    it('does not render the in-form Save action (the panel footer owns it)', () => {
+      expect(spectator.query('ix-form-actions')).toBeNull();
+    });
+
+    it('exposes submit() and canSubmit for the panel footer to drive', () => {
+      expect(typeof spectator.component.submit).toBe('function');
+      expect(spectator.component.canSubmit()).toBe(false);
+    });
+  });
+
   describe('validation clearing integration', () => {
     it('verifies FormErrorHandlerService has clearValidationErrorsForHiddenFields method', () => {
       // This test ensures the FormErrorHandlerService method exists and can be called
