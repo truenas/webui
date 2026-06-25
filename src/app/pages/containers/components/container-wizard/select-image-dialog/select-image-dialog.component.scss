@@ -6,6 +6,7 @@
       overflow: auto;
     }
 
+    // TEMP: tn-table does not expose sticky-header or row line-height as public inputs — track via @truenas/ui-components issue.
     table thead {
       position: sticky;
       top: 0;
@@ -17,7 +18,7 @@
     }
   }
 
-  ix-fieldset fieldset {
+  tn-form-section {
     padding: 0;
 
     @media(min-width: $breakpoint-sm) {
@@ -44,7 +45,7 @@ form {
     display: block;
   }
 
-  ix-fieldset {
+  tn-form-section {
     border-right: 1px solid var(--lines);
     height: 100%;
   }

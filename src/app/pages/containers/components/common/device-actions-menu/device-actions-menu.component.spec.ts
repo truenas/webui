@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -75,12 +75,16 @@ describe('DeviceActionsMenuComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
+  async function openMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnIconButtonHarness);
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   describe('delete', () => {
     it('deletes a device with confirmation and reloads the store when Delete item is selected', async () => {
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-
-      await menu.clickItem({ text: 'Delete' });
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Delete' });
 
       expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
         title: 'Delete Item',
@@ -95,12 +99,10 @@ describe('DeviceActionsMenuComponent', () => {
 
   describe('edit', () => {
     it('emits an edit event for non-storage devices when the Edit item is selected', async () => {
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-
       jest.spyOn(spectator.component.edit, 'emit');
 
-      await menu.clickItem({ text: 'Edit' });
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Edit' });
 
       expect(spectator.component.edit.emit).toHaveBeenCalled();
     });
@@ -113,12 +115,10 @@ describe('DeviceActionsMenuComponent', () => {
         target: '/data',
       } as ContainerDevice);
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-
       jest.spyOn(spectator.inject(SlideIn), 'open');
 
-      await menu.clickItem({ text: 'Edit' });
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Edit' });
 
       // Verify that the SlideIn service was called to open the form
       expect(spectator.inject(SlideIn).open).toHaveBeenCalled();
@@ -127,11 +127,9 @@ describe('DeviceActionsMenuComponent', () => {
     it('does not show the Edit item when showEdit is false', async () => {
       spectator.setInput('showEdit', false);
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-
-      const items = await menu.getItems({ text: 'Edit' });
-      expect(items).toHaveLength(0);
+      const menu = await openMenu();
+      const items = await menu.getItemLabels();
+      expect(items).not.toContain('Edit');
     });
   });
 });
