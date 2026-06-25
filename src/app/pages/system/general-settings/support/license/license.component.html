@@ -1,10 +1,10 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
+<ix-form
+  [formGroup]="form"
   [title]="title"
-  [loading]="isFormLoading"
-></ix-modal-header>
-
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  [requiredRoles]="requiredRoles"
+  [suppressSuccessSnackbar]="true"
+  [submitHandler]="handleSubmit"
+>
   <ix-fieldset>
     <ix-textarea
       [formControlName]="license.fcName"
@@ -12,15 +12,4 @@
       [required]="true"
     ></ix-textarea>
   </ix-fieldset>
-
-  <ix-form-actions>
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      color="primary"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="form.invalid || isFormLoading"
-      (onClick)="onSubmit()"
-    ></tn-button>
-  </ix-form-actions>
-</form>
+</ix-form>

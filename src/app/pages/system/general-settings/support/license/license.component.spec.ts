@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -13,9 +13,8 @@ import {
   DialogWithSecondaryCheckboxResult,
 } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LicenseComponent } from './license.component';
@@ -40,11 +39,9 @@ describe('LicenseComponent', () => {
       mockApi([
         mockCall('truenas.license.upload'),
       ]),
-      mockProvider(SlideIn),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),
-      mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
       mockWindow({
@@ -52,6 +49,7 @@ describe('LicenseComponent', () => {
           reload: jest.fn(),
         },
       }),
+      ...ixFormTestingProviders(),
     ],
   });
 
@@ -67,7 +65,7 @@ describe('LicenseComponent', () => {
       License: 'test-license',
     });
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('truenas.license.upload', ['test-license']);
@@ -81,7 +79,7 @@ describe('LicenseComponent', () => {
       License: 'test-license',
     });
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
