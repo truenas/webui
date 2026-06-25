@@ -1,17 +1,18 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, OnInit, signal, Signal, viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog, TnSpinnerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnSliderComponent,
+  TnSliderThumbDirective, TnSpinnerComponent,
+} from '@truenas/ui-components';
 import {
   combineLatest, filter, map, Subscription, switchMap, tap,
 } from 'rxjs';
 import { AppContainerLog } from 'app/interfaces/app.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -28,10 +29,12 @@ import { ShellService } from 'app/services/shell.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    ToolbarSliderComponent,
     TnButtonComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
+    TnSliderComponent,
+    TnSliderThumbDirective,
     ReactiveFormsModule,
-    IxCheckboxComponent,
     TranslateModule,
     TnSpinnerComponent,
   ],
@@ -48,9 +51,12 @@ export class ContainerLogsComponent implements OnInit {
 
   private logContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('logContainer', { read: ElementRef });
 
-  protected fontSize = signal(14);
+  protected readonly minFontSize = 10;
+  protected readonly maxFontSize = 20;
   protected isLoading = signal(false);
   protected autoScrollControl = new FormControl<boolean>(true);
+  protected fontSizeControl = new FormControl(14, { nonNullable: true });
+  protected fontSize = toSignal(this.fontSizeControl.valueChanges, { initialValue: this.fontSizeControl.value });
 
   protected train: string;
   protected appName: string;
@@ -128,9 +134,5 @@ export class ContainerLogsComponent implements OnInit {
     } catch {
       // Ignore error
     }
-  }
-
-  onFontSizeChanged(newSize: number): void {
-    this.fontSize.set(newSize);
   }
 }

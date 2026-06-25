@@ -7,12 +7,10 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
-import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -25,10 +23,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('system.advanced.sed_global_password', '12345678'),
-        mockCall('system.advanced.update'),
       ]),
-      mockProvider(SnackbarService),
-      mockProvider(ErrorHandlerService),
       provideMockStore({
         selectors: [
           {
@@ -39,8 +34,11 @@ describe('SelfEncryptingDriveCardComponent', () => {
           },
         ],
       }),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => ({ success$: of(true) })),
+      }),
       mockProvider(FirstTimeWarningService, {
-        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(undefined)),
       }),
     ],
   });
@@ -59,26 +57,16 @@ describe('SelfEncryptingDriveCardComponent', () => {
     ]);
   });
 
-  it('opens the SED form in a side panel when Configure is pressed', async () => {
-    expect(spectator.query('ix-self-encrypting-drive-form')).toBeNull();
-
+  it('opens the SED form when Configure is pressed', async () => {
     const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
-    spectator.detectChanges();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.query('ix-self-encrypting-drive-form')).not.toBeNull();
-  });
-
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
-    await configureButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-self-encrypting-drive-form')).not.toBeNull();
-
-    spectator.query(SelfEncryptingDriveFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-self-encrypting-drive-form')).toBeNull();
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      {
+        title: 'Self-Encrypting Drive',
+      },
+    );
   });
 });

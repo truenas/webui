@@ -13,6 +13,39 @@ function detail(errors: ValidationErrors, key: string): ErrorDetail {
 }
 
 /**
+ * Error keys set by `FormErrorHandlerService` for a server-side validation
+ * failure. The active key is the boolean `manualValidateError`, but the
+ * human-readable text lives in the sibling keys — so the resolver must read
+ * across them rather than off the active key's value.
+ */
+const manualValidateError = 'manualValidateError';
+const manualValidateErrorMsg = 'manualValidateErrorMsg';
+const ixManualValidateError = 'ixManualValidateError';
+const manualValidateKeys = new Set<string>([
+  manualValidateError, manualValidateErrorMsg, ixManualValidateError,
+]);
+
+/**
+ * Pulls the server-supplied message out of a manual validation error. Mirrors
+ * the legacy `ix-errors` component, which renders `ixManualValidateError.message`
+ * directly. Returns `null` when no manual message is present.
+ */
+function manualValidationMessage(errors: ValidationErrors | null | undefined): string | null {
+  if (!errors) {
+    return null;
+  }
+  const fromObject = (errors[ixManualValidateError] as { message?: unknown } | undefined)?.message;
+  if (typeof fromObject === 'string' && fromObject.trim()) {
+    return fromObject;
+  }
+  const fromMsg = errors[manualValidateErrorMsg];
+  if (typeof fromMsg === 'string' && fromMsg.trim()) {
+    return fromMsg;
+  }
+  return null;
+}
+
+/**
  * Builds a translated message for a single validation error, mirroring the
  * `ix-errors` component so `tn-form-field` surfaces the same wording and i18n.
  *
@@ -118,8 +151,10 @@ function translateError(
  * wording, so this wires its `TN_FORM_FIELD_ERRORS` hook to `TranslateService`
  * and reuses the same messages as the legacy `ix-errors` component:
  * 1. A custom validator that stored a pre-built `{ message }` string wins.
- * 2. Otherwise a known error key resolves to its translated message.
- * 3. Unknown keys return `null` to fall through to the library defaults.
+ * 2. A server-side validation error (`manualValidateError`) resolves to the
+ *    message its sibling keys carry.
+ * 3. Otherwise a known error key resolves to its translated message.
+ * 4. Unknown keys return `null` to fall through to the library defaults.
  */
 export function provideTnFormFieldErrors(): Provider {
   return {
@@ -132,14 +167,13 @@ export function provideTnFormFieldErrors(): Provider {
           return customMessage;
         }
 
-        // Backend (API) validation errors are mapped onto controls by
-        // `FormErrorHandlerService`, which sets `manualValidateError: true` (a bare
-        // flag, rendered first by tn-form-field) alongside the real message in the
-        // sibling `manualValidateErrorMsg` key. Surface that sibling message — the
-        // legacy `ix-errors` component had equivalent special-casing.
-        if (errorKey === 'manualValidateError') {
-          const message = control?.errors?.['manualValidateErrorMsg'];
-          return typeof message === 'string' ? message : null;
+        // The active error key for a server validation failure is the bare
+        // `manualValidateError: true` flag; its message sits in a sibling key.
+        if (manualValidateKeys.has(errorKey)) {
+          const manualMessage = manualValidationMessage(control?.errors);
+          if (manualMessage) {
+            return manualMessage;
+          }
         }
 
         return translateError(translate, errorKey, control?.errors ?? { [errorKey]: errorValue });

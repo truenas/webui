@@ -3,8 +3,9 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
-import { of, startWith } from 'rxjs';
+import { Observable, of, startWith } from 'rxjs';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
 /**
  * Base class for any form that can be hosted either in a legacy SlideIn (via {@link SlideInRef})
@@ -70,4 +71,20 @@ export abstract class SidePanelForm {
     );
     return computed(() => status() === 'VALID' && !isLoading());
   }
+}
+
+/**
+ * Builds a `<tn-side-panel>` `[closeGuard]` for a hosted {@link SidePanelForm}: prompts the
+ * unsaved-changes confirmation when the form is dirty, otherwise allows the close. Centralizes
+ * the guard otherwise duplicated across every side-panel host.
+ *
+ * @param unsavedChanges injected {@link UnsavedChangesService}
+ * @param form accessor for the hosted form (typically a `viewChild` signal), may be absent
+ *   while the panel is closed
+ */
+export function sidePanelFormCloseGuard(
+  unsavedChanges: UnsavedChangesService,
+  form: () => Pick<SidePanelForm, 'hasUnsavedChanges'> | undefined,
+): () => Observable<boolean> {
+  return () => (form()?.hasUnsavedChanges() ? unsavedChanges.showConfirmDialog() : of(true));
 }

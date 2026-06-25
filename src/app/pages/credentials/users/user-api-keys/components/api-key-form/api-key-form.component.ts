@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
 import { filter, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -25,7 +23,6 @@ import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forb
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialog,
@@ -54,13 +51,10 @@ export interface ApiKeyParams {
     IxDatepickerComponent,
     IxFieldsetComponent,
     IxInputComponent,
-    MatButton,
-    MatCard,
-    MatCardContent,
+    TnButtonComponent,
     ModalHeaderComponent,
     ReactiveFormsModule,
     RequiresRolesDirective,
-    TestDirective,
     TranslateModule,
     IxUserPickerComponent,
   ],

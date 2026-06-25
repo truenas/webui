@@ -4,14 +4,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   NvidiaDriversCardComponent,
 } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-card/nvidia-drivers-card.component';
-import { NvidiaDriversFormComponent } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-form/nvidia-drivers-form.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -23,11 +21,7 @@ describe('NvidiaDriversCardComponent', () => {
     component: NvidiaDriversCardComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('system.advanced.update'),
-      ]),
-      mockProvider(SnackbarService),
-      mockProvider(ErrorHandlerService),
+      mockApi(),
       provideMockStore({
         selectors: [
           {
@@ -37,7 +31,10 @@ describe('NvidiaDriversCardComponent', () => {
         ],
       }),
       mockProvider(FirstTimeWarningService, {
-        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(undefined)),
+      }),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => ({ success$: of(true) })),
       }),
     ],
   });
@@ -62,26 +59,29 @@ describe('NvidiaDriversCardComponent', () => {
     expect(item.textContent.replace(/\s+/g, ' ').trim()).toBe('Enable NVIDIA GPU Support: Enabled');
   });
 
-  it('opens the NVIDIA Drivers form in a side panel when Configure is pressed', async () => {
-    expect(spectator.query('ix-nvidia-drivers-form')).toBeNull();
-
+  it('opens NVIDIA Drivers form when Configure is pressed', async () => {
     const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
-    spectator.detectChanges();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.query('ix-nvidia-drivers-form')).not.toBeNull();
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      { title: 'NVIDIA Drivers', editData: { nvidia: false } },
+    );
   });
 
-  it('closes the side panel when the hosted form emits closed', async () => {
+  it('passes current nvidia enabled state to form', async () => {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectAdvancedConfig, { nvidia: true });
+    store$.refreshState();
+    spectator.detectChanges();
+
     const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-nvidia-drivers-form')).not.toBeNull();
 
-    spectator.query(NvidiaDriversFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-nvidia-drivers-form')).toBeNull();
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      { title: 'NVIDIA Drivers', editData: { nvidia: true } },
+    );
   });
 });

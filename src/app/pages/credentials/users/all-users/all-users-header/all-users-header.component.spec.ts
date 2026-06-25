@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -28,7 +28,7 @@ describe('AllUsersHeaderComponent', () => {
   });
 
   it('should render Create New User button and open create user form', async () => {
-    const createNewUserButton = await loader.getHarness(MatButtonHarness.with({ text: /Add/ }));
+    const createNewUserButton = await loader.getHarness(TnButtonHarness.with({ label: /Add/ }));
     await createNewUserButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(

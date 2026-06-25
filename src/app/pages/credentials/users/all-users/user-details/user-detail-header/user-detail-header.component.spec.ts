@@ -1,8 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -77,7 +76,7 @@ describe('UserDetailHeaderComponent', () => {
   });
 
   it('should open edit user form', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: /Edit/ }));
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
@@ -89,7 +88,7 @@ describe('UserDetailHeaderComponent', () => {
   it('shows disabled Edit button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...dummyUser, local: false });
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     expect(await editButton.isDisabled()).toBe(true);
 
     const tooltips = spectator.queryAll(TnTooltipDirective);
@@ -100,21 +99,21 @@ describe('UserDetailHeaderComponent', () => {
   it('does not show Delete button for an immutable user', async () => {
     spectator.setInput('user', { ...dummyUser, immutable: true });
 
-    const deleteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Delete/ }));
+    const deleteButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: /Delete/ }));
     expect(deleteButton).toBeNull();
   });
 
   it('does not show Delete button for logged in user', async () => {
     spectator.setInput('user', { ...dummyUser, username: 'root' });
 
-    const deleteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Delete/ }));
+    const deleteButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: /Delete/ }));
     expect(deleteButton).toBeNull();
   });
 
   it('shows disabled Delete button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...dummyUser, local: false });
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: /Delete/ }));
     expect(await deleteButton.isDisabled()).toBe(true);
 
     const tooltips = spectator.queryAll(TnTooltipDirective);
@@ -123,7 +122,7 @@ describe('UserDetailHeaderComponent', () => {
   });
 
   it('should open DeleteUserDialog when Delete button is pressed', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: /Delete/ }));
     await deleteButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteUserDialog, {

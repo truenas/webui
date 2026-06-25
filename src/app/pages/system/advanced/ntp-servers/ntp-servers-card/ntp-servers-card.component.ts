@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -12,12 +10,9 @@ import {
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
   TnTableColumnDirective,
   TnTableComponent,
 } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -27,13 +22,13 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ntpServersElements } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.elements';
-import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
+import { getNtpServersFormConfig } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers.form-config';
 
 @Component({
   selector: 'ix-ntp-servers-card',
@@ -42,8 +37,6 @@ import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/n
   imports: [
     TnCardComponent,
     TnCardFooterActionsDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     UiSearchDirective,
     RequiresRolesDirective,
     TnButtonComponent,
@@ -53,7 +46,6 @@ import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/n
     TnCellDefDirective,
     TnEmptyComponent,
     TableActionsCellComponent,
-    NtpServersFormComponent,
     TranslateModule,
     AsyncPipe,
     YesNoPipe,
@@ -64,21 +56,11 @@ export class NtpServersCardComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
   protected readonly searchableElements = ntpServersElements;
-
-  protected configOpen = signal(false);
-  protected editingServer = signal<NtpServer | undefined>(undefined);
-  protected configForm = viewChild(NtpServersFormComponent);
-
-  protected readonly panelTitle = computed(() => (
-    this.editingServer()
-      ? this.translate.instant('Edit NTP Server')
-      : this.translate.instant('Add NTP Server')
-  ));
 
   dataProvider: AsyncDataProvider<NtpServer>;
 
@@ -109,12 +91,6 @@ export class NtpServersCardComponent implements OnInit {
     return [row.address, this.translate.instant('NTP Server')].join(' ');
   }
 
-  protected readonly closeGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
-
   ngOnInit(): void {
     const ntpServers$ = this.api.call('system.ntpserver.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<NtpServer>(ntpServers$);
@@ -141,20 +117,15 @@ export class NtpServersCardComponent implements OnInit {
   }
 
   doEdit(server: NtpServer): void {
-    this.editingServer.set(server);
-    this.configOpen.set(true);
-  }
-
-  protected onConfigClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    this.editingServer.set(undefined);
-    if (saved) {
-      this.loadItems();
-    }
+    this.formPanel.openForm(getNtpServersFormConfig(this.api, this.translate, server), {
+      title: this.translate.instant('Edit NTP Server'),
+      editData: server,
+    }).onSuccess(() => this.loadItems(), this.destroyRef);
   }
 
   doAdd(): void {
-    this.editingServer.set(undefined);
-    this.configOpen.set(true);
+    this.formPanel.openForm(getNtpServersFormConfig(this.api, this.translate, undefined), {
+      title: this.translate.instant('Add NTP Server'),
+    }).onSuccess(() => this.loadItems(), this.destroyRef);
   }
 }
