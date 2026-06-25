@@ -4,13 +4,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
-import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -21,12 +19,9 @@ describe('ConsoleCardComponent', () => {
     component: ConsoleCardComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('system.advanced.serial_port_choices', { ttyS0: 'ttyS0', ttyS1: 'ttyS1' }),
-        mockCall('system.advanced.update'),
-      ]),
-      mockProvider(SnackbarService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
+      }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
@@ -73,18 +68,18 @@ describe('ConsoleCardComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.query('ix-console-form')).not.toBeNull();
-  });
-
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
-    await configureButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-console-form')).not.toBeNull();
-
-    spectator.query(ConsoleFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-console-form')).toBeNull();
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      {
+        title: 'Console',
+        editData: {
+          consolemenu: true,
+          motd: 'Welcome back',
+          serialconsole: true,
+          serialport: 'ttyS0',
+          serialspeed: '9600',
+        },
+      },
+    );
   });
 });

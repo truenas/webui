@@ -16,11 +16,33 @@ import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
 /**
- * A {@link SidePanelForm} that may expose `requiredRoles` to gate its Save action. Forms declare
- * this independently (not on the base), so the host reads it through this structural augmentation
- * rather than forcing every form to `override` a base member.
+ * A secondary action rendered in the side-panel footer alongside the built-in Save (e.g. a form's
+ * "Send Test Alert"). Listed in {@link HostedSidePanelForm.footerActions}; the container renders one
+ * `tn-button` per entry, before Save.
  */
-export type HostedSidePanelForm = SidePanelForm & { readonly requiredRoles?: Role[] };
+export interface SidePanelFooterAction {
+  /** Untranslated marker; the container pipes it through `translate`. */
+  label: string;
+  testId: TnTestIdValue;
+  /** `tn-button` color; defaults to `'default'` (secondary). */
+  color?: 'primary' | 'secondary' | 'warn' | 'default';
+  /** Roles required to show the action (omit / empty = always shown). */
+  requiredRoles?: Role[];
+  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
+  disabled?: () => boolean;
+  onClick: () => void;
+}
+
+/**
+ * A {@link SidePanelForm} that may expose `requiredRoles` to gate its Save action, and optional
+ * {@link SidePanelFooterAction}s rendered before Save. Forms declare these independently (not on the
+ * base), so the host reads them through this structural augmentation rather than forcing every form
+ * to `override` a base member.
+ */
+export type HostedSidePanelForm = SidePanelForm & {
+  readonly requiredRoles?: Role[];
+  readonly footerActions?: SidePanelFooterAction[];
+};
 
 /**
  * Internal chrome for {@link FormSidePanelService}. Not used directly in templates — the
@@ -33,6 +55,9 @@ export type HostedSidePanelForm = SidePanelForm & { readonly requiredRoles?: Rol
 @Component({
   selector: 'ix-form-side-panel-container',
   templateUrl: './form-side-panel-container.component.html',
+  // `display: contents` dissolves the secondary-actions wrapper box so its buttons flex directly
+  // in the panel footer alongside Save (the wrapper exists only to project the group as one node).
+  styles: ['.footer-actions-group { display: contents; }'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnSidePanelComponent,

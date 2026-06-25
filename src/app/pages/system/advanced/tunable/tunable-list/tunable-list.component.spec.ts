@@ -14,12 +14,11 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ConfirmDeleteJobOptions } from 'app/interfaces/dialog.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.component';
 
 describe('TunableListComponent', () => {
@@ -109,6 +108,9 @@ describe('TunableListComponent', () => {
       BasicSearchComponent,
     ],
     providers: [
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
+      }),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteJobOptions) => options.job()),
       }),
@@ -116,15 +118,7 @@ describe('TunableListComponent', () => {
         mockCall('core.get_jobs'),
         mockCall('tunable.query', tunables),
         mockJob('tunable.delete', fakeSuccessfulJob()),
-        mockJob('tunable.create', fakeSuccessfulJob()),
-        mockJob('tunable.update', fakeSuccessfulJob()),
-        mockCall('tunable.tunable_type_choices', {
-          SYSCTL: 'SYSCTL',
-          UDEV: 'UDEV',
-        }),
       ]),
-      mockProvider(FormErrorHandlerService),
-      mockProvider(SnackbarService),
       mockAuth(),
     ],
   });
@@ -154,36 +148,26 @@ describe('TunableListComponent', () => {
     ]);
   });
 
-  it('opens the Add Tunable form in a side panel when Add is pressed', async () => {
-    expect(spectator.query('ix-tunable-form')).toBeNull();
-
+  it('opens the Add Tunable form when Add is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
-    spectator.detectChanges();
 
-    expect(spectator.query('ix-tunable-form')).not.toBeNull();
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
+      title: 'Add Tunable',
+    });
   });
 
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    await addButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-tunable-form')).not.toBeNull();
-
-    spectator.query(TunableFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-tunable-form')).toBeNull();
-  });
-
-  it('opens the Edit Tunable form in the side panel with the selected row', async () => {
+  it('opens the Edit Tunable form with the selected row when Edit is pressed', async () => {
     const menu = await openRowMenu('tunable-kernel-hostname-truenas');
     await menu.clickItem({ label: 'Edit' });
-    spectator.detectChanges();
 
-    const form = spectator.query(TunableFormComponent);
-    expect(form).not.toBeNull();
-    expect(form.editTunable()).toEqual(tunables[6]);
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      {
+        title: 'Edit Tunable (SYSCTL)',
+        editData: tunables[6],
+      },
+    );
   });
 
   it('shows confirmation when Delete button is pressed', async () => {

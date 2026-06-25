@@ -14,35 +14,15 @@
   </div>
 
   <ng-template tnCardFooterActions>
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      color="primary"
-      [testId]="['nvidia-drivers', 'configure']"
-      [ixUiSearch]="searchableElements.elements.configure"
-      [label]="'Configure' | translate"
-      (onClick)="onConfigurePressed()"
-    ></tn-button>
-  </ng-template>
-</tn-card>
-
-<tn-side-panel
-  [title]="'NVIDIA Drivers' | translate"
-  [closeGuard]="closeGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-nvidia-drivers-form (closed)="onConfigClosed($event)"></ix-nvidia-drivers-form>
-  }
-  @if (configForm(); as form) {
-    <div tnSidePanelAction>
+    <ng-container *ixWithLoadingState="nvidiaEnabled$ as nvidiaEnabled">
       <tn-button
         *ixRequiresRoles="requiredRoles"
         color="primary"
-        [testId]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="!form.canSubmit()"
-        (onClick)="form.submit()"
+        [testId]="['nvidia-drivers', 'configure']"
+        [ixUiSearch]="searchableElements.elements.configure"
+        [label]="'Configure' | translate"
+        (onClick)="onConfigurePressed(nvidiaEnabled)"
       ></tn-button>
-    </div>
-  }
-</tn-side-panel>
+    </ng-container>
+  </ng-template>
+</tn-card>

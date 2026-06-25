@@ -14,7 +14,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -55,7 +55,7 @@ describe('AlertServiceListComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
@@ -89,8 +89,9 @@ describe('AlertServiceListComponent', () => {
     const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 4);
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AlertServiceComponent, {
-      data: alertServices[0],
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(AlertServiceComponent, {
+      title: 'Edit Alert Service',
+      inputs: { alertServiceToEdit: alertServices[0] },
     });
   });
 
@@ -98,7 +99,9 @@ describe('AlertServiceListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AlertServiceComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(AlertServiceComponent, {
+      title: 'Add Alert Service',
+    });
   });
 
   it('deletes Alert Service with confirmation when Delete button is pressed', async () => {

@@ -4,6 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonComponent, TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -13,9 +14,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
-import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 import { GroupListComponent } from 'app/pages/credentials/groups/group-list/group-list.component';
 import { groupsInitialState, GroupsState } from 'app/pages/credentials/groups/store/group.reducer';
 import { selectGroups, selectGroupState, selectGroupsTotal } from 'app/pages/credentials/groups/store/group.selectors';
@@ -60,10 +59,14 @@ describe('GroupListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(ApiService),
+      mockApi([
+        mockCall('privilege.query', []),
+        mockCall('group.query', []),
+        mockCall('group.get_next_gid', 1234),
+      ]),
       mockProvider(DialogService),
       mockProvider(FormSidePanelService, {
-        open: jest.fn(() => SlideInResult.empty()),
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
         selectors: [
@@ -159,9 +162,9 @@ describe('GroupListComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
-      GroupFormComponent,
-      { title: 'Add Group', inputs: { group: undefined } },
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      { title: 'Add Group' },
     );
   });
 
@@ -175,9 +178,9 @@ describe('GroupListComponent', () => {
 
     spectator.query(GroupDetailsRowComponent).edit.emit(group);
 
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
-      GroupFormComponent,
-      { title: 'Edit Group', inputs: { group } },
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      { title: 'Edit Group' },
     );
   });
 });

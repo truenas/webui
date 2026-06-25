@@ -28,6 +28,7 @@ import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -36,12 +37,15 @@ import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
+import {
+  getGlobalTwoFactorFormConfig,
+} from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor.form-config';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 import { refreshRebootInfo } from 'app/store/reboot-info/reboot-info.actions';
@@ -131,8 +135,10 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
   private authService = inject(AuthService);
   private errorHandler = inject(ErrorHandlerService);
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private navigateAndHighlightService = inject(NavigateAndHighlightService);
   private document = inject(DOCUMENT);
+  private window = inject<Window>(WINDOW);
   private router = inject(Router);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
 
@@ -712,8 +718,25 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
     const config = this.twoFactorConfig();
     if (config) {
       const elementName = highlight === 'global' ? 'enable-2fa-global' : 'enable-2fa-ssh';
-      this.slideIn.open(GlobalTwoFactorAuthFormComponent, { data: config })
-        .onClose(() => this.setupStigRequirements(), this.destroyRef);
+      this.formPanel.openForm(
+        getGlobalTwoFactorFormConfig(
+          this.api,
+          this.translate,
+          this.dialogService,
+          this.authService,
+          this.router,
+          this.window,
+          config,
+        ),
+        {
+          title: this.translate.instant('Global Two Factor Authentication'),
+          editData: {
+            enabled: config.enabled,
+            window: config.window,
+            ssh: config.services.ssh,
+          },
+        },
+      ).onClose(() => this.setupStigRequirements(), this.destroyRef);
       this.delayHighlightElement(elementName);
     }
   }
