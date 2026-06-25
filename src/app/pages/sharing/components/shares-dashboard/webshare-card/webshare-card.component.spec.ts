@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Signal, WritableSignal } from '@angular/core';
+import { Signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -25,6 +25,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -88,6 +89,9 @@ describe('WebShareCardComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(SlideIn, {
+        open: jest.fn(() => SlideInResult.empty()),
+      }),
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
@@ -225,79 +229,30 @@ describe('WebShareCardComponent', () => {
     expect(await loader.hasHarness(TnBannerHarness)).toBe(false);
   });
 
-  describe('Config Service side panel', () => {
+  describe('Config Service', () => {
     /**
-     * Triggering "Config Service" from the card-header menu opens a host-controlled
-     * tn-side-panel that projects ServiceWebshareComponent and a tnSidePanelAction
-     * Save button. These tests cover the side-panel surface (viewChild + Save +
-     * close flow) so the dual-host migration is not silently uncovered. The menu
-     * items themselves are built by ServiceActionsMenuService.buildServiceCardMenu.
+     * Triggering "Config Service" from the card-header menu opens the WebShare config form
+     * in a side panel via FormSidePanelService. The menu items are built by
+     * ServiceActionsMenuService.buildServiceCardMenu.
      */
-    interface CardInternals {
-      configOpen: WritableSignal<boolean>;
-      configForm: Signal<ServiceWebshareComponent | undefined>;
-      serviceMenu: Signal<TnMenuItem[] | undefined>;
-    }
-    function internals(): CardInternals {
-      return spectator.component as unknown as CardInternals;
-    }
-    function openConfigSidePanel(): void {
-      const menu = internals().serviceMenu();
-      const configItem = menu?.find((item) => item.id === 'service-config');
-      configItem?.action();
-      spectator.detectChanges();
+    function serviceMenu(): TnMenuItem[] | undefined {
+      return (spectator.component as unknown as { serviceMenu: Signal<TnMenuItem[] | undefined> }).serviceMenu();
     }
 
     it('exposes a Config Service menu item with the legacy test ID', () => {
-      const menu = internals().serviceMenu();
-      const configItem = menu?.find((item) => item.id === 'service-config');
+      const configItem = serviceMenu()?.find((item) => item.id === 'service-config');
       expect(configItem).toBeDefined();
       expect(configItem?.label).toBe('Config Service');
       expect(configItem?.testId).toBe('button-webshare-actions-menu-config-service');
     });
 
-    it('opens the side panel and renders the embedded form when Config Service is triggered', async () => {
-      openConfigSidePanel();
-      await spectator.fixture.whenStable();
-      spectator.detectChanges();
+    it('opens the WebShare config form in a side panel when Config Service is triggered', () => {
+      serviceMenu()?.find((item) => item.id === 'service-config')?.action();
 
-      expect(internals().configOpen()).toBe(true);
-      expect(internals().configForm()).toBeTruthy();
-    });
-
-    it('surfaces a side-panel Save button that submits the embedded form and closes the panel', async () => {
-      openConfigSidePanel();
-      await spectator.fixture.whenStable();
-      spectator.detectChanges();
-
-      // tn-side-panel projects its content into a CDK overlay portal mounted on
-      // document.body, so the tnSidePanelAction Save button is not reachable
-      // via the component-scoped loader. Use the document-root loader instead.
-      const rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
-      const saveButton = await rootLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
-
-      await saveButton.click();
-
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
-        'webshare.update',
-        [{ search: true, passkey: WebSharePasskey.Enabled }],
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+        ServiceWebshareComponent,
+        { title: 'WebShare' },
       );
-      expect(internals().configOpen()).toBe(false);
-    });
-
-    it('clears configOpen when the embedded form emits closed', async () => {
-      openConfigSidePanel();
-      await spectator.fixture.whenStable();
-      spectator.detectChanges();
-
-      const form = internals().configForm();
-      expect(form).toBeTruthy();
-
-      form?.closed.emit(false);
-      spectator.detectChanges();
-
-      expect(internals().configOpen()).toBe(false);
     });
   });
 });

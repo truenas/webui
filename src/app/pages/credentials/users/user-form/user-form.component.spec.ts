@@ -5,10 +5,10 @@ import { signal } from '@angular/core';
 import {
   FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -292,7 +292,7 @@ describe('UserFormComponent', () => {
       });
 
       it('should be disabled when form is invalid', async () => {
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         expect(await saveButton.isDisabled()).toBe(true);
       });
 
@@ -302,7 +302,7 @@ describe('UserFormComponent', () => {
           Username: 'validuser',
         });
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         expect(await saveButton.isDisabled()).toBe(false);
       });
     });
@@ -322,7 +322,7 @@ describe('UserFormComponent', () => {
         spectator.detectChanges();
         await spectator.fixture.whenStable();
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         spectator.detectChanges();
@@ -343,7 +343,7 @@ describe('UserFormComponent', () => {
         spectator.detectChanges();
         await spectator.fixture.whenStable();
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         spectator.detectChanges();
@@ -367,7 +367,7 @@ describe('UserFormComponent', () => {
       });
 
       it('should call user.update API when saving changes', async () => {
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [
@@ -379,7 +379,7 @@ describe('UserFormComponent', () => {
       });
 
       it('should close slide-in after successful update', async () => {
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
         await saveButton.click();
 
         expect(slideInRef.close).toHaveBeenCalledWith({

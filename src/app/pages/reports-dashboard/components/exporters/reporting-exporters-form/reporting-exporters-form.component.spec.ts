@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SchemaType } from 'app/enums/schema.enum';
@@ -83,10 +83,13 @@ describe('ReportingExportersFormComponent', () => {
           Name: 'exporter1',
           Type: ReportingExporterKey.Graphite,
           Enable: true,
-          'Secret Access Key ID': 'abcd',
-          'Access Key ID': 'abcde',
         },
       );
+
+      const secretAccessKey = await loader.getHarness(TnInputHarness.with({ name: 'secret_access_key' }));
+      await secretAccessKey.setValue('abcd');
+      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
+      await accessKeyId.setValue('abcde');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
 
@@ -132,23 +135,26 @@ describe('ReportingExportersFormComponent', () => {
         Name: existingExporter.name,
         Type: existingExporter.attributes.exporter_type,
         Enable: existingExporter.enabled,
-        'Secret Access Key ID': existingExporter.attributes.secret_access_key,
-        'Access Key ID': existingExporter.attributes.access_key_id,
       });
 
       expect(disabledState).toEqual({
         Name: false,
         Type: false,
-        'Access Key ID': false,
-        'Secret Access Key ID': false,
         Enable: false,
       });
+
+      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
+      expect(await accessKeyId.getValue()).toBe(existingExporter.attributes.access_key_id);
+      expect(await accessKeyId.isDisabled()).toBe(false);
+
+      const secretAccessKey = await loader.getHarness(TnInputHarness.with({ name: 'secret_access_key' }));
+      expect(await secretAccessKey.getValue()).toBe(existingExporter.attributes.secret_access_key);
+      expect(await secretAccessKey.isDisabled()).toBe(false);
     });
 
     it('edits exporter when form is submitted', async () => {
-      await form.fillForm({
-        'Access Key ID': 'efghi',
-      });
+      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
+      await accessKeyId.setValue('efghi');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();

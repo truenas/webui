@@ -1,62 +1,61 @@
-<ix-modal-header
-  [title]="'Failover' | translate"
-  [loading]="isLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [title]="'Failover' | translate"
+    [loading]="isLoading()"
+  ></ix-modal-header>
+}
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-checkbox
-          formControlName="enabled"
-          [label]="'Enable Automatic Failover' | translate"
-        ></ix-checkbox>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <tn-form-section>
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="enabled"
+        [label]="'Enable Automatic Failover' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-        <ix-checkbox
-          formControlName="master"
-          [label]="'Default TrueNAS controller' | translate"
-          [tooltip]="helptext.masterTooltip | translate"
-        ></ix-checkbox>
+    <tn-form-field [tooltip]="helptext.masterTooltip | translate">
+      <tn-checkbox
+        formControlName="master"
+        [label]="'Default TrueNAS controller' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-        <ix-input
-          formControlName="timeout"
-          type="number"
-          [label]="'Network Timeout Before Initiating Failover' | translate"
-          [tooltip]="helptext.timeoutTooltip | translate"
-        ></ix-input>
-      </ix-fieldset>
+    <tn-form-field
+      [label]="'Network Timeout Before Initiating Failover' | translate"
+      [tooltip]="helptext.timeoutTooltip | translate"
+    >
+      <tn-input formControlName="timeout" [inputType]="InputType.Number"></tn-input>
+    </tn-form-field>
+  </tn-form-section>
 
-      <ix-form-actions>
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ submitButtonText$ | async }}
-        </button>
+  <ix-form-actions>
+    @if (slideInRef) {
+      <tn-button
+        type="submit"
+        color="primary"
+        [testId]="'save'"
+        [disabled]="form.invalid || isLoading()"
+        [label]="(submitButtonText$ | async) ?? ''"
+      ></tn-button>
+    }
 
-        <button
-          mat-button
-          type="button"
-          ixTest="sync-to-peer"
-          [disabled]="isLoading()"
-          (click)="onSyncToPeerPressed()"
-        >
-          {{ 'Sync To Peer' | translate }}
-        </button>
+    <tn-button
+      type="button"
+      color="default"
+      [testId]="'sync-to-peer'"
+      [disabled]="isLoading()"
+      [label]="'Sync To Peer' | translate"
+      (onClick)="onSyncToPeerPressed()"
+    ></tn-button>
 
-        <button
-          mat-button
-          type="button"
-          ixTest="sync-from-peer"
-          [disabled]="isLoading()"
-          (click)="onSyncFromPeerPressed()"
-        >
-          {{ 'Sync From Peer' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <tn-button
+      type="button"
+      color="default"
+      [testId]="'sync-from-peer'"
+      [disabled]="isLoading()"
+      [label]="'Sync From Peer' | translate"
+      (onClick)="onSyncFromPeerPressed()"
+    ></tn-button>
+  </ix-form-actions>
+</form>

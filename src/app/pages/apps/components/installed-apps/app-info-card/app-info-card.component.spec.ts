@@ -5,7 +5,9 @@ import { EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnSidePanelHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockJob, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -14,7 +16,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
@@ -81,6 +82,9 @@ describe('AppInfoCardComponent', () => {
       mockProvider(ApplicationsService, {
         getAppUpgradeSummary: jest.fn(() => of(upgradeSummary)),
         checkIfAppIxVolumeExists: jest.fn(() => of(true)),
+        // Used by the CustomAppForm rendered inside the edit side panel.
+        getAllApps: jest.fn(() => of([])),
+        getApp: jest.fn(() => of([{ ...fakeApp, custom_app: true }])),
       }),
       mockProvider(InstalledAppsStore, {
         installedApps$: of([]),
@@ -100,6 +104,8 @@ describe('AppInfoCardComponent', () => {
         mockJob('app.convert_to_custom'),
         mockJob('app.upgrade'),
         mockJob('app.delete'),
+        mockJob('app.create'),
+        mockJob('app.update'),
         mockCall('app.rollback_versions', ['1.2.1']),
       ]),
     ],
@@ -237,19 +243,20 @@ describe('AppInfoCardComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/apps', 'installed', fakeApp.metadata.train, fakeApp.id, 'edit']);
   });
 
-  it('opens slide-in form to edit custom app when Edit button is pressed', async () => {
-    setupTest({ ...fakeApp, custom_app: true });
-
-    const slideIn = spectator.inject(SlideIn);
-    jest.spyOn(slideIn, 'open').mockImplementation();
+  it('opens the edit form in a side panel with the app when Edit is pressed for a custom app', async () => {
+    const customApp = { ...fakeApp, custom_app: true };
+    setupTest(customApp);
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
+    spectator.detectChanges();
 
-    expect(slideIn.open).toHaveBeenCalledWith(CustomAppFormComponent, {
-      data:
-      { ...fakeApp, custom_app: true },
-    });
+    const panel = await loader.getHarness(TnSidePanelHarness);
+    expect(await panel.isOpen()).toBe(true);
+
+    const form = spectator.query(CustomAppFormComponent);
+    expect(form).toBeTruthy();
+    expect(form?.app()).toEqual(customApp);
   });
 
   it('opens delete app dialog when Delete button is pressed', async () => {

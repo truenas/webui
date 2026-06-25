@@ -1,47 +1,63 @@
-<mat-card>
-  <mat-toolbar-row>
-    <h3>{{ 'Failover' | translate }}</h3>
-    <div class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixUiSearch]="searchableElements.elements.settings"
-        [ixTest]="['console', 'configure']"
-        (click)="onConfigurePressed()"
-      >
-        {{ 'Configure' | translate }}
-      </button>
+<tn-card padding="small" [title]="'Failover' | translate">
+  <div class="details" [ixUiSearch]="searchableElements.elements.card">
+    <div class="details-item">
+      <span class="label">{{ 'Enabled' | translate }}:</span>
+      <span class="value">
+        @if (isLoading()) {
+          <ngx-skeleton-loader></ngx-skeleton-loader>
+        } @else {
+          {{ !(config().disabled) | yesNo }}
+        }
+      </span>
     </div>
-  </mat-toolbar-row>
 
-  <mat-card-content [ixUiSearch]="searchableElements.elements.card">
-    <mat-list>
-      <mat-list-item>
-        <span class="label">{{ 'Enabled' | translate }}:</span>
+    @if (!isLoading() && !config()?.disabled) {
+      <div class="details-item">
+        <span class="label">{{ 'Default Controller' | translate }}:</span>
         <span class="value">
-          @if (isLoading()) {
-            <ngx-skeleton-loader></ngx-skeleton-loader>
-          } @else {
-            {{ !(config().disabled) | yesNo }}
-          }
+          {{ config().master | yesNo }}
         </span>
-      </mat-list-item>
+      </div>
 
-      @if (!isLoading() && !config()?.disabled) {
-        <mat-list-item>
-          <span class="label">{{ 'Default Controller' | translate }}:</span>
-          <span class="value">
-            {{ config().master | yesNo }}
-          </span>
-        </mat-list-item>
+      <div class="details-item">
+        <span class="label">{{ 'Network Timeout Before Initiating Failover' | translate }}:</span>
+        <span class="value">
+          {{ '{seconds}s' | translate: { seconds: config().timeout } }}
+        </span>
+      </div>
+    }
+  </div>
 
-        <mat-list-item>
-          <span class="label">{{ 'Network Timeout Before Initiating Failover' | translate }}:</span>
-          <span class="value">
-            {{ '{seconds}s' | translate: { seconds: config().timeout } }}
-          </span>
-        </mat-list-item>
-      }
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['console', 'configure']"
+      [ixUiSearch]="searchableElements.elements.settings"
+      [label]="'Configure' | translate"
+      (onClick)="onConfigurePressed()"
+    ></tn-button>
+  </ng-template>
+</tn-card>
+
+<tn-side-panel
+  [title]="'Failover' | translate"
+  [closeGuard]="closeGuard"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-failover-form (closed)="onConfigClosed($event)"></ix-failover-form>
+  }
+  @if (configForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>

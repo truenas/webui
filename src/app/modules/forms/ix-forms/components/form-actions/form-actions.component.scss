@@ -54,6 +54,14 @@
   margin: 0 10px;
 }
 
+// Declarative forms (ix-form-renderer) align the actions row with the fields,
+// so drop the left indent there only — legacy forms keep the 10px gutter.
+// The `.ix-form-container` in the context keeps this more specific than the
+// rule above, whose `margin` shorthand would otherwise reset margin-left.
+:host-context(ix-form-renderer .ix-form-container) :host {
+  margin-left: 0;
+}
+
 :host-context(mat-vertical-stepper) :host {
   flex-wrap: wrap;
   justify-content: flex-start;
