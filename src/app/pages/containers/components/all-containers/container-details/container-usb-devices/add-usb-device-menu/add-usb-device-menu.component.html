@@ -3,6 +3,8 @@
 } @else if (hasDevicesToAdd()) {
   <tn-button
     *ixRequiresRoles="requiredRoles"
+    variant="filled"
+    color="primary"
     [testId]="'add-device'"
     [label]="'Add' | translate"
     [tnMenuTriggerFor]="addDeviceMenu"

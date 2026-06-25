@@ -4,7 +4,7 @@ import {
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCardAction, TnCardComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCardAction, TnCardComponent, TnCardFooterActionsDirective } from '@truenas/ui-components';
 import { containerCapabilitiesPolicyLabels, containerIdmapTypeLabels, containerTimeLabels } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container } from 'app/interfaces/container.interface';
@@ -24,7 +24,9 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   styleUrls: ['./container-general-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnButtonComponent,
     TnCardComponent,
+    TnCardFooterActionsDirective,
     TranslateModule,
     YesNoPipe,
     MapValuePipe,

@@ -1,8 +1,28 @@
 <tn-card
   [title]="'General Info' | translate"
-  [primaryAction]="editAction()"
-  [secondaryAction]="deleteAction()"
 >
+  <ng-template tnCardFooterActions>
+    @if (editAction(); as action) {
+      <tn-button
+        variant="outline"
+        color="default"
+        [label]="action.label"
+        [disabled]="action.disabled || false"
+        [testId]="action.testId"
+        (onClick)="action.handler()"
+      ></tn-button>
+    }
+    @if (deleteAction(); as action) {
+      <tn-button
+        variant="outline"
+        color="default"
+        [label]="action.label"
+        [disabled]="action.disabled || false"
+        [testId]="action.testId"
+        (onClick)="action.handler()"
+      ></tn-button>
+    }
+  </ng-template>
   @if (container(); as container) {
     <p>
       <span class="label">{{ 'Description' | translate }}:</span>

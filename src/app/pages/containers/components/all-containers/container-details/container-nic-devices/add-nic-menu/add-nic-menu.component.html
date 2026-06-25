@@ -3,6 +3,8 @@
 } @else if (hasNicsToAdd()) {
   <tn-button
     *ixRequiresRoles="requiredRoles"
+    variant="filled"
+    color="primary"
     [testId]="'add-nic'"
     [label]="'Add' | translate"
     [tnMenuTriggerFor]="addNicMenu"
