@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AllUsersHeaderComponent } from './all-users-header.component';
 
@@ -21,11 +21,11 @@ describe('AllUsersHeaderComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('emits addUser when the Add button is clicked', async () => {
+  it('should render Create New User button and open create user form', async () => {
     const emitSpy = jest.spyOn(spectator.component.addUser, 'emit');
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: /Add/ }));
-    await addButton.click();
+    const createNewUserButton = await loader.getHarness(TnButtonHarness.with({ label: /Add/ }));
+    await createNewUserButton.click();
 
     expect(emitSpy).toHaveBeenCalledWith();
   });

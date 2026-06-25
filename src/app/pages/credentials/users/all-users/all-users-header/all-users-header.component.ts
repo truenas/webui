@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, output } from '@angular/core';
-import { MatAnchor } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { allUsersHeaderElements } from 'app/pages/credentials/users/all-users/all-users-header/all-users-header.elements';
 
 @Component({
@@ -14,8 +13,7 @@ import { allUsersHeaderElements } from 'app/pages/credentials/users/all-users/al
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    TestDirective,
-    MatAnchor,
+    TnButtonComponent,
     UiSearchDirective,
     RequiresRolesDirective,
   ],

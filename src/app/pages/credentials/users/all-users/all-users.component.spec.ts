@@ -13,6 +13,7 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
+import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AllUsersHeaderComponent } from 'app/pages/credentials/users/all-users/all-users-header/all-users-header.component';
@@ -60,12 +61,12 @@ describe('AllUsersComponent', () => {
   const createComponent = createComponentFactory({
     component: AllUsersComponent,
     imports: [
-      MasterDetailViewComponent,
+      MockMasterDetailViewComponent,
       MockComponent(UserListComponent),
       MockComponent(AllUsersHeaderComponent),
+      MockComponent(UserDetailHeaderComponent),
     ],
     declarations: [
-      UserDetailHeaderComponent,
       UserDetailsComponent,
     ],
     providers: [

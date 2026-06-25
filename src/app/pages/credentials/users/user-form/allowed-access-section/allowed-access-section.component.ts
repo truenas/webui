@@ -2,10 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, effect, input, inject }
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  TnCheckboxComponent, TnCheckboxLabelDirective, TnFormSectionComponent, TnIconComponent, TnSelectComponent,
-  TnTestIdDirective,
-} from '@truenas/ui-components';
+import { TnCheckboxComponent, TnCheckboxLabelDirective, TnFormSectionComponent, TnIconComponent, TnSelectComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
@@ -19,11 +16,11 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-for
   imports: [
     TnIconComponent,
     TnSelectComponent,
+    TnFormSectionComponent,
     IxErrorsComponent,
     TnTestIdDirective,
     TnCheckboxComponent,
     TnCheckboxLabelDirective,
-    TnFormSectionComponent,
     ReactiveFormsModule,
     TranslateModule,
   ],

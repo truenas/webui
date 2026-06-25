@@ -1,7 +1,3 @@
-@import 'mixins/forms';
-
-@include tn-form-field-spacing-slide-in();
-
 .server-group {
   border: 1px solid var(--lines);
   border-radius: 4px;

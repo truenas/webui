@@ -5,22 +5,18 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-} from '@truenas/ui-components';
+import { TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
 import {
   catchError, combineLatest, distinctUntilChanged, filter, map, Observable, of,
   startWith,
   switchMap,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
   hasShellAccess, hasSshAccess, hasTrueNasAccess, isEmptyHomeDirectory,
 } from 'app/helpers/user.helper';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -48,12 +44,9 @@ import { AppState } from 'app/store';
     TranslateModule,
     TnFormFieldComponent,
     TnInputComponent,
-    FormActionsComponent,
     AllowedAccessSectionComponent,
-    TnButtonComponent,
     AuthSectionComponent,
     AdditionalDetailsSectionComponent,
-    RequiresRolesDirective,
   ],
   providers: [
     UserFormStore,

@@ -9,7 +9,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonHarness, TnFormFieldComponent, TnFormFieldHarness, TnInputComponent, TnInputHarness,
+  TnFormFieldComponent, TnFormFieldHarness, TnInputComponent, TnInputHarness,
 } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -318,23 +318,23 @@ describe('UserFormComponent', () => {
   });
 
   describe('form submission', () => {
-    describe('save button', () => {
+    // The form renders no in-form Save button; the host (SlideIn / `<tn-side-panel>` footer)
+    // gates on `canSubmit` and calls the public `submit()`. Drive that surface directly.
+    describe('submission gating (canSubmit)', () => {
       beforeEach(() => {
         spectator = createComponent();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('should be disabled when form is invalid', async () => {
-        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-        expect(await saveButton.isDisabled()).toBe(true);
+      it('cannot submit when form is invalid', () => {
+        expect(spectator.component.canSubmit()).toBe(false);
       });
 
-      it('should be enabled when form has valid username', async () => {
+      it('can submit when form has valid username', async () => {
         const usernameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
         await usernameInput.setValue('validuser');
 
-        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-        expect(await saveButton.isDisabled()).toBe(false);
+        expect(spectator.component.canSubmit()).toBe(true);
       });
     });
 
@@ -351,8 +351,7 @@ describe('UserFormComponent', () => {
         spectator.detectChanges();
         await spectator.fixture.whenStable();
 
-        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-        await saveButton.click();
+        spectator.component.submit();
 
         spectator.detectChanges();
         await spectator.fixture.whenStable();
@@ -371,8 +370,7 @@ describe('UserFormComponent', () => {
         spectator.detectChanges();
         await spectator.fixture.whenStable();
 
-        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-        await saveButton.click();
+        spectator.component.submit();
 
         spectator.detectChanges();
         await spectator.fixture.whenStable();
@@ -393,9 +391,8 @@ describe('UserFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('should call user.update API when saving changes', async () => {
-        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-        await saveButton.click();
+      it('should call user.update API when saving changes', () => {
+        spectator.component.submit();
 
         expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [
           69,
@@ -405,9 +402,8 @@ describe('UserFormComponent', () => {
         ]);
       });
 
-      it('should close slide-in after successful update', async () => {
-        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-        await saveButton.click();
+      it('should close slide-in after successful update', () => {
+        spectator.component.submit();
 
         expect(slideInRef.close).toHaveBeenCalledWith({
           response: expect.objectContaining({ username: 'test' }),

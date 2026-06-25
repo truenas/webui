@@ -49,3 +49,26 @@
     (itemClick)="manageCatalog()"
   ></tn-menu-item>
 </tn-menu>
+
+<tn-side-panel
+  testId="apps-settings"
+  [title]="'Settings' | translate"
+  [closeGuard]="settingsCloseGuard"
+  [(open)]="settingsOpen"
+>
+  @if (settingsOpen()) {
+    <ix-apps-settings (closed)="onSettingsClosed($event)"></ix-apps-settings>
+  }
+  @if (settingsForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="form.requiredRoles"
+        color="primary"
+        testId="save"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>
