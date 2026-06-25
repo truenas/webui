@@ -19,9 +19,7 @@ import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
@@ -39,7 +37,6 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnFormSectionComponent,
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TranslateModule,
     TnFormFieldComponent,
@@ -52,7 +49,7 @@ import { AppState } from 'app/store';
     UserFormStore,
   ],
 })
-export class UserFormComponent extends SidePanelForm implements OnInit {
+export class UserFormComponent extends SidePanelForm<User> implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private userFormStore = inject(UserFormStore);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -62,13 +59,13 @@ export class UserFormComponent extends SidePanelForm implements OnInit {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
-  /** Record being edited when hosted in a `<tn-side-panel>` (legacy SlideIn supplies it via `getData()`). */
+  /** Record being edited, supplied by the `<tn-side-panel>` host via the `editUser` input. */
   readonly editUser = input<User | undefined>(undefined);
 
   protected isStigMode = this.userFormStore.isStigMode;
-  // Resolve eagerly from the legacy SlideIn host; the `<tn-side-panel>` host's
-  // `editUser` input is applied later, so panel mode is resolved in ngOnInit.
-  protected editingUser = signal<User | undefined>(this.slideInRef?.getData() as User | undefined);
+  // The host applies the `editUser` input after construction, so the edited record is
+  // resolved in ngOnInit rather than eagerly here.
+  protected editingUser = signal<User | undefined>(undefined);
 
   protected isFormLoading = signal<boolean>(false);
 
@@ -172,10 +169,8 @@ export class UserFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    // Panel host applies `editUser` after construction; legacy host already resolved via getData().
-    if (!this.slideInRef) {
-      this.editingUser.set(this.editUser());
-    }
+    // The panel host applies `editUser` after construction; pick it up here.
+    this.editingUser.set(this.editUser());
     this.setupForm();
     this.setupAccessWatchers();
     this.setupHomeAndShellWatchers();
@@ -411,7 +406,9 @@ export class UserFormComponent extends SidePanelForm implements OnInit {
       next: (user) => {
         this.isFormLoading.set(false);
         if (user) {
-          this.closeWithUser(user);
+          // Hand the created/updated record back to the opener. Most callers just reload, but
+          // some (e.g. ix-user-picker's "Add New") select the returned User from the response.
+          this.closed.emit(user);
 
           if (this.isNewUser()) {
             this.snackbar.success(this.translate.instant('User created'));
@@ -421,19 +418,6 @@ export class UserFormComponent extends SidePanelForm implements OnInit {
         }
       },
     });
-  }
-
-  /**
-   * Closes through whichever host opened the form. The legacy SlideIn host forwards the
-   * created/updated `User` (callers like `ix-user-picker` select it from the response); the
-   * `<tn-side-panel>` host only learns success and reloads the list itself, so it gets `true`.
-   */
-  private closeWithUser(user: User): void {
-    if (this.slideInRef) {
-      (this.slideInRef as unknown as SlideInRef<unknown, User>).close({ response: user });
-    } else {
-      this.closed.emit(true);
-    }
   }
 
   private listenForAllFormsValidity(): void {

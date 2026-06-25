@@ -14,8 +14,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
@@ -54,12 +53,6 @@ describe('UserApiKeysComponent', () => {
     },
   ] as ApiKey[];
 
-  const slideInRef: SlideInRef<ApiKey[] | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: UserApiKeysComponent,
     imports: [
@@ -87,10 +80,9 @@ describe('UserApiKeysComponent', () => {
         mockCall('api_key.query', apiKeys),
         mockCall('api_key.delete'),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -105,8 +97,8 @@ describe('UserApiKeysComponent', () => {
     await addButton.click();
 
     expect(
-      spectator.inject(SlideIn).open,
-    ).toHaveBeenCalledWith(ApiKeyFormComponent, { data: { editingKey: undefined } });
+      spectator.inject(FormSidePanelService).open,
+    ).toHaveBeenCalledWith(ApiKeyFormComponent, { title: 'Add API Key', inputs: { editingKey: undefined } });
   });
 
   it('renders a button that opens API docs', async () => {
@@ -132,8 +124,9 @@ describe('UserApiKeysComponent', () => {
     const editButton = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
-      data: { editingKey: apiKeys[0] },
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
+      title: 'Edit API Key',
+      inputs: { editingKey: apiKeys[0] },
     });
   });
 

@@ -24,7 +24,6 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
@@ -68,12 +67,6 @@ describe('UserFormComponent', () => {
 
   let spectator: Spectator<UserFormComponent>;
   let loader: HarnessLoader;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const allowedAccessForm = new FormGroup({
     smb_access: new FormControl(true),
@@ -156,7 +149,6 @@ describe('UserFormComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef, slideInRef),
       provideTnFormFieldErrors(),
       provideMockStore({
         selectors: [{
@@ -173,29 +165,10 @@ describe('UserFormComponent', () => {
     expect(AdditionalDetailsSectionComponent).toBeTruthy();
   });
 
-  describe('adding user', () => {
-    beforeEach(() => {
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('checks form title', () => {
-      expect(spectator.query(ModalHeaderComponent).title).toBe('Add User');
-    });
-  });
-
   describe('editing user', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => mockUser }),
-        ],
-      });
+      spectator = createComponent({ props: { editUser: mockUser } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('checks form title', () => {
-      expect(spectator.query(ModalHeaderComponent).title).toBe('Edit User');
     });
 
     it('checks username field is disabled when user immutable', async () => {
@@ -204,21 +177,18 @@ describe('UserFormComponent', () => {
     });
   });
 
-  describe('side panel host (no SlideInRef)', () => {
+  describe('side panel host', () => {
+    // The form is hosted exclusively in a <tn-side-panel> (FormSidePanelService), which owns the
+    // header + footer Save; the form delegates submission through canSubmit()/submit().
     beforeEach(() => {
-      // No SlideInRef → hosted in a <tn-side-panel>, which owns the header + footer Save.
-      spectator = createComponent({
-        providers: [
-          { provide: SlideInRef, useValue: null },
-        ],
-      });
+      spectator = createComponent();
     });
 
-    it('does not render the in-form header (the panel host renders its own)', () => {
+    it('does not render an in-form header (the panel host renders its own)', () => {
       expect(spectator.query(ModalHeaderComponent)).toBeNull();
     });
 
-    it('does not render the in-form Save action (the panel footer owns it)', () => {
+    it('does not render an in-form Save action (the panel footer owns it)', () => {
       expect(spectator.query('ix-form-actions')).toBeNull();
     });
 
@@ -298,11 +268,7 @@ describe('UserFormComponent', () => {
 
   describe('editing existing user', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => mockUser }),
-        ],
-      });
+      spectator = createComponent({ props: { editUser: mockUser } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -318,8 +284,8 @@ describe('UserFormComponent', () => {
   });
 
   describe('form submission', () => {
-    // The form renders no in-form Save button; the host (SlideIn / `<tn-side-panel>` footer)
-    // gates on `canSubmit` and calls the public `submit()`. Drive that surface directly.
+    // The form renders no in-form Save button; the `<tn-side-panel>` footer gates on `canSubmit`
+    // and calls the public `submit()`. Drive that surface directly.
     describe('submission gating (canSubmit)', () => {
       beforeEach(() => {
         spectator = createComponent();
@@ -363,7 +329,8 @@ describe('UserFormComponent', () => {
         ]);
       });
 
-      it('should close slide-in after successful creation', async () => {
+      it('emits the created user through the closed output after successful creation', async () => {
+        const emitSpy = jest.spyOn(spectator.component.closed, 'emit');
         const usernameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
         await usernameInput.setValue('newuser');
 
@@ -375,19 +342,13 @@ describe('UserFormComponent', () => {
         spectator.detectChanges();
         await spectator.fixture.whenStable();
 
-        expect(slideInRef.close).toHaveBeenCalledWith({
-          response: expect.objectContaining({ username: 'new-user' }),
-        });
+        expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining({ username: 'new-user' }));
       });
     });
 
     describe('editing existing user', () => {
       beforeEach(() => {
-        spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: () => mockUser }),
-          ],
-        });
+        spectator = createComponent({ props: { editUser: mockUser } });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
@@ -402,12 +363,12 @@ describe('UserFormComponent', () => {
         ]);
       });
 
-      it('should close slide-in after successful update', () => {
+      it('emits the updated user through the closed output after successful update', () => {
+        const emitSpy = jest.spyOn(spectator.component.closed, 'emit');
+
         spectator.component.submit();
 
-        expect(slideInRef.close).toHaveBeenCalledWith({
-          response: expect.objectContaining({ username: 'test' }),
-        });
+        expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining({ username: 'test' }));
       });
     });
   });
