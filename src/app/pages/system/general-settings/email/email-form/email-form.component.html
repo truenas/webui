@@ -1,10 +1,11 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
+<ix-form
+  [formGroup]="form"
   [title]="'Email Options' | translate"
-  [loading]="isLoading()"
-></ix-modal-header>
-
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  [externalLoading]="isLoading()"
+  [requiredRoles]="requiredRoles"
+  [extraDisabled]="extraDisabled()"
+  [submitHandler]="handleSubmit"
+>
   <ix-fieldset>
     <ix-radio-group
       [label]="'Send Mail Method' | translate"
@@ -25,7 +26,7 @@
       [tooltip]="helptext.fromname.tooltip | translate"
     ></ix-input>
 
-    @if (isSmtp) {
+    @if (isSmtp()) {
       <ix-input
         formControlName="outgoingserver"
         [label]="'Outgoing Mail Server' | translate"
@@ -70,7 +71,7 @@
       }
     } @else {
       <div class="oauth-message">
-        @if (hasOauthAuthorization) {
+        @if (hasOauthAuthorization()) {
           <tn-icon name="check-circle" library="mdi"></tn-icon>
           {{ '{oauthType} credentials have been applied.' | translate: { oauthType } }}
         } @else {
@@ -82,29 +83,19 @@
         testId="login-to-oauth-provider"
         [oauthType]="oauthType"
         [oauthUrl]="oauthUrl"
-        [isLoggedIn]="hasOauthAuthorization"
+        [isLoggedIn]="hasOauthAuthorization()"
         (loggedIn)="onLoggedIn($event)"
       ></ix-oauth-button>
     }
   </ix-fieldset>
 
-  <div class="form-actions">
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      color="primary"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!isValid || isLoading()"
-      (onClick)="onSubmit()"
-    ></tn-button>
-
-    <tn-button
-      *ixRequiresRoles="requiredRolesMailWrite"
-      type="button"
-      [testId]="'send-test-mail'"
-      [label]="'Send Test Mail' | translate"
-      [disabled]="!isValid || isLoading()"
-      (onClick)="onSendTestEmailPressed()"
-    ></tn-button>
-  </div>
-</form>
+  <tn-button
+    *ixRequiresRoles="requiredRolesMailWrite"
+    ixExtraActions
+    type="button"
+    [testId]="'send-test-mail'"
+    [label]="'Send Test Mail' | translate"
+    [disabled]="!isValid || isLoading()"
+    (onClick)="onSendTestEmailPressed()"
+  ></tn-button>
+</ix-form>
