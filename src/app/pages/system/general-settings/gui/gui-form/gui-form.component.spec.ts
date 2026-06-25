@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -14,7 +14,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -86,7 +86,7 @@ describe('GuiFormComponent', () => {
           'TLSv1.3': 'TLSv1.3',
         }),
       }),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
       provideMockStore({
         selectors: [
           {
@@ -144,7 +144,7 @@ describe('GuiFormComponent', () => {
         'Usage collection & UI error reporting': true,
       });
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('system.general.update', [
@@ -168,7 +168,7 @@ describe('GuiFormComponent', () => {
         'Web Interface HTTP -> HTTPS Redirect': true,
       });
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       const dialog = spectator.inject(DialogService);
@@ -188,7 +188,7 @@ describe('GuiFormComponent', () => {
         'Web Interface HTTP -> HTTPS Redirect': true,
       });
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       const dialog = spectator.inject(DialogService);
@@ -228,7 +228,7 @@ describe('GuiFormComponent', () => {
         'Web Interface HTTP -> HTTPS Redirect': true,
       });
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       const dialog = spectator.inject(DialogService);
