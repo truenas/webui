@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
@@ -109,11 +110,15 @@ describe('AcmednsFormComponent', () => {
 
       const values = await form.getValues();
 
-      // Form shows values for the selected authenticator (route53)
+      // Static fields (still ix-*) come from the IxFormHarness
       expect(values.Name).toBe('name_test');
       expect(values.Authenticator).toBe('route53');
-      expect(values['Access Key ID']).toBe('access_key_id');
-      expect(values['Secret Access Key']).toBe('secret_access_key');
+
+      // Dynamic fields (now tn-input) are read via their controlName
+      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
+      const secretAccessKey = await loader.getHarness(TnInputHarness.with({ name: 'secret_access_key' }));
+      expect(await accessKeyId.getValue()).toBe('access_key_id');
+      expect(await secretAccessKey.getValue()).toBe('secret_access_key');
     });
 
     it('edits existing DNS Authenticator when form opened for edit is submitted', async () => {
@@ -127,8 +132,9 @@ describe('AcmednsFormComponent', () => {
       // Now fill the cloudflare-specific fields
       await form.fillForm({
         Name: 'name_edit',
-        'API Token': 'new_api_token',
       });
+      const apiToken = await loader.getHarness(TnInputHarness.with({ name: 'api_token' }));
+      await apiToken.setValue('new_api_token');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -161,9 +167,11 @@ describe('AcmednsFormComponent', () => {
       await form.fillForm({
         Name: 'name_new',
         Authenticator: 'cloudflare',
-        'Cloudflare Email': 'aaa@aaa.com',
-        'API Key': 'new_api_key',
       });
+      const cloudflareEmail = await loader.getHarness(TnInputHarness.with({ name: 'cloudflare_email' }));
+      const apiKey = await loader.getHarness(TnInputHarness.with({ name: 'api_key' }));
+      await cloudflareEmail.setValue('aaa@aaa.com');
+      await apiKey.setValue('new_api_key');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -191,8 +199,9 @@ describe('AcmednsFormComponent', () => {
       await form.fillForm({
         Name: 'test',
         Authenticator: 'cloudflare',
-        'Cloudflare Email': 'invalid-email',
       });
+      const cloudflareEmail = await loader.getHarness(TnInputHarness.with({ name: 'cloudflare_email' }));
+      await cloudflareEmail.setValue('invalid-email');
 
       spectator.detectChanges();
 
@@ -211,9 +220,11 @@ describe('AcmednsFormComponent', () => {
       await form.fillForm({
         Name: 'test',
         Authenticator: 'cloudflare',
-        'API Token': 'test_token',
-        'API Key': 'test_key',
       });
+      const apiToken = await loader.getHarness(TnInputHarness.with({ name: 'api_token' }));
+      const apiKey = await loader.getHarness(TnInputHarness.with({ name: 'api_key' }));
+      await apiToken.setValue('test_token');
+      await apiKey.setValue('test_key');
 
       spectator.detectChanges();
 
@@ -232,9 +243,10 @@ describe('AcmednsFormComponent', () => {
       await form.fillForm({
         Name: 'test',
         Authenticator: 'cloudflare',
-        'Cloudflare Email': 'test@example.com',
-        'API Key': '',
       });
+      const cloudflareEmail = await loader.getHarness(TnInputHarness.with({ name: 'cloudflare_email' }));
+      await cloudflareEmail.setValue('test@example.com');
+      // API Key left empty
 
       spectator.detectChanges();
 
@@ -253,8 +265,9 @@ describe('AcmednsFormComponent', () => {
       await form.fillForm({
         Name: 'test',
         Authenticator: 'cloudflare',
-        'API Key': 'test_key',
       });
+      const apiKey = await loader.getHarness(TnInputHarness.with({ name: 'api_key' }));
+      await apiKey.setValue('test_key');
 
       spectator.detectChanges();
 
@@ -293,8 +306,9 @@ describe('AcmednsFormComponent', () => {
       await form.fillForm({
         Name: 'test',
         Authenticator: 'cloudflare',
-        'Cloudflare Email': 'invalid-email',
       });
+      const cloudflareEmail = await loader.getHarness(TnInputHarness.with({ name: 'cloudflare_email' }));
+      await cloudflareEmail.setValue('invalid-email');
 
       spectator.detectChanges();
 
@@ -314,8 +328,9 @@ describe('AcmednsFormComponent', () => {
       await form.fillForm({
         Name: 'test',
         Authenticator: 'cloudflare',
-        'API Token': 'test_token',
       });
+      const apiToken = await loader.getHarness(TnInputHarness.with({ name: 'api_token' }));
+      await apiToken.setValue('test_token');
 
       spectator.detectChanges();
 
@@ -326,9 +341,11 @@ describe('AcmednsFormComponent', () => {
       await form.fillForm({
         Name: 'test',
         Authenticator: 'cloudflare',
-        'Cloudflare Email': 'test@example.com',
-        'API Key': 'test_key',
       });
+      const cloudflareEmail = await loader.getHarness(TnInputHarness.with({ name: 'cloudflare_email' }));
+      const apiKey = await loader.getHarness(TnInputHarness.with({ name: 'api_key' }));
+      await cloudflareEmail.setValue('test@example.com');
+      await apiKey.setValue('test_key');
 
       spectator.detectChanges();
 
@@ -345,10 +362,10 @@ describe('AcmednsFormComponent', () => {
       spectator.detectChanges();
 
       // Now fill route53-specific fields
-      await form.fillForm({
-        'Access Key ID': 'test_key',
-        'Secret Access Key': 'test_secret',
-      });
+      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
+      const secretAccessKey = await loader.getHarness(TnInputHarness.with({ name: 'secret_access_key' }));
+      await accessKeyId.setValue('test_key');
+      await secretAccessKey.setValue('test_secret');
 
       spectator.detectChanges();
 

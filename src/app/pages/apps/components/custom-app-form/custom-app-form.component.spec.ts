@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnInputHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -14,10 +14,7 @@ import { App, ChartFormValue } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxCodeEditorHarness } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.harness';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -52,12 +49,6 @@ const fakeApp = {
   } as Record<string, ChartFormValue>,
 } as App;
 
-const slideInRef: SlideInRef<App | undefined, unknown> = {
-  close: jest.fn(),
-  requireConfirmationWhen: jest.fn(),
-  getData: jest.fn(() => fakeApp),
-};
-
 describe('CustomAppFormComponent', () => {
   let spectator: Spectator<CustomAppFormComponent>;
   let loader: HarnessLoader;
@@ -65,7 +56,6 @@ describe('CustomAppFormComponent', () => {
   const createComponent = createComponentFactory({
     component: CustomAppFormComponent,
     imports: [
-      IxInputComponent,
       IxCodeEditorComponent,
       MockComponent(PageHeaderComponent),
       ReactiveFormsModule,
@@ -94,12 +84,7 @@ describe('CustomAppFormComponent', () => {
 
   function setupTest(app?: App): void {
     spectator = createComponent({
-      providers: [
-        mockProvider(SlideInRef, {
-          ...slideInRef,
-          getData: app ? jest.fn(() => app) : slideInRef.getData,
-        }),
-      ],
+      props: { app },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
@@ -110,14 +95,13 @@ describe('CustomAppFormComponent', () => {
     });
 
     it('checks save and closes slide in when successfully submitted', async () => {
-      const appNameControl = await loader.getHarness(IxInputHarness);
+      const appNameControl = await loader.getHarness(TnInputHarness);
       await appNameControl.setValue('test');
       const configControl = await loader.getHarness(IxCodeEditorHarness);
       await configControl.setValue('config');
       spectator.detectChanges();
 
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await button.click();
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
@@ -131,12 +115,12 @@ describe('CustomAppFormComponent', () => {
     });
 
     it('forbidden app names are not allowed', async () => {
-      const appNameControl = await loader.getHarness(IxInputHarness);
+      const appNameControl = await loader.getHarness(TnInputHarness);
       await appNameControl.setValue('test-app-one');
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(button.isDisabled()).toBeTruthy();
+      expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 
@@ -145,9 +129,8 @@ describe('CustomAppFormComponent', () => {
       setupTest(fakeApp);
     });
 
-    it('checks save and closes slide in when successfully submitted', async () => {
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await button.click();
+    it('checks save and closes slide in when successfully submitted', () => {
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('app.update', [
         'test-app-one',

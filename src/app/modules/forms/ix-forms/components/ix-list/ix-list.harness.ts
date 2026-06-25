@@ -1,5 +1,5 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
 import { IxListItemHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.harness';
 import {
@@ -29,7 +29,7 @@ export class IxListHarness extends ComponentHarness {
   }
 
   async pressAddButton(): Promise<void> {
-    const button = await this.locatorFor(MatButtonHarness.with({ text: 'Add' }))();
+    const button = await this.locatorFor(TnButtonHarness.with({ label: 'Add' }))();
     await button.click();
   }
 

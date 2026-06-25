@@ -7,22 +7,20 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+} from '@truenas/ui-components';
 import {
   combineLatest,
   filter,
   forkJoin,
-  of,
   take,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -30,8 +28,7 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -45,28 +42,25 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    ModalHeaderComponent,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     IxCheckboxListComponent,
     IxListItemComponent,
     IxListComponent,
     IxIpInputWithNetmaskComponent,
     IxInputComponent,
     IxCheckboxComponent,
-    FormActionsComponent,
-    TnButtonComponent,
-    RequiresRolesDirective,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
     TranslateModule,
   ],
   providers: [
     DockerStore,
   ],
 })
-export class AppsSettingsComponent implements OnInit {
+export class AppsSettingsComponent extends SidePanelForm implements OnInit {
   private dockerStore = inject(DockerStore);
   private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private errorHandler = inject(FormErrorHandlerService);
   private fb = inject(FormBuilder);
   private snackbar = inject(SnackbarService);
@@ -74,11 +68,11 @@ export class AppsSettingsComponent implements OnInit {
   private urlValidationService = inject(UrlValidationService);
   private destroyRef = inject(DestroyRef);
 
-  protected isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
   protected showNvidiaCheckbox = signal(false);
-  protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
+  readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
-  protected form = this.fb.nonNullable.group({
+  protected readonly form = this.fb.nonNullable.group({
     preferred_trains: [[] as string[], Validators.required],
     nvidia: [false],
     enable_image_updates: [true],
@@ -91,6 +85,9 @@ export class AppsSettingsComponent implements OnInit {
       insecure: FormControl<boolean>;
     }>>([]),
   });
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   protected allTrains$ = this.api.call('catalog.trains').pipe(
     singleArrayToOptions(),
@@ -107,9 +104,7 @@ export class AppsSettingsComponent implements OnInit {
   }
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+    super();
     this.dockerStore.initialize();
   }
 
@@ -179,6 +174,10 @@ export class AppsSettingsComponent implements OnInit {
   }
 
   protected onSubmit(): void {
+    if (!this.canSubmit()) {
+      return;
+    }
+
     const values = this.form.getRawValue();
 
     this.isFormLoading.set(true);
@@ -201,7 +200,7 @@ export class AppsSettingsComponent implements OnInit {
             this.store$.dispatch(advancedConfigUpdated());
           }
           this.snackbar.success(this.translate.instant('Settings saved'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
