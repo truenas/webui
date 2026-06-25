@@ -105,6 +105,7 @@
         @for (portal of sortedPortals(); track portal.label) {
           <tn-button
             class="portal-button"
+            variant="outline"
             [testId]="['portal', app().name, portal.label]"
             [tnTooltip]="portal.url"
             [label]="portal.label"
@@ -159,7 +160,8 @@
 
       <tn-button
         *ixRequiresRoles="requiredRoles"
-        color="primary"
+        variant="outline"
+        color="warn"
         [testId]="[app().name, 'delete']"
         [label]="'Delete' | translate"
         (onClick)="deleteButtonPressed()"

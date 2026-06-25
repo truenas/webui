@@ -68,6 +68,24 @@
 
 }
 
+// TEMP (NAS-141021): tn-card's `.tn-card__footer-right` is `flex-shrink: 0`, so a
+// footer with several action buttons can't shrink — it overflows and is clipped by
+// the card's `overflow: hidden` on narrow / mobile widths. The left slot is reserved
+// for `footerLink` (unused here), so drop it and let the action slot take the full,
+// bounded footer width; `.footer-actions` (flex-wrap: wrap, justify-content: flex-end)
+// then keeps the buttons right-clustered on desktop and wraps them on mobile. Remove
+// once the library handles footer action overflow/wrapping.
+:host ::ng-deep .tn-card__footer {
+  .tn-card__footer-left {
+    display: none;
+  }
+
+  .tn-card__footer-right {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
 .footer-actions {
   display: flex;
   flex-wrap: wrap;
@@ -76,8 +94,8 @@
   width: 100%;
 }
 
-// Group portal buttons in the footer without adding a layout box, so they flow
-// as direct flex items of .footer-actions alongside Edit / Start / Delete.
+// Portal buttons (Web UI, etc.) flow as direct flex items of .footer-actions so
+// they share the same spacing as Edit / Start / Roll Back / Delete in the cluster.
 .portals {
   display: contents;
 }
