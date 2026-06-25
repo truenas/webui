@@ -6,13 +6,6 @@
   <div tnCardHeader class="card-header">
     <h3 class="detail-card-title">{{ 'Application Info' | translate }}</h3>
     <div class="header-actions">
-      <tn-button
-        variant="outline"
-        [testId]="[app().name, 'edit']"
-        [label]="'Edit' | translate"
-        (onClick)="editButtonPressed()"
-      ></tn-button>
-
       <tn-icon-button
         name="dots-vertical"
         library="mdi"
@@ -25,10 +18,10 @@
   </div>
 
   <!--
-    The overflow menu trigger shares the projected header with the custom Edit button
-    (see .header-actions above), so we host the menu inline rather than via tn-card's
-    [headerMenu] slot — that slot renders its own trigger and can't sit beside Edit.
-    Start/Stop, Roll Back and Delete stay in the footer (see [tnCardFooterActions]).
+    Overflow menu (Update / Convert) is hosted inline in the header rather than via
+    tn-card's [headerMenu] slot, which expects a TnMenuItem[] array. All action
+    buttons (Web UI, Edit, Start/Stop, Roll Back, Delete) live in the footer
+    (see [tnCardFooterActions]).
   -->
   <tn-menu #appInfoMenu>
     <tn-menu-item
@@ -103,24 +96,30 @@
           {{ app().metadata.train | orNotAvailable }}
         </div>
       </div>
-      @if (sortedPortals().length > 0) {
-        <div class="portals" [class.has-many]="sortedPortals().length > 1">
-          @for (portal of sortedPortals(); track portal.label) {
-            <tn-button
-              class="portal-button"
-              [testId]="['portal', app().name, portal.label]"
-              [tnTooltip]="portal.url"
-              [label]="portal.label"
-              (onClick)="openPortalLink(app(), portal.label)"
-            ></tn-button>
-          }
-        </div>
-      }
     </div>
   </div>
 
   <ng-template tnCardFooterActions>
     <div class="footer-actions">
+      <div class="portals">
+        @for (portal of sortedPortals(); track portal.label) {
+          <tn-button
+            class="portal-button"
+            [testId]="['portal', app().name, portal.label]"
+            [tnTooltip]="portal.url"
+            [label]="portal.label"
+            (onClick)="openPortalLink(app(), portal.label)"
+          ></tn-button>
+        }
+      </div>
+
+      <tn-button
+        variant="outline"
+        [testId]="[app().name, 'edit']"
+        [label]="'Edit' | translate"
+        (onClick)="editButtonPressed()"
+      ></tn-button>
+
       <!--
         Start/Stop live in the installed-apps list's controls column on desktop;
         the detail card only surfaces them when that list is hidden (the mobile/
@@ -160,7 +159,7 @@
 
       <tn-button
         *ixRequiresRoles="requiredRoles"
-        variant="outline"
+        color="primary"
         [testId]="[app().name, 'delete']"
         [label]="'Delete' | translate"
         (onClick)="deleteButtonPressed()"

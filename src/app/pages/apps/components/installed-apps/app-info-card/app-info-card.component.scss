@@ -66,16 +66,6 @@
     }
   }
 
-  .portals {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 7px;
-
-    .portal-button {
-      text-transform: capitalize;
-    }
-  }
 }
 
 .footer-actions {
@@ -84,6 +74,16 @@
   gap: 8px;
   justify-content: flex-end;
   width: 100%;
+}
+
+// Group portal buttons in the footer without adding a layout box, so they flow
+// as direct flex items of .footer-actions alongside Edit / Start / Delete.
+.portals {
+  display: contents;
+}
+
+.portal-button {
+  text-transform: capitalize;
 }
 
 .status-actions {
