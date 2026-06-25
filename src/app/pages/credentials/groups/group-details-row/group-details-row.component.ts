@@ -6,11 +6,9 @@ import { TnButtonComponent, TnDialog, TnTooltipDirective } from '@truenas/ui-com
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   DeleteGroupDialog,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
-import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 
 @Component({
   selector: 'ix-group-details-row',
@@ -25,7 +23,6 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
   ],
 })
 export class GroupDetailsRowComponent {
-  private slideIn = inject(SlideIn);
   private router = inject(Router);
   private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
@@ -34,10 +31,11 @@ export class GroupDetailsRowComponent {
   readonly group = input.required<Group>();
 
   readonly delete = output<number>();
+  readonly edit = output<Group>();
   protected readonly Role = Role;
 
   protected doEdit(group: Group): void {
-    this.slideIn.open(GroupFormComponent, { data: group });
+    this.edit.emit(group);
   }
 
   protected readonly isDeleteDisabled = computed(() => {

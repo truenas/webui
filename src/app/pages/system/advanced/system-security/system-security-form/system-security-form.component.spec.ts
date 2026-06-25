@@ -2,11 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator, SpectatorFactory } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnInputHarness, TnSlideToggleHarness } from '@truenas/ui-components';
 import { catchError, EMPTY, Observable, of, throwError } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
@@ -20,14 +20,13 @@ import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interfa
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
@@ -81,6 +80,9 @@ function createStigRequirementsApiMock(overrides: StigRequirementsApiOverrides =
 
   return {
     call: jest.fn((method: string, params?: MockParams) => {
+      if (method === 'system.security.config') {
+        return of(fakeSystemSecurityConfig);
+      }
       if (method === 'auth.twofactor.config') {
         return of({
           enabled: config.twoFactorEnabled,
@@ -133,12 +135,12 @@ async function setupStigRequirementTest(
     ],
   });
   const validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
-  const validationForm = await validationLoader.getHarness(IxFormHarness);
   validationSpectator.detectChanges();
 
-  await validationForm.fillForm({
-    'Enable General Purpose OS STIG compatibility mode': true,
-  });
+  const stigToggle = await validationLoader.getHarness(
+    TnSlideToggleHarness.with({ selector: '[formControlName="enable_gpos_stig"]' }),
+  );
+  await stigToggle.check();
 
   await validationSpectator.fixture.whenStable();
   validationSpectator.detectChanges();
@@ -149,7 +151,28 @@ async function setupStigRequirementTest(
 describe('SystemSecurityFormComponent', () => {
   let spectator: Spectator<SystemSecurityFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
+
+  const setToggle = async (controlName: string, checked: boolean): Promise<void> => {
+    const toggle = await loader.getHarness(
+      TnSlideToggleHarness.with({ selector: `[formControlName="${controlName}"]` }),
+    );
+    if (checked) {
+      await toggle.check();
+    } else {
+      await toggle.uncheck();
+    }
+  };
+
+  const setInput = async (controlName: string, value: number): Promise<void> => {
+    const input = await loader.getHarness(
+      TnInputHarness.with({ selector: `[formControlName="${controlName}"]` }),
+    );
+    await input.setValue(String(value));
+  };
+
+  const getSaveButton = (): Promise<TnButtonHarness> => loader.getHarness(
+    TnButtonHarness.with({ label: 'Save' }),
+  );
 
   const createComponent = createComponentFactory({
     component: SystemSecurityFormComponent,
@@ -191,7 +214,8 @@ describe('SystemSecurityFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       const mockAuthService = spectator.inject(MockAuthService);
       jest.spyOn(mockAuthService, 'clearAuthToken').mockImplementation();
@@ -220,17 +244,18 @@ describe('SystemSecurityFormComponent', () => {
     });
 
     it('saves full system security config when Save is clicked', async () => {
-      await form.fillForm({
-        'Enable FIPS': true,
-        'Enable General Purpose OS STIG compatibility mode': false,
-        'Min Password Age': 15,
-        'Max Password Age': 120,
-        'Min Password Length': 10,
-        'Password History Length': 4,
-        'Password Complexity Ruleset': ['Upper', 'Lower'],
-      });
+      await setToggle('enable_fips', true);
+      await setToggle('enable_gpos_stig', false);
+      await setInput('min_password_age', 15);
+      await setInput('max_password_age', 120);
+      await setInput('min_password_length', 10);
+      await setInput('password_history_length', 4);
+      spectator.component.form.controls.password_complexity_ruleset.setValue([
+        PasswordComplexityRuleset.Upper,
+        PasswordComplexityRuleset.Lower,
+      ]);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await getSaveButton();
       await saveButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
@@ -252,11 +277,9 @@ describe('SystemSecurityFormComponent', () => {
       const store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
 
-      await form.fillForm({
-        'Enable FIPS': true,
-      });
+      await setToggle('enable_fips', true);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await getSaveButton();
       await saveButton.click();
 
       expect(store$.dispatch).toHaveBeenCalledWith(refreshRebootInfo());
@@ -275,7 +298,7 @@ describe('SystemSecurityFormComponent', () => {
         password_complexity_ruleset: null,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await getSaveButton();
       await saveButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
@@ -301,7 +324,7 @@ describe('SystemSecurityFormComponent', () => {
         password_complexity_ruleset: undefined,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await getSaveButton();
       await saveButton.click();
 
       // undefined should be passed as is
@@ -317,17 +340,15 @@ describe('SystemSecurityFormComponent', () => {
     });
 
     it('handles empty array password_complexity_ruleset when saving', async () => {
-      await form.fillForm({
-        'Enable FIPS': true,
-        'Enable General Purpose OS STIG compatibility mode': false,
-        'Min Password Age': 15,
-        'Max Password Age': 120,
-        'Min Password Length': 10,
-        'Password History Length': 4,
-        'Password Complexity Ruleset': [],
-      });
+      await setToggle('enable_fips', true);
+      await setToggle('enable_gpos_stig', false);
+      await setInput('min_password_age', 15);
+      await setInput('max_password_age', 120);
+      await setInput('min_password_length', 10);
+      await setInput('password_history_length', 4);
+      spectator.component.form.controls.password_complexity_ruleset.setValue([]);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await getSaveButton();
       await saveButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
@@ -341,113 +362,118 @@ describe('SystemSecurityFormComponent', () => {
       }]);
     });
 
-    it('loads and displays current values from config', async () => {
-      const values = await form.getValues();
-
-      expect(values).toEqual({
-        'Enable FIPS': false,
-        'Enable General Purpose OS STIG compatibility mode': false,
-        'Min Password Age': '10',
-        'Max Password Age': '90',
-        'Password Complexity Ruleset': ['Upper', 'Lower'],
-        'Min Password Length': '12',
-        'Password History Length': '5',
+    it('loads and displays current values from config', () => {
+      expect(spectator.component.form.value).toEqual({
+        enable_fips: false,
+        enable_gpos_stig: false,
+        min_password_age: 10,
+        max_password_age: 90,
+        password_complexity_ruleset: [PasswordComplexityRuleset.Upper, PasswordComplexityRuleset.Lower],
+        min_password_length: 12,
+        password_history_length: 5,
       });
     });
 
     it('enables FIPS and corrects invalid values when STIG is enabled', async () => {
-      await form.fillForm({
-        'Min Password Age': 0,
-        'Max Password Age': 90,
-        'Min Password Length': 10,
-        'Password History Length': 3,
-        'Password Complexity Ruleset': ['Upper', 'Lower'],
-      });
+      await setInput('min_password_age', 0);
+      await setInput('max_password_age', 90);
+      await setInput('min_password_length', 10);
+      await setInput('password_history_length', 3);
+      spectator.component.form.controls.password_complexity_ruleset.setValue([
+        PasswordComplexityRuleset.Upper,
+        PasswordComplexityRuleset.Lower,
+      ]);
 
-      await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setToggle('enable_gpos_stig', true);
 
-      const values = await form.getValues();
-      expect(values).toMatchObject({
-        'Enable FIPS': true,
-        'Min Password Age': stigPasswordRequirements.minPasswordAge.toString(),
-        'Max Password Age': stigPasswordRequirements.maxPasswordAge.toString(),
-        'Min Password Length': stigPasswordRequirements.minPasswordLength.toString(),
-        'Password History Length': stigPasswordRequirements.passwordHistoryLength.toString(),
-        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      expect(spectator.component.form.value).toMatchObject({
+        enable_fips: true,
+        min_password_age: stigPasswordRequirements.minPasswordAge,
+        max_password_age: stigPasswordRequirements.maxPasswordAge,
+        min_password_length: stigPasswordRequirements.minPasswordLength,
+        password_history_length: stigPasswordRequirements.passwordHistoryLength,
+        password_complexity_ruleset: [
+          PasswordComplexityRuleset.Upper,
+          PasswordComplexityRuleset.Lower,
+          PasswordComplexityRuleset.Number,
+          PasswordComplexityRuleset.Special,
+        ],
       });
     });
 
     it('preserves valid values when STIG is enabled', async () => {
-      await form.fillForm({
-        'Min Password Age': 1,
-        'Max Password Age': 45,
-        'Min Password Length': 16,
-        'Password History Length': 6,
-        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
-      });
+      await setInput('min_password_age', 1);
+      await setInput('max_password_age', 45);
+      await setInput('min_password_length', 16);
+      await setInput('password_history_length', 6);
+      spectator.component.form.controls.password_complexity_ruleset.setValue([
+        PasswordComplexityRuleset.Upper,
+        PasswordComplexityRuleset.Lower,
+        PasswordComplexityRuleset.Number,
+        PasswordComplexityRuleset.Special,
+      ]);
 
-      await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setToggle('enable_gpos_stig', true);
 
-      const values = await form.getValues();
-      expect(values).toMatchObject({
-        'Enable FIPS': true,
-        'Min Password Age': '1',
-        'Max Password Age': '45',
-        'Min Password Length': '16',
-        'Password History Length': '6',
-        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      expect(spectator.component.form.value).toMatchObject({
+        enable_fips: true,
+        min_password_age: 1,
+        max_password_age: 45,
+        min_password_length: 16,
+        password_history_length: 6,
+        password_complexity_ruleset: [
+          PasswordComplexityRuleset.Upper,
+          PasswordComplexityRuleset.Lower,
+          PasswordComplexityRuleset.Number,
+          PasswordComplexityRuleset.Special,
+        ],
       });
     });
 
     it('preserves more restrictive values when STIG is enabled', async () => {
-      await form.fillForm({
-        'Min Password Age': 2,
-        'Max Password Age': 30,
-        'Min Password Length': 20,
-        'Password History Length': 8,
-        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
-      });
+      await setInput('min_password_age', 2);
+      await setInput('max_password_age', 30);
+      await setInput('min_password_length', 20);
+      await setInput('password_history_length', 8);
+      spectator.component.form.controls.password_complexity_ruleset.setValue([
+        PasswordComplexityRuleset.Upper,
+        PasswordComplexityRuleset.Lower,
+        PasswordComplexityRuleset.Number,
+        PasswordComplexityRuleset.Special,
+      ]);
 
-      await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setToggle('enable_gpos_stig', true);
 
-      const values = await form.getValues();
-      expect(values).toMatchObject({
-        'Enable FIPS': true,
-        'Min Password Age': '2',
-        'Max Password Age': '30',
-        'Min Password Length': '20',
-        'Password History Length': '8',
-        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      expect(spectator.component.form.value).toMatchObject({
+        enable_fips: true,
+        min_password_age: 2,
+        max_password_age: 30,
+        min_password_length: 20,
+        password_history_length: 8,
+        password_complexity_ruleset: [
+          PasswordComplexityRuleset.Upper,
+          PasswordComplexityRuleset.Lower,
+          PasswordComplexityRuleset.Number,
+          PasswordComplexityRuleset.Special,
+        ],
       });
     });
 
     it('does not disable FIPS when STIG is disabled first', async () => {
-      await form.fillForm({
-        'Enable FIPS': true,
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setToggle('enable_fips', true);
+      await setToggle('enable_gpos_stig', true);
 
-      await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': false,
-      });
+      await setToggle('enable_gpos_stig', false);
 
-      expect(await form.getValues()).toMatchObject({
-        'Enable FIPS': true,
+      expect(spectator.component.form.value).toMatchObject({
+        enable_fips: true,
       });
     });
 
     it('clears auth token when STIG is enabled', async () => {
-      await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setToggle('enable_gpos_stig', true);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await getSaveButton();
       await saveButton.click();
 
       expect(spectator.inject(MockAuthService).clearAuthToken).toHaveBeenCalled();
@@ -455,41 +481,34 @@ describe('SystemSecurityFormComponent', () => {
 
     it('validates STIG requirements when STIG mode is enabled', async () => {
       // Enable STIG mode to activate validation
-      await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setToggle('enable_gpos_stig', true);
 
       // Try to set values below STIG requirements
-      await form.fillForm({
-        'Min Password Age': 0, // Below STIG minimum of 1
-        'Max Password Age': 90, // Above STIG maximum of 60
-        'Min Password Length': 10, // Below STIG minimum of 15
-        'Password History Length': 3, // Below STIG minimum of 5
-        'Password Complexity Ruleset': ['Upper'], // Missing required complexity rules
-      });
+      await setInput('min_password_age', 0); // Below STIG minimum of 1
+      await setInput('max_password_age', 90); // Above STIG maximum of 60
+      await setInput('min_password_length', 10); // Below STIG minimum of 15
+      await setInput('password_history_length', 3); // Below STIG minimum of 5
+      spectator.component.form.controls.password_complexity_ruleset.setValue([PasswordComplexityRuleset.Upper]);
+      spectator.component.form.controls.password_complexity_ruleset.updateValueAndValidity();
 
       // Form should be invalid due to STIG validation
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await getSaveButton();
       expect(await saveButton.isDisabled()).toBe(true);
     });
 
     it('allows editing password settings when STIG is disabled', async () => {
       // Form starts with STIG disabled
-      expect(await form.getValues()).toMatchObject({
-        'Enable General Purpose OS STIG compatibility mode': false,
-      });
+      expect(spectator.component.form.controls.enable_gpos_stig.value).toBe(false);
 
       // Set values that would be invalid under STIG
-      await form.fillForm({
-        'Min Password Age': 1, // This is valid even under basic validation
-        'Max Password Age': 365,
-        'Min Password Length': 8,
-        'Password History Length': 1,
-        'Password Complexity Ruleset': ['Upper'],
-      });
+      await setInput('min_password_age', 1); // This is valid even under basic validation
+      await setInput('max_password_age', 365);
+      await setInput('min_password_length', 8);
+      await setInput('password_history_length', 1);
+      spectator.component.form.controls.password_complexity_ruleset.setValue([PasswordComplexityRuleset.Upper]);
 
       // Form should be valid since STIG validation is not active
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await getSaveButton();
       expect(await saveButton.isDisabled()).toBe(false);
     });
   });
@@ -497,18 +516,27 @@ describe('SystemSecurityFormComponent', () => {
   describe('STIG validation', () => {
     let stigSpectator: Spectator<SystemSecurityFormComponent>;
     let stigLoader: HarnessLoader;
-    let stigForm: IxFormHarness;
+
+    const setStigToggle = async (checked: boolean): Promise<void> => {
+      const toggle = await stigLoader.getHarness(
+        TnSlideToggleHarness.with({ selector: '[formControlName="enable_gpos_stig"]' }),
+      );
+      if (checked) {
+        await toggle.check();
+      } else {
+        await toggle.uncheck();
+      }
+    };
 
     beforeEach(async () => {
       stigSpectator = createComponent();
       stigLoader = TestbedHarnessEnvironment.loader(stigSpectator.fixture);
-      stigForm = await stigLoader.getHarness(IxFormHarness);
+      stigSpectator.detectChanges();
+      await stigSpectator.fixture.whenStable();
     });
 
     it('displays STIG info message when STIG mode is enabled', async () => {
-      await stigForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(true);
 
       stigSpectator.detectChanges();
 
@@ -519,9 +547,7 @@ describe('SystemSecurityFormComponent', () => {
 
     it('validates password complexity with partial rules when STIG is enabled', async () => {
       // Enable STIG mode first
-      await stigForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(true);
 
       // Wait for the form to process the STIG toggle and update values
       await stigSpectator.fixture.whenStable();
@@ -529,8 +555,12 @@ describe('SystemSecurityFormComponent', () => {
 
       // When STIG is enabled, the form automatically adds missing required rules
       // So the values should already include all required complexity rules
-      const values = await stigForm.getValues();
-      expect(values['Password Complexity Ruleset']).toEqual(['Upper', 'Lower', 'Number', 'Special']);
+      expect(stigSpectator.component.form.controls.password_complexity_ruleset.value).toEqual([
+        PasswordComplexityRuleset.Upper,
+        PasswordComplexityRuleset.Lower,
+        PasswordComplexityRuleset.Number,
+        PasswordComplexityRuleset.Special,
+      ]);
 
       // Try to set incomplete complexity rules
       stigSpectator.component.form.controls.password_complexity_ruleset.setValue([
@@ -551,9 +581,7 @@ describe('SystemSecurityFormComponent', () => {
 
     it('validates each field type correctly with STIG validator', async () => {
       // Enable STIG mode
-      await stigForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(true);
 
       // Test min_password_age validation
       stigSpectator.component.form.controls.min_password_age.setValue(0);
@@ -598,9 +626,7 @@ describe('SystemSecurityFormComponent', () => {
 
     it('returns null for valid values when STIG is enabled', async () => {
       // Enable STIG mode
-      await stigForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(true);
 
       // Set valid values
       stigSpectator.component.form.controls.min_password_age.setValue(1);
@@ -632,9 +658,7 @@ describe('SystemSecurityFormComponent', () => {
 
     it('handles null values in STIG validator', async () => {
       // Enable STIG mode
-      await stigForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(true);
 
       // Set null values
       stigSpectator.component.form.controls.min_password_age.setValue(null);
@@ -648,15 +672,26 @@ describe('SystemSecurityFormComponent', () => {
   describe('2FA warning when enabling STIG', () => {
     let warningSpectator: Spectator<SystemSecurityFormComponent>;
     let warningLoader: HarnessLoader;
-    let warningForm: IxFormHarness;
     let apiService: ApiService;
     let dialogService: DialogService;
+
+    const setStigToggle = async (checked: boolean): Promise<void> => {
+      const toggle = await warningLoader.getHarness(
+        TnSlideToggleHarness.with({ selector: '[formControlName="enable_gpos_stig"]' }),
+      );
+      if (checked) {
+        await toggle.check();
+      } else {
+        await toggle.uncheck();
+      }
+    };
 
     beforeEach(async () => {
       jest.clearAllMocks();
       warningSpectator = createComponent();
       warningLoader = TestbedHarnessEnvironment.loader(warningSpectator.fixture);
-      warningForm = await warningLoader.getHarness(IxFormHarness);
+      warningSpectator.detectChanges();
+      await warningSpectator.fixture.whenStable();
       apiService = warningSpectator.inject(ApiService);
       dialogService = warningSpectator.inject(DialogService);
     });
@@ -677,11 +712,9 @@ describe('SystemSecurityFormComponent', () => {
       const dialogSpy = jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true) as unknown as Observable<DialogWithSecondaryCheckboxResult>);
 
       // Enable STIG mode
-      await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(true);
 
-      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(dialogSpy).toHaveBeenCalledWith({
@@ -700,11 +733,9 @@ describe('SystemSecurityFormComponent', () => {
       const dialogSpy = jest.spyOn(dialogService, 'confirm');
 
       // Enable STIG mode
-      await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(true);
 
-      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(dialogSpy).not.toHaveBeenCalled();
@@ -720,11 +751,9 @@ describe('SystemSecurityFormComponent', () => {
       jest.spyOn(dialogService, 'confirm').mockReturnValue(of(false) as unknown as Observable<DialogWithSecondaryCheckboxResult>); // User cancels
 
       // Enable STIG mode
-      await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(true);
 
-      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(apiService.job).not.toHaveBeenCalled(); // Save should not proceed
@@ -739,11 +768,9 @@ describe('SystemSecurityFormComponent', () => {
       jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true) as unknown as Observable<DialogWithSecondaryCheckboxResult>); // User confirms
 
       // Enable STIG mode
-      await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(true);
 
-      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(apiService.job).toHaveBeenCalledWith('system.security.update', [expect.objectContaining({
@@ -776,6 +803,9 @@ describe('SystemSecurityFormComponent', () => {
       });
 
       jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+        if (method === 'system.security.config') {
+          return of(fakeSystemSecurityConfig);
+        }
         if (method === 'user.query') {
           return throwError(() => error);
         }
@@ -798,11 +828,9 @@ describe('SystemSecurityFormComponent', () => {
       });
 
       // Enable STIG mode
-      await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(true);
 
-      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       // Verify error modal was shown with the error
@@ -832,11 +860,9 @@ describe('SystemSecurityFormComponent', () => {
       });
 
       // Disable STIG mode
-      await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': false,
-      });
+      await setStigToggle(false);
 
-      const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       // Should not call user.query when disabling STIG
@@ -850,7 +876,17 @@ describe('SystemSecurityFormComponent', () => {
   describe('External STIG mode requirements', () => {
     let validationSpectator: Spectator<SystemSecurityFormComponent>;
     let validationLoader: HarnessLoader;
-    let validationForm: IxFormHarness;
+
+    const setStigToggle = async (loaderRef: HarnessLoader, checked: boolean): Promise<void> => {
+      const toggle = await loaderRef.getHarness(
+        TnSlideToggleHarness.with({ selector: '[formControlName="enable_gpos_stig"]' }),
+      );
+      if (checked) {
+        await toggle.check();
+      } else {
+        await toggle.uncheck();
+      }
+    };
 
     // Minimal factory without pre-configured ApiService mocks
     const createValidationComponent = createComponentFactory({
@@ -896,32 +932,35 @@ describe('SystemSecurityFormComponent', () => {
         ],
       });
       validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
-      validationForm = await validationLoader.getHarness(IxFormHarness);
       validationSpectator.detectChanges();
+      await validationSpectator.fixture.whenStable();
 
       // First ensure STIG requirements are met
-      await validationForm.fillForm({
-        'Min Password Age': 1,
-        'Max Password Age': 60,
-        'Min Password Length': 15,
-        'Password History Length': 5,
-        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      validationSpectator.component.form.patchValue({
+        min_password_age: 1,
+        max_password_age: 60,
+        min_password_length: 15,
+        password_history_length: 5,
+        password_complexity_ruleset: [
+          PasswordComplexityRuleset.Upper,
+          PasswordComplexityRuleset.Lower,
+          PasswordComplexityRuleset.Number,
+          PasswordComplexityRuleset.Special,
+        ],
       });
 
-      await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(validationLoader, true);
 
       // Wait for async operations to complete
       await validationSpectator.fixture.whenStable();
       validationSpectator.detectChanges();
 
       expect(validationSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        stigRequirementsNotMet: true,
+        stigRequirementsNotMet: { message: 'STIG mode cannot be enabled until the requirements below are met.' },
       });
 
-      // The error message should be displayed in the mat-error element showing missing requirements
-      const errorElement = validationSpectator.query('mat-error');
+      // The error message should be displayed in the stig-errors element showing missing requirements
+      const errorElement = validationSpectator.query('.stig-errors');
       expect(errorElement).toBeTruthy();
       expect(errorElement?.textContent).toContain('Requirements to enable STIG mode:');
 
@@ -933,12 +972,12 @@ describe('SystemSecurityFormComponent', () => {
       expect(errorElement?.textContent).toContain('The truenas_admin user must have their password disabled.');
       expect(errorElement?.textContent).toContain('The current user must be logged in with 2FA.');
 
-      // Verify the warning is shown in mat-hint
-      const hintElement = validationSpectator.query('mat-hint');
+      // Verify the warning is shown in stig-hints
+      const hintElement = validationSpectator.query('.stig-hints');
       expect(hintElement?.textContent).toContain('Optional requirements to enable STIG mode:');
       expect(hintElement?.textContent).toContain('All users must have 2FA enabled and setup.');
 
-      const saveButton = await validationLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await validationLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
     });
 
@@ -950,21 +989,24 @@ describe('SystemSecurityFormComponent', () => {
         ],
       });
       validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
-      validationForm = await validationLoader.getHarness(IxFormHarness);
       validationSpectator.detectChanges();
+      await validationSpectator.fixture.whenStable();
 
       // Set valid STIG values
-      await validationForm.fillForm({
-        'Min Password Age': 1,
-        'Max Password Age': 60,
-        'Min Password Length': 15,
-        'Password History Length': 5,
-        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      validationSpectator.component.form.patchValue({
+        min_password_age: 1,
+        max_password_age: 60,
+        min_password_length: 15,
+        password_history_length: 5,
+        password_complexity_ruleset: [
+          PasswordComplexityRuleset.Upper,
+          PasswordComplexityRuleset.Lower,
+          PasswordComplexityRuleset.Number,
+          PasswordComplexityRuleset.Special,
+        ],
       });
 
-      await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(validationLoader, true);
 
       // Wait for async operations to complete
       await validationSpectator.fixture.whenStable();
@@ -974,17 +1016,17 @@ describe('SystemSecurityFormComponent', () => {
       expect(validationSpectator.component.form.controls.enable_gpos_stig.errors).toBeNull();
 
       // Verify no requirement error messages are shown in the DOM
-      const errorElements = validationSpectator.queryAll('mat-error');
+      const errorElements = validationSpectator.queryAll('.stig-errors');
       const requirementsError = errorElements.find((el) => el.textContent?.includes('Requirements to enable STIG mode:'));
       expect(requirementsError).toBeFalsy();
 
       // Verify no warning messages are shown in the DOM
-      const hintElements = validationSpectator.queryAll('mat-hint');
+      const hintElements = validationSpectator.queryAll('.stig-hints');
       const warningsHint = hintElements.find((el) => el.textContent?.includes('Optional requirements to enable STIG mode:'));
       expect(warningsHint).toBeFalsy();
 
       // The Save button should be enabled
-      const saveButton = await validationLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await validationLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
     });
 
@@ -1006,20 +1048,18 @@ describe('SystemSecurityFormComponent', () => {
         ],
       });
       validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
-      validationForm = await validationLoader.getHarness(IxFormHarness);
       validationSpectator.detectChanges();
+      await validationSpectator.fixture.whenStable();
 
       // Enable STIG to trigger the error
-      await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(validationLoader, true);
 
       await validationSpectator.fixture.whenStable();
       validationSpectator.detectChanges();
 
       // Verify stigRequirementsNotMet error is present
       expect(validationSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        stigRequirementsNotMet: true,
+        stigRequirementsNotMet: { message: 'STIG mode cannot be enabled until the requirements below are met.' },
       });
 
       // Now mock all requirements as satisfied by replacing the implementation
@@ -1027,12 +1067,8 @@ describe('SystemSecurityFormComponent', () => {
       (apiServiceMock.call as jest.Mock).mockImplementation(satisfiedMock.call);
 
       // Toggle STIG off and on to trigger re-check with new mocks
-      await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': false,
-      });
-      await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
+      await setStigToggle(validationLoader, false);
+      await setStigToggle(validationLoader, true);
 
       await validationSpectator.fixture.whenStable();
       validationSpectator.detectChanges();
@@ -1047,11 +1083,11 @@ describe('SystemSecurityFormComponent', () => {
         { currentUserPwName: 'root' },
       );
 
-      const errorElement = rootUserSpectator.query('mat-error');
+      const errorElement = rootUserSpectator.query('.stig-errors');
       expect(errorElement).toBeTruthy();
       expect(errorElement?.textContent).toContain('You must log in as a user other than root with admin access');
       expect(rootUserSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        stigRequirementsNotMet: true,
+        stigRequirementsNotMet: { message: 'STIG mode cannot be enabled until the requirements below are met.' },
       });
     });
 
@@ -1061,11 +1097,11 @@ describe('SystemSecurityFormComponent', () => {
         { currentUserPwName: 'truenas_admin' },
       );
 
-      const errorElement = adminUserSpectator.query('mat-error');
+      const errorElement = adminUserSpectator.query('.stig-errors');
       expect(errorElement).toBeTruthy();
       expect(errorElement?.textContent).toContain('You must log in as a user other than root with admin access');
       expect(adminUserSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        stigRequirementsNotMet: true,
+        stigRequirementsNotMet: { message: 'STIG mode cannot be enabled until the requirements below are met.' },
       });
     });
 
@@ -1075,11 +1111,11 @@ describe('SystemSecurityFormComponent', () => {
         { currentSessionIs2fa: false },
       );
 
-      const errorElement = sessionNot2faSpectator.query('mat-error');
+      const errorElement = sessionNot2faSpectator.query('.stig-errors');
       expect(errorElement).toBeTruthy();
       expect(errorElement?.textContent).toContain('You must be logged in with 2FA. If you have already configured 2FA');
       expect(sessionNot2faSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        stigRequirementsNotMet: true,
+        stigRequirementsNotMet: { message: 'STIG mode cannot be enabled until the requirements below are met.' },
       });
     });
 
@@ -1089,11 +1125,11 @@ describe('SystemSecurityFormComponent', () => {
         { currentUserHas2fa: false, currentSessionIs2fa: false },
       );
 
-      const errorElement = userNo2faSpectator.query('mat-error');
+      const errorElement = userNo2faSpectator.query('.stig-errors');
       expect(errorElement).toBeTruthy();
       expect(errorElement?.textContent).toContain('The current user must be logged in with 2FA. After configuring 2FA, you will have to log out and log back in again');
       expect(userNo2faSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        stigRequirementsNotMet: true,
+        stigRequirementsNotMet: { message: 'STIG mode cannot be enabled until the requirements below are met.' },
       });
     });
   });
@@ -1111,6 +1147,9 @@ describe('SystemSecurityFormComponent', () => {
         }),
         mockProvider(SlideIn, {
           open: jest.fn(),
+        }),
+        mockProvider(FormSidePanelService, {
+          openForm: jest.fn(() => SlideInResult.empty()),
         }),
         mockProvider(NavigateAndHighlightService, {
           navigateAndHighlight: jest.fn(),
@@ -1135,6 +1174,8 @@ describe('SystemSecurityFormComponent', () => {
 
     it('opens the user edit slidein when clicking the configure button for root/truenas_admin error', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
+      navigationSpectator.detectChanges();
+      await navigationSpectator.fixture.whenStable();
       const slideIn = navigationSpectator.inject(SlideIn);
 
       const openSpy = jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
@@ -1145,7 +1186,7 @@ describe('SystemSecurityFormComponent', () => {
       await navigationSpectator.fixture.whenStable();
 
       // Find the Configure button for the root/admin password requirement
-      const errorMessages = navigationSpectator.queryAll('mat-error li');
+      const errorMessages = navigationSpectator.queryAll('.stig-errors li');
       const passwordError = errorMessages.find((el) => el.textContent.includes('root user'));
       expect(passwordError).toBeTruthy();
 
@@ -1160,8 +1201,7 @@ describe('SystemSecurityFormComponent', () => {
 
     it('navigates to Advanced Settings and opens Global Two-Factor Auth form when clicking Configure', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
-      const slideIn = navigationSpectator.inject(SlideIn);
-      const slideInOpenSpy = jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
+      const formPanel = navigationSpectator.inject(FormSidePanelService);
 
       // Trigger setupStigRequirements - should show "Global Two-Factor Authentication" requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1169,7 +1209,7 @@ describe('SystemSecurityFormComponent', () => {
       await navigationSpectator.fixture.whenStable();
 
       // Find the Configure button for the 2FA requirement
-      const errorMessages = navigationSpectator.queryAll('mat-error li');
+      const errorMessages = navigationSpectator.queryAll('.stig-errors li');
       const twoFactorError = errorMessages.find((el) => el.textContent.includes('Global Two-Factor Authentication'));
       expect(twoFactorError).toBeTruthy();
 
@@ -1184,17 +1224,18 @@ describe('SystemSecurityFormComponent', () => {
       await navigationSpectator.fixture.whenStable();
 
       // Verify the Global 2FA form was opened after navigation
-      expect(slideInOpenSpy).toHaveBeenCalledWith(
-        GlobalTwoFactorAuthFormComponent,
-        { data: { enabled: false, services: { ssh: false } } },
+      expect(formPanel.openForm).toHaveBeenCalledWith(
+        expect.anything(),
+        {
+          title: 'Global Two Factor Authentication',
+          editData: { enabled: false, window: undefined, ssh: false },
+        },
       );
     });
 
     it('opens Global Two-Factor Auth form when clicking SSH 2FA configure button', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
-      const slideIn = navigationSpectator.inject(SlideIn);
-
-      const openSpy = jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
+      const formPanel = navigationSpectator.inject(FormSidePanelService);
 
       // Trigger setupStigRequirements - should show SSH 2FA requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1202,7 +1243,7 @@ describe('SystemSecurityFormComponent', () => {
       await navigationSpectator.fixture.whenStable();
 
       // Find the Configure button for SSH 2FA requirement
-      const errorMessages = navigationSpectator.queryAll('mat-error li');
+      const errorMessages = navigationSpectator.queryAll('.stig-errors li');
       const sshTwoFactorError = errorMessages.find((el) => el.textContent.includes('SSH Two-Factor Authentication'));
       expect(sshTwoFactorError).toBeTruthy();
 
@@ -1213,15 +1254,20 @@ describe('SystemSecurityFormComponent', () => {
       configureButton.click();
 
       // Verify the Global 2FA form was opened with the correct data
-      expect(openSpy).toHaveBeenCalledWith(
-        GlobalTwoFactorAuthFormComponent,
-        { data: { enabled: false, services: { ssh: false } } },
+      expect(formPanel.openForm).toHaveBeenCalledWith(
+        expect.anything(),
+        {
+          title: 'Global Two Factor Authentication',
+          editData: { enabled: false, window: undefined, ssh: false },
+        },
       );
     });
 
 
     it('marks form as pristine before navigating to avoid unsaved changes dialog', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
+      navigationSpectator.detectChanges();
+      await navigationSpectator.fixture.whenStable();
       const slideIn = navigationSpectator.inject(SlideIn);
       jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
       jest.spyOn(navigationSpectator.inject(Router), 'navigate').mockResolvedValue(true);
@@ -1256,6 +1302,8 @@ describe('SystemSecurityFormComponent', () => {
           mockProvider(ApiService, apiServiceMock),
         ],
       });
+      reevaluationSpectator.detectChanges();
+      await reevaluationSpectator.fixture.whenStable();
       const slideIn = reevaluationSpectator.inject(SlideIn);
 
       // Simulate the slidein closing with a successful save
@@ -1267,14 +1315,14 @@ describe('SystemSecurityFormComponent', () => {
       await reevaluationSpectator.fixture.whenStable();
 
       // Verify the root password error is present
-      let errorElement = reevaluationSpectator.query('mat-error');
+      let errorElement = reevaluationSpectator.query('.stig-errors');
       expect(errorElement?.textContent).toContain('The root user must have their password disabled.');
       expect(reevaluationSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        stigRequirementsNotMet: true,
+        stigRequirementsNotMet: { message: 'STIG mode cannot be enabled until the requirements below are met.' },
       });
 
       // Find and click the Configure button for root password
-      const errorMessages = reevaluationSpectator.queryAll('mat-error li');
+      const errorMessages = reevaluationSpectator.queryAll('.stig-errors li');
       const passwordError = errorMessages.find((el) => el.textContent.includes('root user'));
       const configureButton = passwordError.querySelector('.link-button') as HTMLElement;
 
@@ -1316,7 +1364,7 @@ describe('SystemSecurityFormComponent', () => {
       reevaluationSpectator.detectChanges();
 
       // Verify the error is now gone
-      errorElement = reevaluationSpectator.query('mat-error');
+      errorElement = reevaluationSpectator.query('.stig-errors');
       const errorText = errorElement?.textContent || '';
       expect(errorText).not.toContain('The root user must have their password disabled.');
 
@@ -1335,10 +1383,10 @@ describe('SystemSecurityFormComponent', () => {
           mockProvider(ApiService, apiServiceMock),
         ],
       });
-      const slideIn = reevaluationSpectator.inject(SlideIn);
+      const formPanel = reevaluationSpectator.inject(FormSidePanelService);
 
-      // Simulate the slidein closing with a successful save
-      jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
+      // Simulate the side panel closing with a successful save
+      jest.spyOn(formPanel, 'openForm').mockReturnValue(SlideInResult.success(true));
 
       // Enable STIG mode to trigger requirement check
       reevaluationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1346,14 +1394,14 @@ describe('SystemSecurityFormComponent', () => {
       await reevaluationSpectator.fixture.whenStable();
 
       // Verify the 2FA error is present
-      let errorElement = reevaluationSpectator.query('mat-error');
+      let errorElement = reevaluationSpectator.query('.stig-errors');
       expect(errorElement?.textContent).toContain('Global Two-Factor Authentication must be enabled.');
       expect(reevaluationSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        stigRequirementsNotMet: true,
+        stigRequirementsNotMet: { message: 'STIG mode cannot be enabled until the requirements below are met.' },
       });
 
       // Find and click the Configure button for 2FA
-      const errorMessages = reevaluationSpectator.queryAll('mat-error li');
+      const errorMessages = reevaluationSpectator.queryAll('.stig-errors li');
       const twoFactorError = errorMessages.find((el) => el.textContent.includes('Global Two-Factor Authentication'));
       const configureButton = twoFactorError.querySelector('.link-button') as HTMLElement;
 
@@ -1395,7 +1443,7 @@ describe('SystemSecurityFormComponent', () => {
       reevaluationSpectator.detectChanges();
 
       // Verify the 2FA error is now gone
-      errorElement = reevaluationSpectator.query('mat-error');
+      errorElement = reevaluationSpectator.query('.stig-errors');
       const errorText = errorElement?.textContent || '';
       expect(errorText).not.toContain('Global Two-Factor Authentication must be enabled.');
 

@@ -5,20 +5,15 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonComponent, TnButtonHarness, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   DeleteGroupDialog,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
-import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 const dummyGroup = {
@@ -35,24 +30,13 @@ describe('GroupDetailsRowComponent', () => {
   let spectator: SpectatorRouting<GroupDetailsRowComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<Group | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => dummyGroup),
-  };
-
   const createComponent = createRoutingFactory({
     component: GroupDetailsRowComponent,
     imports: [
       TnButtonComponent,
       TnTooltipDirective,
-      MockComponent(GroupFormComponent),
     ],
     providers: [
-      mockProvider(SlideInRef, slideInRef),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockApi([
         mockCall('user.query'),
         mockCall('group.delete'),
@@ -117,11 +101,12 @@ describe('GroupDetailsRowComponent', () => {
   });
 
   describe('Edit button', () => {
-    it('should open edit group form', async () => {
+    it('emits edit with the group when clicked', async () => {
+      const editSpy = jest.spyOn(spectator.component.edit, 'emit');
       const editButton = await loader.getHarness(TnButtonHarness.with({ label: /Edit/ }));
       await editButton.click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
+      expect(editSpy).toHaveBeenCalledWith(dummyGroup);
     });
 
     it('does not show Edit button for built-in groups', async () => {

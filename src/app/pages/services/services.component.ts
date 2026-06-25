@@ -1,16 +1,16 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef, computed, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef, Type,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCellDefDirective, TnHeaderCellDefDirective, TnSidePanelActionDirective,
-  TnSidePanelComponent, TnSlideToggleComponent, TnTableColumnDirective, TnTableComponent, TnTestIdDirective,
+  TnCardComponent, TnCellDefDirective, TnHeaderCellDefDirective,
+  TnSlideToggleComponent, TnTableColumnDirective, TnTableComponent, TnTestIdDirective,
   TnTooltipDirective, type TnSortEvent,
 } from '@truenas/ui-components';
-import { EMPTY, Observable, of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, take,
 } from 'rxjs/operators';
@@ -27,8 +27,8 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
@@ -59,9 +59,6 @@ import { waitForServices } from 'app/store/services/services.selectors';
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnSlideToggleComponent,
-    TnButtonComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     TnTestIdDirective,
     TnTooltipDirective,
     RequiresRolesDirective,
@@ -69,13 +66,6 @@ import { waitForServices } from 'app/store/services/services.selectors';
     PageHeaderComponent,
     ServiceStatusCellComponent,
     ServiceActionsCellComponent,
-    ServiceFtpComponent,
-    ServiceNfsComponent,
-    ServiceSmbComponent,
-    ServiceSnmpComponent,
-    ServiceSshComponent,
-    ServiceUpsComponent,
-    ServiceWebshareComponent,
     TranslateModule,
     AsyncPipe,
   ],
@@ -89,12 +79,11 @@ export class ServicesComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = servicesElements;
   protected readonly requiredRoles = [Role.ServiceWrite];
-  protected readonly ServiceName = ServiceName;
 
   protected readonly displayedColumns = ['name', 'state', 'enable', 'actions'];
 
@@ -106,47 +95,17 @@ export class ServicesComponent implements OnInit {
   error = false;
   loading = true;
 
-  // The config form is hosted in a single side panel; only one service form is
-  // rendered at a time, selected by `configService`.
-  protected readonly configOpen = signal(false);
-  protected readonly configService = signal<ServiceName | null>(null);
-
-  // Two-column forms need a wider panel (matches the legacy SlideIn `wide` width).
-  private readonly wideConfigServices = new Set<ServiceName>([
-    ServiceName.Ftp,
-    ServiceName.Nfs,
-    ServiceName.Snmp,
-    ServiceName.Ups,
+  // Maps each service to its config form. Two-column forms (`wide`) get the wider panel,
+  // matching the legacy SlideIn `wide` width.
+  private readonly configForms = new Map<ServiceName, { component: Type<SidePanelForm>; wide?: boolean }>([
+    [ServiceName.Ftp, { component: ServiceFtpComponent, wide: true }],
+    [ServiceName.Nfs, { component: ServiceNfsComponent, wide: true }],
+    [ServiceName.Cifs, { component: ServiceSmbComponent }],
+    [ServiceName.Snmp, { component: ServiceSnmpComponent, wide: true }],
+    [ServiceName.Ssh, { component: ServiceSshComponent }],
+    [ServiceName.Ups, { component: ServiceUpsComponent, wide: true }],
+    [ServiceName.WebShare, { component: ServiceWebshareComponent }],
   ]);
-
-  private ftpForm = viewChild(ServiceFtpComponent);
-  private nfsForm = viewChild(ServiceNfsComponent);
-  private smbForm = viewChild(ServiceSmbComponent);
-  private snmpForm = viewChild(ServiceSnmpComponent);
-  private sshForm = viewChild(ServiceSshComponent);
-  private upsForm = viewChild(ServiceUpsComponent);
-  private webshareForm = viewChild(ServiceWebshareComponent);
-
-  protected readonly configForm = computed<SidePanelForm | undefined>(() => {
-    return this.ftpForm() ?? this.nfsForm() ?? this.smbForm() ?? this.snmpForm()
-      ?? this.sshForm() ?? this.upsForm() ?? this.webshareForm();
-  });
-
-  protected readonly configTitle = computed<string>(() => {
-    const service = this.configService();
-    return service ? (serviceNames.get(service) ?? service) : '';
-  });
-
-  protected readonly configPanelWidth = computed<string>(() => {
-    const service = this.configService();
-    return service && this.wideConfigServices.has(service) ? '800px' : '480px';
-  });
-
-  protected readonly closeConfigGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
 
   protected get emptyConfig(): EmptyType {
     switch (true) {
@@ -184,12 +143,14 @@ export class ServicesComponent implements OnInit {
   }
 
   protected openConfig(service: Service): void {
-    this.configService.set(service.service);
-    this.configOpen.set(true);
-  }
-
-  protected onConfigClosed(): void {
-    this.configOpen.set(false);
+    const config = this.configForms.get(service.service);
+    if (!config) {
+      return;
+    }
+    this.formPanel.open(config.component, {
+      title: serviceNames.get(service.service) ?? service.service,
+      wide: config.wide,
+    });
   }
 
   protected onListFiltered(query: string): void {
