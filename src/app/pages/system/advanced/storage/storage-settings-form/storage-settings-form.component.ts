@@ -2,12 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, forkJoin, map, Observable, of,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  finalize, forkJoin, map, Observable, of, take,
 } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -21,15 +22,11 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
@@ -48,22 +45,20 @@ export interface StorageSettingsData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
-    IxCheckboxComponent,
     AsyncPipe,
     WarningComponent,
   ],
 })
-export class StorageSettingsFormComponent implements OnInit {
+export class StorageSettingsFormComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private formBuilder = inject(FormBuilder);
@@ -72,7 +67,6 @@ export class StorageSettingsFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private taskService = inject(TaskService);
   private auth = inject(AuthService);
-  slideInRef = inject<SlideInRef<StorageSettingsData, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly rolesToEditPool = [Role.DatasetWrite];
@@ -102,6 +96,8 @@ export class StorageSettingsFormComponent implements OnInit {
     }),
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+
   protected poolOptions$ = this.api.call('systemdataset.pool_choices').pipe(choicesToOptions());
   protected daysOfWeek$ = of(mapToOptions(weekdayLabels, this.translate));
   protected timeOptions$ = of(this.taskService.getTimeOptions());
@@ -110,17 +106,24 @@ export class StorageSettingsFormComponent implements OnInit {
     map((service) => service?.state === ServiceStatus.Running),
   );
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => of(this.form.dirty));
-  }
-
   ngOnInit(): void {
     this.setFormData();
     this.disableControlsBasedOnRoles();
   }
 
   private setFormData(): void {
-    this.form.patchValue(this.slideInRef.getData());
+    forkJoin([
+      this.api.call('systemdataset.config'),
+      this.api.call('pool.resilver.config'),
+    ]).pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(([systemDatasetConfig, resilverConfig]) => {
+      this.form.patchValue({
+        systemDatasetPool: systemDatasetConfig.pool,
+        priorityResilver: resilverConfig,
+      });
+    });
   }
 
   private disableControlsBasedOnRoles(): void {
@@ -150,9 +153,7 @@ export class StorageSettingsFormComponent implements OnInit {
 
     if (requests.length === 0) {
       // No changes made
-      this.slideInRef.close({
-        response: undefined,
-      });
+      this.close(false);
       return;
     }
 
@@ -166,7 +167,7 @@ export class StorageSettingsFormComponent implements OnInit {
       .subscribe({
         complete: () => {
           this.snackbar.success(this.translate.instant('Storage Settings Updated.'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);

@@ -32,7 +32,7 @@
         <button
           mat-icon-button
           ixTest="toggle-row"
-          [matTooltip]="isExpanded(row) ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
+          [tnTooltip]="isExpanded(row) ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
           (click)="$event.stopPropagation(); onToggle(row)"
         >
           @if (isExpanded(row)) {

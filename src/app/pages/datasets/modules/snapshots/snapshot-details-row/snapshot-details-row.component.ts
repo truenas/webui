@@ -3,9 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnTooltipDirective, TnDialog } from '@truenas/ui-components';
 import { isEmpty } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -45,7 +44,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     RequiresRolesDirective,
     TestDirective,
-    MatTooltip,
+    TnTooltipDirective,
   ],
 })
 export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {

@@ -1,19 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IsolatedGpusFormComponent } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -21,10 +18,14 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
-describe('IsolatedGpuPcisFormComponent', () => {
+describe('IsolatedGpusFormComponent', () => {
   let spectator: Spectator<IsolatedGpusFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const createComponent = createComponentFactory({
     component: IsolatedGpusFormComponent,
@@ -63,9 +64,6 @@ describe('IsolatedGpuPcisFormComponent', () => {
         }),
       ]),
       mockProvider(SystemGeneralService),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(GpuService, {
@@ -111,21 +109,17 @@ describe('IsolatedGpuPcisFormComponent', () => {
   });
 
   it('loads current settings and shows them', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
-
-    expect(values).toEqual({
-      GPUs: ['Intel Corporation HD Graphics 510 [0000:00:02.0]'],
-    });
+    const select = await getSelect('isolated_gpu_pci_ids');
+    expect(await select.getDisplayText()).toBe('Intel Corporation HD Graphics 510 [0000:00:02.0]');
   });
 
   it('saves updated settings when Save is pressed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      GPUs: 'Fake HD Graphics [0000:00:01.0]',
-    });
+    const select = await getSelect('isolated_gpu_pci_ids');
+    // Deselect the pre-selected GPU and select a different one.
+    await select.selectOption('Intel Corporation HD Graphics 510 [0000:00:02.0]');
+    await select.selectOption('Fake HD Graphics [0000:00:01.0]');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('system.advanced.update_gpu_pci_ids', [['0000:00:01.0']]);

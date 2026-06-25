@@ -116,9 +116,18 @@ ngMocks.globalKeep(LabelMarkupPipe);
 ngMocks.globalKeep(TnInputComponent);
 
 const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
-  return (
-    methodName === 'error' && message.startsWith('Error: Could not parse CSS stylesheet')
-  );
+  if (methodName === 'error' && message.startsWith('Error: Could not parse CSS stylesheet')) {
+    return true;
+  }
+  // <ix-form> emits this warning in dev mode (which jest runs as) when a
+  // submit's request$ resolves to undefined without a closeWith override.
+  // The default test mock intentionally uses `request$: of(undefined)` as
+  // a no-op success — production callers should still see the warning, so
+  // it's silenced only at the test layer.
+  if (methodName === 'warn' && message.startsWith('[ix-form] submitHandler close payload resolved to undefined')) {
+    return true;
+  }
+  return false;
 };
 failOnConsole({ silenceMessage: silenceJsDomCssParseError });
 

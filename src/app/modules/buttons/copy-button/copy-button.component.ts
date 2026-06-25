@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -13,7 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconButtonComponent,
-    MatTooltip,
+    TnTooltipDirective,
     TranslateModule,
     MatMenuTrigger,
     MatMenu,
