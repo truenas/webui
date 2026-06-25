@@ -4,10 +4,9 @@ import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnTooltipDirective, TnDialog } from '@truenas/ui-components';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
@@ -47,7 +46,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     MatCardContent,
     OrNotAvailablePipe,
-    MatTooltip,
+    TnTooltipDirective,
     CopyButtonComponent,
     MatCardActions,
     TooltipComponent,

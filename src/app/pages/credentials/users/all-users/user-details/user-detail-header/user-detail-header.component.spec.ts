@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -93,8 +92,8 @@ describe('UserDetailHeaderComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     expect(await editButton.isDisabled()).toBe(true);
 
-    const tooltips = spectator.queryAll(MatTooltip);
-    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    const tooltips = spectator.queryAll(TnTooltipDirective);
+    const tooltip = tooltips.find((tip) => String(tip.message) === 'This user is managed by a directory service and cannot be modified.');
     expect(tooltip).toBeTruthy();
   });
 
@@ -118,8 +117,8 @@ describe('UserDetailHeaderComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     expect(await deleteButton.isDisabled()).toBe(true);
 
-    const tooltips = spectator.queryAll(MatTooltip);
-    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    const tooltips = spectator.queryAll(TnTooltipDirective);
+    const tooltip = tooltips.find((tip) => String(tip.message) === 'This user is managed by a directory service and cannot be modified.');
     expect(tooltip).toBeTruthy();
   });
 

@@ -2,8 +2,8 @@
   class="job-item"
   [class.abortable]="job().state === JobState.Running && job().abortable"
   [class.interactive]="clickable()"
-  [matTooltip]="job().state === JobState.Failed ? job().error : null"
-  [matTooltipPosition]="'left'"
+  [tnTooltip]="job().state === JobState.Failed ? job().error : null"
+  [tnTooltipPosition]="'left'"
 >
   <div class="job-item-body" (click)="clickable() && open()">
     <div class="description-line">
@@ -101,7 +101,7 @@
     library="mdi"
     [class.job-icon-abort]="true"
     [testId]="['abort', job().description, job().method]"
-    [matTooltip]="'Abort' | translate"
+    [tnTooltip]="'Abort' | translate"
     (click)="abort()"
   ></tn-icon-button>
 }
@@ -122,10 +122,10 @@
     type="button"
     name="close-circle"
     library="mdi"
-    matTooltipPosition="left"
+    tnTooltipPosition="left"
     [class.job-icon-failed]="true"
     [testId]="['failed', job().description, job().method]"
-    [matTooltip]="job().error"
+    [tnTooltip]="job().error"
     [disabled]="true"
   ></tn-icon-button>
 }

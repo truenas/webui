@@ -52,7 +52,7 @@ export class ServiceSshComponent extends SidePanelForm implements OnInit {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.SshWrite];
+  readonly requiredRoles = [Role.SshWrite];
   protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);

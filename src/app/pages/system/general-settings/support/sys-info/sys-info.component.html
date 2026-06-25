@@ -36,7 +36,7 @@
         }
         <span
           class="edit-contacts-wrapper"
-          [matTooltip]="isProactiveSupportAvailable() ? '' : (helptext.proactive.unavailableMessage | translate)"
+          [tnTooltip]="isProactiveSupportAvailable() ? '' : (helptext.proactive.unavailableMessage | translate)"
         >
           <button
             *ixRequiresRoles="manageProactiveRoles"
@@ -128,7 +128,7 @@
         type="button"
         ixTest="view-fingerprint"
         [attr.aria-label]="'View System Thumbprint' | translate"
-        [matTooltip]="'View Thumbprint' | translate"
+        [tnTooltip]="'View Thumbprint' | translate"
         (click)="openFingerprintDialog()"
       >
         <tn-icon name="eye" library="mdi" size="md"></tn-icon>
@@ -139,7 +139,7 @@
         ixTest="copy-fingerprint"
         [attr.aria-label]="'Copy System Thumbprint' | translate"
         [disabled]="isFingerprintBusy()"
-        [matTooltip]="'Copy to Clipboard' | translate"
+        [tnTooltip]="'Copy to Clipboard' | translate"
         (click)="copyFingerprint()"
       >
         <tn-icon name="content-copy" library="mdi" size="md"></tn-icon>

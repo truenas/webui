@@ -37,9 +37,9 @@
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
-        matTooltipPosition="below"
+        tnTooltipPosition="below"
         ixTest="delete-selected"
-        [matTooltip]="'Delete selections' | translate"
+        [tnTooltip]="'Delete selections' | translate"
         [disabled]="!selectionHasItems"
         (click)="doBatchDelete(selectedSnapshots)"
       >

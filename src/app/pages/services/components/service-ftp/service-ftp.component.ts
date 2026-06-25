@@ -66,7 +66,7 @@ export class ServiceFtpComponent extends SidePanelForm implements OnInit {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.SharingFtpWrite];
+  readonly requiredRoles = [Role.SharingFtpWrite];
   protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);

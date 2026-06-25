@@ -8,8 +8,8 @@
           mat-button
           [ixTest]="['add', 'interface']"
           [disabled]="(isHaEnabled$ | async)"
-          [matTooltip]="'Editing interfaces is not allowed while HA is enabled' | translate"
-          [matTooltipDisabled]="!(isHaEnabled$ | async)"
+          [tnTooltip]="'Editing interfaces is not allowed while HA is enabled' | translate"
+          [tnTooltipDisabled]="!(isHaEnabled$ | async)"
           [ixUiSearch]="searchableElements.addInterface"
           (click)="onAddNew()"
         >

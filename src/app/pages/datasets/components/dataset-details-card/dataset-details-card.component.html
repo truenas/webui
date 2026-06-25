@@ -91,10 +91,10 @@
     <div class="details-item">
       <div class="label">{{ 'Path' | translate }}:</div>
       <div
-        matTooltipPosition="above"
+        tnTooltipPosition="above"
         class="value dataset-path"
-        [matTooltip]="dataset().name"
-        [matTooltipClass]="['dataset-path-tooltip']"
+        tnTooltipClass="dataset-path-tooltip"
+        [tnTooltip]="dataset().name"
       >
         {{ dataset().name }}
       </div>

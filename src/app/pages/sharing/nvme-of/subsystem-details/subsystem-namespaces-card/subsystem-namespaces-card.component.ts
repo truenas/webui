@@ -4,9 +4,8 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -39,7 +38,7 @@ import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete
     MatCardContent,
     MatIconButton,
     NamespaceDescriptionComponent,
-    MatTooltip,
+    TnTooltipDirective,
     TestDirective,
     UiSearchDirective,
     MatButton,

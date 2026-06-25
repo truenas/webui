@@ -1,11 +1,12 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
+} from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -13,7 +14,6 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { manageConfigurationElements } from 'app/pages/system/advanced/manage-configuration-menu/manage-configuration-menu.elements';
 import {
   SaveConfigDialog,
@@ -28,13 +28,11 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatMenuTrigger,
     UiSearchDirective,
-    TnIconComponent,
-    MatMenu,
-    MatMenuItem,
+    TnButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     TranslateModule,
     AsyncPipe,
   ],
@@ -50,6 +48,7 @@ export class ManageConfigurationMenuComponent {
   protected readonly Role = Role;
   protected isSysAdmin$ = this.authService.isSysAdmin$;
   protected readonly searchableElements = manageConfigurationElements;
+  protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
   onDownloadConfig(): void {
     this.tnDialog.open(SaveConfigDialog);

@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -46,6 +46,13 @@ describe('CronFormComponent', () => {
     getData: jest.fn((): undefined => undefined),
     requireConfirmationWhen: jest.fn(),
   };
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const createComponent = createComponentFactory({
     component: CronFormComponent,
@@ -93,17 +100,17 @@ describe('CronFormComponent', () => {
     });
 
     it('adds a new cron job entry', async () => {
+      await (await getInput('description')).setValue('Final cron job');
+      await (await getInput('command')).setValue('rm -rf /');
+      await (await getCheckbox('stdout')).check();
+      await (await getCheckbox('stderr')).check();
+      await (await getCheckbox('enabled')).check();
       await form.fillForm({
-        Description: 'Final cron job',
-        Command: 'rm -rf /',
         'Run As User': 'root',
-        'Hide Standard Output': true,
-        'Hide Standard Error': true,
         Schedule: '0 0 * * *',
-        Enabled: true,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.create', [{
@@ -137,27 +144,27 @@ describe('CronFormComponent', () => {
     });
 
     it('shows existing values when cron form is opened to edit existing record', async () => {
-      const values = await form.getValues();
+      expect(await (await getInput('description')).getValue()).toBe('Important cron job');
+      expect(await (await getInput('command')).getValue()).toBe('ls -la');
+      expect(await (await getCheckbox('stdout')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('stderr')).isChecked()).toBe(false);
+      expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
 
-      expect(values).toEqual({
-        Description: 'Important cron job',
-        Command: 'ls -la',
-        'Run As User': 'root',
-        Schedule: 'Custom At 30 minutes past the hour, every hour, on day 12 of the month, and on Monday, Tuesday, and Wednesday',
-        'Hide Standard Output': true,
-        'Hide Standard Error': false,
-        Enabled: true,
-      });
+      const values = await form.getValues();
+      expect(values['Run As User']).toBe('root');
+      expect(values.Schedule).toBe(
+        'Custom At 30 minutes past the hour, every hour, on day 12 of the month, and on Monday, Tuesday, and Wednesday',
+      );
     });
 
     it('edits an existing cron job entry when it is open for editing', async () => {
+      await (await getInput('description')).setValue('Updated cron job');
+      await (await getCheckbox('enabled')).uncheck();
       await form.fillForm({
-        Description: 'Updated cron job',
         Schedule: '* */2 * * 0-4',
-        Enabled: false,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.update', [234, {
