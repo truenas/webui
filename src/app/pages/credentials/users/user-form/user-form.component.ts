@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { tooltips } from '@codemirror/view';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
   catchError, combineLatest, distinctUntilChanged, filter, map, Observable, of,
   startWith,
@@ -25,7 +25,6 @@ import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
@@ -48,8 +47,7 @@ import { AppState } from 'app/store';
     IxInputComponent,
     FormActionsComponent,
     AllowedAccessSectionComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     AuthSectionComponent,
     AdditionalDetailsSectionComponent,
     RequiresRolesDirective,
