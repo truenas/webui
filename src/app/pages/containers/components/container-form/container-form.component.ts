@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import {
@@ -137,6 +137,13 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
 
   protected readonly isEditMode = signal<boolean>(false);
   protected editingContainer: Container | null = null;
+
+  /**
+   * Container to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
+   * carry data). Absent for Add, and unused in the legacy SlideIn host (which supplies
+   * the record via `slideInRef.getData()`).
+   */
+  readonly editContainer = input<Container | undefined>(undefined);
   protected readonly title = computed(() => {
     if (this.isEditMode()) {
       return this.translate.instant('Edit Container: {name}', {
@@ -196,11 +203,6 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
 
   private hasSetupValidators = false;
 
-  constructor() {
-    super();
-    this.editingContainer = (this.slideInRef?.getData() as Container | undefined) ?? null;
-  }
-
   onBeforeUnload(event: BeforeUnloadEvent): void {
     if (this.form.dirty) {
       event.preventDefault();
@@ -208,6 +210,10 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
+    this.editingContainer = this.slideInRef
+      ? (this.slideInRef.getData() as Container | undefined) ?? null
+      : this.editContainer() ?? null;
+
     this.containerConfigStore.initialize();
 
     this.config$.pipe(

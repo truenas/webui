@@ -83,3 +83,26 @@
     </p>
   }
 </tn-card>
+
+<tn-side-panel
+  [title]="'Edit Container' | translate"
+  [closeGuard]="editCloseGuard"
+  [(open)]="editOpen"
+>
+  @if (editOpen()) {
+    <ix-container-form
+      [editContainer]="container()"
+      (closed)="onEditClosed($event)"
+    ></ix-container-form>
+  }
+  @if (editForm(); as form) {
+    <tn-button
+      tnSidePanelAction
+      color="primary"
+      testId="save"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

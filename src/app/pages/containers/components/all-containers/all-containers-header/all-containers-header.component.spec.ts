@@ -5,10 +5,8 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import {
   TnButtonHarness, TnMenuHarness, TnMenuTesting, TnDialog,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/containers/components/all-containers/all-containers-header/global-config-form/global-config-form.component';
@@ -41,6 +39,7 @@ describe('AllContainersHeaderComponent', () => {
         }),
         mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', bridge1: 'bridge1' }),
         mockCall('container.pool_choices', { tank: 'tank' }),
+        mockCall('container.query', []),
         mockCall('lxc.update'),
       ]),
       mockProvider(ContainersStore, {
@@ -48,9 +47,6 @@ describe('AllContainersHeaderComponent', () => {
         containers: signal([]),
       }),
       mockProvider(ContainerConfigStore, storeMock),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => of(undefined)),
-      }),
       mockProvider(TnDialog, {
         open: jest.fn(),
       }),
@@ -71,11 +67,13 @@ describe('AllContainersHeaderComponent', () => {
       expect(await createNewButton.isDisabled()).toBe(false);
     });
 
-    it('opens ContainerFormComponent when Create New Container is pressed', async () => {
+    it('opens the container form side panel when Create New Container is pressed', async () => {
       const createNewButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create New Container' }));
       await createNewButton.click();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalled();
+      expect(spectator.query('ix-container-form', { root: true })).toBeTruthy();
     });
 
     it('shows Settings and Map User/Group IDs menu items', async () => {
