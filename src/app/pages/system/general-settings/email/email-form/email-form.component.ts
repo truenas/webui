@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
@@ -7,7 +8,10 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnIconComponent, TnInputComponent, TnSelectComponent, InputType,
+} from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,16 +24,12 @@ import {
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import {
   FormSubmitEvent,
   IxFormComponent,
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
@@ -46,13 +46,15 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
   styleUrls: ['./email-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     IxFormComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
     IxRadioGroupComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     TnIconComponent,
     TnButtonComponent,
     OauthButtonComponent,
@@ -74,6 +76,7 @@ export class EmailFormComponent implements OnInit {
 
   private productType = toSignal(this.store$.select(selectProductType));
 
+  protected readonly InputType = InputType;
   protected readonly requiredRoles = [Role.AlertWrite];
   protected readonly requiredRolesMailWrite = [Role.MailWrite];
 

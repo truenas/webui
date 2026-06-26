@@ -5,11 +5,15 @@
   [suppressSuccessSnackbar]="true"
   [submitHandler]="handleSubmit"
 >
-  <ix-fieldset>
-    <ix-textarea
-      [formControlName]="license.fcName"
+  <tn-form-section>
+    <tn-form-field
       [label]="license.label | translate"
       [required]="true"
-    ></ix-textarea>
-  </ix-fieldset>
+    >
+      <tn-input
+        [formControlName]="license.fcName"
+        [multiline]="true"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
 </ix-form>

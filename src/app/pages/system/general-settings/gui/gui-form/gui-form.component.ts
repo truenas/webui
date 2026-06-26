@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject,
 } from '@angular/core';
@@ -5,6 +6,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent, InputType,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -13,15 +17,11 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import {
   FormSubmitEvent,
   IxFormComponent,
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -39,13 +39,15 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   templateUrl: './gui-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     IxFormComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     WithManageCertificatesLinkComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     TranslateModule,
   ],
 })
@@ -64,12 +66,14 @@ export class GuiFormComponent implements OnInit {
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
+  protected InputType = InputType;
+
   protected isFormLoading = signal(true);
   configData!: SystemGeneralConfig;
   protected isStigMode = signal(false);
 
   formGroup = this.fb.nonNullable.group({
-    // Stored as string because ix-select works with string values; converted to number on submit via parseInt.
+    // Stored as string because the select works with string values; converted to number on submit via parseInt.
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[]],
     ui_v6address: [[] as string[]],

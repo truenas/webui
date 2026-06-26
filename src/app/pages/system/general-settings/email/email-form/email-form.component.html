@@ -6,68 +6,83 @@
   [extraDisabled]="extraDisabled()"
   [submitHandler]="handleSubmit"
 >
-  <ix-fieldset>
+  <tn-form-section>
     <ix-radio-group
       [label]="'Send Mail Method' | translate"
       [formControl]="sendMethodControl"
       [options]="sendMethodOptions$"
     ></ix-radio-group>
 
-    <ix-input
-      formControlName="fromemail"
+    <tn-form-field
       [label]="'From Email' | translate"
       [required]="isFromEmailRequired"
       [tooltip]="helptext.fromemail.tooltip | translate"
-    ></ix-input>
+    >
+      <tn-input formControlName="fromemail"></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="fromname"
+    <tn-form-field
       [label]="'From Name' | translate"
       [tooltip]="helptext.fromname.tooltip | translate"
-    ></ix-input>
+    >
+      <tn-input formControlName="fromname"></tn-input>
+    </tn-form-field>
 
     @if (isSmtp()) {
-      <ix-input
-        formControlName="outgoingserver"
+      <tn-form-field
         [label]="'Outgoing Mail Server' | translate"
         [tooltip]="helptext.outgoingserver.tooltip | translate"
-      ></ix-input>
+      >
+        <tn-input formControlName="outgoingserver"></tn-input>
+      </tn-form-field>
 
-      <ix-input
-        formControlName="port"
-        type="number"
+      <tn-form-field
         [label]="'Mail Server Port' | translate"
         [required]="true"
         [tooltip]="helptext.port.tooltip | translate"
-      ></ix-input>
+      >
+        <tn-input
+          formControlName="port"
+          [inputType]="InputType.Number"
+        ></tn-input>
+      </tn-form-field>
 
-      <ix-select
-        formControlName="security"
+      <tn-form-field
         [label]="'Security' | translate"
         [tooltip]="helptext.security.tooltip | translate"
-        [options]="securityOptions$"
-      ></ix-select>
+      >
+        <tn-select
+          formControlName="security"
+          [options]="(securityOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
-      <ix-checkbox
-        formControlName="smtp"
-        [label]="'SMTP Authentication' | translate"
-        [tooltip]="helptext.auth.smtp.tooltip | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="helptext.auth.smtp.tooltip | translate">
+        <tn-checkbox
+          formControlName="smtp"
+          [label]="'SMTP Authentication' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
 
       @if (hasSmtpAuthentication) {
-        <ix-input
-          formControlName="user"
+        <tn-form-field
           [label]="'Username' | translate"
           [required]="true"
           [tooltip]="helptext.user.tooltip | translate"
-        ></ix-input>
+        >
+          <tn-input formControlName="user"></tn-input>
+        </tn-form-field>
 
-        <ix-input
-          formControlName="pass"
-          type="password"
+        <tn-form-field
           [label]="'Password' | translate"
           [tooltip]="helptext.pass.tooltip | translate"
-        ></ix-input>
+        >
+          <tn-input
+            formControlName="pass"
+            [inputType]="InputType.Password"
+            [showPasswordToggle]="true"
+          ></tn-input>
+        </tn-form-field>
       }
     } @else {
       <div class="oauth-message">
@@ -87,7 +102,7 @@
         (loggedIn)="onLoggedIn($event)"
       ></ix-oauth-button>
     }
-  </ix-fieldset>
+  </tn-form-section>
 
   <tn-button
     *ixRequiresRoles="requiredRolesMailWrite"
