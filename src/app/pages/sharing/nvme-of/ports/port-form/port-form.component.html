@@ -8,7 +8,7 @@
   (closed)="onFormClosed()"
 >
   <tn-form-section>
-    <tn-form-field [label]="'Transport Type' | translate">
+    <tn-form-field [label]="'Transport Type' | translate" [required]="true">
       <tn-select
         formControlName="addr_trtype"
         [options]="(types$ | async) ?? []"

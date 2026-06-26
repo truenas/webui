@@ -53,6 +53,7 @@
         <tn-form-field
           [label]="helptext.extent.rpmLabel | translate"
           [tooltip]="helptext.extent.rpmTooltip | translate"
+          [required]="true"
         >
           <tn-select
             formControlName="rpm"
@@ -74,6 +75,7 @@
         <tn-form-field
           [label]="helptext.extent.typeLabel | translate"
           [tooltip]="helptext.extent.typeTooltip | translate"
+          [required]="true"
         >
           <tn-select
             formControlName="type"
@@ -85,6 +87,7 @@
           <tn-form-field
             [label]="helptext.extent.deviceLabel | translate"
             [tooltip]="helptext.extent.deviceTooltip | translate"
+            [required]="true"
           >
             <tn-select
               formControlName="disk"
@@ -158,6 +161,7 @@
         <tn-form-field
           [label]="helptext.extent.blocksizeLabel | translate"
           [tooltip]="helptext.extent.blocksizeTooltip | translate"
+          [required]="true"
         >
           <tn-select
             formControlName="blocksize"

@@ -18,7 +18,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -43,7 +42,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
     TnTooltipDirective,
   ],
 })

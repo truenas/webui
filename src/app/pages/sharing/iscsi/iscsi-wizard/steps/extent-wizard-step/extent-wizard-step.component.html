@@ -21,6 +21,7 @@
     <tn-form-field
       [label]="helptextSharingIscsi.diskName | translate"
       [tooltip]="helptextSharingIscsi.diskTooltip | translate"
+      [required]="true"
     >
       <tn-select
         formControlName="disk"
@@ -92,6 +93,7 @@
   <tn-form-field
     [label]="helptextSharingIscsi.useforLabel | translate"
     [tooltip]="helptextSharingIscsi.useforTooltip | translate"
+    [required]="true"
   >
     <tn-select
       formControlName="usefor"

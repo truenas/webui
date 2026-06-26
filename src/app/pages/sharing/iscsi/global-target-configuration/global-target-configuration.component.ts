@@ -27,7 +27,6 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -49,7 +48,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     FormActionsComponent,
     RequiresRolesDirective,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
     ModalHeaderComponent,
   ],

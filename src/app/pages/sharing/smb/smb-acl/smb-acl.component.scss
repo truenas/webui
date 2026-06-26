@@ -1,11 +1,10 @@
+// TEMP: scoped styles can't reach the host of a control projected into a tn-* slot,
+// so we reset the projected tn-select's default top margin here. Remove once the
+// library exposes a spacing input on tn-select / tn-form-field.
 :host ::ng-deep {
   tn-select {
     margin-top: 0;
   }
-}
-
-mat-card {
-  overflow: hidden !important;
 }
 
 .entry-row {

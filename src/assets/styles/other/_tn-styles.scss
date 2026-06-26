@@ -1058,6 +1058,9 @@ tn-form-field tn-radio + tn-radio {
 // Form components ship their own margins (ix-combobox/ix-user-combobox `margin-bottom: 12px`,
 // ix-explorer, etc.) that otherwise stack on top of the gap and over-space the section. Zero
 // every direct child's vertical margin so spacing is uniform and owned by the section.
+// TEMP: depends on the library-internal `.tn-form-section__body` class, which is not a public
+// contract — a rename would silently break form spacing app-wide. Remove once tn-form-section
+// exposes a public spacing input / the projected controls drop their own margins upstream.
 tn-form-section .tn-form-section__body > * {
   margin-top: 0;
   margin-bottom: 0;

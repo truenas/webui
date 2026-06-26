@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent,
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnCardComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -57,8 +56,7 @@ const typeOptions: Option[] = [
     IxExplorerComponent,
     ReactiveFormsModule,
     TranslateModule,
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     ModalHeaderComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,

@@ -57,7 +57,7 @@
       <tn-button
         *ixRequiresRoles="requiredRoles"
         color="primary"
-        [ixTest]="'save'"
+        [testId]="'save'"
         [label]="'Save' | translate"
         [disabled]="form.invalid || isLoading()"
         (onClick)="onSubmit()"

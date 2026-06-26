@@ -2,18 +2,21 @@
   [title]="isNew() ? ('Add Namespace' | translate) : ('Edit Namespace' | translate)"
 ></ix-modal-header>
 
-<mat-card>
-  <mat-card-content>
+<tn-card>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <tn-form-section>
         <div class="device-type-toggle">
           <span class="device-type-toggle__label" [id]="typeToggleLabelId">{{ 'Type' | translate }}</span>
           <tn-button-toggle-group
             formControlName="device_type"
+            [testId]="'device-type'"
             [ariaLabelledby]="typeToggleLabelId"
           >
             @for (option of typeOptions; track option.value) {
-              <tn-button-toggle [value]="option.value" [testId]="option.label">{{ option.label }}</tn-button-toggle>
+              <tn-button-toggle
+                [value]="option.value"
+                [testId]="['device-type', option.label]"
+              >{{ option.label }}</tn-button-toggle>
             }
           </tn-button-toggle-group>
         </div>
@@ -75,5 +78,4 @@
         [disabled]="form.invalid"
       ></tn-button>
     </form>
-  </mat-card-content>
-</mat-card>
+</tn-card>

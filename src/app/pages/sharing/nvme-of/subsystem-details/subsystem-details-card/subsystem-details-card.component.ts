@@ -3,11 +3,8 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnInputComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnInputComponent } from '@truenas/ui-components';
 import { finalize } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -32,10 +29,7 @@ import { subsystemDetailsCardElements } from 'app/pages/sharing/nvme-of/subsyste
   styleUrl: './subsystem-details-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
     TranslateModule,
     DetailsItemComponent,
     DetailsTableComponent,
