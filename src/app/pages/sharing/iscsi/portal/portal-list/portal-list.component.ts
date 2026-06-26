@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef, Type,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -24,7 +26,8 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
@@ -60,7 +63,7 @@ export class PortalListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   private iscsiService = inject(IscsiService);
   private destroyRef = inject(DestroyRef);
@@ -105,8 +108,7 @@ export class PortalListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            this.slideIn.open(PortalFormComponent, { data: row })
-              .onSuccess(() => this.refresh(), this.destroyRef);
+            this.openForm(row);
           },
         },
         {
@@ -148,9 +150,21 @@ export class PortalListComponent implements OnInit {
     });
   }
 
+  // PortalFormComponent structurally provides the side-panel host surface (closed/canSubmit/
+  // submit/hasUnsavedChanges/requiredRoles); cast past the nominal base type.
+  private readonly portalForm = PortalFormComponent as unknown as Type<SidePanelForm>;
+
   protected doAdd(): void {
-    this.slideIn.open(PortalFormComponent)
-      .onSuccess(() => this.refresh(), this.destroyRef);
+    this.openForm();
+  }
+
+  protected openForm(row?: IscsiPortal): void {
+    this.formPanel.open(this.portalForm, {
+      title: row
+        ? this.translate.instant('Edit Portal')
+        : this.translate.instant('Add Portal'),
+      inputs: { portalData: row },
+    }).onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {

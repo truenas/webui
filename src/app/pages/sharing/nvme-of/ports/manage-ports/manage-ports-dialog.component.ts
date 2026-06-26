@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialog, TnDialogShellComponent, tnIconMarker } from '@truenas/ui-components';
@@ -19,7 +21,8 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
@@ -51,7 +54,7 @@ export class ManagePortsDialog implements OnInit {
   private nvmeOfStore = inject(NvmeOfStore);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
@@ -60,6 +63,10 @@ export class ManagePortsDialog implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+
+  // PortFormComponent keeps the `<ix-form>` wrapper, so it doesn't nominally extend
+  // SidePanelForm — but it exposes the same closed/canSubmit/submit surface the panel host reads.
+  private readonly portForm = PortFormComponent as unknown as Type<SidePanelForm<NvmeOfPort | null>>;
 
   protected columns = createTable<NvmeOfPortAndUsage>([
     textColumn({
@@ -119,8 +126,8 @@ export class ManagePortsDialog implements OnInit {
   }
 
   onAdd(): void {
-    this.slideIn
-      .open(PortFormComponent)
+    this.formPanel
+      .open(this.portForm, { title: this.translate.instant('Add Port') })
       .onSuccess(() => {
         this.snackbar.success(this.translate.instant('Port Added'));
         this.nvmeOfStore.reloadPorts();
@@ -128,7 +135,8 @@ export class ManagePortsDialog implements OnInit {
   }
 
   onEdit(port: NvmeOfPort): void {
-    this.slideIn.open(PortFormComponent, { data: port })
+    this.formPanel
+      .open(this.portForm, { title: this.translate.instant('Edit Port'), inputs: { port } })
       .onSuccess(() => {
         this.snackbar.success(this.translate.instant('Port Updated'));
         this.nvmeOfStore.reloadPorts();

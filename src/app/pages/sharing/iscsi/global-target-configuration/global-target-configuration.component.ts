@@ -5,7 +5,15 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  InputType,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnChipInputComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+} from '@truenas/ui-components';
 import {
   forkJoin, take,
 } from 'rxjs';
@@ -14,10 +22,6 @@ import { Role } from 'app/enums/role.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -37,10 +41,11 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxChipsComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnChipInputComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     TnButtonComponent,
@@ -61,6 +66,7 @@ export class GlobalTargetConfigurationComponent extends SidePanelForm implements
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
 
+  protected readonly InputType = InputType;
   readonly isLoading = signal(false);
   isHaSystem = false;
   private originalBasename: string | null = null;

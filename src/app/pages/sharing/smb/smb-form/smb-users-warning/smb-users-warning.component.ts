@@ -21,7 +21,10 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
 export class SmbUsersWarningComponent implements OnInit {
   private router = inject(Router);
   private smbValidationService = inject(SmbValidationService);
-  private slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef);
+  // Optional: this warning renders inside SmbFormComponent, which is now hosted both in the legacy
+  // SlideIn (SlideInRef present) and in a `<tn-side-panel>` (SlideInRef absent). A non-optional
+  // inject would throw NullInjectorError in the panel host and blank the whole form.
+  private slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
   protected hasSmbUsers = signal(true);
@@ -31,7 +34,9 @@ export class SmbUsersWarningComponent implements OnInit {
   }
 
   protected closeForm(routerLink: string[]): void {
-    this.slideInRef.close({ response: undefined });
+    // SlideIn host: close the slide-in explicitly. Panel host: navigation tears the panel down via
+    // FormSidePanelService's router closeAll, so the optional ref is simply absent here.
+    this.slideInRef?.close({ response: undefined });
     this.router.navigate(routerLink);
   }
 

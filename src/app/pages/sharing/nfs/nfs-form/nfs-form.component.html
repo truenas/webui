@@ -1,154 +1,144 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
+  [addTitle]="'Add NFS Share' | translate"
+  [editTitle]="'Edit NFS Share' | translate"
   [requiredRoles]="requiredRoles"
-  [title]="title"
-  [loading]="isLoading()"
-></ix-modal-header>
-
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="'Path' | translate">
-        <ix-explorer
-          formControlName="path"
-          [required]="true"
-          [label]="'Path' | translate"
-          [tooltip]="helptext.pathTooltip | translate"
-          [nodeProvider]="treeNodeProvider"
-        >
-          @if (isNew) {
-            <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
-          }
-        </ix-explorer>
-      </ix-fieldset>
-
-      <ix-fieldset [title]="'General Options' | translate">
-        <ix-input
-          formControlName="comment"
-          [label]="'Description' | translate"
-        ></ix-input>
-
-        <ix-checkbox
-          formControlName="enabled"
-          [label]="'Enabled' | translate"
-        ></ix-checkbox>
-
-        @if (isEnterprise()) {
-          <ix-checkbox
-            formControlName="expose_snapshots"
-            [label]="'Expose Snapshots' | translate"
-            [tooltip]="helptext.exposeTooltip | translate"
-          ></ix-checkbox>
-        }
-      </ix-fieldset>
-
-      @if (isAdvancedMode) {
-        <ix-fieldset [title]="'Access' | translate">
-          <ix-checkbox
-            formControlName="ro"
-            [label]="'Read Only' | translate"
-          ></ix-checkbox>
-
-          <ix-user-combobox
-            formControlName="maproot_user"
-            [label]="'Maproot User' | translate"
-            [tooltip]="helptext.maprootUserTooltip | translate"
-          ></ix-user-combobox>
-
-          <ix-group-combobox
-            formControlName="maproot_group"
-            [label]="'Maproot Group' | translate"
-            [tooltip]="helptext.maprootGroupTooltip | translate"
-          ></ix-group-combobox>
-
-          <ix-user-combobox
-            formControlName="mapall_user"
-            [label]="'Mapall User' | translate"
-            [tooltip]="helptext.mapallUserTooltip | translate"
-          ></ix-user-combobox>
-
-          <ix-group-combobox
-            formControlName="mapall_group"
-            [label]="'Mapall Group' | translate"
-            [tooltip]="helptext.mapallGroupTooltip | translate"
-          ></ix-group-combobox>
-
-          <ix-select
-            formControlName="security"
-            [label]="'Security' | translate"
-            [options]="securityOptions$"
-            [multiple]="true"
-            [tooltip]="helptext.securityTooltip | translate"
-          ></ix-select>
-        </ix-fieldset>
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section [heading]="'Path' | translate">
+    <ix-explorer
+      formControlName="path"
+      [required]="true"
+      [label]="'Path' | translate"
+      [tooltip]="helptext.pathTooltip | translate"
+      [nodeProvider]="treeNodeProvider"
+    >
+      @if (isNew) {
+        <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
       }
+    </ix-explorer>
+  </tn-form-section>
 
-      <ix-fieldset>
-        <ix-list
-          formArrayName="networks"
-          [empty]="form.controls.networks.controls.length === 0"
+  <tn-form-section [heading]="'General Options' | translate">
+    <tn-form-field [label]="'Description' | translate">
+      <tn-input formControlName="comment"></tn-input>
+    </tn-form-field>
+
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="enabled"
+        [label]="'Enabled' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    @if (isEnterprise()) {
+      <tn-form-field [tooltip]="helptext.exposeTooltip | translate">
+        <tn-checkbox
+          formControlName="expose_snapshots"
+          [label]="'Expose Snapshots' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    }
+  </tn-form-section>
+
+  @if (isAdvancedMode()) {
+    <tn-form-section [heading]="'Access' | translate">
+      <tn-form-field>
+        <tn-checkbox
+          formControlName="ro"
+          [label]="'Read Only' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+
+      <ix-user-combobox
+        formControlName="maproot_user"
+        [label]="'Maproot User' | translate"
+        [tooltip]="helptext.maprootUserTooltip | translate"
+      ></ix-user-combobox>
+
+      <ix-group-combobox
+        formControlName="maproot_group"
+        [label]="'Maproot Group' | translate"
+        [tooltip]="helptext.maprootGroupTooltip | translate"
+      ></ix-group-combobox>
+
+      <ix-user-combobox
+        formControlName="mapall_user"
+        [label]="'Mapall User' | translate"
+        [tooltip]="helptext.mapallUserTooltip | translate"
+      ></ix-user-combobox>
+
+      <ix-group-combobox
+        formControlName="mapall_group"
+        [label]="'Mapall Group' | translate"
+        [tooltip]="helptext.mapallGroupTooltip | translate"
+      ></ix-group-combobox>
+
+      <tn-form-field [label]="'Security' | translate" [tooltip]="helptext.securityTooltip | translate">
+        <tn-select
+          formControlName="security"
+          [multiple]="true"
+          [options]="(securityOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
+    </tn-form-section>
+  }
+
+  <tn-form-section>
+    <ix-list
+      formArrayName="networks"
+      [empty]="form.controls.networks.controls.length === 0"
+      [label]="'Networks' | translate"
+      [formArray]="form.get('networks')"
+      [tooltip]="helptext.addNetworkTooltip | translate"
+      (add)="addNetworkControl()"
+    >
+      @for (network of form.controls.networks.controls; track network; let i = $index) {
+        <ix-list-item
           [label]="'Networks' | translate"
-          [formArray]="form.get('networks')"
-          [tooltip]="helptext.addNetworkTooltip | translate"
-          (add)="addNetworkControl()"
+          (delete)="removeNetworkControl(i)"
         >
-          @for (network of form.controls.networks.controls; track network; let i = $index) {
-            <ix-list-item
-              [label]="'Networks' | translate"
-              (delete)="removeNetworkControl(i)"
-            >
-              <ix-ip-input-with-netmask
-                [required]="true"
-                [formControlName]="i"
-                [label]="'Network' | translate"
-              ></ix-ip-input-with-netmask>
-            </ix-list-item>
-          }
-        </ix-list>
+          <ix-ip-input-with-netmask
+            [required]="true"
+            [formControlName]="i"
+            [label]="'Network' | translate"
+          ></ix-ip-input-with-netmask>
+        </ix-list-item>
+      }
+    </ix-list>
 
-        <ix-list
-          formArrayName="hosts"
-          [empty]="form.controls.hosts.controls.length === 0"
+    <ix-list
+      formArrayName="hosts"
+      [empty]="form.controls.hosts.controls.length === 0"
+      [label]="'Hosts' | translate"
+      [formArray]="form.get('hosts')"
+      [tooltip]="helptext.addHostsTooltip | translate"
+      (add)="addHostControl()"
+    >
+      @for (network of form.controls.hosts.controls; track network; let i = $index) {
+        <ix-list-item
           [label]="'Hosts' | translate"
-          [formArray]="form.get('hosts')"
-          [tooltip]="helptext.addHostsTooltip | translate"
-          (add)="addHostControl()"
+          (delete)="removeHostControl(i)"
         >
-          @for (network of form.controls.hosts.controls; track network; let i = $index) {
-            <ix-list-item
-              [label]="'Hosts' | translate"
-              (delete)="removeHostControl(i)"
-            >
-              <ix-input
-                [required]="true"
-                [formControlName]="i"
-                [label]="'Authorized Hosts and IP addresses' | translate"
-                [tooltip]="helptext.hostsTooltip | translate"
-              ></ix-input>
-            </ix-list-item>
-          }
-        </ix-list>
-      </ix-fieldset>
+          <tn-form-field
+            [required]="true"
+            [label]="'Authorized Hosts and IP addresses' | translate"
+            [tooltip]="helptext.hostsTooltip | translate"
+          >
+            <tn-input [formControlName]="i"></tn-input>
+          </tn-form-field>
+        </ix-list-item>
+      }
+    </ix-list>
+  </tn-form-section>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-
-        <button mat-button type="button" ixTest="toggle-advanced-options" (click)="toggleAdvancedMode()">
-          {{
-            isAdvancedMode
-              ? ('Basic Options' | translate)
-              : ('Advanced Options' | translate)
-          }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <tn-button
+    ixExtraActions
+    type="button"
+    [testId]="'toggle-advanced-options'"
+    [label]="isAdvancedMode() ? ('Basic Options' | translate) : ('Advanced Options' | translate)"
+    (onClick)="toggleAdvancedMode()"
+  ></tn-button>
+</ix-form>

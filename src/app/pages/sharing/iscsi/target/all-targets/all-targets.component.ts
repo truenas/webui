@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild, DestroyRef, Type } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
 import {
   filter,
@@ -12,7 +12,8 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetDetailsComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/target-details.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
@@ -38,7 +39,8 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class AllTargetsComponent implements OnInit {
   private iscsiService = inject(IscsiService);
   private tnDialog = inject(TnDialog);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
@@ -101,13 +103,20 @@ export class AllTargetsComponent implements OnInit {
       });
   }
 
+  // TargetFormComponent structurally provides the side-panel host surface (closed/canSubmit/
+  // submit/hasUnsavedChanges/requiredRoles); cast past the nominal base type.
+  private readonly targetForm = TargetFormComponent as unknown as Type<SidePanelForm>;
+
   editTarget(target: IscsiTarget): void {
-    this.slideIn.open(
-      TargetFormComponent,
-      { data: target, wide: true },
-    ).onSuccess((response) => {
+    // The updated target's expand + reload is driven by `iscsiService.refreshData(...)` (emitted
+    // from the form's onSuccess) which the `listenForDataRefresh` subscription handles — the panel
+    // host can't forward the updated record back here.
+    this.formPanel.open(this.targetForm, {
+      title: this.translate.instant('Edit ISCSI Target'),
+      wide: true,
+      inputs: { targetData: target },
+    }).onSuccess(() => {
       this.dataProvider.load();
-      this.dataProvider.expandedRow = response;
     }, this.destroyRef);
   }
 }

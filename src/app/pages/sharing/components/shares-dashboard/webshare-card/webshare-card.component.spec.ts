@@ -35,6 +35,9 @@ import { ServiceWebshareComponent } from 'app/pages/services/components/service-
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import {
+  WebShareSharesFormComponent,
+} from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebShareCardComponent } from './webshare-card.component';
@@ -185,6 +188,31 @@ describe('WebShareCardComponent', () => {
     await addButton.click();
 
     expect(slideIn.open).toHaveBeenCalled();
+  });
+
+  it('opens the WebShare edit form in a side panel when a row is edited', () => {
+    (spectator.component as unknown as { doEdit: (row: unknown) => void }).doEdit({
+      id: 1,
+      name: 'documents',
+      path: '/mnt/tank/documents',
+      isHomeBase: false,
+    });
+
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      WebShareSharesFormComponent,
+      {
+        title: 'Edit WebShare',
+        inputs: {
+          webShareData: {
+            id: 1,
+            isNew: false,
+            name: 'documents',
+            path: '/mnt/tank/documents',
+            isHomeBase: false,
+          },
+        },
+      },
+    );
   });
 
   it('toggles the WebShare service when the projected header toggle is changed', async () => {

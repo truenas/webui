@@ -2,13 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
@@ -17,9 +18,16 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
 describe('PortFormComponent', () => {
   let spectator: Spectator<PortFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const newPort = { id: 1 } as NvmeOfPort;
   const slideInGetData = jest.fn((): NvmeOfPort | undefined => undefined);
+
+  const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
   const createComponent = createComponentFactory({
     component: PortFormComponent,
     providers: [
@@ -31,11 +39,15 @@ describe('PortFormComponent', () => {
           '10.220.8.2': '10.220.8.2',
         }),
       ]),
+      mockAuth(),
       mockProvider(NvmeOfService, {
         getSupportedTransports: jest.fn(() => of([
           NvmeOfTransportType.Tcp,
           NvmeOfTransportType.Rdma,
         ])),
+      }),
+      mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
       }),
       mockProvider(SlideInRef, {
         getData: slideInGetData,
@@ -48,18 +60,15 @@ describe('PortFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   it('creates a new port when form is submitted', async () => {
-    await form.fillForm({
-      'Transport Type': 'TCP',
-      Port: '20000',
-      Address: '10.220.8.1',
-    });
+    await (await getTnSelect('addr_trtype')).selectOption('TCP');
+    await (await getTnInput('addr_trsvcid')).setValue('20000');
+    await (await getTnSelect('addr_traddr')).selectOption('10.220.8.1');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -75,10 +84,8 @@ describe('PortFormComponent', () => {
   });
 
   it('uses default port 4420 when no port is specified', async () => {
-    await form.fillForm({
-      'Transport Type': 'TCP',
-      Address: '10.220.8.1',
-    });
+    await (await getTnSelect('addr_trtype')).selectOption('TCP');
+    await (await getTnSelect('addr_traddr')).selectOption('10.220.8.1');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -96,38 +103,30 @@ describe('PortFormComponent', () => {
   it('only shows supported transports in the Transport Type select', async () => {
     expect(spectator.inject(NvmeOfService).getSupportedTransports).toHaveBeenCalled();
 
-    const select = await form.getControl('Transport Type') as IxSelectHarness;
-    const transportOptions = await select.getOptionLabels();
+    const select = await getTnSelect('addr_trtype');
+    await select.open();
+    const transportOptions = await select.getOptions();
 
     expect(transportOptions).toEqual(['TCP', 'RDMA']);
   });
 
   it('loads addresses based on the transport type selected', async () => {
-    await form.fillForm({
-      'Transport Type': 'RDMA',
-    });
+    await (await getTnSelect('addr_trtype')).selectOption('RDMA');
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.port.transport_address_choices', [NvmeOfTransportType.Rdma]);
   });
 
   it('shows empty port field when creating a new port', async () => {
-    const formValues = await form.getValues();
-    expect(formValues).toEqual(expect.objectContaining({
-      Port: '',
-    }));
+    expect(await (await getTnInput('addr_trsvcid')).getValue()).toBe('');
   });
 
   it('applies default only for TCP/RDMA, not for other transport types', async () => {
-    // Test that when submitting with empty port and transport type is RDMA
-    await form.fillForm({
-      'Transport Type': 'RDMA',
-      Address: '10.220.8.1',
-    });
+    await (await getTnSelect('addr_trtype')).selectOption('RDMA');
+    await (await getTnSelect('addr_traddr')).selectOption('10.220.8.1');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    // Should apply default port 4420 for RDMA
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.port.create', [{
       addr_trtype: NvmeOfTransportType.Rdma,
       addr_traddr: '10.220.8.1',
@@ -148,20 +147,15 @@ describe('PortFormComponent', () => {
     });
 
     it('shows current values when editing an existing port', async () => {
-      const formValues = await form.getValues();
-      expect(formValues).toEqual({
-        'Transport Type': 'TCP',
-        Port: '15000',
-        Address: '10.220.8.2',
-      });
+      expect(await (await getTnSelect('addr_trtype')).getDisplayText()).toBe('TCP');
+      expect(await (await getTnInput('addr_trsvcid')).getValue()).toBe('15000');
+      expect(await (await getTnSelect('addr_traddr')).getDisplayText()).toBe('10.220.8.2');
     });
 
     it('updates an existing port', async () => {
-      await form.fillForm({
-        'Transport Type': 'TCP',
-        Port: '20000',
-        Address: '10.220.8.1',
-      });
+      await (await getTnSelect('addr_trtype')).selectOption('TCP');
+      await (await getTnInput('addr_trsvcid')).setValue('20000');
+      await (await getTnSelect('addr_traddr')).selectOption('10.220.8.1');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -174,11 +168,11 @@ describe('PortFormComponent', () => {
     });
 
     it('applies default port when updating with empty port field', async () => {
-      await form.fillForm({
-        'Transport Type': 'TCP',
-        Port: '',
-        Address: '10.220.8.1',
-      });
+      const portEl = spectator.query('[formControlName="addr_trsvcid"] input') as HTMLInputElement;
+      portEl.value = '';
+      portEl.dispatchEvent(new Event('input'));
+      spectator.detectChanges();
+      await (await getTnSelect('addr_traddr')).selectOption('10.220.8.1');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

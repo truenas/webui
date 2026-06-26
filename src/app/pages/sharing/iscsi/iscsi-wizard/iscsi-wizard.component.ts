@@ -1,15 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatError } from '@angular/material/form-field';
 import {
-  MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious,
+  MatStepper, MatStep, MatStepLabel,
 } from '@angular/material/stepper';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
   lastValueFrom, forkJoin,
   of,
@@ -52,7 +53,6 @@ import {
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
@@ -71,18 +71,14 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   imports: [
     ModalHeaderComponent,
     MatCard,
-    MatError,
     ReactiveFormsModule,
     MatStepper,
     MatStep,
     MatStepLabel,
-    MatButton,
-    MatStepperNext,
-    TestDirective,
+    TnButtonComponent,
     TargetWizardStepComponent,
     ExtentWizardStepComponent,
     ProtocolOptionsWizardStepComponent,
-    MatStepperPrevious,
     RequiresRolesDirective,
     TranslateModule,
     UseIconsInStepperComponent,
@@ -99,6 +95,10 @@ export class IscsiWizardComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, IscsiTarget>>(SlideInRef);
+
+  // Stepper navigation is driven imperatively from tn-button clicks (tn-button can't
+  // bind matStepperNext/matStepperPrevious directives the way mat-button could).
+  private readonly stepper = viewChild(MatStepper);
 
   isLoading = signal<boolean>(false);
   toStop = signal<boolean>(false);
@@ -279,6 +279,14 @@ export class IscsiWizardComponent implements OnInit {
     this.iscsiService.getTargets().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((targets) => {
       this.namesInUse.set(targets.map((target) => target.name));
     });
+  }
+
+  protected nextStep(): void {
+    this.stepper()?.next();
+  }
+
+  protected previousStep(): void {
+    this.stepper()?.previous();
   }
 
   protected addFcPort(): void {

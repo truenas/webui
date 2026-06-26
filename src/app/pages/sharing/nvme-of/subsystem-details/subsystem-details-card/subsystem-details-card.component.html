@@ -16,10 +16,10 @@
           </div>
 
           <div edit>
-            <ix-input
+            <tn-input
               formControlName="name"
-              [attr.aria-label]="'Name' | translate"
-            ></ix-input>
+              [ariaLabel]="'Name' | translate"
+            ></tn-input>
           </div>
         </ix-editable>
       </ix-details-item>
@@ -36,10 +36,11 @@
           </div>
 
           <div edit>
-            <ix-textarea
+            <tn-input
               formControlName="subnqn"
-              aria-label="NQN"
-            ></ix-textarea>
+              [multiline]="true"
+              [ariaLabel]="'NQN' | translate"
+            ></tn-input>
           </div>
         </ix-editable>
 

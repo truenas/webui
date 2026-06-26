@@ -1,5 +1,5 @@
 :host ::ng-deep {
-  ix-select {
+  tn-select {
     margin-top: 0;
   }
 }
@@ -13,6 +13,12 @@ mat-card {
   display: flex;
   padding-left: 10px;
   padding-right: 10px;
+
+  // Space the SID / Who / Permission+Type rows within an entry — without this the
+  // tn-form-field rows butt together (the migrated controls dropped the ix-* row margins).
+  &:not(:last-child) {
+    margin-bottom: 12px;
+  }
 
   > * {
     flex: 1;

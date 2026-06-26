@@ -18,6 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -77,6 +78,9 @@ describe('IscsiCardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
+        open: jest.fn(() => SlideInResult.empty()),
+      }),
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
@@ -156,9 +160,10 @@ describe('IscsiCardComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: /^Edit$/ });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(TargetFormComponent, {
-      data: expect.objectContaining(iscsiShares[0]),
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(TargetFormComponent, {
       wide: true,
+      title: 'Edit ISCSI Target',
+      inputs: { targetData: expect.objectContaining(iscsiShares[0]) },
     });
   });
 

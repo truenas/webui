@@ -5,12 +5,18 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-button-group
-          formControlName="device_type"
-          [options]="typeOptions$"
-          [label]="'Type' | translate"
-        ></ix-button-group>
+      <tn-form-section>
+        <div class="device-type-toggle">
+          <span class="device-type-toggle__label" [id]="typeToggleLabelId">{{ 'Type' | translate }}</span>
+          <tn-button-toggle-group
+            formControlName="device_type"
+            [ariaLabelledby]="typeToggleLabelId"
+          >
+            @for (option of typeOptions; track option.value) {
+              <tn-button-toggle [value]="option.value" [testId]="option.label">{{ option.label }}</tn-button-toggle>
+            }
+          </tn-button-toggle-group>
+        </div>
 
         @switch (form.value.device_type) {
           @case (FormNamespaceType.Zvol) {
@@ -43,35 +49,31 @@
               <ix-explorer-create-dataset></ix-explorer-create-dataset>
             </ix-explorer>
 
-            <ix-input
-              formControlName="filename"
-              [label]="'Filename' | translate"
-              [required]="true"
-            ></ix-input>
+            <tn-form-field [label]="'Filename' | translate">
+              <tn-input formControlName="filename" [required]="true"></tn-input>
+            </tn-form-field>
 
-            <ix-input
-              formControlName="filesize"
-              [label]="'File Size' | translate"
-              [required]="true"
-              [parse]="formatter.memorySizeParsing"
-              [format]="formatter.memorySizeFormatting"
-            ></ix-input>
+            <tn-form-field [label]="'File Size' | translate">
+              <tn-input
+                formControlName="filesize"
+                sizeDefaultUnit="MiB"
+                [required]="true"
+                [inputType]="InputType.Size"
+              ></tn-input>
+            </tn-form-field>
           }
         }
-      </ix-fieldset>
+      </tn-form-section>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          color="primary"
-          type="submit"
-          ixTest="save"
-          [disabled]="form.invalid"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        type="submit"
+        variant="filled"
+        [primary]="true"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="form.invalid"
+      ></tn-button>
     </form>
   </mat-card-content>
 </mat-card>

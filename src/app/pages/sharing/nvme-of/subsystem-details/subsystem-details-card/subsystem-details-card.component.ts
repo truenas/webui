@@ -7,6 +7,7 @@ import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnInputComponent } from '@truenas/ui-components';
 import { finalize } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -18,8 +19,6 @@ import {
   EditableSaveOnEnterDirective,
 } from 'app/modules/forms/editable/editable-save-on-enter/editable-save-on-enter.directive';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -42,9 +41,8 @@ import { subsystemDetailsCardElements } from 'app/pages/sharing/nvme-of/subsyste
     DetailsTableComponent,
     EditableComponent,
     FormsModule,
-    IxInputComponent,
+    TnInputComponent,
     ReactiveFormsModule,
-    IxTextareaComponent,
     EditableSaveOnEnterDirective,
     TestDirective,
     UiSearchDirective,

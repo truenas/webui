@@ -4,14 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnIconButtonHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -34,6 +35,10 @@ describe('PortalFormComponent', () => {
     id: 1,
     tag: 1,
   } as IscsiPortal;
+
+  const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const createComponent = createComponentFactory({
     component: PortalFormComponent,
@@ -59,7 +64,9 @@ describe('PortalFormComponent', () => {
         mockCall('iscsi.portal.create'),
         mockCall('iscsi.portal.update'),
       ]),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
+      }),
       mockProvider(DialogService),
       provideMockStore(),
       mockProvider(SlideInRef, slideInRef),
@@ -71,6 +78,7 @@ describe('PortalFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
+      jest.spyOn(console, 'warn').mockImplementation();
     });
 
     it('sends an create payload to websocket and closes modal when save is pressed', async () => {
@@ -80,11 +88,10 @@ describe('PortalFormComponent', () => {
       const list = await loader.getHarness(IxListHarness);
       expect(await list.getListItems()).toHaveLength(1);
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Description: 'work',
-        'IP Address': '192.168.1.3',
-      });
+      await (await getTnInput('comment')).setValue('work');
+
+      const ipSelect = await loader.getHarness(TnSelectHarness);
+      await ipSelect.selectOption('192.168.1.3');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -105,24 +112,21 @@ describe('PortalFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
+      jest.spyOn(console, 'warn').mockImplementation();
     });
 
     it('shows iscsi portal group values when form is being edited', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      expect(await (await getTnInput('comment')).getValue()).toBe('test');
 
-      expect(values).toEqual({
-        Description: 'test',
-        'IP Address': '0.0.0.0',
-      });
+      const ipSelect = await loader.getHarness(TnSelectHarness);
+      expect(await ipSelect.getDisplayText()).toBe('0.0.0.0');
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Description: 'good',
-        'IP Address': '0.0.0.0',
-      });
+      await (await getTnInput('comment')).setValue('good');
+
+      const ipSelect = await loader.getHarness(TnSelectHarness);
+      await ipSelect.selectOption('0.0.0.0');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -139,6 +143,7 @@ describe('PortalFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
+      jest.spyOn(console, 'warn').mockImplementation();
     });
 
     it('adds and removes blocks when Add or Delete button is pressed', async () => {

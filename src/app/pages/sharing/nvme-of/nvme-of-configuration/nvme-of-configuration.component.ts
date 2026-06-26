@@ -3,18 +3,18 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
-import { finalize, forkJoin, of } from 'rxjs';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnRadioComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
+import { finalize, forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
+import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -34,11 +34,12 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   imports: [
     ModalHeaderComponent,
     TranslateModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxRadioGroupComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnRadioComponent,
+    TnCheckboxComponent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,
@@ -71,7 +72,7 @@ export class NvmeOfConfigurationComponent extends SidePanelForm implements OnIni
 
   protected readonly helptext = helptextNvmeOf;
 
-  protected readonly implementationOptions$ = of([
+  protected readonly implementationOptions: Option<boolean>[] = [
     {
       label: this.translate.instant('Linux Kernel'),
       value: true,
@@ -80,7 +81,7 @@ export class NvmeOfConfigurationComponent extends SidePanelForm implements OnIni
       label: this.translate.instant('SPDK (userspace)'),
       value: false,
     },
-  ]);
+  ];
 
   /** Public signal hosts can read to disable a Save action while invalid or loading. */
   readonly canSubmit = this.trackCanSubmit(this.isLoading);

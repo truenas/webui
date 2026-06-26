@@ -1,129 +1,126 @@
-<ix-modal-header
-  [title]="isNew() ? ('Add Host' | translate) : ('Edit Host' | translate)"
-  [loading]="isLoading()"
-></ix-modal-header>
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew()"
+  [addTitle]="'Add Host' | translate"
+  [editTitle]="'Edit Host' | translate"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="onFormClosed()"
+>
+  <tn-form-section>
+    <tn-form-field
+      class="host-nqn"
+      [label]="'Host NQN' | translate"
+      [tooltip]="helptext.hostNqnTooltip | translate"
+    >
+      <tn-input formControlName="hostnqn" [required]="true"></tn-input>
+    </tn-form-field>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-input
-          class="host-nqn"
-          formControlName="hostnqn"
-          [label]="'Host NQN' | translate"
-          [tooltip]="helptext.hostNqnTooltip | translate"
-          [required]="true"
-        ></ix-input>
+    <tn-form-field
+      [label]="'Description' | translate"
+      [tooltip]="helptext.hostDescriptionTooltip | translate"
+    >
+      <tn-input formControlName="description"></tn-input>
+    </tn-form-field>
+  </tn-form-section>
 
-        <ix-input
-          formControlName="description"
-          [label]="'Description' | translate"
-          [tooltip]="helptext.hostDescriptionTooltip | translate"
-        ></ix-input>
-      </ix-fieldset>
+  <tn-form-section [heading]="'Authentication' | translate">
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="requireHostAuthentication"
+        [label]="'Require Host Authentication' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-      <ix-fieldset [title]="'Authentication' | translate">
-        <ix-checkbox
-          formControlName="requireHostAuthentication"
-          [label]="'Require Host Authentication' | translate"
-        ></ix-checkbox>
+    @if (form.value.requireHostAuthentication) {
+      <ix-details-table class="authentication-details">
+        <ix-details-item [label]="'Hash' | translate">
+          <ix-editable>
+            <div view>
+              {{ form.value.dhchap_hash }}
+            </div>
 
-        @if (form.value.requireHostAuthentication) {
-          <ix-details-table class="authentication-details">
-            <ix-details-item [label]="'Hash' | translate">
-              <ix-editable>
-                <div view>
-                  {{ form.value.dhchap_hash }}
-                </div>
+            <div edit>
+              <tn-select
+                name="dhchap_hash"
+                formControlName="dhchap_hash"
+                [options]="(hashOptions$ | async) ?? []"
+                [required]="true"
+              ></tn-select>
+            </div>
+          </ix-editable>
+        </ix-details-item>
+      </ix-details-table>
 
-                <div edit>
-                  <ix-select
-                    formControlName="dhchap_hash"
-                    [options]="hashOptions$"
-                    [required]="true"
-                  ></ix-select>
-                </div>
-              </ix-editable>
-            </ix-details-item>
-          </ix-details-table>
+      <tn-form-field
+        [label]="'Key For Host To Present' | translate"
+        [tooltip]="helptext.dhchapKeyTooltip | translate"
+      >
+        <tn-input formControlName="dhchap_key" [multiline]="true"></tn-input>
+      </tn-form-field>
 
-          <ix-textarea
-            formControlName="dhchap_key"
-            [label]="'Key For Host To Present' | translate"
-            [tooltip]="helptext.dhchapKeyTooltip | translate"
-          ></ix-textarea>
+      <div class="generate-key-row">
+        <tn-button
+          type="button"
+          [testId]="'generate-key'"
+          [label]="'Generate Key' | translate"
+          [disabled]="!hasNqn || isGeneratingHostKey()"
+          [tnTooltip]="!hasNqn ? (helptext.generateHostKeyDisabled | translate) : ''"
+          (onClick)="generateHostKey()"
+        ></tn-button>
+      </div>
 
-          <div class="generate-key-row">
-            <button
-              mat-button
-              type="button"
-              ixTest="generate-key"
-              [disabled]="!hasNqn || isGeneratingHostKey()"
-              [tnTooltip]="!hasNqn ? (helptext.generateHostKeyDisabled | translate) : ''"
-              (click)="generateHostKey()"
-            >{{ 'Generate Key' | translate }}</button>
-          </div>
+      <tn-form-field
+        [label]="'Key For TrueNAS To Present (Optional)' | translate"
+        [tooltip]="helptext.dhchapCtrlKey | translate"
+      >
+        <tn-input formControlName="dhchap_ctrl_key" [multiline]="true"></tn-input>
+      </tn-form-field>
 
-          <ix-textarea
-            formControlName="dhchap_ctrl_key"
-            [label]="'Key For TrueNAS To Present (Optional)' | translate"
-            [tooltip]="helptext.dhchapCtrlKey | translate"
-          ></ix-textarea>
+      <div class="generate-key-row">
+        <tn-button
+          type="button"
+          [testId]="'generate-key'"
+          [label]="'Generate Key' | translate"
+          [disabled]="isGeneratingTrueNasKey()"
+          (onClick)="generateTrueNasKey()"
+        ></tn-button>
+      </div>
 
-          <div class="generate-key-row">
-            <button
-              mat-button
-              type="button"
-              ixTest="generate-key"
-              [disabled]="isGeneratingTrueNasKey()"
-              (click)="generateTrueNasKey()"
-            >{{ 'Generate Key' | translate }}</button>
-          </div>
+      <tn-form-field
+        class="dh-checkbox"
+        [tooltip]="helptext.dhKeyExchangeTooltip | translate"
+      >
+        <tn-checkbox
+          formControlName="addDhKeyExchange"
+          [label]="'Also use Diffie–Hellman key exchange for additional security' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
 
-          <ix-checkbox
-            formControlName="addDhKeyExchange"
-            class="dh-checkbox"
-            [label]="'Also use Diffie–Hellman key exchange for additional security' | translate"
-            [tooltip]="helptext.dhKeyExchangeTooltip | translate"
-          ></ix-checkbox>
+      @if (form.value.addDhKeyExchange) {
+        <ix-details-table class="authentication-details">
+          <ix-details-item
+            [label]="'DH Group' | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ form.value.dhchap_dhgroup || (helptext.noDhText | translate) }}
+              </div>
 
-          @if (form.value.addDhKeyExchange) {
-            <ix-details-table class="authentication-details">
-              <ix-details-item
-                [label]="'DH Group' | translate"
-              >
-                <ix-editable>
-                  <div view>
-                    {{ form.value.dhchap_dhgroup || (helptext.noDhText | translate) }}
-                  </div>
-
-                  <div edit>
-                    <ix-select
-                      class="dh-group-select"
-                      formControlName="dhchap_dhgroup"
-                      [options]="dhGroupOptions$"
-                      [emptyLabel]="helptext.noDhText | translate"
-                    ></ix-select>
-                  </div>
-                </ix-editable>
-              </ix-details-item>
-            </ix-details-table>
-          }
-        }
-      </ix-fieldset>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+              <div edit>
+                <tn-select
+                  class="dh-group-select"
+                  name="dhchap_dhgroup"
+                  formControlName="dhchap_dhgroup"
+                  [options]="(dhGroupOptions$ | async) ?? []"
+                  [allowEmpty]="true"
+                  [emptyLabel]="helptext.noDhText | translate"
+                ></tn-select>
+              </div>
+            </ix-editable>
+          </ix-details-item>
+        </ix-details-table>
+      }
+    }
+  </tn-form-section>
+</ix-form>

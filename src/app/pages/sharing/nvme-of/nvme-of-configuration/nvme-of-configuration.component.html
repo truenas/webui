@@ -7,37 +7,50 @@
 }
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset>
-    <ix-input
-      formControlName="basenqn"
+  <tn-form-section>
+    <tn-form-field
       [label]="'Base NQN' | translate"
       [tooltip]="helptext.baseNqnTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input formControlName="basenqn"></tn-input>
+    </tn-form-field>
 
     @if (isEnterprise()) {
-      <div [tnTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''">
-        <ix-radio-group
-          formControlName="kernel"
-          [label]="'Implementation (Experimental)' | translate"
-          [options]="implementationOptions$"
-          [tooltip]="helptext.implementationTooltip | translate"
-        ></ix-radio-group>
-      </div>
+      <tn-form-field
+        [label]="'Implementation (Experimental)' | translate"
+        [tooltip]="helptext.implementationTooltip | translate"
+        [tnTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''"
+      >
+        @for (option of implementationOptions; track option.value) {
+          <tn-radio
+            name="kernel"
+            formControlName="kernel"
+            [value]="option.value"
+            [label]="option.label"
+          ></tn-radio>
+        }
+      </tn-form-field>
     }
 
-    <ix-checkbox
-      formControlName="ana"
-      [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
+    <tn-form-field
       [tnTooltip]="form.controls.ana.disabled ? (helptext.anaDisabledTooltip | translate) : ''"
-    ></ix-checkbox>
+    >
+      <tn-checkbox
+        formControlName="ana"
+        [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-    <ix-checkbox
-      formControlName="rdma"
-      [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
+    <tn-form-field
       [tooltip]="helptext.rdmaTooltip"
       [tnTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
-    ></ix-checkbox>
-  </ix-fieldset>
+    >
+      <tn-checkbox
+        formControlName="rdma"
+        [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
 
   @if (slideInRef) {
     <ix-form-actions>

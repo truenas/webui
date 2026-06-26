@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  InputType, TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
@@ -13,10 +15,6 @@ import { Role } from 'app/enums/role.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import {
-  IxButtonGroupComponent,
-} from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -24,12 +22,8 @@ import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -63,15 +57,15 @@ const typeOptions: Option[] = [
     IxExplorerComponent,
     ReactiveFormsModule,
     TranslateModule,
-    MatButton,
-    TestDirective,
-    FormActionsComponent,
     MatCard,
     MatCardContent,
     ModalHeaderComponent,
-    IxFieldsetComponent,
-    IxButtonGroupComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnButtonComponent,
+    TnButtonToggleGroupComponent,
+    TnButtonToggleComponent,
     ExplorerCreateDatasetComponent,
     ExplorerCreateZvolComponent,
     RequiresRolesDirective,
@@ -81,7 +75,6 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
-  protected formatter = inject(IxFormatterService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
@@ -109,8 +102,10 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
   });
 
   protected readonly FormNamespaceType = FormNamespaceType;
+  protected readonly InputType = InputType;
+  protected readonly typeToggleLabelId = 'namespace-device-type-label';
 
-  protected typeOptions$ = of(translateOptions(this.translate, typeOptions));
+  protected typeOptions = translateOptions(this.translate, typeOptions);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 

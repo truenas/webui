@@ -7,48 +7,52 @@
 }
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset>
-    <ix-input
-      formControlName="basename"
+  <tn-form-section>
+    <tn-form-field
       [label]="'Base Name' | translate"
-      [required]="true"
       [tooltip]="tooltips.basename | translate"
-    ></ix-input>
+      [required]="true"
+    >
+      <tn-input formControlName="basename"></tn-input>
+    </tn-form-field>
 
-    <ix-chips
-      formControlName="isns_servers"
+    <tn-form-field
       [label]="'ISNS Servers' | translate"
       [tooltip]="tooltips.isns_servers | translate"
-    ></ix-chips>
+    >
+      <tn-chip-input formControlName="isns_servers" [allowCustomValue]="true"></tn-chip-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="pool_avail_threshold"
-      type="number"
+    <tn-form-field
       [label]="'Pool Available Space Threshold (%)' | translate"
       [tooltip]="tooltips.pool_avail_threshold | translate"
-    ></ix-input>
+    >
+      <tn-input formControlName="pool_avail_threshold" [inputType]="InputType.Number"></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      type="number"
-      formControlName="listen_port"
+    <tn-form-field
       [label]="'iSCSI listen port' | translate"
       [required]="true"
-    ></ix-input>
+    >
+      <tn-input formControlName="listen_port" [inputType]="InputType.Number"></tn-input>
+    </tn-form-field>
 
     @if (isHaSystem) {
-      <ix-checkbox
-        formControlName="alua"
-        [label]="'Asymmetric Logical Unit Access (ALUA)' | translate"
-        [tooltip]="tooltips.alua | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="tooltips.alua | translate">
+        <tn-checkbox
+          formControlName="alua"
+          [label]="'Asymmetric Logical Unit Access (ALUA)' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
     }
 
-    <ix-checkbox
-      formControlName="iser"
-      [label]="'Enable iSCSI Extensions for RDMA (iSER)' | translate"
-      [tooltip]="tooltips.iser | translate"
-    ></ix-checkbox>
-  </ix-fieldset>
+    <tn-form-field [tooltip]="tooltips.iser | translate">
+      <tn-checkbox
+        formControlName="iser"
+        [label]="'Enable iSCSI Extensions for RDMA (iSER)' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
 
   @if (slideInRef) {
     <ix-form-actions class="form-actions">

@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
-import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { MatOption } from '@angular/material/core';
-import { MatInput } from '@angular/material/input';
-import { MatSelectChange, MatSelect } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
+import { ControlValueAccessor, FormsModule, NgControl, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnSelectComponent, TnSelectOption } from '@truenas/ui-components';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -19,10 +17,9 @@ import { NetworkService } from 'app/services/network.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxLabelComponent,
-    MatInput,
-    MatSelect,
+    FormsModule,
     ReactiveFormsModule,
-    MatOption,
+    TnSelectComponent,
     IxErrorsComponent,
     TranslateModule,
     TestDirective,
@@ -36,6 +33,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   private network = inject(NetworkService);
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
@@ -49,7 +47,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   address = '';
   netmask = '';
 
-  netmaskOptions = this.network.getV4Netmasks();
+  netmaskOptions: TnSelectOption<string>[] = this.mapNetmaskOptions(this.network.getV4Netmasks());
 
   constructor() {
     this.controlDirective.valueAccessor = this;
@@ -61,8 +59,8 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
     this.setNetmaskOptions();
   }
 
-  onNetmaskChange($event: MatSelectChange): void {
-    this.netmask = $event.value as string;
+  onNetmaskChange(value: string): void {
+    this.netmask = value;
     this.onValueChanged();
   }
 
@@ -102,9 +100,16 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   private setNetmaskOptions(): void {
     const isIp6 = this.address.includes(':');
     if (isIp6) {
-      this.netmaskOptions = this.network.getV6PrefixLength();
+      this.netmaskOptions = this.mapNetmaskOptions(this.network.getV6PrefixLength());
     } else {
-      this.netmaskOptions = this.network.getV4Netmasks();
+      this.netmaskOptions = this.mapNetmaskOptions(this.network.getV4Netmasks());
     }
+  }
+
+  private mapNetmaskOptions(options: { label: string; value: string | number }[]): TnSelectOption<string>[] {
+    return options.map((option) => ({
+      label: this.translate.instant(option.label),
+      value: String(option.value),
+    }));
   }
 }

@@ -983,6 +983,15 @@ ix-slide-in-container tn-form-field {
   padding: 8px 0;
 }
 
+// …but when those fields live inside a `tn-form-section`, the section's own 1.25rem body
+// gap already spaces them — the flat margin above would double it (the "too big" spacing on
+// SlideIn-hosted section forms, e.g. WebShare Add). Inside a section, drop the flat margin and
+// let the section rhythm own the spacing, matching the `<tn-side-panel>` host.
+ix-slide-in-container tn-form-section tn-form-field {
+  margin: 0;
+  padding: 0;
+}
+
 // `tn-form-section` has no outer margin and its internal `gap` only spaces fields
 // *within* a section, so two adjacent sections butt together in the
 // `<tn-side-panel>` host (a section heading sits flush under the previous field).
@@ -1021,4 +1030,46 @@ ix-info-dialog .tn-dialog__header {
 tn-form-section {
   display: block;
   padding-bottom: 1.25rem;
+}
+
+// The form-actions row (e.g. an "Advanced Options" toggle) must align with the tn-form-field
+// column on ANY form built from tn-form-section — both the `<ix-form>` wrapper (Edit SMB) and
+// legacy hand-rolled forms that render `<ix-form-actions>` directly (service-smb). form-actions
+// adds a 10px left gutter inside `.ix-form-container` for legacy ix-fieldset forms (whose fields
+// share that indent); tn-form-section columns have no gutter, so the toggle looked indented.
+// `:has(tn-form-section)` scopes the override to migrated forms; legacy ix-fieldset forms keep the
+// gutter. `!important` beats form-actions' component-scoped rule (whose `[_nghost]` attr boosts it).
+.ix-form-container:has(tn-form-section) ix-form-actions {
+  margin-left: 0 !important;
+}
+
+// Multiple `tn-radio` projected into a single `tn-form-field` (an `@for` radio list migrated from
+// `ix-radio-group`, e.g. NVMe-oF "Implementation") render inline and butt together — stack them
+// vertically with a gap.
+tn-form-field tn-radio {
+  display: block;
+}
+
+tn-form-field tn-radio + tn-radio {
+  margin-top: 8px;
+}
+
+// Inside a tn-form-section, the section body's own `gap: 1.25rem` is the sole vertical spacer.
+// Form components ship their own margins (ix-combobox/ix-user-combobox `margin-bottom: 12px`,
+// ix-explorer, etc.) that otherwise stack on top of the gap and over-space the section. Zero
+// every direct child's vertical margin so spacing is uniform and owned by the section.
+tn-form-section .tn-form-section__body > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+// Some controls carry their own margins deep in the tree (ix-combobox `margin-bottom: 12px`,
+// nested inside ix-user-combobox/ix-group-combobox; ix-ip-input-with-netmask `margin: 18px/12px`,
+// nested inside ix-list-item) where the direct-child rule above can't reach. Zero them wherever
+// they sit under a section so the section / list-item gap owns the spacing. `!important` beats the
+// components' `[_nghost]`-boosted `:host`.
+tn-form-section ix-combobox,
+tn-form-section ix-ip-input-with-netmask {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }

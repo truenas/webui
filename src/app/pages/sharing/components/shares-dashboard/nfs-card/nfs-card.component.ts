@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed,
-  inject, DestroyRef, signal,
+  inject, DestroyRef, signal, Type,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -40,7 +40,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -95,7 +95,6 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class NfsCardComponent implements OnInit {
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -216,9 +215,18 @@ export class NfsCardComponent implements OnInit {
     });
   }
 
+  // NfsFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type,
+  // mirroring how FormSidePanelService.openForm casts the renderer.
+  private readonly nfsForm = NfsFormComponent as unknown as Type<SidePanelForm>;
+
   protected openForm(row?: NfsShare): void {
-    this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } })
-      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+    this.formPanel.open(this.nfsForm, {
+      title: row
+        ? this.translate.instant('Edit NFS Share')
+        : this.translate.instant('Add NFS Share'),
+      inputs: { nfsShareData: { existingNfsShare: row } },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected openConfig(): void {

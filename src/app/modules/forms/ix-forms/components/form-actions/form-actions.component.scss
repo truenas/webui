@@ -13,6 +13,14 @@
   position: relative;
   display: inline-block;
 
+  // The wrapper is always rendered for the projected `[type=submit]` button, but in the
+  // `<tn-side-panel>` host no Save is projected (it lives in the panel footer), leaving an empty
+  // inline-block that the flex `gap` still spaces — pushing an `ixExtraActions` toggle (e.g.
+  // "Advanced Options") a few px right of the form's left edge. Collapse it when empty.
+  &:empty {
+    display: none;
+  }
+
   &.validating {
     overflow: hidden;
 
@@ -58,6 +66,8 @@
 // so drop the left indent there only — legacy forms keep the 10px gutter.
 // The `.ix-form-container` in the context keeps this more specific than the
 // rule above, whose `margin` shorthand would otherwise reset margin-left.
+// (The `<ix-form>` wrapper is handled by a global rule in _tn-styles.scss —
+// a scoped `:host-context(ix-form …)` descendant selector is unreliable.)
 :host-context(ix-form-renderer .ix-form-container) :host {
   margin-left: 0;
 }

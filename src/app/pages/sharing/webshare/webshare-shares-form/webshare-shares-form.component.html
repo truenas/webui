@@ -1,60 +1,50 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
+  [addTitle]="helptext.webshare_form_title_add | translate"
+  [editTitle]="helptext.webshare_form_title_edit | translate"
   [requiredRoles]="requiredRoles"
-  [title]="title | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section>
+    <ix-explorer
+      formControlName="path"
+      [label]="helptext.webshare_path_label | translate"
+      [tooltip]="helptext.webshare_path_tooltip | translate"
+      [required]="true"
+      [nodeProvider]="treeNodeProvider"
+    >
+      <ix-explorer-create-dataset></ix-explorer-create-dataset>
+    </ix-explorer>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-explorer
-          formControlName="path"
-          [label]="helptext.webshare_path_label | translate"
-          [tooltip]="helptext.webshare_path_tooltip | translate"
-          [required]="true"
-          [nodeProvider]="treeNodeProvider"
-        >
-          <ix-explorer-create-dataset></ix-explorer-create-dataset>
-        </ix-explorer>
+    <tn-form-field
+      [label]="helptext.webshare_name_label | translate"
+      [tooltip]="helptext.webshare_name_tooltip | translate"
+      [required]="true"
+    >
+      <tn-input
+        formControlName="name"
+        [placeholder]="helptext.webshare_name_placeholder | translate"
+      ></tn-input>
+    </tn-form-field>
 
-        <ix-input
-          formControlName="name"
-          [label]="helptext.webshare_name_label | translate"
-          [tooltip]="helptext.webshare_name_tooltip | translate"
-          [placeholder]="helptext.webshare_name_placeholder | translate"
-          [required]="true"
-        ></ix-input>
+    <div
+      class="home-share-checkbox-wrapper"
+      [tnTooltip]="disabledHomeShareTooltip()"
+      [tnTooltipDisabled]="!existingHomeShare()"
+    >
+      <tn-form-field [tooltip]="helptext.webshare_is_home_base_tooltip | translate">
+        <tn-checkbox
+          formControlName="is_home_base"
+          [label]="helptext.webshare_is_home_base_label | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    </div>
 
-        <div
-          class="home-share-checkbox-wrapper"
-          [tnTooltip]="disabledHomeShareTooltip()"
-          [tnTooltipDisabled]="!existingHomeShare()"
-        >
-          <ix-checkbox
-            formControlName="is_home_base"
-            [label]="helptext.webshare_is_home_base_label | translate"
-            [tooltip]="helptext.webshare_is_home_base_tooltip | translate"
-          ></ix-checkbox>
-        </div>
-
-        <div class="warning-message">
-          <tn-icon name="information" library="mdi"></tn-icon>
-          <span>{{ helptext.webshare_warning | translate }}</span>
-        </div>
-      </ix-fieldset>
-
-      <ix-form-actions>
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <tn-banner
+      [type]="'warning'"
+      [heading]="helptext.webshare_warning | translate"
+    ></tn-banner>
+  </tn-form-section>
+</ix-form>

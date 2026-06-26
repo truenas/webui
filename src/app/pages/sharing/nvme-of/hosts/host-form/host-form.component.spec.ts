@@ -2,12 +2,17 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfGlobalConfig, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -28,6 +33,10 @@ describe('HostFormComponent', () => {
           basenqn: 'nqn.2011-06.com.truenas',
         } as NvmeOfGlobalConfig),
       ]),
+      mockAuth(),
+      mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
+      }),
       mockProvider(SlideInRef, {
         getData: slideInGetData,
         close: jest.fn(),
@@ -42,38 +51,42 @@ describe('HostFormComponent', () => {
   let spectator: ReturnType<typeof createComponent>;
   let component: HostFormComponent;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let api: ApiService;
   let slideInRef: SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>;
 
-  beforeEach(async () => {
+  const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const setEditableSelect = async (editableIndex: number, controlName: string, option: string): Promise<void> => {
+    const editable = (await loader.getAllHarnesses(EditableHarness))[editableIndex];
+    await editable.open();
+    const select = await loader.getHarness(TnSelectHarness.with({ selector: `[name="${controlName}"]` }));
+    await select.selectOption(option);
+    await editable.tryToClose();
+  };
+
+  beforeEach(() => {
     slideInGetData.mockReturnValue(undefined);
     spectator = createComponent();
-    component = spectator.component as HostFormComponent;
+    component = spectator.component;
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     api = spectator.inject(ApiService);
     slideInRef = spectator.inject(SlideInRef);
   });
 
   it('creates a new host when form is submitted', async () => {
-    await form.fillForm({
-      'Host NQN': 'nqn.2014-08.org',
-      'Require Host Authentication': true,
-      'Key For Host To Present': '1234567890',
-      'Key For TrueNAS To Present (Optional)': '111222',
-      'Also use Diffie–Hellman key exchange for additional security': true,
-    });
+    await (await getTnInput('hostnqn')).setValue('nqn.2014-08.org');
+    await (await getTnCheckbox('requireHostAuthentication')).check();
+    await (await getTnInput('dhchap_key')).setValue('1234567890');
+    await (await getTnInput('dhchap_ctrl_key')).setValue('111222');
+    await (await getTnCheckbox('addDhKeyExchange')).check();
 
-    const firstDetails = await loader.getHarness(DetailsTableHarness);
-    await firstDetails.setValues({
-      Hash: 'SHA-512',
-    });
-
-    const secondDetails = (await loader.getAllHarnesses(DetailsTableHarness))[1];
-    await secondDetails.setValues({
-      'DH Group': '2048-BIT',
-    });
+    await setEditableSelect(0, 'dhchap_hash', 'SHA-512');
+    // The DH Group editable only renders after addDhKeyExchange is checked above.
+    await setEditableSelect(1, 'dhchap_dhgroup', '2048-BIT');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -105,15 +118,12 @@ describe('HostFormComponent', () => {
     });
 
     it('shows current values when editing an existing host', async () => {
-      const formValues = await form.getValues();
-      expect(formValues).toEqual({
-        'Host NQN': 'nqn.2014-08.org',
-        Description: '',
-        'Require Host Authentication': true,
-        'Key For Host To Present': '1234567890',
-        'Key For TrueNAS To Present (Optional)': '111222',
-        'Also use Diffie–Hellman key exchange for additional security': true,
-      });
+      expect(await (await getTnInput('hostnqn')).getValue()).toBe('nqn.2014-08.org');
+      expect(await (await getTnInput('description')).getValue()).toBe('');
+      expect(await (await getTnCheckbox('requireHostAuthentication')).isChecked()).toBe(true);
+      expect(await (await getTnInput('dhchap_key')).getValue()).toBe('1234567890');
+      expect(await (await getTnInput('dhchap_ctrl_key')).getValue()).toBe('111222');
+      expect(await (await getTnCheckbox('addDhKeyExchange')).isChecked()).toBe(true);
 
       const firstDetails = await loader.getHarness(DetailsTableHarness);
       expect(await firstDetails.getValues()).toEqual({
@@ -127,10 +137,8 @@ describe('HostFormComponent', () => {
     });
 
     it('updates an existing host', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-09.org',
-        'Require Host Authentication': false,
-      });
+      await (await getTnInput('hostnqn')).setValue('nqn.2014-09.org');
+      await (await getTnCheckbox('requireHostAuthentication')).uncheck();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -148,42 +156,32 @@ describe('HostFormComponent', () => {
 
   describe('key generation', () => {
     it('generates a host key when host authentication is enabled and Generate Key button is pressed', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.org',
-        'Require Host Authentication': true,
-      });
+      await (await getTnInput('hostnqn')).setValue('nqn.2014-08.org');
+      await (await getTnCheckbox('requireHostAuthentication')).check();
 
-      const generateKeyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate Key' }));
+      const generateKeyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Generate Key' }));
       await generateKeyButton.click();
 
       expect(api.call).toHaveBeenCalledWith('nvmet.host.generate_key', ['SHA-256', 'nqn.2014-08.org']);
-      expect(await form.getValues()).toMatchObject({
-        'Key For Host To Present': '123456',
-      });
+      expect(await (await getTnInput('dhchap_key')).getValue()).toBe('123456');
     });
 
     it('generates TrueNAS key using basenqn from settings when the other Generate Key is pressed', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.org',
-        'Require Host Authentication': true,
-      });
+      await (await getTnInput('hostnqn')).setValue('nqn.2014-08.org');
+      await (await getTnCheckbox('requireHostAuthentication')).check();
 
-      const generateKeyButton = (await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Generate Key' })))[1];
+      const generateKeyButton = (await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Generate Key' })))[1];
       await generateKeyButton.click();
 
       expect(api.call).toHaveBeenCalledWith('nvmet.global.config');
       expect(api.call).toHaveBeenCalledWith('nvmet.host.generate_key', ['SHA-256', 'nqn.2011-06.com.truenas']);
-      expect(await form.getValues()).toMatchObject({
-        'Key For TrueNAS To Present (Optional)': '123456',
-      });
+      expect(await (await getTnInput('dhchap_ctrl_key')).getValue()).toBe('123456');
     });
   });
 
   describe('nqn validation', () => {
     it('shows error when NQN does not start with nqn.', async () => {
-      await form.fillForm({
-        'Host NQN': 'invalid.2014-08.org.example',
-      });
+      await (await getTnInput('hostnqn')).setValue('invalid.2014-08.org.example');
 
       expect(component.form.controls.hostnqn.errors).toEqual({
         nqnFormat: {
@@ -193,9 +191,7 @@ describe('HostFormComponent', () => {
     });
 
     it('shows error when NQN is too short', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014',
-      });
+      await (await getTnInput('hostnqn')).setValue('nqn.2014');
 
       expect(component.form.controls.hostnqn.errors).toEqual({
         nqnMinLength: {
@@ -206,9 +202,7 @@ describe('HostFormComponent', () => {
 
     it('shows error when NQN is too long', async () => {
       const longNqn = 'nqn.2014-08.' + 'a'.repeat(212);
-      await form.fillForm({
-        'Host NQN': longNqn,
-      });
+      await (await getTnInput('hostnqn')).setValue(longNqn);
 
       expect(component.form.controls.hostnqn.errors).toEqual({
         nqnMaxLength: {
@@ -218,9 +212,7 @@ describe('HostFormComponent', () => {
     });
 
     it('shows error when NQN format is invalid', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.invalid-date.org',
-      });
+      await (await getTnInput('hostnqn')).setValue('nqn.invalid-date.org');
 
       expect(component.form.controls.hostnqn.errors).toEqual({
         nqnInvalid: {
@@ -230,25 +222,19 @@ describe('HostFormComponent', () => {
     });
 
     it('accepts valid NQN with date and domain', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.org.nvmexpress',
-      });
+      await (await getTnInput('hostnqn')).setValue('nqn.2014-08.org.nvmexpress');
 
       expect(component.form.controls.hostnqn.errors).toBeNull();
     });
 
     it('accepts valid NQN with optional identifier', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.com.example:host1',
-      });
+      await (await getTnInput('hostnqn')).setValue('nqn.2014-08.com.example:host1');
 
       expect(component.form.controls.hostnqn.errors).toBeNull();
     });
 
     it('accepts valid NQN with multiple domain parts', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.com.example.storage',
-      });
+      await (await getTnInput('hostnqn')).setValue('nqn.2014-08.com.example.storage');
 
       expect(component.form.controls.hostnqn.errors).toBeNull();
     });
@@ -256,10 +242,8 @@ describe('HostFormComponent', () => {
 
   describe('description field', () => {
     it('submits description when creating a new host', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.org.example',
-        Description: 'Test host description',
-      });
+      await (await getTnInput('hostnqn')).setValue('nqn.2014-08.org.example');
+      await (await getTnInput('description')).setValue('Test host description');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -283,9 +267,7 @@ describe('HostFormComponent', () => {
 
       component.ngOnInit();
 
-      await form.fillForm({
-        Description: 'Updated description',
-      });
+      await (await getTnInput('description')).setValue('Updated description');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

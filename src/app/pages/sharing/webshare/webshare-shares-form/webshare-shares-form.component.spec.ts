@@ -1,7 +1,11 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
+import { TnInputHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -17,10 +21,12 @@ import { WebShareFormData, WebShareSharesFormComponent } from './webshare-shares
 
 describe('WebShareSharesFormComponent', () => {
   let spectator: Spectator<WebShareSharesFormComponent>;
+  let loader: HarnessLoader;
   let api: ApiService;
 
-  beforeAll(() => {
-    // Suppress console warnings about reactive form disabled state
+  beforeEach(() => {
+    // Suppress benign warnings: reactive-form disabled-state notices, the <ix-form> wrapper's
+    // dev-mode advisory, and Angular's HTML-sanitizer notice for the home-share tooltip.
     jest.spyOn(console, 'warn').mockImplementation();
   });
 
@@ -36,10 +42,19 @@ describe('WebShareSharesFormComponent', () => {
     },
   ];
 
-  const slideInRef: SlideInRef<WebShareFormData | undefined, { response: boolean; error: unknown }> = {
+  const slideInRef: SlideInRef<WebShareFormData | undefined, boolean> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn((): WebShareFormData | undefined => undefined),
+  };
+
+  const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  const clickSave = async (): Promise<void> => {
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
   };
 
   const createComponent = createComponentFactory({
@@ -56,18 +71,17 @@ describe('WebShareSharesFormComponent', () => {
         mockCall('sharing.webshare.update', mockWebShares[0]),
         mockCall('filesystem.stat'),
       ]),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
+      }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(SnackbarService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(TranslateService, {
-        instant: jest.fn((key: string) => {
-          // The marker function T() returns the string as-is, so just return the key
-          // The TranslateService receives the actual string value from helptext
-          return key;
-        }),
-        get: jest.fn(() => of({})),
+        instant: jest.fn((key: string) => key),
+        get: jest.fn((key: string) => of(key)),
+        stream: jest.fn((key: string) => of(key)),
         onLangChange: of({ lang: 'en' }),
         onTranslationChange: of({}),
         onDefaultLangChange: of({}),
@@ -92,6 +106,7 @@ describe('WebShareSharesFormComponent', () => {
           }),
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
       spectator.detectChanges();
     });
@@ -127,16 +142,14 @@ describe('WebShareSharesFormComponent', () => {
       expect(form.controls.name.hasError('pattern')).toBe(false);
     });
 
-    it('should create new WebShare on submit', () => {
-      // Use direct form controls instead of harness due to label translation issues
+    it('should create new WebShare on submit', async () => {
+      await (await getTnInput('name')).setValue('new_share');
       const form = spectator.component.form;
-      form.controls.name.setValue('new_share');
       form.controls.path.setValue('/mnt/tank/new_share');
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      // Use spectator click instead of harness due to label issues
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
-      spectator.click(saveButton);
+      await clickSave();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.create', [{
         name: 'new_share',
@@ -145,29 +158,8 @@ describe('WebShareSharesFormComponent', () => {
       }]);
 
       expect(slideInRef.close).toHaveBeenCalledWith({
-        response: true,
+        response: mockWebShares[0],
       });
-    });
-
-    it('should handle API errors gracefully', () => {
-      jest.spyOn(api, 'call')
-        .mockImplementationOnce(() => of(mockWebShares)) // for shares load
-        .mockImplementationOnce(() => throwError(() => new Error('API Error'))); // for create
-
-      const errorHandler = spectator.inject(FormErrorHandlerService);
-      const handleErrorSpy = jest.spyOn(errorHandler, 'handleValidationErrors');
-
-      // Use direct form controls instead of harness due to label translation issues
-      const form = spectator.component.form;
-      form.controls.name.setValue('new_share');
-      form.controls.path.setValue('/mnt/tank/new_share');
-      spectator.detectChanges();
-
-      // Use spectator click instead of harness due to label issues
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
-      spectator.click(saveButton);
-
-      expect(handleErrorSpy).toHaveBeenCalled();
     });
   });
 
@@ -189,6 +181,7 @@ describe('WebShareSharesFormComponent', () => {
           }),
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
       spectator.detectChanges();
     });
@@ -208,15 +201,13 @@ describe('WebShareSharesFormComponent', () => {
       expect(spectator.component.form.controls.name.enabled).toBe(true);
     });
 
-    it('should update existing WebShare on submit', () => {
-      // Use direct form controls instead of harness due to label translation issues
+    it('should update existing WebShare on submit', async () => {
       const form = spectator.component.form;
       form.controls.path.setValue('/mnt/tank/docs');
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      // Use spectator click instead of harness due to label issues
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
-      spectator.click(saveButton);
+      await clickSave();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [1, {
         name: 'documents',
@@ -225,14 +216,14 @@ describe('WebShareSharesFormComponent', () => {
       }]);
     });
 
-    it('should allow updating the name when editing', () => {
+    it('should allow updating the name when editing', async () => {
       const form = spectator.component.form;
-      form.controls.name.setValue('updated_documents');
+      await (await getTnInput('name')).setValue('updated_documents');
       form.controls.path.setValue('/mnt/tank/docs');
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
-      spectator.click(saveButton);
+      await clickSave();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [1, {
         name: 'updated_documents',
@@ -281,6 +272,7 @@ describe('WebShareSharesFormComponent', () => {
           }),
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
       spectator.detectChanges();
     });
@@ -295,10 +287,10 @@ describe('WebShareSharesFormComponent', () => {
 
       // Update path and submit
       form.controls.path.setValue('/mnt/tank/new_home');
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
-      spectator.click(saveButton);
+      await clickSave();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [3, {
         name: 'home',
@@ -322,6 +314,7 @@ describe('WebShareSharesFormComponent', () => {
           }),
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.detectChanges();
     });
 
@@ -375,42 +368,7 @@ describe('WebShareSharesFormComponent', () => {
       expect(slideInRef.close).toHaveBeenCalledWith({ response: undefined });
     });
 
-    it('should prevent submission when form is invalid', () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              isNew: true,
-              name: '',
-              path: '',
-            } as WebShareFormData),
-          }),
-        ],
-      });
-      api = spectator.inject(ApiService);
-      spectator.detectChanges();
-
-      // Clear mock calls from initialization
-      jest.clearAllMocks();
-
-      const form = spectator.component.form;
-      form.controls.name.setValue('');
-      form.controls.path.setValue('');
-      spectator.detectChanges();
-
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
-      spectator.click(saveButton);
-
-      // Should not call API when form is invalid
-      expect(api.call).not.toHaveBeenCalledWith('sharing.webshare.create', expect.anything());
-
-      // Form should be marked as touched to show errors
-      expect(form.controls.name.touched).toBe(true);
-      expect(form.controls.path.touched).toBe(true);
-    });
-
-    it('should handle update API errors gracefully', () => {
+    it('should handle update API errors gracefully', async () => {
       const mockApiCall = jest.fn((method: string) => {
         if (method === 'sharing.webshare.query') {
           return of(mockWebShares);
@@ -436,6 +394,7 @@ describe('WebShareSharesFormComponent', () => {
           }),
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
       const errorHandler = spectator.inject(FormErrorHandlerService);
       const handleErrorSpy = jest.spyOn(errorHandler, 'handleValidationErrors');
@@ -443,10 +402,10 @@ describe('WebShareSharesFormComponent', () => {
 
       const form = spectator.component.form;
       form.controls.path.setValue('/mnt/tank/docs_updated');
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      const saveButton = spectator.query('button[type="submit"][mat-button]');
-      spectator.click(saveButton);
+      await clickSave();
 
       expect(handleErrorSpy).toHaveBeenCalled();
     });

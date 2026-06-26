@@ -22,6 +22,7 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -85,6 +86,9 @@ describe('SmbCardComponent', () => {
       withLoader: jest.fn(() => (source$: unknown) => source$),
     }),
     mockProvider(SlideIn, {
+      open: jest.fn(() => SlideInResult.empty()),
+    }),
+    mockProvider(FormSidePanelService, {
       open: jest.fn(() => SlideInResult.empty()),
     }),
     mockProvider(SnackbarService),
@@ -155,8 +159,9 @@ describe('SmbCardComponent', () => {
       const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbFormComponent, {
-        data: { existingSmbShare: undefined },
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
+        title: 'Add SMB Share',
+        inputs: { smbShareData: { existingSmbShare: undefined } },
       });
     });
 
@@ -175,8 +180,9 @@ describe('SmbCardComponent', () => {
       const menu = await openRowMenu();
       await menu.clickItem({ label: /^Edit$/ });
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbFormComponent, {
-        data: { existingSmbShare: expect.objectContaining(smbShares[0]) },
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
+        title: 'Edit SMB Share',
+        inputs: { smbShareData: { existingSmbShare: expect.objectContaining(smbShares[0]) } },
       });
     });
 
@@ -210,7 +216,10 @@ describe('SmbCardComponent', () => {
         [{ share_name: 'homes' }],
       );
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbAclComponent, { data: 'test' });
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbAclComponent, {
+        title: 'Share ACL for test',
+        inputs: { shareName: 'test' },
+      });
     });
 
     it('handles edit Filesystem ACL', async () => {
