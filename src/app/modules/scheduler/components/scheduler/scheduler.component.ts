@@ -118,7 +118,9 @@ export class SchedulerComponent implements ControlValueAccessor {
 
   private onSelectionChange(value: string): void {
     if (value === this.customValue) {
-      this.onCustomOptionSelected(undefined);
+      // Seed the cron builder with the current custom schedule (if any) so editing starts from it,
+      // rather than a blank form. Falls back to a fresh form when no custom value is set.
+      this.onCustomOptionSelected(this.customCrontab() ?? undefined);
       return;
     }
 
@@ -167,13 +169,15 @@ export class SchedulerComponent implements ControlValueAccessor {
 
     const customOption: TnSelectOption<string>[] = customCrontab
       ? [{
-          label: ignoreTranslation(`${this.translate.instant('Custom')} ${this.crontabExplanation.transform(customCrontab)}`),
+          label: this.translate.instant('Custom {schedule}', {
+            schedule: this.crontabExplanation.transform(customCrontab),
+          }),
           value: customCrontab,
         }]
       : [];
 
     const createCustomOption: TnSelectOption<string> = {
-      label: ignoreTranslation(`${this.translate.instant('Create')} ${this.translate.instant('Custom schedule')}`),
+      label: this.translate.instant('Create Custom schedule'),
       value: this.customValue,
     };
 

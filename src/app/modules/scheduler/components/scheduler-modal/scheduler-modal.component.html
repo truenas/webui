@@ -80,7 +80,6 @@
       <div class="weekdays" formGroupName="weekdays">
         @for (weekday of weekdays; track weekday) {
           <tn-checkbox
-            class="weekend"
             [testId]="['scheduler', weekday.label]"
             [label]="weekday.label | translate"
             [formControlName]="weekday.value"
@@ -95,7 +94,6 @@
       <div class="months" formArrayName="months">
         @for (month of months; track month) {
           <tn-checkbox
-            class="month"
             [testId]="['scheduler', month.label]"
             [label]="month.label | translate"
             [formControlName]="month.value"

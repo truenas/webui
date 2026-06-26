@@ -111,4 +111,20 @@ describe('SchedulerComponent', () => {
 
     expect(control.value).toBe('0 2 */4 * 0');
   });
+
+  it('opens the custom dialog pre-filled with the current custom crontab when editing', async () => {
+    control.setValue('30 1 * * *');
+    spectator.detectChanges();
+
+    const select = await loader.getHarness(TnSelectHarness);
+    await select.selectOption('Create Custom schedule');
+
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
+      SchedulerModalComponent,
+      {
+        width: '760px',
+        data: expect.objectContaining({ crontab: '30 1 * * *' }),
+      },
+    );
+  });
 });
