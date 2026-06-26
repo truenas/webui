@@ -1,8 +1,8 @@
 <tn-card
   [ixUiSearch]="searchableElements.elements.email"
-  [title]="'Email' | translate"
   [secondaryAction]="settingsAction()"
 >
+  <h3 tnCardHeader class="tn-card__title">{{ 'Email' | translate }}</h3>
   <tn-list>
     <tn-list-item [ixUiSearch]="searchableElements.elements.sendMethod">
       <span class="label">{{ 'Send Mail Method' | translate }}:</span>

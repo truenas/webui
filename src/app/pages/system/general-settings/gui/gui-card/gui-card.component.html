@@ -1,8 +1,8 @@
 <tn-card
   [ixUiSearch]="searchableElements.elements.gui"
-  [title]="helptext.guiTitle | translate"
   [secondaryAction]="settingsAction()"
 >
+  <h3 tnCardHeader class="tn-card__title">{{ helptext.guiTitle | translate }}</h3>
   <tn-list>
     <tn-list-item [ixUiSearch]="searchableElements.elements.sslCertificate">
       <span class="label">{{ helptext.uiCertificate.label | translate }}:</span>

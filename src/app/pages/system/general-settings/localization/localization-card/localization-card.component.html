@@ -1,8 +1,8 @@
 <tn-card
   [ixUiSearch]="searchableElements.elements.localization"
-  [title]="helptext.localeTitle | translate"
   [secondaryAction]="settingsAction()"
 >
+  <h3 tnCardHeader class="tn-card__title">{{ helptext.localeTitle | translate }}</h3>
   <tn-list>
     <tn-list-item [ixUiSearch]="searchableElements.elements.timezone">
       <span class="label">{{ helptext.timezone.label | translate }}:</span>

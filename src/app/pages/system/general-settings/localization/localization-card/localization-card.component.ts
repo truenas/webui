@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCardComponent,
+  TnCardHeaderDirective,
   TnListComponent,
   TnListItemComponent,
   type TnCardAction,
@@ -31,6 +32,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
+    TnCardHeaderDirective,
     TnListComponent,
     TnListItemComponent,
     UiSearchDirective,

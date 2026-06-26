@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCardComponent,
+  TnCardHeaderDirective,
   TnListComponent,
   TnListItemComponent,
   type TnCardAction,
@@ -24,6 +25,7 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
+    TnCardHeaderDirective,
     TnListComponent,
     TnListItemComponent,
     UiSearchDirective,
