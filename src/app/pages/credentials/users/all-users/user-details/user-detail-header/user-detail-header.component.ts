@@ -8,7 +8,7 @@ import { Role } from 'app/enums/role.enum';
 import { getDirectoryServiceTooltip } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { DeleteUserDialog } from 'app/pages/credentials/users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 
@@ -26,7 +26,7 @@ import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-fo
 })
 export class UserDetailHeaderComponent {
   private authService = inject(AuthService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
@@ -42,7 +42,10 @@ export class UserDetailHeaderComponent {
 
   protected doEdit(): void {
     if (!this.user().local) return;
-    this.slideIn.open(UserFormComponent, { data: this.user() });
+    this.formPanel.open(UserFormComponent, {
+      title: this.translate.instant('Edit User'),
+      inputs: { editUser: this.user() },
+    });
   }
 
   protected doDelete(): void {

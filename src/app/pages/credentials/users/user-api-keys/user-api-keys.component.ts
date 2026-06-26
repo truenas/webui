@@ -32,7 +32,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
@@ -67,7 +67,7 @@ export class UserApiKeysComponent implements OnInit {
   private dialog = inject(DialogService);
 
   private authService = inject(AuthService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
@@ -137,8 +137,10 @@ export class UserApiKeysComponent implements OnInit {
   }
 
   openForm(apiKey?: ApiKey): void {
-    this.slideIn.open(ApiKeyFormComponent, { data: { editingKey: apiKey } })
-      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+    this.formPanel.open(ApiKeyFormComponent, {
+      title: apiKey ? this.translate.instant('Edit API Key') : this.translate.instant('Add API Key'),
+      inputs: { editingKey: apiKey },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   doDelete(apiKey: ApiKey): void {

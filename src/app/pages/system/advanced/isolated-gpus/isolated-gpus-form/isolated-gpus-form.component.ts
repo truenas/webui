@@ -26,7 +26,6 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 @Component({
   selector: 'ix-isolated-gpus-form',
   templateUrl: './isolated-gpus-form.component.html',
-  styleUrls: ['./isolated-gpus-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,

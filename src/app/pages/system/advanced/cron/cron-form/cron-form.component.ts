@@ -28,7 +28,6 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
 @Component({
   selector: 'ix-cron-form',
   templateUrl: './cron-form.component.html',
-  styleUrls: ['./cron-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,

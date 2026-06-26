@@ -3,7 +3,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnDateInputHarness, TnDialog, TnInputHarness,
+} from '@truenas/ui-components';
 import { parseISO } from 'date-fns';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -12,23 +14,21 @@ import { ApiKey } from 'app/interfaces/api-key.interface';
 import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ApiKeyFormComponent, ApiKeyParams } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
+import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { KeyCreatedDialog } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 
 describe('ApiKeyFormComponent', () => {
   let spectator: Spectator<ApiKeyFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
-  const slideInRef: SlideInRef<ApiKeyParams | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
+  const editingKey = {
+    id: 1,
+    name: 'existing key',
+    username: 'root',
+    expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+  } as ApiKey;
 
   const createComponent = createComponentFactory({
     component: ApiKeyFormComponent,
@@ -42,7 +42,6 @@ describe('ApiKeyFormComponent', () => {
         mockCall('api_key.update', {} as ApiKey),
       ]),
       mockProvider(DialogRef),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService),
       mockProvider(LocaleService, {
         timezone: 'UTC',
@@ -51,152 +50,129 @@ describe('ApiKeyFormComponent', () => {
     ],
   });
 
-  async function setupTest(data?: ApiKeyParams | null): Promise<void> {
-    spectator = createComponent({
-      providers: [
-        mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => data) }),
-      ],
-    });
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
-
-    jest.spyOn(spectator.inject(TnDialog), 'open').mockImplementation();
+  // The form's username control is bound to an `ix-user-picker`, and `tn-date-input` formatting is
+  // locale/timezone dependent; read both from the form model instead of the rendered controls.
+  function rawForm(): { username: string; expires_at: Date | null } {
+    return (spectator.component as unknown as {
+      form: { getRawValue(): { username: string; expires_at: Date | null } };
+    }).form.getRawValue();
   }
 
-  it('creates a new API key and shows it when dialog is opened with no data', async () => {
-    await setupTest({});
+  async function setupTest(
+    inputs: Partial<{ editingKey: ApiKey; presetUsername: string }> = {},
+  ): Promise<void> {
+    spectator = createComponent({ props: inputs });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockImplementation();
+    await spectator.fixture.whenStable();
+  }
 
-    await form.fillForm({
-      Name: 'My key',
-    });
+  it('creates a new API key and shows it when opened with no data', async () => {
+    await setupTest();
+    const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    const nameInput = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
+    await nameInput.setValue('My key');
+
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.create', [{
       name: 'My key',
       username: 'root',
       expires_at: null,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    expect(closedSpy).toHaveBeenCalledWith(true);
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });
   });
 
-  it('shows values for the existing key when form is opened for edit', async () => {
-    await setupTest({
-      editingKey: {
-        id: 1,
-        name: 'existing key',
-        username: 'root',
-        expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
-      } as ApiKey,
-    });
+  it('shows values for the existing key when opened for edit', async () => {
+    await setupTest({ editingKey });
 
-    expect(await form.getValues()).toEqual({
-      Name: 'existing key',
-      'Non-expiring': false,
-      Username: 'root',
-      'Expires On': expect.stringMatching('2024-11-22'),
-      Reset: false,
-    });
+    const nameInput = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
+    const nonExpiring = await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }));
+
+    expect(await nameInput.getValue()).toBe('existing key');
+    expect(await nonExpiring.isChecked()).toBe(false);
+    expect(rawForm().username).toBe('root');
+    expect(rawForm().expires_at?.getTime()).toBe(editingKey.expires_at?.$date);
   });
 
-  it('edits key name when dialog is opened with existing api key', async () => {
-    await setupTest({
-      editingKey: {
-        id: 1,
-        name: 'existing key',
-        username: 'root',
-        expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
-      } as ApiKey,
-    });
+  it('edits key name when opened with existing api key', async () => {
+    await setupTest({ editingKey });
+    const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
-    await form.fillForm({
-      Name: 'My key',
-      'Non-expiring': true,
-    });
+    const nameInput = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
+    await nameInput.setValue('My key');
+    const nonExpiring = await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }));
+    await nonExpiring.check();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('api_key.update', [1, {
       name: 'My key',
       reset: false,
       expires_at: null,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    expect(closedSpy).toHaveBeenCalledWith(true);
     expect(spectator.inject(TnDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });
   });
 
   it('disables username on edit', async () => {
-    await setupTest({
-      editingKey: {
-        id: 1,
-        name: 'existing key',
-        username: 'root',
-        expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
-      } as ApiKey,
-    });
+    await setupTest({ editingKey });
 
-    const disabledFields = await form.getDisabledState();
-    expect(disabledFields).toMatchObject({
-      Username: true,
-    });
+    expect(
+      (spectator.component as unknown as { form: { controls: { username: { disabled: boolean } } } })
+        .form.controls.username.disabled,
+    ).toBe(true);
   });
 
   it('allows existing api key to be reset and shows newly generated key', async () => {
-    await setupTest({
-      editingKey: {
-        id: 1,
-        name: 'existing key',
-        username: 'root',
-        expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
-      } as ApiKey,
-    });
+    await setupTest({ editingKey });
+    const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
     spectator.inject(MockApiService).mockCallOnce('api_key.update', { key: 'generated-key' } as ApiKey);
 
-    await form.fillForm({
-      Name: 'My key',
-      Reset: true,
-      'Non-expiring': false,
-      'Expires On': '2024-12-22T00:00:00Z',
-    });
+    const nameInput = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
+    await nameInput.setValue('My key');
+    const nonExpiring = await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }));
+    await nonExpiring.uncheck();
+    // `tn-date-input` round-trips through a date-only display, so set/expect the same local-midnight
+    // Date (timezone-independent) rather than a fixed UTC instant.
+    const expiresOnDate = new Date(2024, 11, 22);
+    const expiresOn = await loader.getHarness(TnDateInputHarness);
+    await expiresOn.setValue(expiresOnDate);
+    const reset = await loader.getHarness(TnCheckboxHarness.with({ label: 'Reset' }));
+    await reset.check();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.update', [1, {
       name: 'My key',
       reset: true,
       expires_at: {
-        $date: parseISO('2024-12-22T00:00:00Z').getTime(),
+        $date: expiresOnDate.getTime(),
       },
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    expect(closedSpy).toHaveBeenCalledWith(true);
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
     });
   });
 
   describe('username field on new api key', () => {
-    it('sets current username when no username is provided in params', async () => {
-      await setupTest({});
+    it('sets current username when no username is provided', async () => {
+      await setupTest();
 
-      expect(await form.getValues()).toMatchObject({
-        Username: 'root',
-      });
+      expect(rawForm().username).toBe('root');
     });
 
-    it('sets username from params when username is provided', async () => {
-      await setupTest({ username: 'testuser' });
+    it('sets username from the presetUsername input when provided', async () => {
+      await setupTest({ presetUsername: 'testuser' });
 
-      expect(await form.getValues()).toMatchObject({
-        Username: 'testuser',
-      });
+      expect(rawForm().username).toBe('testuser');
     });
   });
 });

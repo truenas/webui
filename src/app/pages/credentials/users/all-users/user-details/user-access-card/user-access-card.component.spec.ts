@@ -13,7 +13,7 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -78,7 +78,7 @@ function createTestComponent(
         mockCall('user.update'),
         mockCall('user.unset_2fa_secret'),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DownloadService, {
@@ -259,9 +259,10 @@ describe('UserAccessCardComponent', () => {
 
       spectator.click(spectator.query(byText('Add API Key')));
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
-        data: {
-          username: mockUser.username,
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
+        title: 'Add API Key',
+        inputs: {
+          presetUsername: mockUser.username,
         },
       });
     });
@@ -346,7 +347,7 @@ describe('UserAccessCardComponent', () => {
           mockCall('user.update'),
           mockCall('user.unset_2fa_secret'),
         ]),
-        mockProvider(SlideIn, {
+        mockProvider(FormSidePanelService, {
           open: jest.fn(() => SlideInResult.empty()),
         }),
         mockProvider(DownloadService, {

@@ -39,7 +39,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
@@ -134,7 +133,6 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
   private api = inject(ApiService);
   private authService = inject(AuthService);
   private errorHandler = inject(ErrorHandlerService);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private navigateAndHighlightService = inject(NavigateAndHighlightService);
   private document = inject(DOCUMENT);
@@ -742,8 +740,10 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
   }
 
   private openUserEditForm(user: User): void {
-    this.slideIn.open(UserFormComponent, { data: user })
-      .onClose(() => this.setupStigRequirements(), this.destroyRef);
+    this.formPanel.open(UserFormComponent, {
+      title: this.translate.instant('Edit User'),
+      inputs: { editUser: user },
+    }).onClose(() => this.setupStigRequirements(), this.destroyRef);
     this.delayHighlightElement('disablePasswordCheckbox');
   }
 }

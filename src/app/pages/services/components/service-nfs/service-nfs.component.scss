@@ -1,7 +1,4 @@
 @import 'scss-imports/variables';
-@import 'mixins/forms';
-
-@include tn-form-field-spacing();
 
 .two-columns {
   border-bottom: 1px solid var(--lines);
