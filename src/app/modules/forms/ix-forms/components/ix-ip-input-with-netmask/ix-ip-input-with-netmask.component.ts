@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnSelectComponent, TnSelectOption } from '@truenas/ui-components';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -21,7 +20,6 @@ import { NetworkService } from 'app/services/network.service';
     ReactiveFormsModule,
     TnSelectComponent,
     IxErrorsComponent,
-    TranslateModule,
     TestDirective,
     TestOverrideDirective,
   ],
@@ -33,7 +31,6 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   private network = inject(NetworkService);
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
-  private translate = inject(TranslateService);
 
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
@@ -106,9 +103,11 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
     }
   }
 
+  // Netmask labels are display-ready (CIDR numbers / a placeholder), never translatable text, so
+  // they pass through verbatim — the form control value is `${address}/${netmask}`.
   private mapNetmaskOptions(options: { label: string; value: string | number }[]): TnSelectOption<string>[] {
     return options.map((option) => ({
-      label: this.translate.instant(option.label),
+      label: option.label,
       value: String(option.value),
     }));
   }

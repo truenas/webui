@@ -31,10 +31,10 @@ import {
   TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  endWith, Observable, of,
+  BehaviorSubject, endWith, Observable, of,
 } from 'rxjs';
 import {
-  debounceTime, filter, map, switchMap, take, tap,
+  debounceTime, distinctUntilChanged, filter, map, shareReplay, switchMap, take, tap,
 } from 'rxjs/operators';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -220,9 +220,21 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   protected purposeOptions$: Observable<SelectOption<SmbSharePurpose>[]>;
 
-  /** Group-name autocomplete suggestions for the audit Watch/Ignore List chip inputs. */
-  protected readonly groupSuggestions$ = this.userService.groupQueryDsCache().pipe(
+  /** Drives server-side group lookups for the audit Watch/Ignore List chip inputs. */
+  private readonly groupSearch$ = new BehaviorSubject<string>('');
+
+  /**
+   * Group-name autocomplete suggestions for the audit Watch/Ignore List chip inputs. Re-queries the
+   * server as the user types (fed from `(searchChange)` via {@link onGroupSearch}), restoring the
+   * query-as-you-type behavior the old `ix-group-chips` provided — a single empty query only returned
+   * the first 50 groups. `shareReplay` keeps both chip inputs on one subscription / one request.
+   */
+  protected readonly groupSuggestions$ = this.groupSearch$.pipe(
+    debounceTime(250),
+    distinctUntilChanged(),
+    switchMap((search) => this.userService.groupQueryDsCache(search)),
     map((groups) => groups.map((group) => group.group)),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   get isRestartRequired(): boolean {
@@ -429,6 +441,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
   submit(): void {
     this.ixForm()?.submit();
+  }
+
+  /** Feeds typed text from the audit chip inputs into the server-side group lookup. */
+  protected onGroupSearch(search: string): void {
+    this.groupSearch$.next(search);
   }
 
   get shouldShowNamingSchema(): boolean {

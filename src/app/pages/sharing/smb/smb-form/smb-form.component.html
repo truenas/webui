@@ -157,6 +157,7 @@
             formControlName="watch_list"
             [suggestions]="(groupSuggestions$ | async) ?? []"
             [allowCustomValue]="true"
+            (searchChange)="onGroupSearch($event)"
           ></tn-chip-input>
         </tn-form-field>
 
@@ -168,6 +169,7 @@
             formControlName="ignore_list"
             [suggestions]="(groupSuggestions$ | async) ?? []"
             [allowCustomValue]="true"
+            (searchChange)="onGroupSearch($event)"
           ></tn-chip-input>
         </tn-form-field>
       }
