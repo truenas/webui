@@ -961,17 +961,35 @@ mat-form-field {
   outline: none;
 }
 
-// ix-input / ix-select wrapped their controls with this vertical rhythm
-// (margin: 12px 0; padding: 8px 0). tn-form-field has no default spacing, so
-// dialogs migrated to tn-form-field render their fields flush against each other
-// and against adjacent checkboxes. Restore the original ix-* field spacing.
-// Scoped to `tn-dialog-shell` so it only touches migrated dialogs and leaves the
-// vertical rhythm of non-dialog forms (signin, feedback, etc.) untouched.
+// Dialogs migrated to tn-form-field want the original ix-* dialog rhythm
+// (margin: 12px 0; padding: 8px 0), slightly tighter than the global default.
+// Scoped to `tn-dialog-shell` so it only touches migrated dialogs.
 tn-dialog-shell tn-form-field {
   display: block;
   margin-top: 12px;
   margin-bottom: 12px;
   padding: 8px 0;
+}
+
+// Same intent for forms hosted in the legacy SlideIn (`ix-slide-in-container`).
+// A dual-host form (SlideIn + `<tn-side-panel>`) must NOT carry an unconditional
+// field margin: `<tn-side-panel>` already spaces fields via tn-form-field's
+// reserved subscript area, so a flat margin double-spaces the side-panel. Scoped
+// to the SlideIn host, which has no such rhythm and renders fields flush, so
+// restore the original ix-* spacing (margin: 12px 0; padding: 8px 0) there only.
+ix-slide-in-container tn-form-field {
+  display: block;
+  margin: 12px 0;
+  padding: 8px 0;
+}
+
+// `tn-form-section` has no outer margin and its internal `gap` only spaces fields
+// *within* a section, so two adjacent sections butt together in the
+// `<tn-side-panel>` host (a section heading sits flush under the previous field).
+// Space sibling sections to match the section's own internal rhythm.
+tn-form-section + tn-form-section {
+  display: block;
+  margin-top: 1.25rem;
 }
 
 // A required tn-input / tn-select with no label renders its `*` asterisk inline,

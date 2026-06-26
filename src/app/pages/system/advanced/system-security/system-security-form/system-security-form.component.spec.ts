@@ -21,7 +21,6 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -1145,10 +1144,8 @@ describe('SystemSecurityFormComponent', () => {
           getData: jest.fn(() => fakeSystemSecurityConfig),
           requireConfirmationWhen: jest.fn(),
         }),
-        mockProvider(SlideIn, {
-          open: jest.fn(),
-        }),
         mockProvider(FormSidePanelService, {
+          open: jest.fn(() => SlideInResult.empty()),
           openForm: jest.fn(() => SlideInResult.empty()),
         }),
         mockProvider(NavigateAndHighlightService, {
@@ -1172,13 +1169,13 @@ describe('SystemSecurityFormComponent', () => {
       ],
     });
 
-    it('opens the user edit slidein when clicking the configure button for root/truenas_admin error', async () => {
+    it('opens the user edit side panel when clicking the configure button for root/truenas_admin error', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
       navigationSpectator.detectChanges();
       await navigationSpectator.fixture.whenStable();
-      const slideIn = navigationSpectator.inject(SlideIn);
+      const formPanel = navigationSpectator.inject(FormSidePanelService);
 
-      const openSpy = jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
+      const openSpy = jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.empty());
 
       // Trigger setupStigRequirements - should show root/admin password requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1196,7 +1193,10 @@ describe('SystemSecurityFormComponent', () => {
       // Click the Configure button
       configureButton.click();
 
-      expect(openSpy).toHaveBeenCalledWith(UserFormComponent, { data: { username: 'root', password_disabled: false } as User });
+      expect(openSpy).toHaveBeenCalledWith(UserFormComponent, {
+        title: 'Edit User',
+        inputs: { editUser: { username: 'root', password_disabled: false } as User },
+      });
     });
 
     it('navigates to Advanced Settings and opens Global Two-Factor Auth form when clicking Configure', async () => {
@@ -1268,8 +1268,6 @@ describe('SystemSecurityFormComponent', () => {
       const navigationSpectator = createTwoFactorTestComponent();
       navigationSpectator.detectChanges();
       await navigationSpectator.fixture.whenStable();
-      const slideIn = navigationSpectator.inject(SlideIn);
-      jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
       jest.spyOn(navigationSpectator.inject(Router), 'navigate').mockResolvedValue(true);
 
       // Trigger setupStigRequirements
@@ -1304,10 +1302,10 @@ describe('SystemSecurityFormComponent', () => {
       });
       reevaluationSpectator.detectChanges();
       await reevaluationSpectator.fixture.whenStable();
-      const slideIn = reevaluationSpectator.inject(SlideIn);
+      const formPanel = reevaluationSpectator.inject(FormSidePanelService);
 
-      // Simulate the slidein closing with a successful save
-      jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
+      // Simulate the side panel closing with a successful save
+      jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(true));
 
       // Enable STIG mode to trigger requirement check
       reevaluationSpectator.component.form.patchValue({ enable_gpos_stig: true });

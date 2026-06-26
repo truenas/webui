@@ -6,8 +6,7 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { User } from 'app/interfaces/user.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { DeleteUserDialog } from 'app/pages/credentials/users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
 import { UserDetailHeaderComponent } from 'app/pages/credentials/users/all-users/user-details/user-detail-header/user-detail-header.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
@@ -52,9 +51,7 @@ describe('UserDetailHeaderComponent', () => {
           closed: of(true),
         })),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
+      mockProvider(FormSidePanelService),
       mockApi([
         mockCall('user.update'),
         mockCall('group.query', []),
@@ -79,9 +76,9 @@ describe('UserDetailHeaderComponent', () => {
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       UserFormComponent,
-      { data: dummyUser },
+      { title: 'Edit User', inputs: { editUser: dummyUser } },
     );
   });
 

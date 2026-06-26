@@ -15,14 +15,23 @@ import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-chang
  * Centralizes the unsaved-changes confirmation and close plumbing that is otherwise
  * duplicated across every side-panel form. Subclasses provide the {@link form} and
  * {@link onSubmit} implementation, and call {@link trackCanSubmit} to expose `canSubmit`.
+ *
+ * The type parameter `R` is the success payload handed back to the opener: it defaults to
+ * `boolean` (a plain "saved" signal, all most forms need). Forms that create a record the
+ * caller needs — e.g. a picker's "Add New" — parameterize it (`SidePanelForm<User>`) and
+ * emit the record through {@link closed}; `FormSidePanelService.open` then resolves with it.
  */
 @Directive()
-export abstract class SidePanelForm {
+export abstract class SidePanelForm<R = boolean> {
   /** Present when opened via legacy SlideIn host. Absent when hosted in `<tn-side-panel>`. */
   readonly slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef, { optional: true });
 
-  /** Emitted when the form should close (true = saved, false = cancelled). Only for `<tn-side-panel>` hosts. */
-  readonly closed = output<boolean>();
+  /**
+   * Emitted when the form should close. The success payload is `R` (defaults to `true` when
+   * saved / `false` when cancelled); forms with a richer `R` emit the created record on save.
+   * Only for `<tn-side-panel>` hosts.
+   */
+  readonly closed = output<R>();
 
   /** The form whose dirty/validity state drives confirmation and submission. */
   protected abstract readonly form: Pick<AbstractControl, 'dirty' | 'status' | 'statusChanges'>;
@@ -50,12 +59,16 @@ export abstract class SidePanelForm {
     return this.form.dirty;
   }
 
-  /** Closes through whichever host opened the form. */
+  /**
+   * Closes through whichever host opened the form, emitting the boolean saved-signal. For the
+   * default `R = boolean` this is exact; forms with a richer payload close by emitting `R`
+   * through {@link closed} directly instead of calling this.
+   */
   protected close(saved: boolean): void {
     if (this.slideInRef) {
       this.slideInRef.close({ response: saved });
     } else {
-      this.closed.emit(saved);
+      this.closed.emit(saved as unknown as R);
     }
   }
 

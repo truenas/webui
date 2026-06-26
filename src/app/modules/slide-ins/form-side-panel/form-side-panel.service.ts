@@ -15,6 +15,15 @@ import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 
+/** A live panel in {@link FormSidePanelService}'s stack. */
+interface OpenPanel {
+  component: Type<SidePanelForm<unknown>>;
+  result$: SlideInResult<unknown>;
+  teardown: () => void;
+  /** The panel's container, kept so {@link FormSidePanelService.swap} can replace its hosted component in place. */
+  containerRef: ComponentRef<FormSidePanelContainerComponent>;
+}
+
 export interface FormSidePanelOptions {
   /** Panel header text. */
   title?: string;
@@ -56,18 +65,18 @@ export class FormSidePanelService {
   private document = inject(DOCUMENT);
 
   /**
-   * State for the single live panel, if one is open. A config side panel is modal — only one is
-   * meaningful at a time — so re-entrant opens (e.g. a double-fired menu click) return the same
-   * {@link FormSidePanelService.currentResult} instead of stacking a second host on `document.body`.
+   * Live panels, oldest first. Usually holds a single panel — a config side panel is modal — but a
+   * form may open another from within itself (e.g. an `ix-user-picker`'s "Add New" inside a hosted
+   * form), so panels stack: each new one mounts its own host later in `document.body`, so at
+   * tn-side-panel's shared `z-index` it paints on top, its backdrop dimming the panel beneath, and
+   * pops to reveal it on close. A re-entrant open of the component already on top (e.g. a
+   * double-fired menu click) is deduped — it returns the in-flight result instead of stacking a
+   * duplicate.
    *
-   * The panel is hosted on `document.body` (not in any route's view), so it outlives navigation
-   * unless {@link FormSidePanelService.closeCurrent} is invoked explicitly — {@link closeAll} does
-   * that. Both fields are set together when a panel opens and cleared together on teardown.
+   * Panels are hosted on `document.body` (not in any route's view), so they outlive navigation
+   * unless torn down explicitly — {@link closeAll} does that for every panel in the stack.
    */
-  private currentResult: SlideInResult<boolean> | null = null;
-  private closeCurrent: (() => void) | null = null;
-  /** The live panel's container, kept so {@link swap} can replace its hosted component in place. */
-  private currentContainerRef: ComponentRef<FormSidePanelContainerComponent> | null = null;
+  private stack: OpenPanel[] = [];
 
   /**
    * Opens a declarative {@link FormDefinition} in the side panel without a per-form wrapper
@@ -94,16 +103,19 @@ export class FormSidePanelService {
     });
   }
 
-  open(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): SlideInResult<boolean> {
-    if (this.currentResult) {
-      return this.currentResult;
+  open<R = boolean>(component: Type<SidePanelForm<R>>, options: FormSidePanelOptions = {}): SlideInResult<R> {
+    const top = this.stack[this.stack.length - 1];
+    // Dedupe a re-entrant open of the component already on top (e.g. a double-fired menu click);
+    // a different component is a genuine nested open and stacks on top.
+    if (top?.component === component) {
+      return top.result$ as SlideInResult<R>;
     }
 
-    const close$ = new Subject<SlideInResponse<boolean>>();
+    const close$ = new Subject<SlideInResponse<R>>();
     // Defaults to a cancel; overwritten with the form's response when it closes itself via save.
-    let pendingResponse: boolean | undefined;
+    let pendingResponse: R | undefined;
 
-    const portal = new ComponentPortal<SidePanelForm>(component, null, this.injector);
+    const portal = new ComponentPortal<SidePanelForm<R>>(component, null, this.injector);
     const containerRef = createComponent(FormSidePanelContainerComponent, {
       environmentInjector: this.environmentInjector,
     });
@@ -126,9 +138,7 @@ export class FormSidePanelService {
         return;
       }
       isTornDown = true;
-      this.currentResult = null;
-      this.closeCurrent = null;
-      this.currentContainerRef = null;
+      this.stack = this.stack.filter((panel) => panel.teardown !== teardown);
       close$.next({ response: pendingResponse });
       close$.complete();
       this.appRef.detachView(containerRef.hostView);
@@ -136,9 +146,10 @@ export class FormSidePanelService {
     };
 
     containerRef.instance.formAttached.subscribe((form) => {
-      // Form-initiated close (save / cancel). `saved === true` is the only success; everything
-      // else is a cancellation, matching SlideInResult's `=== undefined` convention.
-      form.closed.subscribe((saved) => {
+      // Form-initiated close (save / cancel). A truthy payload is a success — `true` for the
+      // default boolean form, or the created record for a richer `R`; any falsy value is a
+      // cancellation, matching SlideInResult's `=== undefined` convention.
+      (form as SidePanelForm<R>).closed.subscribe((saved) => {
         pendingResponse = saved || undefined;
         containerRef.setInput('open', false);
       });
@@ -158,14 +169,18 @@ export class FormSidePanelService {
       }
     }));
 
-    this.closeCurrent = teardown;
-    this.currentContainerRef = containerRef;
-    this.currentResult = new SlideInResult<boolean>(close$);
-    return this.currentResult;
+    const result$ = new SlideInResult<R>(close$);
+    this.stack.push({
+      component: component as Type<SidePanelForm<unknown>>,
+      result$,
+      teardown,
+      containerRef,
+    });
+    return result$;
   }
 
   /**
-   * Replaces the hosted component in the OPEN panel in place — the panel chrome (header, backdrop,
+   * Replaces the hosted component in the TOP open panel in place — the panel chrome (header, backdrop,
    * focus trap, the {@link SlideInResult} listeners) stays, only the projected content swaps. This is
    * the panel equivalent of the legacy `SlideInRef.swap`, used for wizard ⇄ advanced-form switches.
    *
@@ -174,10 +189,11 @@ export class FormSidePanelService {
    * No-op if no panel is open.
    */
   swap(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): void {
-    const containerRef = this.currentContainerRef;
-    if (!containerRef || containerRef.hostView.destroyed) {
+    const top = this.stack[this.stack.length - 1];
+    if (!top || top.containerRef.hostView.destroyed) {
       return;
     }
+    const { containerRef } = top;
 
     containerRef.setInput('title', options.title ?? '');
     containerRef.setInput('width', options.width ?? (options.wide ? '800px' : '480px'));
@@ -187,14 +203,17 @@ export class FormSidePanelService {
     // Changing the portal input makes `cdkPortalOutlet` detach the old component and attach the new.
     containerRef.setInput('portal', new ComponentPortal<SidePanelForm>(component, null, this.injector));
     containerRef.changeDetectorRef.detectChanges();
+    // Keep the stack entry's component in sync so the re-entrant-open dedupe stays correct.
+    top.component = component as Type<SidePanelForm<unknown>>;
   }
 
   /**
-   * Tears down the open panel immediately (no close animation), resolving it as a cancel.
+   * Tears down every open panel immediately (no close animation), resolving each as a cancel.
    * Called on navigation, mirroring `SlideIn.closeAll()`, so a config form never orphans on
    * `document.body` after its originating route is gone.
    */
   closeAll(): void {
-    this.closeCurrent?.();
+    // Snapshot first — each teardown mutates `this.stack`.
+    [...this.stack].forEach((panel) => panel.teardown());
   }
 }
