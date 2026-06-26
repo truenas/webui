@@ -1,27 +1,24 @@
 @if (container(); as container) {
-  <mat-card class="card">
-    <mat-card-header>
-      <h3 mat-card-title>
-        {{ 'Tools' | translate }}
-      </h3>
-    </mat-card-header>
-
-    <mat-card-content>
+  <tn-card
+    padding="small"
+    [title]="'Tools' | translate"
+    [padContent]="false"
+  >
+    <tn-list>
       <div [tnTooltip]="isContainerStopped() ? ('Container is not running' | translate) : ''">
-        <a
-          mat-flat-button
-          color="default"
-          ixTest="open-shell"
-          class="tool"
-          [class.disabled]="isContainerStopped()"
+        <tn-list-item
+          [tnTestId]="'open-shell'"
+          [class.is-clickable]="!isContainerStopped()"
+          [clickable]="!isContainerStopped()"
           [disabled]="isContainerStopped()"
-          [routerLink]="['/containers', 'view', container.id, 'shell']"
+          (itemClick)="openShell(container.id)"
         >
-          <span>{{ 'Shell' | translate }}</span>
-
-          <tn-icon name="console-line" library="mdi"></tn-icon>
-        </a>
+          <div class="shell-row">
+            <span>{{ 'Shell' | translate }}</span>
+            <tn-icon name="console-line" library="mdi"></tn-icon>
+          </div>
+        </tn-list-item>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </tn-list>
+  </tn-card>
 }

@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -14,7 +15,6 @@ import {
 } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -26,12 +26,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./add-usb-device-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatMenu,
-    MatMenuItem,
-    TestDirective,
+    TnButtonComponent,
+    TnMenuComponent,
+    TnMenuTriggerDirective,
     TranslateModule,
-    MatMenuTrigger,
     NgxSkeletonLoaderModule,
     RequiresRolesDirective,
   ],
@@ -87,6 +85,15 @@ export class AddUsbDeviceMenuComponent {
 
   protected readonly hasDevicesToAdd = computed(() => {
     return this.availableUsbDevices().length > 0;
+  });
+
+  protected readonly menuItems = computed<TnMenuItem[]>(() => {
+    return this.availableUsbDevices().map((usb) => ({
+      id: usb.devicePath,
+      label: usb.description,
+      testId: ['add-usb-device', usb.description],
+      action: () => this.addUsb(usb),
+    }));
   });
 
   protected addUsb(usb: AvailableUsb & { devicePath: string }): void {

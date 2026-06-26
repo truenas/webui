@@ -1,22 +1,19 @@
-import { ChangeDetectionStrategy, Component, input, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import {
-  MatCard, MatCardActions, MatCardContent, MatCardHeader,
-  MatCardTitle,
-} from '@angular/material/card';
+  ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef,
+} from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { TnButtonComponent, TnCardAction, TnCardComponent, TnCardFooterActionsDirective } from '@truenas/ui-components';
 import { containerCapabilitiesPolicyLabels, containerIdmapTypeLabels, containerTimeLabels } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container } from 'app/interfaces/container.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -27,17 +24,12 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   styleUrls: ['./container-general-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatCard,
-    MatCardTitle,
-    MatCardHeader,
-    MatCardActions,
-    MatCardContent,
+    TnButtonComponent,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     TranslateModule,
     YesNoPipe,
     MapValuePipe,
-    RequiresRolesDirective,
-    TestDirective,
   ],
 })
 export class ContainerGeneralInfoComponent {
@@ -49,6 +41,7 @@ export class ContainerGeneralInfoComponent {
   private router = inject(Router);
   private slideIn = inject(SlideIn);
   private containersStore = inject(ContainersStore);
+  private authService = inject(AuthService);
 
   container = input.required<Container>();
 
@@ -57,13 +50,40 @@ export class ContainerGeneralInfoComponent {
   protected readonly containerIdmapTypeLabels = containerIdmapTypeLabels;
   protected readonly containerTimeLabels = containerTimeLabels;
 
-  editContainer(): void {
+  private hasWriteRole = toSignal(
+    this.authService.hasRole([Role.ContainerWrite]),
+    { initialValue: false },
+  );
+
+  protected editAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasWriteRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Edit'),
+      testId: 'edit-container',
+      handler: () => this.editContainer(),
+    };
+  });
+
+  protected deleteAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasWriteRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Delete'),
+      testId: 'delete-container',
+      handler: () => this.deleteContainer(),
+    };
+  });
+
+  private editContainer(): void {
     this.slideIn
       .open(ContainerFormComponent, { data: this.container() })
       .onSuccess(() => this.containersStore.reload(), this.destroyRef);
   }
 
-  deleteContainer(): void {
+  private deleteContainer(): void {
     this.dialogService.confirmDelete({
       message: this.translate.instant('Delete {name}?', { name: this.container().name }),
       call: () => this.api.call('container.delete', [this.container().id]),

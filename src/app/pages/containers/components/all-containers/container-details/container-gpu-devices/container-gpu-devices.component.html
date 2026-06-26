@@ -1,11 +1,11 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'GPU Devices' | translate }}
-    </h3>
+<tn-card padding="small">
+  <h3 tnCardHeader class="tn-card__title">
+    {{ 'GPU Devices' | translate }}
+  </h3>
 
+  <ng-template tnCardFooterActions>
     <ix-add-gpu-device-menu></ix-add-gpu-device-menu>
-  </mat-card-header>
+  </ng-template>
 
   @if (hasNvidiaGpusWithoutDrivers()) {
     <div class="nvidia-drivers-warning">
@@ -14,37 +14,33 @@
         <span class="warning-text">
           {{ 'NVIDIA GPUs detected, but drivers are not enabled.' | translate }}
         </span>
-        <button
-          mat-button
-          type="button"
+        <tn-button
           class="enable-button"
-          ixTest="enable-nvidia-drivers"
-          (click)="enableNvidiaDrivers()"
-        >
-          {{ 'Enable NVIDIA Drivers' | translate }}
-        </button>
+          variant="outline"
+          [testId]="'enable-nvidia-drivers'"
+          [label]="'Enable NVIDIA Drivers' | translate"
+          (onClick)="enableNvidiaDrivers()"
+        ></tn-button>
       </div>
     </div>
   }
 
-  <mat-card-content>
-    @if (isLoadingDevices()) {
-      <ngx-skeleton-loader></ngx-skeleton-loader>
-    } @else {
-      @for (device of shownDevices(); track device.id) {
-        <div class="device">
-          <span class="device-description">{{ getDeviceDescription(device) }}</span>
+  @if (isLoadingDevices()) {
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+  } @else {
+    @for (device of shownDevices(); track device.id) {
+      <div class="device">
+        <span class="device-description">{{ getDeviceDescription(device) }}</span>
 
-          <ix-device-actions-menu
-            [device]="device"
-            [showEdit]="false"
-            [isDisabled]="isContainerRunning()"
-            [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
-          ></ix-device-actions-menu>
-        </div>
-      } @empty {
-        <div class="no-devices">{{ 'No GPU devices added.' | translate }}</div>
-      }
+        <ix-device-actions-menu
+          [device]="device"
+          [showEdit]="false"
+          [isDisabled]="isContainerRunning()"
+          [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
+        ></ix-device-actions-menu>
+      </div>
+    } @empty {
+      <div class="no-devices">{{ 'No GPU devices added.' | translate }}</div>
     }
-  </mat-card-content>
-</mat-card>
+  }
+</tn-card>

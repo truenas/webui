@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatAnchor } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCardComponent,
+  TnIconComponent,
+  TnListComponent,
+  TnListItemComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { ContainerStatus } from 'app/enums/container.enum';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 @Component({
@@ -16,24 +18,26 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   styleUrls: ['./container-tools.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCardTitle,
-    MatCardHeader,
-    MatCard,
-    MatCardContent,
-    TranslateModule,
-    MatAnchor,
-    TestDirective,
+    TnCardComponent,
+    TnListComponent,
+    TnListItemComponent,
     TnIconComponent,
     TnTooltipDirective,
-    RouterLink,
+    TnTestIdDirective,
+    TranslateModule,
   ],
 })
 export class ContainerToolsComponent {
   private containersStore = inject(ContainersStore);
+  private router = inject(Router);
 
   protected readonly container = this.containersStore.selectedContainer;
 
   protected readonly isContainerStopped = computed(() => {
     return this.container()?.status?.state !== ContainerStatus.Running;
   });
+
+  protected openShell(containerId: number): void {
+    this.router.navigate(['/containers', 'view', containerId, 'shell']);
+  }
 }

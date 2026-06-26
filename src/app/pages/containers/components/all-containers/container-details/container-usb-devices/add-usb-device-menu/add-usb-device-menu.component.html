@@ -1,29 +1,16 @@
 @if (isLoading()) {
   <ngx-skeleton-loader class="loader"></ngx-skeleton-loader>
 } @else if (hasDevicesToAdd()) {
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="add-device"
-    [matMenuTriggerFor]="addDeviceMenu"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    variant="filled"
+    color="primary"
+    [testId]="'add-device'"
+    [label]="'Add' | translate"
+    [tnMenuTriggerFor]="addDeviceMenu"
+  ></tn-button>
 
-  <mat-menu #addDeviceMenu="matMenu">
-    @if (availableUsbDevices().length) {
-      <h4 class="menu-header">{{ 'USB Devices' | translate }}</h4>
-      @for (usb of availableUsbDevices(); track usb.devicePath) {
-        <button
-          mat-menu-item
-          [ixTest]="['add-usb-device', usb.description]"
-          (click)="addUsb(usb)"
-        >
-          {{ usb.description }}
-        </button>
-      }
-    }
-  </mat-menu>
+  <tn-menu #addDeviceMenu [items]="menuItems()"></tn-menu>
 } @else {
   <span class="no-devices-available">{{ 'No USB devices available' | translate }}</span>
 }
