@@ -1,9 +1,24 @@
+@import 'mixins/forms';
+
+// tn-form-field has no built-in vertical rhythm and tn-radio defaults to inline-block; restore the
+// spacing the old ix-* controls carried and stack the radio groups.
+@include tn-form-field-spacing();
+@include tn-radio-group-layout();
+
 .lifetime {
+  // Align the value input and unit select on the SAME baseline even when one label wraps to two
+  // lines (e.g. "Source Snapshot Lifetime" vs "Unit") — otherwise they sit at different heights.
+  align-items: flex-end;
+  column-gap: 8px;
   display: flex;
   width: 50%;
 
-  .value,
+  .value {
+    flex: 1;
+    min-width: 0;
+  }
+
   .unit {
-    width: 50%;
+    width: 120px;
   }
 }

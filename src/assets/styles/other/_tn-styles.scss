@@ -1004,3 +1004,14 @@ tn-form-section {
   display: block;
   padding-bottom: 1.25rem;
 }
+
+// Side panels open with a bold section heading (or intro banner) sitting flush under the header
+// divider — the library's 24px content padding reads as cramped there. Give a little more
+// breathing room at the very top. The panel renders its overlay on `document.body` (not inside the
+// host component), so it can't be scoped by component ancestry. The library's
+// `.tn-side-panel__content` rule is emulated-encapsulated (`[_ngcontent]` → specificity 0,2,0), so
+// this needs a three-class chain (0,3,0 — the overlay→panel→content ancestry) to win the longhand
+// without `!important`. Tracked under NAS-141021.
+.tn-side-panel__overlay .tn-side-panel__panel .tn-side-panel__content {
+  padding-top: 36px;
+}

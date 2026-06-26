@@ -1,13 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input, output, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of, switchMap, debounceTime, combineLatest, startWith } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import {
+  InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  Observable, of, switchMap, debounceTime, combineLatest, startWith,
+} from 'rxjs';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
@@ -15,21 +19,14 @@ import {
   PeriodicSnapshotTask,
   PeriodicSnapshotTaskCreate,
 } from 'app/interfaces/periodic-snapshot-task.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { StorageService } from 'app/services/storage.service';
@@ -41,21 +38,17 @@ import { TaskService } from 'app/services/task.service';
   styleUrls: ['./snapshot-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
-    IxChipsComponent,
-    IxCheckboxComponent,
-    IxInputComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnChipInputComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
     SchedulerComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
-    FormActionsComponent,
   ],
 })
 export class SnapshotTaskFormComponent implements OnInit {
@@ -64,22 +57,26 @@ export class SnapshotTaskFormComponent implements OnInit {
   private api = inject(ApiService);
   private snapshotTaskService = inject(SnapshotTaskService);
   private translate = inject(TranslateService);
-  private errorHandler = inject(FormErrorHandlerService);
   private taskService = inject(TaskService);
-  private snackbar = inject(SnackbarService);
   protected storageService = inject(StorageService);
-  slideInRef = inject<SlideInRef<PeriodicSnapshotTask | undefined, boolean>>(SlideInRef);
+  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
+  // `<tn-side-panel>` form panel, where data arrives via {@link taskToEdit}.
+  private slideInRef = inject<SlideInRef<PeriodicSnapshotTask | undefined, boolean>>(SlideInRef, { optional: true });
 
-  protected readonly requiredRoles = [Role.SnapshotTaskWrite];
+  /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
+  readonly taskToEdit = input<PeriodicSnapshotTask | undefined>(undefined);
+
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
+  readonly closed = output<boolean>();
+
+  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
+  protected readonly InputType = InputType;
 
   get isNew(): boolean {
     return !this.editingTask;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Periodic Snapshot Task')
-      : this.translate.instant('Edit Periodic Snapshot Task');
   }
 
   form = this.fb.group({
@@ -134,16 +131,29 @@ export class SnapshotTaskFormComponent implements OnInit {
     Object.values(LifetimeUnit).map((lifetime) => ({ label: lifetime, value: lifetime })),
   );
 
-  constructor() {
-    const slideInRef = this.slideInRef;
+  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
+  submit(): void {
+    this.ixForm()?.submit();
+  }
 
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingTask = slideInRef.getData();
+  /** Whether the form may be submitted right now; the `<tn-side-panel>` host reads this for its Save action. */
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  /** Whether the form is currently submitting; the host shows a progress bar while true. */
+  isBusy(): boolean {
+    return this.ixForm()?.isLoading() ?? false;
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   ngOnInit(): void {
+    this.editingTask = this.slideInRef?.getData() ?? this.taskToEdit();
+
     if (this.editingTask) {
       this.setTaskForEdit(this.editingTask);
       this.setupRetentionChangeDetection();
@@ -221,7 +231,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     });
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (): SubmitResult => {
     const values = this.form.value;
     const {
       begin, end, fixate_removal_date: fixateRemovalDate, ...restValues
@@ -240,33 +250,16 @@ export class SnapshotTaskFormComponent implements OnInit {
       ...(!this.isNew && { fixate_removal_date: fixateRemovalDate }),
     };
 
-    this.isLoading.set(true);
-    let request$: Observable<unknown>;
-    if (this.editingTask) {
+    const request$: Observable<unknown> = this.editingTask
       // cspell:ignore snapshottask
-      request$ = this.api.call('pool.snapshottask.update', [
-        this.editingTask.id,
-        params,
-      ]);
-    } else {
-      // cspell:ignore snapshottask
-      request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
-    }
+      ? this.api.call('pool.snapshottask.update', [this.editingTask.id, params])
+      : this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
 
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        if (this.isNew) {
-          this.snackbar.success(this.translate.instant('Task created'));
-        } else {
-          this.snackbar.success(this.translate.instant('Task updated'));
-        }
-        this.isLoading.set(false);
-        this.slideInRef.close({ response: true });
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$,
+      successMessage: this.isNew
+        ? this.translate.instant('Task created')
+        : this.translate.instant('Task updated'),
+    };
+  };
 }

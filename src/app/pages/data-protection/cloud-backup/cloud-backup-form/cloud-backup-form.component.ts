@@ -1,16 +1,26 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input, output, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnBannerComponent, TnBannerActionDirective } from '@truenas/ui-components';
 import {
-  debounceTime, distinctUntilChanged, filter, map, of,
+  InputType,
+  TnBannerComponent,
+  TnBannerActionDirective,
+  TnCheckboxComponent,
+  TnChipInputComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  Observable, debounceTime, distinctUntilChanged, filter, map, of,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncTransferSetting, cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -21,26 +31,19 @@ import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.inte
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -53,24 +56,19 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   styleUrls: ['./cloud-backup-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnChipInputComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     CloudCredentialsSelectComponent,
-    IxSelectComponent,
-    IxInputComponent,
     SchedulerComponent,
-    IxCheckboxComponent,
-    IxTextareaComponent,
-    IxChipsComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
     TnBannerComponent,
     TnBannerActionDirective,
@@ -81,11 +79,21 @@ export class CloudBackupFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
-  private snackbar = inject(SnackbarService);
   private filesystemService = inject(FilesystemService);
   private cloudCredentialService = inject(CloudCredentialService);
-  slideInRef = inject<SlideInRef<CloudBackup | undefined, CloudBackup>>(SlideInRef);
+  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
+  // `<tn-side-panel>` form panel, where data arrives via {@link backupToEdit}.
+  private slideInRef = inject<SlideInRef<CloudBackup | undefined, CloudBackup>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
+
+  /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
+  readonly backupToEdit = input<CloudBackup | undefined>(undefined);
+
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
+  readonly closed = output<boolean>();
+
+  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
 
   get isNew(): boolean {
     return !this.editingTask;
@@ -97,11 +105,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   protected readonly slashRootNode = [slashRootNode];
 
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add TrueCloud Backup Task')
-      : this.translate.instant('Edit TrueCloud Backup Task');
-  }
+  protected readonly InputType = InputType;
 
   protected readonly newBucketOption = {
     label: this.translate.instant('Add new'),
@@ -133,7 +137,7 @@ export class CloudBackupFormComponent implements OnInit {
   });
 
   protected isLoading = signal(false);
-  editingTask: CloudBackup | undefined;
+  protected editingTask: CloudBackup | undefined;
 
   bucketOptions$ = of<SelectOption[]>([]);
   transferSettings$ = this.api.call('cloud_backup.transfer_setting_choices').pipe(
@@ -148,23 +152,36 @@ export class CloudBackupFormComponent implements OnInit {
   bucketNodeProvider: TreeNodeProvider;
 
   readonly newOption = newOption;
-  protected readonly requiredRoles = [Role.CloudBackupWrite];
+  readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly CloudSyncProviderName = CloudSyncProviderName;
 
   readonly helptext = helptextCloudBackup;
   readonly storjAccountUrl = 'https://www.storj.io/get-started';
   readonly documentationUrl = 'https://www.truenas.com/docs/scale/dataprotection/truecloud/truecloudtasks/';
 
-  constructor() {
-    const slideInRef = this.slideInRef;
+  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
+  submit(): void {
+    this.ixForm()?.submit();
+  }
 
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingTask = slideInRef.getData();
+  /** Whether the form may be submitted right now; the `<tn-side-panel>` host reads this for its Save action. */
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  /** Whether the form is currently submitting; the host shows a progress bar while true. */
+  isBusy(): boolean {
+    return this.ixForm()?.isLoading() ?? false;
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   ngOnInit(): void {
+    this.editingTask = this.slideInRef?.getData() ?? this.backupToEdit();
+
     this.setFileNodeProvider();
     this.setDirectoriesNodeProvider();
     this.setBucketNodeProvider();
@@ -262,32 +279,21 @@ export class CloudBackupFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected handleSubmit = (): SubmitResult => {
     const payload = this.prepareData(this.form.value);
-    let request$ = this.api.call('cloud_backup.create', [payload]);
+    const request$: Observable<CloudBackup> = this.editingTask
+      ? this.api.call('cloud_backup.update', [this.editingTask.id, payload])
+      : this.api.call('cloud_backup.create', [payload]);
 
-    this.isLoading.set(true);
-
-    if (this.editingTask) {
-      request$ = this.api.call('cloud_backup.update', [this.editingTask.id, payload]);
-    }
-
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (response: CloudBackup) => {
-        if (this.isNew) {
-          this.snackbar.success(this.translate.instant('Task created'));
-        } else {
-          this.snackbar.success(this.translate.instant('Task updated'));
-        }
-        this.isLoading.set(false);
-        this.slideInRef.close({ response });
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$,
+      successMessage: this.isNew
+        ? this.translate.instant('Task created')
+        : this.translate.instant('Task updated'),
+      // SlideIn host listeners expect the saved record (slideInRef.close({ response })).
+      closeWith: (response: unknown) => response as CloudBackup,
+    };
+  };
 
   private listenForCredentialsChanges(): void {
     this.form.controls.credentials.valueChanges

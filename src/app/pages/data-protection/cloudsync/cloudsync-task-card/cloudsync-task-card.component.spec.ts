@@ -22,6 +22,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -134,7 +135,7 @@ describe('CloudSyncTaskCardComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -188,17 +189,20 @@ describe('CloudSyncTaskCardComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: /^Edit$/ });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       CloudSyncFormComponent,
       {
+        title: 'Edit Cloud Sync Task',
         wide: true,
-        data: expect.objectContaining({
-          id: 3,
-          description: 'custom-cloudsync',
-          enabled: false,
-          direction: 'PULL',
-          // The data will have additional transformed fields like frequency_sort_key, etc.
-        }),
+        inputs: {
+          taskToEdit: expect.objectContaining({
+            id: 3,
+            description: 'custom-cloudsync',
+            enabled: false,
+            direction: 'PULL',
+            // The data will have additional transformed fields like frequency_sort_key, etc.
+          }),
+        },
       },
     );
   });
@@ -207,9 +211,9 @@ describe('CloudSyncTaskCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       CloudSyncWizardComponent,
-      { wide: true },
+      { title: 'Cloud Sync Task Wizard', wide: true, footerless: true },
     );
   });
 

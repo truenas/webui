@@ -1,3 +1,11 @@
+@import 'mixins/forms';
+
+// tn-form-field has no built-in vertical rhythm and tn-radio defaults to inline-block; the wizard
+// step renders fields in a plain <form>, so restore the spacing the old ix-* controls carried and
+// stack the radio groups.
+@include tn-form-field-spacing();
+@include tn-radio-group-layout();
+
 .replication {
   display: flex;
   gap: 10px;
@@ -9,8 +17,12 @@
 
   .snapshots-text {
     background-color: var(--primary);
+    border-radius: 2px;
+    display: inline-block;
     font-size: 12px;
-    padding: 4px 2px;
+    // Space it from the checkbox that follows (the one above already carries the field margin).
+    margin-bottom: 16px;
+    padding: 4px 6px;
   }
 
   .warning {

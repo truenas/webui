@@ -1,11 +1,27 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type,
+  inject, input, output, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { NavigationExtras, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  InputType,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnChipInputComponent,
+  TnDialog,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnIconComponent,
+  TnInputComponent,
+  TnSelectComponent,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
   BehaviorSubject,
@@ -37,22 +53,21 @@ import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { bwlimitValidator } from 'app/modules/forms/ix-forms/validators/bwlimit-validation/bwlimit-validation';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import {
+  SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -77,23 +92,24 @@ type FormValue = CloudSyncFormComponent['form']['value'];
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
   imports: [
+    AsyncPipe,
     IxFormComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnChipInputComponent,
+    TnButtonComponent,
     TransferModeExplanationComponent,
     IxExplorerComponent,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
     CloudCredentialsSelectComponent,
-    IxCheckboxComponent,
     SchedulerComponent,
-    IxTextareaComponent,
-    IxChipsComponent,
     RequiresRolesDirective,
-    MatButton,
     TranslateModule,
   ],
 })
@@ -110,12 +126,73 @@ export class CloudSyncFormComponent implements OnInit {
   protected tnDialog = inject(TnDialog);
   private filesystemService = inject(FilesystemService);
   protected cloudCredentialService = inject(CloudCredentialService);
-  slideInRef = inject<SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask>>(SlideInRef);
+  // Optional: present only in the legacy SlideIn host (incl. the wizard `swap`).
+  // Absent when hosted in the `<tn-side-panel>` form panel, where data arrives via
+  // {@link taskToEdit} and close happens through {@link closed}.
+  // Public (not private): the cloudsync wizard steps `slideInRef.swap(CloudSyncFormComponent)`, which
+  // requires this form to structurally satisfy `ComponentInSlideIn` (a public `slideInRef`). Optional
+  // because the form is also hosted in a `<tn-side-panel>` (no SlideInRef) when opened via FormSidePanelService.
+  slideInRef = inject<SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask>>(SlideInRef, { optional: true });
   private authService = inject(AuthService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
+
+  /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
+  readonly taskToEdit = input<CloudSyncTaskUi | undefined>(undefined);
+
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
+  readonly closed = output<boolean>();
+
+  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  protected readonly InputType = InputType;
 
   protected get isNew(): boolean {
     return !this.editingTask;
+  }
+
+  /**
+   * Secondary footer action rendered by the `<tn-side-panel>` host. Only in create mode (reached by
+   * swapping out of the wizard) — editing an existing task has no wizard to switch back to.
+   */
+  get footerActions(): SidePanelFooterAction[] {
+    const actions: SidePanelFooterAction[] = [{
+      label: this.helptext.dryRunButton,
+      testId: 'dry-run',
+      requiredRoles: this.requiredRoles,
+      disabled: () => this.form.invalid || this.isLoading() || (this.ixForm()?.isSubmitting() ?? false),
+      onClick: () => this.onDryRun(),
+    }];
+    if (this.isNew) {
+      actions.push({
+        label: T('Switch To Wizard'),
+        testId: 'switch-to-wizard',
+        disabled: () => this.ixForm()?.isSubmitting() ?? false,
+        onClick: () => this.onSwitchToWizard(),
+      });
+    }
+    return actions;
+  }
+
+  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  /** Whether the form may be submitted right now; the `<tn-side-panel>` host reads this for its Save action. */
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  /** Whether the form is currently submitting; the host shows a progress bar while true. */
+  isBusy(): boolean {
+    return this.ixForm()?.isLoading() ?? false;
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   protected readonly slashRootNode = [slashRootNode];
@@ -228,10 +305,6 @@ export class CloudSyncFormComponent implements OnInit {
 
   private editingTask: CloudSyncTaskUi | undefined;
 
-  constructor() {
-    this.editingTask = this.slideInRef.getData();
-  }
-
   private getCredentialsList(): Observable<CloudSyncCredential[]> {
     return this.fetchCloudSyncCredentialsList();
   }
@@ -258,6 +331,8 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.editingTask = this.slideInRef?.getData() ?? this.taskToEdit();
+
     if (!this.editingTask && this.form.controls.direction.value === Direction.Pull) {
       this.form.controls.snapshot.disable();
     }
@@ -774,12 +849,25 @@ export class CloudSyncFormComponent implements OnInit {
   };
 
   onSwitchToWizard(): void {
-    this.slideInRef.swap?.(CloudSyncWizardComponent, { wide: true });
+    if (this.slideInRef) {
+      this.slideInRef.swap?.(CloudSyncWizardComponent, { wide: true });
+    } else {
+      // Panel host: swap back to the wizard in place (footerless — the stepper owns its buttons).
+      this.formPanel.swap(CloudSyncWizardComponent as unknown as Type<SidePanelForm>, {
+        title: this.translate.instant('Cloud Sync Task Wizard'),
+        wide: true,
+        footerless: true,
+      });
+    }
   }
 
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
-    this.slideInRef.close({ response: undefined });
+    if (this.slideInRef) {
+      this.slideInRef.close({ response: undefined });
+    } else {
+      this.closed.emit(false);
+    }
   }
 
   private getInitialData(): void {

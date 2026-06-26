@@ -4,15 +4,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
@@ -46,7 +49,7 @@ describe('SnapshotTaskComponent', () => {
     vmware_sync: false,
   } as PeriodicSnapshotTask;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
+  const slideInRef: SlideInRef<PeriodicSnapshotTask | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn((): undefined => undefined),
@@ -54,7 +57,6 @@ describe('SnapshotTaskComponent', () => {
 
   let spectator: Spectator<SnapshotTaskFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: SnapshotTaskFormComponent,
     imports: [
@@ -71,7 +73,6 @@ describe('SnapshotTaskComponent', () => {
         mockCall('pool.snapshottask.update_will_change_retention_for', {}),
       ]),
       mockProvider(DialogService),
-      mockProvider(SlideIn),
       mockProvider(StorageService, {
         getDatasetNameOptions: jest.fn(() => of([
           { label: 'test', value: 'test' },
@@ -93,29 +94,39 @@ describe('SnapshotTaskComponent', () => {
           },
         ],
       }),
+      ...ixFormTestingProviders(),
       mockProvider(SlideInRef, slideInRef),
     ],
   });
 
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getChipInput = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
+    TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getScheduler = (): Promise<SchedulerHarness> => loader.getHarness(SchedulerHarness);
+
   describe('adds a new snapshot task', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('adds a new snapshot task when new form is saved', async () => {
-      await form.fillForm({
-        Dataset: 'test',
-        Exclude: [],
-        Recursive: true,
-        'Snapshot Lifetime': 2,
-        Unit: LifetimeUnit.Week,
-        'Naming Schema': 'auto-%Y-%m-%d_%H-%M',
-        Schedule: '0 0 * * *',
-        'Allow Taking Empty Snapshots': false,
-        Enabled: true,
-      });
+      await (await getSelect('dataset')).selectOption('test');
+      await (await getInput('lifetime_value')).setValue('2');
+      await (await getSelect('lifetime_unit')).selectOption(LifetimeUnit.Week);
+      await (await getInput('naming_schema')).setValue('auto-%Y-%m-%d_%H-%M');
+      await (await getCheckbox('recursive')).check();
+      await (await getCheckbox('allow_empty')).uncheck();
+      await (await getCheckbox('enabled')).check();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -142,39 +153,31 @@ describe('SnapshotTaskComponent', () => {
   });
 
   describe('edits snapshot task', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ ...existingTask, id: 1 }) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('shows values for an existing snapshot task when it is open for edit', async () => {
-      const values = await form.getValues();
-
-      expect(values).toEqual({
-        Dataset: 'test',
-        Exclude: [],
-        Recursive: true,
-        'Snapshot Lifetime': '2',
-        Unit: LifetimeUnit.Week,
-        'Naming Schema': 'auto-%Y-%m-%d_%H-%M',
-        Schedule: 'Daily At 00:00 (12:00 AM)',
-        'Allow Taking Empty Snapshots': true,
-        Enabled: true,
-      });
+      expect(await (await getSelect('dataset')).getDisplayText()).toBe('test');
+      expect(await (await getChipInput('exclude')).getChips()).toEqual([]);
+      expect(await (await getCheckbox('recursive')).isChecked()).toBe(true);
+      expect(await (await getInput('lifetime_value')).getValue()).toBe('2');
+      expect(await (await getSelect('lifetime_unit')).getDisplayText()).toBe(LifetimeUnit.Week);
+      expect(await (await getInput('naming_schema')).getValue()).toBe('auto-%Y-%m-%d_%H-%M');
+      expect(await (await getScheduler()).getValue()).toBe('Daily At 00:00 (12:00 AM)');
+      expect(await (await getCheckbox('allow_empty')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
     });
 
     it('saves updated snapshot task when form opened for edit is saved', async () => {
-      await form.fillForm({
-        Exclude: ['root'],
-        Recursive: false,
-        Schedule: '0 0 * * *',
-        Enabled: false,
-      });
+      await (await getChipInput('exclude')).addChip('root');
+      await (await getCheckbox('recursive')).uncheck();
+      await (await getCheckbox('enabled')).uncheck();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -206,9 +209,7 @@ describe('SnapshotTaskComponent', () => {
     it('includes fixate_removal_date as false when no snapshots are affected', async () => {
       const apiService = spectator.inject(ApiService);
 
-      await form.fillForm({
-        'Allow Taking Empty Snapshots': false,
-      });
+      await (await getCheckbox('allow_empty')).uncheck();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -225,9 +226,7 @@ describe('SnapshotTaskComponent', () => {
       const mockSnapshots = ['snapshot1', 'snapshot2', 'snapshot3'];
       spectator.inject(ApiService).call.mockReturnValue(of(mockSnapshots));
 
-      await form.fillForm({
-        'Snapshot Lifetime': 5,
-      });
+      await (await getInput('lifetime_value')).setValue('5');
 
       // Wait for debounce and API call
       await new Promise((resolve) => {
@@ -251,9 +250,7 @@ describe('SnapshotTaskComponent', () => {
         throw mockError;
       });
 
-      await form.fillForm({
-        'Snapshot Lifetime': 5,
-      });
+      await (await getInput('lifetime_value')).setValue('5');
 
       // Wait for debounce and API call
       await new Promise((resolve) => {

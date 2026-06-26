@@ -1,6 +1,7 @@
 @import '../../card-title';
 
 @include card-title;
+@include card-table-scroll;
 
 // Hand-rolled footer mirroring tn-card's small-padding footer. Negative margins
 // break out of the 16px content padding so the border-top spans the card width and

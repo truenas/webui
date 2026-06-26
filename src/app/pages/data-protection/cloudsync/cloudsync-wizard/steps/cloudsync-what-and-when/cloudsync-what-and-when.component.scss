@@ -1,4 +1,9 @@
 @import 'scss-imports/variables';
+@import 'mixins/forms';
+
+// tn-form-field has no built-in vertical rhythm; the wizard step renders fields in a plain <form>
+// (not a tn-form-section flex-gap body), so add the spacing the old ix-* controls carried.
+@include tn-form-field-spacing();
 
 .cloudsync {
   display: flex;

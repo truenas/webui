@@ -1,14 +1,14 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   FormGroup, FormControl, ReactiveFormsModule,
 } from '@angular/forms';
 import { SpectatorHost } from '@ngneat/spectator';
 import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -69,12 +69,10 @@ describe('CloudCredentialsSelectComponent', () => {
     });
 
     it('should populate ix-select with credentials when providers are set', async () => {
-      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
+      const select = await loader.getHarness(TnSelectHarness);
       await select.open();
-      const options = await select.getOptions();
-      const optionLabels = await parallel(() => options.map((option) => option.getText()));
+      const optionLabels = await select.getOptions();
       expect(optionLabels).toEqual([
-        '--',
         'Add New',
         'AWS S3 (Amazon S3)',
         'Dropbox (Dropbox)',
@@ -96,12 +94,10 @@ describe('CloudCredentialsSelectComponent', () => {
     });
 
     it('should populate ix-select with credentials when providers are set', async () => {
-      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
+      const select = await loader.getHarness(TnSelectHarness);
       await select.open();
-      const options = await select.getOptions();
-      const optionLabels = await parallel(() => options.map((option) => option.getText()));
+      const optionLabels = await select.getOptions();
       expect(optionLabels).toEqual([
-        '--',
         'Add New',
         'AWS S3 (Amazon S3)',
       ]);
@@ -121,8 +117,8 @@ describe('CloudCredentialsSelectComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const select = await loader.getHarness(IxSelectHarness);
-      await select.setValue('Add New');
+      const select = await loader.getHarness(TnSelectHarness);
+      await select.selectOption('Add New');
 
       expect(slideIn.open).toHaveBeenCalled();
       const form = defaultHostProps.form;
@@ -142,8 +138,8 @@ describe('CloudCredentialsSelectComponent', () => {
 
       defaultHostProps.form.controls.credentials.setValue('1');
 
-      const select = await loader.getHarness(IxSelectHarness);
-      await select.setValue('Add New');
+      const select = await loader.getHarness(TnSelectHarness);
+      await select.selectOption('Add New');
 
       expect(slideIn.open).toHaveBeenCalled();
       expect(defaultHostProps.form.value).toEqual({ credentials: '1' });

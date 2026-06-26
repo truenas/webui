@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, input, output, signal, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, effect, input, output, signal, inject, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
@@ -33,7 +33,8 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
@@ -62,7 +63,7 @@ export class CloudBackupListComponent {
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
@@ -187,9 +188,18 @@ export class CloudBackupListComponent {
     this.dataProvider().setFilter({ query, columnKeys: ['description'] });
   }
 
+  // CloudBackupFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
+  private readonly cloudBackupForm = CloudBackupFormComponent as unknown as Type<SidePanelForm>;
+
   openForm(row?: CloudBackup): void {
-    this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
-      .onSuccess(() => this.dataProvider().load(), this.destroyRef);
+    this.formPanel.open(this.cloudBackupForm, {
+      title: row
+        ? this.translate.instant('Edit TrueCloud Backup Task')
+        : this.translate.instant('Add TrueCloud Backup Task'),
+      wide: true,
+      inputs: { backupToEdit: row },
+    }).onSuccess(() => this.dataProvider().load(), this.destroyRef);
   }
 
   doDelete(row: CloudBackup): void {

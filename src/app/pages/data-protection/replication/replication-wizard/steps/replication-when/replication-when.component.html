@@ -1,11 +1,19 @@
 <form [formGroup]="form">
-  <ix-radio-group
-    formControlName="schedule_method"
+  <tn-form-field
     [label]="helptext.scheduleMethodLabel | translate"
     [tooltip]="helptext.scheduleMethodTooltip | translate"
     [required]="true"
-    [options]="scheduleMethodOptions$"
-  ></ix-radio-group>
+  >
+    @for (option of (scheduleMethodOptions$ | async) ?? []; track option.value) {
+      <tn-radio
+        name="schedule_method"
+        formControlName="schedule_method"
+        [value]="option.value"
+        [label]="option.label"
+        [testId]="['schedule-method', option.value]"
+      ></tn-radio>
+    }
+  </tn-form-field>
   @if (form.controls.schedule_picker.enabled) {
     <ix-scheduler
       formControlName="schedule_picker"
@@ -15,54 +23,74 @@
     ></ix-scheduler>
   }
   @if (form.controls.readonly.enabled) {
-    <ix-checkbox
-      formControlName="readonly"
-      [label]="helptext.readonlyLabel | translate"
-      [tooltip]="helptext.readonlyTooltip | translate"
-    ></ix-checkbox>
+    <tn-form-field [tooltip]="helptext.readonlyTooltip | translate">
+      <tn-checkbox
+        testId="readonly"
+        formControlName="readonly"
+        [label]="helptext.readonlyLabel | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
   @if (form.controls.source_lifetime_value.enabled) {
     <div class="lifetime">
-      <ix-input
+      <tn-form-field
         class="value"
-        formControlName="source_lifetime_value"
-        type="number"
         [label]="helptext.sourceLifetimeLabel | translate"
         [tooltip]="helptext.sourceLifetimeTooltip | translate"
         [required]="true"
-      ></ix-input>
-      <ix-select
-        class="unit"
-        formControlName="source_lifetime_unit"
-        [label]="'Unit' | translate"
-        [options]="lifetimeUnitOptions$"
-        [required]="true"
-      ></ix-select>
+      >
+        <tn-input
+          name="source_lifetime_value"
+          testId="source-lifetime-value"
+          formControlName="source_lifetime_value"
+          [inputType]="InputType.Number"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
+      <tn-form-field class="unit" [label]="'Unit' | translate" [required]="true">
+        <tn-select
+          testId="source-lifetime-unit"
+          formControlName="source_lifetime_unit"
+          [options]="(lifetimeUnitOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     </div>
   }
-  <ix-radio-group
-    formControlName="retention_policy"
+  <tn-form-field
     [label]="helptext.retentionPolicyLabel | translate"
     [tooltip]="helptext.retentionPolicyTooltip | translate"
     [required]="true"
-    [options]="retentionPolicyOptions$"
-  ></ix-radio-group>
+  >
+    @for (option of (retentionPolicyOptions$ | async) ?? []; track option.value) {
+      <tn-radio
+        name="retention_policy"
+        formControlName="retention_policy"
+        [value]="option.value"
+        [label]="option.label"
+        [testId]="['retention-policy', option.value]"
+      ></tn-radio>
+    }
+  </tn-form-field>
   <div class="lifetime">
     @if (form.controls.lifetime_value.enabled) {
-      <ix-input
-        class="value"
-        formControlName="lifetime_value"
-        type="number"
-        [required]="true"
-      ></ix-input>
+      <tn-form-field class="value" [required]="true">
+        <tn-input
+          name="lifetime_value"
+          testId="lifetime-value"
+          formControlName="lifetime_value"
+          [inputType]="InputType.Number"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
     }
     @if (form.controls.lifetime_unit.enabled) {
-      <ix-select
-        class="unit"
-        formControlName="lifetime_unit"
-        [options]="lifetimeUnitOptions$"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field class="unit" [required]="true">
+        <tn-select
+          testId="lifetime-unit"
+          formControlName="lifetime_unit"
+          [options]="(lifetimeUnitOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     }
   </div>
 

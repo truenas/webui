@@ -1,6 +1,10 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { isNull, omitBy } from 'lodash-es';
 import { of } from 'rxjs';
 import { CompressionType, compressionTypeNames } from 'app/enums/compression-type.enum';
@@ -12,10 +16,7 @@ import { helptextGlobal } from 'app/helptext/global-helptext';
 import { newOption } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
@@ -24,12 +25,16 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   templateUrl: './transport-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
+    AsyncPipe,
     ReactiveFormsModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     SshCredentialsSelectComponent,
-    IxSelectComponent,
+    // speed_limit keeps ix-input for its memory-size format/parse; tn-input has no equivalent.
     IxInputComponent,
-    IxCheckboxComponent,
     TranslateModule,
   ],
 })
@@ -37,6 +42,8 @@ export class TransportSectionComponent implements OnChanges {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   formatter = inject(IxFormatterService);
+
+  protected readonly InputType = InputType;
 
   readonly replication = input<ReplicationTask>();
   readonly transport = input<TransportMode>();

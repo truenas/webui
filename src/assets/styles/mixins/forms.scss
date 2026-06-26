@@ -8,6 +8,20 @@
   }
 }
 
+// Lay out a hand-rolled tn-radio group (repeated `<tn-radio>` via `@for`, since the library has no
+// radio-group wrapper yet) as a vertical stack — `tn-radio` defaults to `display: inline-block`, so
+// without this the options sit on one line and butt against each other. Scope the include to the
+// radio's `tn-form-field` so it doesn't affect any unrelated `tn-radio` in the same component.
+@mixin tn-radio-group-layout() {
+  tn-radio {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: 8px;
+    }
+  }
+}
+
 // Same intent, but scoped to the legacy SlideIn host (`ix-slide-in-container`).
 // A dual-host form (SlideIn + `<tn-side-panel>`) must NOT carry an unconditional
 // field margin: `<tn-side-panel>` already spaces fields via tn-form-field's
@@ -31,5 +45,35 @@
   tn-form-section + tn-form-section {
     display: block;
     margin-top: 1.25rem;
+  }
+}
+
+// Two-column form body: a `.fieldsets` flex-wrap row of two 50% columns (e.g.
+// Local/Remote, Source/Destination — the columns are `.fieldset` sections or, for
+// replication, per-section components). The migrated tn-* controls fill their
+// column edge-to-edge, so without a horizontal gutter the left and right columns'
+// inputs butt against each other in the middle. Add a gutter and shrink each
+// column by half of it so two columns + gutter still total 100% (and don't wrap).
+// Stacks to a single full-width column below tablet width. Targets every direct
+// child so it covers both the `.fieldset` sections and replication's section
+// components. Requires `$breakpoint-tablet` (from `scss-imports/variables`) in scope.
+@mixin tn-form-fieldsets-columns($gutter: 24px) {
+  .fieldsets {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: $gutter;
+
+    @media (max-width: $breakpoint-tablet) {
+      display: block;
+    }
+
+    > * {
+      width: calc(50% - #{$gutter * 0.5});
+
+      @media (max-width: $breakpoint-tablet) {
+        padding-bottom: 0;
+        width: 100%;
+      }
+    }
   }
 }

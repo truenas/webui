@@ -4,6 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -19,12 +20,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
@@ -201,12 +198,8 @@ describe('CloudSyncFormComponent', () => {
           credentials_oauth: null,
         }]),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-        openSlideIns: jest.fn(() => 1),
-      }),
+      ...ixFormTestingProviders(),
       mockProvider(FilesystemService),
-      mockProvider(SnackbarService),
       mockProvider(SlideInRef, slideInRef),
     ],
   });
@@ -345,7 +338,9 @@ describe('CloudSyncFormComponent', () => {
       spectator.component.isCredentialInvalid$.next(true);
       spectator.detectChanges();
 
-      const bucketInput = await loader.getHarness(IxInputHarness.with({ label: 'Bucket' }));
+      const bucketInput = await loader.getHarness(
+        TnInputHarness.with({ selector: '[formControlName="bucket_input"]' }),
+      );
       await bucketInput.setValue('selected');
 
       expect(spectator.component.getPayload()).toEqual(expect.objectContaining({
@@ -456,9 +451,12 @@ describe('CloudSyncFormComponent', () => {
     });
 
     it('doesnt load buckets', async () => {
-      const buckets = await loader.getHarness(IxSelectHarness.with({ label: 'Bucket' }));
-      const options = await buckets.getOptionLabels();
-      expect(options).toEqual(['--', 'test3']);
+      const buckets = await loader.getHarness(
+        TnSelectHarness.with({ selector: '[formControlName="bucket"]' }),
+      );
+      await buckets.open();
+      const options = await buckets.getOptions();
+      expect(options).toEqual(['test3']);
     });
   });
 });

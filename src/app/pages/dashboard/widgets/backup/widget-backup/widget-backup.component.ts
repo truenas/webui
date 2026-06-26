@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, TrackByFunction, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, TrackByFunction, Type, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -12,6 +12,8 @@ import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -60,6 +62,7 @@ export class WidgetBackupComponent implements OnInit {
   translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private widgetResourcesService = inject(WidgetResourcesService);
   private destroyRef = inject(DestroyRef);
 
@@ -161,8 +164,12 @@ export class WidgetBackupComponent implements OnInit {
       .onSuccess(() => this.getBackups(), this.destroyRef);
   }
 
+  // RsyncTaskFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
+  private readonly rsyncTaskForm = RsyncTaskFormComponent as unknown as Type<SidePanelForm>;
+
   addRsyncTask(): void {
-    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
+    this.formPanel.open(this.rsyncTaskForm, { title: this.translate.instant('Add Rsync Task'), wide: true })
       .onSuccess(() => this.getBackups(), this.destroyRef);
   }
 

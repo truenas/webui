@@ -1,11 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, DestroyRef, input, output, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
@@ -15,13 +19,10 @@ import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot,
 } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -31,16 +32,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./vmware-snapshot-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnButtonComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    IxSelectComponent,
     TranslateModule,
   ],
 })
@@ -49,22 +49,27 @@ export class VmwareSnapshotFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   protected dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<VmwareSnapshot | undefined, boolean>>(SlideInRef);
+  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
+  // `<tn-side-panel>` form panel, where data arrives via {@link snapshotToEdit}.
+  private slideInRef = inject<SlideInRef<VmwareSnapshot | undefined, boolean>>(SlideInRef, { optional: true });
 
-  protected readonly requiredRoles = [Role.SnapshotTaskWrite];
+  /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
+  readonly snapshotToEdit = input<VmwareSnapshot | undefined>(undefined);
+
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
+  readonly closed = output<boolean>();
+
+  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
+  protected readonly InputType = InputType;
 
   get isNew(): boolean {
     return !this.editingSnapshot;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add VM Snapshot')
-      : this.translate.instant('Edit VM Snapshot');
   }
 
   form = this.fb.nonNullable.group({
@@ -76,7 +81,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
   });
 
   isLoading = false;
-  protected editingSnapshot: VmwareSnapshot;
+  protected editingSnapshot: VmwareSnapshot | undefined;
 
   readonly labels = {
     hostname: helptextVmwareSnapshot.hostnameLabel,
@@ -100,19 +105,29 @@ export class VmwareSnapshotFormComponent implements OnInit {
   filesystemOptions$ = of<Option[]>([]);
   datastoreOptions$ = of<Option[]>([]);
 
-  constructor() {
-    const slideInRef = this.slideInRef;
+  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
+  submit(): void {
+    this.ixForm()?.submit();
+  }
 
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    const snapshot = slideInRef.getData();
-    if (snapshot) {
-      this.editingSnapshot = snapshot;
-    }
+  /** Whether the form may be submitted right now; the `<tn-side-panel>` host reads this for its Save action. */
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  /** Whether the form is currently submitting; the host shows a progress bar while true. */
+  isBusy(): boolean {
+    return this.ixForm()?.isLoading() ?? false;
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   ngOnInit(): void {
+    this.editingSnapshot = this.slideInRef?.getData() ?? this.snapshotToEdit();
+
     this.form.controls.datastore.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: string) => {
       const fileSystemValue = this.datastoreList?.find((datastore) => datastore.name === value)?.filesystems[0];
       if (fileSystemValue) {
@@ -185,19 +200,8 @@ export class VmwareSnapshotFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    const values = this.form.getRawValue();
-
-    this.isLoading = true;
-    let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('vmware.create', [values]);
-    } else {
-      request$ = this.api.call('vmware.update', [
-        this.editingSnapshot.id,
-        values,
-      ]);
-    }
+  protected handleSubmit = (event: FormSubmitEvent<VmwareSnapshot>): SubmitResult => {
+    const values = event.allValues;
 
     const datastoreObj = this.datastoreList.find((datastore) => datastore.name === values.datastore);
     const fileSystemObj = this.filesystemList.find((filesystem) => filesystem.name === values.filesystem);
@@ -206,34 +210,33 @@ export class VmwareSnapshotFormComponent implements OnInit {
       throw new Error('Datastore or filesystem not found');
     }
 
-    (
-      datastoreObj.filesystems[0] !== values.filesystem
-        ? this.dialogService.confirm({
-            title: this.translate.instant('Are you sure?'),
-            message: this.translate.instant(
-              'The filesystem {filesystemName} is {filesystemDescription}, but datastore {datastoreName} is {datastoreDescription}. Is this correct?',
-              {
-                filesystemName: fileSystemObj.name,
-                filesystemDescription: fileSystemObj.description || this.translate.instant('(No description)'),
-                datastoreName: datastoreObj.name,
-                datastoreDescription: datastoreObj.description || this.translate.instant('(No description)'),
-              },
-            ),
-            hideCheckbox: true,
-          })
-        : of(true)
-    ).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.slideInRef.close({ response: true });
-        },
-        error: (error: unknown) => {
-          this.isLoading = false;
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
-        },
-      });
-    });
-  }
+    // Confirm only when the chosen filesystem isn't the datastore's primary one.
+    const confirm$ = datastoreObj.filesystems[0] !== values.filesystem
+      ? this.dialogService.confirm({
+          title: this.translate.instant('Are you sure?'),
+          message: this.translate.instant(
+            'The filesystem {filesystemName} is {filesystemDescription}, but datastore {datastoreName} is {datastoreDescription}. Is this correct?',
+            {
+              filesystemName: fileSystemObj.name,
+              filesystemDescription: fileSystemObj.description || this.translate.instant('(No description)'),
+              datastoreName: datastoreObj.name,
+              datastoreDescription: datastoreObj.description || this.translate.instant('(No description)'),
+            },
+          ),
+          hideCheckbox: true,
+        })
+      : of(true);
+
+    const request$: Observable<unknown> = confirm$.pipe(
+      filter(Boolean),
+      switchMap(() => (this.editingSnapshot
+        ? this.api.call('vmware.update', [this.editingSnapshot.id, values])
+        : this.api.call('vmware.create', [values]))),
+    );
+
+    return {
+      request$,
+      successMessage: this.translate.instant('VM Snapshot saved'),
+    };
+  };
 }

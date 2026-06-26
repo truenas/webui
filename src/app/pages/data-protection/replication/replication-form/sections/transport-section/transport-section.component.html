@@ -1,4 +1,4 @@
-<ix-fieldset [title]="'Transport Options' | translate" [formGroup]="form">
+<tn-form-section [heading]="'Transport Options' | translate" [formGroup]="form">
   @if (!isLocal()) {
     <ix-ssh-credentials-select
       formControlName="ssh_credentials"
@@ -8,44 +8,72 @@
     ></ix-ssh-credentials-select>
   }
   @if (isNetcat()) {
-    <ix-select
-      formControlName="netcat_active_side"
+    <tn-form-field
       [label]="'Netcat Active Side' | translate"
-      [required]="true"
-      [options]="netcatActiveSides$"
       [tooltip]="helptext.netcatActiveSideTooltip | translate"
-    ></ix-select>
-    <ix-input
-      formControlName="netcat_active_side_listen_address"
+      [required]="true"
+    >
+      <tn-select
+        testId="netcat-active-side"
+        formControlName="netcat_active_side"
+        [options]="(netcatActiveSides$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+    <tn-form-field
       [label]="'Netcat Active Side Listen Address' | translate"
       [tooltip]="helptext.netcatActiveSideListenAddressTooltip | translate"
-    ></ix-input>
-    <ix-input
-      formControlName="netcat_active_side_port_min"
-      type="number"
+    >
+      <tn-input
+        name="netcat_active_side_listen_address"
+        testId="netcat-active-side-listen-address"
+        formControlName="netcat_active_side_listen_address"
+      ></tn-input>
+    </tn-form-field>
+    <tn-form-field
       [label]="'Netcat Active Side Min Port' | translate"
       [tooltip]="helptext.netcatActiveSidePortMinTooltip | translate"
-    ></ix-input>
-    <ix-input
-      formControlName="netcat_active_side_port_max"
-      type="number"
+    >
+      <tn-input
+        name="netcat_active_side_port_min"
+        testId="netcat-active-side-port-min"
+        formControlName="netcat_active_side_port_min"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+    <tn-form-field
       [label]="'Netcat Active Side Max Port' | translate"
       [tooltip]="helptext.netcatActiveSidePortMaxTooltip | translate"
-    ></ix-input>
-    <ix-input
-      formControlName="netcat_passive_side_connect_address"
+    >
+      <tn-input
+        name="netcat_active_side_port_max"
+        testId="netcat-active-side-port-max"
+        formControlName="netcat_active_side_port_max"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+    <tn-form-field
       [label]="'Netcat Active Side Connect Address' | translate"
       [tooltip]="helptext.netcatPassiveSideConnectAddressTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input
+        name="netcat_passive_side_connect_address"
+        testId="netcat-passive-side-connect-address"
+        formControlName="netcat_passive_side_connect_address"
+      ></tn-input>
+    </tn-form-field>
   }
   @if (isSsh()) {
-    <ix-select
-      formControlName="compression"
+    <tn-form-field
       [label]="'Stream Compression' | translate"
-      [required]="true"
-      [options]="compressions$"
       [tooltip]="helptext.compressionTooltip | translate"
-    ></ix-select>
+      [required]="true"
+    >
+      <tn-select
+        testId="compression"
+        formControlName="compression"
+        [options]="(compressions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
     <ix-input
       formControlName="speed_limit"
       [label]="asTranslatedString(('Limit' | translate) + sizeSuggestion)"
@@ -54,14 +82,18 @@
       [tooltip]="helptext.speedLimitTooltip | translate"
     ></ix-input>
   }
-  <ix-checkbox
-    formControlName="large_block"
-    [label]="'Allow Blocks Larger than 128KB' | translate"
-    [tooltip]="helptext.largeBlockTooltip | translate"
-  ></ix-checkbox>
-  <ix-checkbox
-    formControlName="compressed"
-    [label]="'Allow Compressed WRITE Records' | translate"
-    [tooltip]="helptext.compressedTooltip | translate"
-  ></ix-checkbox>
-</ix-fieldset>
+  <tn-form-field [tooltip]="helptext.largeBlockTooltip | translate">
+    <tn-checkbox
+      testId="large-block"
+      formControlName="large_block"
+      [label]="'Allow Blocks Larger than 128KB' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
+  <tn-form-field [tooltip]="helptext.compressedTooltip | translate">
+    <tn-checkbox
+      testId="compressed"
+      formControlName="compressed"
+      [label]="'Allow Compressed WRITE Records' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
+</tn-form-section>
