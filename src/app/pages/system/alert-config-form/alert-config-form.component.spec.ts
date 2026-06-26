@@ -1,5 +1,8 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
@@ -13,6 +16,7 @@ import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/ale
 
 describe('AlertConfigFormComponent', () => {
   let spectator: Spectator<AlertConfigFormComponent>;
+  let loader: HarnessLoader;
   let api: ApiService;
   const createComponent = createComponentFactory({
     component: AlertConfigFormComponent,
@@ -84,14 +88,14 @@ describe('AlertConfigFormComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
   });
 
-  // TODO: Does not interact with the form as a user.
   it('loads current config and shows values in the form', () => {
     expect(api.call).toHaveBeenCalledWith('alert.list_categories');
     expect(api.call).toHaveBeenCalledWith('alertclasses.config');
-    expect(spectator.component.form.value).toEqual({
+    expect((spectator.component as unknown as { form: AlertConfigFormComponent['form'] }).form.value).toEqual({
       [AlertClassName.AppUpdate]: { level: AlertLevel.Error, policy: AlertPolicy.Never },
       [AlertClassName.ApplicationsConfigurationFailed]: { level: AlertLevel.Warning, policy: AlertPolicy.Immediately },
       [AlertClassName.CertificateExpired]: { level: AlertLevel.Critical, policy: AlertPolicy.Immediately },
@@ -100,14 +104,18 @@ describe('AlertConfigFormComponent', () => {
   });
 
   it('saves updated config', () => {
-    spectator.component.form.patchValue({
+    const component = spectator.component as unknown as {
+      form: AlertConfigFormComponent['form'];
+      onSubmit: () => void;
+    };
+    component.form.patchValue({
       [AlertClassName.AppUpdate]: { level: AlertLevel.Info, policy: AlertPolicy.Immediately },
       [AlertClassName.ApplicationsConfigurationFailed]: { level: AlertLevel.Notice },
       [AlertClassName.CertificateExpired]: { policy: AlertPolicy.Never },
       [AlertClassName.CertificateIsExpiring]: { policy: AlertPolicy.Hourly },
     });
 
-    spectator.component.onSubmit();
+    component.onSubmit();
 
     expect(api.call).toHaveBeenNthCalledWith(4, 'alertclasses.update', [{
       classes: {
@@ -116,5 +124,13 @@ describe('AlertConfigFormComponent', () => {
         [AlertClassName.CertificateIsExpiring]: { level: AlertLevel.Error, policy: AlertPolicy.Hourly },
       },
     }]);
+  });
+
+  it('disables Save button while form is loading', async () => {
+    spectator.component.isFormLoading.set(true);
+    spectator.detectChanges();
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    expect(await saveButton.isDisabled()).toBe(true);
   });
 });

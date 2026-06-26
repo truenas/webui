@@ -1,56 +1,49 @@
 <ix-page-header>
-  <button
-    mat-button
-    [ixTest]="['alert', 'services']"
+  <tn-button
+    [testId]="['alert', 'services']"
+    [label]="'Alert Services' | translate"
     [routerLink]="['/', 'system', 'alert-settings', 'services']"
-  >{{ 'Alert Services' | translate }}</button>
+  ></tn-button>
 </ix-page-header>
 
 <ng-container>
   <div class="wizard-container">
     @for (category of categories; track category) {
-      <mat-card class="card-container" [id]="category.id">
-        <mat-toolbar-row>
-          <h3>{{ category.title | translate }}</h3>
-          <div class="actions action-icon">
-            <button
-              *ixRequiresRoles="requiredRoles"
-              mat-button
-              [ixTest]="[category.id, '-class-', 'configure']"
-            >
-              {{ 'Configure' | translate }}
-            </button>
-          </div>
-        </mat-toolbar-row>
-        <mat-card-content>
-          <mat-list>
-            @for (cls of category.classes; track cls) {
-              <mat-list-item>
-                <div class="list-item">
-                  <div class="wrapper title">
-                    <div class="column-header">{{ 'Alert' | translate }}</div>
-                    <div class="column-cell">{{ cls.title | translate }}</div>
-                  </div>
+      <tn-card class="card-container" [id]="category.id" [title]="category.title | translate">
+        <ng-template tnCardHeaderActions>
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            [testId]="[category.id, '-class-', 'configure']"
+            [label]="'Configure' | translate"
+          ></tn-button>
+        </ng-template>
+        <tn-list>
+          @for (cls of category.classes; track cls) {
+            <tn-list-item>
+              <div class="list-item">
+                <div class="wrapper title">
+                  <div class="column-header">{{ 'Alert' | translate }}</div>
+                  <div class="column-cell">{{ cls.title | translate }}</div>
+                </div>
 
-                  <div class="wrapper state-button">
-                    <div class="column-header">{{ 'Severity Level' | translate }}</div>
-                    <div class="column-cell">
-                      <tn-icon class="icon" library="mdi" [name]="getIconName(getLevel(cls))" [style.color]="getLevelColor(getLevel(cls))"/>{{ getLevel(cls) }}
-                    </div>
-                  </div>
-
-                  <div class="wrapper freq">
-                    <div class="column-header">{{ 'Frequency' | translate }}</div>
-                    <div
-                      class="column-cell"
-                    >{{ getPolicy(cls) }}</div>
+                <div class="wrapper state-button">
+                  <div class="column-header">{{ 'Severity Level' | translate }}</div>
+                  <div class="column-cell">
+                    <tn-icon class="icon" library="mdi" [name]="getIconName(getLevel(cls))" [style.color]="getLevelColor(getLevel(cls))"/>{{ getLevel(cls) }}
                   </div>
                 </div>
-              </mat-list-item>
-            }
-          </mat-list>
-        </mat-card-content>
-      </mat-card>
+
+                <div class="wrapper freq">
+                  <div class="column-header">{{ 'Frequency' | translate }}</div>
+                  <div
+                    class="column-cell"
+                  >{{ getPolicy(cls) }}</div>
+                </div>
+              </div>
+            </tn-list-item>
+          }
+        </tn-list>
+      </tn-card>
     }
 
   </div>

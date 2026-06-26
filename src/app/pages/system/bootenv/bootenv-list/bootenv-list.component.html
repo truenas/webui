@@ -4,33 +4,27 @@
     (queryChange)="onListFiltered($event)"
   ></ix-basic-search>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="bootenv-stats"
+    [testId]="'bootenv-stats'"
+    [label]="'Stats/Settings' | translate"
     [ixUiSearch]="searchableElements.elements.stats"
-    (click)="openBootenvStats()"
-  >
-    {{ 'Stats/Settings' | translate }}
-  </button>
+    (onClick)="openBootenvStats()"
+  ></tn-button>
 
-  <button
-    mat-button
-    ixTest="bootenv-status"
+  <tn-button
+    [testId]="'bootenv-status'"
+    [label]="'Boot Pool Status' | translate"
     [routerLink]="['/', 'system', 'boot', 'status']"
-  >
-    {{ 'Boot Pool Status' | translate }}
-  </button>
+  ></tn-button>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="bootenv-scrub"
+    [testId]="'bootenv-scrub'"
+    [label]="'Scrub Boot Pool' | translate"
     [ixUiSearch]="searchableElements.elements.scrubBootPool"
-    (click)="doScrub()"
-  >
-    {{ 'Scrub Boot Pool' | translate }}
-  </button>
+    (onClick)="doScrub()"
+  ></tn-button>
 </ix-page-header>
 
 @if (selectedBootenvs.length) {
@@ -39,16 +33,15 @@
       <strong>{{ 'Batch Operations' | translate }}</strong>
     </div>
     <div class="actions">
-      <button
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="delete"
+        icon="delete"
+        iconLibrary="mdi"
+        [testId]="'delete'"
+        [label]="'Delete' | translate"
         [disabled]="!selectionHasItems"
-        (click)="doDelete(selectedBootenvs)"
-      >
-        <tn-icon name="delete" library="mdi"></tn-icon>
-        {{ 'Delete' | translate }}
-      </button>
+        (onClick)="doDelete(selectedBootenvs)"
+      ></tn-button>
     </div>
   </div>
 }

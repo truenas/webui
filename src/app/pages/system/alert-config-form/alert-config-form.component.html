@@ -1,33 +1,35 @@
-<mat-card class="form-card">
+<tn-card class="form-card">
   @if (isFormLoading()) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <tn-progress-bar mode="indeterminate"></tn-progress-bar>
   }
 
   @if (!isFormLoading() && !categories.length) {
-    <ix-empty [conf]="noResponseConfig"></ix-empty>
+    <tn-empty icon="alert-circle" iconLibrary="mdi" [title]="'Cannot retrieve response' | translate"></tn-empty>
   }
 
   @if (categories.length) {
-    <div class="mat-title">
+    <div class="category-header">
       @if (selectedCategory) {
         <h3> {{ 'Category' | translate }}: </h3>
       }
       <div class="categories">
-        <button mat-button ixTest="categories" [matMenuTriggerFor]="categoriesMenu">
-          {{ selectedCategory?.title ? (selectedCategory.title | translate) : '' }}
-          <tn-icon name="menu-down" library="mdi" class="menu-caret"></tn-icon>
-        </button>
-        <mat-menu #categoriesMenu="matMenu">
-          @for (category of categories; track category.id; let i = $index) {
-            <button
-              mat-menu-item
-              [ixTest]="['category', category.id]"
-              (click)="onCategoryChanged(category)"
-              >
-              <span>{{ category.title | translate }}</span>
-            </button>
+        <tn-button
+          icon="menu-down"
+          iconLibrary="mdi"
+          iconPosition="right"
+          [testId]="'categories'"
+          [label]="selectedCategory?.title ? (selectedCategory.title | translate) : ''"
+          [tnMenuTriggerFor]="categoriesMenu"
+        ></tn-button>
+        <tn-menu #categoriesMenu>
+          @for (category of categories; track category.id) {
+            <tn-menu-item
+              [testId]="'category-' + category.id"
+              [label]="category.title | translate"
+              (itemClick)="onCategoryChanged(category)"
+            ></tn-menu-item>
           }
-        </mat-menu>
+        </tn-menu>
       </div>
     </div>
     @if (selectedCategory) {
@@ -54,16 +56,16 @@
           </div>
         }
         <div class="form-actions">
-          <button
+          <tn-button
             *ixRequiresRoles="requiredRoles"
-            mat-button
             type="submit"
             color="primary"
-            ixTest="save"
+            [testId]="'save'"
+            [label]="'Save' | translate"
             [disabled]="form.invalid || isFormLoading() || !selectedCategory"
-          >{{ 'Save' | translate }}</button>
+          ></tn-button>
         </div>
       </form>
     }
   }
-</mat-card>
+</tn-card>

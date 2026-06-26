@@ -1,57 +1,51 @@
-<mat-card class="card" [ixUiSearch]="searchableElements.elements.manualUpdate">
-  <mat-card-content>
-    @if (isFormLoading()) {
-      <mat-progress-bar
-        mode="indeterminate"
-      ></mat-progress-bar>
-    }
+<tn-card class="card" [ixUiSearch]="searchableElements.elements.manualUpdate">
+  @if (isFormLoading()) {
+    <tn-progress-bar mode="indeterminate"></tn-progress-bar>
+  }
 
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <p>
-          <b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}
-        </p>
+  <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+    <ix-fieldset>
+      <p>
+        <b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}
+      </p>
 
-        <ix-file-input
-          formControlName="updateFile"
-          [label]="helptext.filename.label | translate"
-          [tooltip]="helptext.filename.tooltip | translate"
-          [multiple]="false"
+      <ix-file-input
+        formControlName="updateFile"
+        [label]="helptext.filename.label | translate"
+        [tooltip]="helptext.filename.tooltip | translate"
+        [multiple]="false"
+        [required]="true"
+        [acceptedFiles]="'.tar,.update'"
+      ></ix-file-input>
+
+      @if (!isHaLicensed) {
+        <ix-select
+          formControlName="filelocation"
+          [label]="helptext.filelocation.label | translate"
+          [tooltip]="helptext.filelocation.tooltip | translate"
+          [options]="fileLocationOptions$"
           [required]="true"
-          [acceptedFiles]="'.tar,.update'"
-        ></ix-file-input>
+        ></ix-select>
+      }
 
-        @if (!isHaLicensed) {
-          <ix-select
-            formControlName="filelocation"
-            [label]="helptext.filelocation.label | translate"
-            [tooltip]="helptext.filelocation.tooltip | translate"
-            [options]="fileLocationOptions$"
-            [required]="true"
-          ></ix-select>
-        }
+      @if (!isHaLicensed && isEnterprise()) {
+        <ix-checkbox
+          formControlName="rebootAfterManualUpdate"
+          [label]="helptext.rebootAfterManualUpdate.label | translate"
+          [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate"
+        ></ix-checkbox>
+      }
+    </ix-fieldset>
 
-        @if (!isHaLicensed && isEnterprise()) {
-          <ix-checkbox
-            formControlName="rebootAfterManualUpdate"
-            [label]="helptext.rebootAfterManualUpdate.label | translate"
-            [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate"
-          ></ix-checkbox>
-        }
-      </ix-fieldset>
-
-      <div class="form-actions">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="apply-update"
-          [disabled]="form.invalid || isFormLoading()"
-        >
-          {{ 'Apply Update' | translate }}
-        </button>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <div class="form-actions">
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        type="submit"
+        color="primary"
+        [testId]="'apply-update'"
+        [label]="'Apply Update' | translate"
+        [disabled]="form.invalid || isFormLoading()"
+      ></tn-button>
+    </div>
+  </form>
+</tn-card>

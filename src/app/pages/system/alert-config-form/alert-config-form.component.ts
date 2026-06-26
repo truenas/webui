@@ -1,28 +1,29 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { ControlsOf, FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnEmptyComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
+  TnProgressBarComponent,
+} from '@truenas/ui-components';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -33,15 +34,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./alert-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatProgressBar,
-    EmptyComponent,
-    MatButton,
-    TestDirective,
-    MatMenuTrigger,
-    TnIconComponent,
-    MatMenu,
-    MatMenuItem,
+    TnCardComponent,
+    TnProgressBarComponent,
+    TnEmptyComponent,
+    TnButtonComponent,
+    TnMenuTriggerDirective,
+    TnMenuComponent,
+    TnMenuItemComponent,
     ReactiveFormsModule,
     FormsModule,
     IxSelectComponent,
@@ -52,7 +51,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class AlertConfigFormComponent implements OnInit {
   private api = inject(ApiService);
-  dialogService = inject(DialogService);
+  private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   protected translate = inject(TranslateService);
   private snackbarService = inject(SnackbarService);
@@ -61,19 +60,13 @@ export class AlertConfigFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.AlertWrite];
 
-  noResponseConfig = {
-    type: EmptyType.Errors,
-    large: true,
-    title: this.translate.instant('Cannot retrieve response'),
-  };
-
-  categories: AlertCategory[] = [];
-  selectedCategory: AlertCategory | undefined = undefined;
-  form = this.formBuilder.group({});
+  protected categories: AlertCategory[] = [];
+  protected selectedCategory: AlertCategory | undefined = undefined;
+  protected form = this.formBuilder.group({});
   protected isFormLoading = signal(false);
-  readonly helptext = helptextAlertSettings;
+  protected readonly helptext = helptextAlertSettings;
 
-  readonly levelOptions$ = of([
+  protected readonly levelOptions$ = of([
     { label: this.translate.instant('INFO'), value: AlertLevel.Info },
     { label: this.translate.instant('NOTICE'), value: AlertLevel.Notice },
     { label: this.translate.instant('WARNING'), value: AlertLevel.Warning },
@@ -83,7 +76,7 @@ export class AlertConfigFormComponent implements OnInit {
     { label: this.translate.instant('EMERGENCY'), value: AlertLevel.Emergency },
   ]);
 
-  readonly policyOptions$ = this.api.call('alert.list_policies').pipe(
+  protected readonly policyOptions$ = this.api.call('alert.list_policies').pipe(
     map((policyList) => {
       return policyList.map((policy) => ({ label: ignoreTranslation(policy), value: policy }));
     }),
@@ -130,7 +123,7 @@ export class AlertConfigFormComponent implements OnInit {
     this.selectedCategory = category;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isFormLoading.set(true);
     const payload: AlertClassesUpdate = { classes: {} };
     Object.entries(this.form.controls)
