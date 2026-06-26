@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -8,12 +8,11 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
   TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective,
-  TnSidePanelActionDirective, TnSidePanelComponent,
   TnTableColumnDirective, TnTableComponent, tnIconMarker,
 } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import {
-  filter, map, take,
+  filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -29,14 +28,14 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
-import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
+import { getAccessFormConfig } from 'app/pages/system/advanced/access/access-form/access.form-config';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { AppState } from 'app/store';
@@ -51,8 +50,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   imports: [
     TnCardComponent,
     TnCardFooterActionsDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     UiSearchDirective,
     RequiresRolesDirective,
     TnButtonComponent,
@@ -66,7 +63,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxDateComponent,
     IxTablePagerShowMoreComponent,
     TestOverrideDirective,
-    AccessFormComponent,
     TranslateModule,
     YesNoPipe,
     AsyncPipe,
@@ -80,16 +76,13 @@ export class AccessCardComponent implements OnInit {
   private loader = inject(LoaderService);
   private api = inject(ApiService);
   private firstTimeWarning = inject(FirstTimeWarningService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = accessCardElements;
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-
-  protected configOpen = signal(false);
-  protected configForm = viewChild(AccessFormComponent);
 
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,
@@ -120,12 +113,6 @@ export class AccessCardComponent implements OnInit {
     },
   ];
 
-  protected readonly closeGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
-
   ngOnInit(): void {
     const sessions$ = this.api.call('auth.sessions', [[['internal', '=', false]]]).pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -155,16 +142,15 @@ export class AccessCardComponent implements OnInit {
 
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      take(1),
+      switchMap(() => this.formPanel.openForm(
+        getAccessFormConfig(this.api, this.translate, this.store$, () => Boolean(this.isEnterprise())),
+        { title: this.translate.instant('Access') },
+      ).success$),
+      tap(() => {
+        this.updateSessions();
+      }),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.configOpen.set(true));
-  }
-
-  protected onConfigClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    if (saved) {
-      this.updateSessions();
-    }
+    ).subscribe();
   }
 
   private onTerminate(id: string): void {

@@ -11,7 +11,7 @@ import { SimpleComboboxProvider } from 'app/modules/forms/ix-forms/classes/simpl
 import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 
 class FakeProvider implements IxComboboxProvider {
@@ -194,7 +194,7 @@ describe('IxUserPickerComponent', () => {
           ReactiveFormsModule,
         ],
         providers: [
-          mockProvider(SlideIn, mockSlideIn),
+          mockProvider(FormSidePanelService, mockSlideIn),
         ],
       });
 
@@ -289,7 +289,7 @@ describe('IxUserPickerComponent', () => {
           ReactiveFormsModule,
         ],
         providers: [
-          mockProvider(SlideIn, mockSlideInWithUid),
+          mockProvider(FormSidePanelService, mockSlideInWithUid),
         ],
       });
 
@@ -340,7 +340,7 @@ describe('IxUserPickerComponent', () => {
           ReactiveFormsModule,
         ],
         providers: [
-          mockProvider(SlideIn, mockSlideIn),
+          mockProvider(FormSidePanelService, mockSlideIn),
         ],
       });
 
@@ -388,7 +388,7 @@ describe('IxUserPickerComponent', () => {
           ReactiveFormsModule,
         ],
         providers: [
-          mockProvider(SlideIn, mockSlideInError),
+          mockProvider(FormSidePanelService, mockSlideInError),
         ],
       });
 

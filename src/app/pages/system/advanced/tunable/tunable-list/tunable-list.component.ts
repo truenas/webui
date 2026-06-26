@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit,
-  computed, inject, signal, viewChild,
+  inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -11,14 +11,12 @@ import {
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { Observable, of, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -32,12 +30,12 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
+import { getTunableFormConfig } from 'app/pages/system/advanced/tunable/tunable-form/tunable.form-config';
 import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.elements';
 
 @Component({
@@ -56,11 +54,8 @@ import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-l
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnEmptyComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     TableActionsCellComponent,
     TnTablePagerComponent,
-    TunableFormComponent,
     TranslateModule,
     AsyncPipe,
     YesNoPipe,
@@ -72,24 +67,11 @@ export class TunableListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemTunableWrite];
   protected readonly searchableElements = tunableListElements;
-
-  protected configOpen = signal(false);
-  protected editingTunable = signal<Tunable | undefined>(undefined);
-  protected configForm = viewChild(TunableFormComponent);
-
-  protected readonly panelTitle = computed(() => {
-    const tunable = this.editingTunable();
-    if (!tunable) {
-      return this.translate.instant('Add Tunable');
-    }
-    const type = tunable.type?.toUpperCase() || '';
-    return this.translate.instant('Edit Tunable ({type})', { type });
-  });
 
   dataProvider: AsyncDataProvider<Tunable>;
   searchQuery = signal('');
@@ -121,12 +103,6 @@ export class TunableListComponent implements OnInit {
     return [row.var, this.translate.instant('Tunable')].join(' ');
   }
 
-  protected readonly closeGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
-
   ngOnInit(): void {
     const tunables$ = this.api.call('tunable.query').pipe(
       tap((tunables) => this.tunables = tunables),
@@ -145,21 +121,16 @@ export class TunableListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.editingTunable.set(undefined);
-    this.configOpen.set(true);
+    this.formPanel.openForm(getTunableFormConfig(this.api, this.translate, undefined), {
+      title: this.translate.instant('Add Tunable'),
+    }).onSuccess(() => this.getTunables(), this.destroyRef);
   }
 
   protected doEdit(tunable: Tunable): void {
-    this.editingTunable.set(tunable);
-    this.configOpen.set(true);
-  }
-
-  protected onConfigClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    this.editingTunable.set(undefined);
-    if (saved) {
-      this.getTunables();
-    }
+    this.formPanel.openForm(getTunableFormConfig(this.api, this.translate, tunable), {
+      title: this.translate.instant('Edit Tunable ({type})', { type: tunable.type?.toUpperCase() || '' }),
+      editData: tunable,
+    }).onSuccess(() => this.getTunables(), this.destroyRef);
   }
 
   protected doDelete(tunable: Tunable): void {

@@ -64,28 +64,3 @@
   </tn-table>
 }
 <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
-
-<tn-side-panel
-  [title]="panelTitle()"
-  [closeGuard]="closeGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-tunable-form
-      [editTunable]="editingTunable()"
-      (closed)="onConfigClosed($event)"
-    ></ix-tunable-form>
-  }
-  @if (configForm(); as form) {
-    <div tnSidePanelAction>
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        color="primary"
-        [testId]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="!form.canSubmit()"
-        (onClick)="form.submit()"
-      ></tn-button>
-    </div>
-  }
-</tn-side-panel>

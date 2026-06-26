@@ -2,14 +2,12 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardActions, MatCardContent, MatCardHeader,
-  MatCardTitle,
-} from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnIconComponent, TnTestIdDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,9 +18,8 @@ import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { userAccessCardElements } from 'app/pages/credentials/users/all-users/user-details/user-access-card/user-access-card.elements';
 import { UserLastActionComponent } from 'app/pages/credentials/users/all-users/user-details/user-last-action/user-last-action.component';
@@ -39,17 +36,14 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   styleUrls: ['./user-access-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatCard,
+    TnButtonComponent,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     TnIconComponent,
-    MatCardTitle,
-    MatCardHeader,
-    MatCardActions,
-    MatCardContent,
     TnTooltipDirective,
     TranslateModule,
     RequiresRolesDirective,
-    TestDirective,
+    TnTestIdDirective,
     UserLastActionComponent,
     RouterLink,
     UiSearchDirective,
@@ -62,7 +56,7 @@ export class UserAccessCardComponent {
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private downloadService = inject(DownloadService);
   private urlOptions = inject(UrlOptionsService);
   private authService = inject(AuthService);
@@ -182,11 +176,12 @@ export class UserAccessCardComponent {
   }
 
   protected onAddApiKey(): void {
-    this.slideIn
-      .open(ApiKeyFormComponent, { data: { username: this.user().username } })
-      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-        this.reloadUsers.emit();
-      });
+    this.formPanel
+      .open(ApiKeyFormComponent, {
+        title: this.translate.instant('Add API Key'),
+        inputs: { presetUsername: this.user().username },
+      })
+      .onSuccess(() => this.reloadUsers.emit(), this.destroyRef);
   }
 
   protected onClearTwoFactorAuth(): void {

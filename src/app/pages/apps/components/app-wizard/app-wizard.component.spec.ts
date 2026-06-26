@@ -4,16 +4,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
+import {
+  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
+  TnSelectHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -294,6 +296,7 @@ describe('AppWizardComponent', () => {
       mockProvider(TnDialog),
     ],
     providers: [
+      provideTnFormFieldErrors(),
       mockProvider(SlideIn),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -418,47 +421,60 @@ describe('AppWizardComponent', () => {
     });
 
     it('checks validation error when app name already in use', async () => {
-      const applicationName = await loader.getHarness(IxInputHarness.with({ label: 'Application Name' }));
-
+      const applicationName = await loader.getHarness(TnInputHarness.with({ name: 'release_name' }));
       await applicationName.setValue('app-name');
-      expect(await applicationName.getErrorText()).toBe('The name "app-name" is already in use.');
+
+      const applicationNameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Application Name' }));
+      expect(await applicationNameField.getErrorMessage()).toBe('The name "app-name" is already in use.');
     });
 
     it('shows values for app when form is opened for create', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const releaseName = await loader.getHarness(TnInputHarness.with({ name: 'release_name' }));
+      const version = await loader.getHarness(TnSelectHarness.with({ displayText: /Version:/ }));
+      const apiPort = await loader.getHarness(TnInputHarness.with({ name: 'apiPort' }));
+      const gatewayPort = await loader.getHarness(TnInputHarness.with({ name: 'gatewayPort' }));
+      const swarmPort = await loader.getHarness(TnInputHarness.with({ name: 'swarmPort' }));
+      const hostNetwork = await loader.getHarness(
+        TnCheckboxHarness.with({ label: 'Provide access to node network namespace for the workload' }),
+      );
+      const updateStrategy = await loader.getHarness(TnAutocompleteHarness);
 
-      expect(values).toEqual({
-        'Application Name': 'ipfs',
-        Version: 'Version: 0.9.1 / Revision: 1.2.1',
-        'API Port to use for IPFS (local)': '9501',
-        'Gateway Port to use for IPFS (local)': '9880',
-        'Provide access to node network namespace for the workload': false,
-        'Swarm Port to use for IPFS (Public)': '9401',
-        'Update Strategy': 'Create new containers and then kill old ones',
-      });
+      expect(await releaseName.getValue()).toBe('ipfs');
+      expect(await version.getDisplayText()).toBe('Version: 0.9.1 / Revision: 1.2.1');
+      expect(await apiPort.getValue()).toBe('9501');
+      expect(await gatewayPort.getValue()).toBe('9880');
+      expect(await swarmPort.getValue()).toBe('9401');
+      expect(await hostNetwork.isChecked()).toBe(false);
+      expect(await updateStrategy.getInputValue()).toBe('Create new containers and then kill old ones');
     });
 
     it('creating when form is submitted', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Application Name': 'appname',
-        'API Port to use for IPFS (local)': '9599',
-        'Gateway Port to use for IPFS (local)': '9822',
-        'Provide access to node network namespace for the workload': true,
-        'Update Strategy': 'Kill existing containers before creating new ones',
-      });
+      const releaseName = await loader.getHarness(TnInputHarness.with({ name: 'release_name' }));
+      const apiPort = await loader.getHarness(TnInputHarness.with({ name: 'apiPort' }));
+      const gatewayPort = await loader.getHarness(TnInputHarness.with({ name: 'gatewayPort' }));
+      const hostNetwork = await loader.getHarness(
+        TnCheckboxHarness.with({ label: 'Provide access to node network namespace for the workload' }),
+      );
+      const updateStrategy = await loader.getHarness(TnAutocompleteHarness);
 
-      const values = await form.getValues();
+      await releaseName.setValue('appname');
+      await apiPort.setValue('9599');
+      await gatewayPort.setValue('9822');
+      await hostNetwork.check();
+      // The input holds the current value, which filters the panel; clear it via a search
+      // term before selecting a different option.
+      await updateStrategy.setInputValue('Kill');
+      await updateStrategy.selectOption('Kill existing containers before creating new ones');
 
-      expect(values).toEqual({
-        'Application Name': 'appname',
-        Version: 'Version: 0.9.1 / Revision: 1.2.1',
-        'API Port to use for IPFS (local)': '9599',
-        'Gateway Port to use for IPFS (local)': '9822',
-        'Swarm Port to use for IPFS (Public)': '9401',
-        'Update Strategy': 'Kill existing containers before creating new ones',
-      });
+      const version = await loader.getHarness(TnSelectHarness.with({ displayText: /Version:/ }));
+      const swarmPort = await loader.getHarness(TnInputHarness.with({ name: 'swarmPort' }));
+
+      expect(await releaseName.getValue()).toBe('appname');
+      expect(await version.getDisplayText()).toBe('Version: 0.9.1 / Revision: 1.2.1');
+      expect(await apiPort.getValue()).toBe('9599');
+      expect(await gatewayPort.getValue()).toBe('9822');
+      expect(await swarmPort.getValue()).toBe('9401');
+      expect(await updateStrategy.getInputValue()).toBe('Kill existing containers before creating new ones');
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
       await saveButton.click();
@@ -487,28 +503,24 @@ describe('AppWizardComponent', () => {
     });
 
     it('updates form when app version is changed and schema is updated', async () => {
-      const form = await loader.getHarness(IxFormHarness);
+      const version = await loader.getHarness(TnSelectHarness.with({ displayText: /Version:/ }));
+      await version.selectOption('Version: 0.9.0 / Revision: 1.2.0');
 
-      await form.fillForm({
-        Version: 'Version: 0.9.0 / Revision: 1.2.0',
-      });
-
-      const values = await form.getValues();
       expect(spectator.component.chartSchema.groups).toEqual(appVersion120.schema.groups);
 
-      expect(values).toEqual({
-        'Application Name': 'ipfs',
-        Version: 'Version: 0.9.0 / Revision: 1.2.0',
-        'Provide access to node network namespace for the workload Another Version': true,
-      });
+      const releaseName = await loader.getHarness(TnInputHarness.with({ name: 'release_name' }));
+      const hostNetwork = await loader.getHarness(
+        TnCheckboxHarness.with({ label: 'Provide access to node network namespace for the workload Another Version' }),
+      );
+
+      expect(await releaseName.getValue()).toBe('ipfs');
+      expect(await version.getDisplayText()).toBe('Version: 0.9.0 / Revision: 1.2.0');
+      expect(await hostNetwork.isChecked()).toBe(true);
     });
 
     it('submits form with hidden: true values as well since they should be a part of a request', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-
-      await form.fillForm({
-        Version: 'Version: 0.9.0 / Revision: 1.2.0',
-      });
+      const version = await loader.getHarness(TnSelectHarness.with({ displayText: /Version:/ }));
+      await version.selectOption('Version: 0.9.0 / Revision: 1.2.0');
 
       spectator.component.onSubmit();
 

@@ -1,14 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { User } from 'app/interfaces/user.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { DeleteUserDialog } from 'app/pages/credentials/users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
 import { UserDetailHeaderComponent } from 'app/pages/credentials/users/all-users/user-details/user-detail-header/user-detail-header.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
@@ -53,9 +51,7 @@ describe('UserDetailHeaderComponent', () => {
           closed: of(true),
         })),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
+      mockProvider(FormSidePanelService),
       mockApi([
         mockCall('user.update'),
         mockCall('group.query', []),
@@ -77,19 +73,19 @@ describe('UserDetailHeaderComponent', () => {
   });
 
   it('should open edit user form', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       UserFormComponent,
-      { data: dummyUser },
+      { title: 'Edit User', inputs: { editUser: dummyUser } },
     );
   });
 
   it('shows disabled Edit button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...dummyUser, local: false });
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     expect(await editButton.isDisabled()).toBe(true);
 
     const tooltips = spectator.queryAll(TnTooltipDirective);
@@ -100,21 +96,21 @@ describe('UserDetailHeaderComponent', () => {
   it('does not show Delete button for an immutable user', async () => {
     spectator.setInput('user', { ...dummyUser, immutable: true });
 
-    const deleteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Delete/ }));
+    const deleteButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: /Delete/ }));
     expect(deleteButton).toBeNull();
   });
 
   it('does not show Delete button for logged in user', async () => {
     spectator.setInput('user', { ...dummyUser, username: 'root' });
 
-    const deleteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Delete/ }));
+    const deleteButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: /Delete/ }));
     expect(deleteButton).toBeNull();
   });
 
   it('shows disabled Delete button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...dummyUser, local: false });
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: /Delete/ }));
     expect(await deleteButton.isDisabled()).toBe(true);
 
     const tooltips = spectator.queryAll(TnTooltipDirective);
@@ -123,7 +119,7 @@ describe('UserDetailHeaderComponent', () => {
   });
 
   it('should open DeleteUserDialog when Delete button is pressed', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: /Delete/ }));
     await deleteButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteUserDialog, {

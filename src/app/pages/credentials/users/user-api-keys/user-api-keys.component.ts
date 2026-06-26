@@ -1,21 +1,24 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatAnchor, MatButton } from '@angular/material/button';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
+  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, type TnSortEvent,
+} from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import {
-  filter, map, of, shareReplay,
-  withLatestFrom,
+  filter, map, shareReplay,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
@@ -25,22 +28,11 @@ import { searchProperties, textProperty, booleanProperty } from 'app/modules/for
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import {
-  relativeDateColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
@@ -52,19 +44,20 @@ import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/u
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     SearchInputComponent,
-    TestDirective,
     UiSearchDirective,
     RequiresRolesDirective,
-    MatButton,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnIconButtonComponent,
     TnTablePagerComponent,
+    IxDateComponent,
+    YesNoPipe,
     TranslateModule,
     AsyncPipe,
     PageHeaderComponent,
-    MatAnchor,
   ],
 })
 export class UserApiKeysComponent implements OnInit {
@@ -74,7 +67,7 @@ export class UserApiKeysComponent implements OnInit {
   private dialog = inject(DialogService);
 
   private authService = inject(AuthService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
@@ -86,67 +79,33 @@ export class UserApiKeysComponent implements OnInit {
 
   dataProvider: ApiDataProvider<'api_key.query'>;
 
-  columns = createTable<ApiKey>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Username'),
-      propertyName: 'username',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Local'),
-      propertyName: 'local',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Revoked'),
-      propertyName: 'revoked',
-    }),
-    dateColumn({
-      title: this.translate.instant('Created Date'),
-      propertyName: 'created_at',
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Expires On'),
-      propertyName: 'expires_at',
-      getValue: (row) => row.expires_at?.$date || this.translate.instant('Never'),
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          requiredRoles: this.requiredRoles,
-          hidden: (row) => of(row.revoked),
-          onClick: (row) => this.openForm(row),
-          disabled: (row) => this.authService.hasRole([Role.ApiKeyWrite]).pipe(
-            withLatestFrom(this.authService.user$.pipe(
-              filter((user) => !!user),
-              map((user) => user.pw_name),
-            )),
-            map(([canWriteApiKeys, username]) => !canWriteApiKeys && row.username !== username),
-          ),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          disabled: (row) => this.authService.hasRole([Role.ApiKeyWrite]).pipe(
-            withLatestFrom(this.authService.user$.pipe(
-              filter((user) => !!user),
-              map((user) => user.pw_name),
-            )),
-            map(([canWriteApiKeys, username]) => !canWriteApiKeys && row.username !== username),
-          ),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => `api-key-${row.name}-${row.created_at.$date}`,
-    ariaLabels: (row) => [row.id.toString(), this.translate.instant('API Key')],
-  });
+  protected readonly displayedColumns = ['name', 'username', 'local', 'revoked', 'created_at', 'expires_at', 'actions'];
+  protected readonly trackById = (_index: number, row: ApiKey): number => row.id;
+
+  private readonly canWriteApiKeys = toSignal(this.authService.hasRole([Role.ApiKeyWrite]));
+  private readonly currentUsername = toSignal(
+    this.authService.user$.pipe(filter((user) => !!user), map((user) => user.pw_name)),
+  );
+
+  protected isActionDisabled(row: ApiKey): boolean {
+    const canWrite = this.canWriteApiKeys();
+    const username = this.currentUsername();
+    // While auth state is still resolving, keep actions enabled (matches legacy behavior).
+    if (canWrite === undefined || username === undefined) {
+      return false;
+    }
+    return !canWrite && row.username !== username;
+  }
+
+  protected expiresLabel(row: ApiKey): string {
+    return row.expires_at?.$date
+      ? formatDistanceToNowShortened(row.expires_at.$date)
+      : this.translate.instant('Never');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<ApiKey>(event, this.displayedColumns));
+  }
 
   private readonly apiKeys$ = this.api.call('api_key.query').pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
@@ -171,15 +130,17 @@ export class UserApiKeysComponent implements OnInit {
 
   setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 3,
+      active: this.displayedColumns.indexOf('created_at'),
       direction: SortDirection.Desc,
       propertyName: 'created_at',
     });
   }
 
   openForm(apiKey?: ApiKey): void {
-    this.slideIn.open(ApiKeyFormComponent, { data: { editingKey: apiKey } })
-      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+    this.formPanel.open(ApiKeyFormComponent, {
+      title: apiKey ? this.translate.instant('Edit API Key') : this.translate.instant('Add API Key'),
+      inputs: { editingKey: apiKey },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   doDelete(apiKey: ApiKey): void {

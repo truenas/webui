@@ -78,3 +78,30 @@
 </tn-table>
 
 <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+
+<tn-side-panel
+  testId="docker-registry"
+  [title]="registryFormTitle()"
+  [closeGuard]="registryCloseGuard"
+  [(open)]="registryFormOpen"
+>
+  @if (registryFormOpen()) {
+    <ix-docker-registry-form
+      [registry]="editingRegistry()"
+      [isLoggedInToDockerHub]="isLoggedIntoDockerHub()"
+      (closed)="onRegistryFormClosed($event)"
+    ></ix-docker-registry-form>
+  }
+  @if (registryForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="form.requiredRoles"
+        color="primary"
+        testId="save"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>

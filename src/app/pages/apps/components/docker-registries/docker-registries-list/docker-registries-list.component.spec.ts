@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnIconButtonHarness, TnSidePanelHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -12,8 +14,6 @@ import { dockerHubRegistry, DockerRegistry } from 'app/interfaces/docker-registr
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerRegistriesListComponent } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.component';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
@@ -46,13 +46,12 @@ describe('DockerRegistriesListComponent', () => {
       mockApi([
         mockCall('app.registry.query', dockerRegistries),
         mockCall('app.registry.delete'),
+        mockCall('app.registry.create'),
+        mockCall('app.registry.update'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
-      }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
         selectors: [
@@ -94,26 +93,31 @@ describe('DockerRegistriesListComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.registry.delete', [1]);
   });
 
-  it('opens form when the row "Edit" button is pressed', async () => {
+  it('opens the form in a side panel with the row when the "Edit" button is pressed', async () => {
     const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'pencil' }));
     await editButton.click();
+    spectator.detectChanges();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DockerRegistryFormComponent, {
-      data: {
-        registry: dockerRegistries[0],
-        isLoggedInToDockerHub: true,
-      },
-    });
+    const panel = await loader.getHarness(TnSidePanelHarness);
+    expect(await panel.isOpen()).toBe(true);
+
+    const form = spectator.query(DockerRegistryFormComponent);
+    expect(form).toBeTruthy();
+    expect(form?.registry()).toEqual(dockerRegistries[0]);
+    expect(form?.isLoggedInToDockerHub()).toBe(true);
   });
 
-  it('opens form when "Add Registry" button is pressed', async () => {
+  it('opens the form in a side panel for creating when "Add Registry" is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Registry' }));
     await addButton.click();
+    spectator.detectChanges();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DockerRegistryFormComponent, {
-      data: {
-        isLoggedInToDockerHub: true,
-      },
-    });
+    const panel = await loader.getHarness(TnSidePanelHarness);
+    expect(await panel.isOpen()).toBe(true);
+
+    const form = spectator.query(DockerRegistryFormComponent);
+    expect(form).toBeTruthy();
+    expect(form?.registry()).toBeUndefined();
+    expect(form?.isLoggedInToDockerHub()).toBe(true);
   });
 });

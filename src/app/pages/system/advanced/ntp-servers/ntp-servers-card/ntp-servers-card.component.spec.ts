@@ -9,9 +9,10 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NtpServersCardComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
-import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
 
 const fakeDataSource: NtpServer[] = [
   {
@@ -47,6 +48,7 @@ describe('NtpServersCardComponent', () => {
   let spectator: Spectator<NtpServersCardComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+  let formPanel: FormSidePanelService;
   let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
@@ -60,6 +62,9 @@ describe('NtpServersCardComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.cancel()),
+      }),
     ],
   });
 
@@ -72,6 +77,7 @@ describe('NtpServersCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
+    formPanel = spectator.inject(FormSidePanelService);
     table = await loader.getHarness(TnTableHarness);
   });
 
@@ -85,36 +91,23 @@ describe('NtpServersCardComponent', () => {
     ]);
   });
 
-  it('opens the Add NTP Server form in a side panel when Add is pressed', async () => {
-    expect(spectator.query('ix-ntp-servers-form')).toBeNull();
-
+  it('opens the Add NTP Server form when Add is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
-    spectator.detectChanges();
 
-    expect(spectator.query('ix-ntp-servers-form')).not.toBeNull();
+    expect(formPanel.openForm).toHaveBeenCalledWith(expect.anything(), {
+      title: 'Add NTP Server',
+    });
   });
 
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    await addButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-ntp-servers-form')).not.toBeNull();
-
-    spectator.query(NtpServersFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-ntp-servers-form')).toBeNull();
-  });
-
-  it('opens the Edit NTP Server form in the side panel with the selected row', async () => {
+  it('opens the Edit NTP Server form with the selected row', async () => {
     const menu = await openFirstRowMenu();
     await menu.clickItem({ label: 'Edit' });
-    spectator.detectChanges();
 
-    const form = spectator.query(NtpServersFormComponent);
-    expect(form).not.toBeNull();
-    expect(form.editServer()).toEqual(fakeDataSource[0]);
+    expect(formPanel.openForm).toHaveBeenCalledWith(expect.anything(), {
+      title: 'Edit NTP Server',
+      editData: fakeDataSource[0],
+    });
   });
 
   it('should display confirm dialog of deleting ntp server', async () => {

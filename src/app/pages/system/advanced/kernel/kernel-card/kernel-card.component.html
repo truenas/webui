@@ -23,25 +23,3 @@
     ></tn-button>
   </ng-template>
 </tn-card>
-
-<tn-side-panel
-  [title]="'Kernel' | translate"
-  [closeGuard]="closeGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-kernel-form (closed)="onConfigClosed($event)"></ix-kernel-form>
-  }
-  @if (configForm(); as form) {
-    <div tnSidePanelAction>
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        color="primary"
-        [testId]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="!form.canSubmit()"
-        (onClick)="form.submit()"
-      ></tn-button>
-    </div>
-  }
-</tn-side-panel>

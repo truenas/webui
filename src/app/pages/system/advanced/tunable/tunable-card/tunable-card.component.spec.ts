@@ -12,10 +12,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ConfirmDeleteJobOptions } from 'app/interfaces/dialog.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { TunableCardComponent } from './tunable-card.component';
 
@@ -59,10 +57,11 @@ describe('TunableCardComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteJobOptions) => options.job()),
       }),
-      mockProvider(SnackbarService),
-      mockProvider(FormErrorHandlerService),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => ({ success$: of(true) })),
+      }),
       mockProvider(FirstTimeWarningService, {
-        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(undefined)),
       }),
       mockAuth(),
     ],
@@ -88,35 +87,24 @@ describe('TunableCardComponent', () => {
   });
 
   it('opens the Add Tunable form in a side panel when Add is pressed', async () => {
-    expect(spectator.query('ix-tunable-form')).toBeNull();
-
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
-    spectator.detectChanges();
 
-    expect(spectator.query('ix-tunable-form')).not.toBeNull();
-  });
-
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    await addButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-tunable-form')).not.toBeNull();
-
-    spectator.query(TunableFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-tunable-form')).toBeNull();
+    expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      { title: 'Add Tunable', editData: undefined },
+    );
   });
 
   it('opens the Edit Tunable form in the side panel with the selected row', async () => {
     const menu = await openFirstRowMenu();
     await menu.clickItem({ label: 'Edit' });
-    spectator.detectChanges();
 
-    const form = spectator.query(TunableFormComponent);
-    expect(form).not.toBeNull();
-    expect(form.editTunable()).toEqual(items[0]);
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
+      expect.anything(),
+      { title: 'Edit Tunable (ZFS)', editData: expect.objectContaining(items[0]) },
+    );
   });
 
   it('deletes a tunable variable with confirmation when Delete button is pressed', async () => {

@@ -1,31 +1,26 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnInit, signal, viewChild, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { tooltips } from '@codemirror/view';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
 import {
   catchError, combineLatest, distinctUntilChanged, filter, map, Observable, of,
   startWith,
   switchMap,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
   hasShellAccess, hasSshAccess, hasTrueNasAccess, isEmptyHomeDirectory,
 } from 'app/helpers/user.helper';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
@@ -41,26 +36,21 @@ import { AppState } from 'app/store';
   styleUrls: ['./user-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
-    ModalHeaderComponent,
+    TnFormSectionComponent,
     ReactiveFormsModule,
     TranslateModule,
-    IxInputComponent,
-    FormActionsComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     AllowedAccessSectionComponent,
-    MatButton,
-    TestDirective,
     AuthSectionComponent,
     AdditionalDetailsSectionComponent,
-    RequiresRolesDirective,
   ],
   providers: [
     UserFormStore,
   ],
 })
-export class UserFormComponent implements OnInit {
+export class UserFormComponent extends SidePanelForm<User> implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
-  slideInRef = inject<SlideInRef<User | undefined, User>>(SlideInRef);
   private userFormStore = inject(UserFormStore);
   private formErrorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
@@ -69,8 +59,13 @@ export class UserFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
+  /** Record being edited, supplied by the `<tn-side-panel>` host via the `editUser` input. */
+  readonly editUser = input<User | undefined>(undefined);
+
   protected isStigMode = this.userFormStore.isStigMode;
-  protected editingUser = signal<User>(this.slideInRef.getData());
+  // The host applies the `editUser` input after construction, so the edited record is
+  // resolved in ngOnInit rather than eagerly here.
+  protected editingUser = signal<User | undefined>(undefined);
 
   protected isFormLoading = signal<boolean>(false);
 
@@ -86,18 +81,22 @@ export class UserFormComponent implements OnInit {
   protected password = signal<string>('');
   protected passwordDisabled = signal<boolean>(false);
 
-  protected readonly tooltips = tooltips;
   protected readonly Role = Role;
-  protected readonly fakeTooltip = '';
   protected readonly requiredRoles = [Role.AccountWrite];
 
-  protected form = this.formBuilder.group({
+  protected readonly form = this.formBuilder.group({
     username: ['', [
       Validators.required,
       Validators.pattern(UserService.namePattern),
       Validators.maxLength(32),
     ]],
   });
+
+  /**
+   * Drives a host-owned Save action (the `<tn-side-panel>` footer). Validity is tracked across
+   * all four sub-forms via {@link isFormInvalid}, so this can't use the base `trackCanSubmit`.
+   */
+  readonly canSubmit = computed(() => !this.isFormInvalid() && !this.isFormLoading());
 
   protected isNewUser = computed(() => {
     return !this.editingUser();
@@ -129,11 +128,12 @@ export class UserFormComponent implements OnInit {
     const homeCreate = this.formValues.home_create;
     const home = this.formValues.home;
     const homeMode = this.formValues.home_mode;
-    if (this.editingUser()) {
-      if (this.editingUser().immutable || isEmptyHomeDirectory(home)) {
+    const editingUser = this.editingUser();
+    if (editingUser) {
+      if (editingUser.immutable || isEmptyHomeDirectory(home)) {
         return '';
       }
-      if (!homeCreate && this.editingUser().home !== home) {
+      if (!homeCreate && editingUser.home !== home) {
         return this.translate.instant(
           'Operation will change permissions on path: {path}',
           { path: `'${String(home)}'` },
@@ -155,14 +155,22 @@ export class UserFormComponent implements OnInit {
   }
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty || this.authSection().form.dirty || this.allowedAccessSection().form.dirty
-        || this.additionalDetailsSection().form.dirty);
-    });
+    // Base registers the legacy SlideIn dirty-confirmation guard using hasUnsavedChanges().
+    super();
     this.setupUsernameUpdate();
   }
 
+  /** Composite dirty across all four sub-forms; drives both hosts' discard confirmation. */
+  override hasUnsavedChanges(): boolean {
+    return this.form.dirty
+      || this.authSection().form.dirty
+      || this.allowedAccessSection().form.dirty
+      || this.additionalDetailsSection().form.dirty;
+  }
+
   ngOnInit(): void {
+    // The panel host applies `editUser` after construction; pick it up here.
+    this.editingUser.set(this.editUser());
     this.setupForm();
     this.setupAccessWatchers();
     this.setupHomeAndShellWatchers();
@@ -361,8 +369,9 @@ export class UserFormComponent implements OnInit {
   private submitUserRequest(payload: UserUpdate): Observable<User> {
     this.isFormLoading.set(true);
 
-    return this.editingUser()
-      ? this.userFormStore.updateUser(this.editingUser().id, payload)
+    const editingUser = this.editingUser();
+    return editingUser
+      ? this.userFormStore.updateUser(editingUser.id, payload)
       : this.userFormStore.createUser();
   }
 
@@ -397,7 +406,9 @@ export class UserFormComponent implements OnInit {
       next: (user) => {
         this.isFormLoading.set(false);
         if (user) {
-          this.slideInRef.close({ response: user });
+          // Hand the created/updated record back to the opener. Most callers just reload, but
+          // some (e.g. ix-user-picker's "Add New") select the returned User from the response.
+          this.closed.emit(user);
 
           if (this.isNewUser()) {
             this.snackbar.success(this.translate.instant('User created'));

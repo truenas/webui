@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -12,12 +12,10 @@ import {
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
   TnTableColumnDirective,
   TnTableComponent,
 } from '@truenas/ui-components';
-import { Observable, of, take } from 'rxjs';
+import { from, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -27,13 +25,13 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { tunableCardElements } from 'app/pages/system/advanced/tunable/tunable-card/tunable-card.elements';
-import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
+import { getTunableFormConfig } from 'app/pages/system/advanced/tunable/tunable-form/tunable.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 @Component({
@@ -43,8 +41,6 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   imports: [
     TnCardComponent,
     TnCardFooterActionsDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     UiSearchDirective,
     RequiresRolesDirective,
     TnButtonComponent,
@@ -54,7 +50,6 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
     TnCellDefDirective,
     TnEmptyComponent,
     TableActionsCellComponent,
-    TunableFormComponent,
     TranslateModule,
     AsyncPipe,
     YesNoPipe,
@@ -65,22 +60,12 @@ export class TunableCardComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
-  private unsavedChanges = inject(UnsavedChangesService);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemTunableWrite];
   protected readonly searchableElements = tunableCardElements;
-
-  protected configOpen = signal(false);
-  protected editingTunable = signal<Tunable | undefined>(undefined);
-  protected configForm = viewChild(TunableFormComponent);
-
-  protected readonly panelTitle = computed(() => (
-    this.editingTunable()
-      ? this.translate.instant('Edit Tunable')
-      : this.translate.instant('Add Tunable')
-  ));
 
   dataProvider: AsyncDataProvider<Tunable>;
 
@@ -110,12 +95,6 @@ export class TunableCardComponent implements OnInit {
     return [row.var, this.translate.instant('Tunable')].join(' ');
   }
 
-  protected readonly closeGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
-
   ngOnInit(): void {
     const tunables$ = this.api.call('tunable.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
@@ -123,7 +102,7 @@ export class TunableCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.openForm(undefined);
+    this.openForm();
   }
 
   loadItems(): void {
@@ -149,21 +128,18 @@ export class TunableCardComponent implements OnInit {
     this.openForm(row);
   }
 
-  private openForm(row: Tunable | undefined): void {
-    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      take(1),
+  private openForm(row?: Tunable): void {
+    const title = row
+      ? this.translate.instant('Edit Tunable ({type})', { type: row.type?.toUpperCase() || '' })
+      : this.translate.instant('Add Tunable');
+    from(this.firstTimeWarning.showFirstTimeWarningIfNeeded()).pipe(
+      switchMap(() => this.formPanel.openForm(
+        getTunableFormConfig(this.api, this.translate, row),
+        { title, editData: row },
+      ).success$),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.editingTunable.set(row);
-      this.configOpen.set(true);
-    });
-  }
-
-  protected onConfigClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    this.editingTunable.set(undefined);
-    if (saved) {
       this.loadItems();
-    }
+    });
   }
 }

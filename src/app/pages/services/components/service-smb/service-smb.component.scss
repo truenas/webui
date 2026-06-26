@@ -1,7 +1,3 @@
-@import 'mixins/forms';
-
-@include tn-form-field-spacing();
-
 ix-input[hidden] {
   display: none;
 }
