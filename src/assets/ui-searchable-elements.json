@@ -3910,6 +3910,179 @@
   {
     "hierarchy": [
       "Reporting",
+      "CPU"
+    ],
+    "synonyms": [
+      "Processor",
+      "CPU Stats",
+      "CPU Utilization"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "cpu"
+    ],
+    "routerLink": null,
+    "anchor": "cpu",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Disk"
+    ],
+    "synonyms": [
+      "Device",
+      "Disks",
+      "Disk IO",
+      "Disk I/O",
+      "disk stats",
+      "disk writes"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "disk"
+    ],
+    "routerLink": null,
+    "anchor": "disk",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Memory"
+    ],
+    "synonyms": [
+      "RAM",
+      "Free RAM",
+      "Memory Usage",
+      "Memory Stats",
+      "Memory Utilization"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "memory"
+    ],
+    "routerLink": null,
+    "anchor": "memory",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Network"
+    ],
+    "synonyms": [
+      "Network Stats",
+      "Network Utilization",
+      "Network Usage",
+      "Traffic",
+      "Network Traffic"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "network",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "System"
+    ],
+    "synonyms": [
+      "System Stats",
+      "System Utilization",
+      "Uptime"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "system"
+    ],
+    "routerLink": null,
+    "anchor": "system",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Target"
+    ],
+    "synonyms": [
+      "Target Stats",
+      "Target Utilization"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "target"
+    ],
+    "routerLink": null,
+    "anchor": "target",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "UPS"
+    ],
+    "synonyms": [
+      "UPS Stats",
+      "UPS Utilization"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "ups"
+    ],
+    "routerLink": null,
+    "anchor": "ups",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "ZFS"
+    ],
+    "synonyms": [
+      "ZFS Reports",
+      "ZFS Stats",
+      "ZFS Utilization"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "zfs"
+    ],
+    "routerLink": null,
+    "anchor": "zfs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
       "Select Reporting"
     ],
     "synonyms": [],
