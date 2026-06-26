@@ -1,14 +1,15 @@
 import { ComponentHarness, parallel } from '@angular/cdk/testing';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 
 export class SchedulerModalHarness extends ComponentHarness {
   static readonly hostSelector = 'ix-scheduler-modal';
 
-  getMinutesInput = this.locatorFor(IxInputHarness.with({ label: 'Minutes' }));
-  getHoursInput = this.locatorFor(IxInputHarness.with({ label: 'Hours' }));
-  getDaysInput = this.locatorFor(IxInputHarness.with({ label: 'Days of Month' }));
+  getMinutesInput = this.locatorFor(TnInputHarness.with({ name: 'minutes' }));
+  getHoursInput = this.locatorFor(TnInputHarness.with({ name: 'hours' }));
+  getDaysInput = this.locatorFor(TnInputHarness.with({ name: 'days' }));
   getMonthCheckboxes = this.locatorForAll(TnCheckboxHarness.with({ ancestor: '.months' }));
   getDaysOfWeekCheckboxes = this.locatorForAll(TnCheckboxHarness.with({ ancestor: '.weekdays' }));
 

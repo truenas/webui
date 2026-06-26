@@ -2,11 +2,11 @@
   <form [formGroup]="form">
     <section>
       <h4>{{ 'Presets' | translate }}</h4>
-      <ix-select
+      <tn-select
         class="preset-select"
         formControlName="preset"
-        [options]="presetOptions$"
-      ></ix-select>
+        [options]="presetSelectOptions"
+      ></tn-select>
     </section>
 
     <section>
@@ -19,34 +19,49 @@
       </div>
 
       @if (!config.hideMinutes) {
-        <ix-input
+        <tn-form-field
           class="input"
-          formControlName="minutes"
-          [required]="true"
           [label]="'Minutes' | translate"
           [tooltip]="tooltips.minutes | translate"
-        ></ix-input>
+          [required]="true"
+        >
+          <tn-input
+            name="minutes"
+            formControlName="minutes"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
       }
 
-      <ix-input
+      <tn-form-field
         class="input"
-        formControlName="hours"
-        [required]="true"
         [label]="'Hours' | translate"
         [tooltip]="tooltips.hours | translate"
-      ></ix-input>
+        [required]="true"
+      >
+        <tn-input
+          name="hours"
+          formControlName="hours"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
     </section>
 
     <section>
       <h4>{{ 'Days' | translate }}</h4>
 
-      <ix-input
+      <tn-form-field
         class="input days-of-month-input"
-        formControlName="days"
-        [required]="true"
         [label]="'Days of Month' | translate"
         [tooltip]="tooltips.days | translate"
-      ></ix-input>
+        [required]="true"
+      >
+        <tn-input
+          name="days"
+          formControlName="days"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
 
       @if (hasOrConditionExplanation$ | async) {
         <div
