@@ -11,7 +11,7 @@
           formControlName="schedule_method"
           [value]="option.value"
           [label]="option.label"
-          [testId]="['schedule-method', option.value]"
+          [testId]="['schedule-method', option.label]"
         ></tn-radio>
       }
     </tn-form-field>
@@ -68,7 +68,7 @@
           formControlName="retention_policy"
           [value]="option.value"
           [label]="option.label"
-          [testId]="['retention-policy', option.value]"
+          [testId]="['retention-policy', option.label]"
         ></tn-radio>
       }
     </tn-form-field>

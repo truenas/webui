@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSpriteLoaderService,
+  TnBannerHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSpriteLoaderService,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -151,6 +151,11 @@ describe('CloudBackupFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows an info banner with getting started guidance', async () => {
+      const banner = await loader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain('Getting Started with TrueCloud Backup');
     });
 
     it('disables absolute paths when snapshot is enabled and resets to false', async () => {
@@ -349,6 +354,31 @@ describe('CloudBackupFormComponent', () => {
         transfer_setting: CloudsyncTransferSetting.Performance,
       }]);
       expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+    });
+  });
+
+  describe('side panel host (no SlideInRef)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+        ],
+        props: {
+          backupToEdit: existingTask,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('emits closed and updates when saved via the host submit() entry point', async () => {
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+
+      await (await getSelect('bucket')).selectOption('bucket1');
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.update', [1, expect.anything()]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

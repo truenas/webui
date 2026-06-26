@@ -20,6 +20,7 @@ import {
   TnIconComponent,
   TnInputComponent,
   TnSelectComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
 } from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
@@ -70,7 +71,6 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
@@ -104,7 +104,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
     TnButtonComponent,
     TransferModeExplanationComponent,
     IxExplorerComponent,
-    TestDirective,
+    TnTestIdDirective,
     TnIconComponent,
     TnTooltipDirective,
     CloudCredentialsSelectComponent,
@@ -140,6 +140,9 @@ export class CloudSyncFormComponent implements OnInit {
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
   readonly taskToEdit = input<CloudSyncTaskUi | undefined>(undefined);
 
+  // This form hosts `<ix-form>` directly and forwards its submit()/canSubmit()/isBusy()/closed, so it
+  // follows the ix-form dual-host recipe rather than extending `SidePanelForm` (whose `submit()` drives a
+  // subclass-owned form group + `canSubmit` signal — incompatible with delegating to the inner ix-form).
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
   readonly closed = output<boolean>();
 

@@ -167,4 +167,32 @@ describe('VmwareSnapshotFormComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
+
+  describe('side panel host (no SlideInRef)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+        ],
+        props: {
+          snapshotToEdit: { ...existingSnapshot },
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('emits closed and updates when saved via the host submit() entry point', async () => {
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+
+      // Select matching datastore/filesystem so no mismatch confirm is needed.
+      await (await getSelect('datastore')).selectOption('ds01');
+      await (await getSelect('filesystem')).selectOption('fs01');
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vmware.update', [1, expect.anything()]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
+    });
+  });
 });

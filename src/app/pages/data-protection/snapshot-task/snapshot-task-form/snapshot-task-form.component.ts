@@ -66,6 +66,9 @@ export class SnapshotTaskFormComponent implements OnInit {
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
   readonly taskToEdit = input<PeriodicSnapshotTask | undefined>(undefined);
 
+  // This form hosts `<ix-form>` directly and forwards its submit()/canSubmit()/isBusy()/closed, so it
+  // follows the ix-form dual-host recipe rather than extending `SidePanelForm` (whose `submit()` drives a
+  // subclass-owned form group + `canSubmit` signal — incompatible with delegating to the inner ix-form).
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
   readonly closed = output<boolean>();
 

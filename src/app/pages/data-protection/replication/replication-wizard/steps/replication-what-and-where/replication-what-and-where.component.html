@@ -76,7 +76,7 @@
               formControlName="schema_or_regex"
               [value]="option.value"
               [label]="option.label"
-              [testId]="['schema-or-regex', option.value]"
+              [testId]="['schema-or-regex', option.label]"
             ></tn-radio>
           }
         </tn-form-field>
@@ -252,7 +252,7 @@
           formControlName="transport"
           [value]="option.value"
           [label]="option.label"
-          [testId]="['transport', option.value]"
+          [testId]="['transport', option.label]"
         ></tn-radio>
       }
     </tn-form-field>

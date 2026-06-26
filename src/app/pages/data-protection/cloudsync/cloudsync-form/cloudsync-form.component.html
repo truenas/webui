@@ -81,7 +81,8 @@
       [heading]="helptext.remoteTitle | translate"
     >
       <a
-        ixTest="manage-credentials"
+        tnTestIdType="link"
+        [tnTestId]="'manage-credentials'"
         [tnTooltip]="'Open Backup Credentials in full page' | translate"
         (click)="goToManageCredentials()"
       >

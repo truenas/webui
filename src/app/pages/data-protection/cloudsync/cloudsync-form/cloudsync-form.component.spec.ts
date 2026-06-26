@@ -376,6 +376,29 @@ describe('CloudSyncFormComponent', () => {
     });
   });
 
+  describe('side panel host (no SlideInRef)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+        ],
+        props: {
+          taskToEdit: existingTask,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('emits closed and updates when saved via the host submit() entry point', () => {
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.update', [1, expect.anything()]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
+    });
+  });
+
   describe('doesnt load buckets when user doesnt has roles', () => {
     beforeEach(() => {
       spectator = createComponent({
