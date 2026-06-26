@@ -7,9 +7,13 @@ import {
 } from '@angular/forms';
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import {
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
 import {
@@ -26,13 +30,12 @@ import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/compon
 import {
   IxDynamicFormComponent,
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import {
+  IxFormComponent,
+  FormSubmitEvent,
+  SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -44,15 +47,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./reporting-exporters-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
+    IxFormComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     TranslateModule,
     IxDynamicFormComponent,
   ],
@@ -61,18 +62,11 @@ export class ReportingExportersFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   slideInRef = inject<SlideInRef<ReportingExporter | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   get isNew(): boolean {
     return !this.editingExporter;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Reporting Exporter')
-      : this.translate.instant('Edit Reporting Exporter');
   }
 
   form = new FormGroup({
@@ -91,14 +85,11 @@ export class ReportingExportersFormComponent implements OnInit {
   dynamicSection: DynamicFormSchema[] = [];
   protected editingExporter: ReportingExporter | undefined;
 
-  protected exporterTypeOptions$: Observable<Option[]>;
+  protected readonly exporterTypeOptions = signal<Option[]>([]);
   protected reportingExporterList: ReportingExporterList[] = [];
   protected readonly requiredRoles = [Role.ReportingWrite];
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
     this.editingExporter = this.slideInRef.getData();
   }
 
@@ -106,6 +97,35 @@ export class ReportingExportersFormComponent implements OnInit {
     this.loadSchemas();
     this.handleTypeChange();
   }
+
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
+    const values = { ...event.allValues } as {
+      name: string;
+      enabled: boolean;
+      type: string;
+      attributes: Record<string, unknown>;
+    };
+
+    values.attributes['exporter_type'] = values.type;
+    delete (values as Record<string, unknown>)['type'];
+
+    for (const [key, value] of Object.entries(values.attributes)) {
+      if (value == null || value === '') {
+        delete values.attributes[key];
+      }
+    }
+
+    const request$ = this.editingExporter
+      ? this.api.call('reporting.exporters.update', [this.editingExporter.id, values])
+      : this.api.call('reporting.exporters.create', [values]);
+
+    return {
+      request$,
+      successMessage: this.isNew
+        ? this.translate.instant('Exporter created')
+        : this.translate.instant('Exporter updated'),
+    };
+  };
 
   private handleTypeChange(): void {
     this.form.controls.type.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -151,7 +171,7 @@ export class ReportingExportersFormComponent implements OnInit {
   }
 
   private setExporterTypeOptions(schemas: ReportingExporterSchema[]): void {
-    this.exporterTypeOptions$ = of(
+    this.exporterTypeOptions.set(
       schemas.map((schema) => ({
         label: ignoreTranslation(schema.key),
         value: schema.key,
@@ -214,47 +234,5 @@ export class ReportingExportersFormComponent implements OnInit {
         });
       }
     }
-  }
-
-  protected onSubmit(): void {
-    const values = {
-      ...this.form.value,
-    };
-
-    values.attributes['exporter_type'] = values.type;
-    delete values.type;
-
-    for (const [key, value] of Object.entries(values.attributes)) {
-      if (value == null || value === '') {
-        delete values.attributes[key];
-      }
-    }
-
-    this.isLoading.set(true);
-    let request$: Observable<unknown>;
-
-    if (this.editingExporter) {
-      request$ = this.api.call('reporting.exporters.update', [
-        this.editingExporter.id,
-        values,
-      ]);
-    } else {
-      request$ = this.api.call('reporting.exporters.create', [values]);
-    }
-
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
-
-  private close(response: boolean): void {
-    this.slideInRef.close({ response });
   }
 }

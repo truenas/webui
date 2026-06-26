@@ -1,16 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SchemaType } from 'app/enums/schema.enum';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { Schema } from 'app/interfaces/schema.interface';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
@@ -18,7 +19,6 @@ import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/com
 describe('ReportingExportersFormComponent', () => {
   let spectator: Spectator<ReportingExportersFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const existingExporter: ReportingExporter = {
     name: 'test',
@@ -66,33 +66,31 @@ describe('ReportingExportersFormComponent', () => {
         mockCall('reporting.exporters.update'),
       ]),
       mockAuth(),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
     ],
   });
 
   describe('Add new exporter', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('add new exporter when form is submitted', async () => {
-      await form.fillForm(
-        {
-          Name: 'exporter1',
-          Type: ReportingExporterKey.Graphite,
-          Enable: true,
-        },
-      );
+      jest.spyOn(console, 'warn').mockImplementation();
+
+      const nameInput = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
+      await nameInput.setValue('exporter1');
+
+      const typeSelect = await loader.getHarness(TnSelectHarness);
+      await typeSelect.selectOption(ReportingExporterKey.Graphite);
 
       const secretAccessKey = await loader.getHarness(TnInputHarness.with({ name: 'secret_access_key' }));
       await secretAccessKey.setValue('abcd');
       const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
       await accessKeyId.setValue('abcde');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
@@ -109,39 +107,32 @@ describe('ReportingExportersFormComponent', () => {
   });
 
   describe('Edit exporter', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => existingExporter) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('shows values for existing exporter', async () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.exporter_schemas');
 
-      const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
-      const typeOptions = await typeSelect.getOptionLabels();
-      expect(typeOptions).toEqual([
-        'GRAPHITE',
-      ]);
+      const typeSelect = await loader.getHarness(TnSelectHarness);
+      const typeOptions = await typeSelect.getOptions();
+      expect(typeOptions).toEqual(['GRAPHITE']);
 
-      const values = await form.getValues();
-      const disabledState = await form.getDisabledState();
+      const nameInput = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
+      expect(await nameInput.getValue()).toBe(existingExporter.name);
+      expect(await nameInput.isDisabled()).toBe(false);
 
-      expect(values).toEqual({
-        Name: existingExporter.name,
-        Type: existingExporter.attributes.exporter_type,
-        Enable: existingExporter.enabled,
-      });
+      expect(await typeSelect.getDisplayText()).toBe(existingExporter.attributes.exporter_type as string);
+      expect(await typeSelect.isDisabled()).toBe(false);
 
-      expect(disabledState).toEqual({
-        Name: false,
-        Type: false,
-        Enable: false,
-      });
+      const enableCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable' }));
+      expect(await enableCheckbox.isChecked()).toBe(existingExporter.enabled);
+      expect(await enableCheckbox.isDisabled()).toBe(false);
 
       const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
       expect(await accessKeyId.getValue()).toBe(existingExporter.attributes.access_key_id);
@@ -153,10 +144,12 @@ describe('ReportingExportersFormComponent', () => {
     });
 
     it('edits exporter when form is submitted', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
+
       const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
       await accessKeyId.setValue('efghi');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
