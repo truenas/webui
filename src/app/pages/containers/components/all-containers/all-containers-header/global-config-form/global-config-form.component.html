@@ -8,18 +8,16 @@
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
 
-  <tn-form-section [heading]="'Preferred Pool' | translate">
-    <tn-form-field
-      [label]="'Preferred Pool' | translate"
-      [tooltip]="'Default pool to use when creating containers if pool is not explicitly specified.' | translate"
-    >
-      <tn-select
-        formControlName="preferred_pool"
-        [allowEmpty]="true"
-        [options]="(poolOptions$ | async) ?? []"
-      ></tn-select>
-    </tn-form-field>
-  </tn-form-section>
+  <tn-form-field
+    [label]="'Preferred Pool' | translate"
+    [tooltip]="'Default pool to use when creating containers if pool is not explicitly specified.' | translate"
+  >
+    <tn-select
+      formControlName="preferred_pool"
+      [allowEmpty]="true"
+      [options]="(poolOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   <tn-form-section [heading]="'Default Network' | translate">
     <tn-form-field [label]="'Bridge' | translate">
