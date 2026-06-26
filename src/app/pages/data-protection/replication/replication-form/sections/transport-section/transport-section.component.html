@@ -74,13 +74,17 @@
         [options]="(compressions$ | async) ?? []"
       ></tn-select>
     </tn-form-field>
-    <ix-input
-      formControlName="speed_limit"
+    <tn-form-field
       [label]="asTranslatedString(('Limit' | translate) + sizeSuggestion)"
-      [format]="formatter.memorySizeFormatting"
-      [parse]="formatter.memorySizeParsing"
       [tooltip]="helptext.speedLimitTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input
+        name="speed_limit"
+        testId="speed-limit"
+        formControlName="speed_limit"
+        [inputType]="InputType.Size"
+      ></tn-input>
+    </tn-form-field>
   }
   <tn-form-field [tooltip]="helptext.largeBlockTooltip | translate">
     <tn-checkbox

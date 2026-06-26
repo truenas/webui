@@ -16,8 +16,6 @@ import { helptextGlobal } from 'app/helptext/global-helptext';
 import { newOption } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
@@ -33,15 +31,12 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
     TnInputComponent,
     TnCheckboxComponent,
     SshCredentialsSelectComponent,
-    // speed_limit keeps ix-input for its memory-size format/parse; tn-input has no equivalent.
-    IxInputComponent,
     TranslateModule,
   ],
 })
 export class TransportSectionComponent implements OnChanges {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  formatter = inject(IxFormatterService);
 
   protected readonly InputType = InputType;
 

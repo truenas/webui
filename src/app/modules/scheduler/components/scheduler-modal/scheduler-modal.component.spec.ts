@@ -21,6 +21,10 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 import { SchedulerModalComponent } from './scheduler-modal.component';
 
 describe('SchedulerModalComponent', () => {
+  // Scopes the MockInstance calendar override below to this suite so ng-mocks restores it
+  // afterwards instead of warning about leaked side effects.
+  MockInstance.scope();
+
   let spectator: Spectator<SchedulerModalComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({

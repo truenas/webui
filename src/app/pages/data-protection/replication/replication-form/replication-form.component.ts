@@ -21,7 +21,6 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import {
   SidePanelFooterAction,
@@ -78,7 +77,6 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private errorParser = inject(ErrorParserService);
   private translate = inject(TranslateService);
-  formatter = inject(IxFormatterService);
   private cdr = inject(ChangeDetectorRef);
   private dialog = inject(DialogService);
   private snackbar = inject(SnackbarService);

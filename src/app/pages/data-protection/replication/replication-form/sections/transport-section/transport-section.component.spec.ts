@@ -13,7 +13,6 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import {
   TransportSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/transport-section/transport-section.component';
@@ -59,9 +58,7 @@ describe('TransportSectionComponent', () => {
   const getSshSelect = (): Promise<TnSelectHarness> => loader.getHarness(
     TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials"]' }),
   );
-  const getSpeedLimit = (): Promise<IxInputHarness> => loader.getHarness(
-    IxInputHarness.with({ label: 'Limit(Examples: 500 KiB, 500M, 2 TB)' }),
-  );
+  const getSpeedLimit = (): Promise<TnInputHarness> => getTnInput('speed_limit');
 
   describe('SSH transport', () => {
     beforeEach(() => {
@@ -119,7 +116,8 @@ describe('TransportSectionComponent', () => {
       expect(shouldHaveLimit).toHaveProperty('speed_limit', 1 * GiB);
 
       // then, make it empty and ensure that it does properly return null
-      await (await getSpeedLimit()).setValue('');
+      // (an empty size field maps to a null byte count in the model)
+      spectator.component.form.controls.speed_limit.setValue(null);
 
       const shouldNotHaveLimit = spectator.component.getPayload();
       expect(shouldNotHaveLimit).toHaveProperty('speed_limit', null);
