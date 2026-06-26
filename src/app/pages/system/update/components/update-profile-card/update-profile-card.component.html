@@ -10,7 +10,7 @@
     </div>
   }
 
-  @if ((profileOptions() | async)?.length) {
+  @if (hasProfileOptions()) {
     <div class="update-profile" [class.disabled]="!canChangeProfile()">
       <ix-select
         [formControl]="updateProfileControl"
@@ -19,14 +19,12 @@
         [options]="profileOptions()"
       ></ix-select>
 
-      <button
-        mat-button
-        ixTest="apply-profile"
+      <tn-button
+        [testId]="'apply-profile'"
+        [label]="'Apply' | translate"
         [disabled]="!canChangeProfile()"
-        (click)="applyProfile()"
-      >
-        {{ 'Apply' | translate }}
-      </button>
+        (onClick)="applyProfile()"
+      ></tn-button>
     </div>
   }
 

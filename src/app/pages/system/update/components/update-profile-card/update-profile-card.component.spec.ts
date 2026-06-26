@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
@@ -92,8 +93,8 @@ describe('UpdateProfileCard', () => {
     const select = await loader.getHarness(IxSelectHarness.with({ label: 'Select an update profile' }));
     await select.setValue('Developer');
 
-    const button = spectator.query('button[ixTest="apply-profile"]') as HTMLButtonElement;
-    spectator.click(button);
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Apply' }));
+    await button.click();
 
     expect(dialog.confirm).toHaveBeenCalled();
     expect(api.call).toHaveBeenCalledWith('update.update', [{ profile: 'DEVELOPER' }]);
@@ -107,8 +108,8 @@ describe('UpdateProfileCard', () => {
     const select = await loader.getHarness(IxSelectHarness.with({ label: 'Select an update profile' }));
     await select.setValue('Developer');
 
-    const button = spectator.query('button[ixTest="apply-profile"]') as HTMLButtonElement;
-    spectator.click(button);
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Apply' }));
+    await button.click();
 
     expect(spectator.component.profileSwitched.emit).toHaveBeenCalled();
   });

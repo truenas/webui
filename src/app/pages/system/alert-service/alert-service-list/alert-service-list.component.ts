@@ -3,11 +3,14 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardHeaderActionsDirective,
+  tnIconMarker,
+  TnTablePagerComponent,
+} from '@truenas/ui-components';
 import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -30,7 +33,6 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
@@ -41,15 +43,13 @@ import { alertServiceListElements } from 'app/pages/system/alert-service/alert-s
   styleUrls: ['./alert-service-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
     UiSearchDirective,
-    MatToolbarRow,
     BasicSearchComponent,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
+    TnButtonComponent,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
@@ -72,10 +72,10 @@ export class AlertServiceListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AlertListWrite];
   protected readonly searchableElements = alertServiceListElements;
 
-  dataProvider: AsyncDataProvider<AlertService>;
-  searchQuery = signal('');
+  protected dataProvider: AsyncDataProvider<AlertService>;
+  protected searchQuery = signal('');
 
-  columns = createTable<AlertService>([
+  protected columns = createTable<AlertService>([
     textColumn({
       title: this.translate.instant('Service Name'),
       propertyName: 'name',

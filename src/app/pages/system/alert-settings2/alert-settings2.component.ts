@@ -1,14 +1,18 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardHeaderActionsDirective,
+  TnIconComponent,
+  TnListComponent,
+  TnListItemComponent,
+  tnIconMarker,
+} from '@truenas/ui-components';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -29,15 +33,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     RouterLink,
-    MatCard,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
     RequiresRolesDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnListComponent,
+    TnListItemComponent,
     TnIconComponent,
     IxInputComponent,
     ReactiveFormsModule,
@@ -53,13 +56,13 @@ export class AlertSettings2Component implements OnInit {
 
   protected readonly requiredRoles = [Role.AlertListWrite];
 
-  categories: AlertCategory[] = [];
-  alertClasses: AlertClasses;
+  protected categories: AlertCategory[] = [];
+  private alertClasses: AlertClasses;
 
-  searchControl = this.fb.control('');
-  searchOptions: Option[] = [];
+  protected searchControl = this.fb.control('');
+  protected searchOptions: Option[] = [];
 
-  policyOptions: string[] = [];
+  private policyOptions: string[] = [];
 
   ngOnInit(): void {
     this.loadCategories();
@@ -102,15 +105,15 @@ export class AlertSettings2Component implements OnInit {
     });
   }
 
-  getPolicy(cls: AlertClass): AlertPolicy {
+  protected getPolicy(cls: AlertClass): AlertPolicy {
     return this.alertClasses?.classes[cls.id]?.policy || AlertPolicy.Immediately;
   }
 
-  getLevel(cls: AlertClass): AlertLevel {
+  protected getLevel(cls: AlertClass): AlertLevel {
     return this.alertClasses?.classes[cls.id]?.level || cls.level;
   }
 
-  updateSearchOption(): void {
+  private updateSearchOption(): void {
     this.searchOptions = [];
     for (const category of this.categories) {
       this.searchOptions.push({
@@ -120,7 +123,7 @@ export class AlertSettings2Component implements OnInit {
     }
   }
 
-  categoryClick(categoryId: string): void {
+  protected categoryClick(categoryId: string): void {
     document.getElementById(categoryId)?.scrollIntoView();
     this.cdr.markForCheck();
   }
@@ -142,7 +145,7 @@ export class AlertSettings2Component implements OnInit {
     });
   }
 
-  getLevelColor(level: AlertLevel): string {
+  protected getLevelColor(level: AlertLevel): string {
     switch (level) {
       case AlertLevel.Info:
       case AlertLevel.Notice:
@@ -160,7 +163,7 @@ export class AlertSettings2Component implements OnInit {
     }
   }
 
-  getIconName(level: AlertLevel): string {
+  protected getIconName(level: AlertLevel): string {
     switch (level) {
       case AlertLevel.Info:
         return 'information';

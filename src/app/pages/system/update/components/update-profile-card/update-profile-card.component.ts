@@ -1,9 +1,8 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, inject, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { filter, of, switchMap } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
@@ -11,7 +10,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -23,10 +21,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,
-    TestDirective,
-    MatButtonModule,
+    TnButtonComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 
@@ -44,6 +40,8 @@ export class UpdateProfileCard implements OnChanges {
   readonly profileSwitched = output();
 
   protected updateProfileControl = new FormControl('');
+
+  protected hasProfileOptions = computed(() => this.availableProfiles().length > 0);
 
   protected canChangeProfile = computed(() => {
     return this.availableProfiles().length > 1

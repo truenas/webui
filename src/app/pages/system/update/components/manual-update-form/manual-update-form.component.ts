@@ -3,12 +3,10 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCardComponent, TnProgressBarComponent } from '@truenas/ui-components';
 import {
   finalize, noop, Observable, of,
 } from 'rxjs';
@@ -32,7 +30,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { systemManualUpdateFormElements } from 'app/pages/system/update/components/manual-update-form/manual-update-form.elements';
@@ -52,25 +49,23 @@ import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/sys
   styleUrls: ['manual-update-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
     UiSearchDirective,
-    MatCardContent,
-    MatProgressBar,
+    TnProgressBarComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxFileInputComponent,
     IxSelectComponent,
     IxCheckboxComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
 export class ManualUpdateFormComponent implements OnInit {
   private dialogService = inject(DialogService);
   protected router = inject(Router);
-  systemService = inject(SystemGeneralService);
+  private systemService = inject(SystemGeneralService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
