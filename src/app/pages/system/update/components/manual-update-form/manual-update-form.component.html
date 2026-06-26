@@ -4,7 +4,7 @@
   }
 
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-    <ix-fieldset>
+    <tn-form-section>
       <p>
         <b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}
       </p>
@@ -19,33 +19,38 @@
       ></ix-file-input>
 
       @if (!isHaLicensed) {
-        <ix-select
-          formControlName="filelocation"
+        <tn-form-field
           [label]="helptext.filelocation.label | translate"
           [tooltip]="helptext.filelocation.tooltip | translate"
-          [options]="fileLocationOptions$"
           [required]="true"
-        ></ix-select>
+        >
+          <tn-select
+            formControlName="filelocation"
+            [options]="(fileLocationOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
       }
 
       @if (!isHaLicensed && isEnterprise()) {
-        <ix-checkbox
-          formControlName="rebootAfterManualUpdate"
-          [label]="helptext.rebootAfterManualUpdate.label | translate"
-          [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate"
-        ></ix-checkbox>
+        <tn-form-field [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate">
+          <tn-checkbox
+            formControlName="rebootAfterManualUpdate"
+            [label]="helptext.rebootAfterManualUpdate.label | translate"
+          ></tn-checkbox>
+        </tn-form-field>
       }
-    </ix-fieldset>
-
-    <div class="form-actions">
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        type="submit"
-        color="primary"
-        [testId]="'apply-update'"
-        [label]="'Apply Update' | translate"
-        [disabled]="form.invalid || isFormLoading()"
-      ></tn-button>
-    </div>
+    </tn-form-section>
   </form>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="filled"
+      [testId]="'apply-update'"
+      [label]="'Apply Update' | translate"
+      [disabled]="form.invalid || isFormLoading()"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  </ng-template>
 </tn-card>

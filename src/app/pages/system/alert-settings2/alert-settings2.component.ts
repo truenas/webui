@@ -22,7 +22,6 @@ import { AlertCategory, AlertClass, AlertClasses } from 'app/interfaces/alert.in
 import { Option } from 'app/interfaces/option.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -34,7 +33,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   imports: [
     PageHeaderComponent,
     TnButtonComponent,
-    TestDirective,
     RouterLink,
     TnCardComponent,
     TnCardHeaderActionsDirective,
