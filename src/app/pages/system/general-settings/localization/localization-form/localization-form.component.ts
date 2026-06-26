@@ -1,21 +1,21 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent } from '@truenas/ui-components';
 import { sortBy } from 'lodash-es';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import {
+  FormSubmitEvent,
+  IxFormComponent,
+  SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -29,28 +29,24 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
   styleUrls: ['./localization-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
+    AsyncPipe,
+    IxFormComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     IxComboboxComponent,
-    IxSelectComponent,
-    FormActionsComponent,
-    TnButtonComponent,
     TranslateModule,
   ],
 })
 export class LocalizationFormComponent implements OnInit {
   private sysGeneralService = inject(SystemGeneralService);
   private fb = inject(FormBuilder);
-  protected api = inject(ApiService);
-  private errorHandler = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<LocalizationSettings, boolean>>(SlideInRef);
-  private destroyRef = inject(DestroyRef);
 
   fieldsetTitle = helptext.localeTitle;
-
-  isFormLoading = signal<boolean>(false);
 
   protected localizationSettings: LocalizationSettings;
 
@@ -94,21 +90,12 @@ export class LocalizationFormComponent implements OnInit {
     });
   }
 
-  protected submit(): void {
-    const values = this.formGroup.getRawValue();
-    this.isFormLoading.set(true);
-
-    this.api.call('system.general.update', [values]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.store$.dispatch(generalConfigUpdated());
-        this.store$.dispatch(systemInfoUpdated());
-        this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.formGroup);
-      },
-    });
-  }
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => ({
+    request$: this.api.call('system.general.update', [event.allValues]),
+    onSuccess: () => {
+      this.store$.dispatch(generalConfigUpdated());
+      this.store$.dispatch(systemInfoUpdated());
+    },
+    closeWith: () => true,
+  });
 }

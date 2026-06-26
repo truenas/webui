@@ -1,15 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnSelectHarness } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -59,10 +60,10 @@ describe('LocalizationFormComponent', () => {
         },
       }),
       mockProvider(SlideIn),
-      mockProvider(FormErrorHandlerService),
       provideMockStore(),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
+      ...ixFormTestingProviders(),
     ],
   });
 
@@ -73,22 +74,21 @@ describe('LocalizationFormComponent', () => {
   });
 
   it('shows current localization settings when editing', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+    const kbdMapSelect = await loader.getHarness(TnSelectHarness);
+    expect(await kbdMapSelect.getDisplayText()).toBe('English (US) (us)');
 
-    expect(values).toEqual({
-      'Console Keyboard Map': 'English (US) (us)',
-      Timezone: 'America/Los_Angeles',
-    });
+    const form = await loader.getHarness(IxFormHarness);
+    expect((await form.getValues()).Timezone).toBe('America/Los_Angeles');
   });
 
   it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    const kbdMapSelect = await loader.getHarness(TnSelectHarness);
+    await kbdMapSelect.selectOption('English (US) (us)');
+
     const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Console Keyboard Map': 'English (US) (us)',
-      Timezone: 'America/Los_Angeles',
-    });
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await form.fillForm({ Timezone: 'America/Los_Angeles' });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('system.general.update', [{

@@ -1,31 +1,24 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="formGroup"
   [title]="'Localization Settings' | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
-
-<form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
-  <ix-fieldset [title]="fieldsetTitle | translate">
-    <ix-select
+  [isEditMode]="true"
+  [submitHandler]="handleSubmit"
+>
+  <tn-form-section [heading]="fieldsetTitle | translate">
+    <tn-form-field
       [label]="kbdMap.label | translate"
-      [options]="kbdMap.options"
       [required]="true"
-      [formControlName]="kbdMap.fcName"
-    ></ix-select>
+    >
+      <tn-select
+        [formControlName]="kbdMap.fcName"
+        [options]="(kbdMap.options | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
     <ix-combobox
       [formControlName]="timezone.fcName"
       [label]="timezone.label | translate"
       [provider]="timezone.provider"
       [required]="true"
     ></ix-combobox>
-  </ix-fieldset>
-
-  <ix-form-actions>
-    <tn-button
-      color="primary"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="formGroup.invalid || isFormLoading()"
-      (onClick)="submit()"
-    ></tn-button>
-  </ix-form-actions>
-</form>
+  </tn-form-section>
+</ix-form>
