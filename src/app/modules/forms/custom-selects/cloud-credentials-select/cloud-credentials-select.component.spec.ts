@@ -81,6 +81,32 @@ describe('CloudCredentialsSelectComponent', () => {
     });
   });
 
+  describe('required validation', () => {
+    it('carries the required validator on the inner control so the field can show the error', () => {
+      defaultHostProps.form.controls.credentials.setValue(null);
+      spectator = createHost(host, {
+        hostProps: { ...defaultHostProps, label: 'Credentials', required: true },
+      });
+      spectator.detectChanges();
+
+      // The wrapping tn-form-field reads validity from the inner tn-select (bound to selectControl),
+      // not the host control — so the inner control must carry the validator for the inline required
+      // error to surface on blur. This regressed when the migration moved the validator off it.
+      const { selectControl } = spectator.component as unknown as { selectControl: FormControl };
+      expect(selectControl.hasError('required')).toBe(true);
+    });
+
+    it('does not mark the inner control required when required is false', () => {
+      spectator = createHost(host, {
+        hostProps: { ...defaultHostProps, label: 'Credentials', required: false },
+      });
+      spectator.detectChanges();
+
+      const { selectControl } = spectator.component as unknown as { selectControl: FormControl };
+      expect(selectControl.hasError('required')).toBe(false);
+    });
+  });
+
   describe('filter by providers is set', () => {
     beforeEach(() => {
       spectator = createHost(host, {

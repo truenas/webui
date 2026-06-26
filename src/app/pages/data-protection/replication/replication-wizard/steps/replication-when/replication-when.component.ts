@@ -6,7 +6,8 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent, TnSelectComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnRadioComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -32,6 +33,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
+    TnFormSectionComponent,
     TnRadioComponent,
     TnCheckboxComponent,
     TnInputComponent,

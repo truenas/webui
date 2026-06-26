@@ -57,44 +57,53 @@ describe('SnapshotTaskComponent', () => {
 
   let spectator: Spectator<SnapshotTaskFormComponent>;
   let loader: HarnessLoader;
+
+  // Shared by both hosts. A factory (not a shared array) so each host gets its own `jest.fn()`s —
+  // `ixFormTestingProviders()` and the service mocks must be fresh per TestBed to avoid call counts
+  // leaking between tests. The legacy SlideIn host adds SlideInRef; the `<tn-side-panel>` host forces
+  // it null, so the form's optional `inject(SlideInRef)` resolves null → side-panel mode.
+  const baseProviders = (): unknown[] => [
+    mockAuth(),
+    mockProvider(LocaleService, {
+      timezone: 'America/New_York',
+    }),
+    mockApi([
+      mockCall('pool.snapshottask.create'),
+      mockCall('pool.snapshottask.update'),
+      mockCall('pool.snapshottask.update_will_change_retention_for', {}),
+    ]),
+    mockProvider(DialogService),
+    mockProvider(StorageService, {
+      getDatasetNameOptions: jest.fn(() => of([
+        { label: 'test', value: 'test' },
+        { label: 'dev', value: 'dev' },
+      ])),
+    }),
+    mockProvider(TaskService, {
+      getTimeOptions: jest.fn(() => [
+        { label: '00:00:00', value: '00:00' },
+        { label: '09:15:00', value: '09:15' },
+        { label: '23:59:00', value: '23:59' },
+      ]),
+    }),
+    provideMockStore({
+      selectors: [
+        {
+          selector: selectTimezone,
+          value: 'America/New_York',
+        },
+      ],
+    }),
+    ...ixFormTestingProviders(),
+  ];
+
   const createComponent = createComponentFactory({
     component: SnapshotTaskFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockAuth(),
-      mockProvider(LocaleService, {
-        timezone: 'America/New_York',
-      }),
-      mockApi([
-        mockCall('pool.snapshottask.create'),
-        mockCall('pool.snapshottask.update'),
-        mockCall('pool.snapshottask.update_will_change_retention_for', {}),
-      ]),
-      mockProvider(DialogService),
-      mockProvider(StorageService, {
-        getDatasetNameOptions: jest.fn(() => of([
-          { label: 'test', value: 'test' },
-          { label: 'dev', value: 'dev' },
-        ])),
-      }),
-      mockProvider(TaskService, {
-        getTimeOptions: jest.fn(() => [
-          { label: '00:00:00', value: '00:00' },
-          { label: '09:15:00', value: '09:15' },
-          { label: '23:59:00', value: '23:59' },
-        ]),
-      }),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectTimezone,
-            value: 'America/New_York',
-          },
-        ],
-      }),
-      ...ixFormTestingProviders(),
+      ...baseProviders(),
       mockProvider(SlideInRef, slideInRef),
     ],
   });
@@ -268,6 +277,42 @@ describe('SnapshotTaskComponent', () => {
       );
 
       consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe('when hosted in a side panel', () => {
+    // SlideInRef forced null (the form's optional inject then resolves null → side-panel mode); data
+    // arrives via the `taskToEdit` input and the form closes through its `closed` output. Defined in
+    // this describe so its TestBed override is scoped here and doesn't disable the SlideIn host above.
+    const createPanelComponent = createComponentFactory({
+      component: SnapshotTaskFormComponent,
+      imports: [
+        ReactiveFormsModule,
+      ],
+      providers: [
+        ...baseProviders(),
+        { provide: SlideInRef, useValue: null },
+      ],
+    });
+
+    it('submits via submit() and emits closed on a successful save', async () => {
+      const panelSpectator = createPanelComponent({
+        props: { taskToEdit: { ...existingTask, id: 1 } },
+      });
+      panelSpectator.detectChanges();
+
+      const closedSpy = jest.fn();
+      panelSpectator.component.closed.subscribe(closedSpy);
+
+      // The container footer's Save calls submit() directly (no in-form Save button in panel mode).
+      panelSpectator.component.submit();
+      await panelSpectator.fixture.whenStable();
+
+      expect(panelSpectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'pool.snapshottask.update',
+        [1, expect.any(Object)],
+      );
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

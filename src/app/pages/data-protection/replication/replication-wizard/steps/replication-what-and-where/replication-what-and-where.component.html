@@ -11,7 +11,7 @@
   </tn-form-field>
 
   <div class="replication">
-    <div class="source">
+    <tn-form-section class="source">
       <tn-form-field
         [label]="helptext.sourceDatasetsFromLabel | translate"
         [tooltip]="helptext.sourceDatasetsFromTooltip | translate"
@@ -109,8 +109,8 @@
           ></tn-input>
         </tn-form-field>
       }
-    </div>
-    <div class="target">
+    </tn-form-section>
+    <tn-form-section class="target">
       <tn-form-field
         [label]="helptext.targetDatasetFromLabel | translate"
         [tooltip]="helptext.targetDatasetFromTooltip | translate"
@@ -237,7 +237,7 @@
           ></tn-input>
         </tn-form-field>
       }
-    </div>
+    </tn-form-section>
   </div>
 
   @if (form.controls.transport.enabled) {

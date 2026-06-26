@@ -1,8 +1,8 @@
 import {
-  Directive, OnInit, inject, DestroyRef,
+  Directive, OnInit, inject, DestroyRef, input, effect,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ControlValueAccessor, FormControl } from '@angular/forms';
+import { ControlValueAccessor, FormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable, merge, switchMap, take, tap,
@@ -11,6 +11,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ComponentInSlideIn } from 'app/modules/slide-ins/slide-in.interface';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 export const addNewIxSelectValue = 'ADD_NEW';
 
@@ -26,6 +27,11 @@ export const addNewIxSelectValue = 'ADD_NEW';
 export abstract class IxSelectWithNewOption<R = unknown> implements ControlValueAccessor, OnInit {
   formComponentIsWide = false;
 
+  // Shared chrome inputs — the same on every subclass, bound by their `<tn-form-field>`/`<tn-select>`.
+  readonly label = input<TranslatedString>();
+  readonly tooltip = input<TranslatedString>();
+  readonly required = input<boolean>(false);
+
   /** Drives the inner `<tn-select>`. The directive mediates between it and the host's form control. */
   protected readonly selectControl = new FormControl<IxSelectValue>(null);
   /** "Add New" + the fetched options, fed to `<tn-select [options]>`. */
@@ -34,6 +40,16 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
   private slideIn = inject(SlideIn);
   private translateService = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+
+  constructor() {
+    // Mirror the host's required state onto the inner control so `<tn-form-field>` renders the inline
+    // "required" error: the field reads validity from the `<tn-select>` it wraps (bound to
+    // selectControl), not from the host's form control, which carries the actual validator.
+    effect(() => {
+      this.selectControl.setValidators(this.required() ? [Validators.required] : []);
+      this.selectControl.updateValueAndValidity({ emitEvent: false });
+    });
+  }
 
   /** Last real (non-"Add New") value, used to restore the selection when the create form is cancelled. */
   private previousValue: IxSelectValue = null;

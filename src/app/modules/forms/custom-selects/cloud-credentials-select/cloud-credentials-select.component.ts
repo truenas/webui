@@ -11,7 +11,7 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
@@ -29,9 +29,6 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
   imports: [TnFormFieldComponent, TnSelectComponent, ReactiveFormsModule, AsyncPipe],
 })
 export class CloudCredentialsSelectComponent extends IxSelectWithNewOption<CloudSyncCredential> {
-  readonly label = input<TranslatedString>();
-  readonly tooltip = input<TranslatedString>();
-  readonly required = input<boolean>(false);
   readonly filterByProviders = input<CloudSyncProviderName[]>();
 
   private cloudCredentialService = inject(CloudCredentialService);

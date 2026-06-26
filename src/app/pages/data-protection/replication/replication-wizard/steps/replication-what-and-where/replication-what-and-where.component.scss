@@ -1,10 +1,12 @@
 @import 'mixins/forms';
 
-// tn-form-field has no built-in vertical rhythm and tn-radio defaults to inline-block; the wizard
-// step renders fields in a plain <form>, so restore the spacing the old ix-* controls carried and
-// stack the radio groups.
-@include tn-form-field-spacing();
-@include tn-radio-group-layout();
+// Vertical rhythm comes from flex-gap containers (matching the `<tn-form-section>` body): the form
+// spaces its top-level rows (the exist-replication select, the Source/Target columns, transport,
+// sudo, name), and each Source/Target column is a `<tn-form-section>` that gaps its own fields.
+// (tn-radio stacking is handled globally in `_tn-styles.scss`.)
+form {
+  @include tn-form-stack();
+}
 
 .replication {
   display: flex;
@@ -15,13 +17,18 @@
     width: 50%;
   }
 
+  // The two columns are tn-form-sections side by side, not stacked, so cancel the global
+  // adjacent-section top margin (`tn-form-section + tn-form-section` in `_tn-styles.scss`) that
+  // would otherwise push the Destination column down out of line with Source.
+  tn-form-section + tn-form-section {
+    margin-top: 0;
+  }
+
   .snapshots-text {
+    align-self: flex-start;
     background-color: var(--primary);
     border-radius: 2px;
-    display: inline-block;
     font-size: 12px;
-    // Space it from the checkbox that follows (the one above already carries the field margin).
-    margin-bottom: 16px;
     padding: 4px 6px;
   }
 

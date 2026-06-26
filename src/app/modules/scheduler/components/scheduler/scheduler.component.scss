@@ -1,6 +1,12 @@
 :host {
   display: block;
   margin-bottom: 12px;
+
+  // Migrated tn-* forms space the scheduler via the surrounding `<tn-form-section>` gap; drop the
+  // legacy bottom margin there so it doesn't add an extra empty band below the field.
+  :host-context(tn-form-section) & {
+    margin-bottom: 0;
+  }
 }
 
 .full-width {

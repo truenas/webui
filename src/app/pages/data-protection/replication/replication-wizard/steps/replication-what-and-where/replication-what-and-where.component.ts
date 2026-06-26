@@ -9,7 +9,8 @@ import { MatStepperNext } from '@angular/material/stepper';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent, TnSelectComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnRadioComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
@@ -63,6 +64,7 @@ import { ReplicationService } from 'app/services/replication.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService, KeychainCredentialService],
   imports: [
+    TnFormSectionComponent,
     AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
