@@ -1,15 +1,25 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, input, OnInit, signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  InputType,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   DirectoryServiceCredentialType,
   DirectoryServiceType,
@@ -24,14 +34,11 @@ import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import {
+  SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ActiveDirectoryConfigComponent } from './active-directory-config/active-directory-config.component';
@@ -47,23 +54,21 @@ import { DirectoryServiceValidationService } from './services/directory-service-
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    FormActionsComponent,
-    TnButtonComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     TranslateModule,
-    RequiresRolesDirective,
     CredentialConfigComponent,
     ActiveDirectoryConfigComponent,
     LdapConfigComponent,
     IpaConfigComponent,
   ],
 })
-export class DirectoryServicesFormComponent implements OnInit {
+export class DirectoryServicesFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
@@ -72,13 +77,16 @@ export class DirectoryServicesFormComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private validationService = inject(DirectoryServiceValidationService);
-  slideInRef = inject<SlideInRef<DirectoryServicesConfig | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
+
+  /** Existing config to edit; supplied by the `<tn-side-panel>` host (or legacy SlideIn `getData`). */
+  readonly existingConfig = input<DirectoryServicesConfig | undefined>(undefined);
 
   protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);
   protected readonly isLoading = signal(false);
-  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
+  readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly helptext = helptextDirectoryServices;
+  protected readonly InputType = InputType;
   private readonly mainFormValid = signal(false);
 
   // Validation states are now managed by the validation service
@@ -92,6 +100,17 @@ export class DirectoryServicesFormComponent implements OnInit {
       this.form.controls.service_type.value,
     );
   });
+
+  /** Drives the host-owned Save action (`<tn-side-panel>` footer). */
+  readonly canSubmit = computed(() => this.isFormValid() && !this.isLoading());
+
+  /** Secondary footer action rendered by the side-panel host beside Save. */
+  readonly footerActions: SidePanelFooterAction[] = [{
+    label: T('Clear Config'),
+    testId: 'clear-config',
+    requiredRoles: this.requiredRoles,
+    onClick: () => this.onClearConfig(),
+  }];
 
   private updateFormValidity(): void {
     this.mainFormValid.set(this.form.valid);
@@ -120,17 +139,13 @@ export class DirectoryServicesFormComponent implements OnInit {
     { label: 'IPA', value: DirectoryServiceType.Ipa },
   ]);
 
-  constructor() {
-    const data = this.slideInRef.getData();
+  ngOnInit(): void {
+    // Data arrives via the legacy SlideIn (`getData`) or the side-panel host (`existingConfig` input).
+    // The base constructor wires the unsaved-changes confirmation via `hasUnsavedChanges()`.
+    const data = (this.slideInRef?.getData() as DirectoryServicesConfig | undefined) ?? this.existingConfig();
     if (data) {
       this.previousConfig.set(data);
     }
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
-
-  ngOnInit(): void {
     this.fillFormWithPreviousConfig();
     this.setupFormWatchers();
     this.updateFormValidity();
@@ -227,7 +242,7 @@ export class DirectoryServicesFormComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form, this.getFieldsMap());
@@ -259,7 +274,7 @@ export class DirectoryServicesFormComponent implements OnInit {
         )
         .subscribe({
           next: () => {
-            this.slideInRef.close({ response: true });
+            this.close(true);
           },
           error: (error: unknown) => {
             this.errorHandler.showErrorModal(error);

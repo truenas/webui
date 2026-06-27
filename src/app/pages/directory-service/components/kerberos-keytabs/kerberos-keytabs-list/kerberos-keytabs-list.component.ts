@@ -33,7 +33,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   TableActionsCellComponent,
@@ -78,7 +78,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   protected dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
@@ -101,8 +101,10 @@ export class KerberosKeytabsListComponent implements OnInit {
       iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: this.translate.instant('Edit'),
       onClick: (row) => {
-        this.slideIn.open(KerberosKeytabsFormComponent, { data: row })
-          .onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
+        this.formPanel.open(KerberosKeytabsFormComponent, {
+          title: this.translate.instant('Edit Kerberos Keytab'),
+          inputs: { editingRow: row },
+        }).onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
       },
     },
     {
@@ -172,8 +174,9 @@ export class KerberosKeytabsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(KerberosKeytabsFormComponent)
-      .onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
+    this.formPanel.open(KerberosKeytabsFormComponent, {
+      title: this.translate.instant('Add Kerberos Keytab'),
+    }).onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {

@@ -7,8 +7,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
@@ -39,8 +38,8 @@ describe('KerberosRealmsListComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => ({ onSuccess: (callback: () => void) => callback() })),
       }),
     ],
   });
@@ -62,7 +61,10 @@ describe('KerberosRealmsListComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(KerberosRealmsFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(KerberosRealmsFormComponent, {
+      title: 'Add Kerberos Realm',
+      inputs: { editingRow: undefined },
+    });
   });
 
   it('opens form to edit a Kerberos Realm when Edit button is pressed', () => {
@@ -71,8 +73,9 @@ describe('KerberosRealmsListComponent', () => {
     // by aria-label. Safe here because the table renders a single data row.
     spectator.click(spectator.query('[aria-label^="Edit"]'));
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(KerberosRealmsFormComponent, {
-      data: expect.objectContaining({ id: 1, realm: 'EXAMPLE.COM' }),
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(KerberosRealmsFormComponent, {
+      title: 'Edit Kerberos Realm',
+      inputs: { editingRow: expect.objectContaining({ id: 1, realm: 'EXAMPLE.COM' }) },
     });
   });
 

@@ -1,54 +1,63 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="title"
-  [loading]="isFormLoading()"
-></ix-modal-header>
-
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset>
-    <ix-input
-      formControlName="realm"
+  <tn-form-section>
+    <tn-form-field
       [label]="'Realm' | translate"
-      [required]="true"
       [tooltip]="tooltips.realm | translate"
-    ></ix-input>
+      [required]="true"
+    >
+      <tn-input
+        name="realm"
+        testId="realm"
+        formControlName="realm"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="primary_kdc"
+    <tn-form-field
       [label]="'Primary KDC' | translate"
       [tooltip]="tooltips.primary_kdc | translate"
-    ></ix-input>
+    >
+      <tn-input
+        name="primary_kdc"
+        testId="primary_kdc"
+        formControlName="primary_kdc"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-chips
-      formControlName="kdc"
+    <tn-form-field
       [label]="'KDC' | translate"
-      [placeholder]="'KDC' | translate"
       [tooltip]="tooltips.kdc | translate"
-    ></ix-chips>
+    >
+      <tn-chip-input
+        formControlName="kdc"
+        testId="kdc"
+        [allowCustomValue]="true"
+        [placeholder]="'KDC' | translate"
+      ></tn-chip-input>
+    </tn-form-field>
 
-    <ix-chips
-      formControlName="admin_server"
+    <tn-form-field
       [label]="'Admin Servers' | translate"
-      [placeholder]="'Admin Servers' | translate"
       [tooltip]="tooltips.admin_server | translate"
-    ></ix-chips>
+    >
+      <tn-chip-input
+        formControlName="admin_server"
+        testId="admin_server"
+        [allowCustomValue]="true"
+        [placeholder]="'Admin Servers' | translate"
+      ></tn-chip-input>
+    </tn-form-field>
 
-    <ix-chips
-      formControlName="kpasswd_server"
+    <tn-form-field
       [label]="'Password Servers' | translate"
-      [placeholder]="'Password Servers' | translate"
       [tooltip]="tooltips.kpasswd_server | translate"
-    ></ix-chips>
-  </ix-fieldset>
-
-  <ix-form-actions>
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      color="primary"
-      type="submit"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="form.invalid || isFormLoading()"
-    ></tn-button>
-  </ix-form-actions>
+    >
+      <tn-chip-input
+        formControlName="kpasswd_server"
+        testId="kpasswd_server"
+        [allowCustomValue]="true"
+        [placeholder]="'Password Servers' | translate"
+      ></tn-chip-input>
+    </tn-form-field>
+  </tn-form-section>
 </form>

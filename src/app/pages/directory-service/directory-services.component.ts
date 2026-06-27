@@ -29,7 +29,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -70,7 +70,7 @@ interface DataCard {
 })
 export class DirectoryServicesComponent implements OnInit {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialog = inject(DialogService);
   private tnDialog = inject(TnDialog);
   private loader = inject(LoaderService);
@@ -364,8 +364,9 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   protected openDirectoryServicesForm(): void {
-    this.slideIn.open(DirectoryServicesFormComponent, {
-      data: this.directoryServicesConfig(),
+    this.formPanel.open(DirectoryServicesFormComponent, {
+      title: this.translate.instant('Directory Services Configuration'),
+      inputs: { existingConfig: this.directoryServicesConfig() ?? undefined },
     }).onSuccess(() => this.refreshCards(), this.destroyRef);
   }
 

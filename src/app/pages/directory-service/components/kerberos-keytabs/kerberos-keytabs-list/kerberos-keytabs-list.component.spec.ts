@@ -11,8 +11,7 @@ import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KerberosKeytabsFormComponent,
@@ -36,8 +35,8 @@ describe('KerberosKeytabsListComponent', () => {
       MockComponent(KerberosKeytabsFormComponent),
     ],
     providers: [
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => ({ onSuccess: jest.fn() })),
       }),
       mockApi([
         mockCall('kerberos.keytab.query', [
@@ -88,7 +87,9 @@ describe('KerberosKeytabsListComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(KerberosKeytabsFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(KerberosKeytabsFormComponent, {
+      title: 'Add Kerberos Keytab',
+    });
   });
 
   it('deletes a keytab with confirmation when Delete button is pressed', () => {
@@ -125,8 +126,8 @@ describe('KerberosKeytabsListComponent - LDAP mode', () => {
       MockComponent(KerberosKeytabsFormComponent),
     ],
     providers: [
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => ({ onSuccess: jest.fn() })),
       }),
       mockApi([
         mockCall('kerberos.keytab.query', []),

@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, output, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -6,6 +7,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  InputType,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   map,
   Observable, of, pairwise, startWith, switchMap,
@@ -19,9 +24,6 @@ import {
   ldapSupportedCredentialTypes,
 } from 'app/interfaces/directoryservice-credentials.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 
@@ -31,11 +33,13 @@ import { DirectoryServiceValidationService } from 'app/pages/directory-service/c
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
     TranslateModule,
+    TnFormFieldComponent,
+    TnFormSectionComponent,
+    TnInputComponent,
+    TnSelectComponent,
   ],
 })
 export class CredentialConfigComponent implements OnInit {
@@ -45,6 +49,7 @@ export class CredentialConfigComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly helptext = helptextCredentials;
+  protected readonly InputType = InputType;
 
   protected form = this.fb.group({
     credential_type: [null as DirectoryServiceCredentialType, Validators.required],

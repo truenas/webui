@@ -32,7 +32,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -75,7 +75,7 @@ export class KerberosRealmsListComponent implements OnInit {
   private api = inject(ApiService);
   protected dialogService = inject(DialogService);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   readonly paginator = input(true);
@@ -95,8 +95,10 @@ export class KerberosRealmsListComponent implements OnInit {
       iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: this.translate.instant('Edit'),
       onClick: (row) => {
-        this.slideIn.open(KerberosRealmsFormComponent, { data: row })
-          .onSuccess(() => this.getKerberosRealms(), this.destroyRef);
+        this.formPanel.open(KerberosRealmsFormComponent, {
+          title: this.translate.instant('Edit Kerberos Realm'),
+          inputs: { editingRow: row },
+        }).onSuccess(() => this.getKerberosRealms(), this.destroyRef);
       },
     },
     {
@@ -162,8 +164,10 @@ export class KerberosRealmsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(KerberosRealmsFormComponent)
-      .onSuccess(() => this.getKerberosRealms(), this.destroyRef);
+    this.formPanel.open(KerberosRealmsFormComponent, {
+      title: this.translate.instant('Add Kerberos Realm'),
+      inputs: { editingRow: undefined },
+    }).onSuccess(() => this.getKerberosRealms(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {

@@ -1,22 +1,19 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
+import { Observable } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextKerberosKeytabs } from 'app/helptext/directory-service/kerberos-keytabs-form-list';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -24,40 +21,27 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './kerberos-keytabs-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     IxFileInputComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class KerberosKeytabsFormComponent implements OnInit {
-  private translate = inject(TranslateService);
+export class KerberosKeytabsFormComponent extends SidePanelForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
-  slideInRef = inject<SlideInRef<KerberosKeytab | undefined, boolean>>(SlideInRef);
   private fileValidator = inject(FileValidatorService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
+  readonly editingRow = input<KerberosKeytab | undefined>(undefined);
+
+  readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected editingKerberosKeytab: KerberosKeytab | undefined;
 
-  get isNew(): boolean {
-    return !this.editingKerberosKeytab;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant(helptextKerberosKeytabs.titleAdd)
-      : this.translate.instant(helptextKerberosKeytabs.titleEdit);
-  }
-
-  form = this.formBuilder.nonNullable.group({
+  protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     file: [null as File[] | null, Validators.compose([
       Validators.required,
@@ -65,23 +49,19 @@ export class KerberosKeytabsFormComponent implements OnInit {
     ])],
   });
 
-  protected isLoading = signal(false);
+  protected readonly isFormLoading = signal(false);
+
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   readonly helptext = helptextKerberosKeytabs;
 
-  constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingKerberosKeytab = slideInRef.getData();
-  }
-
   ngOnInit(): void {
-    if (this.editingKerberosKeytab) {
+    const row = (this.slideInRef?.getData() as KerberosKeytab | undefined) ?? this.editingRow();
+    this.editingKerberosKeytab = row;
+
+    if (row) {
       this.form.patchValue({
-        name: this.editingKerberosKeytab.name,
+        name: row.name,
       });
     }
   }
@@ -103,7 +83,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
         name: values.name,
         file,
       };
-      this.isLoading.set(true);
+      this.isFormLoading.set(true);
       let request$: Observable<unknown>;
       if (this.editingKerberosKeytab) {
         request$ = this.api.call('kerberos.keytab.update', [
@@ -116,11 +96,11 @@ export class KerberosKeytabsFormComponent implements OnInit {
 
       request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
-          this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
+          this.isFormLoading.set(false);
+          this.close(true);
         },
         error: (error: unknown) => {
-          this.isLoading.set(false);
+          this.isFormLoading.set(false);
           this.errorHandler.handleValidationErrors(error, this.form);
         },
       });
