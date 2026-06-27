@@ -101,7 +101,11 @@ export class DirectoryServicesFormComponent extends SidePanelForm implements OnI
     );
   });
 
-  /** Drives the host-owned Save action (`<tn-side-panel>` footer). */
+  /**
+   * Drives the host-owned Save action (`<tn-side-panel>` footer). Built by hand rather than via
+   * the base `trackCanSubmit()` because validity here is the aggregate `isFormValid()` signal
+   * (main form + child-form validation service), not just `form.status`.
+   */
   readonly canSubmit = computed(() => this.isFormValid() && !this.isLoading());
 
   /** Secondary footer action rendered by the side-panel host beside Save. */

@@ -45,10 +45,9 @@ describe('IdmapConfigComponent', () => {
     return (await loader.getAllHarnesses(TnSelectHarness))[0];
   }
 
-  /** Builtin inputs render before idmap_domain inputs; index 1 targets idmap_domain. */
-  async function getIdmapDomainInput(name: string): Promise<TnInputHarness> {
-    const inputs = await loader.getAllHarnesses(TnInputHarness.with({ name }));
-    return inputs[inputs.length - 1];
+  /** idmap_domain inputs use bare control names; the builtin section's are prefixed `builtin_`. */
+  function getIdmapDomainInput(name: string): Promise<TnInputHarness> {
+    return loader.getHarness(TnInputHarness.with({ name }));
   }
 
   function getUseDefaultCheckbox(): Promise<TnCheckboxHarness> {

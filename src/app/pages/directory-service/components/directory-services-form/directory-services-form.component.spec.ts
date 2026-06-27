@@ -91,10 +91,11 @@ describe('DirectoryServicesConfigFormComponent', () => {
       const timeout = await loader.getHarness(TnInputHarness.with({ name: 'timeout' }));
       await timeout.setValue('60');
 
-      // The configuration-type select is present but unset, so the form stays invalid.
+      // The configuration-type select is present but unset, so the form stays invalid and the
+      // host-driven Save action (canSubmit) is disabled.
       const serviceType = await loader.getHarness(TnSelectHarness);
       expect(serviceType).toBeTruthy();
-      expect((spectator.component as unknown as { form: { invalid: boolean } }).form.invalid).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('should show Active Directory fields when AD configuration is selected', async () => {

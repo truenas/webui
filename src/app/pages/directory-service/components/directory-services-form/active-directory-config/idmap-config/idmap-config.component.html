@@ -9,17 +9,19 @@
     </tn-form-field>
     @if (!(form.controls.use_default_idmap.value)) {
       <tn-form-section [heading]="'Builtin' | translate" [formGroup]="form.controls.builtin">
+        <!-- `name`/`testId` are prefixed `builtin_` so they stay unique against the identically-named
+             idmap_domain controls below, which render simultaneously. -->
         <tn-form-field [label]="'Name' | translate" [tooltip]="helptext.name.tooltip | translate">
           <tn-input
-            name="name"
-            testId="name"
+            name="builtin_name"
+            testId="builtin_name"
             formControlName="name"
           ></tn-input>
         </tn-form-field>
         <tn-form-field [label]="'Range Low' | translate" [tooltip]="helptext.rangeLowTooltip | translate" [required]="true">
           <tn-input
-            name="range_low"
-            testId="range_low"
+            name="builtin_range_low"
+            testId="builtin_range_low"
             formControlName="range_low"
             [inputType]="InputType.Number"
             [required]="true"
@@ -27,8 +29,8 @@
         </tn-form-field>
         <tn-form-field [label]="'Range High' | translate" [tooltip]="helptext.rangeHighTooltip | translate" [required]="true">
           <tn-input
-            name="range_high"
-            testId="range_high"
+            name="builtin_range_high"
+            testId="builtin_range_high"
             formControlName="range_high"
             [inputType]="InputType.Number"
             [required]="true"
