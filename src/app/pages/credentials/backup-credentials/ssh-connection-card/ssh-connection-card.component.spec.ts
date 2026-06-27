@@ -13,7 +13,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SshConnectionCardComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.component';
@@ -69,7 +69,7 @@ describe('SshConnectionCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -104,28 +104,33 @@ describe('SshConnectionCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SshConnectionFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SshConnectionFormComponent, {
+      title: 'New SSH Connection',
+    });
   });
 
   it('opens form when "Edit" button is pressed', async () => {
     const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       SshConnectionFormComponent,
       {
-        data: {
-          attributes: {
-            connect_timeout: 10,
-            host: 'fake.host.name',
-            port: 22,
-            private_key: 4,
-            remote_host_key: 'ssh-rsa FAAAKE',
-            username: 'root',
+        title: 'Edit SSH Connection',
+        inputs: {
+          editConnection: {
+            attributes: {
+              connect_timeout: 10,
+              host: 'fake.host.name',
+              port: 22,
+              private_key: 4,
+              remote_host_key: 'ssh-rsa FAAAKE',
+              username: 'root',
+            },
+            id: 5,
+            name: 'test-conn-1',
+            type: 'SSH_CREDENTIALS',
           },
-          id: 5,
-          name: 'test-conn-1',
-          type: 'SSH_CREDENTIALS',
         },
       },
     );

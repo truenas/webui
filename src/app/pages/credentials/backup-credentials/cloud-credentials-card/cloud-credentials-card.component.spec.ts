@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
@@ -72,7 +72,7 @@ describe('CloudCredentialsCardComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -105,16 +105,19 @@ describe('CloudCredentialsCardComponent', () => {
     await addButton.click();
 
     expect(
-      spectator.inject(SlideIn).open,
-    ).toHaveBeenCalledWith(CloudCredentialsFormComponent);
+      spectator.inject(FormSidePanelService).open,
+    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, { title: 'Add Cloud Credential' });
   });
 
   it('opens form when "Edit" button is pressed', async () => {
     const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
     await editButton.click();
     expect(
-      spectator.inject(SlideIn).open,
-    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, { data: { existingCredential: credentials[0] } });
+      spectator.inject(FormSidePanelService).open,
+    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, {
+      title: 'Edit Cloud Credential',
+      inputs: { editInput: { existingCredential: credentials[0] } },
+    });
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {

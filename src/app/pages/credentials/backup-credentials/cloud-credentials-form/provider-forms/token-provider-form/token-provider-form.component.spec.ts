@@ -1,9 +1,10 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness } from '@truenas/ui-components';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -13,7 +14,7 @@ import {
 
 describe('TokenProviderFormComponent', () => {
   let spectator: Spectator<TokenProviderFormComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: TokenProviderFormComponent,
     detectChanges: false,
@@ -26,11 +27,15 @@ describe('TokenProviderFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
     spectator.component.provider = {} as CloudSyncProvider;
     spectator.detectChanges();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('without credentials_oauth set provider', () => {
@@ -39,16 +44,11 @@ describe('TokenProviderFormComponent', () => {
         token: 'token1234',
       });
 
-      const values = await form.getValues();
-      expect(values).toEqual({
-        Token: 'token1234',
-      });
+      expect(await (await getInput('token')).getValue()).toBe('token1234');
     });
 
     it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
-      await form.fillForm({
-        Token: 'newtoken1234',
-      });
+      await (await getInput('token')).setValue('newtoken1234');
 
       const values = spectator.component.getSubmitAttributes();
       expect(values).toEqual({
@@ -70,16 +70,11 @@ describe('TokenProviderFormComponent', () => {
         token: 'token1234',
       });
 
-      const values = await form.getValues();
-      expect(values).toEqual({
-        Token: 'token1234',
-      });
+      expect(await (await getInput('token')).getValue()).toBe('token1234');
     });
 
     it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
-      await form.fillForm({
-        Token: 'newtoken1234',
-      });
+      await (await getInput('token')).setValue('newtoken1234');
 
       const values = spectator.component.getSubmitAttributes();
       expect(values).toEqual({

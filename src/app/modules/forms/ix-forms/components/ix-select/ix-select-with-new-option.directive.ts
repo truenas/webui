@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, DestroyRef, Directive, OnInit, viewChild, inject,
+  AfterViewInit, DestroyRef, Directive, OnInit, Type, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,8 +9,8 @@ import {
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ComponentInSlideIn } from 'app/modules/slide-ins/slide-in.interface';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 
 export const addNewIxSelectValue = 'ADD_NEW';
 
@@ -22,8 +22,8 @@ export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, Afte
 
   private options = new BehaviorSubject<Option[]>([]);
 
-  private slideIn = inject(SlideIn);
-  private translateService = inject(TranslateService);
+  private formPanel = inject(FormSidePanelService);
+  protected translateService = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
@@ -36,8 +36,11 @@ export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, Afte
   }
 
   abstract getValueFromSlideInResponse(result: R): IxSelectValue;
-  abstract getFormComponentType(): ComponentInSlideIn<unknown, R>;
+  abstract getFormComponentType(): Type<unknown>;
+  /** Title shown on the `<tn-side-panel>` opened for the "Add New" option. */
+  abstract getFormTitle(): string;
   abstract fetchOptions(): Observable<Option[]>;
+  /** Inputs applied to the hosted form (e.g. provider filters). Keyed by the form's input name. */
   getFormInputData(): Record<string, unknown> | undefined {
     return undefined;
   }
@@ -55,10 +58,14 @@ export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, Afte
       pairwise(),
       filter(([, current]) => !!current && current === addNewIxSelectValue),
       switchMap(([previous]) => {
-        const result$ = this.slideIn.open(this.getFormComponentType(), {
-          wide: this.formComponentIsWide,
-          data: this.getFormInputData(),
-        });
+        const result$ = this.formPanel.open<R>(
+          this.getFormComponentType() as Type<SidePanelForm<R>>,
+          {
+            title: this.getFormTitle(),
+            wide: this.formComponentIsWide,
+            inputs: this.getFormInputData(),
+          },
+        );
         return merge(
           result$.success$.pipe(
             switchMap((response) => {

@@ -1,32 +1,30 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
-  TnIconButtonComponent,
-  TnMenuComponent,
-  TnMenuItemComponent,
-  TnMenuTriggerDirective,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
 } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSshKeypairs } from 'app/helptext/system/ssh-keypairs';
 import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import {
+  SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
@@ -38,36 +36,27 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./ssh-keypair-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     RequiresRolesDirective,
     TnButtonComponent,
-    IxTextareaComponent,
-    FormActionsComponent,
-    TnIconButtonComponent,
-    TnMenuTriggerDirective,
-    TnMenuComponent,
-    TnMenuItemComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
-export class SshKeypairFormComponent implements OnInit {
+export class SshKeypairFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private loader = inject(LoaderService);
   private download = inject(DownloadService);
-  slideInRef = inject<SlideInRef<KeychainSshKeyPair | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.KeychainCredentialWrite];
+  readonly requiredRoles = [Role.KeychainCredentialWrite];
 
   get isNew(): boolean {
     return !this.editingKeypair;
@@ -77,11 +66,16 @@ export class SshKeypairFormComponent implements OnInit {
 
   protected editingKeypair: KeychainSshKeyPair | undefined;
 
+  /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
+  readonly editKeypair = input<KeychainSshKeyPair | undefined>(undefined);
+
   form = this.fb.group({
     name: ['', Validators.required],
     private_key: [''],
     public_key: ['', atLeastOne('private_key', [helptextSshKeypairs.privateKeyLabel, helptextSshKeypairs.publicKeyLabel])],
   });
+
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   readonly tooltips = {
     name: helptextSshKeypairs.nameTooltip,
@@ -91,20 +85,35 @@ export class SshKeypairFormComponent implements OnInit {
 
   readonly keyInstructions = helptextSshKeypairs.keyInstructions;
 
-  readonly canDownloadPublicKey$ = this.form.value$.pipe(map((value) => value.name && value.public_key));
-  readonly canDownloadPrivateKey$ = this.form.value$.pipe(map((value) => value.name && value.private_key));
-
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingKeypair = this.slideInRef.getData();
-  }
+  /**
+   * A single "Download" dropdown rendered in the `<tn-side-panel>` footer beside Save. Each item is
+   * enabled only once the keypair has a name and the corresponding key is present.
+   */
+  readonly footerActions: SidePanelFooterAction[] = [
+    {
+      label: T('Download'),
+      testId: 'download-actions',
+      menuItems: [
+        {
+          label: T('Download Private Key'),
+          testId: 'download-private-key',
+          disabled: () => !this.canDownloadKey('private_key'),
+          onClick: () => this.onDownloadKey('private_key'),
+        },
+        {
+          label: T('Download Public Key'),
+          testId: 'download-public-key',
+          disabled: () => !this.canDownloadKey('public_key'),
+          onClick: () => this.onDownloadKey('public_key'),
+        },
+      ],
+    },
+  ];
 
   ngOnInit(): void {
-    const keypair = this.editingKeypair;
-    if (keypair) {
-      this.setKeypairForEditing(keypair);
+    this.editingKeypair = this.editKeypair();
+    if (this.editingKeypair) {
+      this.setKeypairForEditing(this.editingKeypair);
     }
   }
 
@@ -129,6 +138,11 @@ export class SshKeypairFormComponent implements OnInit {
           private_key: keyPair.private_key,
         });
       });
+  }
+
+  private canDownloadKey(keyType: 'private_key' | 'public_key'): boolean {
+    const value = this.form.value;
+    return Boolean(value.name && value[keyType]);
   }
 
   protected onDownloadKey(keyType: 'private_key' | 'public_key'): void {
@@ -172,7 +186,7 @@ export class SshKeypairFormComponent implements OnInit {
         }
 
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, input, output, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface OauthProviderData {
@@ -21,16 +20,19 @@ export interface OauthProviderData {
   styleUrls: ['./oauth-provider.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     ReactiveFormsModule,
     OauthButtonComponent,
-    IxInputComponent,
     TranslateModule,
     TestDirective,
   ],
 })
 export class OauthProviderComponent {
   private formBuilder = inject(NonNullableFormBuilder);
+
+  protected readonly InputType = InputType;
 
   readonly oauthUrl = input<string>();
   readonly authenticated = output<Record<string, unknown>>();

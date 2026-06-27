@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, computed, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -27,7 +27,8 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
@@ -62,7 +63,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class CloudCredentialsCardComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialog = inject(DialogService);
   private cloudCredentialService = inject(CloudCredentialService);
   private errorHandler = inject(ErrorHandlerService);
@@ -149,20 +150,24 @@ export class CloudCredentialsCardComponent implements OnInit {
     });
   }
 
+  // CloudCredentialsFormComponent structurally provides the host surface
+  // (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the
+  // nominal base type, mirroring how FormSidePanelService.openForm casts the renderer.
+  private readonly cloudForm = CloudCredentialsFormComponent as unknown as Type<SidePanelForm>;
+
   protected doAdd(): void {
-    this.slideIn.open(CloudCredentialsFormComponent)
-      .onSuccess(() => this.getCredentials(), this.destroyRef);
+    this.formPanel.open(this.cloudForm, {
+      title: this.translate.instant('Add Cloud Credential'),
+    }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doEdit(credential: CloudSyncCredential): void {
-    this.slideIn.open(
-      CloudCredentialsFormComponent,
-      {
-        data: {
-          existingCredential: credential,
-        } as CloudCredentialFormInput,
+    this.formPanel.open(this.cloudForm, {
+      title: this.translate.instant('Edit Cloud Credential'),
+      inputs: {
+        editInput: { existingCredential: credential } as CloudCredentialFormInput,
       },
-    ).onSuccess(() => this.getCredentials(), this.destroyRef);
+    }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doDelete(credential: CloudSyncCredential): void {

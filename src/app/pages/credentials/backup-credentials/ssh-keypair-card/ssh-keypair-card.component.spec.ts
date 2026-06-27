@@ -12,8 +12,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
@@ -53,12 +52,6 @@ describe('SshKeypairCardComponent', () => {
     },
   ] as KeychainSshKeyPair[];
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: SshKeypairCardComponent,
     imports: [
@@ -73,10 +66,9 @@ describe('SshKeypairCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
           closed: of(true),
@@ -109,15 +101,18 @@ describe('SshKeypairCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SshKeypairFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SshKeypairFormComponent, {
+      title: 'Add SSH Keypair',
+    });
   });
 
   it('opens form when "Edit" button is pressed', async () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SshKeypairFormComponent, {
-      data: credentials[0],
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SshKeypairFormComponent, {
+      title: 'Edit SSH Keypair',
+      inputs: { editKeypair: credentials[0] },
     });
   });
 

@@ -59,8 +59,12 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption<Cloud
     return CloudCredentialsFormComponent;
   }
 
-  override getFormInputData(): { providers: CloudSyncProviderName[] } | undefined {
+  getFormTitle(): string {
+    return this.translateService.instant('Add Cloud Credential');
+  }
+
+  override getFormInputData(): { editInput: { providers: CloudSyncProviderName[] } } | undefined {
     const providers = this.filterByProviders();
-    return providers?.length ? { providers } : undefined;
+    return providers?.length ? { editInput: { providers } } : undefined;
   }
 }

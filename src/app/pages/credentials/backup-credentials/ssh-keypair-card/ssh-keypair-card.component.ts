@@ -25,7 +25,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -62,7 +62,7 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
 })
 export class SshKeypairCardComponent implements OnInit {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private keychainCredentialService = inject(KeychainCredentialService);
@@ -139,13 +139,16 @@ export class SshKeypairCardComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(SshKeypairFormComponent)
-      .onSuccess(() => this.getCredentials(), this.destroyRef);
+    this.formPanel.open(SshKeypairFormComponent, {
+      title: this.translate.instant('Add SSH Keypair'),
+    }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doEdit(credential: KeychainSshKeyPair): void {
-    this.slideIn.open(SshKeypairFormComponent, { data: credential })
-      .onSuccess(() => this.getCredentials(), this.destroyRef);
+    this.formPanel.open(SshKeypairFormComponent, {
+      title: this.translate.instant('Edit SSH Keypair'),
+      inputs: { editKeypair: credential },
+    }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doDelete(credential: KeychainSshKeyPair): void {

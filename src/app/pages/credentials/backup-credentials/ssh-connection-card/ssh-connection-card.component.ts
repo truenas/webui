@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, computed, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -26,7 +26,8 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -60,7 +61,7 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
 })
 export class SshConnectionCardComponent implements OnInit {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -130,14 +131,22 @@ export class SshConnectionCardComponent implements OnInit {
     });
   }
 
+  // SshConnectionFormComponent structurally provides the host surface
+  // (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the
+  // nominal base type, mirroring how FormSidePanelService.openForm casts the renderer.
+  private readonly connectionForm = SshConnectionFormComponent as unknown as Type<SidePanelForm>;
+
   protected doAdd(): void {
-    this.slideIn.open(SshConnectionFormComponent)
-      .onSuccess(() => this.getCredentials(), this.destroyRef);
+    this.formPanel.open(this.connectionForm, {
+      title: this.translate.instant('New SSH Connection'),
+    }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doEdit(credential: KeychainSshCredentials): void {
-    this.slideIn.open(SshConnectionFormComponent, { data: credential })
-      .onSuccess(() => this.getCredentials(), this.destroyRef);
+    this.formPanel.open(this.connectionForm, {
+      title: this.translate.instant('Edit SSH Connection'),
+      inputs: { editConnection: credential },
+    }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doDelete(credential: KeychainSshCredentials): void {

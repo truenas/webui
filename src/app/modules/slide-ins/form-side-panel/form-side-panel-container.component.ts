@@ -5,6 +5,9 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
   type TnTestIdValue,
@@ -15,10 +18,21 @@ import { Role } from 'app/enums/role.enum';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
+/** A single item inside a {@link SidePanelFooterAction}'s dropdown menu. */
+export interface SidePanelFooterMenuItem {
+  /** Untranslated marker; the container pipes it through `translate`. */
+  label: string;
+  testId: TnTestIdValue;
+  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
+  disabled?: () => boolean;
+  onClick: () => void;
+}
+
 /**
  * A secondary action rendered in the side-panel footer alongside the built-in Save (e.g. a form's
  * "Send Test Alert"). Listed in {@link HostedSidePanelForm.footerActions}; the container renders one
- * `tn-button` per entry, before Save.
+ * `tn-button` per entry, before Save. Provide {@link menuItems} instead of {@link onClick} to render
+ * a dropdown-menu button (e.g. an SSH keypair's "Download" → Private/Public Key).
  */
 export interface SidePanelFooterAction {
   /** Untranslated marker; the container pipes it through `translate`. */
@@ -30,7 +44,10 @@ export interface SidePanelFooterAction {
   requiredRoles?: Role[];
   /** Re-evaluated each change detection — read signals inside for reactive disabling. */
   disabled?: () => boolean;
-  onClick: () => void;
+  /** Direct click handler. Mutually exclusive with {@link menuItems}. */
+  onClick?: () => void;
+  /** When set, the button opens a dropdown menu of these items instead of firing {@link onClick}. */
+  menuItems?: SidePanelFooterMenuItem[];
 }
 
 /**
@@ -63,6 +80,9 @@ export type HostedSidePanelForm = SidePanelForm & {
     TnSidePanelComponent,
     TnSidePanelActionDirective,
     TnButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     RequiresRolesDirective,
     CdkPortalOutlet,
     TranslateModule,

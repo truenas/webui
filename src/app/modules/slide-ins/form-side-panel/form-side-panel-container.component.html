@@ -23,14 +23,34 @@
   @if ((form()?.footerActions ?? []).length) {
     <div tnSidePanelAction class="footer-actions-group">
       @for (action of form()?.footerActions ?? []; track action.testId) {
-        <tn-button
-          *ixRequiresRoles="action.requiredRoles ?? []"
-          [color]="action.color ?? 'default'"
-          [testId]="action.testId"
-          [label]="action.label | translate"
-          [disabled]="action.disabled?.() ?? false"
-          (onClick)="action.onClick()"
-        ></tn-button>
+        @if (action.menuItems; as menuItems) {
+          <tn-button
+            *ixRequiresRoles="action.requiredRoles ?? []"
+            [color]="action.color ?? 'default'"
+            [testId]="action.testId"
+            [label]="action.label | translate"
+            [disabled]="action.disabled?.() ?? false"
+            [tnMenuTriggerFor]="footerMenu"
+          ></tn-button>
+          <tn-menu #footerMenu>
+            @for (item of menuItems; track item.testId) {
+              <tn-menu-item
+                [testId]="item.testId"
+                [disabled]="item.disabled?.() ?? false"
+                (itemClick)="item.onClick()"
+              >{{ item.label | translate }}</tn-menu-item>
+            }
+          </tn-menu>
+        } @else {
+          <tn-button
+            *ixRequiresRoles="action.requiredRoles ?? []"
+            [color]="action.color ?? 'default'"
+            [testId]="action.testId"
+            [label]="action.label | translate"
+            [disabled]="action.disabled?.() ?? false"
+            (onClick)="action.onClick?.()"
+          ></tn-button>
+        }
       }
     </div>
   }
