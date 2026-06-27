@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, signal, inject, input, output,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -16,7 +16,7 @@ import {
   TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, of, startWith, throwError,
+  Observable, of, throwError,
 } from 'rxjs';
 import {
   catchError, map, switchMap,
@@ -40,6 +40,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -66,7 +67,7 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
     AsyncPipe,
   ],
 })
-export class SshConnectionFormComponent implements OnInit {
+export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential | null> implements OnInit {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -85,13 +86,6 @@ export class SshConnectionFormComponent implements OnInit {
 
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
   readonly editConnection = input<KeychainSshCredentials | undefined>(undefined);
-
-  /**
-   * Fired on close with the created/updated credential (or null on cancel) so the
-   * `<tn-side-panel>` host — and callers like `ix-ssh-credentials-select` that open this form
-   * through `FormSidePanelService` — can auto-select the new connection.
-   */
-  readonly closed = output<KeychainCredential | null>();
 
   form = this.formBuilder.group({
     connection_name: ['', Validators.required],
@@ -135,13 +129,8 @@ export class SshConnectionFormComponent implements OnInit {
 
   protected isLoading = signal(false);
 
-  private formStatus = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status)),
-    { initialValue: this.form.status },
-  );
-
   /** Read by the `<tn-side-panel>` host to enable/disable its footer Save action. */
-  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isLoading());
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   readonly setupMethods$ = of([
     {
@@ -185,21 +174,6 @@ export class SshConnectionFormComponent implements OnInit {
     if (this.existingConnection) {
       this.setConnectionForEdit();
     }
-  }
-
-  /** Public entry point for a `<tn-side-panel>` host to trigger submission. */
-  submit(): void {
-    this.onSubmit();
-  }
-
-  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  /** Closes the panel, handing back the created/updated credential (or null on cancel). */
-  private close(result: KeychainCredential | null): void {
-    this.closed.emit(result);
   }
 
   get isManualAuthFormValid(): boolean {
@@ -250,7 +224,9 @@ export class SshConnectionFormComponent implements OnInit {
       next: (newCredential) => {
         this.isLoading.set(false);
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        this.close(newCredential);
+        // Richer payload than the base boolean — emit the created/updated credential directly so
+        // `ix-ssh-credentials-select` can auto-select it.
+        this.closed.emit(newCredential);
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

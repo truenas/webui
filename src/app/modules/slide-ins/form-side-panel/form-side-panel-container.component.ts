@@ -28,13 +28,8 @@ export interface SidePanelFooterMenuItem {
   onClick: () => void;
 }
 
-/**
- * A secondary action rendered in the side-panel footer alongside the built-in Save (e.g. a form's
- * "Send Test Alert"). Listed in {@link HostedSidePanelForm.footerActions}; the container renders one
- * `tn-button` per entry, before Save. Provide {@link menuItems} instead of {@link onClick} to render
- * a dropdown-menu button (e.g. an SSH keypair's "Download" → Private/Public Key).
- */
-export interface SidePanelFooterAction {
+/** Fields common to every {@link SidePanelFooterAction}, regardless of click vs. menu behavior. */
+interface SidePanelFooterActionBase {
   /** Untranslated marker; the container pipes it through `translate`. */
   label: string;
   testId: TnTestIdValue;
@@ -44,10 +39,28 @@ export interface SidePanelFooterAction {
   requiredRoles?: Role[];
   /** Re-evaluated each change detection — read signals inside for reactive disabling. */
   disabled?: () => boolean;
-  /** Direct click handler. Mutually exclusive with {@link menuItems}. */
-  onClick?: () => void;
-  /** When set, the button opens a dropdown menu of these items instead of firing {@link onClick}. */
-  menuItems?: SidePanelFooterMenuItem[];
+}
+
+/**
+ * A secondary action rendered in the side-panel footer alongside the built-in Save (e.g. a form's
+ * "Send Test Alert"). Listed in {@link HostedSidePanelForm.footerActions}; the container renders one
+ * `tn-button` per entry, before Save. This is a discriminated union: an action either fires
+ * {@link SidePanelFooterClickAction.onClick} directly, or opens a dropdown of
+ * {@link SidePanelFooterMenuAction.menuItems} (e.g. an SSH keypair's "Download" → Private/Public
+ * Key) — never both, and never neither.
+ */
+export type SidePanelFooterAction = SidePanelFooterClickAction | SidePanelFooterMenuAction;
+
+/** A footer action that fires a handler directly on click. */
+export interface SidePanelFooterClickAction extends SidePanelFooterActionBase {
+  onClick: () => void;
+  menuItems?: never;
+}
+
+/** A footer action whose button opens a dropdown menu instead of firing a handler. */
+export interface SidePanelFooterMenuAction extends SidePanelFooterActionBase {
+  menuItems: SidePanelFooterMenuItem[];
+  onClick?: never;
 }
 
 /**

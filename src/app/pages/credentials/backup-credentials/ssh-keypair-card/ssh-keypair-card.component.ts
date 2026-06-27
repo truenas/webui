@@ -20,6 +20,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { KeychainCredentialUsedBy, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
@@ -63,6 +64,7 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
 export class SshKeypairCardComponent implements OnInit {
   private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
+  private emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private keychainCredentialService = inject(KeychainCredentialService);
@@ -85,6 +87,12 @@ export class SshKeypairCardComponent implements OnInit {
   protected readonly isLoading = toSignal(this.dataProvider.isLoading$, { initialValue: false });
 
   protected readonly isEmpty = computed(() => !this.currentPage().length && !this.isLoading());
+
+  private emptyType = toSignal(this.dataProvider.emptyType$);
+
+  // Reflects the data-provider's state (error / no data / no search results) so the empty state
+  // shows the correct title — not a static "no records" message when the query actually failed.
+  protected readonly emptyConfig = computed(() => this.emptyService.defaultEmptyConfig(this.emptyType()));
 
   protected readonly displayedColumns = ['name', 'actions'];
 

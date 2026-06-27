@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, ViewContainerRef, viewChild,
-  computed, signal, inject, input, output,
+  computed, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -23,6 +23,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -57,7 +58,7 @@ export interface CloudCredentialFormInput {
     AsyncPipe,
   ],
 })
-export class CloudCredentialsFormComponent implements OnInit {
+export class CloudCredentialsFormComponent extends SidePanelForm<CloudSyncCredential | null> implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
@@ -73,17 +74,14 @@ export class CloudCredentialsFormComponent implements OnInit {
   /** Data supplied by the `<tn-side-panel>` host (undefined = create with no provider limit). */
   readonly editInput = input<CloudCredentialFormInput | undefined>(undefined);
 
-  /**
-   * Fired on close with the saved credential (or null on cancel) so the `<tn-side-panel>` host —
-   * and callers like `ix-cloud-credentials-select` that open this form through
-   * `FormSidePanelService` — can auto-select the new credential.
-   */
-  readonly closed = output<CloudSyncCredential | null>();
-
   commonForm = this.formBuilder.nonNullable.group({
     name: ['Storj', Validators.required],
     type: [CloudSyncProviderName.Storj],
   });
+
+  // Satisfies the `SidePanelForm` abstract `form`; this form additionally tracks a dynamic
+  // provider sub-form, so `canSubmit` / `hasUnsavedChanges` are overridden below.
+  protected readonly form = this.commonForm;
 
   protected isLoading = signal(false);
 
@@ -115,19 +113,12 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  /** Public entry point for a `<tn-side-panel>` host to trigger submission. */
-  submit(): void {
-    this.onSubmit();
-  }
-
-  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
+  /**
+   * Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. Overrides
+   * the base's single-form check to also account for the dynamic provider sub-form.
+   */
+  override hasUnsavedChanges(): boolean {
     return this.commonForm.dirty || Boolean(this.providerForm?.form?.dirty);
-  }
-
-  /** Closes the panel, handing back the saved credential (or null on cancel). */
-  private close(result: CloudSyncCredential | null): void {
-    this.closed.emit(result);
   }
 
   get showProviderDescription(): boolean {
@@ -197,7 +188,9 @@ export class CloudCredentialsFormComponent implements OnInit {
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.close(response);
+          // Richer payload than the base boolean — emit the saved credential directly so
+          // `ix-cloud-credentials-select` can auto-select it.
+          this.closed.emit(response);
         },
         error: (error: unknown) => {
           // TODO: Errors for nested provider form will be shown in a modal. Can be improved.

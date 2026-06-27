@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -21,13 +21,13 @@ import { Role } from 'app/enums/role.enum';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { KeychainCredentialUsedBy, KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -62,6 +62,7 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
 export class SshConnectionCardComponent implements OnInit {
   private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
+  private emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -83,6 +84,12 @@ export class SshConnectionCardComponent implements OnInit {
   protected readonly isLoading = toSignal(this.dataProvider.isLoading$, { initialValue: false });
 
   protected readonly isEmpty = computed(() => !this.currentPage().length && !this.isLoading());
+
+  private emptyType = toSignal(this.dataProvider.emptyType$);
+
+  // Reflects the data-provider's state (error / no data / no search results) so the empty state
+  // shows the correct title — not a static "no records" message when the query actually failed.
+  protected readonly emptyConfig = computed(() => this.emptyService.defaultEmptyConfig(this.emptyType()));
 
   protected readonly displayedColumns = ['name', 'actions'];
 
@@ -131,19 +138,14 @@ export class SshConnectionCardComponent implements OnInit {
     });
   }
 
-  // SshConnectionFormComponent structurally provides the host surface
-  // (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the
-  // nominal base type, mirroring how FormSidePanelService.openForm casts the renderer.
-  private readonly connectionForm = SshConnectionFormComponent as unknown as Type<SidePanelForm>;
-
   protected doAdd(): void {
-    this.formPanel.open(this.connectionForm, {
+    this.formPanel.open(SshConnectionFormComponent, {
       title: this.translate.instant('New SSH Connection'),
     }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doEdit(credential: KeychainSshCredentials): void {
-    this.formPanel.open(this.connectionForm, {
+    this.formPanel.open(SshConnectionFormComponent, {
       title: this.translate.instant('Edit SSH Connection'),
       inputs: { editConnection: credential },
     }).onSuccess(() => this.getCredentials(), this.destroyRef);
