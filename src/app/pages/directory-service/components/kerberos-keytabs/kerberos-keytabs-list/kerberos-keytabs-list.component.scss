@@ -12,10 +12,13 @@
   align-items: center;
   // Match the library's projected-title-suppressed `.tn-card__title` typography,
   // which is view-encapsulated and so doesn't reach projected `[tnCardHeader]` content.
+  // Color stays on webui's `--fg1` theme var (the library's `--tn-fg1` is not mapped
+  // app-wide and would fall back to a static color, breaking dark theme).
   color: var(--fg1);
-  display: flex;
+  display: inline-flex;
   font-size: 1.125rem;
   font-weight: 600;
+  gap: 8px;
   line-height: 1.5;
   margin: 0;
 
