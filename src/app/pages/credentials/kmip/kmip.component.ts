@@ -6,7 +6,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
   TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnFormFieldComponent,
-  TnIconComponent, TnInputComponent, TnProgressBarComponent, TnSelectComponent,
+  TnFormSectionComponent, TnIconComponent, TnInputComponent, TnProgressBarComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -16,7 +16,6 @@ import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -35,7 +34,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnCardComponent,
     UiSearchDirective,
     TnProgressBarComponent,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     TnIconComponent,
     RequiresRolesDirective,
     TnButtonComponent,
