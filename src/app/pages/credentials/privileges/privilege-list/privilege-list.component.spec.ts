@@ -9,7 +9,7 @@ import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
@@ -53,7 +53,7 @@ describe('PrivilegeListComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockAuth(),
@@ -81,8 +81,9 @@ describe('PrivilegeListComponent', () => {
     const [editButton] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PrivilegeFormComponent, {
-      data: fakePrivilegeDataSource[0],
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(PrivilegeFormComponent, {
+      title: 'Edit Privilege',
+      inputs: { editPrivilege: fakePrivilegeDataSource[0] },
     });
   });
 

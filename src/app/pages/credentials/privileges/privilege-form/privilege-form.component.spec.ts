@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { lastValueFrom, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -12,8 +14,6 @@ import { Role } from 'app/enums/role.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
@@ -145,8 +145,9 @@ describe('PrivilegeFormComponent', () => {
     });
 
     it('shows roles sorted alphabetically with compound (non-builtin) roles on top', async () => {
-      const roles = await loader.getHarness(IxSelectHarness.with({ label: 'Roles' }));
-      const options = await roles.getOptionLabels();
+      const roles = await loader.getHarness(TnSelectHarness);
+      await roles.open();
+      const options = await roles.getOptions();
       expect(options).toEqual([
         'Full Admin',
         'Readonly Admin',
@@ -157,12 +158,15 @@ describe('PrivilegeFormComponent', () => {
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Name: 'new privilege',
-        Roles: 'Sharing Admin',
-        'Web Shell Access': true,
-      });
+      const name = await loader.getHarness(TnInputHarness);
+      await name.setValue('new privilege');
+
+      const roles = await loader.getHarness(TnSelectHarness);
+      await roles.selectOption('Sharing Admin');
+      await roles.close();
+
+      const webShell = await loader.getHarness(TnCheckboxHarness);
+      await webShell.check();
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -189,25 +193,30 @@ describe('PrivilegeFormComponent', () => {
     });
 
     it('shows current privilege values when form is being edited', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+      const name = await loader.getHarness(TnInputHarness);
+      expect(await name.getValue()).toBe('privilege');
 
-      expect(values).toEqual({
-        Name: 'privilege',
-        'Web Shell Access': true,
-        'Local Groups': ['Group A', 'Group B'],
-        'Directory Services Groups': [],
-        Roles: ['Readonly Admin'],
-      });
+      const webShell = await loader.getHarness(TnCheckboxHarness);
+      expect(await webShell.isChecked()).toBe(true);
+
+      const localGroups = await loader.getHarness(TnChipInputHarness);
+      expect(await localGroups.getChips()).toEqual(['Group A', 'Group B']);
+
+      const roles = await loader.getHarness(TnSelectHarness);
+      expect(await roles.getDisplayText()).toBe('Readonly Admin');
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Name: 'updated privilege',
-        Roles: ['Full Admin', 'Readonly Admin'],
-        'Web Shell Access': false,
-      });
+      const name = await loader.getHarness(TnInputHarness);
+      await name.setValue('updated privilege');
+
+      // Readonly Admin is already selected (from the edited record); add Full Admin.
+      const roles = await loader.getHarness(TnSelectHarness);
+      await roles.selectOption('Full Admin');
+      await roles.close();
+
+      const webShell = await loader.getHarness(TnCheckboxHarness);
+      await webShell.uncheck();
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -216,13 +225,16 @@ describe('PrivilegeFormComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      expect(api.call).toHaveBeenCalledWith('privilege.update', [10, {
+      const updateCall = (api.call as jest.Mock).mock.calls.find((call) => call[0] === 'privilege.update');
+      expect(updateCall[1][0]).toBe(10);
+      expect(updateCall[1][1]).toMatchObject({
         ds_groups: [],
         local_groups: [111, 222],
         name: 'updated privilege',
-        roles: [Role.FullAdmin, Role.ReadonlyAdmin],
         web_shell: false,
-      }]);
+      });
+      expect(updateCall[1][1].roles).toEqual(expect.arrayContaining([Role.FullAdmin, Role.ReadonlyAdmin]));
+      expect(updateCall[1][1].roles).toHaveLength(2);
     });
   });
 
@@ -238,19 +250,18 @@ describe('PrivilegeFormComponent', () => {
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
+      const name = await loader.getHarness(TnInputHarness);
+      expect(await name.isDisabled()).toBe(true);
 
-      expect(await form.getDisabledState()).toEqual({
-        Name: true,
-        Roles: true,
-        'Directory Services Groups': false,
-        'Local Groups': false,
-        'Web Shell Access': false,
-      });
+      const roles = await loader.getHarness(TnSelectHarness);
+      expect(await roles.isDisabled()).toBe(true);
 
-      await form.fillForm({
-        'Web Shell Access': false,
-      });
+      const localGroups = await loader.getHarness(TnChipInputHarness);
+      expect(await localGroups.isDisabled()).toBe(false);
+
+      const webShell = await loader.getHarness(TnCheckboxHarness);
+      expect(await webShell.isDisabled()).toBe(false);
+      await webShell.uncheck();
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
@@ -286,7 +297,7 @@ describe('PrivilegeFormComponent', () => {
         roles: [Role.FullAdmin],
       });
 
-      spectator.component.onSubmit();
+      spectator.component.submit();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -320,7 +331,7 @@ describe('PrivilegeFormComponent', () => {
         roles: [Role.FullAdmin],
       });
 
-      spectator.component.onSubmit();
+      spectator.component.submit();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();

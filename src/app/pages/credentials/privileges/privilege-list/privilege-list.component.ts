@@ -36,7 +36,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
@@ -66,10 +66,10 @@ import { privilegesListElements } from 'app/pages/credentials/privileges/privile
   ],
 })
 export class PrivilegeListComponent implements OnInit {
-  private slideIn = inject(SlideIn);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
@@ -171,8 +171,12 @@ export class PrivilegeListComponent implements OnInit {
   }
 
   openForm(privilege?: Privilege): void {
-    this.slideIn.open(PrivilegeFormComponent, { data: privilege })
-      .onSuccess(() => this.getPrivileges(), this.destroyRef);
+    this.formPanel.open(PrivilegeFormComponent, {
+      title: privilege
+        ? this.translate.instant('Edit Privilege')
+        : this.translate.instant('New Privilege'),
+      inputs: { editPrivilege: privilege },
+    }).onSuccess(() => this.getPrivileges(), this.destroyRef);
   }
 
   doDelete(privilege: Privilege): void {
