@@ -1,9 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import {
-  MatCard, MatCardContent, MatCardHeader,
-  MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { getUserType, isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 
@@ -13,10 +10,7 @@ import { User } from 'app/interfaces/user.interface';
   styleUrls: ['./user-profile-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardTitle,
-    MatCardHeader,
-    MatCardContent,
+    TnCardComponent,
     TranslateModule,
   ],
 })

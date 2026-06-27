@@ -1,37 +1,60 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Filesystem Devices' | translate }}
-    </h3>
-
-    <button
+<tn-card
+  class="card"
+  [title]="'Filesystem Devices' | translate"
+>
+  <ng-template tnCardFooterActions>
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="add-disk"
-      (click)="addDisk()"
-    >
-      {{ 'Add' | translate }}
-    </button>
-  </mat-card-header>
+      variant="filled"
+      color="primary"
+      testId="add-disk"
+      [label]="'Add' | translate"
+      (onClick)="addDisk()"
+    ></tn-button>
+  </ng-template>
 
-  <mat-card-content>
-    @if (isLoadingDevices()) {
-      <ngx-skeleton-loader></ngx-skeleton-loader>
-    } @else {
-      @for (disk of visibleDisks(); track disk.id) {
-        <div class="device">
-          <span class="device-description">{{ getDeviceDescription(disk) }}</span>
+  @if (isLoadingDevices()) {
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+  } @else {
+    @for (disk of visibleDisks(); track disk.id) {
+      <div class="device">
+        <span class="device-description">{{ getDeviceDescription(disk) }}</span>
 
-          <ix-device-actions-menu
-            [device]="disk"
-            [showEdit]="true"
-            [isDisabled]="isContainerRunning()"
-            [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
-          ></ix-device-actions-menu>
-        </div>
-      } @empty {
-        <div class="no-devices">{{ 'No filesystem devices added.' | translate }}</div>
-      }
+        <ix-device-actions-menu
+          [device]="disk"
+          [showEdit]="true"
+          [isDisabled]="isContainerRunning()"
+          [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
+        ></ix-device-actions-menu>
+      </div>
+    } @empty {
+      <div class="no-devices">{{ 'No filesystem devices added.' | translate }}</div>
     }
-  </mat-card-content>
-</mat-card>
+  }
+</tn-card>
+
+<tn-side-panel
+  [title]="panelTitle()"
+  [closeGuard]="closeGuard"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-container-filesystem-device-form
+      [disk]="editingDisk()"
+      [container]="container()"
+      (closed)="onConfigClosed($event)"
+    ></ix-container-filesystem-device-form>
+  }
+  @if (configForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>

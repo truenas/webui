@@ -1,5 +1,8 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -24,6 +27,7 @@ import { selectAdvancedConfig } from 'app/store/system-config/system-config.sele
 
 describe('ContainerGpuDevicesComponent', () => {
   let spectator: Spectator<ContainerGpuDevicesComponent>;
+  let loader: HarnessLoader;
   const devices: ContainerDevice[] = [
     {
       id: 1,
@@ -84,6 +88,7 @@ describe('ContainerGpuDevicesComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows a list of GPU devices', () => {
@@ -112,13 +117,10 @@ describe('ContainerGpuDevicesComponent', () => {
     expect(warning).toHaveText('NVIDIA GPUs detected, but drivers are not enabled.');
   });
 
-  it('enables NVIDIA drivers when clicking enable button', () => {
+  it('enables NVIDIA drivers when clicking enable button', async () => {
     spectator.detectChanges();
-    const button = spectator.query<HTMLButtonElement>('.enable-button');
-    expect(button).toExist();
-    expect(button).toHaveText('Enable NVIDIA Drivers');
-
-    spectator.click(button);
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Enable NVIDIA Drivers' }));
+    await button.click();
 
     const api = spectator.inject(ApiService);
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: true }]);

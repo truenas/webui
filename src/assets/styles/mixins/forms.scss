@@ -1,9 +1,0 @@
-// Vertical rhythm for tn-form-field rows inside a form (matches the spacing
-// the old ix-* form controls carried). Shared across the migrated service
-// forms so the literal values live in one place.
-@mixin tn-form-field-spacing() {
-  tn-form-field {
-    display: block;
-    margin-bottom: 16px;
-  }
-}

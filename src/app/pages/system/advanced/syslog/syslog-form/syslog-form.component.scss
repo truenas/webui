@@ -9,20 +9,15 @@
     margin-top: 0;
   }
 
-  button {
+  tn-button {
     margin-top: 16px;
   }
 }
 
 .add-server-button {
+  display: inline-block;
   margin-bottom: 24px;
   margin-top: 16px;
-  
-  .server-limit-hint {
-    color: var(--fg2);
-    font-size: 0.875rem;
-    margin-left: 8px;
-  }
 }
 
 .server-limit-message {

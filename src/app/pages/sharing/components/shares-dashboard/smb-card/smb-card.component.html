@@ -147,25 +147,3 @@
     [routerLink]="['/sharing', 'smb']"
   ></ix-table-pager-show-more>
 </tn-card>
-
-<tn-side-panel
-  [title]="'SMB' | translate"
-  [closeGuard]="closeConfigGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-service-smb (closed)="onConfigClosed()"></ix-service-smb>
-  }
-  @if (configForm(); as form) {
-    <div tnSidePanelAction>
-      <tn-button
-        *ixRequiresRoles="form.requiredRoles"
-        color="primary"
-        [ixTest]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="!form.canSubmit()"
-        (onClick)="form.submit()"
-      ></tn-button>
-    </div>
-  }
-</tn-side-panel>

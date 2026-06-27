@@ -2,9 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { filter, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -39,7 +39,7 @@ import { doesDatasetHaveShares, getDatasetLabel, isIocageMounted } from 'app/pag
     MobileBackButtonComponent,
     TranslateModule,
     DatasetIconComponent,
-    MatTooltip,
+    TnTooltipDirective,
     MatButton,
     RequiresRolesDirective,
     UiSearchDirective,

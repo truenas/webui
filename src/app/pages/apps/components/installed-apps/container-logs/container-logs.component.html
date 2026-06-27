@@ -1,21 +1,35 @@
 <ix-page-header>
-  <ix-checkbox
-    [formControl]="autoScrollControl"
-    [label]="'Auto Scroll' | translate"
-    [tooltip]="'Automatically scroll to the latest log entry' | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="'Automatically scroll to the latest log entry' | translate">
+    <tn-checkbox
+      testId="auto-scroll"
+      [formControl]="autoScrollControl"
+      [label]="'Auto Scroll' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-toolbar-slider
-    [label]="'Set font size' | translate"
-    [min]="10"
-    [max]="20"
-    [value]="fontSize()"
-    (valueChange)="onFontSizeChanged($event)"
-  ></ix-toolbar-slider>
+  <div class="font-size-control">
+    <span id="container-logs-font-size-label" class="font-size-label">{{ 'Set font size' | translate }}</span>
+    <tn-slider
+      class="font-size-slider"
+      testId="set-font-size"
+      labelType="none"
+      [min]="minFontSize"
+      [max]="maxFontSize"
+      [step]="1"
+    >
+      <input
+        tnSliderThumb
+        aria-labelledby="container-logs-font-size-label"
+        [formControl]="fontSizeControl"
+      />
+    </tn-slider>
+  </div>
 
-  <button mat-button ixTest="reconnect" (click)="reconnect()">
-    {{ 'Reconnect' | translate }}
-  </button>
+  <tn-button
+    testId="reconnect"
+    [label]="'Reconnect' | translate"
+    (onClick)="reconnect()"
+  ></tn-button>
 </ix-page-header>
 
 <div class="logs-wrapper">
@@ -31,7 +45,7 @@
     [style.font-size]="fontSize() + 'px'"
   >
     @if (isLoading()) {
-      <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
+      <tn-spinner class="spinner" [diameter]="40" [ariaLabel]="'Loading logs' | translate"></tn-spinner>
     } @else {
       @for (podLog of logs(); track podLog) {
         <div class="log-row">

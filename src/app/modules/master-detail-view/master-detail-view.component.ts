@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, AfterViewInit, signal, ChangeDetect
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationSkipped, NavigationStart, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
@@ -16,6 +17,7 @@ import { FocusService } from 'app/services/focus.service';
   imports: [
     DetailsHeightDirective,
     MobileBackButtonComponent,
+    TnCardComponent,
     TranslateModule,
   ],
   exportAs: 'masterDetailViewContext',

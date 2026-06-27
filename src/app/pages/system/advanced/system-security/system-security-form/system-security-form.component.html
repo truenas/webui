@@ -1,134 +1,154 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="'System Security' | translate"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles"
+    [title]="'System Security' | translate"
+  ></ix-modal-header>
+}
 
-<mat-card class="card">
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-slide-toggle
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <tn-form-section>
+    <tn-form-field
+      [tooltip]="'Enforce the use of FIPS 140-2 compliant algorithms' | translate"
+    >
+      <tn-slide-toggle
         formControlName="enable_fips"
-        color="primary"
         [label]="'Enable FIPS' | translate"
-        [tooltip]="'Enforce the use of FIPS 140-2 compliant algorithms' | translate"
-      ></ix-slide-toggle>
+      ></tn-slide-toggle>
+    </tn-form-field>
 
-      <ix-slide-toggle
+    <tn-form-field
+      [tooltip]="'Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.' | translate"
+    >
+      <tn-slide-toggle
         formControlName="enable_gpos_stig"
-        color="primary"
         [label]="'Enable General Purpose OS STIG compatibility mode' | translate"
-        [tooltip]="'Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.' | translate"
-      ></ix-slide-toggle>
-      @if (loadingStigRequirements()) {
-        <div>
-          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-        </div>
-      }
-      @if (missingStigRequirements().length > 0) {
-        <mat-error>
-          <div>{{ 'Requirements to enable STIG mode:' | translate }}</div>
-          <ul class="stig-validation-list">
-            @for (requirement of missingStigRequirements(); track requirement.message) {
-              <li>
-                {{ requirement.message }}
-                @if (requirement.navigateTo || requirement.action) {
-                  <span
-                    class="link-button"
-                    role="button"
-                    tabindex="0"
-                    [attr.aria-label]="requirement.configureTitle + ': ' + requirement.message"
-                    (click)="handleRequirementAction(requirement)"
-                    (keydown.enter)="handleRequirementAction(requirement)"
-                    (keydown.space)="handleRequirementAction(requirement)"
-                  >{{ requirement.configureTitle }}</span>
-                }
-              </li>
-            }
-          </ul>
-        </mat-error>
-      }
-      @if (missingStigWarnings().length > 0) {
-        <mat-hint>
-          <div class="stig-info">{{ 'Optional requirements to enable STIG mode:' | translate }}</div>
-          <ul class="stig-validation-list">
-            @for (requirement of missingStigWarnings(); track requirement.message) {
-              <li class="stig-info">
-                {{ requirement.message }}
-                @if (requirement.navigateTo || requirement.action) {
-                  <span
-                    class="link-button"
-                    role="button"
-                    tabindex="0"
-                    [attr.aria-label]="requirement.configureTitle + ': ' + requirement.message"
-                    (click)="handleRequirementAction(requirement)"
-                    (keydown.enter)="handleRequirementAction(requirement)"
-                    (keydown.space)="handleRequirementAction(requirement)"
-                  >{{ requirement.configureTitle }}</span>
-                }
-              </li>
-            }
-          </ul>
-        </mat-hint>
-      }
-      @if (isStigEnabled()) {
-        <mat-hint class="stig-info">{{ 'STIG mode is enabled. Password policy fields have minimum required values that cannot be reduced.' | translate }}</mat-hint>
-      }
-      <br>
-      <mat-hint>{{ 'Restart is required after changing these settings.' | translate }}</mat-hint>
+      ></tn-slide-toggle>
+    </tn-form-field>
 
-      <ix-input
+    @if (loadingStigRequirements()) {
+      <div>
+        <tn-progress-bar mode="indeterminate"></tn-progress-bar>
+      </div>
+    }
+    @if (missingStigRequirements().length > 0) {
+      <div class="stig-errors" role="alert">
+        <div>{{ 'Requirements to enable STIG mode:' | translate }}</div>
+        <ul class="stig-validation-list">
+          @for (requirement of missingStigRequirements(); track requirement.message) {
+            <li>
+              {{ requirement.message }}
+              @if (requirement.navigateTo || requirement.action) {
+                <span
+                  class="link-button"
+                  role="button"
+                  tabindex="0"
+                  [attr.aria-label]="requirement.configureTitle + ': ' + requirement.message"
+                  (click)="handleRequirementAction(requirement)"
+                  (keydown.enter)="handleRequirementAction(requirement)"
+                  (keydown.space)="handleRequirementAction(requirement)"
+                >{{ requirement.configureTitle }}</span>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    }
+    @if (missingStigWarnings().length > 0) {
+      <div class="stig-hints">
+        <div class="stig-info">{{ 'Optional requirements to enable STIG mode:' | translate }}</div>
+        <ul class="stig-validation-list">
+          @for (requirement of missingStigWarnings(); track requirement.message) {
+            <li class="stig-info">
+              {{ requirement.message }}
+              @if (requirement.navigateTo || requirement.action) {
+                <span
+                  class="link-button"
+                  role="button"
+                  tabindex="0"
+                  [attr.aria-label]="requirement.configureTitle + ': ' + requirement.message"
+                  (click)="handleRequirementAction(requirement)"
+                  (keydown.enter)="handleRequirementAction(requirement)"
+                  (keydown.space)="handleRequirementAction(requirement)"
+                >{{ requirement.configureTitle }}</span>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    }
+    @if (isStigEnabled()) {
+      <div class="stig-hints stig-info">{{ 'STIG mode is enabled. Password policy fields have minimum required values that cannot be reduced.' | translate }}</div>
+    }
+    <br>
+    <div class="stig-hints">{{ 'Restart is required after changing these settings.' | translate }}</div>
+
+    <tn-form-field
+      [label]="'Min Password Age' | translate"
+      [tooltip]="'Minimum number of days a password must be used before it can be changed.' | translate"
+    >
+      <tn-input
         formControlName="min_password_age"
-        type="number"
-        [label]="'Min Password Age' | translate"
-        [tooltip]="'Minimum number of days a password must be used before it can be changed.' | translate"
+        [inputType]="InputType.Number"
         [attr.aria-describedby]="isStigEnabled() && form.controls.min_password_age.hasError('stigMinPasswordAge') ? 'min-password-age-error' : null"
-      ></ix-input>
+      ></tn-input>
+    </tn-form-field>
 
-      <ix-input
+    <tn-form-field
+      [label]="'Max Password Age' | translate"
+      [tooltip]="'Maximum number of days a password can be used before it must be changed.' | translate"
+    >
+      <tn-input
         formControlName="max_password_age"
-        type="number"
-        [label]="'Max Password Age' | translate"
-        [tooltip]="'Maximum number of days a password can be used before it must be changed.' | translate"
+        [inputType]="InputType.Number"
         [attr.aria-describedby]="isStigEnabled() && form.controls.max_password_age.hasError('stigMaxPasswordAge') ? 'max-password-age-error' : null"
-      ></ix-input>
+      ></tn-input>
+    </tn-form-field>
 
-      <ix-select
+    <tn-form-field
+      [label]="'Password Complexity Ruleset' | translate"
+      [tooltip]="'Password complexity ruleset. Choose between Upper, Lower, Number and Special complexity levels.' | translate"
+    >
+      <tn-select
         formControlName="password_complexity_ruleset"
-        [options]="complexityRulesetLabels$"
         [multiple]="true"
-        [label]="'Password Complexity Ruleset' | translate"
-        [tooltip]="'Password complexity ruleset. Choose between Upper, Lower, Number and Special complexity levels.' | translate"
+        [options]="(complexityRulesetLabels$ | async) ?? []"
         [attr.aria-describedby]="isStigEnabled() && form.controls.password_complexity_ruleset.hasError('stigPasswordComplexity') ? 'password-complexity-error' : null"
-      ></ix-select>
+      ></tn-select>
+    </tn-form-field>
 
-      <ix-input
+    <tn-form-field
+      [label]="'Min Password Length' | translate"
+      [tooltip]="'Minimum number of characters in a password. Must be at least 8 characters.' | translate"
+    >
+      <tn-input
         formControlName="min_password_length"
-        type="number"
-        [label]="'Min Password Length' | translate"
-        [tooltip]="'Minimum number of characters in a password. Must be at least 8 characters.' | translate"
+        [inputType]="InputType.Number"
         [attr.aria-describedby]="isStigEnabled() && form.controls.min_password_length.hasError('stigMinPasswordLength') ? 'min-password-length-error' : null"
-      ></ix-input>
+      ></tn-input>
+    </tn-form-field>
 
-      <ix-input
+    <tn-form-field
+      [label]="'Password History Length' | translate"
+      [tooltip]="'Number of previous passwords to remember. Must be between 1 and 10.' | translate"
+    >
+      <tn-input
         formControlName="password_history_length"
-        type="number"
-        [label]="'Password History Length' | translate"
-        [tooltip]="'Number of previous passwords to remember. Must be between 1 and 10.' | translate"
+        [inputType]="InputType.Number"
         [attr.aria-describedby]="isStigEnabled() && form.controls.password_history_length.hasError('stigPasswordHistoryLength') ? 'password-history-error' : null"
-      ></ix-input>
+      ></tn-input>
+    </tn-form-field>
 
+    @if (slideInRef) {
       <div class="form-actions">
-        <button
+        <tn-button
           *ixRequiresRoles="requiredRoles"
-          mat-button
           type="submit"
           color="primary"
-          ixTest="save"
+          [testId]="'save'"
           [disabled]="!form.valid || loadingStigRequirements()"
-        >
-          {{ 'Save' | translate }}
-        </button>
+          [label]="'Save' | translate"
+        ></tn-button>
       </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+    }
+  </tn-form-section>
+</form>

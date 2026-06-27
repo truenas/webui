@@ -2,9 +2,8 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatTableHarness } from '@angular/material/table/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconButtonHarness } from '@truenas/ui-components';
+import { TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Group } from 'app/interfaces/group.interface';
@@ -91,20 +90,17 @@ describe('MapUserGroupIdsDialogComponent', () => {
   });
 
   it('displays users by default', async () => {
-    const table = await loader.getHarness(MatTableHarness);
-    const rows = await table.getRows();
+    const table = await loader.getHarness(TnTableHarness);
 
-    expect(rows).toHaveLength(2);
+    expect(await table.getRowCount()).toBe(2);
 
-    const firstRowCells = await rows[0].getCells();
-    expect(await firstRowCells[0].getText()).toBe('testuser');
-    expect(await firstRowCells[1].getText()).toBe('1000');
-    expect(await firstRowCells[2].getText()).toBe('Same');
+    expect(await table.getCellText(0, 'name')).toBe('testuser');
+    expect(await table.getCellText(0, 'hostUidOrGid')).toBe('1000');
+    expect(await table.getCellText(0, 'instanceUidOrGid')).toBe('Same');
 
-    const secondRowCells = await rows[1].getCells();
-    expect(await secondRowCells[0].getText()).toBe('anotheruser');
-    expect(await secondRowCells[1].getText()).toBe('1001');
-    expect(await secondRowCells[2].getText()).toBe('2001');
+    expect(await table.getCellText(1, 'name')).toBe('anotheruser');
+    expect(await table.getCellText(1, 'hostUidOrGid')).toBe('1001');
+    expect(await table.getCellText(1, 'instanceUidOrGid')).toBe('2001');
   });
 
   it('switches to groups when type is changed', async () => {
@@ -127,12 +123,8 @@ describe('MapUserGroupIdsDialogComponent', () => {
       return of(null);
     });
 
-    const table = await loader.getHarness(MatTableHarness);
-    const rows = await table.getRows();
-    const firstRowCells = await rows[0].getCells();
-    const deleteButton = await firstRowCells[3].getHarness(TnIconButtonHarness);
-
-    await deleteButton.click();
+    const deleteButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' }));
+    await deleteButtons[0].click();
 
     expect(apiCallSpy).toHaveBeenCalledWith('user.update', [1, { userns_idmap: null }]);
   });

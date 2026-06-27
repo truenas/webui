@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -152,7 +153,7 @@ describe('TargetFormComponent', () => {
       // Click Add buttons to create FormArray items:
       // addButtons[0] = Add button for groups (click twice for 2 groups)
       // addButtons[1] = Add button for auth_networks (click twice for 2 networks)
-      const addButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Add' }));
+      const addButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Add' }));
       await addButtons[0].click();
       await addButtons[0].click();
       await addButtons[1].click();

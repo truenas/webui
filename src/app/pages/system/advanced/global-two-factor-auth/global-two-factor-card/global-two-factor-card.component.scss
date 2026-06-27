@@ -1,0 +1,12 @@
+@import '../../settings-card-details';
+
+@include settings-card-details;
+
+.details-item .label {
+  align-items: center;
+  display: inline-flex;
+
+  ix-tooltip {
+    margin-left: 5px;
+  }
+}

@@ -7,9 +7,9 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { Observable, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Option } from 'app/interfaces/option.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { LocalizationCardComponent } from 'app/pages/system/general-settings/localization/localization-card/localization-card.component';
-import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -38,8 +38,15 @@ describe('LocalizationCardComponent', () => {
             { value: 'us', label: 'English (US) (us)' },
           ]);
         },
+        timezoneChoices(): Observable<Option[]> {
+          return of([
+            { value: 'America/New_York', label: 'America/New_York' },
+          ]);
+        },
       }),
-      mockProvider(SlideIn),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
+      }),
     ],
   });
 
@@ -62,9 +69,10 @@ describe('LocalizationCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(LocalizationFormComponent, {
-      data: {
-        kbdMap: 'us',
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
+      title: 'Localization Settings',
+      editData: {
+        kbdmap: 'us',
         timezone: 'America/New_York',
       },
     });
