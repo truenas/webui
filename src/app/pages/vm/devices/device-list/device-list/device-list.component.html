@@ -32,7 +32,7 @@
         mat-icon-button
         ixTest="device-actions"
         class="actions"
-        [matTooltip]="'Actions' | translate"
+        [tnTooltip]="'Actions' | translate"
         [attr.aria-label]="'Actions' | translate"
         [matMenuTriggerFor]="actionsMenu"
       >
@@ -67,7 +67,7 @@
             [ixTest]="[device.id, 'export']"
             [attr.aria-label]="'Export disk to image file' | translate"
             [disabled]="isVmRunning()"
-            [matTooltip]="isVmRunning() ? ('Export is not allowed when Virtual Machine is running.' | translate) : ''"
+            [tnTooltip]="isVmRunning() ? ('Export is not allowed when Virtual Machine is running.' | translate) : ''"
             (click)="handleExportDisk(device)"
           >
             {{ 'Export to Image' | translate }}

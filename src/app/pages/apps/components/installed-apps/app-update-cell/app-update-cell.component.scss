@@ -5,10 +5,11 @@
   gap: 4px;
 
   .icon {
-    color: var(--yellow);
     display: inline-flex;
-    height: 18px;
     line-height: 1;
-    width: 18px;
+  }
+
+  .icon--update {
+    color: var(--yellow);
   }
 }

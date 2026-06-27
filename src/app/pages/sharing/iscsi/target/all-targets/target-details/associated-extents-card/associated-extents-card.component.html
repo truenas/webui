@@ -9,7 +9,7 @@
     } @else {
       <div
         class="actions"
-        [matTooltip]="unassociatedExtents().length > 0 ? null : ('No unassociated extents available.' | translate)"
+        [tnTooltip]="unassociatedExtents().length > 0 ? null : ('No unassociated extents available.' | translate)"
       >
         <button
           *ixRequiresRoles="requiredRoles"
@@ -42,7 +42,7 @@
             [ixTest]="'remove-extent-association' + extent.extent"
             [title]="'Remove extent association' | translate"
             [attr.aria-label]="'Remove extent association' | translate"
-            [matTooltip]="'Remove extent association' | translate"
+            [tnTooltip]="'Remove extent association' | translate"
             (click)="removeExtentAssociation(extent)"
           >
             <tn-icon name="link-off" library="mdi"></tn-icon>

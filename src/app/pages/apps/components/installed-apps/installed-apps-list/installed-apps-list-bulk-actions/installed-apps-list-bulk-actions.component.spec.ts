@@ -1,8 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
@@ -11,7 +10,6 @@ import { InstalledAppsListBulkActionsComponent } from './installed-apps-list-bul
 describe('InstalledAppsListBulkActionsComponent', () => {
   let spectator: Spectator<InstalledAppsListBulkActionsComponent>;
   let loader: HarnessLoader;
-  let menu: MatMenuHarness;
 
   const checkedAppsMock = [
     { id: 'ix-app-1', state: AppState.Running, upgrade_available: true },
@@ -20,21 +18,24 @@ describe('InstalledAppsListBulkActionsComponent', () => {
 
   const createComponent = createComponentFactory({
     component: InstalledAppsListBulkActionsComponent,
-    imports: [MatMenuModule],
     providers: [
       mockAuth(),
     ],
   });
 
-  beforeEach(async () => {
+  async function openMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Select action' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         checkedApps: checkedAppsMock,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    menu = await loader.getHarness(MatMenuHarness);
-    await menu.open();
   });
 
   it('displays the correct count of selected instances', () => {
@@ -45,8 +46,8 @@ describe('InstalledAppsListBulkActionsComponent', () => {
   it('emits bulkStart after actions', async () => {
     const startSpy = jest.spyOn(spectator.component.bulkStart, 'emit');
 
-    await menu.open();
-    await menu.clickItem({ text: 'Start All Selected' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Start All Selected' });
 
     expect(startSpy).toHaveBeenCalled();
   });
@@ -54,8 +55,8 @@ describe('InstalledAppsListBulkActionsComponent', () => {
   it('emits bulkStop after actions', async () => {
     const stopSpy = jest.spyOn(spectator.component.bulkStop, 'emit');
 
-    await menu.open();
-    await menu.clickItem({ text: 'Stop All Selected' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Stop All Selected' });
 
     expect(stopSpy).toHaveBeenCalled();
   });
@@ -63,8 +64,8 @@ describe('InstalledAppsListBulkActionsComponent', () => {
   it('emits bulkUpdate after actions', async () => {
     const updateSpy = jest.spyOn(spectator.component.bulkUpdate, 'emit');
 
-    await menu.open();
-    await menu.clickItem({ text: 'Update All Selected' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Update All Selected' });
 
     expect(updateSpy).toHaveBeenCalled();
   });
@@ -72,8 +73,8 @@ describe('InstalledAppsListBulkActionsComponent', () => {
   it('emits bulkDelete after actions', async () => {
     const deleteSpy = jest.spyOn(spectator.component.bulkDelete, 'emit');
 
-    await menu.open();
-    await menu.clickItem({ text: 'Delete All Selected' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Delete All Selected' });
 
     expect(deleteSpy).toHaveBeenCalled();
   });

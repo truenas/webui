@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
@@ -25,7 +25,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     MatCard,
     MatCardHeader,
     TranslateModule,
-    MatTooltipModule,
+    TnTooltipDirective,
     MatCardContent,
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,

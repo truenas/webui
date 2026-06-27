@@ -1,10 +1,10 @@
 @for (section of dynamicSection(); track section) {
   @if (section.schema.length) {
-    <ix-fieldset
+    <tn-form-section
       [id]="section.name"
-      [title]="section.name | translate"
+      [heading]="section.name | translate"
     >
-      <mat-divider class="divider" inset></mat-divider>
+      <tn-divider class="divider" [inset]="true"></tn-divider>
       <div class="section">
         <div class="fieldset">
           @for (schema of section.schema; track schema) {
@@ -23,6 +23,6 @@
           <div class="value">{{ section.help }}</div>
         </div>
       </div>
-    </ix-fieldset>
+    </tn-form-section>
   }
 }

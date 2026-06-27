@@ -1,74 +1,78 @@
-<ix-modal-header
-  [requiredRoles]="anyRoles"
-  [title]="'Storage Settings' | translate"
-  [loading]="isLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="anyRoles"
+    [title]="'Storage Settings' | translate"
+    [loading]="isLoading()"
+  ></ix-modal-header>
+}
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-select
-          formControlName="systemDatasetPool"
-          [label]="'System Dataset Pool' | translate"
-          [required]="true"
-          [options]="poolOptions$"
-        ></ix-select>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <tn-form-section>
+    <tn-form-field [label]="'System Dataset Pool' | translate" [required]="true">
+      <tn-select
+        formControlName="systemDatasetPool"
+        [options]="(poolOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-        @if (isSmbRunning$ | async) {
-          <ix-warning
-            [message]="helptext.smbRebootWarning | translate"
-          ></ix-warning>
-        }
-      </ix-fieldset>
+    @if (isSmbRunning$ | async) {
+      <ix-warning
+        [message]="helptext.smbRebootWarning | translate"
+      ></ix-warning>
+    }
+  </tn-form-section>
 
-      <ix-fieldset
-        [title]="'Priority Resilvering' | translate"
-        [formGroup]="form.controls.priorityResilver"
-      >
-        <ix-checkbox
-          formControlName="enabled"
-          [label]="'Run Resilvering At Higher Priority At Certain Times' | translate"
-          [tooltip]="helptext.priorityResilverEnabled | translate"
-        ></ix-checkbox>
+  <tn-form-section
+    [heading]="'Priority Resilvering' | translate"
+    [formGroup]="form.controls.priorityResilver"
+  >
+    <tn-form-field
+      subscriptSizing="dynamic"
+      [tooltip]="helptext.priorityResilverEnabled | translate"
+    >
+      <tn-checkbox
+        formControlName="enabled"
+        [label]="'Run Resilvering At Higher Priority At Certain Times' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-        @if (this.form.value.priorityResilver.enabled) {
-          <ix-select
-            formControlName="weekday"
-            [label]="'Days of the Week' | translate"
-            [options]="daysOfWeek$"
-            [multiple]="true"
-            [required]="true"
-          ></ix-select>
+    @if (this.form.value.priorityResilver.enabled) {
+      <tn-form-field [label]="'Days of the Week' | translate" [required]="true">
+        <tn-select
+          formControlName="weekday"
+          [multiple]="true"
+          [options]="(daysOfWeek$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
-          <div class="priority-times">
-            <ix-select
-              formControlName="begin"
-              [label]="'From' | translate"
-              [options]="timeOptions$"
-            ></ix-select>
+      <div class="priority-times">
+        <tn-form-field [label]="'From' | translate">
+          <tn-select
+            formControlName="begin"
+            [options]="(timeOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
 
-            <ix-select
-              formControlName="end"
-              [label]="'To' | translate"
-              [options]="timeOptions$"
-            ></ix-select>
-          </div>
-        }
-      </ix-fieldset>
+        <tn-form-field [label]="'To' | translate">
+          <tn-select
+            formControlName="end"
+            [options]="(timeOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+      </div>
+    }
+  </tn-form-section>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="anyRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <ix-form-actions>
+    @if (slideInRef) {
+      <tn-button
+        *ixRequiresRoles="anyRoles"
+        type="submit"
+        color="primary"
+        [testId]="'save'"
+        [disabled]="form.invalid || isLoading()"
+        [label]="'Save' | translate"
+      ></tn-button>
+    }
+  </ix-form-actions>
+</form>

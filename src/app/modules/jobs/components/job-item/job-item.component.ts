@@ -3,9 +3,8 @@ import {
   Component, ChangeDetectionStrategy, input, output,
 } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
@@ -21,7 +20,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   styleUrls: ['./job-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatTooltip,
+    TnTooltipDirective,
     MatProgressBar,
     TnIconButtonComponent,
     TranslateModule,

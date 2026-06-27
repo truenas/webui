@@ -4,7 +4,6 @@ import { MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { forkJoin, of } from 'rxjs';
@@ -36,7 +35,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatCardHeader,
     MatCardTitle,
     TranslateModule,
-    MatTooltip,
     AddHostMenuComponent,
     MatIconButton,
     TestDirective,

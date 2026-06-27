@@ -31,11 +31,14 @@ import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
 import {
-  TN_TEST_ATTR, TnIconButtonComponent, TnIconComponent, TnIconTesting, TnTablePagerComponent,
+  LabelMarkupPipe,
+  TN_TEST_ATTR, TnButtonComponent, TnIconButtonComponent, TnIconComponent, TnIconTesting,
+  TnInputComponent,
+  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTablePagerComponent,
 } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
-import { MockComponent, MockProvider } from 'ng-mocks';
+import { MockComponent, MockProvider, ngMocks } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import {
   Observable,
@@ -94,10 +97,37 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 setupZoneTestEnv();
 
+// `TnCardComponent` imports `TnButtonComponent`, which imports `LabelMarkupPipe`
+// (the pipe that renders a tn-button's `[label]`). When ng-mocks deep-mocks any
+// component that transitively imports `TnCardComponent`, it also mocks this pipe,
+// and the mocked `transform()` returns empty — silently blanking the label of
+// every *real* tn-button in the same TestBed. Keep the pure pipe real everywhere
+// so mocking a card-bearing component never corrupts a sibling button's label.
+ngMocks.globalKeep(LabelMarkupPipe);
+
+// `TnInputComponent` exposes its `<input>` through a signal `viewChild('inputEl')`,
+// which real consumers read (e.g. `BasicSearchComponent.focusInput()` calls
+// `searchInput().inputEl()`, and harnesses query the rendered `input.tn-input`).
+// When ng-mocks deep-mocks any component whose graph transitively imports
+// `tn-input`, it replaces `TnInputComponent` across the whole TestBed with an empty
+// mock — silently breaking sibling *real* search inputs that depend on the rendered
+// element. Keep the lightweight input real everywhere so a deep-mocked parent never
+// blanks an unrelated real search field.
+ngMocks.globalKeep(TnInputComponent);
+
 const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
-  return (
-    methodName === 'error' && message.startsWith('Error: Could not parse CSS stylesheet')
-  );
+  if (methodName === 'error' && message.startsWith('Error: Could not parse CSS stylesheet')) {
+    return true;
+  }
+  // <ix-form> emits this warning in dev mode (which jest runs as) when a
+  // submit's request$ resolves to undefined without a closeWith override.
+  // The default test mock intentionally uses `request$: of(undefined)` as
+  // a no-op success — production callers should still see the warning, so
+  // it's silenced only at the test layer.
+  if (methodName === 'warn' && message.startsWith('[ix-form] submitHandler close payload resolved to undefined')) {
+    return true;
+  }
+  return false;
 };
 failOnConsole({ silenceMessage: silenceJsDomCssParseError });
 
@@ -108,8 +138,12 @@ defineGlobalsInjections({
     MatCheckboxModule,
     MatSlideToggleModule,
     MatMenuModule,
+    TnButtonComponent,
     TnIconComponent,
     TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,

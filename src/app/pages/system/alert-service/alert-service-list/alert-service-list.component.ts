@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -26,7 +28,8 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -60,7 +63,7 @@ export class AlertServiceListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private loader = inject(LoaderService);
   private cdr = inject(ChangeDetectorRef);
@@ -135,8 +138,14 @@ export class AlertServiceListComponent implements OnInit {
     });
   }
 
+  // AlertServiceComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles/footerActions) the panel reads; cast past the nominal base type,
+  // mirroring how FormSidePanelService.openForm casts the renderer.
+  private readonly alertServiceForm = AlertServiceComponent as unknown as Type<SidePanelForm>;
+
   protected addAlertService(): void {
-    this.slideIn.open(AlertServiceComponent).onSuccess(() => this.getAlertServices(), this.destroyRef);
+    this.formPanel.open(this.alertServiceForm, { title: this.translate.instant('Add Alert Service') })
+      .onSuccess(() => this.getAlertServices(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {
@@ -151,7 +160,10 @@ export class AlertServiceListComponent implements OnInit {
   }
 
   private editAlertService(row: AlertService): void {
-    this.slideIn.open(AlertServiceComponent, { data: row }).onSuccess(() => this.getAlertServices(), this.destroyRef);
+    this.formPanel.open(this.alertServiceForm, {
+      title: this.translate.instant('Edit Alert Service'),
+      inputs: { alertServiceToEdit: row },
+    }).onSuccess(() => this.getAlertServices(), this.destroyRef);
   }
 
   private confirmDeleteAlertService(alertService: AlertService): void {

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   errorsConfig, loadingConfig, noItemsConfig, noSearchResultsConfig,
 } from 'app/constants/empty-configs';
@@ -19,6 +20,29 @@ export class EmptyService {
         return noSearchResultsConfig;
       default:
         return noItemsConfig;
+    }
+  }
+
+  /**
+   * Resolves the icon for an empty state from its type. Mirrors the icon mapping
+   * historically rendered by ix-empty so tn-table's `[emptyIcon]` reflects the
+   * state (error/search/no-data) instead of a static page-specific icon.
+   */
+  iconForType(type?: EmptyType | null): string {
+    switch (type) {
+      case EmptyType.Loading:
+        return tnIconMarker('truenas-logo', 'custom');
+      case EmptyType.FirstUse:
+        return tnIconMarker('rocket', 'mdi');
+      case EmptyType.Errors:
+        return tnIconMarker('alert-octagon', 'mdi');
+      case EmptyType.NoSearchResults:
+        return tnIconMarker('magnify-scan', 'mdi');
+      case EmptyType.None:
+        return '';
+      case EmptyType.NoPageData:
+      default:
+        return tnIconMarker('format-list-text', 'mdi');
     }
   }
 }

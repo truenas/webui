@@ -1,9 +1,4 @@
-@import 'mixins/forms';
-
-@include tn-form-field-spacing();
-
 :host {
   display: block;
   width: 450px;
 }
-

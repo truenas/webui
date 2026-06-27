@@ -1,32 +1,89 @@
 <ix-page-header>
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="add-init-shutdown-script"
     color="primary"
-    (click)="addScript()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    [testId]="'add-init-shutdown-script'"
+    [label]="'Add' | translate"
+    (onClick)="addScript()"
+  ></tn-button>
 </ix-page-header>
 
 <div class="table-container" [ixUiSearch]="searchableElements.elements.initShutDown">
-  <ix-table
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-  >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
+  @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
+    <tn-empty
+      [title]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async).title | translate"
+    ></tn-empty>
+  } @else {
+    <tn-table
+      class="table"
+      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns"
+      [trackBy]="trackByScriptId"
+      [loading]="!!(dataProvider.isLoading$ | async)"
+      (sortChange)="onSortChange($event)"
     >
-    </tbody>
-  </ix-table>
+      <ng-container [tnColumnDef]="'type'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Type' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>{{ getTypeLabel(row) }}</ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'comment'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>{{ row.comment }}</ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'when'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'When' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>{{ getWhenLabel(row) }}</ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'script'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Command/Script' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>{{ getScriptValue(row) }}</ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'enabled'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>{{ !!row.enabled | yesNo | translate }}</ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-actions-cell
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-table-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
+  }
   <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
 </div>
+
+<tn-side-panel
+  [title]="panelTitle()"
+  [closeGuard]="closeGuard"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-init-shutdown-form
+      [editScript]="editingScript()"
+      (closed)="onConfigClosed($event)"
+    ></ix-init-shutdown-form>
+  }
+  @if (configForm(); as form) {
+    <div tnSidePanelAction>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!form.canSubmit()"
+        (onClick)="form.submit()"
+      ></tn-button>
+    </div>
+  }
+</tn-side-panel>
