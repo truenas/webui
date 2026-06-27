@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableHarness,
+  TnButtonHarness, TnCardComponent, TnDialog, TnIconButtonHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -94,10 +94,7 @@ describe('SshConnectionCardComponent', () => {
   });
 
   it('checks page title', () => {
-    // White-box read: tn-card renders the title from its [title] input; swap for
-    // TnCardHarness.getTitle() once @truenas/ui-components exposes one.
-    const title = spectator.query('h3');
-    expect(title).toHaveText('SSH Connections');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('SSH Connections');
   });
 
   it('opens form when "Add" button is pressed', async () => {

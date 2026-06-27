@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, output, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
+import {
+  InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface OauthProviderData {
   client_id: string;
@@ -26,7 +27,7 @@ export interface OauthProviderData {
     ReactiveFormsModule,
     OauthButtonComponent,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
   ],
 })
 export class OauthProviderComponent {
