@@ -1,8 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,10 +14,6 @@ import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownCardComponent,
@@ -22,12 +21,13 @@ import {
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
+import { FilesystemService } from 'app/services/filesystem.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 describe('InitShutdownCardComponent', () => {
   let spectator: Spectator<InitShutdownCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const scripts = [
     {
@@ -53,6 +53,7 @@ describe('InitShutdownCardComponent', () => {
   const createComponent = createComponentFactory({
     component: InitShutdownCardComponent,
     imports: [
+      ReactiveFormsModule,
     ],
     providers: [
       mockApi([
@@ -62,61 +63,72 @@ describe('InitShutdownCardComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn((): undefined => undefined) }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+      }),
+      mockProvider(FilesystemService, {
+        getFilesystemNodeProvider: jest.fn(() => () => of([])),
       }),
       mockAuth(),
     ],
   });
 
+  async function openFirstRowMenu(): Promise<TnMenuHarness> {
+    spectator.click(
+      spectator.query('[data-test="button-card-init-shutdown-undefined-postinit-more-action"]') as HTMLElement,
+    );
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Command / Script', 'Description', 'When', 'Enabled', 'Timeout', ''],
-      [
-        '/mnt/tank/script.sh',
-        'Prepare system',
-        'POSTINIT',
-        'Yes',
-        '10',
-        '',
-      ],
-      [
-        'echo "Hello World"',
-        'Greeting',
-        'POSTINIT',
-        'Yes',
-        '20',
-        '',
-      ],
-    ];
+    expect(await table.getHeaderTexts()).toEqual(['Command / Script', 'Description', 'When', 'Enabled', 'Timeout', '']);
+    expect(await table.getAllRowTexts()).toEqual([
+      ['/mnt/tank/script.sh', 'Prepare system', 'POSTINIT', 'Yes', '10', ''],
+      ['echo "Hello World"', 'Greeting', 'POSTINIT', 'Yes', '20', ''],
+    ]);
+  });
 
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+  it('opens the Add Init/Shutdown Script form in a side panel when Add is pressed', async () => {
+    expect(spectator.query('ix-init-shutdown-form')).toBeNull();
+
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-init-shutdown-form')).not.toBeNull();
+  });
+
+  it('closes the side panel when the hosted form emits closed', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+    spectator.detectChanges();
+    expect(spectator.query('ix-init-shutdown-form')).not.toBeNull();
+
+    spectator.query(InitShutdownFormComponent).closed.emit(true);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-init-shutdown-form')).toBeNull();
   });
 
   it('shows form to edit an init shutdown script when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'Prepare system');
-    await editButton.click();
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Edit' });
+    spectator.detectChanges();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      InitShutdownFormComponent,
-      { data: expect.objectContaining(scripts[0]) },
-    );
+    const form = spectator.query(InitShutdownFormComponent);
+    expect(form).not.toBeNull();
+    expect(form.editScript()).toEqual(scripts[0]);
   });
 
   it('deletes a script with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'Prepare system');
-    await deleteIcon.click();
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete Script',

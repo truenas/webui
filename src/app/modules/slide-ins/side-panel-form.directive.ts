@@ -3,8 +3,9 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
-import { of, startWith } from 'rxjs';
+import { Observable, of, startWith } from 'rxjs';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
 /**
  * Base class for any form that can be hosted either in a legacy SlideIn (via {@link SlideInRef})
@@ -14,14 +15,23 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
  * Centralizes the unsaved-changes confirmation and close plumbing that is otherwise
  * duplicated across every side-panel form. Subclasses provide the {@link form} and
  * {@link onSubmit} implementation, and call {@link trackCanSubmit} to expose `canSubmit`.
+ *
+ * The type parameter `R` is the success payload handed back to the opener: it defaults to
+ * `boolean` (a plain "saved" signal, all most forms need). Forms that create a record the
+ * caller needs — e.g. a picker's "Add New" — parameterize it (`SidePanelForm<User>`) and
+ * emit the record through {@link closed}; `FormSidePanelService.open` then resolves with it.
  */
 @Directive()
-export abstract class SidePanelForm {
+export abstract class SidePanelForm<R = boolean> {
   /** Present when opened via legacy SlideIn host. Absent when hosted in `<tn-side-panel>`. */
   readonly slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef, { optional: true });
 
-  /** Emitted when the form should close (true = saved, false = cancelled). Only for `<tn-side-panel>` hosts. */
-  readonly closed = output<boolean>();
+  /**
+   * Emitted when the form should close. The success payload is `R` (defaults to `true` when
+   * saved / `false` when cancelled); forms with a richer `R` emit the created record on save.
+   * Only for `<tn-side-panel>` hosts.
+   */
+  readonly closed = output<R>();
 
   /** The form whose dirty/validity state drives confirmation and submission. */
   protected abstract readonly form: Pick<AbstractControl, 'dirty' | 'status' | 'statusChanges'>;
@@ -49,12 +59,16 @@ export abstract class SidePanelForm {
     return this.form.dirty;
   }
 
-  /** Closes through whichever host opened the form. */
+  /**
+   * Closes through whichever host opened the form, emitting the boolean saved-signal. For the
+   * default `R = boolean` this is exact; forms with a richer payload close by emitting `R`
+   * through {@link closed} directly instead of calling this.
+   */
   protected close(saved: boolean): void {
     if (this.slideInRef) {
       this.slideInRef.close({ response: saved });
     } else {
-      this.closed.emit(saved);
+      this.closed.emit(saved as unknown as R);
     }
   }
 
@@ -70,4 +84,20 @@ export abstract class SidePanelForm {
     );
     return computed(() => status() === 'VALID' && !isLoading());
   }
+}
+
+/**
+ * Builds a `<tn-side-panel>` `[closeGuard]` for a hosted {@link SidePanelForm}: prompts the
+ * unsaved-changes confirmation when the form is dirty, otherwise allows the close. Centralizes
+ * the guard otherwise duplicated across every side-panel host.
+ *
+ * @param unsavedChanges injected {@link UnsavedChangesService}
+ * @param form accessor for the hosted form (typically a `viewChild` signal), may be absent
+ *   while the panel is closed
+ */
+export function sidePanelFormCloseGuard(
+  unsavedChanges: UnsavedChangesService,
+  form: () => Pick<SidePanelForm, 'hasUnsavedChanges'> | undefined,
+): () => Observable<boolean> {
+  return () => (form()?.hasUnsavedChanges() ? unsavedChanges.showConfirmDialog() : of(true));
 }

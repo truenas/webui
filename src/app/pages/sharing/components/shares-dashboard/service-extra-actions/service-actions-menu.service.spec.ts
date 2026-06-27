@@ -1,7 +1,6 @@
 import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { AuditService } from 'app/enums/audit.enum';
@@ -11,7 +10,6 @@ import { Service } from 'app/interfaces/service.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -67,7 +65,6 @@ describe('ServiceActionsMenuService', () => {
       mockProvider(ErrorHandlerService, {
         withErrorHandler: jest.fn(() => <T>(source$: T): T => source$),
       }),
-      mockProvider(UnsavedChangesService),
     ],
   });
 
@@ -184,31 +181,6 @@ describe('ServiceActionsMenuService', () => {
         'service.control',
         [ServiceOperation.Start, ServiceName.Cifs, { silent: false }],
       );
-    });
-  });
-
-  describe('buildUnsavedChangesGuard', () => {
-    it('allows the close immediately without prompting when the form is not dirty', () => {
-      let allowed: boolean | undefined;
-      spectator.service.buildUnsavedChangesGuard(() => false)().subscribe((value) => {
-        allowed = value;
-      });
-
-      expect(allowed).toBe(true);
-      expect(spectator.inject(UnsavedChangesService).showConfirmDialog).not.toHaveBeenCalled();
-    });
-
-    it('delegates to the unsaved-changes confirm dialog when the form is dirty', () => {
-      const unsavedChanges = spectator.inject(UnsavedChangesService);
-      jest.spyOn(unsavedChanges, 'showConfirmDialog').mockReturnValue(of(false));
-
-      let allowed: boolean | undefined;
-      spectator.service.buildUnsavedChangesGuard(() => true)().subscribe((value) => {
-        allowed = value;
-      });
-
-      expect(unsavedChanges.showConfirmDialog).toHaveBeenCalled();
-      expect(allowed).toBe(false);
     });
   });
 

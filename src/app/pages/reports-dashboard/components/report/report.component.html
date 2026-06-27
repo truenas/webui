@@ -14,8 +14,8 @@
                   <button
                     mat-button
                     [disabled]="stepBackDisabled"
-                    [matTooltip]="'Step Back' | translate"
-                    [matTooltipShowDelay]="1000"
+                    [tnTooltip]="'Step Back' | translate"
+                    [tnTooltipShowDelay]="1000"
                     [ixTest]="['steps', 'back']"
                     (click)="stepBack()"
                   >
@@ -24,8 +24,8 @@
                   <button
                     mat-button
                     [disabled]="stepForwardDisabled"
-                    [matTooltip]="'Step Forward' | translate"
-                    [matTooltipShowDelay]="1000"
+                    [tnTooltip]="'Step Forward' | translate"
+                    [tnTooltipShowDelay]="1000"
                     [ixTest]="['steps', 'forward']"
                     (click)="stepForward()"
                   >
@@ -37,7 +37,7 @@
                   <button
                     mat-button
                     [disabled]="zoomLevelIndex === zoomLevelMin"
-                    [matTooltip]="'Zoom Out' | translate"
+                    [tnTooltip]="'Zoom Out' | translate"
                     [ixTest]="['zoom', 'out']"
                     (click)="timeZoomOut()"
                     ><tn-icon name="magnify-minus" library="mdi"></tn-icon>
@@ -46,7 +46,7 @@
                   <button
                     mat-button
                     [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
-                    [matTooltip]="'Reset Zoom' | translate"
+                    [tnTooltip]="'Reset Zoom' | translate"
                     [ixTest]="['zoom', 'reset']"
                     (click)="timeZoomReset()"
                   >
@@ -56,7 +56,7 @@
                   <button
                     mat-button
                     [disabled]="zoomLevelIndex === zoomLevelMax"
-                    [matTooltip]="'Zoom In' | translate"
+                    [tnTooltip]="'Zoom In' | translate"
                     [ixTest]="['zoom', 'in']"
                     (click)="timeZoomIn()"
                     >

@@ -6,7 +6,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnSidePanelHarness, TnSlideToggleHarness, TnTableHarness,
+  TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -22,10 +22,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import {
   GlobalTargetConfigurationComponent,
@@ -70,6 +72,9 @@ describe('ServicesComponent', () => {
       ]),
       mockProvider(DialogService),
       mockProvider(SlideIn, {
+        open: jest.fn(() => SlideInResult.empty()),
+      }),
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(IscsiService),
@@ -120,14 +125,13 @@ describe('ServicesComponent', () => {
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
   });
 
-  it('opens the config side panel with the matching form when a service is edited', async () => {
+  it('opens the matching config form in a side panel when a service is edited', () => {
     spectator.click('[data-test="button-service-ftp-edit-service"]');
-    spectator.detectChanges();
 
-    const panel = await loader.getHarness(TnSidePanelHarness);
-    expect(await panel.isOpen()).toBe(true);
-    expect(spectator.query('ix-service-ftp')).toBeTruthy();
-    expect(spectator.query('ix-service-smb')).toBeFalsy();
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      ServiceFtpComponent,
+      { title: 'FTP', wide: true },
+    );
     expect(spectator.inject(SlideIn).open).not.toHaveBeenCalled();
   });
 });

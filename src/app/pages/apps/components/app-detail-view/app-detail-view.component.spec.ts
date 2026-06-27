@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
@@ -98,7 +98,7 @@ describe('AppDetailViewComponent', () => {
   });
 
   it('redirect to install app when Install button is pressed', async () => {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
     await saveButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([

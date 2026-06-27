@@ -4,10 +4,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   catchError, EMPTY, filter, Observable, tap,
 } from 'rxjs';
@@ -42,7 +41,7 @@ interface RowState {
   imports: [
     MatButton,
     NgClass,
-    MatTooltip,
+    TnTooltipDirective,
     TnIconComponent,
     TranslateModule,
     TestDirective,

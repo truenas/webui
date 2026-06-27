@@ -1,4 +1,5 @@
 import { BehaviorSubject, of } from 'rxjs';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
@@ -28,14 +29,19 @@ export const mockUsers = [
 
 export const mockUserApiDataProvider = {
   currentPage$: new BehaviorSubject(mockUsers),
+  isLoading$: of(false),
+  emptyType$: of(EmptyType.None),
+  expandedRow: null,
+  totalRows: mockUsers.length,
   load: jest.fn(),
   setPagination: jest.fn(),
   setParams: jest.fn(),
+  setSorting: jest.fn(),
   additionalUsername: '',
   shouldLoadUser: jest.fn(),
   sorting: {
-    propertyName: 'message_timestamp',
-    direction: 'desc',
+    propertyName: 'username',
+    direction: 'asc',
     active: 1,
   },
   pagination: {

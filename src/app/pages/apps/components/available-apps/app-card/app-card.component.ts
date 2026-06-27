@@ -3,9 +3,8 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-app-badge/installed-app-badge.component';
@@ -17,10 +16,11 @@ import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
+    TnCardComponent,
     AppCardLogoComponent,
     InstalledAppBadgeComponent,
     TnIconComponent,
-    MatTooltip,
+    TnTooltipDirective,
   ],
 })
 export class AppCardComponent {

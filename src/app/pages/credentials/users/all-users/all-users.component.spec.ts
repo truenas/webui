@@ -6,18 +6,22 @@ import { BehaviorSubject, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
+import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AllUsersHeaderComponent } from 'app/pages/credentials/users/all-users/all-users-header/all-users-header.component';
 import { mockUsers } from 'app/pages/credentials/users/all-users/testing/mock-user-api-data-provider';
 import { UserDetailHeaderComponent } from 'app/pages/credentials/users/all-users/user-details/user-detail-header/user-detail-header.component';
 import { UserDetailsComponent } from 'app/pages/credentials/users/all-users/user-details/user-details.component';
 import { UserListComponent } from 'app/pages/credentials/users/all-users/user-list/user-list.component';
+import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { AllUsersComponent } from './all-users.component';
 
@@ -57,18 +61,19 @@ describe('AllUsersComponent', () => {
   const createComponent = createComponentFactory({
     component: AllUsersComponent,
     imports: [
-      MasterDetailViewComponent,
+      MockMasterDetailViewComponent,
       MockComponent(UserListComponent),
       MockComponent(AllUsersHeaderComponent),
+      MockComponent(UserDetailHeaderComponent),
     ],
     declarations: [
-      UserDetailHeaderComponent,
       UserDetailsComponent,
     ],
     providers: [
       mockApi([
         mockCall('user.query', mockUsers),
       ]),
+      mockProvider(FormSidePanelService),
       mockAuth(),
       mockProvider(AuthService, {
         getGlobalTwoFactorConfig: jest.fn(() => of(mockGlobalTwoFactorConfig)),
@@ -131,20 +136,37 @@ describe('AllUsersComponent', () => {
     expect(userDetails.user()).toBe(originalExpandedRow);
   });
 
-  it('shows new user by setting up data provider with the new user username', () => {
+  it('opens the user form in a side panel when Add is requested', () => {
     const usersHeaderComponent = spectator.query(AllUsersHeaderComponent);
+    usersHeaderComponent.addUser.emit();
+
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      UserFormComponent,
+      { title: 'Add User' },
+    );
+  });
+
+  it('auto-expands the newly added user once its added event arrives', () => {
     const newUser = {
       id: 3,
       username: 'new_test_user',
       full_name: 'New Test User',
       roles: [],
     } as User;
-    usersHeaderComponent.userCreated.emit(newUser);
+    // The reloaded page must contain the new user so it is re-selected by username.
+    api.mockCall('user.query', [...mockUsers, newUser]);
 
-    const userDetails = spectator.query(UserDetailsComponent);
-
+    // Add arms the capture; the server then pushes the "added" event carrying the record.
+    spectator.query(AllUsersHeaderComponent).addUser.emit();
+    api.emitSubscribeEvent({
+      id: newUser.id,
+      msg: CollectionChangeType.Added,
+      collection: 'user.query',
+      fields: newUser,
+    });
     spectator.detectChanges();
 
+    const userDetails = spectator.query(UserDetailsComponent);
     expect(userDetails.user()).toBe(newUser);
     expect(location.replaceState).toHaveBeenCalledWith('credentials/users?username=new_test_user');
   });
