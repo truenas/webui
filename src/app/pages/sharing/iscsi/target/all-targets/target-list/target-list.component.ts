@@ -151,14 +151,12 @@ export class TargetListComponent implements OnInit {
 
   doAdd(): void {
     // The created target's expand + reload is driven by `iscsiService.refreshData(...)` (emitted
-    // from the form's onSuccess) which `all-targets` listens for — the panel host can't forward
-    // the created record back here.
+    // from the form's onSuccess) which `all-targets` listens for and reloads the shared
+    // dataProvider — so no explicit reload here (it would double-load).
     this.formPanel.open(this.targetForm, {
       title: this.translate.instant('Add ISCSI Target'),
       wide: true,
-    }).onSuccess(() => {
-      this.dataProvider().load();
-    }, this.destroyRef);
+    });
   }
 
   onListFiltered(query: string): void {

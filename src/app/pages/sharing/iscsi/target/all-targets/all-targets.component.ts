@@ -109,14 +109,12 @@ export class AllTargetsComponent implements OnInit {
 
   editTarget(target: IscsiTarget): void {
     // The updated target's expand + reload is driven by `iscsiService.refreshData(...)` (emitted
-    // from the form's onSuccess) which the `listenForDataRefresh` subscription handles — the panel
-    // host can't forward the updated record back here.
+    // from the form's onSuccess) which the `listenForDataRefresh` subscription handles by reloading
+    // the dataProvider — so no explicit reload here (it would double-load).
     this.formPanel.open(this.targetForm, {
       title: this.translate.instant('Edit ISCSI Target'),
       wide: true,
       inputs: { targetData: target },
-    }).onSuccess(() => {
-      this.dataProvider.load();
-    }, this.destroyRef);
+    });
   }
 }
