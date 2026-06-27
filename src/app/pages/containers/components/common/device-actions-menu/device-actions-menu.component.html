@@ -1,8 +1,8 @@
 <div *ixRequiresRoles="requiredRoles">
   <div
     class="button-wrapper"
-    [matTooltip]="!canManage() && manageRestrictedExplanation() ? manageRestrictedExplanation()! : ''"
-    [matTooltipDisabled]="canManage() || !manageRestrictedExplanation()"
+    [tnTooltip]="!canManage() && manageRestrictedExplanation() ? manageRestrictedExplanation()! : ''"
+    [tnTooltipDisabled]="canManage() || !manageRestrictedExplanation()"
   >
     <button
       mat-icon-button
@@ -12,7 +12,7 @@
       [disabled]="!canManage()"
       [class.disabled]="!canManage()"
       [attr.tabindex]="!canManage() ? -1 : 0"
-      [matTooltip]="canManage() ? ('Actions for {device}' | translate: { device: deviceDescription() }) : ''"
+      [tnTooltip]="canManage() ? ('Actions for {device}' | translate: { device: deviceDescription() }) : ''"
       [attr.aria-label]="'Actions for {device}' | translate: { device: deviceDescription() }"
     >
       <tn-icon name="dots-vertical" library="mdi"></tn-icon>

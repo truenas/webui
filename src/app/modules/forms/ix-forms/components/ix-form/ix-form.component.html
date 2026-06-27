@@ -1,0 +1,41 @@
+<!-- SlideIn host only: the <tn-side-panel> host renders its own header. -->
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles()"
+    [title]="resolvedTitle()"
+    [loading]="isLoading()"
+  ></ix-modal-header>
+}
+
+<form
+  class="ix-form-container"
+  [formGroup]="formGroup()"
+  [attr.aria-busy]="isLoading() || null"
+  (ngSubmit)="onFormSubmit()"
+>
+  <ng-content />
+
+  <ix-form-actions>
+    <ng-content select="[ixExtraActions]" />
+
+    <!-- SlideIn host only: the <tn-side-panel> host owns the Save in its footer. -->
+    @if (slideInRef) {
+      <button
+        *ixRequiresRoles="requiredRoles()"
+        mat-button
+        type="submit"
+        color="primary"
+        ixTest="save"
+        aria-live="polite"
+        [disabled]="isSaveDisabled()"
+        [attr.aria-busy]="isSubmitting() || null"
+      >
+        @if (isSubmitting()) {
+          {{ 'Saving…' | translate }}
+        } @else {
+          {{ 'Save' | translate }}
+        }
+      </button>
+    }
+  </ix-form-actions>
+</form>

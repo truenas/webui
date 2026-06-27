@@ -1,35 +1,43 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
+import { CdkConnectedOverlay, CdkOverlayOrigin } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, model, OnChanges, OnInit, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { cloneDeep } from 'lodash-es';
 import { map, take } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxCellActionsComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { IxCellActionsWithMenuComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { preferredColumnsUpdated } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
+/**
+ * Deliberate deviation from the tn-menu component-map entry: the column dropdown is
+ * hand-rolled from a CDK connected overlay rather than `<tn-menu>`/`<tn-menu-item>`.
+ * tn-menu-item renders as a plain command button (role="menuitem") and does not expose
+ * the `role="menuitemcheckbox"` + `aria-checked` semantics this control needs to announce
+ * each column's checked/unchecked state, nor the roving Home/End/Arrow focus management
+ * implemented here. Revisit if tn-menu gains a checkbox-item variant (NAS-141021 library
+ * follow-up).
+ */
 @Component({
   selector: 'ix-table-columns-selector',
   templateUrl: './ix-table-columns-selector.component.html',
   styleUrls: ['./ix-table-columns-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatMenuTrigger,
+    CdkOverlayOrigin,
+    CdkConnectedOverlay,
+    CdkTrapFocus,
+    TnButtonComponent,
     TnIconComponent,
-    MatMenu,
-    MatMenuItem,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
   ],
 })
 export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, OnInit {
@@ -42,16 +50,56 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
 
   readonly columnsChange = output<Column<T, ColumnComponent<T>>[]>();
   readonly isResetToDefaultDisabled = signal(true);
+  protected readonly menuOpen = signal(false);
 
   hiddenColumns = new SelectionModel<Column<T, ColumnComponent<T>>>(true, []);
   private defaultColumns: Column<T, ColumnComponent<T>>[];
 
-  get isOnlyOneColumnSelected(): boolean {
+  private get isOnlyOneColumnSelected(): boolean {
     return this.columns().filter((column) => !column.hidden && !!column.title).length === 1;
   }
 
-  get isAllSelected(): boolean {
+  protected get isAllSelected(): boolean {
     return !this.columns().filter((column) => column.hidden && !!column.title).length;
+  }
+
+  protected toggleMenu(): void {
+    this.menuOpen.update((open) => !open);
+  }
+
+  protected openMenu(): void {
+    this.menuOpen.set(true);
+  }
+
+  protected closeMenu(): void {
+    this.menuOpen.set(false);
+  }
+
+  /** Roving focus between menu items with the Up/Down arrow keys. */
+  protected moveFocus(event: Event, direction: 1 | -1): void {
+    event.preventDefault();
+    const menu = event.currentTarget as HTMLElement;
+    const items = this.getFocusableItems(menu);
+    if (!items.length) {
+      return;
+    }
+    const currentIndex = items.indexOf(menu.ownerDocument.activeElement as HTMLButtonElement);
+    const nextIndex = (currentIndex + direction + items.length) % items.length;
+    items[nextIndex].focus();
+  }
+
+  /** Jump focus to the first/last menu item with the Home/End keys. */
+  protected focusEdge(event: Event, edge: 'first' | 'last'): void {
+    event.preventDefault();
+    const items = this.getFocusableItems(event.currentTarget as HTMLElement);
+    if (!items.length) {
+      return;
+    }
+    (edge === 'first' ? items[0] : items[items.length - 1]).focus();
+  }
+
+  private getFocusableItems(menu: HTMLElement): HTMLButtonElement[] {
+    return Array.from(menu.querySelectorAll<HTMLButtonElement>('.columns-menu__item:not([disabled])'));
   }
 
   constructor() {
@@ -112,7 +160,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     });
   }
 
-  toggleAll(): void {
+  protected toggleAll(): void {
     const selectableColumns = this.columns().filter((col) => !!col.title);
 
     if (this.isAllSelected) {
@@ -126,15 +174,15 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     this.emitColumnsChange();
   }
 
-  isSelected(column: Column<T, ColumnComponent<T>>): boolean {
+  protected isSelected(column: Column<T, ColumnComponent<T>>): boolean {
     return this.hiddenColumns.isSelected(column);
   }
 
-  resetToDefaults(): void {
+  protected resetToDefaults(): void {
     this.setInitialState();
   }
 
-  toggle(column: Column<T, ColumnComponent<T>>): void {
+  protected toggle(column: Column<T, ColumnComponent<T>>): void {
     if (this.isOnlyOneColumnSelected && !this.isSelected(column)) {
       return;
     }
@@ -142,7 +190,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     this.emitColumnsChange();
   }
 
-  saveColumnPreferences(): void {
+  protected saveColumnPreferences(): void {
     if (this.columnPreferencesKey()) {
       this.store$.dispatch(preferredColumnsUpdated({
         tableDisplayedColumns: [{
@@ -153,7 +201,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     }
   }
 
-  enableResetButton(): void {
+  protected enableResetButton(): void {
     this.isResetToDefaultDisabled.set(false);
   }
 

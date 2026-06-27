@@ -221,6 +221,49 @@ describe('EditableComponent', () => {
 
       expect(spectator.component.isElementWithin(innerElement)).toBe(true);
     });
+
+    it('returns true for clicks inside a tn-* control overlay so the editable stays open', () => {
+      const overlayClasses = [
+        'tn-select-dropdown',
+        'tn-chip-input__dropdown',
+        'tn-autocomplete__dropdown',
+        'tn-datepicker-overlay',
+      ];
+
+      for (const overlayClass of overlayClasses) {
+        const overlay = document.createElement('div');
+        overlay.className = overlayClass;
+        const option = document.createElement('div');
+        overlay.appendChild(option);
+        document.body.appendChild(overlay);
+
+        expect(spectator.component.isElementWithin(option)).toBe(true);
+
+        overlay.remove();
+      }
+    });
+
+    it('returns true for clicks inside a tn-menu overlay (matched by element selector)', () => {
+      // tn-menu attaches a `<tn-menu-panel>` element to the overlay with no
+      // panelClass, so it is matched by element selector, not by `.class`.
+      const overlay = document.createElement('tn-menu-panel');
+      const menuItem = document.createElement('button');
+      overlay.appendChild(menuItem);
+      document.body.appendChild(overlay);
+
+      expect(spectator.component.isElementWithin(menuItem)).toBe(true);
+
+      overlay.remove();
+    });
+
+    it('returns false for a genuine outside element when no overlay or dialog is open', () => {
+      const outside = document.createElement('div');
+      document.body.appendChild(outside);
+
+      expect(spectator.component.isElementWithin(outside)).toBe(false);
+
+      outside.remove();
+    });
   });
 
   describe('click outside functionality', () => {

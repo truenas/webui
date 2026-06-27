@@ -28,8 +28,8 @@
       @if (isSidenavCollapsed) {
         <div
           class="sidenav-copyright-icon"
-          matTooltipPosition="right"
-          [matTooltip]="copyrightText()"
+          tnTooltipPosition="right"
+          [tnTooltip]="copyrightText()"
         >
           <tn-icon name="copyright" library="mdi"></tn-icon>
         </div>
@@ -38,8 +38,8 @@
           @if (hostname$ | async; as hostname) {
             <div
               class="hostname-label"
-              matTooltipPosition="above"
-              [matTooltip]="'Hostname: {hostname}' | translate: { hostname }"
+              tnTooltipPosition="above"
+              [tnTooltip]="'Hostname: {hostname}' | translate: { hostname }"
             >{{ hostname }}</div>
           }
 

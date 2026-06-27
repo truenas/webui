@@ -5,9 +5,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { Observable, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -35,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     MatIconButton,
     MatListModule,
-    MatTooltip,
+    TnTooltipDirective,
     ReactiveFormsModule,
     IxSlideToggleComponent,
     RequiresRolesDirective,

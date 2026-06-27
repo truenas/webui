@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCardComponent } from '@truenas/ui-components';
 import { User } from 'app/interfaces/user.interface';
 import { UserProfileCardComponent } from 'app/pages/credentials/users/all-users/user-details/user-profile-card/user-profile-card.component';
 
@@ -37,7 +38,7 @@ describe('UserProfileCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('mat-card-header h3')).toHaveText('Profile');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Profile');
   });
 
   it('shows user details', () => {

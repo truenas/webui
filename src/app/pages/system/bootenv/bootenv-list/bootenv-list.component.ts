@@ -33,13 +33,13 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolDeleteDialog } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
-import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
+import { getBootenvFormConfig } from 'app/pages/system/bootenv/bootenv-form/bootenv.form-config';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 import { BootenvStatsDialog } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -79,7 +79,7 @@ export class BootEnvironmentListComponent implements OnInit {
   private api = inject(ApiService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private loader = inject(LoaderService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -226,8 +226,8 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected doClone(bootenv: BootEnvironment): void {
-    const result$ = this.slideIn.open(BootEnvironmentFormComponent, {
-      data: bootenv.id,
+    const result$ = this.formPanel.openForm(getBootenvFormConfig(this.api, this.translate, bootenv.id), {
+      title: this.translate.instant('Clone Boot Environment'),
     });
     this.handleSlideInClosed(result$);
   }

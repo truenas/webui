@@ -14,6 +14,13 @@
   padding-left: 16px;
 }
 
+tn-form-field {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  padding: 8px 0;
+}
+
 .label {
   align-items: center;
   display: flex;
@@ -34,4 +41,14 @@
   flex-direction: row;
   height: 100%;
   justify-content: center;
+
+  .tooltip {
+    align-items: center;
+    background: none;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    padding: 0;
+  }
 }

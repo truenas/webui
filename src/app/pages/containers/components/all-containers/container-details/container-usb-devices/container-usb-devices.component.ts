@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import {
@@ -22,10 +22,10 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   styleUrls: ['./container-usb-devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnCardHeaderDirective,
     TranslateModule,
-    MatCardContent,
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
     AddUsbDeviceMenuComponent,

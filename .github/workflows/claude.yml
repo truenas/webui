@@ -4,6 +4,7 @@ on:
     types: [opened, synchronize]
     branches:
       - master
+      - 'NAS-*'
     paths-ignore:
       - 'src/assets/i18n/**'
 jobs:

@@ -1,51 +1,49 @@
-<mat-card [ixUiSearch]="searchableElements.elements.audit">
-  <mat-toolbar-row>
-    <h3>{{ 'Audit' | translate }}</h3>
-    <div class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['audit', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
-        (click)="onConfigurePressed()"
-      >
-        {{ 'Configure' | translate }}
-      </button>
+<tn-card
+  padding="small"
+  [title]="'Audit' | translate"
+  [ixUiSearch]="searchableElements.elements.audit"
+>
+  <div class="details">
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.retention">
+      <span class="label">{{ 'Retention' | translate }}:</span>
+      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+        {{ getEndValue(auditConfig.retention, '{value} days') }}
+      </span>
     </div>
-  </mat-toolbar-row>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.reservation">
+      <span class="label">{{ 'Reservation' | translate }}:</span>
+      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+        {{ getEndValue(auditConfig.reservation, '{value} GiB') }}
+      </span>
+    </div>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.quota">
+      <span class="label">{{ 'Quota' | translate }}:</span>
+      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+        {{ getEndValue(auditConfig.quota, '{value} GiB') }}
+      </span>
+    </div>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.quotaFillWarning">
+      <span class="label">{{ 'Quota Fill Warning' | translate }}:</span>
+      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+        {{ getEndValue(auditConfig.quota_fill_warning, '{value}%') }}
+      </span>
+    </div>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.quotaFillCritical">
+      <span class="label">{{ 'Quota Fill Critical' | translate }}:</span>
+      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+        {{ getEndValue(auditConfig.quota_fill_critical, '{value}%') }}
+      </span>
+    </div>
+  </div>
 
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.retention">
-        <span class="label">{{ 'Retention' | translate }}:</span>
-        <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ getEndValue(auditConfig.retention, '{value} days') }}
-        </span>
-      </mat-list-item>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.reservation">
-        <span class="label">{{ 'Reservation' | translate }}:</span>
-        <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ getEndValue(auditConfig.reservation, '{value} GiB') }}
-        </span>
-      </mat-list-item>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.quota">
-        <span class="label">{{ 'Quota' | translate }}:</span>
-        <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ getEndValue(auditConfig.quota, '{value} GiB') }}
-        </span>
-      </mat-list-item>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.quotaFillWarning">
-        <span class="label">{{ 'Quota Fill Warning' | translate }}:</span>
-        <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ getEndValue(auditConfig.quota_fill_warning, '{value}%') }}
-        </span>
-      </mat-list-item>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.quotaFillCritical">
-        <span class="label">{{ 'Quota Fill Critical' | translate }}:</span>
-        <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ getEndValue(auditConfig.quota_fill_critical, '{value}%') }}
-        </span>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['audit', 'configure']"
+      [ixUiSearch]="searchableElements.elements.configure"
+      [label]="'Configure' | translate"
+      (onClick)="onConfigurePressed()"
+    ></tn-button>
+  </ng-template>
+</tn-card>

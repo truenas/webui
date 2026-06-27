@@ -1,10 +1,10 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerStatus } from 'app/enums/container.enum';
@@ -20,16 +20,20 @@ import { ContainerListBulkActionsComponent } from './container-list-bulk-actions
 describe('ContainerListBulkActionsComponent', () => {
   let spectator: Spectator<ContainerListBulkActionsComponent>;
   let loader: HarnessLoader;
-  let menu: MatMenuHarness;
 
   const checkedContainersMock = [
     { id: 1, status: { state: ContainerStatus.Running } },
     { id: 2, status: { state: ContainerStatus.Stopped } },
   ] as Container[];
 
+  async function openMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Select action' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   const createComponent = createComponentFactory({
     component: ContainerListBulkActionsComponent,
-    imports: [MatMenuModule],
     providers: [
       mockProvider(SnackbarService),
       mockAuth(),
@@ -57,15 +61,13 @@ describe('ContainerListBulkActionsComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         checkedContainers: checkedContainersMock,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    menu = await loader.getHarness(MatMenuHarness);
-    await menu.open();
   });
 
   it('displays the correct count of selected containers', () => {
@@ -73,22 +75,20 @@ describe('ContainerListBulkActionsComponent', () => {
     expect(selectedCount).toHaveText(String(checkedContainersMock.length));
   });
 
-  it('calls onBulkStart when Start All Selected is clicked', async () => {
-    const startSpy = jest.spyOn(spectator.component, 'onBulkStart');
-
-    await menu.open();
-    await menu.clickItem({ text: 'Start All Selected' });
+  it('starts stopped containers when Start All Selected is clicked', async () => {
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Start All Selected' });
     await spectator.fixture.whenStable();
 
-    expect(startSpy).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.start', [2]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Requested action performed for selected Containers');
   });
 
   it('opens the Stop Options dialog when Stop All Selected is clicked', async () => {
     const tnDialog = spectator.inject(TnDialog);
 
-    await menu.open();
-    await menu.clickItem({ text: 'Stop All Selected' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Stop All Selected' });
 
     expect(tnDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
   });
@@ -96,8 +96,8 @@ describe('ContainerListBulkActionsComponent', () => {
   it('opens the Restart Options dialog when Restart All Selected is clicked', async () => {
     const tnDialog = spectator.inject(TnDialog);
 
-    await menu.open();
-    await menu.clickItem({ text: 'Restart All Selected' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Restart All Selected' });
 
     expect(tnDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
   });
@@ -105,7 +105,8 @@ describe('ContainerListBulkActionsComponent', () => {
   it('emits resetBulkSelection after actions', async () => {
     const resetSpy = jest.spyOn(spectator.component.resetBulkSelection, 'emit');
 
-    spectator.component.onBulkStart();
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Start All Selected' });
     await spectator.fixture.whenStable();
 
     expect(resetSpy).toHaveBeenCalled();

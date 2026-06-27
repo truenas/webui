@@ -3,10 +3,9 @@ import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject, 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import { tnIconMarker, TnIconComponent, TnTablePagerComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -46,7 +45,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     UiSearchDirective,
     MatToolbarRow,
-    MatTooltip,
+    TnTooltipDirective,
     RouterLink,
     TnIconComponent,
     IxTableComponent,
