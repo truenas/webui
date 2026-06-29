@@ -1,12 +1,15 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import {
+  Injectable, computed, inject, signal,
+} from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, of, forkJoin,
 } from 'rxjs';
 import {
-  defaultIfEmpty, switchMap, take, map, catchError, shareReplay,
+  defaultIfEmpty, switchMap, take, map, catchError, shareReplay, tap,
 } from 'rxjs/operators';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -41,16 +44,44 @@ export class WebShareService {
   readonly isTruenasDirectDomain = this.window.location.hostname.includes('.truenas.direct');
 
   /**
+   * Whether TrueNAS Connect is currently configured (fully operational).
+   * Backed by `tn_connect.config` events, so disabling TrueNAS Connect immediately
+   * flips this to `false` without requiring a page refresh.
+   */
+  private isTruenasConnectConfigured = toSignal(
+    this.truenasConnectService.config$.pipe(
+      map((config) => config?.status === TruenasConnectStatus.Configured),
+    ),
+    { initialValue: false },
+  );
+
+  /**
    * Hostname resolved from TrueNAS Connect IP mappings.
    * When not on a truenas.direct domain, we check if the local IP has a matching hostname.
    */
-  private truenasConnectHostname = signal<string | null>(null);
+  private resolvedHostname = signal<string | null>(null);
+
+  /**
+   * Hostname to use when opening WebShare. Only available while TrueNAS Connect is
+   * configured. When TrueNAS Connect is disabled this resolves to `null` so we never
+   * generate a stale `.truenas.direct` URL that would produce SSL errors.
+   */
+  private truenasConnectHostname = computed<string | null>(
+    () => (this.isTruenasConnectConfigured() ? this.resolvedHostname() : null),
+  );
+
   readonly truenasConnectHostname$ = toObservable(this.truenasConnectHostname);
 
   /**
-   * Whether WebShare can be opened (either on truenas.direct domain or with a resolved hostname).
+   * Whether WebShare can be opened. Requires both an accessible hostname
+   * (either the current `.truenas.direct` domain or a resolved hostname) AND that
+   * TrueNAS Connect is currently configured. This reacts to TrueNAS Connect being
+   * disabled so the UI immediately blocks WebShare access without a page refresh.
    */
-  readonly canOpenWebShare = signal<boolean>(this.isTruenasDirectDomain);
+  readonly canOpenWebShare = computed<boolean>(
+    () => this.isTruenasConnectConfigured() && (this.isTruenasDirectDomain || !!this.resolvedHostname()),
+  );
+
   readonly canOpenWebShare$ = toObservable(this.canOpenWebShare);
 
   /**
@@ -64,11 +95,10 @@ export class WebShareService {
   ]).pipe(
     map(([ipsWithHostnames, localIp]) => {
       const hostname = ipsWithHostnames[localIp];
-      if (hostname) {
-        this.truenasConnectHostname.set(hostname);
-        this.canOpenWebShare.set(true);
-      }
       return { ipsWithHostnames, localIp, hostname };
+    }),
+    tap(({ hostname }) => {
+      this.resolvedHostname.set(hostname ?? null);
     }),
     catchError((error: unknown) => {
       console.error('Failed to fetch hostname mapping for WebShare:', error);
@@ -93,6 +123,13 @@ export class WebShareService {
    * @param shareName - Optional name of the specific share to open. If omitted, opens the root WebShare listing.
    */
   openWebShare(shareName?: string): void {
+    if (!this.canOpenWebShare()) {
+      this.snackbar.error(
+        this.translate.instant('WebShare is unavailable because TrueNAS Connect is disabled.'),
+      );
+      return;
+    }
+
     const hostname = this.isTruenasDirectDomain
       ? this.window.location.hostname
       : this.truenasConnectHostname();
