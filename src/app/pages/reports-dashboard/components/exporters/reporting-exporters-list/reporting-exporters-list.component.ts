@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -30,7 +32,8 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { reportingExportersElements } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.elements';
@@ -64,7 +67,7 @@ export class ReportingExporterListComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private emptyService = inject(EmptyService);
   private loader = inject(LoaderService);
@@ -124,8 +127,12 @@ export class ReportingExporterListComponent implements OnInit {
     this.getExporters();
   }
 
+  private readonly exporterForm = ReportingExportersFormComponent as unknown as Type<SidePanelForm>;
+
   protected doAdd(): void {
-    this.slideIn.open(ReportingExportersFormComponent)
+    this.formPanel.open(this.exporterForm, {
+      title: this.translate.instant('Add Reporting Exporter'),
+    })
       .onSuccess(() => this.getExporters(), this.destroyRef);
   }
 
@@ -167,7 +174,10 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   protected doEdit(exporter: ReportingExporter): void {
-    this.slideIn.open(ReportingExportersFormComponent, { data: exporter })
+    this.formPanel.open(this.exporterForm, {
+      title: this.translate.instant('Edit Reporting Exporter'),
+      inputs: { exporter },
+    })
       .onSuccess(() => this.getExporters(), this.destroyRef);
   }
 

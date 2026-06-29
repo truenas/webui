@@ -1,11 +1,8 @@
 <ix-form
   [formGroup]="form"
-  [isEditMode]="!isNew"
-  [addTitle]="'Add Reporting Exporter' | translate"
-  [editTitle]="'Edit Reporting Exporter' | translate"
-  [requiredRoles]="requiredRoles"
   [externalLoading]="isLoading()"
   [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
 >
   <ix-fieldset>
     <tn-form-field

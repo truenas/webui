@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input, output, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -36,7 +36,6 @@ import {
   FormSubmitEvent,
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -61,14 +60,25 @@ export class ReportingExportersFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  slideInRef = inject<SlideInRef<ReportingExporter | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
+
+  /**
+   * the record being edited.
+   * supplied by the `<tn-side-panel>` host (null = create).
+   **/
+  readonly exporter = input<ReportingExporter | undefined>(undefined);
+
+  /** fired on a successful submit when hosted in a `<tn-side-panel>`. */
+  readonly closed = output<boolean>();
+
+  /** the inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
 
   get isNew(): boolean {
     return !this.editingExporter;
   }
 
-  form = new FormGroup({
+  protected readonly form = new FormGroup({
     name: new FormControl(null as string | null, Validators.required),
     enabled: new FormControl(true),
     type: new FormControl(null as string | null, Validators.required),
@@ -86,15 +96,24 @@ export class ReportingExportersFormComponent implements OnInit {
 
   protected readonly exporterTypeOptions = signal<Option[]>([]);
   protected reportingExporterList: ReportingExporterList[] = [];
-  protected readonly requiredRoles = [Role.ReportingWrite];
-
-  constructor() {
-    this.editingExporter = this.slideInRef.getData();
-  }
+  readonly requiredRoles = [Role.ReportingWrite];
 
   ngOnInit(): void {
+    this.editingExporter = this.exporter();
     this.loadSchemas();
     this.handleTypeChange();
+  }
+
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.ixForm()?.hasUnsavedChanges() ?? false;
   }
 
   protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
@@ -180,10 +199,10 @@ export class ReportingExportersFormComponent implements OnInit {
 
   private createExporterControls(schemas: ReportingExporterSchema[]): void {
     for (const schema of schemas) {
-      for (const input of schema.schema) {
+      for (const field of schema.schema) {
         this.form.controls.attributes.addControl(
-          input._name_,
-          new FormControl(input.const || '', input._required_ ? [Validators.required] : []),
+          field._name_,
+          new FormControl(field.const || '', field._required_ ? [Validators.required] : []),
         );
       }
     }
@@ -202,12 +221,12 @@ export class ReportingExportersFormComponent implements OnInit {
 
   protected parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
     return schema.schema
-      .filter((input) => !input.const)
-      .map((input) => getDynamicFormSchemaNode(input));
+      .filter((field) => !field.const)
+      .map((field) => getDynamicFormSchemaNode(field));
   }
 
   private parseSchemaForExporterList(schema: ReportingExporterSchema): ReportingExporterList {
-    const variables = schema.schema.map((input) => input._name_);
+    const variables = schema.schema.map((field) => field._name_);
     return { key: schema.key, variables };
   }
 

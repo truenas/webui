@@ -10,8 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
@@ -35,12 +34,6 @@ describe('ReportingExportersListComponent', () => {
   let loader: HarnessLoader;
   let table: TnTableHarness;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: ReportingExporterListComponent,
     imports: [],
@@ -50,12 +43,11 @@ describe('ReportingExportersListComponent', () => {
         mockCall('reporting.exporters.delete'),
         mockCall('reporting.exporters.update'),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockAuth(),
@@ -77,15 +69,18 @@ describe('ReportingExportersListComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ReportingExportersFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ReportingExportersFormComponent, {
+      title: 'Add Reporting Exporter',
+    });
   });
 
   it('opens reporting exporters form when "Edit" button is pressed', async () => {
     const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ReportingExportersFormComponent, {
-      data: exporters[0],
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ReportingExportersFormComponent, {
+      title: 'Edit Reporting Exporter',
+      inputs: { exporter: exporters[0] },
     });
   });
 

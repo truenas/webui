@@ -1,8 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
@@ -12,7 +11,6 @@ import { SchemaType } from 'app/enums/schema.enum';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { Schema } from 'app/interfaces/schema.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 
@@ -31,19 +29,12 @@ describe('ReportingExportersFormComponent', () => {
     enabled: true,
   };
 
-  const slideInRef: SlideInRef<ReportingExporter | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: ReportingExportersFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('reporting.exporters.exporter_schemas', [{
           key: ReportingExporterKey.Graphite,
@@ -90,8 +81,8 @@ describe('ReportingExportersFormComponent', () => {
       const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
       await accessKeyId.setValue('abcde');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
         name: 'exporter1',
@@ -102,16 +93,14 @@ describe('ReportingExportersFormComponent', () => {
           exporter_type: ReportingExporterKey.Graphite,
         },
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalledWith(true);
     });
   });
 
   describe('Edit exporter', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => existingExporter) }),
-        ],
+        props: { exporter: existingExporter },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
@@ -149,8 +138,8 @@ describe('ReportingExportersFormComponent', () => {
       const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
       await accessKeyId.setValue('efghi');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'reporting.exporters.update',
@@ -167,7 +156,7 @@ describe('ReportingExportersFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalledWith(true);
     });
   });
 });
