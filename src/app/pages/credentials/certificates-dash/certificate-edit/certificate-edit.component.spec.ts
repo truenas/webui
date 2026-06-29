@@ -5,7 +5,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxComponent, TnCheckboxHarness, TnDialog, TnInputHarness,
+  TnButtonHarness, TnCheckboxComponent, TnCheckboxHarness, TnDialog, TnFormFieldComponent, TnInputHarness,
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -33,6 +33,9 @@ import { CertificateEditComponent } from './certificate-edit.component';
 // TestBed (only `tn-input` is kept real globally in setup-jest), blanking the
 // real `add_to_trusted_store` checkbox. Keep the lightweight checkbox real here.
 ngMocks.globalKeep(TnCheckboxComponent);
+// `tn-form-field` uses signal-based content queries that crash when auto-mocked
+// by ng-mocks; render it real so the form template initializes.
+ngMocks.globalKeep(TnFormFieldComponent);
 
 describe('CertificateEditComponent', () => {
   let spectator: Spectator<CertificateEditComponent>;

@@ -136,7 +136,7 @@ describe('CertificateListComponent', () => {
     expect(await table.getHeaderTexts()).toEqual(['Name', 'Date', 'CN', '']);
 
     const rows = await table.getAllRowTexts();
-    expect(rows).toHaveLength(certificates.length);
+    expect(rows).toHaveLength(4);
     expect(rows[0]).toEqual([
       'cert_default_0', 'From:2023-06-20 06:55:04Until:2024-06-20 06:55:04', 'CN:localhostSAN:DNS:localhost', '',
     ]);

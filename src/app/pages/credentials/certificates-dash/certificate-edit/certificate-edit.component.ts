@@ -100,8 +100,13 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
    * Secondary actions rendered as a dropdown in the `<tn-side-panel>` footer next to Save (read by
    * the host container). The legacy SlideIn host has no footer, so it shows the same actions inline
    * (gated by `@if (slideInRef)` in the template) instead.
+   *
+   * Built once in `ngOnInit` (the host reads it every change-detection cycle) — `certificate` is
+   * set at init and never reassigned, so the menu is stable.
    */
-  get footerMenu(): SidePanelFooterMenu | undefined {
+  footerMenu: SidePanelFooterMenu | undefined;
+
+  private buildFooterMenu(): SidePanelFooterMenu | undefined {
     if (!this.certificate) {
       return undefined;
     }
@@ -134,6 +139,7 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
       : this.editingCertificate();
     this.setCertificate();
     this.setRenewDaysForEditIfAvailable();
+    this.footerMenu = this.buildFooterMenu();
   }
 
   private setCertificate(): void {

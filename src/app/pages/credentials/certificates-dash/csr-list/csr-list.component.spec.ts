@@ -98,7 +98,7 @@ describe('CertificateSigningRequestsListComponent', () => {
   it('should show table rows', async () => {
     expect(await table.getHeaderTexts()).toEqual(['Name', 'CN', '']);
     expect(await table.getAllRowTexts()).toEqual(
-      csrs.map((csr) => [csr.name, 'CN:localhostSAN:DNS:localhost', '']),
+      csrs.slice(0, 4).map((csr) => [csr.name, 'CN:localhostSAN:DNS:localhost', '']),
     );
   });
 

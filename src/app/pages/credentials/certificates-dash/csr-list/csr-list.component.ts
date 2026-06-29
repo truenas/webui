@@ -26,6 +26,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -60,6 +61,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnCellDefDirective,
     TnEmptyComponent,
     TableActionsCellComponent,
+    IxTablePagerShowMoreComponent,
     UiSearchDirective,
     RequiresRolesDirective,
     TranslateModule,

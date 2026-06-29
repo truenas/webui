@@ -92,7 +92,7 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
   it('should show table rows', async () => {
     expect(await table.getHeaderTexts()).toEqual(['Name', 'Authenticator', '']);
     expect(await table.getAllRowTexts()).toEqual(
-      authenticators.map((authenticator) => [authenticator.name, 'cloudflare', '']),
+      authenticators.slice(0, 4).map((authenticator) => [authenticator.name, 'cloudflare', '']),
     );
   });
 });
