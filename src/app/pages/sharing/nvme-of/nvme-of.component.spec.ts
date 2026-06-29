@@ -1,9 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
-import { MockComponents } from 'ng-mocks';
+import { MockComponents, MockInstance } from 'ng-mocks';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -40,6 +41,7 @@ describe('NvmeOfComponent', () => {
         SubsystemsDetailsHeaderComponent,
         SubsystemNamespacesCardComponent,
         SubsystemPortsCardComponent,
+        NvmeOfConfigurationComponent,
       ),
     ],
     providers: [
@@ -77,15 +79,20 @@ describe('NvmeOfComponent', () => {
   });
 
   beforeEach(() => {
+    // The Global Configuration form is mocked, so seed the signal the panel footer
+    // reads (`form.canSubmit()`) — the viewChild binds to this mock instance.
+    MockInstance(NvmeOfConfigurationComponent, 'canSubmit', signal(false));
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('opens Global Configuration form when corresponding button is pressed', async () => {
+  afterEach(() => MockInstance.restore());
+
+  it('opens the Global Configuration side panel when corresponding button is pressed', async () => {
     const configurationButton = await loader.getHarness(TnButtonHarness.with({ label: 'Global Configuration' }));
     await configurationButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
+    expect(spectator.component.configPanelOpen()).toBe(true);
   });
 
   it('shows a table with subsystems', () => {

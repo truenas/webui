@@ -10,7 +10,6 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfGlobalConfig } from 'app/interfaces/nvme-of.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -25,7 +24,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 describe('NvmeOfConfigurationComponent', () => {
   let spectator: Spectator<NvmeOfConfigurationComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: NvmeOfConfigurationComponent,
     providers: [
@@ -73,37 +71,39 @@ describe('NvmeOfConfigurationComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
+
+  async function clickSave(): Promise<void> {
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+  }
 
   it('loads current global config when component is initialized', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.config');
   });
 
-  it('shows current values for global settings', async () => {
-    const formValues = await form.getValues();
-
-    expect(formValues).toEqual({
-      'Base NQN': 'iqn.2005-10.org.freenas:ctl',
-      'Implementation (Experimental)': 'Linux Kernel',
-      'Enable Asymmetric Namespace Access (ANA)': true,
-      'Enable Remote Direct Memory Access (RDMA)': true,
+  it('shows current values for global settings', () => {
+    expect(spectator.component.form.getRawValue()).toEqual({
+      basenqn: 'iqn.2005-10.org.freenas:ctl',
+      kernel: true,
+      ana: true,
+      rdma: true,
     });
   });
 
   it('saves form values when Save is pressed', async () => {
-    await form.fillForm({
-      'Base NQN': 'new.2005-10.org.freenas:ctl',
-      'Implementation (Experimental)': 'SPDK (userspace)',
-      'Enable Asymmetric Namespace Access (ANA)': true,
-      'Enable Remote Direct Memory Access (RDMA)': true,
+    spectator.component.form.patchValue({
+      basenqn: 'new.2005-10.org.freenas:ctl',
+      kernel: false,
+      ana: true,
+      rdma: true,
     });
+    spectator.detectChanges();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    await clickSave();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
       ana: true,
@@ -114,31 +114,21 @@ describe('NvmeOfConfigurationComponent', () => {
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
-  it('disables RDMA control if RDMA support is missing from the system', async () => {
+  it('disables RDMA control if RDMA support is missing from the system', () => {
     spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(false));
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
 
-    const controls = await form.getDisabledState();
-    expect(controls).toMatchObject({
-      'Enable Remote Direct Memory Access (RDMA)': true,
-    });
+    expect(spectator.component.form.controls.rdma.disabled).toBe(true);
   });
 
-  it('disables ANA for systems without HA license', async () => {
+  it('disables ANA for systems without HA license', () => {
     spectator.inject(MockStore).overrideSelector(selectIsHaLicensed, false);
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
 
-    const controls = await form.getDisabledState();
-    expect(controls).toMatchObject({
-      'Enable Asymmetric Namespace Access (ANA)': true,
-    });
+    expect(spectator.component.form.controls.ana.disabled).toBe(true);
   });
 
-  it('disables Implementation field when NVMe service is running', async () => {
+  it('disables Implementation field when NVMe service is running', () => {
     spectator.inject(MockStore).overrideSelector(selectServices, [{
       id: 1,
       service: ServiceName.NvmeOf,
@@ -147,27 +137,16 @@ describe('NvmeOfConfigurationComponent', () => {
       pids: [1234],
     } as Service]);
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
 
-    const controls = await form.getDisabledState();
-    expect(controls).toMatchObject({
-      'Implementation (Experimental)': true,
-    });
+    expect(spectator.component.form.controls.kernel.disabled).toBe(true);
   });
 
-  it('hides Implementation field on non-enterprise systems', async () => {
+  it('hides Implementation field on non-enterprise systems', () => {
     spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
+    spectator.detectChanges();
 
-    const formValues = await form.getValues();
-    expect(formValues).toEqual({
-      'Base NQN': 'iqn.2005-10.org.freenas:ctl',
-      'Enable Asymmetric Namespace Access (ANA)': true,
-      'Enable Remote Direct Memory Access (RDMA)': true,
-    });
+    expect(spectator.query('tn-radio')).toBeNull();
   });
 
   it('does not include kernel in payload when saving on non-enterprise systems', async () => {
@@ -175,10 +154,8 @@ describe('NvmeOfConfigurationComponent', () => {
     spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(true));
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    await clickSave();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
       ana: true,

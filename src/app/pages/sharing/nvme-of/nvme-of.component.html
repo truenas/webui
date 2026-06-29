@@ -54,3 +54,24 @@
     }
   </ng-container>
 </ix-master-detail-view>
+
+<tn-side-panel
+  [title]="'NVMe-oF Global Configuration' | translate"
+  [closeGuard]="configCloseGuard"
+  [(open)]="configPanelOpen"
+>
+  @if (configPanelOpen()) {
+    <ix-nvme-of-configuration (closed)="onConfigClosed()"></ix-nvme-of-configuration>
+  }
+  @if (configForm(); as form) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

@@ -1,9 +1,11 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnSidePanelActionDirective, TnSidePanelComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -14,7 +16,9 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import {
   NvmeOfConfigurationComponent,
@@ -38,6 +42,8 @@ import { setSubsystemNameInUrl } from 'app/pages/sharing/nvme-of/utils/router-ut
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnButtonComponent,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     PageHeaderComponent,
     RequiresRolesDirective,
     TranslateModule,
@@ -46,6 +52,7 @@ import { setSubsystemNameInUrl } from 'app/pages/sharing/nvme-of/utils/router-ut
     SubsystemDetailsComponent,
     SubsystemsDetailsHeaderComponent,
     SubsystemsListComponent,
+    NvmeOfConfigurationComponent,
   ],
 })
 export class NvmeOfComponent implements OnInit {
@@ -54,8 +61,15 @@ export class NvmeOfComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private location = inject(Location);
   private destroyRef = inject(DestroyRef);
+  private unsavedChanges = inject(UnsavedChangesService);
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
+
+  // Global Configuration form hosted in a <tn-side-panel> (the form is dual-host:
+  // it still opens via legacy SlideIn from other call sites).
+  protected readonly configPanelOpen = signal(false);
+  protected readonly configForm = viewChild(NvmeOfConfigurationComponent);
+  protected readonly configCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, () => this.configForm());
 
   protected readonly subsystems = this.nvmeOfStore.subsystems;
   protected dataProvider = new ArrayDataProvider<NvmeOfSubsystemDetails>();
@@ -124,7 +138,11 @@ export class NvmeOfComponent implements OnInit {
   }
 
   protected openGlobalConfiguration(): void {
-    this.slideIn.open(NvmeOfConfigurationComponent);
+    this.configPanelOpen.set(true);
+  }
+
+  protected onConfigClosed(): void {
+    this.configPanelOpen.set(false);
   }
 
   protected addSubsystem(): void {
