@@ -193,6 +193,7 @@ export class EmailFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.emailConfig = this.config();
     if (this.emailConfig) {
       this.initEmailForm(this.emailConfig);
     } else {
