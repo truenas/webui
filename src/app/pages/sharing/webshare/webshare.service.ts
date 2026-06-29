@@ -78,11 +78,29 @@ export class WebShareService {
    * TrueNAS Connect is currently configured. This reacts to TrueNAS Connect being
    * disabled so the UI immediately blocks WebShare access without a page refresh.
    */
-  readonly canOpenWebShare = computed<boolean>(
-    () => this.isTruenasConnectConfigured() && (this.isTruenasDirectDomain || !!this.resolvedHostname()),
-  );
+  readonly canOpenWebShare = computed<boolean>(() => !this.webShareUnavailableReason());
 
   readonly canOpenWebShare$ = toObservable(this.canOpenWebShare);
+
+  /**
+   * Human-readable explanation of why WebShare cannot be opened, or `null` when it
+   * can. Used both for the disabled-button tooltip and the `openWebShare()` snackbar
+   * so the user always sees the actual reason (TrueNAS Connect disabled vs. wrong
+   * domain) rather than a tooltip that only ever blames the domain.
+   */
+  readonly webShareUnavailableReason = computed<string | null>(() => {
+    if (!this.isTruenasConnectConfigured()) {
+      return this.translate.instant('WebShare is unavailable because TrueNAS Connect is disabled.');
+    }
+
+    if (!this.isTruenasDirectDomain && !this.resolvedHostname()) {
+      return this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain');
+    }
+
+    return null;
+  });
+
+  readonly webShareUnavailableReason$ = toObservable(this.webShareUnavailableReason);
 
   /**
    * Observable that fetches and caches the IP to hostname mapping.
@@ -123,10 +141,9 @@ export class WebShareService {
    * @param shareName - Optional name of the specific share to open. If omitted, opens the root WebShare listing.
    */
   openWebShare(shareName?: string): void {
-    if (!this.canOpenWebShare()) {
-      this.snackbar.error(
-        this.translate.instant('WebShare is unavailable because TrueNAS Connect is disabled.'),
-      );
+    const unavailableReason = this.webShareUnavailableReason();
+    if (unavailableReason) {
+      this.snackbar.error(unavailableReason);
       return;
     }
 

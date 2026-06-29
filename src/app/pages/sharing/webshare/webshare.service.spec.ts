@@ -368,6 +368,14 @@ describe('WebShareService - no hostname mapping', () => {
 
     expect(spectator.service.canOpenWebShare()).toBe(false);
   });
+
+  it('should expose the domain reason when TrueNAS Connect is configured but no hostname resolves', async () => {
+    await firstValueFrom(spectator.service.hostnameMapping$);
+
+    expect(spectator.service.webShareUnavailableReason()).toBe(
+      'WebShare can only be opened when accessed via a .truenas.direct domain',
+    );
+  });
 });
 
 describe('WebShareService - TrueNAS Connect disabled', () => {
@@ -413,6 +421,12 @@ describe('WebShareService - TrueNAS Connect disabled', () => {
 
   it('should report canOpenWebShare as false even on a truenas.direct domain', () => {
     expect(spectator.service.canOpenWebShare()).toBe(false);
+  });
+
+  it('should expose the TrueNAS Connect disabled reason rather than a domain reason', () => {
+    expect(spectator.service.webShareUnavailableReason()).toBe(
+      'WebShare is unavailable because TrueNAS Connect is disabled.',
+    );
   });
 
   it('should not open a WebShare window and shows an error when TrueNAS Connect is disabled', () => {
