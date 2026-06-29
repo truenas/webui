@@ -82,7 +82,7 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
   protected readonly InputType = InputType;
 
   get isCsr(): boolean {
-    return this.certificate?.cert_type_CSR;
+    return !!this.certificate?.cert_type_CSR;
   }
 
   /**
