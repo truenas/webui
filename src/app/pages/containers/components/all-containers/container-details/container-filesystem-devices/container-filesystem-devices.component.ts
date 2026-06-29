@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject, signal, viewChild } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnButtonComponent, TnCardAction, TnCardComponent,
   TnSidePanelActionDirective, TnSidePanelComponent,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -10,6 +11,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container, ContainerDevice, ContainerFilesystemDevice } from 'app/interfaces/container.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import {
   ContainerFilesystemDeviceFormComponent,
@@ -27,7 +29,6 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   imports: [
     TnButtonComponent,
     TnCardComponent,
-    TnCardFooterActionsDirective,
     TnSidePanelComponent,
     TnSidePanelActionDirective,
     NgxSkeletonLoaderModule,
@@ -44,8 +45,25 @@ export class ContainerFilesystemDevicesComponent {
   private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);
   private unsavedChanges = inject(UnsavedChangesService);
+  private authService = inject(AuthService);
 
   readonly container = input.required<Container>();
+
+  private hasDeviceWriteRole = toSignal(
+    this.authService.hasRole(this.requiredRoles),
+    { initialValue: false },
+  );
+
+  protected readonly addAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasDeviceWriteRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Add'),
+      testId: 'add-disk',
+      handler: () => this.addDisk(),
+    };
+  });
 
   protected readonly editingDisk = signal<ContainerFilesystemDevice | undefined>(undefined);
   protected readonly configOpen = signal(false);

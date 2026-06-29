@@ -2,24 +2,20 @@
   [title]="'General Info' | translate"
 >
   <ng-template tnCardFooterActions>
-    @if (editAction(); as action) {
+    @if (canModify()) {
       <tn-button
         variant="outline"
         color="default"
-        [label]="action.label"
-        [disabled]="action.disabled || false"
-        [testId]="action.testId"
-        (onClick)="action.handler()"
+        [label]="'Edit' | translate"
+        [testId]="'edit-container'"
+        (onClick)="editContainer()"
       ></tn-button>
-    }
-    @if (deleteAction(); as action) {
       <tn-button
         variant="outline"
         color="default"
-        [label]="action.label"
-        [disabled]="action.disabled || false"
-        [testId]="action.testId"
-        (onClick)="action.handler()"
+        [label]="'Delete' | translate"
+        [testId]="'delete-container'"
+        (onClick)="deleteContainer()"
       ></tn-button>
     }
   </ng-template>

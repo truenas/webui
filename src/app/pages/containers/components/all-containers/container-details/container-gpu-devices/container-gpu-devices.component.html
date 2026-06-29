@@ -1,28 +1,24 @@
-<tn-card padding="small">
-  <h3 tnCardHeader class="tn-card__title">
-    {{ 'GPU Devices' | translate }}
-  </h3>
-
+<tn-card
+  padding="small"
+  [title]="'GPU Devices' | translate"
+>
   <ng-template tnCardFooterActions>
     <ix-add-gpu-device-menu></ix-add-gpu-device-menu>
   </ng-template>
 
   @if (hasNvidiaGpusWithoutDrivers()) {
-    <div class="nvidia-drivers-warning">
-      <tn-icon name="information" library="mdi" class="warning-icon"></tn-icon>
-      <div class="warning-content">
-        <span class="warning-text">
-          {{ 'NVIDIA GPUs detected, but drivers are not enabled.' | translate }}
-        </span>
-        <tn-button
-          class="enable-button"
-          variant="outline"
-          [testId]="'enable-nvidia-drivers'"
-          [label]="'Enable NVIDIA Drivers' | translate"
-          (onClick)="enableNvidiaDrivers()"
-        ></tn-button>
-      </div>
-    </div>
+    <tn-banner
+      type="warning"
+      [heading]="'NVIDIA GPUs detected, but drivers are not enabled.' | translate"
+    >
+      <tn-button
+        tnBannerAction
+        variant="outline"
+        [testId]="'enable-nvidia-drivers'"
+        [label]="'Enable NVIDIA Drivers' | translate"
+        (onClick)="enableNvidiaDrivers()"
+      ></tn-button>
+    </tn-banner>
   }
 
   @if (isLoadingDevices()) {

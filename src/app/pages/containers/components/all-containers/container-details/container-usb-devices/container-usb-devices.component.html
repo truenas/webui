@@ -1,8 +1,7 @@
-<tn-card padding="small">
-  <h3 tnCardHeader class="tn-card__title">
-    {{ 'USB Devices' | translate }}
-  </h3>
-
+<tn-card
+  padding="small"
+  [title]="'USB Devices' | translate"
+>
   <ng-template tnCardFooterActions>
     <ix-add-usb-device-menu></ix-add-usb-device-menu>
   </ng-template>
