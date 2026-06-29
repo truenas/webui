@@ -188,9 +188,10 @@ export class CloudCredentialsFormComponent extends SidePanelForm<CloudSyncCreden
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          // Richer payload than the base boolean — emit the saved credential directly so
-          // `ix-cloud-credentials-select` can auto-select it.
-          this.closed.emit(response);
+          // Richer payload than the base boolean — hand back the saved credential so
+          // `ix-cloud-credentials-select` can auto-select it. `closeWith` routes it through
+          // whichever host opened the form.
+          this.closeWith(response);
         },
         error: (error: unknown) => {
           // TODO: Errors for nested provider form will be shown in a modal. Can be improved.

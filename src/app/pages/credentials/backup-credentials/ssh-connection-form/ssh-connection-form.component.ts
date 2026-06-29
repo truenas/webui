@@ -224,9 +224,10 @@ export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential
       next: (newCredential) => {
         this.isLoading.set(false);
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        // Richer payload than the base boolean — emit the created/updated credential directly so
-        // `ix-ssh-credentials-select` can auto-select it.
-        this.closed.emit(newCredential);
+        // Richer payload than the base boolean — hand back the created/updated credential so
+        // `ix-ssh-credentials-select` can auto-select it. `closeWith` routes it through
+        // whichever host opened the form.
+        this.closeWith(newCredential);
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
@@ -257,7 +258,9 @@ export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential
     } else {
       params.semi_automatic_setup = {
         // tn-input has no `[parse]`; normalize the bare URL (prepend protocol) at submit,
-        // matching the legacy ix-input `stringAsUrlParsing` behavior.
+        // matching the legacy ix-input `stringAsUrlParsing` behavior. Safe to defer to submit:
+        // the `url` control only validates presence (conditional `Validators.required`), so the
+        // normalized value never feeds a format validator.
         url: this.formatter.stringAsUrlParsing(values.url),
         admin_username: values.admin_username,
         password: values.password,
