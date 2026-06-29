@@ -1,10 +1,19 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, input, signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  InputType,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -13,18 +22,13 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -35,24 +39,23 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./certificate-acme-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
     IxListComponent,
     IxListItemComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class CertificateAcmeAddComponent implements OnInit {
+export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private validatorsService = inject(IxValidatorsService);
   private translate = inject(TranslateService);
@@ -61,7 +64,6 @@ export class CertificateAcmeAddComponent implements OnInit {
   private dialogService = inject(DialogService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
-  slideInRef = inject<SlideInRef<Certificate, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CertificateWrite];
@@ -81,30 +83,38 @@ export class CertificateAcmeAddComponent implements OnInit {
     domains: this.formBuilder.array<string>([]),
   });
 
-  protected csr: Certificate;
-
   protected isLoading = signal(false);
+
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+
   domains: TranslatedString[] = [];
+
+  /**
+   * CSR to create the ACME certificate from when hosted in a `<tn-side-panel>`
+   * (which has no `SlideInRef` to carry data). Unused in the legacy SlideIn host
+   * (which supplies the CSR via `slideInRef.getData()`).
+   */
+  readonly csr = input<Certificate | undefined>(undefined);
+
+  private csrData: Certificate | undefined;
 
   readonly acmeDirectoryUris$ = this.api.call('certificate.acme_server_choices').pipe(choicesToOptions());
   readonly authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
 
   readonly helptext = helptextSystemCertificates;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.csr = this.slideInRef.getData();
-  }
+  protected readonly InputType = InputType;
 
   ngOnInit(): void {
-    if (this.csr) {
+    this.csrData = this.slideInRef
+      ? this.slideInRef.getData() as Certificate | undefined
+      : this.csr();
+    if (this.csrData) {
       this.loadDomains();
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const formValues = this.form.getRawValue();
 
     const dnsMapping = this.domains.reduce((mapping, domain, i) => {
@@ -116,7 +126,7 @@ export class CertificateAcmeAddComponent implements OnInit {
 
     const payload = {
       name: formValues.name,
-      csr_id: this.csr.id,
+      csr_id: this.csrData?.id,
       tos: formValues.tos,
       create_type: CertificateCreateType.CreateAcme,
       renew_days: formValues.renew_days,
@@ -136,7 +146,7 @@ export class CertificateAcmeAddComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.slideInRef.close({ response: true });
+          this.close(true);
           this.snackbar.success(this.translate.instant('ACME Certificate Created'));
         },
         complete: () => {
@@ -152,7 +162,7 @@ export class CertificateAcmeAddComponent implements OnInit {
   private loadDomains(): void {
     this.isLoading.set(true);
 
-    this.api.call('webui.crypto.get_certificate_domain_names', [this.csr.id])
+    this.api.call('webui.crypto.get_certificate_domain_names', [this.csrData.id])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (domains) => {

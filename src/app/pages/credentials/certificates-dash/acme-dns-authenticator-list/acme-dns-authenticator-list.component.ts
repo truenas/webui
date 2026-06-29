@@ -1,11 +1,18 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+} from '@truenas/ui-components';
 import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -14,17 +21,12 @@ import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.elements';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/acmedns-form/acmedns-form.component';
@@ -35,25 +37,24 @@ import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/ac
   styleUrls: ['./acme-dns-authenticator-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTablePagerShowMoreComponent,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
+    TableActionsCellComponent,
     TranslateModule,
     AsyncPipe,
   ],
 })
 export class AcmeDnsAuthenticatorListComponent implements OnInit {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
   private dialog = inject(DialogService);
@@ -64,34 +65,32 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
 
   dataProvider: AsyncDataProvider<DnsAuthenticator>;
   authenticators: DnsAuthenticator[] = [];
-  columns = createTable<DnsAuthenticator>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Authenticator'),
-      getValue: (row) => row.attributes?.authenticator,
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'amce-dns-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('ACME DNS Authenticator')],
-  });
+
+  protected readonly displayedColumns = ['name', 'authenticator', 'actions'];
+
+  protected readonly trackBy = (_: number, row: DnsAuthenticator): number => row.id;
+
+  protected readonly actions: IconActionConfig<DnsAuthenticator>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+    },
+  ];
+
+  protected uniqueRowTag(row: DnsAuthenticator): string {
+    return 'amce-dns-' + row.name;
+  }
+
+  protected ariaLabel(row: DnsAuthenticator): string {
+    return [row.name, this.translate.instant('ACME DNS Authenticator')].join(' ');
+  }
 
   ngOnInit(): void {
     const authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(
@@ -116,12 +115,15 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(AcmednsFormComponent)
+    this.formPanel.open(AcmednsFormComponent, { title: this.translate.instant('Add DNS Authenticator') })
       .onSuccess(() => this.getAuthenticators(), this.destroyRef);
   }
 
   doEdit(authenticator: DnsAuthenticator): void {
-    this.slideIn.open(AcmednsFormComponent, { data: authenticator })
+    this.formPanel.open(AcmednsFormComponent, {
+      title: this.translate.instant('Edit DNS Authenticator'),
+      inputs: { editingAuthenticator: authenticator },
+    })
       .onSuccess(() => this.getAuthenticators(), this.destroyRef);
   }
 

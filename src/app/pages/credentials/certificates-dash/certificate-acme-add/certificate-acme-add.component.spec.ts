@@ -1,8 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import {
@@ -13,7 +15,6 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -23,13 +24,36 @@ import {
 describe('CertificateAcmeAddComponent', () => {
   let spectator: Spectator<CertificateAcmeAddComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
+
+  const selectByControlName = async (name: string, label: string): Promise<void> => {
+    const select = await loader.getHarness(
+      TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+    );
+    await select.selectOption(label);
+  };
+
+  // Domain selects use a property-bound `[formControlName]="i"` (no DOM attribute to
+  // match on), so they are located positionally — they are always the last selects.
+  const selectDomainAuthenticators = async (...labels: string[]): Promise<void> => {
+    const selects = await loader.getAllHarnesses(TnSelectHarness);
+    const domainSelects = selects.slice(-labels.length);
+    for (let i = 0; i < labels.length; i++) {
+      await domainSelects[i].selectOption(labels[i]);
+    }
+  };
 
   const slideInRef: SlideInRef<Certificate | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => ({ id: 2 } as Certificate)),
   };
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const createComponent = createComponentFactory({
     component: CertificateAcmeAddComponent,
@@ -65,31 +89,24 @@ describe('CertificateAcmeAddComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
-  it('loads and shows domain names associated with the certificate', async () => {
-    const labels = await form.getLabels();
-
-    expect(labels).toContain('DNS:truenas.com');
-    expect(labels).toContain('DNS:truenas.io');
+  it('loads and shows domain names associated with the certificate', () => {
+    expect(spectator.fixture.nativeElement.textContent).toContain('DNS:truenas.com');
+    expect(spectator.fixture.nativeElement.textContent).toContain('DNS:truenas.io');
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webui.crypto.get_certificate_domain_names', [2]);
   });
 
   it('creates an ACME certificate when form is submitted', async () => {
-    await form.fillForm({
-      Identifier: 'new',
-      'Terms of Service': true,
-      'Custom ACME Server Directory URI': false,
-      'ACME Server Directory URI': "Let's Encrypt Staging Directory",
-      'DNS:truenas.com': 'cloudflare',
-      'DNS:truenas.io': 'route53',
-    });
+    await (await getInput('name')).setValue('new');
+    await (await getCheckbox('tos')).check();
+    await selectByControlName('acme_directory_uri', "Let's Encrypt Staging Directory");
+    await selectDomainAuthenticators('cloudflare', 'route53');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -112,18 +129,14 @@ describe('CertificateAcmeAddComponent', () => {
   });
 
   it('allows custom ACME Server Directory URI', async () => {
-    await form.fillForm(
-      {
-        Identifier: 'new',
-        'Terms of Service': true,
-        'Custom ACME Server Directory URI': true,
-        'DNS:truenas.com': 'cloudflare',
-        'DNS:truenas.io': 'route53',
-        'ACME Server Directory URI': 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',
-      },
-    );
+    await (await getInput('name')).setValue('new');
+    await (await getCheckbox('tos')).check();
+    await (await getCheckbox('custom_acme_directory_uri')).check();
+    await (await getInput('acme_directory_uri'))
+      .setValue('https://acme-staging-v02.api.letsencrypt.org/directory-custom');
+    await selectDomainAuthenticators('cloudflare', 'route53');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

@@ -3,27 +3,23 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { omit } from 'lodash-es';
-import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateCreate } from 'app/interfaces/certificate.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates-dash/utils/normalize-certificate.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -35,29 +31,25 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
     RequiresRolesDirective,
     TranslateModule,
     FormsModule,
-    IxCheckboxComponent,
-    IxInputComponent,
     ReactiveFormsModule,
-    IxTextareaComponent,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnButtonComponent,
   ],
 })
-export class ImportCertificateComponent {
+export class ImportCertificateComponent extends SidePanelForm {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
-  slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({
@@ -85,14 +77,11 @@ export class ImportCertificateComponent {
 
   protected readonly requiredRoles = [Role.CertificateWrite];
   protected readonly helptext = helptextSystemCertificates;
+  protected readonly InputType = InputType;
 
   isLoading = signal(false);
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(Boolean(this.form?.dirty));
-    });
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   protected onSubmit(): void {
     this.isLoading.set(true);
@@ -105,7 +94,7 @@ export class ImportCertificateComponent {
         complete: () => {
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Certificate has been created.'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

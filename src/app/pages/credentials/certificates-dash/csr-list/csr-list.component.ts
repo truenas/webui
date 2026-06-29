@@ -3,11 +3,18 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, effect, input, output, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+} from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -18,19 +25,14 @@ import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interfa
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
@@ -49,19 +51,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./csr-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
+    TableActionsCellComponent,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableCellDirective,
-    IxTablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
   ],
@@ -69,6 +69,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class CertificateSigningRequestsListComponent {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
   protected emptyService = inject(EmptyService);
@@ -87,45 +88,42 @@ export class CertificateSigningRequestsListComponent {
 
   dataProvider = new ArrayDataProvider<Certificate>();
 
-  columns = createTable<Certificate>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('CN'),
-      propertyName: 'common',
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('wrench', 'mdi'),
-          tooltip: this.translate.instant('Create ACME Certificate'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.doCreateAcmeCert(row),
-        },
-        {
-          iconName: tnIconMarker('download', 'mdi'),
-          tooltip: this.translate.instant('Download'),
-          onClick: (row) => this.doDownload(row),
-        },
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'csr-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('CSR')],
-  });
+  protected readonly displayedColumns = ['name', 'cn', 'actions'];
+
+  protected readonly trackBy = (_: number, row: Certificate): number => row.id;
+
+  protected readonly actions: IconActionConfig<Certificate>[] = [
+    {
+      iconName: tnIconMarker('wrench', 'mdi'),
+      tooltip: this.translate.instant('Create ACME Certificate'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => this.doCreateAcmeCert(row),
+    },
+    {
+      iconName: tnIconMarker('download', 'mdi'),
+      tooltip: this.translate.instant('Download'),
+      onClick: (row) => this.doDownload(row),
+    },
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+    },
+  ];
+
+  protected uniqueRowTag(row: Certificate): string {
+    return 'csr-' + row.name;
+  }
+
+  protected ariaLabel(row: Certificate): string {
+    return [row.name, this.translate.instant('CSR')].join(' ');
+  }
 
   constructor() {
     this.setDefaultSort();
@@ -155,9 +153,12 @@ export class CertificateSigningRequestsListComponent {
   }
 
   doEdit(certificate: Certificate): void {
-    this.slideIn.open(CertificateEditComponent, {
+    this.formPanel.open(CertificateEditComponent, {
       wide: true,
-      data: certificate,
+      title: certificate.cert_type_CSR
+        ? this.translate.instant('Edit CSR')
+        : this.translate.instant('Edit Certificate'),
+      inputs: { editingCertificate: certificate },
     }).onSuccess(() => this.csrsUpdated.emit(), this.destroyRef);
   }
 
@@ -223,7 +224,9 @@ export class CertificateSigningRequestsListComponent {
   }
 
   private doCreateAcmeCert(csr: Certificate): void {
-    this.slideIn.open(CertificateAcmeAddComponent, { data: csr })
-      .onSuccess(() => this.csrsUpdated.emit(), this.destroyRef);
+    this.formPanel.open(CertificateAcmeAddComponent, {
+      title: this.translate.instant('Create ACME Certificate'),
+      inputs: { csr },
+    }).onSuccess(() => this.csrsUpdated.emit(), this.destroyRef);
   }
 }
