@@ -8,16 +8,13 @@ import {
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
+  InputType, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import {
   SidePanelFooterMenu, SidePanelFooterMenuItem,
 } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
@@ -41,16 +38,12 @@ import {
   styleUrls: ['./certificate-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
     CertificateDetailsComponent,
-    TnButtonComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
     TranslateModule,
   ],
 })
@@ -81,11 +74,7 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
 
   certificate: Certificate;
 
-  /**
-   * Record to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
-   * carry data). Unused in the legacy SlideIn host (which supplies the record via
-   * `slideInRef.getData()`).
-   */
+  /** Record to edit, supplied by the `<tn-side-panel>` host. */
   readonly editingCertificate = input<Certificate | undefined>(undefined);
 
   readonly helptext = helptextSystemCertificates;
@@ -98,8 +87,7 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
 
   /**
    * Secondary actions rendered as a dropdown in the `<tn-side-panel>` footer next to Save (read by
-   * the host container). The legacy SlideIn host has no footer, so it shows the same actions inline
-   * (gated by `@if (slideInRef)` in the template) instead.
+   * the host container).
    *
    * Built once in `ngOnInit` (the host reads it every change-detection cycle) — `certificate` is
    * set at init and never reassigned, so the menu is stable.
@@ -134,9 +122,7 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.certificate = this.slideInRef
-      ? this.slideInRef.getData() as Certificate
-      : this.editingCertificate();
+    this.certificate = this.editingCertificate();
     this.setCertificate();
     this.setRenewDaysForEditIfAvailable();
     this.footerMenu = this.buildFooterMenu();
@@ -176,12 +162,7 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
   }
 
   onCreateAcmePressed(): void {
-    if (this.slideInRef) {
-      this.slideInRef.swap?.(CertificateAcmeAddComponent);
-      return;
-    }
-    // Side-panel host: there is no SlideIn to swap, so close this panel and open the
-    // ACME form for the same CSR.
+    // Close this panel and open the ACME form for the same CSR.
     this.close(false);
     this.formPanel.open(CertificateAcmeAddComponent, {
       title: this.translate.instant('Create ACME Certificate'),

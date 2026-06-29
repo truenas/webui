@@ -1,12 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ImportCertificateComponent } from './import-certificate.component';
@@ -19,11 +17,6 @@ describe('ImportCertificateComponent', () => {
     component: ImportCertificateComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideInRef, {
-        requireConfirmationWhen: () => of(false),
-        getData: () => undefined,
-        close: jest.fn(),
-      }),
       mockApi([
         mockJob('certificate.create'),
       ]),
@@ -51,8 +44,9 @@ describe('ImportCertificateComponent', () => {
     await (await getInput('passphrase')).setValue('secret123');
     await (await getInput('passphrase2')).setValue('secret123');
 
-    const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import' }));
-    await importButton.click();
+    const closeSpy = jest.fn();
+    spectator.component.closed.subscribe(closeSpy);
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'test-cert-with-password',
@@ -64,7 +58,7 @@ describe('ImportCertificateComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    expect(closeSpy).toHaveBeenCalledWith(true);
   });
 
   it('imports certificate without password', async () => {
@@ -72,8 +66,9 @@ describe('ImportCertificateComponent', () => {
     await (await getInput('certificate')).setValue('--BEING CERTIFICATE--');
     await (await getInput('privatekey')).setValue('--BEING PRIVATE KEY--');
 
-    const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import' }));
-    await importButton.click();
+    const closeSpy = jest.fn();
+    spectator.component.closed.subscribe(closeSpy);
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'test-cert-no-password',
@@ -85,15 +80,16 @@ describe('ImportCertificateComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    expect(closeSpy).toHaveBeenCalledWith(true);
   });
 
   it('imports certificate with empty private key', async () => {
     await (await getInput('name')).setValue('test-cert-no-private-key');
     await (await getInput('certificate')).setValue('--BEING CERTIFICATE--');
 
-    const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import' }));
-    await importButton.click();
+    const closeSpy = jest.fn();
+    spectator.component.closed.subscribe(closeSpy);
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'test-cert-no-private-key',
@@ -105,6 +101,6 @@ describe('ImportCertificateComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    expect(closeSpy).toHaveBeenCalledWith(true);
   });
 });

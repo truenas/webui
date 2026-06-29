@@ -5,15 +5,14 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxComponent, TnCheckboxHarness, TnDialog, TnFormFieldComponent, TnInputHarness,
+  TnCheckboxComponent, TnCheckboxHarness, TnDialog, TnFormFieldComponent, TnInputHarness,
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
@@ -52,11 +51,9 @@ describe('CertificateEditComponent', () => {
     CSR: '--BEGIN CERTIFICATE REQUEST--',
   };
 
-  const slideInRef: SlideInRef<Certificate | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-    swap: jest.fn(),
+  /** Invokes a footer-menu action the way the tn-side-panel host would. */
+  const clickFooterMenuItem = (testId: string): void => {
+    spectator.component.footerMenu?.items.find((item) => item.testId === testId)?.onClick();
   };
 
   const createComponent = createComponentFactory({
@@ -69,8 +66,7 @@ describe('CertificateEditComponent', () => {
         mockJob('certificate.update'),
       ]),
       mockProvider(TnDialog),
-      mockProvider(SlideIn),
-      mockProvider(SlideInRef, slideInRef),
+      mockProvider(FormSidePanelService),
       mockProvider(DialogService),
       mockAuth(),
     ],
@@ -84,9 +80,7 @@ describe('CertificateEditComponent', () => {
   describe('Edit certificate', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => certificate) }),
-        ],
+        props: { editingCertificate: certificate },
       });
       spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -117,18 +111,18 @@ describe('CertificateEditComponent', () => {
       );
       await addToTrustedStoreCheckbox.check();
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      const closeSpy = jest.fn();
+      spectator.component.closed.subscribe(closeSpy);
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.update', [1,
         { name: 'New Name', add_to_trusted_store: true },
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalledWith(true);
     });
 
-    it('opens modal for certificate when View/Download Certificate is pressed', async () => {
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'View/Download Certificate' }));
-      await button.click();
+    it('opens modal for certificate when View/Download Certificate is pressed', () => {
+      clickFooterMenuItem('view-certificate-or-csr');
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
         data: {
@@ -140,9 +134,8 @@ describe('CertificateEditComponent', () => {
       });
     });
 
-    it('opens modals for certificate key when View/Download Key is pressed', async () => {
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'View/Download Key' }));
-      await button.click();
+    it('opens modals for certificate key when View/Download Key is pressed', () => {
+      clickFooterMenuItem('view-key');
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
         data: {
@@ -158,9 +151,7 @@ describe('CertificateEditComponent', () => {
   describe('Edit acme certificate', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ ...certificate, acme: true })) }),
-        ],
+        props: { editingCertificate: { ...certificate, acme: true } as Certificate },
       });
       spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -182,9 +173,7 @@ describe('CertificateEditComponent', () => {
   describe('CSR', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => certificateCsr) }),
-        ],
+        props: { editingCertificate: certificateCsr },
       });
       spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -197,9 +186,8 @@ describe('CertificateEditComponent', () => {
       expect(addToTrustedStoreCheckbox).toBeNull();
     });
 
-    it('opens modal for CSR when View/Download CSR is pressed', async () => {
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'View/Download CSR' }));
-      await button.click();
+    it('opens modal for CSR when View/Download CSR is pressed', () => {
+      clickFooterMenuItem('view-certificate-or-csr');
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
         data: {
@@ -211,12 +199,15 @@ describe('CertificateEditComponent', () => {
       });
     });
 
-    it('opens SlideIn for creating ACME certificates when Create ACME Certificate is pressed', async () => {
-      const createButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create ACME Certificate' }));
-      await createButton.click();
+    it('opens the ACME certificate form for the CSR when Create ACME Certificate is pressed', () => {
+      clickFooterMenuItem('create-acme-certificate');
 
-      expect(slideInRef.swap).toHaveBeenCalledWith(
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
         CertificateAcmeAddComponent,
+        {
+          title: 'Create ACME Certificate',
+          inputs: { csr: certificateCsr },
+        },
       );
     });
 

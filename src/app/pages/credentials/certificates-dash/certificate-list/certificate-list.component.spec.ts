@@ -92,7 +92,7 @@ describe('CertificateListComponent', () => {
   });
 
   it('checks page title', () => {
-    expect(spectator.query('.tn-card__title')).toHaveText('Certificates');
+    expect(spectator.query('h3')).toHaveText('Certificates');
   });
 
   it('opens certificate import form when "Import" button is pressed', async () => {
@@ -101,6 +101,7 @@ describe('CertificateListComponent', () => {
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ImportCertificateComponent, {
       title: 'Import Certificate',
+      saveLabel: 'Import',
     });
   });
 

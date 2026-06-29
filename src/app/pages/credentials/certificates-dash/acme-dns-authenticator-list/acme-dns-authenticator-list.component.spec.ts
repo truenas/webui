@@ -53,7 +53,7 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
   });
 
   it('checks page title', () => {
-    const title = spectator.query('.tn-card__title');
+    const title = spectator.query('h3');
     expect(title).toHaveText('ACME DNS-Authenticators');
   });
 

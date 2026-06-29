@@ -7,11 +7,10 @@ import { UntypedFormGroup, Validators, ReactiveFormsModule } from '@angular/form
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnBannerComponent, TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnBannerComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
   TnSelectComponent,
 } from '@truenas/ui-components';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
@@ -25,9 +24,7 @@ import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/compon
 import {
   IxDynamicFormComponent,
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudflareAuthValidator } from 'app/pages/credentials/certificates-dash/acmedns-form/cloudflare-auth.validator';
@@ -45,16 +42,12 @@ interface DnsAuthenticatorList {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnBannerComponent,
     TnSelectComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
     IxDynamicFormComponent,
   ],
@@ -68,16 +61,6 @@ export class AcmednsFormComponent extends SidePanelForm implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
-
-  get isNew(): boolean {
-    return !this.editingAcmedns;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant(helptext.addTitle)
-      : this.translate.instant(helptext.editTitle);
-  }
 
   form = this.formBuilder.nonNullable.group({
     name: [null as string | null, Validators.required],
@@ -101,11 +84,7 @@ export class AcmednsFormComponent extends SidePanelForm implements OnInit {
 
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
-  /**
-   * Authenticator to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef`
-   * to carry data). Absent for Add, and unused in the legacy SlideIn host (which
-   * supplies the record via `slideInRef.getData()`).
-   */
+  /** Authenticator to edit, supplied by the `<tn-side-panel>` host. Absent for Add. */
   readonly editingAuthenticator = input<DnsAuthenticator | undefined>(undefined);
 
   dynamicSection: DynamicFormSchema[] = [];
@@ -121,9 +100,7 @@ export class AcmednsFormComponent extends SidePanelForm implements OnInit {
   private editingAcmedns: DnsAuthenticator | undefined;
 
   ngOnInit(): void {
-    this.editingAcmedns = this.slideInRef
-      ? this.slideInRef.getData() as DnsAuthenticator | undefined
-      : this.editingAuthenticator();
+    this.editingAcmedns = this.editingAuthenticator();
 
     this.loadSchemas();
 

@@ -92,7 +92,7 @@ describe('CertificateSigningRequestsListComponent', () => {
   });
 
   it('checks page title', () => {
-    expect(spectator.query('.tn-card__title')).toHaveText('Certificate Signing Requests');
+    expect(spectator.query('h3')).toHaveText('Certificate Signing Requests');
   });
 
   it('should show table rows', async () => {

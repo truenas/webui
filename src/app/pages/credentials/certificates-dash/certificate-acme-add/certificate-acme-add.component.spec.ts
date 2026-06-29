@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -15,7 +15,6 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
@@ -40,12 +39,6 @@ describe('CertificateAcmeAddComponent', () => {
     for (let i = 0; i < labels.length; i++) {
       await domainSelects[i].selectOption(labels[i]);
     }
-  };
-
-  const slideInRef: SlideInRef<Certificate | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => ({ id: 2 } as Certificate)),
   };
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
@@ -79,7 +72,6 @@ describe('CertificateAcmeAddComponent', () => {
         mockJob('certificate.create', fakeSuccessfulJob()),
         mockCall('webui.crypto.get_certificate_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
@@ -90,7 +82,9 @@ describe('CertificateAcmeAddComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: { csr: { id: 2 } as Certificate },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -106,8 +100,9 @@ describe('CertificateAcmeAddComponent', () => {
     await selectByControlName('acme_directory_uri', "Let's Encrypt Staging Directory");
     await selectDomainAuthenticators('cloudflare', 'route53');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    const closeSpy = jest.fn();
+    spectator.component.closed.subscribe(closeSpy);
+    spectator.component.submit();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -125,7 +120,7 @@ describe('CertificateAcmeAddComponent', () => {
         tos: true,
       }],
     );
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closeSpy).toHaveBeenCalledWith(true);
   });
 
   it('allows custom ACME Server Directory URI', async () => {
@@ -136,8 +131,9 @@ describe('CertificateAcmeAddComponent', () => {
       .setValue('https://acme-staging-v02.api.letsencrypt.org/directory-custom');
     await selectDomainAuthenticators('cloudflare', 'route53');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    const closeSpy = jest.fn();
+    spectator.component.closed.subscribe(closeSpy);
+    spectator.component.submit();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -155,6 +151,6 @@ describe('CertificateAcmeAddComponent', () => {
         tos: true,
       }],
     );
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closeSpy).toHaveBeenCalledWith(true);
   });
 });

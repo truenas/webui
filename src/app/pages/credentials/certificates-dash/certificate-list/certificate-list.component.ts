@@ -145,6 +145,7 @@ export class CertificateListComponent {
   protected doImport(): void {
     this.formPanel.open(ImportCertificateComponent, {
       title: this.translate.instant('Import Certificate'),
+      saveLabel: this.translate.instant('Import'),
     }).onSuccess(() => this.certificatesUpdated.emit(), this.destroyRef);
   }
 

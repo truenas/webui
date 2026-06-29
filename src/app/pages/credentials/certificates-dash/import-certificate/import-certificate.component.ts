@@ -6,18 +6,15 @@ import {
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { omit } from 'lodash-es';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateCreate } from 'app/interfaces/certificate.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,9 +27,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./import-certificate.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
     TranslateModule,
     FormsModule,
     ReactiveFormsModule,
@@ -40,7 +34,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
-    TnButtonComponent,
   ],
 })
 export class ImportCertificateComponent extends SidePanelForm {

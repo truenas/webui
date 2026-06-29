@@ -7,26 +7,22 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent,
   TnCheckboxComponent,
   TnFormFieldComponent,
   TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
 } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
@@ -40,7 +36,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -49,9 +44,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnSelectComponent,
     IxListComponent,
     IxListItemComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -89,11 +81,7 @@ export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit
 
   domains: TranslatedString[] = [];
 
-  /**
-   * CSR to create the ACME certificate from when hosted in a `<tn-side-panel>`
-   * (which has no `SlideInRef` to carry data). Unused in the legacy SlideIn host
-   * (which supplies the CSR via `slideInRef.getData()`).
-   */
+  /** CSR to create the ACME certificate from, supplied by the `<tn-side-panel>` host. */
   readonly csr = input<Certificate | undefined>(undefined);
 
   private csrData: Certificate | undefined;
@@ -106,9 +94,7 @@ export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit
   protected readonly InputType = InputType;
 
   ngOnInit(): void {
-    this.csrData = this.slideInRef
-      ? this.slideInRef.getData() as Certificate | undefined
-      : this.csr();
+    this.csrData = this.csr();
     if (this.csrData) {
       this.loadDomains();
     }

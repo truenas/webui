@@ -5,7 +5,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import {
-  TnBannerHarness, TnButtonHarness, TnInputHarness, TnSelectHarness,
+  TnBannerHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,7 +15,6 @@ import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Schema } from 'app/interfaces/schema.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/acmedns-form/acmedns-form.component';
 
@@ -40,19 +39,12 @@ describe('AcmednsFormComponent', () => {
     },
   } as DnsAuthenticator;
 
-  const slideInRef: SlideInRef<DnsAuthenticator | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: AcmednsFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService),
       mockApi([
         mockCall('acme.dns.authenticator.create'),
@@ -93,9 +85,7 @@ describe('AcmednsFormComponent', () => {
   describe('Edit DNS', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => existingAcmedns) }),
-        ],
+        props: { editingAuthenticator: existingAcmedns },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
@@ -142,8 +132,9 @@ describe('AcmednsFormComponent', () => {
       const apiToken = await loader.getHarness(TnInputHarness.with({ name: 'api_token' }));
       await apiToken.setValue('new_api_token');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      const closeSpy = jest.fn();
+      spectator.component.closed.subscribe(closeSpy);
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'acme.dns.authenticator.update',
@@ -158,7 +149,7 @@ describe('AcmednsFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalledWith(true);
     });
   });
 
@@ -177,8 +168,9 @@ describe('AcmednsFormComponent', () => {
       await cloudflareEmail.setValue('aaa@aaa.com');
       await apiKey.setValue('new_api_key');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      const closeSpy = jest.fn();
+      spectator.component.closed.subscribe(closeSpy);
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.create', [{
         name: 'name_new',
@@ -188,7 +180,7 @@ describe('AcmednsFormComponent', () => {
           cloudflare_email: 'aaa@aaa.com',
         },
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalledWith(true);
     });
   });
 
