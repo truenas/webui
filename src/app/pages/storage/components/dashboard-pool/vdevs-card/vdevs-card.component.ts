@@ -168,9 +168,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
       this.topologyState.dedup,
     ];
 
-    const emptyCount = nonDataVdevs.filter((vdevType) => !vdevType.assigned).length;
-
-    return emptyCount >= 3;
+    return nonDataVdevs.every((vdevType) => !vdevType.assigned);
   });
 
   get isDraidLayoutDataVdevs(): boolean {
