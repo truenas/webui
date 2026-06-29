@@ -4,6 +4,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
   TnButtonHarness,
+  TnIconButtonHarness,
   TnMenuHarness,
   TnMenuTesting,
   TnTableHarness,
@@ -48,10 +49,6 @@ describe('CertificateListComponent', () => {
   let loader: HarnessLoader;
   let table: TnTableHarness;
 
-  // The "⋮" row-action trigger test id, derived from the row's uniqueRowTag
-  // ('cert-' + name, normalized: cert-cert_default_0 -> cert-cert-default-0).
-  const rowMenuTrigger = '[data-test="button-cert-cert-default-0-more-action"]';
-
   const createComponent = createComponentFactory({
     component: CertificateListComponent,
     providers: [
@@ -77,7 +74,8 @@ describe('CertificateListComponent', () => {
   });
 
   async function openRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(rowMenuTrigger);
+    const [trigger] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
     return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
   }
 

@@ -63,8 +63,8 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly searchableElements = acmeDnsAuthenticatorListElements;
 
-  dataProvider: AsyncDataProvider<DnsAuthenticator>;
-  authenticators: DnsAuthenticator[] = [];
+  protected dataProvider: AsyncDataProvider<DnsAuthenticator>;
+  private authenticators: DnsAuthenticator[] = [];
 
   protected readonly displayedColumns = ['name', 'authenticator', 'actions'];
 
@@ -106,7 +106,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
@@ -114,12 +114,12 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.formPanel.open(AcmednsFormComponent, { title: this.translate.instant('Add DNS Authenticator') })
       .onSuccess(() => this.getAuthenticators(), this.destroyRef);
   }
 
-  doEdit(authenticator: DnsAuthenticator): void {
+  private doEdit(authenticator: DnsAuthenticator): void {
     this.formPanel.open(AcmednsFormComponent, {
       title: this.translate.instant('Edit DNS Authenticator'),
       inputs: { editingAuthenticator: authenticator },
@@ -127,7 +127,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
       .onSuccess(() => this.getAuthenticators(), this.destroyRef);
   }
 
-  doDelete(authenticator: DnsAuthenticator): void {
+  private doDelete(authenticator: DnsAuthenticator): void {
     this.dialog
       .confirmDelete({
         title: this.translate.instant('Delete DNS Authenticator'),

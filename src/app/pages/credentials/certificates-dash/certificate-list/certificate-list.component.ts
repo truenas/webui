@@ -85,7 +85,7 @@ export class CertificateListComponent {
   protected readonly requiredRoles = [Role.CertificateWrite];
   protected readonly searchableElements = certificateListElements;
 
-  dataProvider = new ArrayDataProvider<Certificate>();
+  protected dataProvider = new ArrayDataProvider<Certificate>();
 
   protected readonly displayedColumns = ['name', 'date', 'cn', 'actions'];
 

@@ -86,7 +86,7 @@ export class CertificateSigningRequestsListComponent {
   protected readonly requiredRoles = [Role.CertificateWrite];
   protected readonly searchableElements = csrListElements;
 
-  dataProvider = new ArrayDataProvider<Certificate>();
+  protected dataProvider = new ArrayDataProvider<Certificate>();
 
   protected readonly displayedColumns = ['name', 'cn', 'actions'];
 
@@ -147,12 +147,12 @@ export class CertificateSigningRequestsListComponent {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(CsrAddComponent)
       .onSuccess(() => this.csrsUpdated.emit(), this.destroyRef);
   }
 
-  doEdit(certificate: Certificate): void {
+  private doEdit(certificate: Certificate): void {
     this.formPanel.open(CertificateEditComponent, {
       wide: true,
       title: certificate.cert_type_CSR
@@ -162,7 +162,7 @@ export class CertificateSigningRequestsListComponent {
     }).onSuccess(() => this.csrsUpdated.emit(), this.destroyRef);
   }
 
-  doDelete(certificate: Certificate): void {
+  private doDelete(certificate: Certificate): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Certificate'),
       message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: certificate.name }),
@@ -193,7 +193,7 @@ export class CertificateSigningRequestsListComponent {
     });
   }
 
-  doDownload(certificate: Certificate): void {
+  private doDownload(certificate: Certificate): void {
     const isCsr = certificate.cert_type_CSR;
     const path = isCsr ? certificate.csr_path : certificate.certificate_path;
     const fileName = `${certificate.name}.${isCsr ? 'csr' : 'crt'}`;

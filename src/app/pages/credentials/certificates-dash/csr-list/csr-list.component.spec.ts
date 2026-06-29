@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+  TnButtonHarness, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -73,7 +73,8 @@ describe('CertificateSigningRequestsListComponent', () => {
   });
 
   async function openFirstRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(spectator.query('[data-test$="more-action"]') as HTMLElement);
+    const [trigger] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
     return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
   }
 
@@ -91,8 +92,7 @@ describe('CertificateSigningRequestsListComponent', () => {
   });
 
   it('checks page title', () => {
-    const title = spectator.query('.tn-card-title, h3');
-    expect(title).toHaveText('Certificate Signing Requests');
+    expect(spectator.query('.tn-card__title')).toHaveText('Certificate Signing Requests');
   });
 
   it('should show table rows', async () => {

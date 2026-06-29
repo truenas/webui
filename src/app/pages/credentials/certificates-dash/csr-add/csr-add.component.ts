@@ -83,7 +83,7 @@ export class CsrAddComponent {
   protected readonly requiredRoles = [Role.CertificateWrite];
 
   protected isLoading = signal(false);
-  summary: SummarySection[];
+  protected summary: SummarySection[];
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
