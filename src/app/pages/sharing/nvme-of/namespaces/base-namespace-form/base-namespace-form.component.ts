@@ -1,6 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -8,7 +10,7 @@ import {
   InputType, TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnFormFieldComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { startWith, of } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
@@ -85,6 +87,8 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
 
   namespace = input<NvmeOfNamespace>();
   error = input<unknown>(null);
+  /** Hide the internal modal-header + Save when the form is hosted in a `<tn-side-panel>`. */
+  showActions = input(true);
 
   submitted = output<NamespaceChanges>();
 
@@ -112,8 +116,21 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
+  private readonly formStatus = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status)),
+    { initialValue: this.form.status },
+  );
+
+  /** Whether the form can be submitted — read by a `<tn-side-panel>` host's footer Save. */
+  readonly canSubmit = computed(() => this.formStatus() === 'VALID');
+
   get isFormDirty(): boolean {
     return this.form.dirty;
+  }
+
+  /** Public entry point so a `<tn-side-panel>` host can trigger submission from its footer. */
+  submit(): void {
+    this.onSubmit();
   }
 
   constructor() {

@@ -1,6 +1,8 @@
-<ix-modal-header
-  [title]="isNew() ? ('Add Namespace' | translate) : ('Edit Namespace' | translate)"
-></ix-modal-header>
+@if (showActions()) {
+  <ix-modal-header
+    [title]="isNew() ? ('Add Namespace' | translate) : ('Edit Namespace' | translate)"
+  ></ix-modal-header>
+}
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset>
@@ -64,14 +66,16 @@
     }
   </ix-fieldset>
 
-  <ix-form-actions>
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      color="primary"
-      type="submit"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="form.invalid"
-    ></tn-button>
-  </ix-form-actions>
+  @if (showActions()) {
+    <ix-form-actions>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        type="submit"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="form.invalid"
+      ></tn-button>
+    </ix-form-actions>
+  }
 </form>
