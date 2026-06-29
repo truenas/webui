@@ -998,8 +998,9 @@ ix-slide-in-container tn-form-field {
 // false, leaving only a wrapper `<div>` with no control). As flex children of
 // `tn-form-section`'s gap-spaced body each empty item would add a blank gap,
 // stacking into a large void. Collapse items that hold no real control element
-// (a `*:not(div)` descendant — i.e. a tn-form-field / ix-list / etc.). Tracked NAS-141021.
-ix-dynamic-form-item:not(:has(*:not(div))) {
+// (a `*:not(div)` descendant — i.e. a tn-form-field / ix-list / etc.). Scoped to the
+// `<tn-side-panel>` host so other `ix-dynamic-form` usages are untouched. Tracked NAS-141021.
+.tn-side-panel__content ix-dynamic-form ix-dynamic-form-item:not(:has(*:not(div))) {
   display: none;
 }
 

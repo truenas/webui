@@ -16,6 +16,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
@@ -65,7 +66,7 @@ describe('CertificateListComponent', () => {
         })),
       }),
       mockProvider(FormSidePanelService, {
-        open: jest.fn(() => ({ onSuccess: (cb: () => void) => cb() })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(StorageService),
       mockProvider(SnackbarService),
@@ -145,6 +146,8 @@ describe('CertificateListComponent', () => {
     const certificatesUpdatedSpy = jest.fn();
     spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
 
+    jest.spyOn(spectator.inject(FormSidePanelService), 'open').mockReturnValue(SlideInResult.success(true));
+
     const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import' }));
     await importButton.click();
 
@@ -154,6 +157,8 @@ describe('CertificateListComponent', () => {
   it('emits certificatesUpdated when edit succeeds', async () => {
     const certificatesUpdatedSpy = jest.fn();
     spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
+
+    jest.spyOn(spectator.inject(FormSidePanelService), 'open').mockReturnValue(SlideInResult.success(true));
 
     const menu = await openRowMenu();
     await menu.clickItem({ label: /Edit/ });

@@ -126,7 +126,7 @@ export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit
 
     const payload = {
       name: formValues.name,
-      csr_id: this.csrData?.id,
+      csr_id: this.csrData.id,
       tos: formValues.tos,
       create_type: CertificateCreateType.CreateAcme,
       renew_days: formValues.renew_days,
