@@ -6,7 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -17,12 +17,13 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('SnapshotTaskCardComponent', () => {
@@ -102,7 +103,7 @@ describe('SnapshotTaskCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
@@ -115,6 +116,7 @@ describe('SnapshotTaskCardComponent', () => {
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
+      mockProvider(ErrorHandlerService),
     ],
   });
 
@@ -140,9 +142,10 @@ describe('SnapshotTaskCardComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: /^Edit$/ });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
-      data: snapshotTasks[0],
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
+      title: 'Edit Periodic Snapshot Task',
       wide: true,
+      inputs: { taskToEdit: snapshotTasks[0] },
     });
   });
 
@@ -150,9 +153,10 @@ describe('SnapshotTaskCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
-      data: undefined,
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
+      title: 'Add Periodic Snapshot Task',
       wide: true,
+      inputs: { taskToEdit: undefined },
     });
   });
 
@@ -184,6 +188,25 @@ describe('SnapshotTaskCardComponent', () => {
       'pool.snapshottask.update',
       [1, { enabled: true }],
     );
+  });
+
+  it('reverts the Enabled toggle when the update fails', async () => {
+    // A pending subject keeps the update in flight so the optimistic flip is observable
+    // before the error is delivered.
+    const update$ = new Subject<unknown>();
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce(() => update$);
+
+    const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
+    expect(await toggle.isChecked()).toBe(false);
+
+    await toggle.check();
+    expect(await toggle.isChecked()).toBe(true);
+
+    update$.error(new Error('update failed'));
+    spectator.detectChanges();
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    expect(await toggle.isChecked()).toBe(false);
   });
 
   it('subscribes to pool.snapshottask.query websocket events on init', () => {

@@ -1,13 +1,13 @@
 import { AsyncPipe, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import {
   ActivatedRoute,
   Router,
   RouterLink,
 } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   BehaviorSubject,
@@ -15,7 +15,6 @@ import {
 } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
@@ -31,10 +30,10 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
     CustomAppButtonComponent,
     NgxSkeletonLoaderModule,
     AsyncPipe,
-    TestDirective,
+    TnTestIdDirective,
     AppCardComponent,
     TranslateModule,
-    MatButton,
+    TnButtonComponent,
     TitleCasePipe,
     RouterLink,
   ],

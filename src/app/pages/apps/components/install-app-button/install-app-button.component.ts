@@ -2,10 +2,9 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, input, ViewContainerRef,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
 import {
   filter, Observable, of, switchMap, take,
 } from 'rxjs';
@@ -14,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -25,10 +23,9 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   templateUrl: './install-app-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class InstallAppButtonComponent {

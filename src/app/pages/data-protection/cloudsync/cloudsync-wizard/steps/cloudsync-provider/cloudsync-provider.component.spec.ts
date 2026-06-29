@@ -1,17 +1,15 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatStepper } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -27,7 +25,6 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
 describe('CloudSyncProviderComponent', () => {
   let spectator: Spectator<CloudSyncProviderComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const slideInRef = {
     next: jest.fn(),
     swap: jest.fn(),
@@ -52,7 +49,7 @@ describe('CloudSyncProviderComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(MatStepper),
       mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('cloudsync.providers', [storjProvider, googlePhotosProvider]),
@@ -80,7 +77,7 @@ describe('CloudSyncProviderComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     Object.defineProperty(spectator.component, 'loading', {
       value: loading,
@@ -89,26 +86,23 @@ describe('CloudSyncProviderComponent', () => {
       value: save,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   it('emits the value of credentials when credentials value changes', async () => {
-    await form.fillForm({
-      Credentials: 'Google Photos (Google Photos)',
-    });
+    await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="exist_credential"]' })))
+      .selectOption('Google Photos (Google Photos)');
 
-    const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
+    const verifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Verify Credential' }));
     await verifyButton.click();
 
     expect(save.emit).toHaveBeenNthCalledWith(1, googlePhotosCreds);
   });
 
   it('verifies entered values when user presses Verify', async () => {
-    await form.fillForm({
-      Credentials: 'Google Photos (Google Photos)',
-    });
+    await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="exist_credential"]' })))
+      .selectOption('Google Photos (Google Photos)');
 
-    const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
+    const verifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Verify Credential' }));
     await verifyButton.click();
 
     expect(loading.emit).toHaveBeenNthCalledWith(1, true);

@@ -2,15 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent,
+} from '@truenas/ui-components';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { User } from 'app/interfaces/user.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { UserFormStore, UserStigPasswordOption, defaultHomePath } from 'app/pages/credentials/users/user-form/user.store';
 
@@ -20,12 +17,12 @@ import { UserFormStore, UserStigPasswordOption, defaultHomePath } from 'app/page
   templateUrl: './auth-section.component.html',
   imports: [
     ReactiveFormsModule,
-    IxInputComponent,
-    IxFieldsetComponent,
+    TnInputComponent,
+    TnFormFieldComponent,
+    TnRadioComponent,
+    TnCheckboxComponent,
+    TnFormSectionComponent,
     TranslateModule,
-    IxRadioGroupComponent,
-    IxCheckboxComponent,
-    IxTextareaComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -62,8 +59,9 @@ export class AuthSectionComponent implements OnInit {
     ],
   });
 
+  protected readonly InputType = InputType;
+
   protected readonly tooltips = {
-    one_time_password: helptextUsers.oneTimePasswordTooltip,
     password: helptextUsers.passwordTooltip,
     password_edit: helptextUsers.passwordTooltip,
     password_confirm: helptextUsers.passwordConfirmTooltip,
@@ -77,7 +75,7 @@ export class AuthSectionComponent implements OnInit {
     return helptextUsers.disablePasswordTooltip;
   });
 
-  protected stigPasswordOptions$ = of([
+  protected readonly stigPasswordOptions = [
     {
       label: this.translate.instant('Disable Password'),
       value: UserStigPasswordOption.DisablePassword,
@@ -86,9 +84,9 @@ export class AuthSectionComponent implements OnInit {
     {
       label: this.translate.instant('Generate Temporary One-Time Password'),
       value: UserStigPasswordOption.OneTimePassword,
-      tooltip: this.translate.instant(this.tooltips.one_time_password),
+      tooltip: this.translate.instant(helptextUsers.oneTimePasswordTooltip),
     },
-  ]);
+  ];
 
   constructor() {
     this.form.valueChanges.pipe(

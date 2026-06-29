@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed,
-  inject, DestroyRef, signal, viewChild,
+  inject, DestroyRef, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -11,24 +11,25 @@ import {
   tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
+  TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
-  type TnCardAction,
   type TnSortEvent,
 } from '@truenas/ui-components';
 import {
   map, BehaviorSubject, of,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import {
   ExternalSmbShareOptions, LegacySmbShareOptions, SmbShare, SmbSharesec,
@@ -43,6 +44,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -77,8 +79,10 @@ import { selectService } from 'app/store/services/services.selectors';
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
+    TnCardHeaderActionsDirective,
+    TnCardFooterActionsDirective,
+    TnSlideToggleComponent,
+    RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -93,7 +97,6 @@ import { selectService } from 'app/store/services/services.selectors';
     RouterLink,
     TnEmptyComponent,
     CardAlertBadgeComponent,
-    ServiceSmbComponent,
     TableToggleCellComponent,
     TableActionsCellComponent,
     TierStatusComponent,
@@ -101,6 +104,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbCardComponent implements OnInit {
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
@@ -111,7 +115,7 @@ export class SmbCardComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private poolStoreService = inject(poolStore);
   private authService = inject(AuthService);
-  private actionsMenu = inject(ServiceActionsMenuService);
+  protected actionsMenu = inject(ServiceActionsMenuService);
   private tierService = inject(SharingTierService);
   private snackbar = inject(SnackbarService);
 
@@ -120,41 +124,18 @@ export class SmbCardComponent implements OnInit {
   protected readonly cardMenuPath = ['sharing', 'smb'];
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
-  private service = toSignal(this.service$);
+  protected service = toSignal(this.service$);
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
   protected serviceStatus = computed(() => this.actionsMenu.buildCardHeaderStatus(this.service()));
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      testId: 'button-smb-share-add',
-      handler: () => this.openForm(),
-    };
-  });
-
-  protected configOpen = signal(false);
-  protected configForm = viewChild(ServiceSmbComponent);
-  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
-    () => this.configForm()?.hasUnsavedChanges() ?? false,
-  );
-
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
     this.hasAddRole(),
-    () => this.configOpen.set(true),
+    () => this.openConfig(),
   ));
-
-  protected serviceControl = computed(() => this.actionsMenu.buildServiceControl(this.service(), this.hasAddRole()));
-
-  protected onConfigClosed(): void {
-    this.configOpen.set(false);
-  }
 
   dataProvider: AsyncDataProvider<SmbShare>;
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -271,6 +252,10 @@ export class SmbCardComponent implements OnInit {
       .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
+  protected openConfig(): void {
+    this.formPanel.open(ServiceSmbComponent, { title: serviceNames.get(ServiceName.Cifs) });
+  }
+
   protected doDelete(smb: SmbShare): void {
     this.dialogService.confirmDelete({
       message: this.translate.instant('Are you sure you want to delete SMB Share <b>"{name}"</b>?', { name: smb.name }),
@@ -318,7 +303,7 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  protected onChangeEnabledState(row: SmbShare): void {
+  protected onChangeEnabledState(row: SmbShare, toggle: TableToggleCellComponent): void {
     const enabled = !row.enabled;
 
     this.api.call('sharing.smb.update', [row.id, { enabled }]).pipe(
@@ -334,7 +319,7 @@ export class SmbCardComponent implements OnInit {
         );
       },
       error: (error: unknown) => {
-        this.dataProvider.load();
+        toggle.revert();
         this.errorHandler.showErrorModal(error);
       },
     });

@@ -2,14 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -25,6 +23,13 @@ describe('ServiceWebshareComponent', () => {
     search: true,
     passkey: WebSharePasskey.Enabled,
   };
+
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const createComponent = createComponentFactory({
     component: ServiceWebshareComponent,
@@ -54,19 +59,13 @@ describe('ServiceWebshareComponent', () => {
   it('loads current webshare config and populates form on init', async () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.config');
 
-    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable TrueSearch' }));
-    expect(await searchCheckbox.getValue()).toBe(true);
-
-    const passkeySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Passkey' }));
-    expect(await passkeySelect.getValue()).toBe('Enabled');
+    expect(await (await getCheckbox('search')).isChecked()).toBe(true);
+    expect(await (await getSelect('passkey')).getDisplayText()).toBe('Enabled');
   });
 
   it('submits updated config when form is saved', async () => {
-    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable TrueSearch' }));
-    await searchCheckbox.setValue(false);
-
-    const passkeySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Passkey' }));
-    await passkeySelect.setValue('Required');
+    await (await getCheckbox('search')).uncheck();
+    await (await getSelect('passkey')).selectOption('Required');
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -77,8 +76,7 @@ describe('ServiceWebshareComponent', () => {
   });
 
   it('submits updated config and closes slide-in on successful save', async () => {
-    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable TrueSearch' }));
-    await searchCheckbox.setValue(false);
+    await (await getCheckbox('search')).uncheck();
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -117,8 +115,7 @@ describe('ServiceWebshareComponent', () => {
 
   it('saves config with search enabled when keeping it enabled', async () => {
     // Form already has search enabled from mock config
-    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable TrueSearch' }));
-    expect(await searchCheckbox.getValue()).toBe(true);
+    expect(await (await getCheckbox('search')).isChecked()).toBe(true);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -139,11 +136,8 @@ describe('ServiceWebshareComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable TrueSearch' }));
-    expect(await searchCheckbox.getValue()).toBe(false);
-
-    const passkeySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Passkey' }));
-    expect(await passkeySelect.getValue()).toBe('Disabled');
+    expect(await (await getCheckbox('search')).isChecked()).toBe(false);
+    expect(await (await getSelect('passkey')).getDisplayText()).toBe('Disabled');
   });
 
   it('displays the form with correct title', () => {

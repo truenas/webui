@@ -1,21 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
+import { ChangeDetectionStrategy, Component, computed, input, inject, output } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
-import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
-import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
-import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
-import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ServicesService } from 'app/services/services.service';
@@ -27,11 +18,10 @@ import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.ser
   styleUrls: ['./service-actions-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
-    TnIconComponent,
+    TnTestIdDirective,
+    TnIconButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
-    MatIconButton,
   ],
 })
 export class ServiceActionsCellComponent {
@@ -41,6 +31,9 @@ export class ServiceActionsCellComponent {
   private slideIn = inject(SlideIn);
 
   readonly service = input.required<Service>();
+
+  /** Emitted for services whose config form is hosted in the page-level side panel. */
+  readonly configure = output<Service>();
 
   protected readonly requiredRoles = computed(() => {
     return this.servicesService.getRolesRequiredToManage(this.service().service);
@@ -74,28 +67,9 @@ export class ServiceActionsCellComponent {
       case ServiceName.Iscsi:
         this.slideIn.open(GlobalTargetConfigurationComponent);
         break;
-      case ServiceName.Ftp:
-        this.slideIn.open(ServiceFtpComponent, { wide: true });
-        break;
-      case ServiceName.Nfs:
-        this.slideIn.open(ServiceNfsComponent, { wide: true });
-        break;
-      case ServiceName.Snmp:
-        this.slideIn.open(ServiceSnmpComponent, { wide: true });
-        break;
-      case ServiceName.Ups:
-        this.slideIn.open(ServiceUpsComponent, { wide: true });
-        break;
-      case ServiceName.Ssh:
-        this.slideIn.open(ServiceSshComponent);
-        break;
-      case ServiceName.Cifs:
-        this.slideIn.open(ServiceSmbComponent);
-        break;
-      case ServiceName.WebShare:
-        this.slideIn.open(ServiceWebshareComponent);
-        break;
       default:
+        // The service config forms are hosted in the page-level side panel.
+        this.configure.emit(this.service());
         break;
     }
   }

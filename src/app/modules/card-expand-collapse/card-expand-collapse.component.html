@@ -6,13 +6,12 @@
 }
 @if (showButton()) {
   <div class="more-less">
-    <button
-      type="button"
-      mat-stroked-button
-      ixTest="show-more-less"
-      (click)="changeCollapsed()"
-    >
-      {{ isCollapsed() ? ('View More' | translate) : ('Collapse' | translate) }}
-    </button>
+    <tn-button
+      variant="filled"
+      color="default"
+      testId="show-more-less"
+      [label]="isCollapsed() ? ('View More' | translate) : ('Collapse' | translate)"
+      (onClick)="changeCollapsed()"
+    ></tn-button>
   </div>
 }

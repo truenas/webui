@@ -1,5 +1,32 @@
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { filterTableRows, toDisplayedColumns } from './utils';
+import { filterTableRows, mapTnSortToProviderSorting, toDisplayedColumns } from './utils';
+
+describe('mapTnSortToProviderSorting', () => {
+  it('maps an ascending sort to propertyName + direction', () => {
+    expect(mapTnSortToProviderSorting({ column: 'name', direction: 'asc' })).toEqual({
+      propertyName: 'name',
+      direction: SortDirection.Asc,
+      active: null,
+    });
+  });
+
+  it('maps a descending sort to propertyName + direction', () => {
+    expect(mapTnSortToProviderSorting({ column: 'size', direction: 'desc' })).toEqual({
+      propertyName: 'size',
+      direction: SortDirection.Desc,
+      active: null,
+    });
+  });
+
+  it('clears sorting (null propertyName and direction) when the direction is empty', () => {
+    expect(mapTnSortToProviderSorting({ column: 'name', direction: '' })).toEqual({
+      propertyName: null,
+      direction: null,
+      active: null,
+    });
+  });
+});
 
 describe('filterTableRows', () => {
   interface TestItem {

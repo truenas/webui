@@ -4,6 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -16,11 +19,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -63,7 +67,7 @@ describe('RsyncTaskFormComponent', () => {
 
   let spectator: Spectator<RsyncTaskFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
+
   const createComponent = createComponentFactory({
     component: RsyncTaskFormComponent,
     imports: [
@@ -83,9 +87,6 @@ describe('RsyncTaskFormComponent', () => {
           { id: 2, name: 'ssh02' },
         ] as KeychainCredential[]),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(FilesystemService),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
@@ -104,45 +105,65 @@ describe('RsyncTaskFormComponent', () => {
           },
         ],
       }),
+      ...ixFormTestingProviders(),
       mockProvider(SlideInRef, slideInRef),
     ],
   });
 
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const setCheckbox = async (name: string, value: boolean): Promise<void> => {
+    const checkbox = await getCheckbox(name);
+    if (value) {
+      await checkbox.check();
+    } else {
+      await checkbox.uncheck();
+    }
+  };
+
+  const saveForm = async (): Promise<void> => {
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+  };
+
   describe('adds a new rsync task', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('adds a new rsync task when new form is saved', async () => {
-      await form.fillForm({
-        Path: '/mnt/new',
-        User: 'steven',
-        Direction: 'Pull',
-        Description: 'My new task',
+      await (await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }))).setValue('/mnt/new');
+      await (await loader.getHarness(IxComboboxHarness.with({ label: 'User' }))).setValue('steven');
+      await (await getSelect('direction')).selectOption('Pull');
+      await (await getInput('desc')).setValue('My new task');
 
-        'Remote Host': 'pentagon.gov',
-        'Rsync Mode': 'Module',
-        'Remote Module Name': 'module',
+      await (await getSelect('mode')).selectOption('Module');
+      await (await getInput('remotehost')).setValue('pentagon.gov');
+      await (await getInput('remotemodule')).setValue('module');
 
-        Schedule: '0 2 * * *',
-        Recursive: false,
-        Enabled: true,
+      await (await loader.getHarness(SchedulerHarness.with({ label: 'Schedule' }))).setValue('0 2 * * *');
+      await setCheckbox('recursive', false);
+      await setCheckbox('enabled', true);
 
-        Times: false,
-        Compress: true,
-        Archive: false,
-        Delete: true,
-        Quiet: true,
-        'Preserve Permissions': true,
-        'Preserve Extended Attributes': false,
-        'Delay Updates': false,
-        'Auxiliary Parameters': ['param=newValue'],
-      });
+      await setCheckbox('times', false);
+      await setCheckbox('compress', true);
+      await setCheckbox('archive', false);
+      await setCheckbox('delete', true);
+      await setCheckbox('quiet', true);
+      await setCheckbox('preserveperm', true);
+      await setCheckbox('preserveattr', false);
+      await setCheckbox('delayupdates', false);
+      await (await loader.getHarness(TnChipInputHarness.with({ selector: '[formControlName="extra"]' }))).addChip('param=newValue');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await saveForm();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.create', [{
         archive: false,
@@ -173,57 +194,42 @@ describe('RsyncTaskFormComponent', () => {
   });
 
   describe('edits rsync task', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ ...existingTask, id: 1 })) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('shows values for an existing rsync task when it is open for edit', async () => {
-      const values = await form.getValues();
+      expect(await (await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }))).getValue()).toBe('/mnt/x/oooo');
+      expect(await (await loader.getHarness(IxComboboxHarness.with({ label: 'User' }))).getValue()).toBe('root');
+      expect(await (await getSelect('direction')).getDisplayText()).toBe('Push');
+      expect(await (await getInput('desc')).getValue()).toBe('My rsync task');
 
-      expect(values).toEqual({
-        Path: '/mnt/x/oooo',
-        User: 'root',
-        Direction: 'Push',
-        Description: 'My rsync task',
+      expect(await (await getSelect('mode')).getDisplayText()).toBe('Module');
+      expect(await (await getInput('remotehost')).getValue()).toBe('pentagon.gov');
+      expect(await (await getInput('remotemodule')).getValue()).toBe('module');
 
-        'Remote Host': 'pentagon.gov',
-        'Rsync Mode': 'Module',
-        'Remote Module Name': 'module',
-
-        Schedule: 'Hourly At the start of each hour',
-        Recursive: true,
-        Enabled: true,
-
-        Times: true,
-        Compress: true,
-        Archive: false,
-        Delete: false,
-        Quiet: true,
-        'Preserve Permissions': false,
-        'Preserve Extended Attributes': false,
-        'Delay Updates': true,
-        'Auxiliary Parameters': ['param=value'],
-      });
+      expect(await (await getCheckbox('recursive')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('times')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('compress')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('quiet')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('delayupdates')).isChecked()).toBe(true);
     });
 
     it('saves updated rsync task when form opened for edit is saved', async () => {
-      await form.fillForm({
-        Path: '/mnt/new',
-        Direction: 'Push',
+      await (await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }))).setValue('/mnt/new');
+      await (await getSelect('direction')).selectOption('Push');
 
-        Times: false,
-        Compress: false,
-        'Delay Updates': true,
-      });
+      await setCheckbox('times', false);
+      await setCheckbox('compress', false);
+      await setCheckbox('delayupdates', true);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await saveForm();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
@@ -241,17 +247,12 @@ describe('RsyncTaskFormComponent', () => {
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH private key stored in user\'s home directory', async () => {
-      await form.fillForm(
-        {
-          'Rsync Mode': 'SSH',
-          'Remote SSH Port': 45,
-          'Remote Path': '/mnt/path',
-          'Validate Remote Path': true,
-        },
-      );
+      await (await getSelect('mode')).selectOption('SSH');
+      await (await getInput('remoteport')).setValue('45');
+      await (await getInput('remotepath')).setValue('/mnt/path');
+      await setCheckbox('validate_rpath', true);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await saveForm();
 
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
@@ -271,17 +272,12 @@ describe('RsyncTaskFormComponent', () => {
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH connection from the keychain', async () => {
-      await form.fillForm(
-        {
-          'Rsync Mode': 'SSH',
-          'Connect using:': 'SSH connection from the keychain',
-          'SSH Connection': 'ssh01',
-          'Remote Path': '/mnt/path',
-        },
-      );
+      await (await getSelect('mode')).selectOption('SSH');
+      await (await getSelect('sshconnectmode')).selectOption('SSH connection from the keychain');
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials"]' }))).selectOption('ssh01');
+      await (await getInput('remotepath')).setValue('/mnt/path');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await saveForm();
 
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
@@ -298,6 +294,29 @@ describe('RsyncTaskFormComponent', () => {
           validate_rpath: true,
         },
       ]);
+    });
+  });
+
+  describe('side panel host (no SlideInRef)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+        ],
+        props: {
+          taskToEdit: { ...existingTask, id: 1 } as RsyncTask,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('emits closed and updates when saved via the host submit() entry point', () => {
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [1, expect.anything()]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

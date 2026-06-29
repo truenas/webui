@@ -1,6 +1,7 @@
 import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { Injectable, inject } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TnDialog } from '@truenas/ui-components';
 import {
   defer, EMPTY, finalize, MonoTypeOperatorFunction, Observable, Subscription,
 } from 'rxjs';
@@ -10,6 +11,10 @@ import { FocusService } from 'app/services/focus.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoaderService {
+  private tnDialog = inject(TnDialog);
+  // The cdk `Dialog` is the underlying service `TnDialog` wraps; we inject it
+  // directly to read `openDialogs` for focus restoration, which `TnDialog` does
+  // not expose. Mirrors the pattern in DialogService.
   private dialog = inject(Dialog);
   private focusService = inject(FocusService);
 
@@ -36,12 +41,15 @@ export class LoaderService {
       return EMPTY;
     }
 
-    this.dialogRef = this.dialog.open<unknown, unknown, AppLoaderComponent>(AppLoaderComponent, {
+    this.dialogRef = this.tnDialog.open<AppLoaderComponent>(AppLoaderComponent, {
       // The loader must never be dismissed by the user (backdrop click / ESC);
       // it only closes programmatically when loading finishes. The optional
       // confirmation flow listens to keydownEvents/backdropClick manually,
       // which still emit while disableClose is true.
       disableClose: true,
+      // `TnDialog` prepends its `tn-dialog-panel` class (which supplies the
+      // surface — background, border-radius, box-shadow); `app-loader-overlay`
+      // remains for the loader-specific overlay tweaks in _tn-styles.scss.
       panelClass: 'app-loader-overlay',
       width: '200px',
       height: '200px',

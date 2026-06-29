@@ -1,40 +1,55 @@
-<button
-  mat-button
-  ixTest="configuration-menu"
-  [matMenuTriggerFor]="configMenu"
->
-  {{ 'Configuration' | translate }}
-  <tn-icon name="mdi-menu-down" class="menu-caret"></tn-icon>
-</button>
+<tn-button
+  iconPosition="right"
+  testId="configuration-menu"
+  [icon]="menuDownIcon"
+  [label]="'Configuration' | translate"
+  [tnMenuTriggerFor]="configMenu"
+></tn-button>
 
-<mat-menu #configMenu="matMenu" overlapTrigger="false">
-  <button
-    mat-menu-item
-    ixTest="global-configuration"
+<tn-menu #configMenu>
+  <tn-menu-item
+    testId="global-configuration"
+    [label]="'Settings' | translate"
     [ixUiSearch]="searchableElements.elements.settings"
-    (click)="onGlobalConfiguration()"
-  >
-    {{ 'Settings' | translate }}
-  </button>
+    (itemClick)="onGlobalConfiguration()"
+  ></tn-menu-item>
 
-  <button
+  <tn-menu-item
     *ixRequiresRoles="requiredRoles"
-    mat-menu-item
-    ixTest="map-user-group-ids"
+    testId="map-user-group-ids"
+    [label]="'Map User/Group IDs' | translate"
     [ixUiSearch]="searchableElements.elements.mapUserGroupIds"
-    (click)="onMapUserGroupIds()"
-  >
-    {{ 'Map User/Group IDs' | translate }}
-  </button>
-</mat-menu>
+    (itemClick)="onMapUserGroupIds()"
+  ></tn-menu-item>
+</tn-menu>
 
 @if (config()) {
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="create-new-container"
-    [color]="'primary'"
+    color="primary"
+    testId="create-new-container"
     [ixUiSearch]="searchableElements.elements.add"
-    (click)="onCreateContainer()"
-  >{{ 'Create New Container' | translate }}</button>
+    [label]="'Create New Container' | translate"
+    (onClick)="onCreateContainer()"
+  ></tn-button>
 }
+
+<tn-side-panel
+  [title]="'Global Configuration' | translate"
+  [closeGuard]="closeGuard"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-global-config-form (closed)="onConfigClosed($event)"></ix-global-config-form>
+  }
+  @if (configForm(); as form) {
+    <tn-button
+      tnSidePanelAction
+      color="primary"
+      testId="save"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

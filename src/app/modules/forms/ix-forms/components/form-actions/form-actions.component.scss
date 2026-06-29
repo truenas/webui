@@ -13,6 +13,13 @@
   position: relative;
   display: inline-block;
 
+  // No submit button projected (e.g. a wizard's `ix-form-actions` holds only Next/Back/Advanced):
+  // collapse the empty wrapper so the `gap` after it doesn't shift the visible buttons off the
+  // form's left edge.
+  &:empty {
+    display: none;
+  }
+
   &.validating {
     overflow: hidden;
 
@@ -52,6 +59,14 @@
   gap: 8px;
   justify-content: flex-start;
   margin: 0 10px;
+}
+
+// Declarative forms (ix-form-renderer) align the actions row with the fields,
+// so drop the left indent there only — legacy forms keep the 10px gutter.
+// The `.ix-form-container` in the context keeps this more specific than the
+// rule above, whose `margin` shorthand would otherwise reset margin-left.
+:host-context(ix-form-renderer .ix-form-container) :host {
+  margin-left: 0;
 }
 
 :host-context(mat-vertical-stepper) :host {

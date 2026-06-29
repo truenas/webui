@@ -1,21 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { switchMap, forkJoin, finalize } from 'rxjs';
 import {
-  tap,
-} from 'rxjs/operators';
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, viewChild, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnSidePanelActionDirective, TnSidePanelComponent,
+} from '@truenas/ui-components';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import {
+  Observable, finalize, forkJoin, of, take,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getResilverSummary } from 'app/pages/system/advanced/storage/storage-card/resilver-summary.util';
 import { storageCardElements } from 'app/pages/system/advanced/storage/storage-card/storage-card.elements';
@@ -27,34 +27,36 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 
 @Component({
   selector: 'ix-storage-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./storage-card.component.scss'],
   templateUrl: './storage-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnButtonComponent,
+    StorageSettingsFormComponent,
     TranslateModule,
     NgxSkeletonLoaderModule,
   ],
 })
 export class StorageCardComponent implements OnInit {
-  private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   protected isLoading = signal(false);
   protected systemDatasetPool = signal<string | null>(null);
   protected resilverConfig = signal<ResilverConfig | null>(null);
+
+  protected configOpen = signal(false);
+  protected configForm = viewChild(StorageSettingsFormComponent);
 
   protected priorityResilverSummary = computed(() => {
     const config = this.resilverConfig();
@@ -67,6 +69,12 @@ export class StorageCardComponent implements OnInit {
 
   protected readonly searchableElements = storageCardElements;
   protected readonly requiredRoles = [Role.DatasetWrite, Role.PoolWrite];
+
+  protected readonly closeGuard = (): Observable<boolean> => {
+    return this.configForm()?.hasUnsavedChanges()
+      ? this.unsavedChanges.showConfirmDialog()
+      : of(true);
+  };
 
   ngOnInit(): void {
     this.loadConfig();
@@ -92,16 +100,15 @@ export class StorageCardComponent implements OnInit {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => {
-        return this.slideIn.open(StorageSettingsFormComponent, {
-          data: {
-            systemDatasetPool: this.systemDatasetPool(),
-            priorityResilver: this.resilverConfig(),
-          },
-        }).success$;
-      }),
-      tap(() => this.loadConfig()),
+      take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    ).subscribe(() => this.configOpen.set(true));
+  }
+
+  protected onConfigClosed(saved: boolean): void {
+    this.configOpen.set(false);
+    if (saved) {
+      this.loadConfig();
+    }
   }
 }

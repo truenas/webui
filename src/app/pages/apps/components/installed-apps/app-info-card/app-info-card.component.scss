@@ -1,6 +1,8 @@
 @import 'mixins/cards';
 @import 'scss-imports/variables';
 
+@include tn-detail-card();
+
 .app-logo {
   cursor: pointer;
   flex: 0 0 auto;
@@ -16,18 +18,19 @@
 }
 
 .card {
-  @include details-card();
   margin: 0;
 
-  mat-card-header {
-    button {
-      margin-left: 8px;
-    }
-  }
-
-  .actions {
+  .card-header {
     align-items: center;
     display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .header-actions {
+    align-items: center;
+    display: flex;
+    gap: 8px;
   }
 
   .info-container {
@@ -63,26 +66,55 @@
     }
   }
 
-  .portals {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 7px;
+}
 
-    .portal-button {
-      text-transform: capitalize;
-    }
+// TEMP (NAS-141021): tn-card's `.tn-card__footer-right` is `flex-shrink: 0`, so a
+// footer with several action buttons can't shrink — it overflows and is clipped by
+// the card's `overflow: hidden` on narrow / mobile widths. The left slot is reserved
+// for `footerLink` (unused here), so drop it and let the action slot take the full,
+// bounded footer width; `.footer-actions` (flex-wrap: wrap, justify-content: flex-end)
+// then keeps the buttons right-clustered on desktop and wraps them on mobile. Remove
+// once the library handles footer action overflow/wrapping.
+:host ::ng-deep .tn-card__footer {
+  .tn-card__footer-left {
+    display: none;
+  }
+
+  .tn-card__footer-right {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+// Portal buttons (Web UI, etc.) flow as direct flex items of .footer-actions so
+// they share the same spacing as Edit / Start / Roll Back / Delete in the cluster.
+.portals {
+  display: contents;
+}
+
+.portal-button {
+  text-transform: capitalize;
+}
+
+.status-actions {
+  // Hidden on desktop (Start/Stop live in the list's controls column there);
+  // surfaced only in the mobile/tablet master-detail view, where the list is gone.
+  display: none;
+
+  @media (max-width: $breakpoint-tablet) {
+    display: contents;
   }
 }
 
 .source-link {
   white-space: normal;
   word-break: break-word;
-}
-
-.cell-status-actions {
-  @media (max-width: $breakpoint-tablet) {
-    display: inline-block;
-  }
-  display: none;
 }

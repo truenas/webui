@@ -85,6 +85,22 @@ export function toDisplayedColumns<T>(columns: Column<T, ColumnComponent<T>>[]):
     .map((column) => (column.propertyName ? String(column.propertyName) : 'actions'));
 }
 
+/**
+ * Translates a tn-table `(sortChange)` event into the `TableSort` shape an
+ * `AsyncDataProvider`/`ApiDataProvider` `setSorting()` expects, where sorting is
+ * driven purely by `propertyName`/`direction` and `active` (column index) is
+ * unused. Shared by the simple tn-table list migrations (docker images,
+ * docker registries) so the empty-direction handling can't drift between them.
+ */
+export function mapTnSortToProviderSorting<T>(event: TnSortEvent): TableSort<T> {
+  const direction = event.direction === '' ? null : (event.direction as SortDirection);
+  return {
+    propertyName: direction ? (event.column as keyof T) : null,
+    direction,
+    active: null,
+  };
+}
+
 export function filterTableRows<T>(filter: TableFilter<T>): T[] {
   const {
     list = [], query = '', columnKeys = [], preprocessMap, exact = false,

@@ -4,14 +4,8 @@
   height: 100%;
   padding: 24px;
   text-align: center;
-  // The loader opens via the bare CDK dialog (no MatDialog surface), so the
-  // surface styling lives here.
-  background: var(--bg2);
-  border-radius: 4px;
-  box-shadow:
-    0 11px 15px -7px rgba(0, 0, 0, 0.2),
-    0 24px 38px 3px rgba(0, 0, 0, 0.14),
-    0 9px 46px 8px rgba(0, 0, 0, 0.12);
+  // The dialog surface (background, border-radius, box-shadow) is supplied by
+  // the `tn-dialog-panel` class that `TnDialog` applies to the overlay panel.
 }
 
 tn-spinner {

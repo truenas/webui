@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -8,23 +8,24 @@ import {
   tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
+  TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
-  type TnCardAction,
   type TnSortEvent,
   TnDialog,
 } from '@truenas/ui-components';
 import {
   filter, startWith, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
@@ -38,6 +39,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -68,8 +70,10 @@ import { selectService } from 'app/store/services/services.selectors';
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
+    TnCardHeaderActionsDirective,
+    TnCardFooterActionsDirective,
+    TnSlideToggleComponent,
+    RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -84,12 +88,12 @@ import { selectService } from 'app/store/services/services.selectors';
     RouterLink,
     TnEmptyComponent,
     CardAlertBadgeComponent,
-    GlobalTargetConfigurationComponent,
     TableActionsCellComponent,
   ],
 })
 export class IscsiCardComponent implements OnInit {
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   protected emptyService = inject(EmptyService);
@@ -99,10 +103,10 @@ export class IscsiCardComponent implements OnInit {
   private license = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
-  private actionsMenu = inject(ServiceActionsMenuService);
+  protected actionsMenu = inject(ServiceActionsMenuService);
 
   service$ = this.store$.select(selectService(ServiceName.Iscsi));
-  private service = toSignal(this.service$);
+  protected service = toSignal(this.service$);
   requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
@@ -124,33 +128,16 @@ export class IscsiCardComponent implements OnInit {
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
-  protected wizardAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasWriteRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Wizard'),
-      testId: 'button-iscsi-share-wizard',
-      handler: () => this.openForm(undefined, true),
-    };
-  });
-
-  protected configOpen = signal(false);
-  protected configForm = viewChild(GlobalTargetConfigurationComponent);
-  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
-    () => this.configForm()?.hasUnsavedChanges() ?? false,
-  );
-
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
     this.hasWriteRole(),
-    () => this.configOpen.set(true),
+    () => this.openConfig(),
   ));
 
-  protected serviceControl = computed(() => this.actionsMenu.buildServiceControl(this.service(), this.hasWriteRole()));
-
-  protected onConfigClosed(): void {
-    this.configOpen.set(false);
+  protected openConfig(): void {
+    this.formPanel.open(GlobalTargetConfigurationComponent, {
+      title: this.translate.instant('iSCSI Global Configuration'),
+    });
   }
 
   dataProvider: AsyncDataProvider<IscsiTarget>;

@@ -1,12 +1,13 @@
 import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { TestBed } from '@angular/core/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { AppLoaderComponent } from 'app/modules/loader/components/app-loader/app-loader.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 
 describe('LoaderService', () => {
   let service: LoaderService;
-  let dialog: Dialog;
+  let tnDialog: TnDialog;
   let mockDialogRef: Partial<DialogRef<unknown, AppLoaderComponent>>;
   let mockComponentInstance: Partial<AppLoaderComponent>;
 
@@ -22,20 +23,25 @@ describe('LoaderService', () => {
       close: jest.fn(),
     };
 
-    const mockDialog = {
+    const mockTnDialog = {
       open: jest.fn(() => mockDialogRef),
+    };
+
+    // The loader reads `openDialogs` off the cdk `Dialog` for focus restoration.
+    const mockDialog = {
       openDialogs: [] as DialogRef[],
     };
 
     TestBed.configureTestingModule({
       providers: [
         LoaderService,
+        { provide: TnDialog, useValue: mockTnDialog },
         { provide: Dialog, useValue: mockDialog },
       ],
     });
 
     service = TestBed.inject(LoaderService);
-    dialog = TestBed.inject(Dialog);
+    tnDialog = TestBed.inject(TnDialog);
   });
 
   afterEach(() => {
@@ -46,7 +52,7 @@ describe('LoaderService', () => {
     it('opens a dialog with default title', () => {
       service.open();
 
-      expect(dialog.open).toHaveBeenCalledWith(AppLoaderComponent, {
+      expect(tnDialog.open).toHaveBeenCalledWith(AppLoaderComponent, {
         disableClose: true,
         panelClass: 'app-loader-overlay',
         width: '200px',
@@ -66,7 +72,7 @@ describe('LoaderService', () => {
 
       service.open('Test title');
 
-      expect(dialog.open).toHaveBeenCalled();
+      expect(tnDialog.open).toHaveBeenCalled();
       expect(mockComponentInstance.setTitle).not.toHaveBeenCalled();
     });
   });

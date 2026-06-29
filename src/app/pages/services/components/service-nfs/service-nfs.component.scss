@@ -4,6 +4,7 @@
   border-bottom: 1px solid var(--lines);
   border-top: 1px solid var(--lines);
   display: flex;
+  gap: 24px;
 
   @media (max-width: $breakpoint-tablet) {
     display: block;
@@ -11,7 +12,8 @@
 
   > * {
     display: block;
-    width: 50%;
+    flex: 1 1 0;
+    min-width: 0;
 
     @media (max-width: $breakpoint-tablet) {
       width: 100%;
@@ -23,6 +25,8 @@
   display: flex;
   gap: 10px;
 
+  // TEMP: reaching into the projected tn-icon to size the tooltip help icon
+  // until @truenas/ui-components exposes an icon-size input. Remove when available.
   ::ng-deep tn-icon {
     font-size: 25px !important;
   }

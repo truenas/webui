@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, forwardRef, Signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, forwardRef, output, Signal, viewChild, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCardModule } from '@angular/material/card';
 import { MatStepperModule } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -32,7 +33,6 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
     CloudSyncProviderComponent,
     CloudSyncWhatAndWhenComponent,
     ModalHeaderComponent,
-    MatCardModule,
     MatStepperModule,
     TranslateModule,
     AsyncPipe,
@@ -40,7 +40,10 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
   ],
 })
 export class CloudSyncWizardComponent {
-  slideInRef = inject<SlideInRef<undefined, CloudSyncTask>>(SlideInRef);
+  // Optional: present only in the legacy SlideIn host. Absent when hosted in the `<tn-side-panel>`
+  // form panel (opened via FormSidePanelService with `footerless: true` — the stepper owns its own
+  // Next/Save buttons), where close happens through {@link closed}.
+  slideInRef = inject<SlideInRef<undefined, CloudSyncTask>>(SlideInRef, { optional: true });
   private api = inject(ApiService);
   private snackbarService = inject(SnackbarService);
   private cdr = inject(ChangeDetectorRef);
@@ -56,15 +59,26 @@ export class CloudSyncWizardComponent {
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (true = saved). */
+  readonly closed = output<boolean>();
+
   isLoading$ = new BehaviorSubject(false);
   isProviderLoading$ = new BehaviorSubject(false);
   mergedLoading$: Observable<boolean> = merge(this.isLoading$, this.isProviderLoading$);
   existingCredential: CloudSyncCredential | undefined;
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => of(
-      Boolean(this.whatAndWhen()?.form?.dirty || this.cloudSyncProvider()?.isDirty()),
-    ));
+    this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) — dirty across either step. */
+  hasUnsavedChanges(): boolean {
+    return Boolean(this.whatAndWhen()?.form?.dirty || this.cloudSyncProvider()?.isDirty());
+  }
+
+  /** Whether the form is currently submitting; the host shows a progress bar while true. */
+  isBusy(): boolean {
+    return this.isLoading$.value || this.isProviderLoading$.value;
   }
 
   private createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
@@ -96,7 +110,11 @@ export class CloudSyncWizardComponent {
       next: (response) => {
         this.snackbarService.success(this.translate.instant('Task created'));
         this.isLoading$.next(false);
-        this.slideInRef.close({ response });
+        if (this.slideInRef) {
+          this.slideInRef.close({ response });
+        } else {
+          this.closed.emit(true);
+        }
 
         this.cdr.markForCheck();
       },

@@ -20,7 +20,7 @@
         <mat-spinner
           class="running"
           [diameter]="22"
-          [matTooltip]="job().progress.description"
+          [tnTooltip]="job().progress.description"
         ></mat-spinner>
       }
       @case (JobState.Waiting) {
@@ -47,7 +47,7 @@
         class="job-progress"
         [value]="job().progress.percent"
         [mode]="job().progress.percent ? 'determinate' : 'indeterminate'"
-        [matTooltip]="job().progress.description"
+        [tnTooltip]="job().progress.description"
       ></mat-progress-bar>
     }
   </div>
@@ -58,7 +58,7 @@
     mat-icon-button
     type="button"
     [ixTest]="['abort-job', job().description]"
-    [matTooltip]="'Abort' | translate"
+    [tnTooltip]="'Abort' | translate"
     [attr.aria-label]="'Abort' | translate"
     (click)="onAborted()"
   >

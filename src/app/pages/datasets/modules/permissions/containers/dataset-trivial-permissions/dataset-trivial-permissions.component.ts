@@ -6,10 +6,10 @@ import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -41,7 +41,7 @@ import { StorageService } from 'app/services/storage.service';
     MatCard,
     MatCardHeader,
     MatCardTitle,
-    MatTooltip,
+    TnTooltipDirective,
     MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
