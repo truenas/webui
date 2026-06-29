@@ -1,10 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnFormFieldComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -14,9 +16,6 @@ import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import {
-  IxButtonGroupComponent,
-} from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -29,12 +28,11 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-enum FormNamespaceType {
+export enum FormNamespaceType {
   Zvol = 'Zvol',
   NewFile = 'NewFile',
   ExistingFile = 'ExistingFile',
@@ -60,17 +58,18 @@ const typeOptions: Option[] = [
   templateUrl: './base-namespace-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     IxExplorerComponent,
     ReactiveFormsModule,
     TranslateModule,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
+    TnButtonToggleGroupComponent,
+    TnButtonToggleComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
-    MatCard,
-    MatCardContent,
     ModalHeaderComponent,
     IxFieldsetComponent,
-    IxButtonGroupComponent,
     IxInputComponent,
     ExplorerCreateDatasetComponent,
     ExplorerCreateZvolComponent,

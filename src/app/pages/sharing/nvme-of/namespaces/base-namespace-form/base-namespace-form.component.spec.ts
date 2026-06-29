@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -13,10 +13,9 @@ import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
-  BaseNamespaceFormComponent,
+  BaseNamespaceFormComponent, FormNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -40,6 +39,20 @@ describe('BaseNamespaceFormComponent', () => {
     ],
   });
 
+  async function clickSave(): Promise<void> {
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+  }
+
+  // device_type changes clear device_path (clearPathOnTypeChanges), so set the
+  // type first, then the path.
+  function fillType(type: FormNamespaceType, path: string): void {
+    spectator.component.form.controls.device_type.setValue(type);
+    spectator.detectChanges();
+    spectator.component.form.controls.device_path.setValue(path);
+    spectator.detectChanges();
+  }
+
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -49,14 +62,9 @@ describe('BaseNamespaceFormComponent', () => {
 
   describe('creation', () => {
     it('emits new values for a Zvol when form is filled in', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Type: 'Zvol',
-        'Path To Zvol': '/dev/zvol/tank/test-zvol',
-      });
+      fillType(FormNamespaceType.Zvol, '/dev/zvol/tank/test-zvol');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await clickSave();
 
       expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
         device_path: 'zvol/tank/test-zvol',
@@ -66,14 +74,9 @@ describe('BaseNamespaceFormComponent', () => {
     });
 
     it('emits new values for an existing file when form is filled in', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Type: 'Existing File',
-        'Path To File': '/mnt/tank/test-file',
-      });
+      fillType(FormNamespaceType.ExistingFile, '/mnt/tank/test-file');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await clickSave();
 
       expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
         device_path: '/mnt/tank/test-file',
@@ -83,16 +86,12 @@ describe('BaseNamespaceFormComponent', () => {
     });
 
     it('emits new values for a new file when form is filled in', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Type: 'New File',
-        'Parent Directory': '/mnt/tank',
-        Filename: 'new-file.img',
-        'File Size': '1024 MiB',
-      });
+      fillType(FormNamespaceType.NewFile, '/mnt/tank');
+      spectator.component.form.controls.filename.setValue('new-file.img');
+      spectator.component.form.controls.filesize.setValue(1024 * MiB);
+      spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await clickSave();
 
       expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
         device_path: '/mnt/tank/new-file.img',
@@ -130,25 +129,15 @@ describe('BaseNamespaceFormComponent', () => {
       jest.spyOn(spectator.component.submitted, 'emit');
     });
 
-    it('shows values for an existing namespace', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
-
-      expect(values).toEqual({
-        Type: 'Zvol',
-        'Path To Zvol': 'zvol/tank/test-zvol',
-      });
+    it('shows values for an existing namespace', () => {
+      expect(spectator.component.form.controls.device_type.value).toBe(FormNamespaceType.Zvol);
+      expect(spectator.component.form.controls.device_path.value).toBe('zvol/tank/test-zvol');
     });
 
     it('emits changed values when existing namespace is updated', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Type: 'Existing File',
-        'Path To File': '/mnt/tank/updated-file',
-      });
+      fillType(FormNamespaceType.ExistingFile, '/mnt/tank/updated-file');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await clickSave();
 
       expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
         device_path: '/mnt/tank/updated-file',
