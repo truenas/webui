@@ -5,6 +5,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
+  TnIconButtonComponent,
   TnMenuComponent,
   TnMenuItemComponent,
   TnMenuTriggerDirective,
@@ -18,18 +19,12 @@ import { Role } from 'app/enums/role.enum';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
-/** A single item inside a {@link SidePanelFooterAction}'s dropdown menu. */
-export interface SidePanelFooterMenuItem {
-  /** Untranslated marker; the container pipes it through `translate`. */
-  label: string;
-  testId: TnTestIdValue;
-  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
-  disabled?: () => boolean;
-  onClick: () => void;
-}
-
-/** Fields common to every {@link SidePanelFooterAction}, regardless of click vs. menu behavior. */
-interface SidePanelFooterActionBase {
+/**
+ * A secondary action rendered in the side-panel footer alongside the built-in Save (e.g. a form's
+ * "Send Test Alert"). Listed in {@link HostedSidePanelForm.footerActions}; the container renders one
+ * `tn-button` per entry, before Save.
+ */
+export interface SidePanelFooterAction {
   /** Untranslated marker; the container pipes it through `translate`. */
   label: string;
   testId: TnTestIdValue;
@@ -39,39 +34,45 @@ interface SidePanelFooterActionBase {
   requiredRoles?: Role[];
   /** Re-evaluated each change detection — read signals inside for reactive disabling. */
   disabled?: () => boolean;
-}
-
-/**
- * A secondary action rendered in the side-panel footer alongside the built-in Save (e.g. a form's
- * "Send Test Alert"). Listed in {@link HostedSidePanelForm.footerActions}; the container renders one
- * `tn-button` per entry, before Save. This is a discriminated union: an action either fires
- * {@link SidePanelFooterClickAction.onClick} directly, or opens a dropdown of
- * {@link SidePanelFooterMenuAction.menuItems} (e.g. an SSH keypair's "Download" → Private/Public
- * Key) — never both, and never neither.
- */
-export type SidePanelFooterAction = SidePanelFooterClickAction | SidePanelFooterMenuAction;
-
-/** A footer action that fires a handler directly on click. */
-export interface SidePanelFooterClickAction extends SidePanelFooterActionBase {
   onClick: () => void;
-  menuItems?: never;
 }
 
-/** A footer action whose button opens a dropdown menu instead of firing a handler. */
-export interface SidePanelFooterMenuAction extends SidePanelFooterActionBase {
-  menuItems: SidePanelFooterMenuItem[];
-  onClick?: never;
+/** A single action inside a {@link SidePanelFooterMenu}. */
+export interface SidePanelFooterMenuItem {
+  /** Untranslated marker; the container pipes it through `translate`. */
+  label: string;
+  testId: TnTestIdValue;
+  icon?: string;
+  iconLibrary?: 'material' | 'mdi' | 'custom' | 'lucide';
+  /** Roles required to show the item (omit / empty = always shown). */
+  requiredRoles?: Role[];
+  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
+  disabled?: () => boolean;
+  onClick: () => void;
 }
 
 /**
- * A {@link SidePanelForm} that may expose `requiredRoles` to gate its Save action, and optional
- * {@link SidePanelFooterAction}s rendered before Save. Forms declare these independently (not on the
- * base), so the host reads them through this structural augmentation rather than forcing every form
- * to `override` a base member.
+ * A dropdown of secondary actions rendered in the footer before Save. Use instead of a flat
+ * {@link SidePanelFooterAction}[] when several actions would crowd the footer — the container
+ * renders one `dots-vertical` icon-button trigger opening a `tn-menu` of the {@link items}.
+ */
+export interface SidePanelFooterMenu {
+  /** Trigger button accessible name / tooltip (untranslated marker). */
+  label: string;
+  testId: TnTestIdValue;
+  items: SidePanelFooterMenuItem[];
+}
+
+/**
+ * A {@link SidePanelForm} that may expose `requiredRoles` to gate its Save action, plus optional
+ * {@link SidePanelFooterAction}s and/or a {@link SidePanelFooterMenu} rendered before Save. Forms
+ * declare these independently (not on the base), so the host reads them through this structural
+ * augmentation rather than forcing every form to `override` a base member.
  */
 export type HostedSidePanelForm = SidePanelForm & {
   readonly requiredRoles?: Role[];
   readonly footerActions?: SidePanelFooterAction[];
+  readonly footerMenu?: SidePanelFooterMenu;
 };
 
 /**
@@ -93,6 +94,7 @@ export type HostedSidePanelForm = SidePanelForm & {
     TnSidePanelComponent,
     TnSidePanelActionDirective,
     TnButtonComponent,
+    TnIconButtonComponent,
     TnMenuComponent,
     TnMenuItemComponent,
     TnMenuTriggerDirective,

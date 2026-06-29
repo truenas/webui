@@ -95,8 +95,8 @@ describe('SshKeypairFormComponent', () => {
         expect(await (await getInput('public_key')).getValue()).toBe('Generated public key');
       });
 
-      const getDownloadItem = (testId: string): SidePanelFooterMenuItem => spectator.component.footerActions[0]
-        .menuItems!.find((item) => item.testId === testId)!;
+      const getDownloadItem = (testId: string): SidePanelFooterMenuItem => spectator.component.footerMenu
+        .items.find((item) => item.testId === testId)!;
 
       it('enables and runs the Download Public Key menu item when name and public key are set', async () => {
         const item = getDownloadItem('download-public-key');

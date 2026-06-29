@@ -22,7 +22,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import {
-  SidePanelFooterAction,
+  SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -86,29 +86,27 @@ export class SshKeypairFormComponent extends SidePanelForm implements OnInit {
   readonly keyInstructions = helptextSshKeypairs.keyInstructions;
 
   /**
-   * A single "Download" dropdown rendered in the `<tn-side-panel>` footer beside Save. Each item is
-   * enabled only once the keypair has a name and the corresponding key is present.
+   * A "Download" dropdown rendered as a 3-dots icon-button in the `<tn-side-panel>` footer beside
+   * Save. Each item is enabled only once the keypair has a name and the corresponding key is present.
    */
-  readonly footerActions: SidePanelFooterAction[] = [
-    {
-      label: T('Download'),
-      testId: 'download-actions',
-      menuItems: [
-        {
-          label: T('Download Private Key'),
-          testId: 'download-private-key',
-          disabled: () => !this.canDownloadKey('private_key'),
-          onClick: () => this.onDownloadKey('private_key'),
-        },
-        {
-          label: T('Download Public Key'),
-          testId: 'download-public-key',
-          disabled: () => !this.canDownloadKey('public_key'),
-          onClick: () => this.onDownloadKey('public_key'),
-        },
-      ],
-    },
-  ];
+  readonly footerMenu: SidePanelFooterMenu = {
+    label: T('Download'),
+    testId: 'download-actions',
+    items: [
+      {
+        label: T('Download Private Key'),
+        testId: 'download-private-key',
+        disabled: () => !this.canDownloadKey('private_key'),
+        onClick: () => this.onDownloadKey('private_key'),
+      },
+      {
+        label: T('Download Public Key'),
+        testId: 'download-public-key',
+        disabled: () => !this.canDownloadKey('public_key'),
+        onClick: () => this.onDownloadKey('public_key'),
+      },
+    ],
+  };
 
   ngOnInit(): void {
     this.editingKeypair = this.editKeypair();
