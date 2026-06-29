@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject, output, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -24,7 +24,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -62,9 +61,12 @@ export class GuiFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
-  readonly slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
+
+  readonly closed = output<boolean>();
+
+  private readonly ixForm = viewChild(IxFormComponent);
 
   protected InputType = InputType;
 
@@ -118,6 +120,18 @@ export class GuiFormComponent implements OnInit {
         this.formGroup.controls.usage_collection.disable();
       }
     });
+  }
+
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.ixForm()?.hasUnsavedChanges() ?? false;
   }
 
   protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {

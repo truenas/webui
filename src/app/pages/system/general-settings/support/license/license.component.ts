@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, inject, output, viewChild,
+} from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
@@ -11,7 +13,6 @@ import {
   IxFormComponent,
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -34,10 +35,11 @@ export class LicenseComponent {
   private translate = inject(TranslateService);
   private window = inject<Window>(WINDOW);
 
-  readonly slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  readonly closed = output<boolean>();
 
-  protected readonly requiredRoles = [Role.FullAdmin];
-  protected readonly title = helptext.updateLicense.licensePlaceholder;
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  readonly requiredRoles = [Role.FullAdmin];
 
   protected form = this.fb.nonNullable.group({
     license: ['', Validators.required],
@@ -47,6 +49,18 @@ export class LicenseComponent {
     fcName: 'license',
     label: helptext.updateLicense.licensePlaceholder,
   };
+
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.ixForm()?.hasUnsavedChanges() ?? false;
+  }
 
   protected handleSubmit = (event: FormSubmitEvent<{ license: string }>): SubmitResult => ({
     request$: this.api.call('truenas.license.upload', [event.allValues.license]),

@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject, input, output, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -33,7 +33,6 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -71,13 +70,18 @@ export class EmailFormComponent implements OnInit {
   private validatorService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
   private store$ = inject(Store<AppState>);
-  readonly slideInRef = inject<SlideInRef<MailConfig | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
+
+  readonly config = input<MailConfig | undefined>(undefined);
+
+  readonly closed = output<boolean>();
+
+  private readonly ixForm = viewChild(IxFormComponent);
 
   private productType = toSignal(this.store$.select(selectProductType));
 
   protected readonly InputType = InputType;
-  protected readonly requiredRoles = [Role.AlertWrite];
+  readonly requiredRoles = [Role.AlertWrite];
   protected readonly requiredRolesMailWrite = [Role.MailWrite];
 
   sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
@@ -163,8 +167,6 @@ export class EmailFormComponent implements OnInit {
   }
 
   constructor() {
-    this.emailConfig = this.slideInRef.getData();
-
     this.sendMethodControl.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
@@ -196,6 +198,18 @@ export class EmailFormComponent implements OnInit {
     } else {
       this.loadEmailConfig();
     }
+  }
+
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.ixForm()?.hasUnsavedChanges() ?? false;
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => ({

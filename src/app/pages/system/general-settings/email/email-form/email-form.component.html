@@ -5,6 +5,7 @@
   [requiredRoles]="requiredRoles"
   [extraDisabled]="extraDisabled()"
   [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
 >
   <tn-form-section>
     <ix-radio-group

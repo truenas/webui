@@ -5,7 +5,7 @@ import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { MailConfig, MailOauthConfig } from 'app/interfaces/mail-config.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { EmailCardComponent } from 'app/pages/system/general-settings/email/email-card/email-card.component';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
@@ -32,7 +32,7 @@ describe('EmailCardComponent with SMTP', () => {
       mockApi([
         mockCall('mail.config', fakeEmailConfig),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -57,8 +57,8 @@ describe('EmailCardComponent with SMTP', () => {
     const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(EmailFormComponent, { data: fakeEmailConfig });
+    expect(spectator.inject(FormSidePanelService).open)
+      .toHaveBeenCalledWith(EmailFormComponent, { title: 'Email Options', inputs: { config: fakeEmailConfig } });
   });
 });
 
@@ -73,8 +73,8 @@ describe('EmailCardComponent with Gmail OAuth', () => {
           oauth: { client_id: '123', provider: 'gmail' } as MailOauthConfig,
         }),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => ({ slideInClosed$: SlideInResult.empty() })),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });
@@ -105,7 +105,7 @@ describe('EmailCardComponent with Outlook OAuth', () => {
           oauth: { client_id: '123', provider: 'outlook' } as MailOauthConfig,
         }),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],

@@ -1,11 +1,10 @@
 <ix-form
   [formGroup]="form"
-  [title]="helptext.proactive.title | translate"
   [externalLoading]="dataLoading()"
-  [requiredRoles]="requiredRoles"
   [extraDisabled]="isSupportUnavailable()"
   [initialFormSnapshot]="initialFormSnapshot()"
   [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
 >
   @if (isSupportUnavailable()) {
     <ix-warning [message]="helptext.proactive.unavailableMessage"></ix-warning>

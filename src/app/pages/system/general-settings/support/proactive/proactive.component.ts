@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, output, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -19,7 +19,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -46,9 +45,11 @@ export class ProactiveComponent implements OnInit {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  readonly slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  readonly closed = output<boolean>();
 
-  protected readonly requiredRoles = [Role.SupportWrite];
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  readonly requiredRoles = [Role.SupportWrite];
   protected dataLoading = signal(false);
   protected isSupportUnavailable = signal(false);
   protected readonly initialFormSnapshot = signal<Partial<SupportConfigUpdate> | null>(null);
@@ -69,6 +70,18 @@ export class ProactiveComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadConfig();
+  }
+
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.ixForm()?.hasUnsavedChanges() ?? false;
   }
 
   protected handleSubmit = (event: FormSubmitEvent<SupportConfigUpdate>): SubmitResult => ({

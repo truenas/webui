@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
@@ -36,7 +36,7 @@ describe('GuiCardComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -68,6 +68,8 @@ describe('GuiCardComponent', () => {
     const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GuiFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(GuiFormComponent, {
+      title: 'GUI Settings',
+    });
   });
 });

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Type, computed, inject,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -15,7 +17,8 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { guiCardElements } from 'app/pages/system/general-settings/gui/gui-card/gui-card.elements';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { AppState } from 'app/store';
@@ -38,7 +41,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 })
 export class GuiCardComponent {
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
 
@@ -68,7 +71,14 @@ export class GuiCardComponent {
     };
   });
 
+  // GuiFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges) the panel reads; cast past the nominal base type, mirroring how
+  // FormSidePanelService.openForm casts the renderer.
+  private readonly guiForm = GuiFormComponent as unknown as Type<SidePanelForm>;
+
   openSettings(): void {
-    this.slideIn.open(GuiFormComponent);
+    this.formPanel.open(this.guiForm, {
+      title: this.translate.instant('GUI Settings'),
+    });
   }
 }

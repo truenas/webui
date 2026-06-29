@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, Type, computed, OnInit, signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -13,7 +15,8 @@ import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-s
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
@@ -34,7 +37,7 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
   ],
 })
 export class EmailCardComponent implements OnInit {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -69,8 +72,13 @@ export class EmailCardComponent implements OnInit {
       .subscribe((state) => this.emailConfigState.set(state));
   }
 
+  private readonly emailForm = EmailFormComponent as unknown as Type<SidePanelForm>;
+
   protected openEmailSettings(): void {
-    this.slideIn.open(EmailFormComponent, { data: this.emailConfigState().value })
+    this.formPanel.open(this.emailForm, {
+      title: this.translate.instant('Email Options'),
+      inputs: { config: this.emailConfigState().value },
+    })
       .onSuccess(() => this.loadEmailConfig(), this.destroyRef);
   }
 }

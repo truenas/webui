@@ -29,7 +29,7 @@ import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
@@ -82,7 +82,7 @@ describe('SupportCardComponent', () => {
       mockAuth(),
       mockProvider(TnDialog),
       mockProvider(DialogService),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(LocaleService, {
@@ -178,18 +178,18 @@ describe('SupportCardComponent', () => {
       });
 
       it('has Enable button that opens ProactiveComponent', async () => {
-        const slideIn = spectator.inject(SlideIn);
-        jest.spyOn(slideIn, 'open');
+        const formPanel = spectator.inject(FormSidePanelService);
+        jest.spyOn(formPanel, 'open');
 
         const enableButton = await loader.getHarness(TnButtonHarness.with({ label: 'Enable' }));
         await enableButton.click();
 
-        expect(slideIn.open).toHaveBeenCalledWith(ProactiveComponent, { wide: true });
+        expect(formPanel.open).toHaveBeenCalledWith(ProactiveComponent, { title: 'Proactive Support', wide: true });
       });
 
       it('re-checks proactive support availability after the slide-in closes', async () => {
-        const slideIn = spectator.inject(SlideIn);
-        jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.cancel());
+        const formPanel = spectator.inject(FormSidePanelService);
+        jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.cancel());
 
         const api = spectator.inject(ApiService);
         const apiCallSpy = jest.spyOn(api, 'call');
@@ -264,13 +264,13 @@ describe('SupportCardComponent', () => {
       });
 
       it('opens LicenseComponent when Update License button is clicked', async () => {
-        const slideIn = spectator.inject(SlideIn);
-        jest.spyOn(slideIn, 'open');
+        const formPanel = spectator.inject(FormSidePanelService);
+        jest.spyOn(formPanel, 'open');
 
         const updateLicenseButton = await loader.getHarness(TnButtonHarness.with({ label: 'Update License' }));
         await updateLicenseButton.click();
 
-        expect(slideIn.open).toHaveBeenCalledWith(LicenseComponent);
+        expect(formPanel.open).toHaveBeenCalledWith(LicenseComponent, { title: 'License' });
       });
     });
   });

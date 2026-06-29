@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
@@ -29,7 +29,8 @@ import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -79,7 +80,7 @@ export class SupportCardComponent implements OnInit {
   protected api = inject(ApiService);
   private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
@@ -175,8 +176,16 @@ export class SupportCardComponent implements OnInit {
       && daysLeft <= this.expirationWarningDays;
   }
 
+  // LicenseComponent / ProactiveComponent structurally provide the host surface
+  // (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the
+  // nominal base type, mirroring how FormSidePanelService.openForm casts the renderer.
+  private readonly licenseForm = LicenseComponent as unknown as Type<SidePanelForm>;
+  private readonly proactiveForm = ProactiveComponent as unknown as Type<SidePanelForm>;
+
   updateLicense(): void {
-    this.slideIn.open(LicenseComponent);
+    this.formPanel.open(this.licenseForm, {
+      title: this.translate.instant(helptext.updateLicense.licensePlaceholder),
+    });
   }
 
   feedbackDialog(): void {
@@ -184,7 +193,10 @@ export class SupportCardComponent implements OnInit {
   }
 
   openProactive(): void {
-    this.slideIn.open(ProactiveComponent, { wide: true })
+    this.formPanel.open(this.proactiveForm, {
+      title: this.translate.instant(helptext.proactive.title),
+      wide: true,
+    })
       .onClose(() => this.checkProactiveSupportAvailability(), this.destroyRef);
   }
 

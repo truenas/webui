@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
@@ -16,7 +15,6 @@ import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
@@ -51,12 +49,6 @@ describe('GuiFormComponent', () => {
     ui_certificate: 1,
   } as SystemGeneralConfig;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: GuiFormComponent,
     imports: [
@@ -72,7 +64,6 @@ describe('GuiFormComponent', () => {
           enable_gpos_stig: false,
         } as SystemSecurityConfig),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(WebSocketHandlerService),
       mockProvider(WebSocketStatusService),
       mockProvider(DialogService, {
@@ -137,8 +128,7 @@ describe('GuiFormComponent', () => {
       await (await getCheckbox('ui_consolemsg')).check();
       await (await getCheckbox('usage_collection')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('system.general.update', [
         {
@@ -158,8 +148,7 @@ describe('GuiFormComponent', () => {
 
       await (await getCheckbox('ui_httpsredirect')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const dialog = spectator.inject(DialogService);
       expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -175,8 +164,7 @@ describe('GuiFormComponent', () => {
 
       await (await getCheckbox('ui_httpsredirect')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const dialog = spectator.inject(DialogService);
       expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -212,8 +200,7 @@ describe('GuiFormComponent', () => {
     it('does not include usage_collection in update payload', async () => {
       await (await getCheckbox('ui_httpsredirect')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const dialog = spectator.inject(DialogService);
       expect(dialog.confirm).toHaveBeenCalledWith(expect.not.objectContaining({

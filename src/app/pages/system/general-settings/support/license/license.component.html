@@ -1,9 +1,8 @@
 <ix-form
   [formGroup]="form"
-  [title]="title"
-  [requiredRoles]="requiredRoles"
   [suppressSuccessSnackbar]="true"
   [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
 >
   <tn-form-section>
     <tn-form-field

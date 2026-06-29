@@ -21,7 +21,6 @@ import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-but
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -55,12 +54,6 @@ describe('EmailFormComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-
-  const slideInRef: SlideInRef<MailConfig | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => fakeEmailConfig),
-  };
 
   const createComponent = createComponentFactory({
     component: EmailFormComponent,
@@ -116,13 +109,12 @@ describe('EmailFormComponent', () => {
         }),
         removeEventListener: jest.fn(),
       }),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
   describe('form checks', () => {
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({ props: { config: fakeEmailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
@@ -173,13 +165,12 @@ describe('EmailFormComponent', () => {
     it('enables Save button after switching from SMTP to Gmail and completing OAuth', async () => {
       await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
 
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
 
     it('saves Gmail Oauth config when user authorizes via Gmail and saves the form', async () => {
@@ -190,8 +181,7 @@ describe('EmailFormComponent', () => {
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
@@ -263,9 +253,9 @@ describe('EmailFormComponent', () => {
     it('disables Save button when no From Email is provided for Outlook OAuth', async () => {
       await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
       spectator.component.form.controls.fromemail.setValue('');
+      spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('calls removeEventListener when outlook oAuth callback is called', async () => {
@@ -286,8 +276,7 @@ describe('EmailFormComponent', () => {
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
       await logInButton.click();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
@@ -346,7 +335,7 @@ describe('EmailFormComponent', () => {
 
   describe('SMTP config', () => {
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({ props: { config: fakeEmailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
@@ -360,8 +349,7 @@ describe('EmailFormComponent', () => {
       await (await getSelect('security')).selectOption('SSL (Implicit TLS)');
       await (await getCheckbox('smtp')).uncheck();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
@@ -430,11 +418,7 @@ describe('EmailFormComponent', () => {
     };
 
     beforeEach(async () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => fakeGmailEmailConfig }),
-        ],
-      });
+      spectator = createComponent({ props: { config: fakeGmailEmailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
@@ -446,9 +430,8 @@ describe('EmailFormComponent', () => {
       expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
     });
 
-    it('has Save button enabled when Gmail config is loaded', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
+    it('has Save button enabled when Gmail config is loaded', () => {
+      expect(spectator.component.canSubmit()).toBe(true);
     });
   });
 
@@ -465,12 +448,7 @@ describe('EmailFormComponent', () => {
       } as MailConfig;
 
       beforeEach(async () => {
-        spectator = createComponent({
-          detectChanges: false,
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
-          ],
-        });
+        spectator = createComponent({ detectChanges: false });
         spectator.inject(MockApiService).mockCall('mail.config', fakeGmailConfig);
         spectator.detectChanges();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -484,19 +462,13 @@ describe('EmailFormComponent', () => {
         expect(await (await getInput('fromname')).getValue()).toBe('John Smith');
         expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-        expect(await saveButton.isDisabled()).toBe(false);
+        expect(spectator.component.canSubmit()).toBe(true);
       });
     });
 
     describe('with SMTP config', () => {
       beforeEach(async () => {
-        spectator = createComponent({
-          detectChanges: false,
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
-          ],
-        });
+        spectator = createComponent({ detectChanges: false });
         spectator.inject(MockApiService).mockCall('mail.config', fakeEmailConfig);
         spectator.detectChanges();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -521,8 +493,7 @@ describe('EmailFormComponent', () => {
         await (await getInput('fromemail')).setValue('newfrom@ixsystems.com');
         await (await getInput('fromname')).setValue('Jeremy');
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-        await saveButton.click();
+        spectator.component.submit();
 
         expect(api.call).toHaveBeenCalledWith('mail.update', [{
           fromemail: 'newfrom@ixsystems.com',
@@ -541,12 +512,8 @@ describe('EmailFormComponent', () => {
 
   describe('opened from alerts panel with API error', () => {
     it('shows error modal and keeps form open when mail.config request fails', () => {
-      spectator = createComponent({
-        detectChanges: false,
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
-        ],
-      });
+      spectator = createComponent({ detectChanges: false });
+      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       when(spectator.inject(MockApiService).call)
         .calledWith('mail.config')
@@ -554,7 +521,7 @@ describe('EmailFormComponent', () => {
 
       spectator.detectChanges();
 
-      expect(spectator.inject(SlideInRef).close).not.toHaveBeenCalled();
+      expect(closeSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -570,11 +537,7 @@ describe('EmailFormComponent', () => {
     };
 
     beforeEach(async () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => fakeOutlookEmailConfig }),
-        ],
-      });
+      spectator = createComponent({ props: { config: fakeOutlookEmailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
