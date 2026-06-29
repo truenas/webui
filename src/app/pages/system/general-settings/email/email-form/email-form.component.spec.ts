@@ -123,7 +123,7 @@ describe('EmailFormComponent', () => {
     it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
       spectator.inject(MockApiService).mockCall('mail.local_administrator_email', null);
 
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Send Test Mail' }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: /Send Test Mail/ }));
       await button.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.local_administrator_email');
@@ -204,7 +204,7 @@ describe('EmailFormComponent', () => {
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
 
-      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: 'Send Test Mail' }));
+      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: /Send Test Mail/ }));
       await sendTestEmailButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -302,7 +302,7 @@ describe('EmailFormComponent', () => {
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
       await logInButton.click();
 
-      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: 'Send Test Mail' }));
+      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: /Send Test Mail/ }));
       await sendTestEmailButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -377,7 +377,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('sends test email with SMTP settings when SMTP form is used and Send Test Mail is pressed', async () => {
-      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: 'Send Test Mail' }));
+      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: /Send Test Mail/ }));
       await sendTestEmailButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
