@@ -121,6 +121,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
+      await spectator.fixture.whenStable();
       spectator.inject(MockApiService).mockCall('mail.local_administrator_email', null);
 
       const button = await loader.getHarness(TnButtonHarness.with({ label: /Send Test Mail/ }));
@@ -199,6 +200,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('sends test email with Gmail Oauth config when Gmail used and Send Test Mail is pressed', async () => {
+      await spectator.fixture.whenStable();
       await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
@@ -297,6 +299,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('sends test email with Outlook Oauth config when Outlook used and Send Test Mail is pressed', async () => {
+      await spectator.fixture.whenStable();
       await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
@@ -377,6 +380,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('sends test email with SMTP settings when SMTP form is used and Send Test Mail is pressed', async () => {
+      await spectator.fixture.whenStable();
       const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: /Send Test Mail/ }));
       await sendTestEmailButton.click();
 
