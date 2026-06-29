@@ -58,6 +58,7 @@ import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/u
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { LicenseService } from 'app/services/license.service';
 
 // volsize values round-trip through the file-size formatter, so a re-saved
 // edit can drift by a few bytes. Treat anything within 0.1% of the original
@@ -94,6 +95,7 @@ export class ZvolFormComponent implements OnInit {
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
+  private licenseService = inject(LicenseService);
   slideInRef = inject<SlideInRef<{
     isNew: boolean;
     parentOrZvolId: string;
@@ -128,6 +130,7 @@ export class ZvolFormComponent implements OnInit {
   private inheritedReadonlyValue: string;
   protected volsizeReadonlyWarning: string | null = null;
   private originalVolsize: number | null = null;
+  protected hasDeduplication = false;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -211,6 +214,8 @@ export class ZvolFormComponent implements OnInit {
     this.isNew = this.slideInRef.getData().isNew;
     this.parentOrZvolId = this.slideInRef.getData().parentOrZvolId;
 
+    this.checkIfDedupIsSupported();
+
     // Set up conditional validation for special_small_block_size_custom
     this.form.controls.special_small_block_size.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -245,6 +250,28 @@ export class ZvolFormComponent implements OnInit {
 
   protected getOptionLabel(options: Option[], value: unknown): string {
     return options.find((option) => option.value === value)?.label ?? String(value ?? '');
+  }
+
+  private checkIfDedupIsSupported(): void {
+    this.licenseService.hasDedup$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((hasDedup) => {
+      this.hasDeduplication = hasDedup;
+      this.updateDeduplicationControl();
+      this.cdr.markForCheck();
+    });
+  }
+
+  // When deduplication is hidden, the control still carries `Validators.required`,
+  // which would silently block submission. Drop the validator while hidden (the
+  // value is left untouched: setupForm already resolves it to `inherit`/the
+  // parent value, which the payload builders strip or diff away).
+  private updateDeduplicationControl(): void {
+    const control = this.form.controls.deduplication;
+    if (this.hasDeduplication) {
+      control.setValidators([Validators.required]);
+    } else {
+      control.clearValidators();
+    }
+    control.updateValueAndValidity({ emitEvent: false });
   }
 
   private buildCreateResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult {
@@ -489,6 +516,7 @@ export class ZvolFormComponent implements OnInit {
           if (parentOrZvol?.type === DatasetType.Filesystem) {
             this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
+            this.updateDeduplicationControl();
             if (!this.isNew) {
               this.formSnapshot.set(this.form.getRawValue());
             }
@@ -512,6 +540,7 @@ export class ZvolFormComponent implements OnInit {
                 this.inheritDeduplication(parentOrZvol, parentDataset);
                 this.inheritSnapdev(parentOrZvol, parentDataset);
                 this.inheritSpecialSmallBlockSize(parentDataset);
+                this.updateDeduplicationControl();
 
                 if (!this.isNew) {
                   this.formSnapshot.set(this.form.getRawValue());
