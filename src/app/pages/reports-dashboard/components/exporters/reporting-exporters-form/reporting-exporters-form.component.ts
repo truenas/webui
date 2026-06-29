@@ -44,7 +44,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 @Component({
   selector: 'ix-reporting-exporters-form',
   templateUrl: './reporting-exporters-form.component.html',
-  styleUrls: ['./reporting-exporters-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxFormComponent,
