@@ -1,24 +1,25 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
-import { forkJoin, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { TnCheckboxComponent, TnFormFieldComponent, TnInputComponent } from '@truenas/ui-components';
+import { forkJoin } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { SupportConfig } from 'app/modules/feedback/interfaces/file-ticket.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { SupportConfig, SupportConfigUpdate } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import {
+  FormSubmitEvent,
+  IxFormComponent,
+  SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -28,13 +29,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./proactive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
+    IxFormComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     WarningComponent,
     TranslateModule,
   ],
@@ -43,18 +43,16 @@ export class ProactiveComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.SupportWrite];
+  readonly slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
-  protected isLoading = signal(false);
-  title = helptext.proactive.title;
+  protected readonly requiredRoles = [Role.SupportWrite];
+  protected dataLoading = signal(false);
   protected isSupportUnavailable = signal(false);
+  protected readonly initialFormSnapshot = signal<Partial<SupportConfigUpdate> | null>(null);
+
   form = this.formBuilder.group({
     name: ['', [Validators.required]],
     title: ['', [Validators.required]],
@@ -69,41 +67,18 @@ export class ProactiveComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
-
   ngOnInit(): void {
     this.loadConfig();
   }
 
-  protected onSubmit(): void {
-    const values = this.form.value;
-    this.isLoading.set(true);
-
-    this.api.call('support.update', [values])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
-
-          this.snackbar.success(
-            this.translate.instant(helptext.proactive.dialogMessage),
-          );
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
-        },
-      });
-  }
+  protected handleSubmit = (event: FormSubmitEvent<SupportConfigUpdate>): SubmitResult => ({
+    request$: this.api.call('support.update', [event.allValues]),
+    successMessage: this.translate.instant(helptext.proactive.dialogMessage),
+    closeWith: () => true,
+  });
 
   private loadConfig(): void {
-    this.isLoading.set(true);
+    this.dataLoading.set(true);
 
     forkJoin([
       this.api.call('support.config'),
@@ -113,7 +88,7 @@ export class ProactiveComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ([config, isAvailable, isEnabled]) => {
-          this.isLoading.set(false);
+          this.dataLoading.set(false);
 
           if (!isAvailable) {
             this.supportUnavailable();
@@ -123,9 +98,8 @@ export class ProactiveComponent implements OnInit {
           this.patchFormValues(config, isEnabled);
         },
         error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.form.disable();
-          this.cdr.markForCheck();
+          this.dataLoading.set(false);
+          this.supportUnavailable();
           this.errorHandler.showErrorModal(error);
         },
       });
@@ -149,5 +123,6 @@ export class ProactiveComponent implements OnInit {
     updateValues.enabled = isEnabled;
 
     this.form.patchValue(updateValues);
+    this.initialFormSnapshot.set(this.form.getRawValue() as Partial<SupportConfigUpdate>);
   }
 }

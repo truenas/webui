@@ -1,18 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SupportConfig } from 'app/modules/feedback/interfaces/file-ticket.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -21,13 +20,19 @@ describe('ProactiveComponent', () => {
   let spectator: Spectator<ProactiveComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  let form: IxFormHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn((): undefined => undefined),
   };
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const createComponent = createComponentFactory({
     component: ProactiveComponent,
@@ -52,46 +57,41 @@ describe('ProactiveComponent', () => {
         mockCall('support.is_available', true),
         mockCall('support.is_available_and_enabled', true),
       ]),
-      mockProvider(FormErrorHandlerService),
-      mockProvider(SlideIn),
       mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   it('loads current proactive settings and shows them in the form', async () => {
     expect(api.call).toHaveBeenCalledWith('support.config');
-    const value = await form.getValues();
-    expect(value).toEqual({
-      Name: 'Zepp Karlsen',
-      Email: 'test-user@test-user.com',
-      Title: 'Cannot connect',
-      'Enable TrueNAS Proactive Support': true,
-      'Phone Number': '+888888888',
-      'Secondary Email': 'test-user@test-user.com',
-      'Secondary Name': 'Zepp Karlsen',
-      'Secondary Phone Number': '+999999999',
-      'Secondary Title': 'Cannot connect',
-    });
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    expect(await (await getInput('name')).getValue()).toBe('Zepp Karlsen');
+    expect(await (await getInput('title')).getValue()).toBe('Cannot connect');
+    expect(await (await getInput('email')).getValue()).toBe('test-user@test-user.com');
+    expect(await (await getInput('phone')).getValue()).toBe('+888888888');
+    expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
+    expect(await (await getInput('secondary_name')).getValue()).toBe('Zepp Karlsen');
+    expect(await (await getInput('secondary_title')).getValue()).toBe('Cannot connect');
+    expect(await (await getInput('secondary_email')).getValue()).toBe('test-user@test-user.com');
+    expect(await (await getInput('secondary_phone')).getValue()).toBe('+999999999');
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     expect(await saveButton.isDisabled()).toBeFalsy();
   });
 
   it('saves support config when form is submitted', async () => {
-    const sendValue = {
-      Name: 'Jhon Smith',
-      'Phone Number': '+777-77-77-77',
-    };
-    await form.fillForm(sendValue);
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await (await getInput('name')).setValue('Jhon Smith');
+    await (await getInput('phone')).setValue('+777-77-77-77');
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
+
     expect(api.call).toHaveBeenCalledWith('support.update', [{
       enabled: true,
       name: 'Jhon Smith',
@@ -109,7 +109,8 @@ describe('ProactiveComponent', () => {
   it('disables form when support is not available', async () => {
     spectator.inject(MockApiService).mockCall('support.is_available', false);
     spectator.component.ngOnInit();
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    spectator.detectChanges();
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
 
     expect(await saveButton.isDisabled()).toBeTruthy();
   });
