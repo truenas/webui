@@ -1,15 +1,14 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatDivider } from '@angular/material/divider';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialog, TnDividerComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
+  tnIconMarker,
+} from '@truenas/ui-components';
 import { sortBy } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
@@ -20,15 +19,13 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
   templateUrl: './add-port-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnIconComponent,
-    MatButton,
-    MatMenu,
-    MatMenuItem,
-    TestDirective,
+    TnButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
+    TnDividerComponent,
     TranslateModule,
-    MatMenuTrigger,
     PortDescriptionComponent,
-    MatDivider,
     RequiresRolesDirective,
   ],
 })
@@ -52,6 +49,7 @@ export class AddPortMenuComponent {
   });
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+  protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
   protected openPortForm(): void {
     this.slideIn

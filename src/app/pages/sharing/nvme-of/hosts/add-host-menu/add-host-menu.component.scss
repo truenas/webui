@@ -12,9 +12,3 @@
     font-size: 0.875rem;
   }
 }
-
-:host ::ng-deep .mat-mdc-menu-item {
-  min-height: 56px;
-  height: auto;
-  white-space: normal;
-}
