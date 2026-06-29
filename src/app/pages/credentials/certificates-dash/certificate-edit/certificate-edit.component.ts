@@ -162,12 +162,14 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
   }
 
   onCreateAcmePressed(): void {
-    // Close this panel and open the ACME form for the same CSR.
-    this.close(false);
+    // Open the ACME form for the same CSR (stacked over this panel). On success, close
+    // this edit panel with a saved result so the opener's `onSuccess` fires and the
+    // dashboard reloads — matching the legacy SlideIn `swap()`, which preserved the
+    // original opener's success chain. On cancel, this panel stays open underneath.
     this.formPanel.open(CertificateAcmeAddComponent, {
       title: this.translate.instant('Create ACME Certificate'),
       inputs: { csr: this.certificate },
-    });
+    }).onSuccess(() => this.close(true), this.destroyRef);
   }
 
   protected onSubmit(): void {

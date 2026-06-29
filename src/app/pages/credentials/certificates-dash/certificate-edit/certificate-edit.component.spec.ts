@@ -13,6 +13,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
@@ -199,16 +200,40 @@ describe('CertificateEditComponent', () => {
       });
     });
 
-    it('opens the ACME certificate form for the CSR when Create ACME Certificate is pressed', () => {
+    it('opens the ACME form for the CSR and closes with a saved result once it succeeds', () => {
+      const formPanel = spectator.inject(FormSidePanelService);
+      // Drive the reopened ACME panel's success synchronously so we can assert the
+      // edit panel closes with `true` — which is what fires the opener's refresh.
+      (formPanel.open as jest.Mock).mockReturnValue({
+        onSuccess: (callback: () => void) => callback(),
+      } as SlideInResult<boolean>);
+      const closeSpy = jest.fn();
+      spectator.component.closed.subscribe(closeSpy);
+
       clickFooterMenuItem('create-acme-certificate');
 
-      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      expect(formPanel.open).toHaveBeenCalledWith(
         CertificateAcmeAddComponent,
         {
           title: 'Create ACME Certificate',
           inputs: { csr: certificateCsr },
         },
       );
+      expect(closeSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('keeps the edit panel open when the ACME form is cancelled', () => {
+      const formPanel = spectator.inject(FormSidePanelService);
+      // `onSuccess` never invokes its callback on cancel.
+      (formPanel.open as jest.Mock).mockReturnValue({
+        onSuccess: () => {},
+      } as SlideInResult<boolean>);
+      const closeSpy = jest.fn();
+      spectator.component.closed.subscribe(closeSpy);
+
+      clickFooterMenuItem('create-acme-certificate');
+
+      expect(closeSpy).not.toHaveBeenCalled();
     });
 
     it('exposes the View/Download and Create ACME actions as a footer menu for the tn-side-panel host', () => {
