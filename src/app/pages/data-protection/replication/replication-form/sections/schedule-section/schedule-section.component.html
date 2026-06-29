@@ -1,14 +1,18 @@
-<ix-fieldset [title]="'Replication Schedule' | translate" [formGroup]="form">
-  <ix-checkbox
-    formControlName="auto"
-    [label]="'Run Automatically' | translate"
-    [tooltip]="helptext.autoTooltip | translate"
-  ></ix-checkbox>
-  <ix-checkbox
-    formControlName="schedule"
-    [label]="'Schedule' | translate"
-    [tooltip]="helptext.scheduleTooltip | translate"
-  ></ix-checkbox>
+<tn-form-section [heading]="'Replication Schedule' | translate" [formGroup]="form">
+  <tn-form-field [tooltip]="helptext.autoTooltip | translate">
+    <tn-checkbox
+      testId="auto"
+      formControlName="auto"
+      [label]="'Run Automatically' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
+  <tn-form-field [tooltip]="helptext.scheduleTooltip | translate">
+    <tn-checkbox
+      testId="schedule"
+      formControlName="schedule"
+      [label]="'Schedule' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
   @if (form.value.schedule) {
     <ix-scheduler
       formControlName="schedule_picker"
@@ -16,27 +20,31 @@
       [tooltip]="helptext.schedulePickerTooltip | translate"
     ></ix-scheduler>
     @if (form.value.schedule_picker === CronPresetValue.Hourly) {
-      <ix-select
-        formControlName="schedule_begin"
-        [label]="'Begin' | translate"
-        [options]="timeOptions$"
-        [tooltip]="helptext.scheduleBeginTooltip | translate"
-      ></ix-select>
+      <tn-form-field [label]="'Begin' | translate" [tooltip]="helptext.scheduleBeginTooltip | translate">
+        <tn-select
+          testId="schedule-begin"
+          formControlName="schedule_begin"
+          [options]="(timeOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     }
     @if (form.value.schedule_picker === CronPresetValue.Hourly) {
-      <ix-select
-        formControlName="schedule_end"
-        [label]="'End' | translate"
-        [options]="timeOptions$"
-        [tooltip]="helptext.scheduleEndTooltip | translate"
-      ></ix-select>
+      <tn-form-field [label]="'End' | translate" [tooltip]="helptext.scheduleEndTooltip | translate">
+        <tn-select
+          testId="schedule-end"
+          formControlName="schedule_end"
+          [options]="(timeOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     }
   }
   @if (form.value.schedule) {
-    <ix-checkbox
-      formControlName="only_matching_schedule"
-      [label]="'Only Replicate Snapshots Matching Schedule' | translate"
-      [tooltip]="helptext.onlyMatchingScheduleTooltip | translate"
-    ></ix-checkbox>
+    <tn-form-field [tooltip]="helptext.onlyMatchingScheduleTooltip | translate">
+      <tn-checkbox
+        testId="only-matching-schedule"
+        formControlName="only_matching_schedule"
+        [label]="'Only Replicate Snapshots Matching Schedule' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
-</ix-fieldset>
+</tn-form-section>

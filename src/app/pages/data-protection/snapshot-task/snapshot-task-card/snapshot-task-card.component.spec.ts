@@ -17,7 +17,7 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -103,7 +103,7 @@ describe('SnapshotTaskCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
@@ -142,9 +142,10 @@ describe('SnapshotTaskCardComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: /^Edit$/ });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
-      data: snapshotTasks[0],
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
+      title: 'Edit Periodic Snapshot Task',
       wide: true,
+      inputs: { taskToEdit: snapshotTasks[0] },
     });
   });
 
@@ -152,9 +153,10 @@ describe('SnapshotTaskCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
-      data: undefined,
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
+      title: 'Add Periodic Snapshot Task',
       wide: true,
+      inputs: { taskToEdit: undefined },
     });
   });
 

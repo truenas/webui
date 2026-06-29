@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, inject,
+  ChangeDetectionStrategy, Component, Type, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -37,6 +37,8 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { convertStringToId } from 'app/modules/ix-table/utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -91,6 +93,7 @@ export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi>
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private taskService = inject(TaskService);
   private snackbar = inject(SnackbarService);
   private tnDialog = inject(TnDialog);
@@ -178,13 +181,25 @@ export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi>
   }
 
   protected onAdd(): void {
-    this.slideIn.open(CloudSyncWizardComponent, { wide: true })
-      .onSuccess(() => this.reload(), this.destroyRef);
+    this.formPanel.open(this.cloudSyncWizard, {
+      title: this.translate.instant('Cloud Sync Task Wizard'),
+      wide: true,
+      footerless: true,
+    }).onSuccess(() => this.reload(), this.destroyRef);
   }
 
+  // CloudSyncFormComponent / CloudSyncWizardComponent structurally provide the host surface the panel
+  // reads (closed / hasUnsavedChanges, and for the form canSubmit/submit); cast past the nominal base.
+  // The wizard is `footerless` — its mat-stepper owns its Next/Save buttons.
+  private readonly cloudSyncForm = CloudSyncFormComponent as unknown as Type<SidePanelForm>;
+  private readonly cloudSyncWizard = CloudSyncWizardComponent as unknown as Type<SidePanelForm>;
+
   protected onEdit(row?: CloudSyncTaskUi): void {
-    this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row })
-      .onSuccess(() => this.reload(), this.destroyRef);
+    this.formPanel.open(this.cloudSyncForm, {
+      title: this.translate.instant('Edit Cloud Sync Task'),
+      wide: true,
+      inputs: { taskToEdit: row },
+    }).onSuccess(() => this.reload(), this.destroyRef);
   }
 
   protected runNow(row: CloudSyncTaskUi): void {
