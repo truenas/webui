@@ -260,10 +260,11 @@ export class ZvolFormComponent implements OnInit {
     });
   }
 
-  // When deduplication is hidden, the control still carries `Validators.required`,
-  // which would silently block submission. Drop the validator while hidden (the
-  // value is left untouched: setupForm already resolves it to `inherit`/the
-  // parent value, which the payload builders strip or diff away).
+  // When deduplication is hidden (Enterprise without a dedup license), the
+  // control still carries `Validators.required`, which would silently block
+  // submission. Drop the validator while hidden; the value is left untouched
+  // and the payload builders omit `deduplication` entirely based on
+  // `hasDeduplication`.
   private updateDeduplicationControl(): void {
     const control = this.form.controls.deduplication;
     if (this.hasDeduplication) {
@@ -330,7 +331,7 @@ export class ZvolFormComponent implements OnInit {
     if (data.compression === inherit) {
       delete data.compression;
     }
-    if (data.deduplication === inherit) {
+    if (data.deduplication === inherit || !this.hasDeduplication) {
       delete data.deduplication;
     }
     if (data.readonly === inherit) {
@@ -408,6 +409,12 @@ export class ZvolFormComponent implements OnInit {
     delete data.confirm_passphrase;
     delete data.pbkdf2iters;
     delete data.algorithm;
+
+    // Never send deduplication when the field is hidden (Enterprise without a
+    // dedup license) — it isn't user-editable in that state.
+    if (!this.hasDeduplication) {
+      delete data.deduplication;
+    }
 
     // Handle readonly/volsize interaction
     const readonlyValue = this.form.controls.readonly.value;
@@ -516,7 +523,6 @@ export class ZvolFormComponent implements OnInit {
           if (parentOrZvol?.type === DatasetType.Filesystem) {
             this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
-            this.updateDeduplicationControl();
             if (!this.isNew) {
               this.formSnapshot.set(this.form.getRawValue());
             }
@@ -540,7 +546,6 @@ export class ZvolFormComponent implements OnInit {
                 this.inheritDeduplication(parentOrZvol, parentDataset);
                 this.inheritSnapdev(parentOrZvol, parentDataset);
                 this.inheritSpecialSmallBlockSize(parentDataset);
-                this.updateDeduplicationControl();
 
                 if (!this.isNew) {
                   this.formSnapshot.set(this.form.getRawValue());

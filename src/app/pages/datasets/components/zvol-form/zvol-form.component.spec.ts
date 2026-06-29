@@ -322,6 +322,20 @@ describe('ZvolFormComponent', () => {
       // Hidden control drops its required validator so it never blocks submission.
       expect(spectator.component.form.controls.deduplication.hasValidator(Validators.required)).toBe(false);
     });
+
+    it('omits deduplication from the create payload when hidden', async () => {
+      await setupVisibilityTest(true, false);
+      form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ Name: 'new zvol', Size: '1 GiB' });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
+        'pool.dataset.create',
+        [expect.not.objectContaining({ deduplication: expect.anything() })],
+      );
+    });
   });
 
   describe('adds a new zvol with encrypted parent', () => {
