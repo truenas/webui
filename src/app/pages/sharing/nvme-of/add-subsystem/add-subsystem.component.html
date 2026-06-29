@@ -4,7 +4,7 @@
 ></ix-modal-header>
 
 <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
-  <tn-stepper #stepper orientation="vertical">
+  <tn-stepper #stepper orientation="horizontal">
     <tn-step [label]="'What To Share' | translate">
       <tn-form-field
         class="name-input"
