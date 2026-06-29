@@ -54,7 +54,7 @@
           *ixRequiresRoles="requiredRoles"
           [testId]="[('Enabled' | translate), uniqueRowTag(row), 'row-toggle']"
           [checked]="row.enabled"
-          [ariaLabel]="'Toggle enabled for ' + row.name"
+          [ariaLabel]="('Toggle enabled for ' | translate) + row.name"
           (change)="onToggle(row, $event)"
         ></tn-slide-toggle>
       </ng-template>
