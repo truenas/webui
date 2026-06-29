@@ -1,10 +1,10 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef,
+  ChangeDetectionStrategy, Component, input, inject, DestroyRef,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardAction, TnCardComponent, TnCardFooterActionsDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective } from '@truenas/ui-components';
 import { containerCapabilitiesPolicyLabels, containerIdmapTypeLabels, containerTimeLabels } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container } from 'app/interfaces/container.interface';
@@ -50,40 +50,18 @@ export class ContainerGeneralInfoComponent {
   protected readonly containerIdmapTypeLabels = containerIdmapTypeLabels;
   protected readonly containerTimeLabels = containerTimeLabels;
 
-  private hasWriteRole = toSignal(
+  protected readonly canModify = toSignal(
     this.authService.hasRole([Role.ContainerWrite]),
     { initialValue: false },
   );
 
-  protected editAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasWriteRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Edit'),
-      testId: 'edit-container',
-      handler: () => this.editContainer(),
-    };
-  });
-
-  protected deleteAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasWriteRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Delete'),
-      testId: 'delete-container',
-      handler: () => this.deleteContainer(),
-    };
-  });
-
-  private editContainer(): void {
+  protected editContainer(): void {
     this.slideIn
       .open(ContainerFormComponent, { data: this.container() })
       .onSuccess(() => this.containersStore.reload(), this.destroyRef);
   }
 
-  private deleteContainer(): void {
+  protected deleteContainer(): void {
     this.dialogService.confirmDelete({
       message: this.translate.instant('Delete {name}?', { name: this.container().name }),
       call: () => this.api.call('container.delete', [this.container().id]),
