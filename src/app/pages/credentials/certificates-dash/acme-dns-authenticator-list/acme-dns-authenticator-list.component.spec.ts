@@ -57,6 +57,13 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
     expect(title).toHaveText('ACME DNS-Authenticators');
   });
 
+  it('makes Name sortable, leaving the nested Authenticator column unsortable', async () => {
+    expect(await table.isSortable('name')).toBe(true);
+    expect(await table.isSortable('authenticator')).toBe(false);
+    await table.clickSortHeader('name');
+    expect(await table.getSortDirection('name')).toBe('ascending');
+  });
+
   it('opens acme dns authenticator form when "Add" button is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();

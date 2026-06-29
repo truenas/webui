@@ -95,6 +95,18 @@ describe('CertificateListComponent', () => {
     expect(spectator.query('h3')).toHaveText('Certificates');
   });
 
+  it('makes the data columns sortable and the actions column not', async () => {
+    expect(await table.isSortable('name')).toBe(true);
+    expect(await table.isSortable('from')).toBe(true);
+    expect(await table.isSortable('common')).toBe(true);
+    expect(await table.isSortable('actions')).toBe(false);
+  });
+
+  it('sorts when a column header is clicked', async () => {
+    await table.clickSortHeader('name');
+    expect(await table.getSortDirection('name')).toBe('ascending');
+  });
+
   it('opens certificate import form when "Import" button is pressed', async () => {
     const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import' }));
     await importButton.click();

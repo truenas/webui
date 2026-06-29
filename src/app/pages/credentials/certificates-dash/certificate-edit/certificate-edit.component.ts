@@ -72,7 +72,7 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
 
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
-  certificate: Certificate;
+  certificate: Certificate | undefined;
 
   /** Record to edit, supplied by the `<tn-side-panel>` host. */
   readonly editingCertificate = input<Certificate | undefined>(undefined);

@@ -95,6 +95,17 @@ describe('CertificateSigningRequestsListComponent', () => {
     expect(spectator.query('h3')).toHaveText('Certificate Signing Requests');
   });
 
+  it('makes the data columns sortable and the actions column not', async () => {
+    expect(await table.isSortable('name')).toBe(true);
+    expect(await table.isSortable('common')).toBe(true);
+    expect(await table.isSortable('actions')).toBe(false);
+  });
+
+  it('sorts when a column header is clicked', async () => {
+    await table.clickSortHeader('name');
+    expect(await table.getSortDirection('name')).toBe('ascending');
+  });
+
   it('should show table rows', async () => {
     expect(await table.getHeaderTexts()).toEqual(['Name', 'CN', '']);
     expect(await table.getAllRowTexts()).toEqual(

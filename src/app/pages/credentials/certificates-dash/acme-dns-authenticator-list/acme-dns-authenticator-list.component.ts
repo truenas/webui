@@ -10,6 +10,7 @@ import {
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
+  type TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
 } from '@truenas/ui-components';
@@ -24,6 +25,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { mapTnSortToProviderSorting } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
@@ -71,6 +73,10 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   protected readonly displayedColumns = ['name', 'authenticator', 'actions'];
 
   protected readonly trackBy = (_: number, row: DnsAuthenticator): number => row.id;
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToProviderSorting<DnsAuthenticator>(event));
+  }
 
   protected readonly actions: IconActionConfig<DnsAuthenticator>[] = [
     {

@@ -12,6 +12,7 @@ import {
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
+  type TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
 } from '@truenas/ui-components';
@@ -28,6 +29,7 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -90,9 +92,14 @@ export class CertificateSigningRequestsListComponent {
 
   protected dataProvider = new ArrayDataProvider<Certificate>();
 
-  protected readonly displayedColumns = ['name', 'cn', 'actions'];
+  // The CN column aggregates CN + SAN; key it on `common` (the property master sorted by).
+  protected readonly displayedColumns = ['name', 'common', 'actions'];
 
   protected readonly trackBy = (_: number, row: Certificate): number => row.id;
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<Certificate>(event, this.displayedColumns));
+  }
 
   protected readonly actions: IconActionConfig<Certificate>[] = [
     {
