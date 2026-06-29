@@ -101,6 +101,12 @@ export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit
   }
 
   protected onSubmit(): void {
+    // The form is only ever opened with a CSR (the panel supplies it via the `csr` input);
+    // guard the invariant explicitly rather than rely on non-strict null checks.
+    if (!this.csrData) {
+      return;
+    }
+
     const formValues = this.form.getRawValue();
 
     const dnsMapping = this.domains.reduce((mapping, domain, i) => {
