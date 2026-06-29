@@ -238,6 +238,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
         ? this.translate.instant('Are you sure you want to delete the user quota <b>{name}</b>?', { name })
         : this.translate.instant('Are you sure you want to delete the group quota <b>{name}</b>?', { name }),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
     });
   }
 }
