@@ -5,7 +5,8 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnFormFieldComponent, TnInputComponent,
+  InputType, TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnFormFieldComponent,
+  TnInputComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
@@ -24,9 +25,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
@@ -70,7 +69,6 @@ const typeOptions: Option[] = [
     FormActionsComponent,
     ModalHeaderComponent,
     IxFieldsetComponent,
-    IxInputComponent,
     ExplorerCreateDatasetComponent,
     ExplorerCreateZvolComponent,
     RequiresRolesDirective,
@@ -80,9 +78,10 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
-  protected formatter = inject(IxFormatterService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private destroyRef = inject(DestroyRef);
+
+  protected readonly InputType = InputType;
 
   namespace = input<NvmeOfNamespace>();
   error = input<unknown>(null);

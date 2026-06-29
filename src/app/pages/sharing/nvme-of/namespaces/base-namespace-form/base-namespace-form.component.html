@@ -51,13 +51,15 @@
           <tn-input testId="filename" formControlName="filename"></tn-input>
         </tn-form-field>
 
-        <ix-input
-          formControlName="filesize"
-          [label]="'File Size' | translate"
-          [required]="true"
-          [parse]="formatter.memorySizeParsing"
-          [format]="formatter.memorySizeFormatting"
-        ></ix-input>
+        <tn-form-field [label]="'File Size' | translate" [required]="true">
+          <tn-input
+            testId="filesize"
+            formControlName="filesize"
+            sizeStandard="iec"
+            sizeDefaultUnit="MiB"
+            [inputType]="InputType.Size"
+          ></tn-input>
+        </tn-form-field>
       }
     }
   </ix-fieldset>
