@@ -23,8 +23,13 @@ export function convertStringToId(inputString: string): string {
 
 export function createTable<T>(
   columns: Column<T, ColumnComponent<T>>[],
-  config: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
+  config?: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
 ): Column<T, ColumnComponent<T>>[] {
+  // tn-table renders cells from the template and supplies its own row tags/aria
+  // labels, so migrated tables build a column model for the picker without config.
+  if (!config) {
+    return columns;
+  }
   return columns.map((column) => {
     const uniqueRowTag = (row: T): string => convertStringToId(config.uniqueRowTag(row));
     const ariaLabels = (row: T): string[] => config.ariaLabels(row);
@@ -59,6 +64,25 @@ export function mapTnSortToTableSort<T>(
     direction,
     active: direction && columnIndex >= 0 ? columnIndex : null,
   };
+}
+
+/**
+ * Bridges the ix-table column model driven by `<ix-table-columns-selector>` to
+ * the `displayedColumns` list a `tn-table` expects. The selector toggles each
+ * column's `hidden` flag (and persists visibility via `columnPreferencesKey`);
+ * this maps the still-visible columns, in declaration order, to the
+ * `*tnColumnDef` names a tn-table renders. Shared so every column-selectable
+ * tn-table migration bridges the two models identically.
+ *
+ * A column's tn-table name is its `propertyName` — matching the `(sortChange)`
+ * convention `mapTnSortToTableSort` relies on. Columns without a `propertyName`
+ * (e.g. an actions column, which is also never user-toggleable since it has no
+ * `title`) fall back to `'actions'`.
+ */
+export function toDisplayedColumns<T>(columns: Column<T, ColumnComponent<T>>[]): string[] {
+  return columns
+    .filter((column) => !column.hidden)
+    .map((column) => (column.propertyName ? String(column.propertyName) : 'actions'));
 }
 
 export function filterTableRows<T>(filter: TableFilter<T>): T[] {

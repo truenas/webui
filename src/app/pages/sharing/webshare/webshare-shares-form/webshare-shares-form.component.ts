@@ -1,31 +1,26 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, computed, effect,
+  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, computed, effect, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators, FormControl, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import {
+  TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareValidatorService } from 'app/pages/sharing/webshare/webshare-validator.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -47,28 +42,29 @@ export interface WebShareFormData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    TnIconComponent,
+    TnBannerComponent,
     FormActionsComponent,
-    MatButton,
-    MatTooltip,
-    TestDirective,
+    TnButtonComponent,
+    TnTooltipDirective,
     TranslateModule,
   ],
   providers: [WebShareValidatorService],
 })
-export class WebShareSharesFormComponent implements OnInit {
+export class WebShareSharesFormComponent extends SidePanelForm implements OnInit {
   protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
   protected readonly helptext = helptextSharingWebshare;
 
-  protected isFormLoading = signal(true);
+  /** Form data when hosted in a `<tn-side-panel>` (the legacy SlideIn host provides it via `slideInRef`). */
+  readonly data = input<WebShareFormData>();
+
+  readonly isFormLoading = signal(true);
   protected webShares = signal<WebShare[]>([]);
 
   /**
@@ -113,12 +109,10 @@ export class WebShareSharesFormComponent implements OnInit {
   private validatorService = inject(WebShareValidatorService);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
-  slideInRef = inject(SlideInRef<WebShareFormData, boolean>);
   private store$ = inject(Store<AppState>);
   private destroyRef = inject(DestroyRef);
 
-
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     name: ['', [
       Validators.required,
       Validators.pattern(/^[a-zA-Z0-9_-]+$/),
@@ -127,10 +121,15 @@ export class WebShareSharesFormComponent implements OnInit {
     is_home_base: [false],
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
+  /** Resolves form data from whichever host opened the form. */
+  private get incomingData(): WebShareFormData | undefined {
+    return (this.slideInRef?.getData() as WebShareFormData | undefined) ?? this.data();
+  }
+
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+    super();
 
     // Disable home share checkbox when another share is already designated as home
     effect(() => {
@@ -145,7 +144,7 @@ export class WebShareSharesFormComponent implements OnInit {
   }
 
   get isNew(): boolean {
-    return this.slideInRef.getData()?.isNew || false;
+    return this.incomingData?.isNew || false;
   }
 
   get title(): string {
@@ -162,7 +161,7 @@ export class WebShareSharesFormComponent implements OnInit {
 
   ngOnInit(): void {
     // Set editingShareId before loading shares so the computed signal works correctly
-    const data = this.slideInRef.getData();
+    const data = this.incomingData;
     const shareId: number | undefined = data?.id;
     this.editingShareId.set(data?.isNew ? null : (shareId ?? null));
 
@@ -175,7 +174,7 @@ export class WebShareSharesFormComponent implements OnInit {
   }
 
   private initializeFormData(): void {
-    const data = this.slideInRef.getData();
+    const data = this.incomingData;
     if (data) {
       if (!data.isNew && data.name) {
         // Editing existing WebShare
@@ -194,7 +193,7 @@ export class WebShareSharesFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -212,7 +211,7 @@ export class WebShareSharesFormComponent implements OnInit {
 
     const apiCall$ = this.isNew
       ? this.api.call('sharing.webshare.create', [payload])
-      : this.api.call('sharing.webshare.update', [this.slideInRef.getData().id, payload]);
+      : this.api.call('sharing.webshare.update', [this.incomingData?.id, payload]);
 
     apiCall$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -231,7 +230,7 @@ export class WebShareSharesFormComponent implements OnInit {
             this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.WebShare }));
           }
 
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
@@ -263,13 +262,13 @@ export class WebShareSharesFormComponent implements OnInit {
             message: this.translate.instant('Could not retrieve existing WebShare configurations. Please check your connection and try again.'),
             stackTrace: error instanceof Error ? error.message : String(error),
           });
-          this.slideInRef.close({ response: undefined });
+          this.close(false);
         },
       });
   }
 
   private setupValidators(): void {
-    const excludeId: number | null = this.isNew ? null : (this.slideInRef.getData()?.id ?? null);
+    const excludeId: number | null = this.isNew ? null : (this.incomingData?.id ?? null);
 
     const nameControl = this.form.controls.name as FormControl;
     nameControl.addAsyncValidators(

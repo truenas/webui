@@ -1,4 +1,5 @@
-import { filterTableRows } from './utils';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import { filterTableRows, toDisplayedColumns } from './utils';
 
 describe('filterTableRows', () => {
   interface TestItem {
@@ -79,5 +80,27 @@ describe('filterTableRows', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].dataset).toBe('/dozer/test');
+  });
+});
+
+describe('toDisplayedColumns', () => {
+  interface Row { name: string; path: string }
+
+  const columns = (overrides: Partial<ColumnComponent<Row>>[] = []): Column<Row, ColumnComponent<Row>>[] => ([
+    { propertyName: 'name', title: 'Name', ...overrides[0] },
+    { propertyName: 'path', title: 'Path', ...overrides[1] },
+    { ...overrides[2] }, // actions column: no propertyName / title
+  ]);
+
+  it('maps each visible column to its propertyName, in declaration order', () => {
+    expect(toDisplayedColumns(columns())).toEqual(['name', 'path', 'actions']);
+  });
+
+  it('drops columns hidden by the selector', () => {
+    expect(toDisplayedColumns(columns([{}, { hidden: true }]))).toEqual(['name', 'actions']);
+  });
+
+  it('falls back to "actions" for a column without a propertyName', () => {
+    expect(toDisplayedColumns([{ title: 'X' } as Column<Row, ColumnComponent<Row>>])).toEqual(['actions']);
   });
 });

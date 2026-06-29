@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnDialog, TnTableHarness } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -18,13 +18,9 @@ import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { selectService } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -34,8 +30,7 @@ describe('WebShareListComponent', () => {
   let spectator: Spectator<WebShareListComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  let slideIn: SlideIn;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const mockWebShares: WebShare[] = [
     { id: 1, name: 'documents', path: '/mnt/tank/documents' },
@@ -68,9 +63,6 @@ describe('WebShareListComponent', () => {
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
@@ -117,57 +109,43 @@ describe('WebShareListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
-    slideIn = spectator.inject(SlideIn);
     spectator.detectChanges();
 
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should display WebShare list on load', async () => {
-    const rows = await table.getRows();
-    expect(rows).toHaveLength(3);
+    expect(await table.getRowCount()).toBe(3);
 
     // Verify that the data provider has the correct data
     expect(spectator.component.dataProvider).toBeDefined();
   });
 
-  it('should show empty state configuration', () => {
-    const config = spectator.component.emptyConfig;
-    expect(config).toBeDefined();
-    expect(config.title).toBe('');
-    expect(config.message).toContain('WebShare service provides web-based file access');
-  });
-
-
-  it('should open form when Add button is clicked', () => {
-    // Directly call doAdd to test the form opening logic
+  it('opens the side panel with new-share data when Add is clicked', () => {
     spectator.component.doAdd();
-    spectator.detectChanges();
 
-    expect(slideIn.open).toHaveBeenCalledWith(WebShareSharesFormComponent, {
-      data: {
-        isNew: true,
-        name: '',
-        path: '',
-      },
+    expect(spectator.component.configOpen()).toBe(true);
+    expect(spectator.component.formData()).toEqual({
+      isNew: true,
+      name: '',
+      path: '',
     });
   });
 
-  it('should open form when Edit action is clicked', () => {
-    // Directly call the doEdit method to test its behavior
+  it('opens the side panel with the row data when Edit is clicked', () => {
     spectator.component.doEdit({
       id: 1,
       name: 'documents',
       path: '/mnt/tank/documents',
     });
 
-    expect(slideIn.open).toHaveBeenCalledWith(WebShareSharesFormComponent, {
-      data: {
-        id: 1,
-        isNew: false,
-        name: 'documents',
-        path: '/mnt/tank/documents',
-      },
+    expect(spectator.component.configOpen()).toBe(true);
+    expect(spectator.component.formData()).toEqual({
+      id: 1,
+      isNew: false,
+      name: 'documents',
+      path: '/mnt/tank/documents',
+      isHomeBase: undefined,
     });
   });
 
@@ -216,14 +194,24 @@ describe('WebShareListComponent', () => {
     });
   });
 
-  it('should reload data after successful form submission', () => {
-    jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
+  it('reloads data and closes the panel after a successful save', () => {
     jest.spyOn(spectator.component.dataProvider, 'load');
-
     spectator.component.doAdd();
-    spectator.detectChanges();
 
+    spectator.component.onFormClosed(true);
+
+    expect(spectator.component.configOpen()).toBe(false);
     expect(spectator.component.dataProvider.load).toHaveBeenCalled();
+  });
+
+  it('does not reload when the panel is closed without saving', () => {
+    jest.spyOn(spectator.component.dataProvider, 'load');
+    spectator.component.doAdd();
+
+    spectator.component.onFormClosed(false);
+
+    expect(spectator.component.configOpen()).toBe(false);
+    expect(spectator.component.dataProvider.load).not.toHaveBeenCalled();
   });
 
   it('should sort shares by name by default', () => {
@@ -233,13 +221,13 @@ describe('WebShareListComponent', () => {
   });
 
   it('should update columns when column selector changes', () => {
-    const originalColumns = [...spectator.component.columns];
+    const originalColumns = [...spectator.component.columns()];
     const newColumns = originalColumns.filter((col) => col.propertyName !== 'path');
 
-    spectator.component.columnsChange(newColumns);
+    spectator.component.onColumnsChange(newColumns);
 
-    expect(spectator.component.columns).toEqual(newColumns);
-    expect(spectator.component.columns).not.toBe(newColumns); // Should be a new array
+    expect(spectator.component.columns()).toEqual(newColumns);
+    expect(spectator.component.columns()).not.toBe(newColumns); // Should be a new array
   });
 
   it('should open TrueNAS Connect dialog', () => {
@@ -284,9 +272,6 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
@@ -333,11 +318,8 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
     spectator.detectChanges();
   });
 
-  it('should show empty state configuration when TrueNAS Connect is not configured', () => {
-    const config = spectator.component.emptyConfig;
-    expect(config).toBeDefined();
-    expect(config.title).toBe('');
-    expect(config.message).toContain('WebShare service provides web-based file access');
+  it('should show empty state when TrueNAS Connect is not configured', () => {
+    expect(spectator.query('tn-empty')).toBeTruthy();
   });
 });
 
@@ -368,9 +350,6 @@ describe('WebShareListComponent - No WebShare users configured', () => {
         mockCall('tn_connect.config', mockTruenasConnectConfig),
         mockCall('user.query', []),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
@@ -419,16 +398,16 @@ describe('WebShareListComponent - No WebShare users configured', () => {
   });
 
   it('should show info message when no users have WebShare access configured', () => {
-    const infoMessages = spectator.queryAll('.info-message');
-    expect(infoMessages).toHaveLength(1);
-    expect(infoMessages[0].textContent).toContain('It appears you have no users configured to access WebShare.');
+    const banners = spectator.queryAll('tn-banner');
+    expect(banners).toHaveLength(1);
+    expect(banners[0].textContent).toContain('It appears you have no users configured to access WebShare.');
   });
 
   it('should navigate to users page when info message is clicked', () => {
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
 
-    spectator.click('.info-message');
+    spectator.click('tn-banner');
 
     expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'users']);
   });

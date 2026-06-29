@@ -1,0 +1,9 @@
+<tn-select
+  testId="columns"
+  [multiple]="true"
+  [formControl]="control"
+  [options]="options()"
+  [placeholder]="'Columns' | translate"
+  [ariaLabel]="'Columns' | translate"
+  (multiSelectionChange)="onSelectionChange($event)"
+></tn-select>
