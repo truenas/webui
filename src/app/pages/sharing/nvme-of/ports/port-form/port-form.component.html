@@ -3,45 +3,46 @@
   [loading]="isLoading()"
 ></ix-modal-header>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-select
-          formControlName="addr_trtype"
-          [label]="'Transport Type' | translate"
-          [options]="types$"
-          [required]="true"
-        ></ix-select>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-fieldset>
+    <tn-form-field [label]="'Transport Type' | translate" [required]="true">
+      <tn-select
+        testId="addr-trtype"
+        formControlName="addr_trtype"
+        [options]="(types$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-        <ix-input
-          formControlName="addr_trsvcid"
-          [label]="'Port' | translate"
-          [type]="isFibreChannel ? 'text' : 'number'"
-          [placeholder]="portPlaceholder"
-        ></ix-input>
+    <tn-form-field [label]="'Port' | translate">
+      <tn-input
+        testId="addr-trsvcid"
+        formControlName="addr_trsvcid"
+        [inputType]="isFibreChannel ? InputType.PlainText : InputType.Number"
+        [placeholder]="portPlaceholder"
+      ></tn-input>
+    </tn-form-field>
 
-        <ix-select
-          formControlName="addr_traddr"
-          [label]="'Address' | translate"
-          [required]="true"
-          [options]="addresses$"
-          [hint]="isTcp ? (helptext.onlyStaticIpsShown | translate) : ''"
-        ></ix-select>
-      </ix-fieldset>
+    <tn-form-field
+      [label]="'Address' | translate"
+      [required]="true"
+      [hint]="isTcp ? (helptext.onlyStaticIpsShown | translate) : ''"
+    >
+      <tn-select
+        testId="addr-traddr"
+        formControlName="addr_traddr"
+        [options]="(addresses$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+  </ix-fieldset>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <ix-form-actions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      type="submit"
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="form.invalid || isLoading()"
+    ></tn-button>
+  </ix-form-actions>
+</form>

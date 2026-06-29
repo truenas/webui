@@ -1,11 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   finalize, merge, of, switchMap,
 } from 'rxjs';
@@ -19,12 +21,9 @@ import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
@@ -36,16 +35,15 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
   imports: [
     FormsModule,
     IxFieldsetComponent,
-    MatCard,
-    MatCardContent,
     ModalHeaderComponent,
     TranslateModule,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxSelectComponent,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnInputComponent,
+    TnButtonComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
     RequiresRolesDirective,
   ],
 })
@@ -73,6 +71,7 @@ export class PortFormComponent implements OnInit {
   );
 
   protected readonly helptext = helptextNvmeOf;
+  protected readonly InputType = InputType;
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
