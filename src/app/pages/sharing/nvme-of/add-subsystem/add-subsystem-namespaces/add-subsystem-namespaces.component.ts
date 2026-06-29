@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
@@ -22,11 +20,8 @@ import {
   imports: [
     TranslateModule,
     ReactiveFormsModule,
-    MatButton,
-    MatIconButton,
-    TnIconComponent,
-    TnTooltipDirective,
-    TestDirective,
+    TnButtonComponent,
+    TnIconButtonComponent,
     NamespaceDescriptionComponent,
   ],
 })

@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -82,7 +82,7 @@ describe('NvmeOfComponent', () => {
   });
 
   it('opens Global Configuration form when corresponding button is pressed', async () => {
-    const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Configuration' }));
+    const configurationButton = await loader.getHarness(TnButtonHarness.with({ label: 'Global Configuration' }));
     await configurationButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
@@ -94,7 +94,7 @@ describe('NvmeOfComponent', () => {
   });
 
   it('initializes store when added', async () => {
-    const addSubsystemButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Subsystem' }));
+    const addSubsystemButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Subsystem' }));
     expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalledTimes(1);
     await addSubsystemButton.click();
     expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalledTimes(2);

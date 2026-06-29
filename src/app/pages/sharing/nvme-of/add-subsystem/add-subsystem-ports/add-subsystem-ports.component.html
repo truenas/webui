@@ -20,13 +20,14 @@
           <ix-port-description [port]="port"></ix-port-description>
 
           <span class="port-actions">
-            <button
-              mat-icon-button
-              [ixTest]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
-              (click)="onRemovePort(port)"
-            >
-              <tn-icon class="icon" name="close" library="mdi"></tn-icon>
-            </button>
+            <tn-icon-button
+              name="close"
+              library="mdi"
+              iconClass="icon"
+              [ariaLabel]="'Remove' | translate"
+              [testId]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
+              (onClick)="onRemovePort(port)"
+            ></tn-icon-button>
           </span>
         </span>
       </li>
