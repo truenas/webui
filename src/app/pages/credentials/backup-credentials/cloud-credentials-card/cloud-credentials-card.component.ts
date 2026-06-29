@@ -88,8 +88,13 @@ export class CloudCredentialsCardComponent implements OnInit {
   private emptyType = toSignal(this.dataProvider.emptyType$);
 
   // Reflects the data-provider's state (error / no data / no search results) so the empty state
-  // shows the correct title — not a static "no records" message when the query actually failed.
+  // shows the correct title/message — not a static "no records" message when the query failed.
   protected readonly emptyConfig = computed(() => this.emptyService.defaultEmptyConfig(this.emptyType()));
+
+  // State icon for error / no-search states, falling back to the card's own icon for no-data.
+  protected readonly emptyIcon = computed(
+    () => this.emptyService.iconForTypeOrDefault(this.emptyType(), tnIconMarker('cloud-outline', 'mdi')),
+  );
 
   private providers = new Map<string, string>();
 
@@ -151,7 +156,7 @@ export class CloudCredentialsCardComponent implements OnInit {
 
   private setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 1,
+      active: null,
       direction: SortDirection.Asc,
       propertyName: 'id',
     });
