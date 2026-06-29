@@ -1,6 +1,6 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>{{ 'Associated Hosts' | translate }}</h3>
+<tn-card class="card">
+  <div tnCardHeader class="card-header">
+    <h3 class="tn-card__title">{{ 'Associated Hosts' | translate }}</h3>
 
     <ix-add-host-menu
       [hosts]="subsystem().hosts"
@@ -9,59 +9,59 @@
       (hostSelected)="hostAdded($event)"
       (allowAllHostsSelected)="allowAllHostsSelected()"
     ></ix-add-host-menu>
-  </mat-card-header>
-  <mat-card-content>
-    @if (subsystem().allow_any_host && !subsystem().hosts.length) {
-      {{ 'All hosts are allowed.' | translate }}
-    } @else if (!subsystem().hosts?.length) {
-      <div class="no-hosts-warning">
-        <tn-icon
-          name="alert"
-          library="mdi"
-          class="icon"
-        ></tn-icon>
+  </div>
 
-        <div>
-          {{ helptext.noHostsWarning | translate }}
-        </div>
+  @if (subsystem().allow_any_host && !subsystem().hosts.length) {
+    {{ 'All hosts are allowed.' | translate }}
+  } @else if (!subsystem().hosts?.length) {
+    <div class="no-hosts-warning">
+      <tn-icon
+        name="alert"
+        library="mdi"
+        class="icon"
+      ></tn-icon>
+
+      <div>
+        {{ helptext.noHostsWarning | translate }}
       </div>
-    } @else {
-      <ul class="host-list">
-        @for (host of subsystem().hosts; track host.id) {
-          <li>
-            <span class="host">
-              <span class="host-description">
-                @if (host.description) {
-                  <strong>{{ host.description }}</strong> - {{ host.hostnqn }}
-                } @else {
-                  {{ host.hostnqn }}
-                }
+    </div>
+  } @else {
+    <ul class="host-list">
+      @for (host of subsystem().hosts; track host.id) {
+        <li>
+          <span class="host">
+            <span class="host-description">
+              @if (host.description) {
+                <strong>{{ host.description }}</strong> - {{ host.hostnqn }}
+              } @else {
+                {{ host.hostnqn }}
+              }
 
-                @if (host.dhchap_key) {
-                  <tn-icon
-                    name="key"
-                    library="mdi"
-                    class="key-icon"
-                    [tnTooltip]="helptext.hasHostAuthentication | translate"
-                  ></tn-icon>
-                }
-              </span>
-
-              <span class="host-actions">
-                <button
-                  *ixRequiresRoles="requiredRoles"
-                  mat-icon-button
-                  [ixTest]="['remove-host-association', host.hostnqn]"
-                  [tnTooltip]="'Remove host from the subsystem' | translate"
-                  (click)="removeAssociation(host)"
-                >
-                  <tn-icon class="icon" name="link-variant-off" library="mdi"></tn-icon>
-                </button>
-              </span>
+              @if (host.dhchap_key) {
+                <tn-icon
+                  name="key"
+                  library="mdi"
+                  class="key-icon"
+                  [tnTooltip]="helptext.hasHostAuthentication | translate"
+                ></tn-icon>
+              }
             </span>
-          </li>
-        }
-      </ul>
-    }
-  </mat-card-content>
-</mat-card>
+
+            <span class="host-actions">
+              <tn-icon-button
+                *ixRequiresRoles="requiredRoles"
+                name="link-variant-off"
+                library="mdi"
+                iconClass="icon"
+                [ariaLabel]="'Remove host from the subsystem' | translate"
+                [tooltip]="'Remove host from the subsystem' | translate"
+                [testId]="['remove-host-association', host.hostnqn]"
+                (onClick)="removeAssociation(host)"
+              ></tn-icon-button>
+            </span>
+          </span>
+        </li>
+      }
+    </ul>
+  }
+</tn-card>

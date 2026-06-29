@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnCardHeaderDirective, TnIconButtonComponent, TnIconComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -15,7 +13,6 @@ import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfSubsystemDetails, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -28,16 +25,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrl: './subsystem-hosts-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnCardComponent,
+    TnCardHeaderDirective,
     TnIconComponent,
+    TnIconButtonComponent,
     TnTooltipDirective,
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
     TranslateModule,
     AddHostMenuComponent,
-    MatIconButton,
-    TestDirective,
     UiSearchDirective,
     RequiresRolesDirective,
   ],

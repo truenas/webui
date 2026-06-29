@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnCardHeaderDirective, TnIconButtonComponent, TnIconComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -13,7 +11,6 @@ import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
@@ -27,18 +24,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrl: './subsystem-ports-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardHeaderDirective,
     TnIconComponent,
+    TnIconButtonComponent,
     PortDescriptionComponent,
     TranslateModule,
     AddPortMenuComponent,
-    MatIconButton,
-    TestDirective,
     UiSearchDirective,
-    TnTooltipDirective,
     RequiresRolesDirective,
   ],
 })

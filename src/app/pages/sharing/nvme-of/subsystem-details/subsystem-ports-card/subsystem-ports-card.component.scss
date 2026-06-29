@@ -35,3 +35,10 @@
     }
   }
 }
+
+.card-header {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+}

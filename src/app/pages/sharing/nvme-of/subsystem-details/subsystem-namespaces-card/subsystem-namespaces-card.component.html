@@ -1,53 +1,49 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>{{ 'Namespaces' | translate }}</h3>
+<tn-card class="card">
+  <div tnCardHeader class="card-header">
+    <h3 class="tn-card__title">{{ 'Namespaces' | translate }}</h3>
 
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="button"
-      ixTest="add-namespace"
+      [testId]="'add-namespace'"
+      [label]="'Add' | translate"
       [ixUiSearch]="searchableElements.elements.addNamespace"
-      (click)="onAddNamespace()"
-    >
-      {{ 'Add' | translate }}
-    </button>
-  </mat-card-header>
-  <mat-card-content>
-    @if (!subsystem().namespaces?.length) {
-      <div class="no-namespaces-warning">
-        <tn-icon
-          name="alert"
-          library="mdi"
-          class="icon"
-        ></tn-icon>
+      (onClick)="onAddNamespace()"
+    ></tn-button>
+  </div>
 
-        <div>
-          {{ helptext.noNamespacesWarning | translate }}
-        </div>
+  @if (!subsystem().namespaces?.length) {
+    <div class="no-namespaces-warning">
+      <tn-icon
+        name="alert"
+        library="mdi"
+        class="icon"
+      ></tn-icon>
+
+      <div>
+        {{ helptext.noNamespacesWarning | translate }}
       </div>
-    } @else {
-      <ul class="namespace-list">
-        @for (namespace of subsystem().namespaces; track namespace.id) {
-          <li>
-            <span class="namespace">
-              <ix-namespace-description [namespace]="namespace"></ix-namespace-description>
+    </div>
+  } @else {
+    <ul class="namespace-list">
+      @for (namespace of subsystem().namespaces; track namespace.id) {
+        <li>
+          <span class="namespace">
+            <ix-namespace-description [namespace]="namespace"></ix-namespace-description>
 
-              <span class="namespace-actions">
-                <button
-                  *ixRequiresRoles="requiredRoles"
-                  mat-icon-button
-                  [ixTest]="['delete-namespace', namespace.device_path]"
-                  [tnTooltip]="'Delete namespace' | translate"
-                  (click)="onDeleteNamespace(namespace)"
-                >
-                  <tn-icon name="delete" library="mdi"></tn-icon>
-                </button>
-              </span>
+            <span class="namespace-actions">
+              <tn-icon-button
+                *ixRequiresRoles="requiredRoles"
+                name="delete"
+                library="mdi"
+                [ariaLabel]="'Delete namespace' | translate"
+                [tooltip]="'Delete namespace' | translate"
+                [testId]="['delete-namespace', namespace.device_path]"
+                (onClick)="onDeleteNamespace(namespace)"
+              ></tn-icon-button>
             </span>
-          </li>
-        }
-      </ul>
-    }
-  </mat-card-content>
-</mat-card>
+          </span>
+        </li>
+      }
+    </ul>
+  }
+</tn-card>
