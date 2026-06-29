@@ -3,27 +3,20 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog, TnDialogShellComponent, tnIconMarker } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCellDefDirective, TnDialog, TnDialogShellComponent, TnHeaderCellDefDirective,
+  TnTableColumnDirective, TnTableComponent, tnIconMarker,
+} from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import {
-  actionsColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import {
-  yesNoColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -44,10 +37,11 @@ interface NvmeOfHostAndUsage extends NvmeOfHost {
     TnButtonComponent,
     TranslateModule,
     AsyncPipe,
-    IxTableBodyComponent,
-    IxTableComponent,
-    IxTableHeadComponent,
-    IxTableEmptyDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TableActionsCellComponent,
   ],
 })
 export class ManageHostsDialog implements OnInit {
@@ -65,42 +59,23 @@ export class ManageHostsDialog implements OnInit {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  protected columns = createTable<NvmeOfHostAndUsage>([
-    textColumn({
-      title: this.translate.instant('NQN'),
-      propertyName: 'hostnqn',
-    }),
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'description',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Has Host Authentication'),
-      propertyName: 'dhchap_key',
-    }),
-    textColumn({
-      title: this.translate.instant('Used In Subsystems'),
-      propertyName: 'usedInSubsystems',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.onEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.onDelete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => `host-${row.hostnqn}`,
-    ariaLabels: (row) => [String(row.id), this.translate.instant('Host')],
-  });
+  protected readonly displayedColumns = ['hostnqn', 'description', 'dhchap_key', 'usedInSubsystems', 'actions'];
+
+  protected readonly trackByHostId = (_: number, row: NvmeOfHostAndUsage): number => row.id;
+
+  protected readonly actions: IconActionConfig<NvmeOfHostAndUsage>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.onEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => this.onDelete(row),
+    },
+  ];
 
   protected dataProvider = new AsyncDataProvider(
     this.nvmeOfStore.state$.pipe(
