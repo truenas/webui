@@ -6,12 +6,11 @@ import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCheckboxComponent, TnFormFieldComponent, TnInputComponent } from '@truenas/ui-components';
+import { TnCheckboxComponent, TnFormSectionComponent, TnFormFieldComponent, TnInputComponent } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SupportConfig, SupportConfigUpdate } from 'app/modules/feedback/interfaces/file-ticket.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import {
   FormSubmitEvent,
   IxFormComponent,
@@ -30,12 +29,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     IxFormComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
     WarningComponent,
     TranslateModule,
+    TnFormSectionComponent,
   ],
 })
 export class ProactiveComponent implements OnInit {

@@ -2,6 +2,7 @@
 
 .two-columns {
   display: flex;
+  gap: 16px;
   margin-top: 20px;
 
   @media (max-width: $breakpoint-tablet) {
