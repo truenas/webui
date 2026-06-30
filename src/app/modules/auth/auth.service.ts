@@ -74,10 +74,12 @@ export class AuthService implements OnDestroy {
    * Whether the current user is allowed to open a Web Shell. Every shell
    * (system, VM serial, container console) connects through the same
    * `/websocket/shell/` endpoint, which is gated by the `web_shell` privilege.
+   *
+   * A null user resolves to `false` (rather than being filtered out) so that
+   * `take(1)`-gated consumers always receive an emission instead of hanging.
    */
   readonly hasWebShellAccess$: Observable<boolean> = this.user$.pipe(
-    filter(Boolean),
-    map((user) => Boolean(user.privilege?.web_shell)),
+    map((user) => Boolean(user?.privilege?.web_shell)),
   );
 
   private readonly hasPasswordChangedSinceLastLogin$ = new BehaviorSubject(false);
