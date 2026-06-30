@@ -1,7 +1,10 @@
 /* eslint-disable max-classes-per-file */
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import {
   EMPTY, of, Subject, throwError,
 } from 'rxjs';
@@ -330,8 +333,12 @@ describe('TerminalComponent Reconnect Logic', () => {
 describe('TerminalComponent access control', () => {
   let spectator: Spectator<TerminalComponent>;
   let shellService: ShellService;
+  let loader: HarnessLoader;
+  let getOneTimeToken: jest.Mock;
 
   const accessDeniedText = 'Your user permissions do not allow Web Shell access.';
+
+  const getLockIcon = (): Promise<TnIconHarness | null> => loader.getHarnessOrNull(TnIconHarness.with({ name: 'lock' }));
 
   const createComponent = createComponentFactory({
     component: TerminalComponent,
@@ -367,24 +374,29 @@ describe('TerminalComponent access control', () => {
         web_shell: webShell,
       },
     } as LoggedInUser);
-    // Prevent terminal/websocket initialization in tests.
-    (authService as unknown as AuthService).getOneTimeToken = jest.fn(() => EMPTY);
+    // Prevent terminal/websocket initialization in tests. getOneTimeToken is the first call
+    // startShell() makes, so it doubles as a probe for whether the connect path ran.
+    getOneTimeToken = jest.fn(() => EMPTY);
+    (authService as unknown as AuthService).getOneTimeToken = getOneTimeToken;
 
     spectator.detectChanges();
     shellService = spectator.inject(ShellService, true);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
-  it('shows a restricted-access warning when the user lacks the web_shell privilege', () => {
+  it('shows a restricted-access warning when the user lacks the web_shell privilege', async () => {
     setupComponent({ connectionData: {} }, { webShell: false });
 
-    expect(spectator.query('.access-denied-icon')).toExist();
+    expect(await getLockIcon()).not.toBeNull();
     expect(spectator.fixture.nativeElement).toHaveText(accessDeniedText);
     expect(shellService.connect).not.toHaveBeenCalled();
+    expect(getOneTimeToken).not.toHaveBeenCalled();
   });
 
-  it('proceeds to connect when the user has the web_shell privilege', () => {
+  it('proceeds to connect when the user has the web_shell privilege', async () => {
     setupComponent({ connectionData: { container_id: 1, use_console: false } }, { webShell: true });
 
-    expect(spectator.query('.access-denied-icon')).not.toExist();
+    expect(await getLockIcon()).toBeNull();
+    expect(getOneTimeToken).toHaveBeenCalled();
   });
 });
