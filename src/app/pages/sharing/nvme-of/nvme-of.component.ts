@@ -17,7 +17,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import {
@@ -53,11 +52,11 @@ import { setSubsystemNameInUrl } from 'app/pages/sharing/nvme-of/utils/router-ut
     SubsystemsDetailsHeaderComponent,
     SubsystemsListComponent,
     NvmeOfConfigurationComponent,
+    AddSubsystemComponent,
   ],
 })
 export class NvmeOfComponent implements OnInit {
   private nvmeOfStore = inject(NvmeOfStore);
-  private slideIn = inject(SlideIn);
   private activatedRoute = inject(ActivatedRoute);
   private location = inject(Location);
   private destroyRef = inject(DestroyRef);
@@ -70,6 +69,12 @@ export class NvmeOfComponent implements OnInit {
   protected readonly configPanelOpen = signal(false);
   protected readonly configForm = viewChild(NvmeOfConfigurationComponent);
   protected readonly configCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, () => this.configForm());
+
+  // Add Subsystem wizard hosted in a <tn-side-panel>; the panel footer drives the
+  // stepper (Next on step 1, Back + Save on step 2) via the form's step API.
+  protected readonly addSubsystemPanelOpen = signal(false);
+  protected readonly subsystemForm = viewChild(AddSubsystemComponent);
+  protected readonly addSubsystemCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, () => this.subsystemForm());
 
   protected readonly subsystems = this.nvmeOfStore.subsystems;
   protected dataProvider = new ArrayDataProvider<NvmeOfSubsystemDetails>();
@@ -146,11 +151,13 @@ export class NvmeOfComponent implements OnInit {
   }
 
   protected addSubsystem(): void {
-    this.slideIn.open(AddSubsystemComponent)
-      .onSuccess((response) => {
-        this.selectedSubsystemName = (response as NvmeOfSubsystem).name;
-        this.nvmeOfStore.initialize();
-      }, this.destroyRef);
+    this.addSubsystemPanelOpen.set(true);
+  }
+
+  protected onSubsystemCreated(subsystem: NvmeOfSubsystem): void {
+    this.addSubsystemPanelOpen.set(false);
+    this.selectedSubsystemName = subsystem.name;
+    this.nvmeOfStore.initialize();
   }
 
   protected onSubsystemSelected(subsystem: NvmeOfSubsystemDetails): void {

@@ -75,3 +75,43 @@
     ></tn-button>
   }
 </tn-side-panel>
+
+<tn-side-panel
+  [title]="'Add Subsystem' | translate"
+  [closeGuard]="addSubsystemCloseGuard"
+  [(open)]="addSubsystemPanelOpen"
+>
+  @if (addSubsystemPanelOpen()) {
+    <ix-add-subsystem (created)="onSubsystemCreated($event)"></ix-add-subsystem>
+  }
+  @if (subsystemForm() && !subsystemForm().isLastStep()) {
+    <tn-button
+      tnSidePanelAction
+      color="primary"
+      [testId]="'next'"
+      [label]="'Next' | translate"
+      [disabled]="!subsystemForm().canProceed()"
+      (onClick)="subsystemForm().nextStep()"
+    ></tn-button>
+  }
+  @if (subsystemForm()?.isLastStep()) {
+    <tn-button
+      tnSidePanelAction
+      variant="outline"
+      [testId]="'back'"
+      [label]="'Back' | translate"
+      (onClick)="subsystemForm().previousStep()"
+    ></tn-button>
+  }
+  @if (subsystemForm()?.isLastStep()) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!subsystemForm().canSubmit()"
+      (onClick)="subsystemForm().submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

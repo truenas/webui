@@ -1,10 +1,12 @@
-<ix-modal-header
-  [title]="'Add Subsystem' | translate"
-  [loading]="isLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [title]="'Add Subsystem' | translate"
+    [loading]="isLoading()"
+  ></ix-modal-header>
+}
 
 <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
-  <tn-stepper #stepper orientation="horizontal">
+  <tn-stepper orientation="horizontal" [(selectedIndex)]="currentStepIndex">
     <tn-step [label]="'What To Share' | translate">
       <tn-form-field
         class="name-input"
@@ -41,15 +43,17 @@
         [namespacesControl]="form.controls.namespaces"
       ></ix-add-subsystem-namespaces>
 
-      <div class="step-buttons">
-        <tn-button
-          color="primary"
-          [testId]="'next'"
-          [label]="'Next' | translate"
-          [disabled]="form.controls.name.invalid"
-          (onClick)="stepper.next()"
-        ></tn-button>
-      </div>
+      @if (slideInRef) {
+        <div class="step-buttons">
+          <tn-button
+            color="primary"
+            [testId]="'next'"
+            [label]="'Next' | translate"
+            [disabled]="!canProceed()"
+            (onClick)="nextStep()"
+          ></tn-button>
+        </div>
+      }
     </tn-step>
 
     <tn-step [label]="'Access' | translate">
@@ -71,22 +75,24 @@
         [portsControl]="form.controls.ports"
       ></ix-add-subsystem-ports>
 
-      <div class="step-buttons last-step-buttons">
-        <tn-button
-          color="default"
-          [testId]="'back'"
-          [label]="'Back' | translate"
-          (onClick)="stepper.previous()"
-        ></tn-button>
-        <tn-button
-          *ixRequiresRoles="requiredRoles"
-          type="submit"
-          color="primary"
-          [testId]="'save'"
-          [label]="'Save' | translate"
-          [disabled]="form.invalid || isLoading()"
-        ></tn-button>
-      </div>
+      @if (slideInRef) {
+        <div class="step-buttons last-step-buttons">
+          <tn-button
+            color="default"
+            [testId]="'back'"
+            [label]="'Back' | translate"
+            (onClick)="previousStep()"
+          ></tn-button>
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            type="submit"
+            color="primary"
+            [testId]="'save'"
+            [label]="'Save' | translate"
+            [disabled]="!canSubmit()"
+          ></tn-button>
+        </div>
+      }
     </tn-step>
   </tn-stepper>
 </form>

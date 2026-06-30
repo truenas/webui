@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, output, signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -8,7 +10,7 @@ import {
 } from '@truenas/ui-components';
 import {
   catchError,
-  finalize, forkJoin, map, Observable, of, switchMap,
+  finalize, forkJoin, map, Observable, of, startWith, switchMap,
   tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -68,7 +70,8 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 })
 export class AddSubsystemComponent {
   private formBuilder = inject(FormBuilder);
-  slideInRef = inject<SlideInRef<void, NvmeOfSubsystem>>(SlideInRef);
+  /** Present when opened via legacy SlideIn host. Absent when hosted in `<tn-side-panel>`. */
+  readonly slideInRef = inject<SlideInRef<void, NvmeOfSubsystem>>(SlideInRef, { optional: true });
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
@@ -81,11 +84,12 @@ export class AddSubsystemComponent {
   protected isLoading = signal(false);
   requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  /** Emitted with the created subsystem when hosted in a `<tn-side-panel>`. */
+  readonly created = output<NvmeOfSubsystem>();
+
+  /** Two-way bound to the stepper so a host footer can drive/observe the active step. */
+  readonly currentStepIndex = signal(0);
+  readonly isLastStep = computed(() => this.currentStepIndex() === 1);
 
   protected form = this.formBuilder.group({
     name: ['', Validators.required],
@@ -99,6 +103,43 @@ export class AddSubsystemComponent {
   });
 
   protected readonly helptext = helptextNvmeOf;
+
+  private readonly nameStatus = toSignal(
+    this.form.controls.name.statusChanges.pipe(startWith(this.form.controls.name.status)),
+    { initialValue: this.form.controls.name.status },
+  );
+
+  /** Whether step 1 is complete enough to advance — drives the panel footer's Next. */
+  readonly canProceed = computed(() => this.nameStatus() === 'VALID');
+
+  private readonly formStatus = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status)),
+    { initialValue: this.form.status },
+  );
+
+  /** Whether the whole form can be submitted — drives the panel footer's Save. */
+  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isLoading());
+
+  constructor() {
+    this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
+  }
+
+  nextStep(): void {
+    this.currentStepIndex.update((index) => index + 1);
+  }
+
+  previousStep(): void {
+    this.currentStepIndex.update((index) => index - 1);
+  }
+
+  /** Public entry point for a `<tn-side-panel>` host's footer Save. */
+  submit(): void {
+    this.onSubmit();
+  }
 
   protected onSubmit(): void {
     this.isLoading.set(true);
@@ -122,8 +163,16 @@ export class AddSubsystemComponent {
       }
 
       this.snackbar.success(this.translate.instant('New subsystem added'));
-      this.slideInRef.close({ response: subsystem });
+      this.close(subsystem);
     });
+  }
+
+  private close(subsystem: NvmeOfSubsystem): void {
+    if (this.slideInRef) {
+      this.slideInRef.close({ response: subsystem });
+    } else {
+      this.created.emit(subsystem);
+    }
   }
 
   private createRelatedEntities(subsystem: NvmeOfSubsystem): Observable<string[]> {
