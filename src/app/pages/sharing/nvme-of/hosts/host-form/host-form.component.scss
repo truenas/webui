@@ -1,7 +1,13 @@
+tn-form-field {
+  display: block;
+  margin-bottom: 2rem;
+}
+
 .generate-key-row {
   display: flex;
   justify-content: flex-end;
-  margin-top: -10px;
+  margin-bottom: 2rem;
+  margin-top: -1rem;
 }
 
 .authentication-details {
@@ -10,10 +16,6 @@
 
 .dh-group-select {
   min-width: 190px;
-}
-
-.host-nqn {
-  margin-bottom: 0;
 }
 
 .dh-checkbox {
