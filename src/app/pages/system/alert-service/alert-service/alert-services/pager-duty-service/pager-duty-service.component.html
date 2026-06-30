@@ -4,7 +4,7 @@
     [tooltip]="helptext.pagerDuty.serviceKeyTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="service_key"></tn-input>
+    <tn-input formControlName="service_key" [testId]="'service_key'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
@@ -12,6 +12,6 @@
     [tooltip]="helptext.pagerDuty.clientNameTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="client_name"></tn-input>
+    <tn-input formControlName="client_name" [testId]="'client_name'"></tn-input>
   </tn-form-field>
 </ng-container>

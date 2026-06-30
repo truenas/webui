@@ -4,7 +4,7 @@
     [tooltip]="helptext.telegram.botTokenTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="bot_token"></tn-input>
+    <tn-input formControlName="bot_token" [testId]="'bot_token'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
@@ -12,6 +12,6 @@
     [tooltip]="helptext.telegram.chatIdsTooltip | translate"
     [required]="true"
   >
-    <tn-chip-input formControlName="chat_ids" [allowCustomValue]="true" [addOnBlur]="true"></tn-chip-input>
+    <tn-chip-input formControlName="chat_ids" [testId]="'chat_ids'" [allowCustomValue]="true" [addOnBlur]="true"></tn-chip-input>
   </tn-form-field>
 </ng-container>

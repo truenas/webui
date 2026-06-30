@@ -31,6 +31,7 @@
         >
           <tn-select
             formControlName="filelocation"
+            [testId]="'filelocation'"
             [options]="(fileLocationOptions$ | async) ?? []"
           ></tn-select>
         </tn-form-field>
@@ -40,6 +41,7 @@
         <tn-form-field [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate">
           <tn-checkbox
             formControlName="rebootAfterManualUpdate"
+            [testId]="'rebootAfterManualUpdate'"
             [label]="helptext.rebootAfterManualUpdate.label | translate"
           ></tn-checkbox>
         </tn-form-field>
