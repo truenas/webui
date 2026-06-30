@@ -2,7 +2,7 @@
   color: var(--fg2);
 }
 
-.reports-toolbar ::ng-deep {
+.reports-toolbar {
   align-items: flex-end;
   display: flex;
   flex-direction: row;
@@ -20,10 +20,7 @@
     display: flex;
     margin: 0;
     padding: 0;
+    width: 180px;
     max-width: 180px;
-
-    .input-container {
-      width: 180px;
-    }
   }
 }
