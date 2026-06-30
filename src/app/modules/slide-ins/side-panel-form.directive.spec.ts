@@ -43,6 +43,39 @@ describe('SidePanelForm', () => {
     });
   });
 
+  describe('isSubmitting (distinguishes a save from an initial data load)', () => {
+    let spectator: Spectator<TrackedFormComponent>;
+    const createComponent = createComponentFactory(TrackedFormComponent);
+
+    beforeEach(() => {
+      spectator = createComponent();
+    });
+
+    it('stays false while busy with an initial data load (no submit yet)', () => {
+      spectator.component.loading.set(true);
+
+      expect(spectator.component.isBusy()).toBe(true);
+      expect(spectator.component.isSubmitting()).toBe(false);
+    });
+
+    it('reads true once submit() has run and work is still in flight', () => {
+      spectator.component.submit();
+      spectator.component.loading.set(true);
+
+      expect(spectator.component.isSubmitting()).toBe(true);
+    });
+
+    it('self-clears once the in-flight work settles', () => {
+      spectator.component.submit();
+      spectator.component.loading.set(true);
+      expect(spectator.component.isSubmitting()).toBe(true);
+
+      spectator.component.loading.set(false);
+
+      expect(spectator.component.isSubmitting()).toBe(false);
+    });
+  });
+
   describe('isBusy (form that builds canSubmit without trackCanSubmit)', () => {
     let spectator: Spectator<UntrackedFormComponent>;
     const createComponent = createComponentFactory(UntrackedFormComponent);

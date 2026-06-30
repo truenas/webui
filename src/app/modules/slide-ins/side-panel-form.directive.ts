@@ -45,18 +45,31 @@ export abstract class SidePanelForm<R = boolean> {
   /** Loading signal backing {@link isBusy}; captured from {@link trackCanSubmit} (false otherwise). */
   private submitLoading: Signal<boolean> = signal(false);
 
+  /** Set by {@link submit}; gates {@link isSubmitting} so it reads false outside an actual save. */
+  private readonly submitTriggered = signal(false);
+
   /**
-   * Whether the form is busy — a `<tn-side-panel>` host reads this to show its progress bar and
-   * switch Save to "Saving…". In side-panel mode the inner `<ix-form>` renders no loader (its
-   * chrome is SlideIn-only), so without this a save shows no progress feedback. Defaults to the
-   * loading signal handed to {@link trackCanSubmit} — typically a submit-in-flight flag, though for
-   * forms whose loading signal also covers initial data load this will read busy during that load
-   * too. Forms that build `canSubmit` without `trackCanSubmit` should `override` this to return
-   * their own loading signal.
+   * Whether the form is busy — a `<tn-side-panel>` host reads this to show its progress bar and to
+   * keep Save disabled. In side-panel mode the inner `<ix-form>` renders no loader (its chrome is
+   * SlideIn-only), so without this a save shows no progress feedback. Defaults to the loading signal
+   * handed to {@link trackCanSubmit} — typically a submit-in-flight flag, though for forms whose
+   * loading signal also covers initial data load this will read busy during that load too. Forms
+   * that build `canSubmit` without `trackCanSubmit` should `override` this to return their own
+   * loading signal. The progress bar during a load is harmless; the "Saving…" label is driven by
+   * {@link isSubmitting} (not this) so a load never mislabels Save as saving.
    */
   isBusy(): boolean {
     return this.submitLoading();
   }
+
+  /**
+   * Whether a save is actually in flight — distinct from {@link isBusy}, which for some forms also
+   * covers an initial data load. The `<tn-side-panel>` host reads this (not `isBusy`) to switch Save
+   * to "Saving…", so a form merely loading its initial config doesn't show a misleading "Saving…".
+   * True only while busy work that {@link submit} kicked off is still running; it self-clears via the
+   * `isBusy()` term once that work settles, so an initial load (before any submit) always reads false.
+   */
+  readonly isSubmitting = computed(() => this.submitTriggered() && this.isBusy());
 
   /** Performs the actual save. Invoked by the host-facing {@link submit}. */
   protected abstract onSubmit(): void;
@@ -67,6 +80,7 @@ export abstract class SidePanelForm<R = boolean> {
 
   /** Public entry point for hosts (e.g. `<tn-side-panel>`) to trigger form submission. */
   submit(): void {
+    this.submitTriggered.set(true);
     this.onSubmit();
   }
 

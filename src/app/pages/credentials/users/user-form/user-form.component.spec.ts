@@ -205,6 +205,13 @@ describe('UserFormComponent', () => {
       expect(typeof spectator.component.isBusy).toBe('function');
       expect(spectator.component.isBusy()).toBe(false);
     });
+
+    it('exposes isSubmitting so the panel host only shows "Saving…" during an actual save', () => {
+      // Public contract only: false outside a save (no submit in flight). The "Saving…" label is
+      // driven by this rather than isBusy; the submit-in-flight transition is covered by the
+      // SidePanelForm directive spec.
+      expect(spectator.component.isSubmitting()).toBe(false);
+    });
   });
 
   describe('validation clearing integration', () => {

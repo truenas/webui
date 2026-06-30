@@ -46,7 +46,7 @@
       tnSidePanelAction
       color="primary"
       [testId]="'save'"
-      [label]="(form.isBusy?.() ? ('Saving…' | translate) : (saveLabel() | translate))"
+      [label]="(form.isSubmitting?.() ? ('Saving…' | translate) : (saveLabel() | translate))"
       [disabled]="!form.canSubmit() || (form.isBusy?.() ?? false)"
       (onClick)="form.submit()"
     ></tn-button>
