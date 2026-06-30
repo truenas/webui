@@ -12,6 +12,7 @@ import {
   TnCardComponent,
   TnCardFooterActionsDirective,
   TnCheckboxComponent,
+  TnFileInputComponent,
   TnFormFieldComponent,
   TnFormSectionComponent,
   TnProgressBarComponent,
@@ -35,7 +36,6 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -64,7 +64,7 @@ import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/sys
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
-    IxFileInputComponent,
+    TnFileInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
     RequiresRolesDirective,
@@ -92,11 +92,11 @@ export class ManualUpdateFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     filelocation: ['', Validators.required],
-    updateFile: [null as FileList | null],
+    updateFile: [null as File | null, Validators.required],
     rebootAfterManualUpdate: [false],
   }) as FormGroup<{
     filelocation?: FormControl<string | null>;
-    updateFile: FormControl<FileList | null>;
+    updateFile: FormControl<File | null>;
     rebootAfterManualUpdate: FormControl<boolean>;
   }>;
 
@@ -212,20 +212,20 @@ export class ManualUpdateFormComponent implements OnInit {
     this.setupAndOpenUpdateJobDialog(value.updateFile, value.filelocation);
   }
 
-  private setupAndOpenUpdateJobDialog(files: FileList, fileLocation: string): void {
-    if (!files.length) {
+  private setupAndOpenUpdateJobDialog(file: File | null, fileLocation: string): void {
+    if (!file) {
       return;
     }
 
     const params: UploadOptions = this.isHaLicensed
       ? {
           method: 'failover.upgrade',
-          file: files[0],
+          file,
         }
       : {
           method: 'update.file',
           params: [{ destination: fileLocation }],
-          file: files[0],
+          file,
         };
 
     const job$ = this.upload.uploadAsJob(params);

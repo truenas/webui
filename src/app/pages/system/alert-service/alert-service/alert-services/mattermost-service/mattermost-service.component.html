@@ -1,28 +1,30 @@
 <ng-container [formGroup]="form">
-  <ix-input
-    formControlName="url"
+  <tn-form-field
     [label]="'Webhook URL' | translate"
-    [required]="true"
     [tooltip]="helptext.mattermost.urlTooltip | translate"
-    [parse]="formatter.stringAsUrlParsing"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input formControlName="url"></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="username"
+  <tn-form-field
     [label]="'Username' | translate"
     [required]="true"
-  ></ix-input>
+  >
+    <tn-input formControlName="username"></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="channel"
+  <tn-form-field
     [label]="'Channel' | translate"
     [tooltip]="helptext.mattermost.channelTooltip | translate"
-  ></ix-input>
+  >
+    <tn-input formControlName="channel"></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="icon_url"
+  <tn-form-field
     [label]="'Icon URL' | translate"
     [tooltip]="helptext.mattermost.iconUrlTooltip | translate"
-    [parse]="formatter.stringAsUrlParsing"
-  ></ix-input>
+  >
+    <tn-input formControlName="icon_url"></tn-input>
+  </tn-form-field>
 </ng-container>

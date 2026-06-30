@@ -1,8 +1,8 @@
 <ng-container [formGroup]="form">
-  <ix-input
-    formControlName="email"
-    type="email"
+  <tn-form-field
     [label]="'Override Admin Email' | translate"
     [tooltip]="helptext.emailTooltip | translate"
-  ></ix-input>
+  >
+    <tn-input formControlName="email" [inputType]="InputType.Email"></tn-input>
+  </tn-form-field>
 </ng-container>

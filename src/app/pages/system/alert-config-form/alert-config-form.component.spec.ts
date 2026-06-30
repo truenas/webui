@@ -2,14 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnMenuHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnMenuHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -101,18 +100,18 @@ describe('AlertConfigFormComponent', () => {
 
     // First category (Applications) is selected by default; its two classes render level/policy selects.
     const [appUpdateLevel, appUpdatePolicy, appFailedLevel, appFailedPolicy] = await loader
-      .getAllHarnesses(IxSelectHarness);
-    expect(await appUpdateLevel.getValue()).toBe(AlertLevel.Error);
-    expect(await appUpdatePolicy.getValue()).toBe(AlertPolicy.Never);
-    expect(await appFailedLevel.getValue()).toBe(AlertLevel.Warning);
-    expect(await appFailedPolicy.getValue()).toBe(AlertPolicy.Immediately);
+      .getAllHarnesses(TnSelectHarness);
+    expect(await appUpdateLevel.getDisplayText()).toBe(AlertLevel.Error);
+    expect(await appUpdatePolicy.getDisplayText()).toBe(AlertPolicy.Never);
+    expect(await appFailedLevel.getDisplayText()).toBe(AlertLevel.Warning);
+    expect(await appFailedPolicy.getDisplayText()).toBe(AlertPolicy.Immediately);
   });
 
   it('saves updated config', async () => {
-    const [appUpdateLevel, appUpdatePolicy, appFailedLevel] = await loader.getAllHarnesses(IxSelectHarness);
-    await appUpdateLevel.setValue(AlertLevel.Info);
-    await appUpdatePolicy.setValue(AlertPolicy.Immediately);
-    await appFailedLevel.setValue(AlertLevel.Notice);
+    const [appUpdateLevel, appUpdatePolicy, appFailedLevel] = await loader.getAllHarnesses(TnSelectHarness);
+    await appUpdateLevel.selectOption(AlertLevel.Info);
+    await appUpdatePolicy.selectOption(AlertPolicy.Immediately);
+    await appFailedLevel.selectOption(AlertLevel.Notice);
 
     // Switch to the Certificates category to edit its classes within the same form.
     const categoriesTrigger = await loader.getHarness(TnButtonHarness.with({ label: 'Applications' }));
@@ -120,9 +119,9 @@ describe('AlertConfigFormComponent', () => {
     const categoriesMenu = await rootLoader.getHarness(TnMenuHarness);
     await categoriesMenu.clickItem({ label: 'Certificates' });
 
-    const [, certExpiredPolicy, , certExpiringPolicy] = await loader.getAllHarnesses(IxSelectHarness);
-    await certExpiredPolicy.setValue(AlertPolicy.Never);
-    await certExpiringPolicy.setValue(AlertPolicy.Hourly);
+    const [, certExpiredPolicy, , certExpiringPolicy] = await loader.getAllHarnesses(TnSelectHarness);
+    await certExpiredPolicy.selectOption(AlertPolicy.Never);
+    await certExpiringPolicy.selectOption(AlertPolicy.Hourly);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
