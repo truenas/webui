@@ -1,4 +1,25 @@
-<tn-card class="form-card">
+<tn-card class="form-card" [title]="'Category' | translate">
+  <ng-template tnCardHeaderActions>
+    @if (categories.length) {
+      <tn-button
+        icon="mdi-menu-down"
+        iconPosition="right"
+        [testId]="'categories'"
+        [label]="selectedCategory?.title ? (selectedCategory.title | translate) : ''"
+        [tnMenuTriggerFor]="categoriesMenu"
+      ></tn-button>
+      <tn-menu #categoriesMenu>
+        @for (category of categories; track category.id) {
+          <tn-menu-item
+            [testId]="'category-' + category.id"
+            [label]="category.title | translate"
+            (itemClick)="onCategoryChanged(category)"
+          ></tn-menu-item>
+        }
+      </tn-menu>
+    }
+  </ng-template>
+
   @if (isFormLoading()) {
     <tn-progress-bar mode="indeterminate"></tn-progress-bar>
   }
@@ -7,65 +28,48 @@
     <tn-empty icon="alert-circle" iconLibrary="mdi" [title]="'Cannot retrieve response' | translate"></tn-empty>
   }
 
-  @if (categories.length) {
-    <div class="category-header">
-      @if (selectedCategory) {
-        <h3> {{ 'Category' | translate }}: </h3>
-      }
-      <div class="categories">
-        <tn-button
-          icon="menu-down"
-          iconLibrary="mdi"
-          iconPosition="right"
-          [testId]="'categories'"
-          [label]="selectedCategory?.title ? (selectedCategory.title | translate) : ''"
-          [tnMenuTriggerFor]="categoriesMenu"
-        ></tn-button>
-        <tn-menu #categoriesMenu>
-          @for (category of categories; track category.id) {
-            <tn-menu-item
-              [testId]="'category-' + category.id"
-              [label]="category.title | translate"
-              (itemClick)="onCategoryChanged(category)"
-            ></tn-menu-item>
-          }
-        </tn-menu>
-      </div>
-    </div>
-    @if (selectedCategory) {
-      <form (submit)="onSubmit()">
-        @for (cls of selectedCategory.classes; track cls.id) {
-          <div class="class-row" [formGroup]="form.controls[cls.id]">
-            <span class="class-label">{{ cls.title | translate }}</span>
-            <ix-select
+  @if (categories.length && selectedCategory) {
+    <form (submit)="onSubmit()">
+      @for (cls of selectedCategory.classes; track cls.id) {
+        <div class="class-row" [formGroup]="form.controls[cls.id]">
+          <span class="class-label">{{ cls.title | translate }}</span>
+          <tn-form-field
+            [label]="'Set Warning Level' | translate"
+            [tooltip]="helptext.levelTooltip | translate"
+            [required]="true"
+          >
+            <tn-select
               formControlName="level"
-              [ixTestOverride]="[cls.title, 'level']"
-              [label]="'Set Warning Level' | translate"
-              [required]="true"
-              [tooltip]="helptext.levelTooltip | translate"
-              [options]="levelOptions$"
-            ></ix-select>
-            <ix-select
+              [testId]="[cls.title, 'level']"
+              [options]="(levelOptions$ | async) ?? []"
+            ></tn-select>
+          </tn-form-field>
+          <tn-form-field
+            [label]="'Set Frequency' | translate"
+            [tooltip]="helptext.policyTooltip | translate"
+            [required]="true"
+          >
+            <tn-select
               formControlName="policy"
-              [ixTestOverride]="[cls.title, 'policy']"
-              [label]="'Set Frequency' | translate"
-              [required]="true"
-              [tooltip]="helptext.policyTooltip | translate"
-              [options]="policyOptions$"
-            ></ix-select>
-          </div>
-        }
-        <div class="form-actions">
-          <tn-button
-            *ixRequiresRoles="requiredRoles"
-            type="submit"
-            color="primary"
-            [testId]="'save'"
-            [label]="'Save' | translate"
-            [disabled]="form.invalid || isFormLoading() || !selectedCategory"
-          ></tn-button>
+              [testId]="[cls.title, 'policy']"
+              [options]="(policyOptions$ | async) ?? []"
+            ></tn-select>
+          </tn-form-field>
         </div>
-      </form>
-    }
+      }
+    </form>
   }
+
+  <ng-template tnCardFooterActions>
+    @if (categories.length && selectedCategory) {
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="form.invalid || isFormLoading() || !selectedCategory"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    }
+  </ng-template>
 </tn-card>

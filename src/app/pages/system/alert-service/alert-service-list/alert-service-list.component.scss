@@ -1,7 +1,3 @@
-mat-toolbar-row {
-  > div {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-  }
+:host {
+  display: block;
 }

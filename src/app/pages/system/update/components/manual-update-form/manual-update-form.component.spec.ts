@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnDialog, TnSelectHarness } from '@truenas/ui-components';
+import { TnDialog, TnFileInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -119,8 +119,10 @@ describe('ManualUpdateFormComponent', () => {
     expect(select).toBeNull();
   });
 
-  /**
-   * TODO: More tests should be written to test form submission etc once
-   * harness and test files are ready for IxFileInputComponent
-   */
+  it('renders the update file input, empty until a file is chosen', async () => {
+    const fileInput = await loader.getHarness(TnFileInputHarness);
+    expect(await fileInput.getTestId()).toBe('file-input-update-file');
+    expect(await fileInput.hasFile()).toBe(false);
+    expect(spectator.component.form.controls.updateFile.value).toBeNull();
+  });
 });

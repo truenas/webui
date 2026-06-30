@@ -9,14 +9,19 @@
         <b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}
       </p>
 
-      <ix-file-input
-        formControlName="updateFile"
+      <tn-form-field
         [label]="helptext.filename.label | translate"
         [tooltip]="helptext.filename.tooltip | translate"
-        [multiple]="false"
         [required]="true"
-        [acceptedFiles]="'.tar,.update'"
-      ></ix-file-input>
+      >
+        <tn-file-input
+          formControlName="updateFile"
+          accept=".tar,.update"
+          [showFileName]="true"
+          [ariaLabel]="helptext.filename.label | translate"
+          [testId]="'update-file'"
+        ></tn-file-input>
+      </tn-form-field>
 
       @if (!isHaLicensed) {
         <tn-form-field

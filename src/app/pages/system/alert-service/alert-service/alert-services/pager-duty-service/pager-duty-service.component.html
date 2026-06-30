@@ -1,15 +1,17 @@
 <ng-container [formGroup]="form">
-  <ix-input
-    formControlName="service_key"
+  <tn-form-field
     [label]="'Service Key' | translate"
-    [required]="true"
     [tooltip]="helptext.pagerDuty.serviceKeyTooltip | translate"
-  ></ix-input>
-
-  <ix-input
-    formControlName="client_name"
-    [label]="'Client Name' | translate"
     [required]="true"
+  >
+    <tn-input formControlName="service_key"></tn-input>
+  </tn-form-field>
+
+  <tn-form-field
+    [label]="'Client Name' | translate"
     [tooltip]="helptext.pagerDuty.clientNameTooltip | translate"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input formControlName="client_name"></tn-input>
+  </tn-form-field>
 </ng-container>

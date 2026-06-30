@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -6,11 +7,15 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderActionsDirective,
   TnEmptyComponent,
+  TnFormFieldComponent,
   TnMenuComponent,
   TnMenuItemComponent,
   TnMenuTriggerDirective,
   TnProgressBarComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -21,9 +26,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -34,7 +37,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./alert-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     TnCardComponent,
+    TnCardHeaderActionsDirective,
+    TnCardFooterActionsDirective,
     TnProgressBarComponent,
     TnEmptyComponent,
     TnButtonComponent,
@@ -43,8 +49,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnMenuItemComponent,
     ReactiveFormsModule,
     FormsModule,
-    IxSelectComponent,
-    TestOverrideDirective,
+    TnFormFieldComponent,
+    TnSelectComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],

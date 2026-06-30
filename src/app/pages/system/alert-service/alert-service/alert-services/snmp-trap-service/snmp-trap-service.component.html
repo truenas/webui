@@ -1,63 +1,67 @@
 <ng-container [formGroup]="form">
-  <ix-input
-    formControlName="host"
+  <tn-form-field
     [label]="'Hostname' | translate"
-    [required]="true"
     [tooltip]="helptext.snmpTrap.hostTooltip | translate"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input formControlName="host"></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="port"
-    type="number"
+  <tn-form-field
     [label]="'Port' | translate"
     [tooltip]="helptext.snmpTrap.portTooltip | translate"
-  ></ix-input>
+  >
+    <tn-input formControlName="port" [inputType]="InputType.Number"></tn-input>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="v3"
-    [label]="'SNMPv3 Security Model' | translate"
-  ></ix-checkbox>
+  <tn-form-field>
+    <tn-checkbox formControlName="v3" [label]="'SNMPv3 Security Model' | translate"></tn-checkbox>
+  </tn-form-field>
 
   @if (isV3) {
-    <ix-input
-      formControlName="v3_username"
+    <tn-form-field
       [label]="'Username' | translate"
-      [required]="true"
       [tooltip]="helptext.snmpTrap.usernameTooltip | translate"
-    ></ix-input>
+      [required]="true"
+    >
+      <tn-input formControlName="v3_username"></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="v3_authkey"
+    <tn-form-field
       [label]="'Secret Authentication Key' | translate"
       [tooltip]="helptext.snmpTrap.authKeyTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input formControlName="v3_authkey"></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="v3_privkey"
+    <tn-form-field
       [label]="'Secret Encryption Key' | translate"
       [tooltip]="helptext.snmpTrap.privateKeyTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input formControlName="v3_privkey"></tn-input>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="v3_authprotocol"
+    <tn-form-field
       [label]="'Authentication Protocol' | translate"
-      [options]="authProtocols$"
-      [required]="true"
       [tooltip]="helptext.snmpTrap.authProtocolTooltip | translate"
-    ></ix-select>
-
-    <ix-select
-      formControlName="v3_privprotocol"
-      [label]="'Encryption Protocol' | translate"
-      [options]="privProtocols$"
       [required]="true"
+    >
+      <tn-select formControlName="v3_authprotocol" [options]="(authProtocols$ | async) ?? []"></tn-select>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Encryption Protocol' | translate"
       [tooltip]="helptext.snmpTrap.encryptionProtocolTooltip | translate"
-    ></ix-select>
+      [required]="true"
+    >
+      <tn-select formControlName="v3_privprotocol" [options]="(privProtocols$ | async) ?? []"></tn-select>
+    </tn-form-field>
   }
 
-  <ix-input
-    formControlName="community"
+  <tn-form-field
     [label]="'SNMP Community' | translate"
     [tooltip]="helptext.snmpTrap.communityTooltip | translate"
-  ></ix-input>
+  >
+    <tn-input formControlName="community"></tn-input>
+  </tn-form-field>
 </ng-container>
