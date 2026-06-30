@@ -12,9 +12,7 @@ import { TnIconComponent } from '@truenas/ui-components';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
 import FontFaceObserver from 'fontfaceobserver';
-import {
-  filter, take, tap,
-} from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
