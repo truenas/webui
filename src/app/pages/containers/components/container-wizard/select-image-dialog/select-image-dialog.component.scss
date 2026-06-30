@@ -26,6 +26,15 @@
       position: sticky;
       top: 0;
     }
+
+    // The global `tn-dialog-shell tn-form-field` rule (_tn-styles.scss) adds the
+    // ix-* dialog rhythm (12px margin + 8px padding) to every field, which is too
+    // airy for this compact filter sidebar. Drop it and let the section's own
+    // `gap` space the fields.
+    tn-form-field {
+      margin: 0;
+      padding: 0;
+    }
   }
 }
 
