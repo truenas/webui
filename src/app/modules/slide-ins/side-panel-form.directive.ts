@@ -1,5 +1,5 @@
 import {
-  computed, Directive, inject, output, signal, Signal,
+  computed, Directive, effect, inject, output, signal, Signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
@@ -45,7 +45,11 @@ export abstract class SidePanelForm<R = boolean> {
   /** Loading signal backing {@link isBusy}; captured from {@link trackCanSubmit} (false otherwise). */
   private submitLoading: Signal<boolean> = signal(false);
 
-  /** Set by {@link submit}; gates {@link isSubmitting} so it reads false outside an actual save. */
+  /**
+   * Set by {@link submit} and cleared once the busy period it kicked off settles (see the
+   * falling-edge reset in the constructor); gates {@link isSubmitting} so it reads false outside
+   * an actual save — even if the form's loading signal later toggles for a non-submit reason.
+   */
   private readonly submitTriggered = signal(false);
 
   /**
@@ -66,8 +70,9 @@ export abstract class SidePanelForm<R = boolean> {
    * Whether a save is actually in flight — distinct from {@link isBusy}, which for some forms also
    * covers an initial data load. The `<tn-side-panel>` host reads this (not `isBusy`) to switch Save
    * to "Saving…", so a form merely loading its initial config doesn't show a misleading "Saving…".
-   * True only while busy work that {@link submit} kicked off is still running; it self-clears via the
-   * `isBusy()` term once that work settles, so an initial load (before any submit) always reads false.
+   * True only while busy work that {@link submit} kicked off is still running, because
+   * {@link submitTriggered} is cleared on that work's falling edge (see constructor); so an initial
+   * load (before any submit) reads false, and so does a later non-submit busy toggle.
    */
   readonly isSubmitting = computed(() => this.submitTriggered() && this.isBusy());
 
@@ -76,6 +81,18 @@ export abstract class SidePanelForm<R = boolean> {
 
   constructor() {
     this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
+
+    // Clear the submit latch on the falling edge of busy: once the save's busy period ends, a later
+    // non-submit busy toggle won't mislabel Save as "Saving…". Only the falling edge clears it, so
+    // setting the latch in submit() before busy rises is safe.
+    let wasBusy = false;
+    effect(() => {
+      const busy = this.isBusy();
+      if (wasBusy && !busy) {
+        this.submitTriggered.set(false);
+      }
+      wasBusy = busy;
+    });
   }
 
   /** Public entry point for hosts (e.g. `<tn-side-panel>`) to trigger form submission. */

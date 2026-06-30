@@ -230,7 +230,10 @@ describe('PrivilegeFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ ...fakeDataPrivilege, builtin_name: 'ADMIN' }) }),
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({ ...fakeDataPrivilege, builtin_name: Role.FullAdmin }),
+          }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

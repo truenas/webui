@@ -74,6 +74,21 @@ describe('SidePanelForm', () => {
 
       expect(spectator.component.isSubmitting()).toBe(false);
     });
+
+    it('drops the submit latch after a save, so a later non-submit busy toggle is not "saving"', () => {
+      // Full save cycle: submit, then busy rises and falls (detectChanges flushes the reset effect).
+      spectator.component.submit();
+      spectator.component.loading.set(true);
+      spectator.detectChanges();
+      spectator.component.loading.set(false);
+      spectator.detectChanges();
+
+      // A later busy period with no submit (e.g. a reload) must not mislabel Save as "Saving…".
+      spectator.component.loading.set(true);
+
+      expect(spectator.component.isBusy()).toBe(true);
+      expect(spectator.component.isSubmitting()).toBe(false);
+    });
   });
 
   describe('isBusy (form that builds canSubmit without trackCanSubmit)', () => {
