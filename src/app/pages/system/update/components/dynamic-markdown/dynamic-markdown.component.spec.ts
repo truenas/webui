@@ -1,5 +1,7 @@
-import { MatTabsModule } from '@angular/material/tabs';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { TnTabsHarness } from '@truenas/ui-components';
 import { MarkdownModule } from 'ngx-markdown';
 import { DynamicMarkdownComponent } from './dynamic-markdown.component';
 
@@ -7,7 +9,7 @@ describe('DynamicMarkdownComponent', () => {
   let spectator: Spectator<DynamicMarkdownComponent>;
   const createComponent = createComponentFactory({
     component: DynamicMarkdownComponent,
-    imports: [MarkdownModule.forRoot(), MatTabsModule],
+    imports: [MarkdownModule.forRoot()],
   });
 
   it('should create', () => {
@@ -99,7 +101,7 @@ describe('DynamicMarkdownComponent', () => {
     expect(processedData.sections[0].content).toBe('Version: 24.10');
   });
 
-  it('should render tab sections', () => {
+  it('should render tab sections', async () => {
     spectator = createComponent({
       props: {
         content: `<!-- tabs -->
@@ -111,9 +113,10 @@ Content 2
         context: {},
       },
     });
+    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const tabGroup = spectator.query('mat-tab-group');
-    expect(tabGroup).toBeTruthy();
+    const tabs = await loader.getHarness(TnTabsHarness);
+    expect(tabs).toBeTruthy();
 
     const component = spectator.component;
     const processedData = component.processedData();
@@ -123,7 +126,7 @@ Content 2
     expect(processedData.sections[0].tabs[1].label).toBe('Tab 2');
   });
 
-  it('should handle mixed content with tabs', () => {
+  it('should handle mixed content with tabs', async () => {
     spectator = createComponent({
       props: {
         content: `# Before tabs
@@ -137,10 +140,11 @@ Tab content
         context: {},
       },
     });
+    const loader: HarnessLoader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
     const markdownElements = spectator.queryAll('markdown');
     expect(markdownElements.length).toBeGreaterThan(1);
-    expect(spectator.query('mat-tab-group')).toBeTruthy();
+    expect(await loader.getHarness(TnTabsHarness)).toBeTruthy();
 
     const component = spectator.component;
     const processedData = component.processedData();

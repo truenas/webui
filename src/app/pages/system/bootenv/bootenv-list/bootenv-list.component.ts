@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   filter, map, of, switchMap,
   take,
@@ -36,7 +35,6 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolDeleteDialog } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { getBootenvFormConfig } from 'app/pages/system/bootenv/bootenv-form/bootenv.form-config';
@@ -61,11 +59,9 @@ interface BootEnvironmentUi extends BootEnvironment {
     PageHeaderComponent,
     BasicSearchComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
     RouterLink,
-    TnIconComponent,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
@@ -93,7 +89,7 @@ export class BootEnvironmentListComponent implements OnInit {
   protected readonly searchQuery = signal('');
   private bootenvs: BootEnvironmentUi[] = [];
 
-  columns = createTable<BootEnvironmentUi>([
+  protected columns = createTable<BootEnvironmentUi>([
     checkboxColumn({
       propertyName: 'selected',
       onRowCheck: (row, checked) => {
