@@ -15,7 +15,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { Role, roleNames } from 'app/enums/role.enum';
+import { formatRoleNames, Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -146,11 +146,7 @@ export class GroupListComponent implements OnInit {
   protected readonly emptyMessage = toSignal(this.emptyMessage$, { initialValue: '' });
 
   protected getRolesValue(row: Group): string {
-    return row.roles
-      // Skip falsy entries — translate.instant throws `Parameter "key" required` on an empty key.
-      .filter(Boolean)
-      .map((role) => this.translate.instant(roleNames.get(role) || role))
-      .join(', ') || this.translate.instant('N/A');
+    return formatRoleNames(row.roles, (key) => this.translate.instant(key)) || this.translate.instant('N/A');
   }
 
   protected onRowClick(row: Group): void {

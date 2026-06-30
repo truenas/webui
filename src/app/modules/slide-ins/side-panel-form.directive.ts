@@ -46,11 +46,13 @@ export abstract class SidePanelForm<R = boolean> {
   private submitLoading: Signal<boolean> = signal(false);
 
   /**
-   * Whether a submit is in flight — a `<tn-side-panel>` host reads this to show its progress bar
-   * and switch Save to "Saving…". In side-panel mode the inner `<ix-form>` renders no loader (its
+   * Whether the form is busy — a `<tn-side-panel>` host reads this to show its progress bar and
+   * switch Save to "Saving…". In side-panel mode the inner `<ix-form>` renders no loader (its
    * chrome is SlideIn-only), so without this a save shows no progress feedback. Defaults to the
-   * loading signal handed to {@link trackCanSubmit}; forms that build `canSubmit` without it should
-   * `override` this to return their own loading signal.
+   * loading signal handed to {@link trackCanSubmit} — typically a submit-in-flight flag, though for
+   * forms whose loading signal also covers initial data load this will read busy during that load
+   * too. Forms that build `canSubmit` without `trackCanSubmit` should `override` this to return
+   * their own loading signal.
    */
   isBusy(): boolean {
     return this.submitLoading();
