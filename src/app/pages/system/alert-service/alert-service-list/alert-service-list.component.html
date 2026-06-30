@@ -16,8 +16,10 @@
   </ng-template>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
+    @let emptyConfig = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
     <tn-empty
-      [title]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async).title | translate"
+      [title]="emptyConfig.title | translate"
+      [description]="emptyConfig.message ? (emptyConfig.message | translate) : undefined"
     ></tn-empty>
   } @else {
     <tn-table
