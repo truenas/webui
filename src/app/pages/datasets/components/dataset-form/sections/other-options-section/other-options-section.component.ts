@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -87,7 +87,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   readonly advancedModeChange = output();
   readonly formValidityChange = output<boolean>();
 
-  hasDeduplication = false;
+  protected readonly hasDeduplication = toSignal(this.licenseService.hasDedup$, { initialValue: false });
   hasRecordsizeWarning = false;
   wasDedupChecksumWarningShown = false;
   minimumRecommendedRecordsize = '128K' as DatasetRecordSize;
@@ -192,8 +192,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.checkIfDedupIsSupported();
-
     this.tierService.getTierConfig().pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
@@ -259,13 +257,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;
-  }
-
-  private checkIfDedupIsSupported(): void {
-    this.licenseService.hasDedup$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((hasDedup) => {
-      this.hasDeduplication = hasDedup;
-      this.cdr.markForCheck();
-    });
   }
 
   private getCopiesValue(dataset: Dataset): number | typeof inherit {
