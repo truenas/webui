@@ -12,9 +12,8 @@ import { TnIconComponent } from '@truenas/ui-components';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
 import FontFaceObserver from 'fontfaceobserver';
-import { Observable } from 'rxjs';
 import {
-  filter, map, take, tap,
+  filter, take, tap,
 } from 'rxjs/operators';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
@@ -83,7 +82,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private resizeTimeout: ReturnType<typeof setTimeout>;
 
   ngOnInit(): void {
-    this.checkShellAccess().pipe(
+    // Gate shell connection on the `web_shell` privilege. Without this check a user
+    // lacking that privilege is left staring at an indefinite "Connecting..." spinner.
+    this.authService.hasWebShellAccess$.pipe(
       take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((hasAccess) => {
@@ -93,20 +94,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
       }
       this.startShell();
     });
-  }
-
-  /**
-   * Verifies the current user is allowed to open this shell before attempting to connect.
-   * Every shell (system, VM serial, container console) connects through the same
-   * `/websocket/shell/` endpoint, whose authorization gate is the `web_shell` privilege.
-   * Without this check a user lacking that privilege is left staring at an indefinite
-   * "Connecting..." spinner.
-   */
-  private checkShellAccess(): Observable<boolean> {
-    return this.authService.user$.pipe(
-      filter(Boolean),
-      map((user) => Boolean(user.privilege?.web_shell)),
-    );
   }
 
   private startShell(): void {

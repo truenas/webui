@@ -30,12 +30,14 @@
       </div>
     </div>
   }
-  <div
-    #terminal
-    id="terminal"
-    [ngStyle]="{ 'font-size': fontSize + 'px' }"
-    [class.terminal-dimmed]="!shellConnected()"
-  ></div>
+  @if (!accessDenied()) {
+    <div
+      #terminal
+      id="terminal"
+      [ngStyle]="{ 'font-size': fontSize + 'px' }"
+      [class.terminal-dimmed]="!shellConnected()"
+    ></div>
+  }
 </div>
 
 <ng-template #terminalLoading>

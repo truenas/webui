@@ -70,6 +70,16 @@ export class AuthService implements OnDestroy {
     map((user) => user.account_attributes.includes(AccountAttribute.Local)),
   );
 
+  /**
+   * Whether the current user is allowed to open a Web Shell. Every shell
+   * (system, VM serial, container console) connects through the same
+   * `/websocket/shell/` endpoint, which is gated by the `web_shell` privilege.
+   */
+  readonly hasWebShellAccess$: Observable<boolean> = this.user$.pipe(
+    filter(Boolean),
+    map((user) => Boolean(user.privilege?.web_shell)),
+  );
+
   private readonly hasPasswordChangedSinceLastLogin$ = new BehaviorSubject(false);
   readonly isPasswordChangeRequired$: Observable<boolean> = combineLatest([
     this.user$.pipe(

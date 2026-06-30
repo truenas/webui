@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { tnIconMarker } from '@truenas/ui-components';
-import { map } from 'rxjs/operators';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { LicenseService } from 'app/services/license.service';
@@ -116,7 +115,7 @@ export class NavigationService {
         {
           name: T('Shell'),
           state: 'shell',
-          hasAccess$: this.authService.user$.pipe(map((user) => !!user?.privilege?.web_shell)),
+          hasAccess$: this.authService.hasWebShellAccess$,
         },
         { name: T('Alert Settings'), state: 'alert-settings' },
         { name: T('Audit'), state: 'audit' },
