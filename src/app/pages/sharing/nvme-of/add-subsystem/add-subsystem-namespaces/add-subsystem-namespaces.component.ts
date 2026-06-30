@@ -1,9 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, signal, viewChild,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnIconButtonComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnIconButtonComponent, TnSidePanelActionDirective, TnSidePanelComponent,
+} from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Role } from 'app/enums/role.enum';
+import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
@@ -22,28 +29,40 @@ import {
     ReactiveFormsModule,
     TnButtonComponent,
     TnIconButtonComponent,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
+    AddSubsystemNamespaceComponent,
     NamespaceDescriptionComponent,
+    RequiresRolesDirective,
   ],
 })
 export class AddSubsystemNamespacesComponent {
-  private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
-  private destroyRef = inject(DestroyRef);
+  private unsavedChanges = inject(UnsavedChangesService);
 
   namespacesControl = input.required<FormControl<NamespaceChanges[]>>();
+
+  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+
+  // Add-namespace form hosted in a <tn-side-panel> (the form is dual-host: it also
+  // still opens via legacy SlideIn from other call sites).
+  protected readonly namespacePanelOpen = signal(false);
+  protected readonly namespaceForm = viewChild(AddSubsystemNamespaceComponent);
+  protected readonly namespaceCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, () => this.namespaceForm());
 
   protected get namespaces(): NamespaceChanges[] {
     return this.namespacesControl()?.value || [];
   }
 
   protected onAddNamespace(): void {
-    this.slideIn.open(AddSubsystemNamespaceComponent)
-      .onSuccess((response) => {
-        const newNamespaces = [...this.namespaces, response];
-        this.namespacesControl().setValue(uniqBy(newNamespaces, 'device_path'));
+    this.namespacePanelOpen.set(true);
+  }
 
-        this.cdr.markForCheck();
-      }, this.destroyRef);
+  protected onNamespaceSaved(namespace: NamespaceChanges): void {
+    this.namespacePanelOpen.set(false);
+    const newNamespaces = [...this.namespaces, namespace];
+    this.namespacesControl().setValue(uniqBy(newNamespaces, 'device_path'));
+    this.cdr.markForCheck();
   }
 
   protected onDeleteNamespace(indexToRemove: number): void {

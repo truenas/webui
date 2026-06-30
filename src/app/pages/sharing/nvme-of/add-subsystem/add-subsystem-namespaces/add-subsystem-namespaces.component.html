@@ -31,3 +31,24 @@
     }
   </div>
 }
+
+<tn-side-panel
+  [title]="'Add Namespace' | translate"
+  [closeGuard]="namespaceCloseGuard"
+  [(open)]="namespacePanelOpen"
+>
+  @if (namespacePanelOpen()) {
+    <ix-add-subsystem-namespace (saved)="onNamespaceSaved($event)"></ix-add-subsystem-namespace>
+  }
+  @if (namespaceForm(); as form) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>
