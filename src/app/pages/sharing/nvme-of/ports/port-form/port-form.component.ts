@@ -33,6 +33,7 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
 @Component({
   selector: 'ix-port-form',
   templateUrl: './port-form.component.html',
+  styleUrl: './port-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
