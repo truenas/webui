@@ -20,6 +20,11 @@ import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-chang
  * `boolean` (a plain "saved" signal, all most forms need). Forms that create a record the
  * caller needs — e.g. a picker's "Add New" — parameterize it (`SidePanelForm<User>`) and
  * emit the record through {@link closed}; `FormSidePanelService.open` then resolves with it.
+ *
+ * Note: forms built on the clean `<ix-form>` renderer (`IxFormRendererComponent`) already expose
+ * `isBusy`/`isSubmitting` by delegating to its separate loading/submitting signals. The
+ * {@link submitTriggered} latch below exists only for hand-rolled forms whose single loading signal
+ * conflates initial data load and submit, so a load can't be told apart from a save without it.
  */
 @Directive()
 export abstract class SidePanelForm<R = boolean> {
@@ -46,9 +51,20 @@ export abstract class SidePanelForm<R = boolean> {
   private submitLoading: Signal<boolean> = signal(false);
 
   /**
-   * Set by {@link submit} and cleared once the busy period it kicked off settles (see the
-   * falling-edge reset in the constructor); gates {@link isSubmitting} so it reads false outside
-   * an actual save — even if the form's loading signal later toggles for a non-submit reason.
+   * Set by {@link submit} to mark that a save was requested, and consumed on the next rising edge
+   * of {@link isBusy} (see the constructor effect) — at which point we know the save really kicked
+   * off async work and {@link submitTriggered} latches. Cleared synchronously by {@link submit} if
+   * `onSubmit()` returns without going busy, so a submit that bails out (a guard/validation early
+   * return) never leaves a pending request that a later non-submit busy period could latch onto.
+   */
+  private readonly submitRequested = signal(false);
+
+  /**
+   * Latched on the rising edge of the busy period a {@link submit} kicked off, and cleared once that
+   * busy period settles (see the edge handling in the constructor); gates {@link isSubmitting} so it
+   * reads false outside an actual save — even if the form's loading signal later toggles for a
+   * non-submit reason. Because it only latches once busy actually rises (never pre-set in
+   * {@link submit}), a submit that bails out synchronously leaves it false.
    */
   private readonly submitTriggered = signal(false);
 
@@ -71,8 +87,9 @@ export abstract class SidePanelForm<R = boolean> {
    * covers an initial data load. The `<tn-side-panel>` host reads this (not `isBusy`) to switch Save
    * to "Saving…", so a form merely loading its initial config doesn't show a misleading "Saving…".
    * True only while busy work that {@link submit} kicked off is still running, because
-   * {@link submitTriggered} is cleared on that work's falling edge (see constructor); so an initial
-   * load (before any submit) reads false, and so does a later non-submit busy toggle.
+   * {@link submitTriggered} only latches on that work's rising edge and clears on its falling edge
+   * (see constructor); so an initial load (before any submit) reads false, and so does a later
+   * non-submit busy toggle.
    */
   readonly isSubmitting = computed(() => this.submitTriggered() && this.isBusy());
 
@@ -82,16 +99,19 @@ export abstract class SidePanelForm<R = boolean> {
   constructor() {
     this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
 
-    // Clear the submit latch on the falling edge of busy: once the save's busy period ends, a later
-    // non-submit busy toggle won't mislabel Save as "Saving…". Only the falling edge clears it, so
-    // setting the latch in submit() before busy rises is safe. This assumes every onSubmit() raises
-    // a busy edge (true async save); a submit that bails out synchronously without ever going busy
-    // leaves the latch set — harmless on its own since isSubmitting ANDs in isBusy(), but a later
-    // non-submit busy period would then read as submitting until the next real save settles it.
+    // Drive the submit latch off the edges of busy rather than pre-setting it in submit():
+    //  - rising edge while a submit is pending: the save really kicked off async work, so latch it;
+    //  - falling edge: that busy period ended, so clear the latch.
+    // Latching only on the rising edge means a submit that bails out synchronously (a guard or
+    // validation early-return that never goes busy) leaves the latch false — so a later non-submit
+    // busy period (e.g. an edit-mode reload) is never mislabeled as "Saving…".
     let wasBusy = false;
     effect(() => {
       const busy = this.isBusy();
-      if (wasBusy && !busy) {
+      if (busy && !wasBusy && this.submitRequested()) {
+        this.submitRequested.set(false);
+        this.submitTriggered.set(true);
+      } else if (wasBusy && !busy) {
         this.submitTriggered.set(false);
       }
       wasBusy = busy;
@@ -100,8 +120,14 @@ export abstract class SidePanelForm<R = boolean> {
 
   /** Public entry point for hosts (e.g. `<tn-side-panel>`) to trigger form submission. */
   submit(): void {
-    this.submitTriggered.set(true);
+    this.submitRequested.set(true);
     this.onSubmit();
+    // onSubmit() that bails synchronously never raised a busy edge, so there's nothing in flight to
+    // latch; drop the pending request (forms set their loading signal synchronously before the API
+    // call, so a real save reads busy here and keeps the request for the rising-edge latch above).
+    if (!this.isBusy()) {
+      this.submitRequested.set(false);
+    }
   }
 
   /** Host hook (e.g. `<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */

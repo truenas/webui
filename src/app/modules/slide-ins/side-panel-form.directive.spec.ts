@@ -9,7 +9,17 @@ class TrackedFormComponent extends SidePanelForm {
   protected readonly form = new FormControl('');
   readonly loading = signal(false);
   readonly canSubmit = this.trackCanSubmit(this.loading);
-  protected onSubmit(): void {}
+
+  /** When true, onSubmit() returns early without going busy (e.g. a validation/guard early-return). */
+  bailWithoutSaving = false;
+
+  protected onSubmit(): void {
+    if (this.bailWithoutSaving) {
+      return;
+    }
+    // Mirrors every real form: a save flips the loading signal synchronously before the API call.
+    this.loading.set(true);
+  }
 }
 
 @Component({ selector: 'ix-test-untracked-form', template: '', changeDetection: ChangeDetectionStrategy.OnPush })
@@ -53,38 +63,58 @@ describe('SidePanelForm', () => {
 
     it('stays false while busy with an initial data load (no submit yet)', () => {
       spectator.component.loading.set(true);
+      spectator.detectChanges();
 
       expect(spectator.component.isBusy()).toBe(true);
       expect(spectator.component.isSubmitting()).toBe(false);
     });
 
-    it('reads true once submit() has run and work is still in flight', () => {
+    it('reads true once submit() has run and the save is still in flight', () => {
+      // onSubmit() flips loading synchronously; detectChanges flushes the rising-edge latch effect.
       spectator.component.submit();
-      spectator.component.loading.set(true);
+      spectator.detectChanges();
 
+      expect(spectator.component.isBusy()).toBe(true);
       expect(spectator.component.isSubmitting()).toBe(true);
     });
 
     it('self-clears once the in-flight work settles', () => {
       spectator.component.submit();
-      spectator.component.loading.set(true);
+      spectator.detectChanges();
       expect(spectator.component.isSubmitting()).toBe(true);
 
       spectator.component.loading.set(false);
+      spectator.detectChanges();
 
       expect(spectator.component.isSubmitting()).toBe(false);
     });
 
     it('drops the submit latch after a save, so a later non-submit busy toggle is not "saving"', () => {
-      // Full save cycle: submit, then busy rises and falls (detectChanges flushes the reset effect).
+      // Full save cycle: submit (busy rises), then busy falls (detectChanges flushes the edge effects).
       spectator.component.submit();
-      spectator.component.loading.set(true);
       spectator.detectChanges();
       spectator.component.loading.set(false);
       spectator.detectChanges();
 
       // A later busy period with no submit (e.g. a reload) must not mislabel Save as "Saving…".
       spectator.component.loading.set(true);
+      spectator.detectChanges();
+
+      expect(spectator.component.isBusy()).toBe(true);
+      expect(spectator.component.isSubmitting()).toBe(false);
+    });
+
+    it('never latches when submit() bails synchronously, so a later busy toggle is not "saving"', () => {
+      // A submit that early-returns without going busy must not leave a pending latch behind.
+      spectator.component.bailWithoutSaving = true;
+      spectator.component.submit();
+      spectator.detectChanges();
+
+      expect(spectator.component.isSubmitting()).toBe(false);
+
+      // The next non-submit busy period (e.g. an edit-mode reload) must still read as not saving.
+      spectator.component.loading.set(true);
+      spectator.detectChanges();
 
       expect(spectator.component.isBusy()).toBe(true);
       expect(spectator.component.isSubmitting()).toBe(false);
