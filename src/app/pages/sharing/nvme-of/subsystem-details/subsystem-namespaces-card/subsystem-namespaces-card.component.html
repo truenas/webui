@@ -10,17 +10,11 @@
   </ng-template>
 
   @if (!subsystem().namespaces?.length) {
-    <div class="no-namespaces-warning">
-      <tn-icon
-        name="alert"
-        library="mdi"
-        class="icon"
-      ></tn-icon>
-
-      <div>
-        {{ helptext.noNamespacesWarning | translate }}
-      </div>
-    </div>
+    <tn-banner
+      type="warning"
+      [heading]="helptext.noNamespacesWarningHeading | translate"
+      [message]="helptext.noNamespacesWarning | translate"
+    ></tn-banner>
   } @else {
     <ul class="namespace-list">
       @for (namespace of subsystem().namespaces; track namespace.id) {

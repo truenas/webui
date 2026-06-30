@@ -8,17 +8,11 @@
   </ng-template>
 
   @if (!subsystem().ports?.length) {
-    <div class="no-ports-warning">
-      <tn-icon
-        name="alert"
-        library="mdi"
-        class="icon"
-      ></tn-icon>
-
-      <div>
-        {{ helptext.noPortsWarning | translate }}
-      </div>
-    </div>
+    <tn-banner
+      type="warning"
+      [heading]="helptext.noPortsWarningHeading | translate"
+      [message]="helptext.noPortsWarning | translate"
+    ></tn-banner>
   } @else {
     <ul class="port-list">
       @for (port of subsystem().ports; track port.id) {

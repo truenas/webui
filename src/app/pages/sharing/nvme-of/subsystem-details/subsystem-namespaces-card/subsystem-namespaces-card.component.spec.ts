@@ -2,7 +2,7 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
@@ -47,15 +47,14 @@ describe('SubsystemNamespacesCardComponent', () => {
   }
 
   describe('no namespaces', () => {
-    it('shows a warning when subsystem has no namespaces', async () => {
+    it('shows a warning banner when subsystem has no namespaces', async () => {
       initComponent({
         name: 'Test Subsystem',
         namespaces: [],
       });
 
-      const icon = await loader.getHarness(TnIconHarness);
-      expect(await icon.getName()).toBe('alert');
-      expect(spectator.query('.no-namespaces-warning')).toHaveText(helptextNvmeOf.noNamespacesWarning);
+      const banner = await loader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain(helptextNvmeOf.noNamespacesWarning);
     });
   });
 
