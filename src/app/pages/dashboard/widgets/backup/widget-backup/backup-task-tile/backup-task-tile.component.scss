@@ -1,6 +1,8 @@
 @import 'mixins/cards';
 
 :host {
+  container: backup-tile / inline-size;
+  display: block;
   height: 100%;
   width: 100%;
 }
@@ -64,7 +66,9 @@ ul {
         }
       }
 
-      &:nth-child(5) {
+      &.activity {
+        max-width: 50%;
+
         @media(max-width: $breakpoint-xs) {
           display: none;
         }
@@ -93,6 +97,7 @@ ul {
 
     .title {
       font-size: 20px;
+      margin: 0;
       white-space: nowrap;
     }
 
@@ -121,6 +126,74 @@ ul {
 
     &.safe {
       color: var(--green);
+    }
+  }
+}
+
+// The default tile is a wide horizontal row built for full width. When the tile
+// itself gets narrow (e.g. the two-column layout that kicks in once every backup
+// type is configured), the horizontal row no longer fits: stack it vertically —
+// title, then task counts, then the "this week / last successful" activity — and
+// drop the inline backup-actions prompt, which has no room. Keyed off the tile's
+// own width via a container query, so wide tiles (single column, or two columns on
+// a large dashboard) keep the full layout. Scoped through `.tile` to outrank the
+// base `.tile-content` rules above.
+@container backup-tile (max-width: 400px) {
+  .tile .tile-content {
+    // Stretch rows to the full tile width so labels left-align and don't collapse
+    // to a truncated shrink-to-fit width.
+    align-items: stretch;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    padding: 8px 14px;
+
+    .divider {
+      display: none;
+    }
+
+    .backup-actions {
+      display: none;
+    }
+
+    ul {
+      flex: 0 0 auto;
+      text-align: left;
+      // Full width so labels left-align and don't truncate. The base layout caps
+      // the title (:first-child) and counts (:nth-child(3)) columns at 25% for the
+      // horizontal row; override those (matched at equal specificity) when stacked.
+      max-width: 100%;
+      width: 100%;
+
+      &:first-child,
+      &:nth-child(3) {
+        max-width: 100%;
+      }
+
+      &:first-child {
+        text-align: left;
+      }
+
+      // "this week / last successful" activity — surface the "Last successful"
+      // row stacked under the counts (separated by a hairline) instead of hiding
+      // the whole column. The per-week rows don't fit alongside the counts, so
+      // keep them for the wide layout only.
+      &.activity {
+        border-top: 1px solid var(--lines);
+        display: flex;
+        max-width: 100%;
+        padding-top: 6px;
+        width: 100%;
+
+        li:not(:last-child) {
+          display: none;
+        }
+      }
+    }
+
+    // Match the neighbouring Storage widget's tile-header-title size.
+    .title {
+      font-size: 24px;
     }
   }
 }
