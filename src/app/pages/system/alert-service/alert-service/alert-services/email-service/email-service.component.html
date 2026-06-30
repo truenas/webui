@@ -3,6 +3,6 @@
     [label]="'Override Admin Email' | translate"
     [tooltip]="helptext.emailTooltip | translate"
   >
-    <tn-input formControlName="email" [inputType]="InputType.Email"></tn-input>
+    <tn-input formControlName="email" [testId]="'email'" [inputType]="InputType.Email"></tn-input>
   </tn-form-field>
 </ng-container>

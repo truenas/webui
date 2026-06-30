@@ -4,7 +4,7 @@
     [tooltip]="helptext.awsSns.regionTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="region"></tn-input>
+    <tn-input formControlName="region" [testId]="'region'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
@@ -12,7 +12,7 @@
     [tooltip]="helptext.awsSns.topicArnTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="topic_arn"></tn-input>
+    <tn-input formControlName="topic_arn" [testId]="'topic_arn'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
@@ -20,7 +20,7 @@
     [tooltip]="helptext.awsSns.accessKeyIdTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="aws_access_key_id"></tn-input>
+    <tn-input formControlName="aws_access_key_id" [testId]="'aws_access_key_id'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
@@ -28,6 +28,6 @@
     [tooltip]="helptext.awsSns.secretAccessKeyTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="aws_secret_access_key" [inputType]="InputType.Password"></tn-input>
+    <tn-input formControlName="aws_secret_access_key" [testId]="'aws_secret_access_key'" [inputType]="InputType.Password"></tn-input>
   </tn-form-field>
 </ng-container>

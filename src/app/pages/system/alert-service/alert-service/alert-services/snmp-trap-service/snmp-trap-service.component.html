@@ -4,18 +4,18 @@
     [tooltip]="helptext.snmpTrap.hostTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="host"></tn-input>
+    <tn-input formControlName="host" [testId]="'host'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
     [label]="'Port' | translate"
     [tooltip]="helptext.snmpTrap.portTooltip | translate"
   >
-    <tn-input formControlName="port" [inputType]="InputType.Number"></tn-input>
+    <tn-input formControlName="port" [testId]="'port'" [inputType]="InputType.Number"></tn-input>
   </tn-form-field>
 
   <tn-form-field>
-    <tn-checkbox formControlName="v3" [label]="'SNMPv3 Security Model' | translate"></tn-checkbox>
+    <tn-checkbox formControlName="v3" [testId]="'v3'" [label]="'SNMPv3 Security Model' | translate"></tn-checkbox>
   </tn-form-field>
 
   @if (isV3) {
@@ -24,21 +24,21 @@
       [tooltip]="helptext.snmpTrap.usernameTooltip | translate"
       [required]="true"
     >
-      <tn-input formControlName="v3_username"></tn-input>
+      <tn-input formControlName="v3_username" [testId]="'v3_username'"></tn-input>
     </tn-form-field>
 
     <tn-form-field
       [label]="'Secret Authentication Key' | translate"
       [tooltip]="helptext.snmpTrap.authKeyTooltip | translate"
     >
-      <tn-input formControlName="v3_authkey"></tn-input>
+      <tn-input formControlName="v3_authkey" [testId]="'v3_authkey'"></tn-input>
     </tn-form-field>
 
     <tn-form-field
       [label]="'Secret Encryption Key' | translate"
       [tooltip]="helptext.snmpTrap.privateKeyTooltip | translate"
     >
-      <tn-input formControlName="v3_privkey"></tn-input>
+      <tn-input formControlName="v3_privkey" [testId]="'v3_privkey'"></tn-input>
     </tn-form-field>
 
     <tn-form-field
@@ -46,7 +46,7 @@
       [tooltip]="helptext.snmpTrap.authProtocolTooltip | translate"
       [required]="true"
     >
-      <tn-select formControlName="v3_authprotocol" [options]="(authProtocols$ | async) ?? []"></tn-select>
+      <tn-select formControlName="v3_authprotocol" [testId]="'v3_authprotocol'" [options]="(authProtocols$ | async) ?? []"></tn-select>
     </tn-form-field>
 
     <tn-form-field
@@ -54,7 +54,7 @@
       [tooltip]="helptext.snmpTrap.encryptionProtocolTooltip | translate"
       [required]="true"
     >
-      <tn-select formControlName="v3_privprotocol" [options]="(privProtocols$ | async) ?? []"></tn-select>
+      <tn-select formControlName="v3_privprotocol" [testId]="'v3_privprotocol'" [options]="(privProtocols$ | async) ?? []"></tn-select>
     </tn-form-field>
   }
 
@@ -62,6 +62,6 @@
     [label]="'SNMP Community' | translate"
     [tooltip]="helptext.snmpTrap.communityTooltip | translate"
   >
-    <tn-input formControlName="community"></tn-input>
+    <tn-input formControlName="community" [testId]="'community'"></tn-input>
   </tn-form-field>
 </ng-container>

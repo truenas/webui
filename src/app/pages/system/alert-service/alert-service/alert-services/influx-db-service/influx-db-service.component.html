@@ -4,28 +4,28 @@
     [tooltip]="helptext.influxDb.hostTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="host"></tn-input>
+    <tn-input formControlName="host" [testId]="'host'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
     [label]="'Username' | translate"
     [required]="true"
   >
-    <tn-input formControlName="username"></tn-input>
+    <tn-input formControlName="username" [testId]="'username'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
     [label]="'Password' | translate"
     [required]="true"
   >
-    <tn-input formControlName="password" [inputType]="InputType.Password"></tn-input>
+    <tn-input formControlName="password" [testId]="'password'" [inputType]="InputType.Password"></tn-input>
   </tn-form-field>
 
   <tn-form-field
     [label]="'Database' | translate"
     [required]="true"
   >
-    <tn-input formControlName="database"></tn-input>
+    <tn-input formControlName="database" [testId]="'database'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
@@ -33,6 +33,6 @@
     [tooltip]="helptext.influxDb.seriesNameTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="series_name"></tn-input>
+    <tn-input formControlName="series_name" [testId]="'series_name'"></tn-input>
   </tn-form-field>
 </ng-container>

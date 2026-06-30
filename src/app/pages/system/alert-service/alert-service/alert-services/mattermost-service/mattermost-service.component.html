@@ -4,27 +4,27 @@
     [tooltip]="helptext.mattermost.urlTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="url"></tn-input>
+    <tn-input formControlName="url" [testId]="'url'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
     [label]="'Username' | translate"
     [required]="true"
   >
-    <tn-input formControlName="username"></tn-input>
+    <tn-input formControlName="username" [testId]="'username'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
     [label]="'Channel' | translate"
     [tooltip]="helptext.mattermost.channelTooltip | translate"
   >
-    <tn-input formControlName="channel"></tn-input>
+    <tn-input formControlName="channel" [testId]="'channel'"></tn-input>
   </tn-form-field>
 
   <tn-form-field
     [label]="'Icon URL' | translate"
     [tooltip]="helptext.mattermost.iconUrlTooltip | translate"
   >
-    <tn-input formControlName="icon_url"></tn-input>
+    <tn-input formControlName="icon_url" [testId]="'icon_url'"></tn-input>
   </tn-form-field>
 </ng-container>

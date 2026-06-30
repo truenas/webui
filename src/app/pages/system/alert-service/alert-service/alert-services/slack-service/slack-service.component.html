@@ -4,6 +4,6 @@
     [tooltip]="helptext.slack.urlTooltip | translate"
     [required]="true"
   >
-    <tn-input formControlName="url"></tn-input>
+    <tn-input formControlName="url" [testId]="'url'"></tn-input>
   </tn-form-field>
 </ng-container>
