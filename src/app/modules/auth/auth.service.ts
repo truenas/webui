@@ -75,11 +75,16 @@ export class AuthService implements OnDestroy {
    * (system, VM serial, container console) connects through the same
    * `/websocket/shell/` endpoint, which is gated by the `web_shell` privilege.
    *
-   * A null user resolves to `false` (rather than being filtered out) so that
-   * `take(1)`-gated consumers always receive an emission instead of hanging.
+   * Only emits for a resolved (non-null) user. `take(1)`-gated consumers (e.g.
+   * the terminal access check) rely on this: shell routes sit behind AuthGuard,
+   * so a user is always resolved by the time they activate. Filtering out the
+   * transient nulls (initial seed, refreshUser, reconnect) means we wait for the
+   * re-resolved user instead of snapshotting a premature `false` and denying
+   * access permanently.
    */
   readonly hasWebShellAccess$: Observable<boolean> = this.user$.pipe(
-    map((user) => Boolean(user?.privilege?.web_shell)),
+    filter(Boolean),
+    map((user) => Boolean(user.privilege?.web_shell)),
   );
 
   private readonly hasPasswordChangedSinceLastLogin$ = new BehaviorSubject(false);

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 
@@ -15,7 +15,8 @@ export class MockAuthService {
   isAuthenticated$ = of(true);
   user$ = this.loggedInUser$.asObservable();
   hasWebShellAccess$ = this.user$.pipe(
-    map((user) => Boolean(user?.privilege?.web_shell)),
+    filter(Boolean),
+    map((user) => Boolean(user.privilege?.web_shell)),
   );
 
   setUser(user: LoggedInUser): void {
