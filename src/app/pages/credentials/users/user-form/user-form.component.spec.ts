@@ -12,7 +12,7 @@ import {
   TnFormFieldComponent, TnFormFieldHarness, TnInputComponent, TnInputHarness,
 } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -207,9 +207,10 @@ describe('UserFormComponent', () => {
     });
 
     it('exposes isSubmitting so the panel host only shows "Saving…" during an actual save', () => {
-      // Public contract only: false outside a save (no submit in flight). The "Saving…" label is
-      // driven by this rather than isBusy; the submit-in-flight transition is covered by the
-      // SidePanelForm directive spec.
+      // Public contract only: false outside a save (no submit in flight). This form overrides
+      // isSubmitting to track its own isFormLoading (which is set only by the submit path, including
+      // the async confirmation-dialog route); the submit-in-flight transition is covered by the
+      // "shows Saving… even when the save is gated behind an async confirmation" test below.
       expect(spectator.component.isSubmitting()).toBe(false);
     });
   });
@@ -343,6 +344,42 @@ describe('UserFormComponent', () => {
             username: 'newuser',
           }),
         ]);
+      });
+
+      it('shows "Saving…" via isSubmitting even when the save is gated behind an async confirmation', async () => {
+        // The default new-user values trigger getHomeCreateWarning, so onSubmit() routes through the
+        // (asynchronous) confirmation dialog before the save goes busy. Hold both the confirm and the
+        // create in flight so we can observe each phase.
+        const confirm$ = new Subject<boolean>();
+        // mockReturnValueOnce so the shared confirm mock reverts to its default for later tests.
+        (spectator.inject(DialogService).confirm as jest.Mock).mockReturnValueOnce(confirm$);
+        const create$ = new Subject<User>();
+        // UserFormStore is provided at the component level, so spy the component-injector instance.
+        const store = spectator.fixture.debugElement.injector.get(UserFormStore);
+        jest.spyOn(store, 'createUser').mockReturnValue(create$);
+
+        const usernameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
+        await usernameInput.setValue('newuser');
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+
+        spectator.component.submit();
+        spectator.detectChanges();
+
+        // Awaiting the user's confirmation: the save hasn't started, so it must not read "Saving…".
+        expect(spectator.component.isSubmitting()).toBe(false);
+
+        // User confirms → loading flips true (long after submit() returned) → Save must show "Saving…".
+        confirm$.next(true);
+        spectator.detectChanges();
+        expect(spectator.component.isBusy()).toBe(true);
+        expect(spectator.component.isSubmitting()).toBe(true);
+
+        // Save settles → no longer "Saving…".
+        create$.next({ username: 'newuser' } as User);
+        create$.complete();
+        spectator.detectChanges();
+        expect(spectator.component.isSubmitting()).toBe(false);
       });
 
       it('emits the created user through the closed output after successful creation', async () => {
