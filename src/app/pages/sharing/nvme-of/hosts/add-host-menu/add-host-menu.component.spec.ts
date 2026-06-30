@@ -9,9 +9,12 @@ import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
-import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
+import {
+  ManageHostsAction, ManageHostsDialog, ManageHostsResult,
+} from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 describe('AddHostMenuComponent', () => {
@@ -43,10 +46,12 @@ describe('AddHostMenuComponent', () => {
       }),
       mockProvider(NvmeOfStore, {
         hosts: allHosts,
+        reloadHosts: jest.fn(),
       }),
+      mockProvider(SnackbarService),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          closed: of(true),
+          closed: of(undefined),
         })),
       }),
     ],
@@ -85,6 +90,30 @@ describe('AddHostMenuComponent', () => {
     spectator.component.onHostSaved(newHost);
 
     expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(newHost);
+    expect(spectator.component.hostPanelOpen()).toBe(false);
+  });
+
+  it('opens the Edit Host side panel when Manage Hosts requests an edit', () => {
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of({ action: ManageHostsAction.Edit, host: usedHost } as ManageHostsResult),
+    } as ReturnType<TnDialog['open']>);
+
+    spectator.component.manageHosts();
+
+    expect(spectator.component.hostPanelOpen()).toBe(true);
+    expect(spectator.component.hostToEdit()).toEqual(usedHost);
+  });
+
+  it('reloads hosts without selecting when a Manage Hosts edit saves', () => {
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of({ action: ManageHostsAction.Add } as ManageHostsResult),
+    } as ReturnType<TnDialog['open']>);
+
+    spectator.component.manageHosts();
+    spectator.component.onHostSaved(newHost);
+
+    expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
+    expect(spectator.component.hostSelected.emit).not.toHaveBeenCalled();
     expect(spectator.component.hostPanelOpen()).toBe(false);
   });
 

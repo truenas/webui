@@ -60,12 +60,15 @@
 }
 
 <tn-side-panel
-  [title]="'Add Host' | translate"
+  [title]="hostPanelTitle()"
   [closeGuard]="hostCloseGuard"
   [(open)]="hostPanelOpen"
 >
   @if (hostPanelOpen()) {
-    <ix-host-form (saved)="onHostSaved($event)"></ix-host-form>
+    <ix-host-form
+      [data]="hostToEdit()"
+      (saved)="onHostSaved($event)"
+    ></ix-host-form>
   }
   @if (hostForm(); as form) {
     <tn-button
