@@ -46,18 +46,27 @@ ul {
       }
     }
 
-    ul {
+    ul,
+    .caption {
       box-sizing: border-box;
       display: flex;
       flex: 1 1 100%;
       flex-direction: column;
       justify-content: center;
+    }
 
-      &:first-child {
-        text-align: center;
+    // The title column (first child of the row).
+    .caption {
+      max-width: 25%;
+      text-align: center;
+
+      @media(max-width: $breakpoint-xs) {
+        max-width: 50%;
       }
+    }
 
-      &:first-child,
+    ul {
+      // The task-counts column.
       &:nth-child(3) {
         max-width: 25%;
 
@@ -156,24 +165,24 @@ ul {
       display: none;
     }
 
-    ul {
+    // Full width so labels left-align and don't truncate when stacked.
+    ul,
+    .caption {
       flex: 0 0 auto;
-      text-align: left;
-      // Full width so labels left-align and don't truncate. The base layout caps
-      // the title (:first-child) and counts (:nth-child(3)) columns at 25% for the
-      // horizontal row; override those (matched at equal specificity) when stacked.
       max-width: 100%;
+      text-align: left;
       width: 100%;
+    }
 
-      &:first-child,
-      &:nth-child(3) {
-        max-width: 100%;
-      }
+    // The base row layout caps the counts column at 25% via a `:nth-child(3)`
+    // rule whose specificity (0,3,1) outranks the grouped `ul` selector above;
+    // re-cap it at full width here at matching specificity, otherwise the counts
+    // stay 25% wide and their labels truncate ("0 s…" instead of "0 send tasks").
+    ul:nth-child(3) {
+      max-width: 100%;
+    }
 
-      &:first-child {
-        text-align: left;
-      }
-
+    ul {
       // "this week / last successful" activity — surface the "Last successful"
       // row stacked under the counts (separated by a hairline) instead of hiding
       // the whole column. The per-week rows don't fit alongside the counts, so
