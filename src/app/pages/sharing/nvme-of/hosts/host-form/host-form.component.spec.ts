@@ -1,13 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfGlobalConfig, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -42,41 +40,36 @@ describe('HostFormComponent', () => {
   let spectator: ReturnType<typeof createComponent>;
   let component: HostFormComponent;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let api: ApiService;
   let slideInRef: SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     slideInGetData.mockReturnValue(undefined);
     spectator = createComponent();
     component = spectator.component as HostFormComponent;
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     api = spectator.inject(ApiService);
     slideInRef = spectator.inject(SlideInRef);
   });
 
+  async function clickButton(label: string, index = 0): Promise<void> {
+    const buttons = await loader.getAllHarnesses(TnButtonHarness.with({ label }));
+    await buttons[index].click();
+  }
+
   it('creates a new host when form is submitted', async () => {
-    await form.fillForm({
-      'Host NQN': 'nqn.2014-08.org',
-      'Require Host Authentication': true,
-      'Key For Host To Present': '1234567890',
-      'Key For TrueNAS To Present (Optional)': '111222',
-      'Also use Diffie–Hellman key exchange for additional security': true,
+    component.form.patchValue({
+      hostnqn: 'nqn.2014-08.org',
+      requireHostAuthentication: true,
+      dhchap_key: '1234567890',
+      dhchap_ctrl_key: '111222',
+      addDhKeyExchange: true,
+      dhchap_hash: 'SHA-512',
+      dhchap_dhgroup: '2048-BIT',
     });
+    spectator.detectChanges();
 
-    const firstDetails = await loader.getHarness(DetailsTableHarness);
-    await firstDetails.setValues({
-      Hash: 'SHA-512',
-    });
-
-    const secondDetails = (await loader.getAllHarnesses(DetailsTableHarness))[1];
-    await secondDetails.setValues({
-      'DH Group': '2048-BIT',
-    });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    await clickButton('Save');
 
     expect(api.call).toHaveBeenCalledWith('nvmet.host.create', [{
       hostnqn: 'nqn.2014-08.org',
@@ -102,38 +95,30 @@ describe('HostFormComponent', () => {
       } as NvmeOfHost);
 
       component.ngOnInit();
+      spectator.detectChanges();
     });
 
-    it('shows current values when editing an existing host', async () => {
-      const formValues = await form.getValues();
-      expect(formValues).toEqual({
-        'Host NQN': 'nqn.2014-08.org',
-        Description: '',
-        'Require Host Authentication': true,
-        'Key For Host To Present': '1234567890',
-        'Key For TrueNAS To Present (Optional)': '111222',
-        'Also use Diffie–Hellman key exchange for additional security': true,
-      });
-
-      const firstDetails = await loader.getHarness(DetailsTableHarness);
-      expect(await firstDetails.getValues()).toEqual({
-        Hash: 'SHA-256',
-      });
-
-      const secondDetails = (await loader.getAllHarnesses(DetailsTableHarness))[1];
-      expect(await secondDetails.getValues()).toEqual({
-        'DH Group': '2048-BIT',
+    it('shows current values when editing an existing host', () => {
+      expect(component.form.getRawValue()).toMatchObject({
+        hostnqn: 'nqn.2014-08.org',
+        description: '',
+        requireHostAuthentication: true,
+        dhchap_key: '1234567890',
+        dhchap_ctrl_key: '111222',
+        addDhKeyExchange: true,
+        dhchap_hash: 'SHA-256',
+        dhchap_dhgroup: '2048-BIT',
       });
     });
 
     it('updates an existing host', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-09.org',
-        'Require Host Authentication': false,
+      component.form.patchValue({
+        hostnqn: 'nqn.2014-09.org',
+        requireHostAuthentication: false,
       });
+      spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await clickButton('Save');
 
       expect(api.call).toHaveBeenCalledWith('nvmet.host.update', [23, {
         hostnqn: 'nqn.2014-09.org',
@@ -148,42 +133,36 @@ describe('HostFormComponent', () => {
 
   describe('key generation', () => {
     it('generates a host key when host authentication is enabled and Generate Key button is pressed', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.org',
-        'Require Host Authentication': true,
+      component.form.patchValue({
+        hostnqn: 'nqn.2014-08.org',
+        requireHostAuthentication: true,
       });
+      spectator.detectChanges();
 
-      const generateKeyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate Key' }));
-      await generateKeyButton.click();
+      await clickButton('Generate Key');
 
       expect(api.call).toHaveBeenCalledWith('nvmet.host.generate_key', ['SHA-256', 'nqn.2014-08.org']);
-      expect(await form.getValues()).toMatchObject({
-        'Key For Host To Present': '123456',
-      });
+      expect(component.form.controls.dhchap_key.value).toBe('123456');
     });
 
     it('generates TrueNAS key using basenqn from settings when the other Generate Key is pressed', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.org',
-        'Require Host Authentication': true,
+      component.form.patchValue({
+        hostnqn: 'nqn.2014-08.org',
+        requireHostAuthentication: true,
       });
+      spectator.detectChanges();
 
-      const generateKeyButton = (await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Generate Key' })))[1];
-      await generateKeyButton.click();
+      await clickButton('Generate Key', 1);
 
       expect(api.call).toHaveBeenCalledWith('nvmet.global.config');
       expect(api.call).toHaveBeenCalledWith('nvmet.host.generate_key', ['SHA-256', 'nqn.2011-06.com.truenas']);
-      expect(await form.getValues()).toMatchObject({
-        'Key For TrueNAS To Present (Optional)': '123456',
-      });
+      expect(component.form.controls.dhchap_ctrl_key.value).toBe('123456');
     });
   });
 
   describe('nqn validation', () => {
-    it('shows error when NQN does not start with nqn.', async () => {
-      await form.fillForm({
-        'Host NQN': 'invalid.2014-08.org.example',
-      });
+    it('shows error when NQN does not start with nqn.', () => {
+      component.form.controls.hostnqn.setValue('invalid.2014-08.org.example');
 
       expect(component.form.controls.hostnqn.errors).toEqual({
         nqnFormat: {
@@ -192,10 +171,8 @@ describe('HostFormComponent', () => {
       });
     });
 
-    it('shows error when NQN is too short', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014',
-      });
+    it('shows error when NQN is too short', () => {
+      component.form.controls.hostnqn.setValue('nqn.2014');
 
       expect(component.form.controls.hostnqn.errors).toEqual({
         nqnMinLength: {
@@ -204,11 +181,9 @@ describe('HostFormComponent', () => {
       });
     });
 
-    it('shows error when NQN is too long', async () => {
+    it('shows error when NQN is too long', () => {
       const longNqn = 'nqn.2014-08.' + 'a'.repeat(212);
-      await form.fillForm({
-        'Host NQN': longNqn,
-      });
+      component.form.controls.hostnqn.setValue(longNqn);
 
       expect(component.form.controls.hostnqn.errors).toEqual({
         nqnMaxLength: {
@@ -217,10 +192,8 @@ describe('HostFormComponent', () => {
       });
     });
 
-    it('shows error when NQN format is invalid', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.invalid-date.org',
-      });
+    it('shows error when NQN format is invalid', () => {
+      component.form.controls.hostnqn.setValue('nqn.invalid-date.org');
 
       expect(component.form.controls.hostnqn.errors).toEqual({
         nqnInvalid: {
@@ -229,26 +202,20 @@ describe('HostFormComponent', () => {
       });
     });
 
-    it('accepts valid NQN with date and domain', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.org.nvmexpress',
-      });
+    it('accepts valid NQN with date and domain', () => {
+      component.form.controls.hostnqn.setValue('nqn.2014-08.org.nvmexpress');
 
       expect(component.form.controls.hostnqn.errors).toBeNull();
     });
 
-    it('accepts valid NQN with optional identifier', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.com.example:host1',
-      });
+    it('accepts valid NQN with optional identifier', () => {
+      component.form.controls.hostnqn.setValue('nqn.2014-08.com.example:host1');
 
       expect(component.form.controls.hostnqn.errors).toBeNull();
     });
 
-    it('accepts valid NQN with multiple domain parts', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.com.example.storage',
-      });
+    it('accepts valid NQN with multiple domain parts', () => {
+      component.form.controls.hostnqn.setValue('nqn.2014-08.com.example.storage');
 
       expect(component.form.controls.hostnqn.errors).toBeNull();
     });
@@ -256,13 +223,13 @@ describe('HostFormComponent', () => {
 
   describe('description field', () => {
     it('submits description when creating a new host', async () => {
-      await form.fillForm({
-        'Host NQN': 'nqn.2014-08.org.example',
-        Description: 'Test host description',
+      component.form.patchValue({
+        hostnqn: 'nqn.2014-08.org.example',
+        description: 'Test host description',
       });
+      spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await clickButton('Save');
 
       expect(api.call).toHaveBeenLastCalledWith('nvmet.host.create', [{
         hostnqn: 'nqn.2014-08.org.example',
@@ -283,12 +250,12 @@ describe('HostFormComponent', () => {
 
       component.ngOnInit();
 
-      await form.fillForm({
-        Description: 'Updated description',
+      component.form.patchValue({
+        description: 'Updated description',
       });
+      spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await clickButton('Save');
 
       expect(api.call).toHaveBeenLastCalledWith('nvmet.host.update', [24, {
         hostnqn: 'nqn.2014-08.org',

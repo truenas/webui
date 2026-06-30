@@ -1,13 +1,10 @@
 <div class="section-header">
   <h5>{{ 'Namespaces' | translate }}</h5>
-  <button
-    mat-button
-    type="button"
-    ixTest="add-namespace"
-    (click)="onAddNamespace()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+  <tn-button
+    [testId]="'add-namespace'"
+    [label]="'Add' | translate"
+    (onClick)="onAddNamespace()"
+  ></tn-button>
 </div>
 
 @if (!namespaces.length) {
@@ -21,16 +18,37 @@
         <ix-namespace-description [namespace]="namespace"></ix-namespace-description>
 
         <div class="namespace-actions">
-          <button
-            mat-icon-button
-            ixTest="delete-namespace"
-            [tnTooltip]="'Remove namespace' | translate"
-            (click)="onDeleteNamespace(i)"
-          >
-            <tn-icon name="close" library="mdi"></tn-icon>
-          </button>
+          <tn-icon-button
+            name="close"
+            library="mdi"
+            [testId]="'delete-namespace'"
+            [ariaLabel]="'Remove namespace' | translate"
+            [tooltip]="'Remove namespace' | translate"
+            (onClick)="onDeleteNamespace(i)"
+          ></tn-icon-button>
         </div>
       </div>
     }
   </div>
 }
+
+<tn-side-panel
+  [title]="'Add Namespace' | translate"
+  [closeGuard]="namespaceCloseGuard"
+  [(open)]="namespacePanelOpen"
+>
+  @if (namespacePanelOpen()) {
+    <ix-add-subsystem-namespace (saved)="onNamespaceSaved($event)"></ix-add-subsystem-namespace>
+  }
+  @if (namespaceForm(); as form) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

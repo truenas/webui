@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
@@ -11,7 +12,6 @@ import {
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -52,7 +52,7 @@ const mockSubsystems: NvmeOfSubsystemDetails[] = [
 describe('SubsystemsListComponent', () => {
   let spectator: Spectator<SubsystemsListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: SubsystemsListComponent,
@@ -81,16 +81,12 @@ describe('SubsystemsListComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('shows table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Namespaces', 'Ports', 'Hosts', ''],
-      ['subsys-1', '2', '4', '3', ''],
-      ['subsys-2', '2', '4', '3', ''],
-    ];
-
-    expect(await table.getCellTexts()).toEqual(expectedRows);
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Namespaces', 'Ports', 'Hosts', '']);
+    expect(await table.getRowTexts(0)).toEqual(['subsys-1', '2', '4', '3', '']);
+    expect(await table.getRowTexts(1)).toEqual(['subsys-2', '2', '4', '3', '']);
   });
 });

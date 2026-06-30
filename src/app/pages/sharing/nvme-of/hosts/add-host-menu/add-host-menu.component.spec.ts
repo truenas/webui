@@ -1,18 +1,20 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
+} from '@truenas/ui-components';
+import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
-import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
+import {
+  ManageHostsAction, ManageHostsDialog, ManageHostsResult,
+} from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 describe('AddHostMenuComponent', () => {
@@ -35,25 +37,29 @@ describe('AddHostMenuComponent', () => {
   const allHosts = signal<NvmeOfHost[]>([]);
   const createComponent = createComponentFactory({
     component: AddHostMenuComponent,
+    declarations: [
+      MockComponent(HostFormComponent),
+    ],
     providers: [
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
       }),
       mockProvider(NvmeOfStore, {
         hosts: allHosts,
+        reloadHosts: jest.fn(),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.success(newHost)),
-      }),
+      mockProvider(SnackbarService),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          closed: of(true),
+          closed: of(undefined),
         })),
       }),
     ],
   });
 
   beforeEach(() => {
+    // The "Create New" host form is mocked, so seed the signal the panel footer reads.
+    MockInstance(HostFormComponent, 'canSubmit', signal(false));
     spectator = createComponent({
       props: {
         hosts: [],
@@ -64,22 +70,60 @@ describe('AddHostMenuComponent', () => {
     jest.spyOn(spectator.component.hostSelected, 'emit');
   });
 
-  it('shows single Add button when there are no hosts in the system at all', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+  afterEach(() => MockInstance.restore());
+
+  async function openMenu(): Promise<TnMenuHarness> {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
+  it('opens the Add Host side panel when the single Add button is pressed', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(HostFormComponent);
+    expect(spectator.component.hostPanelOpen()).toBe(true);
+  });
+
+  it('emits (hostSelected) and closes the panel when the host form saves', () => {
+    spectator.component.hostPanelOpen.set(true);
+    spectator.component.onHostSaved(newHost);
+
     expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(newHost);
+    expect(spectator.component.hostPanelOpen()).toBe(false);
+  });
+
+  it('opens the Edit Host side panel when Manage Hosts requests an edit', () => {
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of({ action: ManageHostsAction.Edit, host: usedHost } as ManageHostsResult),
+    } as ReturnType<TnDialog['open']>);
+
+    spectator.component.manageHosts();
+
+    expect(spectator.component.hostPanelOpen()).toBe(true);
+    expect(spectator.component.hostToEdit()).toEqual(usedHost);
+  });
+
+  it('reloads hosts without selecting when a Manage Hosts edit saves', () => {
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of({ action: ManageHostsAction.Add } as ManageHostsResult),
+    } as ReturnType<TnDialog['open']>);
+
+    spectator.component.manageHosts();
+    spectator.component.onHostSaved(newHost);
+
+    expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
+    expect(spectator.component.hostSelected.emit).not.toHaveBeenCalled();
+    expect(spectator.component.hostPanelOpen()).toBe(false);
   });
 
   it('shows menu with Allow all hosts option when no hosts exist but showAllowAnyHost is true', async () => {
     jest.spyOn(spectator.component.allowAllHostsSelected, 'emit');
     spectator.setInput('showAllowAnyHost', true);
 
-    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-    await menu.open();
+    const menu = await openMenu();
 
-    await menu.clickItem({ text: 'Allow all hosts' });
+    await menu.clickItem({ label: 'Allow all hosts' });
 
     expect(spectator.component.allowAllHostsSelected.emit).toHaveBeenCalled();
   });
@@ -91,19 +135,17 @@ describe('AddHostMenuComponent', () => {
     });
 
     it('lists available hosts that are not used in current subsystem', async () => {
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+      const menu = await openMenu();
 
-      const items = await menu.getItems();
-      expect(items).toHaveLength(3);
-      expect(await items[0].getText()).toBe('iqn.2023-12.com.example:host1');
+      const labels = await menu.getItemLabels();
+      expect(labels).toHaveLength(3);
+      expect(labels[0]).toContain('iqn.2023-12.com.example:host1');
     });
 
     it('emits (hostSelected) when a host is selected', async () => {
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+      const menu = await openMenu();
 
-      await menu.clickItem({ text: 'iqn.2023-12.com.example:host1' });
+      await menu.clickItem({ label: /iqn\.2023-12\.com\.example:host1/ });
 
       expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(unusedHost);
     });
@@ -112,35 +154,25 @@ describe('AddHostMenuComponent', () => {
       jest.spyOn(spectator.component.allowAllHostsSelected, 'emit');
       spectator.setInput('showAllowAnyHost', true);
 
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+      const menu = await openMenu();
 
-      await menu.clickItem({ text: 'Allow all hosts' });
+      await menu.clickItem({ label: 'Allow all hosts' });
 
       expect(spectator.component.allowAllHostsSelected.emit).toHaveBeenCalled();
     });
 
-    it('has create new button that opens host form and emits (hostSelected) with new host', async () => {
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+    it('opens the Add Host side panel from the Create New menu item', async () => {
+      const menu = await openMenu();
 
-      const items = await menu.getItems();
-      expect(await items[1].getText()).toBe('Create New');
+      await menu.clickItem({ label: 'Create New' });
 
-      await items[1].click();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(HostFormComponent);
-      expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(newHost);
+      expect(spectator.component.hostPanelOpen()).toBe(true);
     });
 
     it('has Manage Hosts button that opens Manage hosts dialog', async () => {
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+      const menu = await openMenu();
 
-      const items = await menu.getItems();
-      expect(await items[2].getText()).toBe('Manage Hosts');
-
-      await items[2].click();
+      await menu.clickItem({ label: 'Manage Hosts' });
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ManageHostsDialog, { minWidth: '450px', maxWidth: '768px' });
     });

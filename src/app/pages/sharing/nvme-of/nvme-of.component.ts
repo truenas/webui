@@ -1,9 +1,11 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnSidePanelActionDirective, TnSidePanelComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -14,8 +16,8 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import {
   NvmeOfConfigurationComponent,
@@ -38,26 +40,41 @@ import { setSubsystemNameInUrl } from 'app/pages/sharing/nvme-of/utils/router-ut
   templateUrl: './nvme-of.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
+    TnButtonComponent,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     PageHeaderComponent,
     RequiresRolesDirective,
-    TestDirective,
     TranslateModule,
     UiSearchDirective,
     MasterDetailViewComponent,
     SubsystemDetailsComponent,
     SubsystemsDetailsHeaderComponent,
     SubsystemsListComponent,
+    NvmeOfConfigurationComponent,
+    AddSubsystemComponent,
   ],
 })
 export class NvmeOfComponent implements OnInit {
   private nvmeOfStore = inject(NvmeOfStore);
-  private slideIn = inject(SlideIn);
   private activatedRoute = inject(ActivatedRoute);
   private location = inject(Location);
   private destroyRef = inject(DestroyRef);
+  private unsavedChanges = inject(UnsavedChangesService);
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
+
+  // Global Configuration form hosted in a <tn-side-panel> (the form is dual-host:
+  // it still opens via legacy SlideIn from other call sites).
+  protected readonly configPanelOpen = signal(false);
+  protected readonly configForm = viewChild(NvmeOfConfigurationComponent);
+  protected readonly configCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, () => this.configForm());
+
+  // Add Subsystem wizard hosted in a <tn-side-panel>; the panel footer drives the
+  // stepper (Next on step 1, Back + Save on step 2) via the form's step API.
+  protected readonly addSubsystemPanelOpen = signal(false);
+  protected readonly subsystemForm = viewChild(AddSubsystemComponent);
+  protected readonly addSubsystemCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, () => this.subsystemForm());
 
   protected readonly subsystems = this.nvmeOfStore.subsystems;
   protected dataProvider = new ArrayDataProvider<NvmeOfSubsystemDetails>();
@@ -126,15 +143,21 @@ export class NvmeOfComponent implements OnInit {
   }
 
   protected openGlobalConfiguration(): void {
-    this.slideIn.open(NvmeOfConfigurationComponent);
+    this.configPanelOpen.set(true);
+  }
+
+  protected onConfigClosed(): void {
+    this.configPanelOpen.set(false);
   }
 
   protected addSubsystem(): void {
-    this.slideIn.open(AddSubsystemComponent)
-      .onSuccess((response) => {
-        this.selectedSubsystemName = (response as NvmeOfSubsystem).name;
-        this.nvmeOfStore.initialize();
-      }, this.destroyRef);
+    this.addSubsystemPanelOpen.set(true);
+  }
+
+  protected onSubsystemCreated(subsystem: NvmeOfSubsystem): void {
+    this.addSubsystemPanelOpen.set(false);
+    this.selectedSubsystemName = subsystem.name;
+    this.nvmeOfStore.initialize();
   }
 
   protected onSubsystemSelected(subsystem: NvmeOfSubsystemDetails): void {

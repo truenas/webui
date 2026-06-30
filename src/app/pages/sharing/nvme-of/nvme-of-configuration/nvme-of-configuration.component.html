@@ -8,35 +8,46 @@
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset>
-    <ix-input
-      formControlName="basenqn"
+    <tn-form-field
       [label]="'Base NQN' | translate"
       [tooltip]="helptext.baseNqnTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input testId="basenqn" formControlName="basenqn"></tn-input>
+    </tn-form-field>
 
     @if (isEnterprise()) {
       <div [tnTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''">
-        <ix-radio-group
-          formControlName="kernel"
+        <tn-form-field
           [label]="'Implementation (Experimental)' | translate"
-          [options]="implementationOptions$"
           [tooltip]="helptext.implementationTooltip | translate"
-        ></ix-radio-group>
+        >
+          @for (option of implementationOptions; track option.value) {
+            <tn-radio
+              formControlName="kernel"
+              [value]="option.value"
+              [label]="option.label"
+              [testId]="['kernel', option.label]"
+            ></tn-radio>
+          }
+        </tn-form-field>
       </div>
     }
 
-    <ix-checkbox
+    <tn-checkbox
+      testId="ana"
       formControlName="ana"
       [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
       [tnTooltip]="form.controls.ana.disabled ? (helptext.anaDisabledTooltip | translate) : ''"
-    ></ix-checkbox>
+    ></tn-checkbox>
 
-    <ix-checkbox
-      formControlName="rdma"
-      [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
-      [tooltip]="helptext.rdmaTooltip"
-      [tnTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
-    ></ix-checkbox>
+    <tn-form-field [tooltip]="helptext.rdmaTooltip">
+      <tn-checkbox
+        testId="rdma"
+        formControlName="rdma"
+        [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
+        [tnTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
+      ></tn-checkbox>
+    </tn-form-field>
   </ix-fieldset>
 
   @if (slideInRef) {
@@ -44,7 +55,7 @@
       <tn-button
         *ixRequiresRoles="requiredRoles"
         color="primary"
-        [ixTest]="'save'"
+        [testId]="'save'"
         [label]="'Save' | translate"
         [disabled]="form.invalid || isLoading()"
         (onClick)="onSubmit()"

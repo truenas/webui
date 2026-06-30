@@ -2,25 +2,23 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog, TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
-import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
+import {
+  ManagePortsAction, ManagePortsDialog,
+} from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemPortOrHostDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-port-ot-host-delete-dialog/subsystem-port-ot-host-delete-dialog.component';
 
 describe('ManagePortsDialog', () => {
   let spectator: Spectator<ManagePortsDialog>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const ports = [
     {
@@ -71,9 +69,6 @@ describe('ManagePortsDialog', () => {
         }),
         reloadPorts: jest.fn(),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.success({})),
-      }),
       mockAuth(),
     ],
   });
@@ -81,30 +76,29 @@ describe('ManagePortsDialog', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('shows a list of ports', async () => {
-    expect(await table.getCellTexts()).toEqual([
-      ['Type', 'Address', 'Port', 'Used In Subsystems', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Type', 'Address', 'Port', 'Used In Subsystems', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['TCP', '10.120.120.120', '7000', '2', ''],
       ['RDMA', '10.100.100.100', '9000', '1', ''],
     ]);
   });
 
-  it('opens port form when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'TCP');
+  it('closes the dialog with an edit request when the Edit button is pressed', async () => {
+    const editButton = (await loader.getAllHarnesses(TnIconHarness.with({ name: 'mdi-pencil' })))[0];
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      PortFormComponent,
-      { data: expect.objectContaining(ports[0]) },
-    );
-    expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
+      action: ManagePortsAction.Edit,
+      port: expect.objectContaining(ports[0]),
+    });
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
-    const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'TCP');
+    const deleteButton = (await loader.getAllHarnesses(TnIconHarness.with({ name: 'mdi-delete' })))[0];
     await deleteButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SubsystemPortOrHostDeleteDialogComponent, {
@@ -125,11 +119,10 @@ describe('ManagePortsDialog', () => {
     expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
   });
 
-  it('opens a form to add a new port when Add New is pressed', async () => {
+  it('closes the dialog with an add request when Add New is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add New' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PortFormComponent);
-    expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({ action: ManagePortsAction.Add });
   });
 });

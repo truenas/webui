@@ -1,13 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnIconHarness } from '@truenas/ui-components';
+import { MockComponent, MockInstance } from 'ng-mocks';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
@@ -34,15 +32,13 @@ describe('AddSubsystemNamespacesComponent', () => {
     component: AddSubsystemNamespacesComponent,
     imports: [
       MockComponent(NamespaceDescriptionComponent),
-    ],
-    providers: [
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.success(newNamespace)),
-      }),
+      MockComponent(AddSubsystemNamespaceComponent),
     ],
   });
 
   beforeEach(() => {
+    // The add-namespace form is mocked, so seed the signal the panel footer reads.
+    MockInstance(AddSubsystemNamespaceComponent, 'canSubmit', signal(false));
     formControl = new FormControl<NamespaceChanges[]>([]);
 
     spectator = createComponent({
@@ -53,6 +49,8 @@ describe('AddSubsystemNamespacesComponent', () => {
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
+
+  afterEach(() => MockInstance.restore());
 
   it('shows a hint when no namespaces have been added yet', () => {
     expect(spectator.query('.empty-state')).toHaveText('Select files or zvols to expose.');
@@ -77,13 +75,16 @@ describe('AddSubsystemNamespacesComponent', () => {
     expect(spectator.query('ix-namespace-description')).toExist();
   });
 
-  it('opens AddSubsystemNamespaceComponent and adds new namespace to the list when it closes', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+  it('opens the Add Namespace side panel and adds the namespace when the form saves', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
+
+    expect(spectator.component.namespacePanelOpen()).toBe(true);
+
+    spectator.component.onNamespaceSaved(newNamespace);
     spectator.detectChanges();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AddSubsystemNamespaceComponent);
-
+    expect(spectator.component.namespacePanelOpen()).toBe(false);
     expect(formControl.value).toEqual([newNamespace]);
     expect(spectator.query('.empty-state')).not.toExist();
     expect(spectator.query('.namespaces-list')).toExist();
@@ -115,14 +116,10 @@ describe('AddSubsystemNamespacesComponent', () => {
     expect(formControl.value).toEqual([namespaces[1]]);
   });
 
-  it('prevents duplicate namespaces from being added', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
-    await addButton.click();
-    spectator.detectChanges();
-
-    // Try to add the same namespace again
-    await addButton.click();
-    spectator.detectChanges();
+  it('prevents duplicate namespaces from being added', () => {
+    spectator.component.onNamespaceSaved(newNamespace);
+    // Save the same namespace again
+    spectator.component.onNamespaceSaved(newNamespace);
 
     expect(formControl.value).toEqual([newNamespace]);
   });

@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 
 @Component({
@@ -17,9 +15,8 @@ import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-m
     AddHostMenuComponent,
     TranslateModule,
     TnIconComponent,
+    TnIconButtonComponent,
     TnTooltipDirective,
-    MatIconButton,
-    TestDirective,
   ],
 })
 export class AddSubsystemHostsComponent {

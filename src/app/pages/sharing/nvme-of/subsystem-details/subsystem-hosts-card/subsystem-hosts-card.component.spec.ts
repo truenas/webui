@@ -44,7 +44,7 @@ describe('SubsystemHostsCardComponent', () => {
       },
     });
 
-    const allowedHosts = spectator.query('mat-card-content');
+    const allowedHosts = spectator.query('tn-card');
     expect(allowedHosts.textContent).toContain('All hosts are allowed');
   });
 

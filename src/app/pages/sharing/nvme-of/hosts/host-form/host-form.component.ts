@@ -1,14 +1,17 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, output, signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, ValidatorFn, AbstractControl, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { omit } from 'lodash-es';
-import { finalize, of, switchMap } from 'rxjs';
+import { finalize, of, startWith, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
@@ -18,15 +21,10 @@ import { DetailsItemComponent } from 'app/modules/details-table/details-item/det
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -38,18 +36,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     FormsModule,
     IxFieldsetComponent,
-    MatCard,
-    MatCardContent,
     ModalHeaderComponent,
     TranslateModule,
-    IxInputComponent,
+    AsyncPipe,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TnButtonComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    IxTextareaComponent,
-    IxSelectComponent,
     EditableComponent,
     DetailsTableComponent,
     DetailsItemComponent,
@@ -63,8 +59,14 @@ export class HostFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
-  slideInRef = inject<SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>>(SlideInRef);
+  /** Present when opened via legacy SlideIn host. Absent when hosted in `<tn-side-panel>`. */
+  readonly slideInRef = inject<SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
+
+  /** Host being edited when provided by a `<tn-side-panel>` host (SlideIn supplies it via `slideInRef`). */
+  readonly data = input<NvmeOfHost>();
+  /** Emitted with the saved host when hosted in a `<tn-side-panel>`. */
+  readonly saved = output<NvmeOfHost>();
 
   protected isLoading = signal(false);
 
@@ -142,14 +144,29 @@ export class HostFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
+  private readonly formStatus = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status)),
+    { initialValue: this.form.status },
+  );
+
+  /** Whether the form can be submitted — read by a `<tn-side-panel>` host's footer Save. */
+  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isLoading());
+
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+    this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
+  }
+
+  /** Public entry point for a `<tn-side-panel>` host's footer Save. */
+  submit(): void {
+    this.onSubmit();
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   ngOnInit(): void {
-    const existingHost = this.slideInRef.getData();
+    const existingHost = this.slideInRef?.getData() ?? this.data();
 
     if (existingHost) {
       this.existingHost.set(existingHost);
@@ -220,14 +237,20 @@ export class HostFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (savedHost) => {
-        this.slideInRef.close({
-          response: savedHost,
-        });
+        this.close(savedHost);
       },
       error: (error: unknown) => {
         this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
+  }
+
+  private close(savedHost: NvmeOfHost): void {
+    if (this.slideInRef) {
+      this.slideInRef.close({ response: savedHost });
+    } else {
+      this.saved.emit(savedHost);
+    }
   }
 
   protected readonly helptext = helptextNvmeOf;

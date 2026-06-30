@@ -1,22 +1,20 @@
 <ix-page-header pageTitle="NVMe-oF">
-  <button
-    mat-button
+  <tn-button
     color="default"
-    ixTest="global-configuration"
+    [testId]="'global-configuration'"
+    [label]="'Global Configuration' | translate"
     [ixUiSearch]="searchableElements.elements.config"
-    (click)="openGlobalConfiguration()"
-  >{{ 'Global Configuration' | translate }}</button>
+    (onClick)="openGlobalConfiguration()"
+  ></tn-button>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="primary"
-    ixTest="add-subsystem"
+    [testId]="'add-subsystem'"
+    [label]="'Add Subsystem' | translate"
     [ixUiSearch]="searchableElements.elements.addSubsystem"
-    (click)="addSubsystem()"
-  >
-    {{ 'Add Subsystem' | translate }}
-  </button>
+    (onClick)="addSubsystem()"
+  ></tn-button>
 </ix-page-header>
 
 @let subsystem = dataProvider.expandedRow;
@@ -56,3 +54,64 @@
     }
   </ng-container>
 </ix-master-detail-view>
+
+<tn-side-panel
+  [title]="'NVMe-oF Global Configuration' | translate"
+  [closeGuard]="configCloseGuard"
+  [(open)]="configPanelOpen"
+>
+  @if (configPanelOpen()) {
+    <ix-nvme-of-configuration (closed)="onConfigClosed()"></ix-nvme-of-configuration>
+  }
+  @if (configForm(); as form) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>
+
+<tn-side-panel
+  [title]="'Add Subsystem' | translate"
+  [closeGuard]="addSubsystemCloseGuard"
+  [(open)]="addSubsystemPanelOpen"
+>
+  @if (addSubsystemPanelOpen()) {
+    <ix-add-subsystem (created)="onSubsystemCreated($event)"></ix-add-subsystem>
+  }
+  @if (subsystemForm() && !subsystemForm().isLastStep()) {
+    <tn-button
+      tnSidePanelAction
+      color="primary"
+      [testId]="'next'"
+      [label]="'Next' | translate"
+      [disabled]="!subsystemForm().canProceed()"
+      (onClick)="subsystemForm().nextStep()"
+    ></tn-button>
+  }
+  @if (subsystemForm()?.isLastStep()) {
+    <tn-button
+      tnSidePanelAction
+      variant="outline"
+      [testId]="'back'"
+      [label]="'Back' | translate"
+      (onClick)="subsystemForm().previousStep()"
+    ></tn-button>
+  }
+  @if (subsystemForm()?.isLastStep()) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!subsystemForm().canSubmit()"
+      (onClick)="subsystemForm().submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

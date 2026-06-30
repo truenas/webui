@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
@@ -51,16 +51,14 @@ describe('SubsystemPortsCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
-  it('shows a warning when subsystem has no ports', () => {
+  it('shows a warning banner when subsystem has no ports', async () => {
     setupTest({
       id: 1,
       ports: [],
     } as NvmeOfSubsystemDetails);
 
-    const warning = spectator.query('.no-ports-warning');
-    expect(warning).toBeTruthy();
-    expect(warning.textContent).toContain(helptextNvmeOf.noPortsWarning);
-    expect(warning).toHaveDescendant('tn-icon');
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain(helptextNvmeOf.noPortsWarning);
   });
 
   it('has a menu-button to add new ports', () => {
