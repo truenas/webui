@@ -123,6 +123,9 @@ export class CloudSyncProviderComponent implements OnInit {
   }
 
   onVerify(): void {
+    if (!this.existingCredential) {
+      return;
+    }
     this.loading.emit(true);
 
     const payload = this.existingCredential.provider;
@@ -194,8 +197,28 @@ export class CloudSyncProviderComponent implements OnInit {
   }
 
   private emitSelectedCredential(credsId: number): void {
-    this.existingCredential = this.credentials.find((credential) => credential.id === credsId);
-    this.save.emit(this.existingCredential);
-    this.cdr.markForCheck();
+    const cached = this.credentials.find((credential) => credential.id === credsId);
+    if (cached) {
+      this.existingCredential = cached;
+      this.save.emit(this.existingCredential);
+      this.cdr.markForCheck();
+      return;
+    }
+
+    // The credentials cache may not be loaded yet — e.g. when the wizard is opened from the
+    // dashboard, where many concurrent API calls delay this step's own credentials query. Fetch
+    // before resolving so actions (Next/Verify) never operate on an undefined credential.
+    this.loading.emit(true);
+    this.cloudCredentialService.getCloudSyncCredentials().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (creds) => {
+        this.credentials = creds;
+        this.existingCredential = creds.find((credential) => credential.id === credsId);
+        this.save.emit(this.existingCredential);
+        this.cdr.markForCheck();
+      },
+      complete: () => {
+        this.loading.emit(false);
+      },
+    });
   }
 }

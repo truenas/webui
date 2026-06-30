@@ -14,7 +14,6 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.definition';
@@ -61,7 +60,6 @@ interface BackupRow {
 export class WidgetBackupComponent implements OnInit {
   translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private widgetResourcesService = inject(WidgetResourcesService);
   private destroyRef = inject(DestroyRef);
@@ -152,21 +150,29 @@ export class WidgetBackupComponent implements OnInit {
       });
   }
 
+  // CloudSyncWizardComponent / ReplicationWizardComponent / RsyncTaskFormComponent structurally
+  // provide the host surface (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel
+  // reads; cast past the nominal base type. The wizards are `footerless` — their mat-stepper owns
+  // its Next/Save buttons, and "Advanced" swaps in place via the form panel.
+  private readonly cloudSyncWizard = CloudSyncWizardComponent as unknown as Type<SidePanelForm>;
+  private readonly replicationWizard = ReplicationWizardComponent as unknown as Type<SidePanelForm>;
+  private readonly rsyncTaskForm = RsyncTaskFormComponent as unknown as Type<SidePanelForm>;
+
   addCloudSyncTask(): void {
-    this.slideIn.open(
-      CloudSyncWizardComponent,
-      { wide: true },
-    ).onSuccess(() => this.getBackups(), this.destroyRef);
+    this.formPanel.open(this.cloudSyncWizard, {
+      title: this.translate.instant('Cloud Sync Task Wizard'),
+      wide: true,
+      footerless: true,
+    }).onSuccess(() => this.getBackups(), this.destroyRef);
   }
 
   addReplicationTask(): void {
-    this.slideIn.open(ReplicationWizardComponent, { wide: true })
-      .onSuccess(() => this.getBackups(), this.destroyRef);
+    this.formPanel.open(this.replicationWizard, {
+      title: this.translate.instant('Replication Task Wizard'),
+      wide: true,
+      footerless: true,
+    }).onSuccess(() => this.getBackups(), this.destroyRef);
   }
-
-  // RsyncTaskFormComponent structurally provides the host surface (closed/canSubmit/submit/
-  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
-  private readonly rsyncTaskForm = RsyncTaskFormComponent as unknown as Type<SidePanelForm>;
 
   addRsyncTask(): void {
     this.formPanel.open(this.rsyncTaskForm, { title: this.translate.instant('Add Rsync Task'), wide: true })
