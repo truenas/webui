@@ -3,12 +3,11 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnIn
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnTooltipDirective, TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import { TnTooltipDirective, TnDialog, TnIconComponent, TnSpinnerComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, combineLatest, of,
 } from 'rxjs';
@@ -64,7 +63,7 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     ReactiveFormsModule,
     IxSlideToggleComponent,
     TranslateModule,

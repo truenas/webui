@@ -5,9 +5,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnSpinnerComponent } from '@truenas/ui-components';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
 import FontFaceObserver from 'fontfaceobserver';
@@ -31,7 +31,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     NgStyle,
     TranslateModule,
     NgTemplateOutlet,

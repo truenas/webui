@@ -3,10 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnSpinnerComponent } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -47,7 +46,7 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     MatCardHeader,
     MatCardTitle,
     ReactiveFormsModule,

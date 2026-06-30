@@ -32,7 +32,7 @@
 </div>
 
 <ng-template #terminalLoading>
-  <mat-progress-spinner diameter="48" mode="indeterminate"></mat-progress-spinner>
+  <tn-spinner mode="indeterminate" [diameter]="48"></tn-spinner>
   @if (isInstanceShell()) {
     <p>{{ 'Connecting to instance shell...' | translate }}</p>
   } @else {
