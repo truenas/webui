@@ -5,12 +5,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
+import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
 import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
@@ -42,15 +41,15 @@ describe('AddPortMenuComponent', () => {
   const allPorts = signal<NvmeOfPort[]>([]);
   const createComponent = createComponentFactory({
     component: AddPortMenuComponent,
+    declarations: [
+      MockComponent(PortFormComponent),
+    ],
     providers: [
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
       }),
       mockProvider(NvmeOfStore, {
         ports: allPorts,
-      }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.success(newPort)),
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
@@ -61,6 +60,8 @@ describe('AddPortMenuComponent', () => {
   });
 
   beforeEach(() => {
+    // The "Create New" port form is mocked, so seed the signal the panel footer reads.
+    MockInstance(PortFormComponent, 'canSubmit', signal(false));
     spectator = createComponent({
       props: {
         subsystemPorts: [],
@@ -70,18 +71,27 @@ describe('AddPortMenuComponent', () => {
     jest.spyOn(spectator.component.portSelected, 'emit');
   });
 
+  afterEach(() => MockInstance.restore());
+
   async function openMenu(): Promise<TnMenuHarness> {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
     return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
   }
 
-  it('shows single Add button when there are no ports in the system at all', async () => {
+  it('opens the Add Port side panel when the single Add button is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PortFormComponent);
+    expect(spectator.component.portPanelOpen()).toBe(true);
+  });
+
+  it('emits (portSelected) and closes the panel when the port form saves', () => {
+    spectator.component.portPanelOpen.set(true);
+    spectator.component.onPortSaved(newPort);
+
     expect(spectator.component.portSelected.emit).toHaveBeenCalledWith(newPort);
+    expect(spectator.component.portPanelOpen()).toBe(false);
   });
 
   describe('some ports exist in the system', () => {
@@ -106,13 +116,12 @@ describe('AddPortMenuComponent', () => {
       expect(spectator.component.portSelected.emit).toHaveBeenCalledWith(unusedPort);
     });
 
-    it('has create new button that opens port form and emits (portSelected) with new port', async () => {
+    it('opens the Add Port side panel from the Create New menu item', async () => {
       const menu = await openMenu();
 
       await menu.clickItem({ label: 'Create New' });
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PortFormComponent);
-      expect(spectator.component.portSelected.emit).toHaveBeenCalledWith(newPort);
+      expect(spectator.component.portPanelOpen()).toBe(true);
     });
 
     it('has Manage Ports button that opens Manage ports dialog', async () => {

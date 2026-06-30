@@ -58,3 +58,24 @@
     }
   </tn-menu>
 }
+
+<tn-side-panel
+  [title]="'Add Host' | translate"
+  [closeGuard]="hostCloseGuard"
+  [(open)]="hostPanelOpen"
+>
+  @if (hostPanelOpen()) {
+    <ix-host-form (saved)="onHostSaved($event)"></ix-host-form>
+  }
+  @if (hostForm(); as form) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>
