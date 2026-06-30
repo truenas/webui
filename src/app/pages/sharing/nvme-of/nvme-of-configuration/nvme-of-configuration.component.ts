@@ -28,6 +28,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 @Component({
   selector: 'ix-nvme-of-configuration',
   templateUrl: './nvme-of-configuration.component.html',
+  styleUrl: './nvme-of-configuration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
