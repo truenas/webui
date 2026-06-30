@@ -15,6 +15,8 @@ import { User } from 'app/interfaces/user.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
@@ -28,6 +30,7 @@ describe('CronCardComponent', () => {
   let spectator: Spectator<CronCardComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
+  let formPanel: FormSidePanelService;
 
   const cronJobs = [
     {
@@ -85,6 +88,9 @@ describe('CronCardComponent', () => {
           closed: of(true),
         })),
       }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
       mockProvider(LocaleService),
       mockProvider(UserService, {
         userQueryDsCache: () => of([{ username: 'root' }] as User[]),
@@ -110,6 +116,7 @@ describe('CronCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('should show table rows', async () => {
@@ -122,25 +129,11 @@ describe('CronCardComponent', () => {
   });
 
   it('opens the Add Cron Job form in a side panel when Add is pressed', async () => {
-    expect(spectator.query('ix-cron-form')).toBeNull();
-
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
-    spectator.detectChanges();
 
-    expect(spectator.query('ix-cron-form')).not.toBeNull();
-  });
-
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    await addButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-cron-form')).not.toBeNull();
-
-    spectator.query(CronFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-cron-form')).toBeNull();
+    expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
+    expect(formPanel.open).toHaveBeenCalledWith(CronFormComponent, { title: 'Add Cron Job' });
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
@@ -159,11 +152,11 @@ describe('CronCardComponent', () => {
   it('opens the Edit Cron Job form in the side panel with the selected row', async () => {
     const menu = await openFirstRowMenu();
     await menu.clickItem({ label: 'Edit' });
-    spectator.detectChanges();
 
-    const form = spectator.query(CronFormComponent);
-    expect(form).not.toBeNull();
-    expect(form.editCronjob()).toEqual(expect.objectContaining(cronJobs[0]));
+    expect(formPanel.open).toHaveBeenCalledWith(CronFormComponent, {
+      title: 'Edit Cron Job',
+      inputs: { editCronjob: expect.objectContaining(cronJobs[0]) },
+    });
   });
 
   it('deletes a cronjob with confirmation when Delete button is pressed', async () => {
