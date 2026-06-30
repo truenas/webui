@@ -10,8 +10,11 @@ import { of } from 'rxjs';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
-import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
+import {
+  ManagePortsAction, ManagePortsDialog, ManagePortsResult,
+} from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
@@ -50,10 +53,12 @@ describe('AddPortMenuComponent', () => {
       }),
       mockProvider(NvmeOfStore, {
         ports: allPorts,
+        reloadPorts: jest.fn(),
       }),
+      mockProvider(SnackbarService),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          closed: of(true),
+          closed: of(undefined),
         })),
       }),
     ],
@@ -91,6 +96,30 @@ describe('AddPortMenuComponent', () => {
     spectator.component.onPortSaved(newPort);
 
     expect(spectator.component.portSelected.emit).toHaveBeenCalledWith(newPort);
+    expect(spectator.component.portPanelOpen()).toBe(false);
+  });
+
+  it('opens the Edit Port side panel when Manage Ports requests an edit', () => {
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of({ action: ManagePortsAction.Edit, port: usedPort } as ManagePortsResult),
+    } as ReturnType<TnDialog['open']>);
+
+    spectator.component.onManagePorts();
+
+    expect(spectator.component.portPanelOpen()).toBe(true);
+    expect(spectator.component.portToEdit()).toEqual(usedPort);
+  });
+
+  it('reloads ports without selecting when a Manage Ports edit saves', () => {
+    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
+      closed: of({ action: ManagePortsAction.Add } as ManagePortsResult),
+    } as ReturnType<TnDialog['open']>);
+
+    spectator.component.onManagePorts();
+    spectator.component.onPortSaved(newPort);
+
+    expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
+    expect(spectator.component.portSelected.emit).not.toHaveBeenCalled();
     expect(spectator.component.portPanelOpen()).toBe(false);
   });
 

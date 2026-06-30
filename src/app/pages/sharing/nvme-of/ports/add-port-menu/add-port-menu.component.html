@@ -43,12 +43,15 @@
 }
 
 <tn-side-panel
-  [title]="'Add Port' | translate"
+  [title]="portPanelTitle()"
   [closeGuard]="portCloseGuard"
   [(open)]="portPanelOpen"
 >
   @if (portPanelOpen()) {
-    <ix-port-form (saved)="onPortSaved($event)"></ix-port-form>
+    <ix-port-form
+      [data]="portToEdit()"
+      (saved)="onPortSaved($event)"
+    ></ix-port-form>
   }
   @if (portForm(); as form) {
     <tn-button

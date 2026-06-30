@@ -1,3 +1,4 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -14,17 +15,24 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemPortOrHostDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-port-ot-host-delete-dialog/subsystem-port-ot-host-delete-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface NvmeOfPortAndUsage extends NvmeOfPort {
   usedInSubsystems: number;
+}
+
+export const enum ManagePortsAction {
+  Add = 'add',
+  Edit = 'edit',
+}
+
+export interface ManagePortsResult {
+  action: ManagePortsAction;
+  port?: NvmeOfPort;
 }
 
 @Component({
@@ -48,12 +56,11 @@ export class ManagePortsDialog implements OnInit {
   private nvmeOfStore = inject(NvmeOfStore);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);
-  private snackbar = inject(SnackbarService);
+  private dialogRef = inject<DialogRef<ManagePortsResult>>(DialogRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
@@ -98,20 +105,13 @@ export class ManagePortsDialog implements OnInit {
   }
 
   onAdd(): void {
-    this.slideIn
-      .open(PortFormComponent)
-      .onSuccess(() => {
-        this.snackbar.success(this.translate.instant('Port Added'));
-        this.nvmeOfStore.reloadPorts();
-      }, this.destroyRef);
+    // Close the dialog and let the host open the port form in a side panel.
+    this.dialogRef.close({ action: ManagePortsAction.Add });
   }
 
   onEdit(port: NvmeOfPort): void {
-    this.slideIn.open(PortFormComponent, { data: port })
-      .onSuccess(() => {
-        this.snackbar.success(this.translate.instant('Port Updated'));
-        this.nvmeOfStore.reloadPorts();
-      }, this.destroyRef);
+    // Close the dialog and let the host open the port form in a side panel.
+    this.dialogRef.close({ action: ManagePortsAction.Edit, port });
   }
 
   onDelete(port: NvmeOfPortAndUsage): void {
