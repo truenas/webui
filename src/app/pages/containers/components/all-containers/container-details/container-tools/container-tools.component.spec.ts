@@ -1,6 +1,9 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 import {
@@ -11,6 +14,7 @@ import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
 describe('ContainerToolsComponent', () => {
   let spectator: Spectator<ContainerToolsComponent>;
+  let loader: HarnessLoader;
 
   const runningContainer = fakeContainer({
     id: 1,
@@ -30,12 +34,15 @@ describe('ContainerToolsComponent', () => {
   beforeEach(() => {
     selectedContainer.set(runningContainer);
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('shell', () => {
-    it('shows a Shell row with a trailing icon', () => {
+    it('shows a Shell row with a trailing icon', async () => {
       expect(spectator.query('tn-list-item')).toHaveText('Shell');
-      expect(spectator.query('tn-icon')).toBeTruthy();
+
+      const icon = await loader.getHarness(TnIconHarness);
+      expect(await icon.getName()).toBe('console-line');
     });
 
     it('navigates to the shell when the Shell row is clicked', () => {

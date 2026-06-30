@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type,
+  input, OnChanges, OnInit, output, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Validators, FormBuilder, FormControl, ReactiveFormsModule,
@@ -7,7 +11,9 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious } from '@angular/material/stepper';
 import { NavigationExtras, Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnDialog, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
   BehaviorSubject,
@@ -36,13 +42,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
@@ -62,12 +67,14 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
   styleUrls: ['./cloudsync-what-and-when.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnInputComponent,
     TransferModeExplanationComponent,
     IxExplorerComponent,
-    IxInputComponent,
     SchedulerComponent,
     FormActionsComponent,
     MatButton,
@@ -80,7 +87,10 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
 export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
-  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef);
+  // Optional: the wizard is hosted in the `<tn-side-panel>` form panel (no SlideInRef); "Advanced
+  // Options" swaps via {@link formPanel} there.
+  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef, { optional: true });
+  private formPanel = inject(FormSidePanelService);
   private dialog = inject(DialogService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
@@ -93,6 +103,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   private destroyRef = inject(DestroyRef);
 
   readonly credentialId = input<number>();
+  readonly loading = input(false);
 
   readonly save = output();
 
@@ -301,7 +312,10 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.slideInRef.swap?.(CloudSyncFormComponent, { wide: true });
+      this.formPanel.swap(CloudSyncFormComponent as unknown as Type<SidePanelForm>, {
+        title: this.translate.instant('Add Cloud Sync Task'),
+        wide: true,
+      });
     });
   }
 

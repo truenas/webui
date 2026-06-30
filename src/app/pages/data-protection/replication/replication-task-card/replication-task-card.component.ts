@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, inject,
+  ChangeDetectionStrategy, Component, Type, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -36,7 +36,8 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { convertStringToId } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   TableActionsCellComponent,
@@ -91,7 +92,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTask> {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
@@ -171,13 +172,25 @@ export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTas
   }
 
   protected onAdd(): void {
-    this.slideIn.open(ReplicationWizardComponent, { wide: true })
-      .onSuccess(() => this.reload(), this.destroyRef);
+    this.formPanel.open(this.replicationWizard, {
+      title: this.translate.instant('Replication Task Wizard'),
+      wide: true,
+      footerless: true,
+    }).onSuccess(() => this.reload(), this.destroyRef);
   }
 
+  // ReplicationFormComponent / ReplicationWizardComponent structurally provide the host surface
+  // (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the
+  // nominal base type.
+  private readonly replicationForm = ReplicationFormComponent as unknown as Type<SidePanelForm>;
+  private readonly replicationWizard = ReplicationWizardComponent as unknown as Type<SidePanelForm>;
+
   private editReplicationTask(row: ReplicationTask): void {
-    this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
-      .onSuccess(() => this.reload(), this.destroyRef);
+    this.formPanel.open(this.replicationForm, {
+      title: this.translate.instant('Edit Replication Task'),
+      wide: true,
+      inputs: { replicationToEdit: row },
+    }).onSuccess(() => this.reload(), this.destroyRef);
   }
 
   protected runNow(row: ReplicationTask): void {

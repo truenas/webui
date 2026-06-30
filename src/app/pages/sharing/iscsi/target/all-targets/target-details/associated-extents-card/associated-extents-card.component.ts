@@ -108,6 +108,7 @@ export class AssociatedExtentsCardComponent {
       }),
       hideCheckbox: true,
       buttonText: this.translate.instant('Remove'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => this.iscsiService.deleteTargetExtent(extent.id).pipe(this.loader.withLoader())),

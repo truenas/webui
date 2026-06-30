@@ -1,9 +1,10 @@
 // cspell:ignore ngneat snapshottask zvol volsize volblocksize pbkdf
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -13,11 +14,14 @@ import {
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
@@ -26,6 +30,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { selectIsEnterprise, selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('ZvolFormComponent', () => {
   let loader: HarnessLoader;
@@ -155,6 +160,16 @@ describe('ZvolFormComponent', () => {
       ...ixFormTestingProviders(),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
+      provideMockStore({
+        initialState: {
+          systemInfo: {
+            productType: ProductType.CommunityEdition,
+            systemInfo: {
+              license: { features: [] },
+            } as SystemInfo,
+          },
+        },
+      }),
     ],
   });
 
@@ -257,6 +272,69 @@ describe('ZvolFormComponent', () => {
       expect(await saveButton.isDisabled()).toBe(true);
       expect(spectator.component.form.invalid).toBe(true);
       expect(spectator.component.form.controls.volsize.hasError('min')).toBe(true);
+    });
+  });
+
+  describe('deduplication visibility', () => {
+    // overrideSelector mutates the module-singleton selectors, so reset them
+    // afterwards to avoid leaking the enterprise/license state into other tests.
+    afterEach(() => {
+      spectator.inject(MockStore).resetSelectors();
+    });
+
+    async function setupVisibilityTest(isEnterprise: boolean, hasDedupLicense: boolean): Promise<void> {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'parentId' })),
+          }),
+        ],
+      });
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectIsEnterprise, isEnterprise);
+      store$.overrideSelector(selectSystemInfo, {
+        license: {
+          features: hasDedupLicense ? [{ name: LicenseFeature.Dedup }] : [],
+        },
+      } as SystemInfo);
+      store$.refreshState();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+      mainDetails = await loader.getHarness(DetailsTableHarness);
+    }
+
+    it('shows deduplication when not enterprise', async () => {
+      await setupVisibilityTest(false, false);
+      expect(Object.keys(await mainDetails.getValues())).toContain('ZFS Deduplication');
+      expect(spectator.component.form.controls.deduplication.hasValidator(Validators.required)).toBe(true);
+    });
+
+    it('shows deduplication when enterprise with dedup license', async () => {
+      await setupVisibilityTest(true, true);
+      expect(Object.keys(await mainDetails.getValues())).toContain('ZFS Deduplication');
+      expect(spectator.component.form.controls.deduplication.hasValidator(Validators.required)).toBe(true);
+    });
+
+    it('hides deduplication when enterprise without dedup license', async () => {
+      await setupVisibilityTest(true, false);
+      expect(Object.keys(await mainDetails.getValues())).not.toContain('ZFS Deduplication');
+      // Hidden control drops its required validator so it never blocks submission.
+      expect(spectator.component.form.controls.deduplication.hasValidator(Validators.required)).toBe(false);
+    });
+
+    it('omits deduplication from the create payload when hidden', async () => {
+      await setupVisibilityTest(true, false);
+      form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ Name: 'new zvol', Size: '1 GiB' });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
+        'pool.dataset.create',
+        [expect.not.objectContaining({ deduplication: expect.anything() })],
+      );
     });
   });
 
@@ -370,6 +448,7 @@ describe('ZvolFormComponent', () => {
       });
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
       form = await loader.getHarness(IxFormHarness);
       mainDetails = await loader.getHarness(DetailsTableHarness);
     });

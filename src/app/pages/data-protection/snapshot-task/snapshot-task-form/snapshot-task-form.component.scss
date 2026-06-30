@@ -1,6 +1,7 @@
 @import 'scss-imports/variables';
 
 .columns {
+  column-gap: 24px;
   display: flex;
 
   @media (max-width: $breakpoint-tablet) {
@@ -9,6 +10,7 @@
 
   .column {
     flex: 1;
+    min-width: 0;
   }
 }
 
@@ -21,11 +23,11 @@
     margin-top: 0;
   }
 
-  ix-input {
+  tn-form-field:first-child {
     flex: 1;
   }
 
-  ix-select {
+  tn-form-field:last-child {
     width: 100px;
   }
 }

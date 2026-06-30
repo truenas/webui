@@ -8,6 +8,11 @@
   (openChange)="open.set($event)"
   (closed)="panelClosed.emit()"
 >
+  <!-- Indeterminate loader pinned to the top of the panel while the hosted form submits. -->
+  @if (form()?.isBusy?.()) {
+    <tn-progress-bar class="panel-progress" mode="indeterminate"></tn-progress-bar>
+  }
+
   <ng-template
     [cdkPortalOutlet]="portal()"
     (attached)="onPortalAttached($event)"
@@ -20,7 +25,7 @@
     Secondary actions are grouped under ONE `display: contents` host so the loop's buttons still flex
     directly in the footer (gap + Save layout intact) without each needing its own projection.
   -->
-  @if ((form()?.footerActions ?? []).length) {
+  @if (!footerless() && (form()?.footerActions ?? []).length) {
     <div tnSidePanelAction class="footer-actions-group">
       @for (action of form()?.footerActions ?? []; track action.testId) {
         <tn-button
@@ -35,7 +40,7 @@
     </div>
   }
 
-  @if (form()?.footerMenu; as footerMenu) {
+  @if (!footerless() && form()?.footerMenu; as footerMenu) {
     <div tnSidePanelAction class="footer-actions-group">
       <tn-icon-button
         name="dots-vertical"
@@ -61,14 +66,14 @@
     </div>
   }
 
-  @if (form(); as form) {
+  @if (!footerless() && form(); as form) {
     <tn-button
       *ixRequiresRoles="form.requiredRoles || []"
       tnSidePanelAction
       color="primary"
       [testId]="'save'"
-      [label]="saveLabel() | translate"
-      [disabled]="!form.canSubmit()"
+      [label]="(form.isBusy?.() ? ('Saving…' | translate) : (saveLabel() | translate))"
+      [disabled]="!form.canSubmit() || (form.isBusy?.() ?? false)"
       (onClick)="form.submit()"
     ></tn-button>
   }

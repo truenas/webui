@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { KeyValuePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -73,8 +73,7 @@ describe('ContainerGeneralInfoComponent', () => {
   });
 
   it('checks card title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('General Info');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('General Info');
   });
 
   it('renders details in card', () => {
