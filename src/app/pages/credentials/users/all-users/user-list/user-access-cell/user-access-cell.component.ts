@@ -18,6 +18,8 @@ export class UserAccessCellComponent {
 
   protected readonly roles = computed<string>(() => {
     return this.user().roles
+      // Skip falsy entries — translate.instant throws `Parameter "key" required` on an empty key.
+      .filter(Boolean)
       .map((role) => this.translate.instant(roleNames.get(role) || role))
       .join(', ');
   });

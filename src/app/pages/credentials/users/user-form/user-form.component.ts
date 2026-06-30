@@ -98,6 +98,15 @@ export class UserFormComponent extends SidePanelForm<User> implements OnInit {
    */
   readonly canSubmit = computed(() => !this.isFormInvalid() && !this.isFormLoading());
 
+  /**
+   * Busy/loading state read by the `<tn-side-panel>` host to show its progress bar, switch Save to
+   * "Saving…", and keep Save disabled mid-submit. Overrides the base (which sources its loading
+   * from `trackCanSubmit`) because this form builds `canSubmit` from its four sub-forms instead.
+   */
+  override isBusy(): boolean {
+    return this.isFormLoading();
+  }
+
   protected isNewUser = computed(() => {
     return !this.editingUser();
   });

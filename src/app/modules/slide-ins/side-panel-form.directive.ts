@@ -1,5 +1,5 @@
 import {
-  computed, Directive, inject, output, Signal,
+  computed, Directive, inject, output, signal, Signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
@@ -42,6 +42,20 @@ export abstract class SidePanelForm<R = boolean> {
    */
   abstract readonly canSubmit: Signal<boolean>;
 
+  /** Loading signal backing {@link isBusy}; captured from {@link trackCanSubmit} (false otherwise). */
+  private submitLoading: Signal<boolean> = signal(false);
+
+  /**
+   * Whether a submit is in flight — a `<tn-side-panel>` host reads this to show its progress bar
+   * and switch Save to "Saving…". In side-panel mode the inner `<ix-form>` renders no loader (its
+   * chrome is SlideIn-only), so without this a save shows no progress feedback. Defaults to the
+   * loading signal handed to {@link trackCanSubmit}; forms that build `canSubmit` without it should
+   * `override` this to return their own loading signal.
+   */
+  isBusy(): boolean {
+    return this.submitLoading();
+  }
+
   /** Performs the actual save. Invoked by the host-facing {@link submit}. */
   protected abstract onSubmit(): void;
 
@@ -78,6 +92,8 @@ export abstract class SidePanelForm<R = boolean> {
    * `protected readonly canSubmit = this.trackCanSubmit(this.isFormLoading);`
    */
   protected trackCanSubmit(isLoading: Signal<boolean>): Signal<boolean> {
+    // Surface the same loading signal as isBusy so the side-panel host can show its loader.
+    this.submitLoading = isLoading;
     const status = toSignal(
       this.form.statusChanges.pipe(startWith(this.form.status)),
       { initialValue: this.form.status },

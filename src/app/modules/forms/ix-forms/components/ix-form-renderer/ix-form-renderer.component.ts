@@ -129,6 +129,14 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
   readonly canSubmit = computed(() => this.ixForm()?.canSubmit() ?? false);
 
   /**
+   * Whether the form is submitting / busy — a `<tn-side-panel>` host reads this to show its
+   * progress bar, switch Save to "Saving…", and keep Save disabled mid-submit. Delegates to the
+   * inner `<ix-form>` (whose `isLoading` covers both submit and `loadData`); falls back to the
+   * renderer's own `externalLoading` for the brief window before the child view initializes.
+   */
+  readonly isBusy = computed(() => this.ixForm()?.isLoading() ?? this.externalLoading());
+
+  /**
    * Reactive mirror of {@link canSubmit} for hosts that can't read a child signal
    * directly (a `<tn-side-panel>` wrapper whose ref to this component is a
    * non-signal `@ViewChild`, e.g. because it gets ng-mocks-mocked elsewhere).

@@ -7,7 +7,7 @@ import {
   TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
   TnSelectHarness, TnSelectOption,
 } from '@truenas/ui-components';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { FormSubmitEvent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -204,6 +204,39 @@ describe('IxFormRendererComponent', () => {
         min: 1,
         max: 9,
       });
+    });
+  });
+
+  describe('host-facing side-panel surface', () => {
+    it('reports canSubmit only once the form is valid', async () => {
+      spectator = createComponent({ props: { definition } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      await (await loader.getHarness(TnInputHarness.with({ name: 'name' }))).setValue('sample');
+
+      expect(spectator.component.canSubmit()).toBe(true);
+    });
+
+    it('reports isBusy while a submit is in flight and clears it once the request settles', async () => {
+      const request$ = new Subject<unknown>();
+      const busyDefinition: FormDefinition<SampleForm> = {
+        ...definition,
+        submit: () => ({ request$, successMessage: asTranslated('Saved') }),
+      };
+      spectator = createComponent({ props: { definition: busyDefinition } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await (await loader.getHarness(TnInputHarness.with({ name: 'name' }))).setValue('sample');
+
+      expect(spectator.component.isBusy()).toBe(false);
+
+      spectator.component.submit();
+      expect(spectator.component.isBusy()).toBe(true);
+
+      request$.next({});
+      request$.complete();
+      expect(spectator.component.isBusy()).toBe(false);
     });
   });
 

@@ -196,6 +196,14 @@ describe('UserFormComponent', () => {
       expect(typeof spectator.component.submit).toBe('function');
       expect(spectator.component.canSubmit()).toBe(false);
     });
+
+    it('exposes isBusy so the panel host can show its loader while submitting', () => {
+      expect(spectator.component.isBusy()).toBe(false);
+
+      spectator.component.isFormLoading.set(true);
+
+      expect(spectator.component.isBusy()).toBe(true);
+    });
   });
 
   describe('validation clearing integration', () => {
