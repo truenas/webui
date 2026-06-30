@@ -10,6 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCheckboxComponent,
   TnFormFieldComponent,
+  TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
 } from '@truenas/ui-components';
@@ -30,7 +31,6 @@ import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/compon
 import {
   IxDynamicFormComponent,
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import {
   IxFormComponent,
   FormSubmitEvent,
@@ -47,13 +47,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     IxFormComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
     TranslateModule,
     IxDynamicFormComponent,
+    TnFormSectionComponent,
   ],
 })
 export class ReportingExportersFormComponent implements OnInit {

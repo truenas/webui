@@ -4,7 +4,7 @@
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"
 >
-  <ix-fieldset>
+  <tn-form-section>
     <tn-form-field
       [label]="'Name' | translate"
       [tooltip]="'Give your exporter configuration a name' | translate"
@@ -17,8 +17,6 @@
         [required]="true"
       ></tn-input>
     </tn-form-field>
-  </ix-fieldset>
-  <ix-fieldset>
     <tn-form-field
       [label]="'Type' | translate"
       [required]="true"
@@ -29,8 +27,6 @@
         [options]="exporterTypeOptions()"
       ></tn-select>
     </tn-form-field>
-  </ix-fieldset>
-  <ix-fieldset>
     <tn-form-field class="checkbox-field">
       <tn-checkbox
         testId="enabled"
@@ -38,7 +34,7 @@
         [label]="'Enable' | translate"
       ></tn-checkbox>
     </tn-form-field>
-  </ix-fieldset>
+  </tn-form-section>
 
   @if (!isLoadingSchemas()) {
     <ix-dynamic-form
