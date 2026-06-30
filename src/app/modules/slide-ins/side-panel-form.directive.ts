@@ -84,7 +84,10 @@ export abstract class SidePanelForm<R = boolean> {
 
     // Clear the submit latch on the falling edge of busy: once the save's busy period ends, a later
     // non-submit busy toggle won't mislabel Save as "Saving…". Only the falling edge clears it, so
-    // setting the latch in submit() before busy rises is safe.
+    // setting the latch in submit() before busy rises is safe. This assumes every onSubmit() raises
+    // a busy edge (true async save); a submit that bails out synchronously without ever going busy
+    // leaves the latch set — harmless on its own since isSubmitting ANDs in isBusy(), but a later
+    // non-submit busy period would then read as submitting until the next real save settles it.
     let wasBusy = false;
     effect(() => {
       const busy = this.isBusy();

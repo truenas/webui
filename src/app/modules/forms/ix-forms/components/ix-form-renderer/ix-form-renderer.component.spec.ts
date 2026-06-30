@@ -230,13 +230,16 @@ describe('IxFormRendererComponent', () => {
       await (await loader.getHarness(TnInputHarness.with({ name: 'name' }))).setValue('sample');
 
       expect(spectator.component.isBusy()).toBe(false);
+      expect(spectator.component.isSubmitting()).toBe(false);
 
       spectator.component.submit();
       expect(spectator.component.isBusy()).toBe(true);
+      expect(spectator.component.isSubmitting()).toBe(true);
 
       request$.next({});
       request$.complete();
       expect(spectator.component.isBusy()).toBe(false);
+      expect(spectator.component.isSubmitting()).toBe(false);
     });
   });
 
