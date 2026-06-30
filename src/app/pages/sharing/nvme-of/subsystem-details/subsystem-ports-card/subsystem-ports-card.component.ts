@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, input } from '@
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCardComponent, TnCardHeaderDirective, TnIconButtonComponent, TnIconComponent,
+  TnCardComponent, TnCardHeaderActionsDirective, TnIconButtonComponent, TnIconComponent,
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -25,7 +25,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    TnCardHeaderDirective,
+    TnCardHeaderActionsDirective,
     TnIconComponent,
     TnIconButtonComponent,
     PortDescriptionComponent,

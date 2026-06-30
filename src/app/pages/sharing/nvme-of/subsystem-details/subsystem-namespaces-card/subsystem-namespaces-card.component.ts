@@ -4,7 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnDialog, TnIconButtonComponent, TnIconComponent,
+  TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnDialog, TnIconButtonComponent, TnIconComponent,
   TnSidePanelActionDirective, TnSidePanelComponent,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs';
@@ -32,7 +32,7 @@ import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    TnCardHeaderDirective,
+    TnCardHeaderActionsDirective,
     TranslateModule,
     TnIconComponent,
     TnIconButtonComponent,

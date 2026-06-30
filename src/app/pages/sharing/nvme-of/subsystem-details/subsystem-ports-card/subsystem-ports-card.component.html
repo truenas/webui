@@ -1,13 +1,11 @@
-<tn-card class="card">
-  <div tnCardHeader class="card-header">
-    <h3 class="tn-card__title">{{ 'Ports' | translate }}</h3>
-
+<tn-card class="card" [title]="'Ports' | translate">
+  <ng-template tnCardHeaderActions>
     <ix-add-port-menu
       [subsystemPorts]="subsystem().ports"
       [ixUiSearch]="searchableElements.elements.addPort"
       (portSelected)="onPortAdded($event)"
     ></ix-add-port-menu>
-  </div>
+  </ng-template>
 
   @if (!subsystem().ports?.length) {
     <div class="no-ports-warning">

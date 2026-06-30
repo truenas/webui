@@ -1,7 +1,5 @@
-<tn-card class="card">
-  <div tnCardHeader class="card-header">
-    <h3 class="tn-card__title">{{ 'Namespaces' | translate }}</h3>
-
+<tn-card class="card" [title]="'Namespaces' | translate">
+  <ng-template tnCardHeaderActions>
     <tn-button
       *ixRequiresRoles="requiredRoles"
       [testId]="'add-namespace'"
@@ -9,7 +7,7 @@
       [ixUiSearch]="searchableElements.elements.addNamespace"
       (onClick)="onAddNamespace()"
     ></tn-button>
-  </div>
+  </ng-template>
 
   @if (!subsystem().namespaces?.length) {
     <div class="no-namespaces-warning">

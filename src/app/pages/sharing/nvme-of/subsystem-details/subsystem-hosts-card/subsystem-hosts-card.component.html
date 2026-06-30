@@ -1,7 +1,5 @@
-<tn-card class="card">
-  <div tnCardHeader class="card-header">
-    <h3 class="tn-card__title">{{ 'Associated Hosts' | translate }}</h3>
-
+<tn-card class="card" [title]="'Associated Hosts' | translate">
+  <ng-template tnCardHeaderActions>
     <ix-add-host-menu
       [hosts]="subsystem().hosts"
       [showAllowAnyHost]="!subsystem().allow_any_host"
@@ -9,7 +7,7 @@
       (hostSelected)="hostAdded($event)"
       (allowAllHostsSelected)="allowAllHostsSelected()"
     ></ix-add-host-menu>
-  </div>
+  </ng-template>
 
   @if (subsystem().allow_any_host && !subsystem().hosts.length) {
     {{ 'All hosts are allowed.' | translate }}
