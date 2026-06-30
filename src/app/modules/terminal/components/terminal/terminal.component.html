@@ -8,7 +8,7 @@
   @if (accessDenied()) {
     <div class="terminal-busy-overlay">
       <div class="busy-content" role="alert">
-        <tn-icon name="lock" library="mdi" size="xl" class="access-denied-icon"></tn-icon>
+        <tn-icon name="lock" library="mdi" size="xl" aria-hidden="true"></tn-icon>
         <p>{{ 'Your user permissions do not allow Web Shell access.' | translate }}</p>
       </div>
     </div>
