@@ -10,7 +10,9 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { AppContainerState, App } from 'app/interfaces/app.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import {
@@ -140,5 +142,34 @@ describe('AppContainersCardComponent', () => {
     await showLogsButton.click();
 
     expect(navigateSpy).toHaveBeenCalledWith(['/apps', 'installed', 'ix-test-train', 'ix-test-app', 'logs', '1']);
+  });
+
+  describe('without web_shell access', () => {
+    const createDeniedComponent = createComponentFactory({
+      component: AppWorkloadsCardComponent,
+      declarations: [
+        MockComponent(VolumeMountsDialog),
+      ],
+      imports: [
+        MapValuePipe,
+      ],
+      providers: [
+        mockProvider(TnDialog, {
+          open: jest.fn(() => of(true)),
+        }),
+        mockAuth({
+          privilege: {
+            roles: { $set: [Role.AppsWrite] },
+            web_shell: false,
+          },
+        } as LoggedInUser),
+      ],
+    });
+
+    it('locks the Shell button with a lock icon when the user lacks web_shell access', () => {
+      spectator = createDeniedComponent({ props: { app } });
+
+      expect(spectator.query('ix-missing-access-wrapper')).toExist();
+    });
   });
 });
