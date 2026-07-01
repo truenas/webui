@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -13,7 +12,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { allContainersHeaderElements } from 'app/pages/containers/components/all-containers/all-containers-header/all-containers-header.elements';
 import {
   GlobalConfigFormComponent,
@@ -45,7 +43,6 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 })
 export class AllContainersHeaderComponent {
   private destroyRef = inject(DestroyRef);
-  private slideIn = inject(SlideIn);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
@@ -58,10 +55,11 @@ export class AllContainersHeaderComponent {
   protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
   protected onCreateContainer(): void {
-    this.slideIn
-      .open(ContainerFormComponent)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe();
+    this.formPanel.open(ContainerFormComponent, {
+      title: this.translate.instant('Add Container'),
+      wide: true,
+      saveLabel: this.translate.instant('Create'),
+    });
   }
 
   protected onGlobalConfiguration(): void {
