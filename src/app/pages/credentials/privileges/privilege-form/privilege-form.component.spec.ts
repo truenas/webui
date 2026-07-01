@@ -7,6 +7,7 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { lastValueFrom, of, throwError } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
@@ -659,6 +660,7 @@ describe('PrivilegeFormComponent', () => {
 
     it('should show button and enable ds_auth when clicked', async () => {
       spectator = createComponent({
+        detectChanges: false,
         providers: [
           provideMockStore({
             selectors: [
@@ -685,16 +687,18 @@ describe('PrivilegeFormComponent', () => {
 
       api = spectator.inject(ApiService);
 
-      // Wait for ngOnInit to complete
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      // Manually set DS status to Healthy with type (since factory mock doesn't include type)
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['dsStatus'].set({
+      // Report DS as active (with a type) before ngOnInit reads the status, so the
+      // enable button becomes available — drives visibility through the mocked call
+      // rather than poking the component's private state. `detectChanges: false`
+      // defers ngOnInit until after this override is in place.
+      spectator.inject(MockApiService).mockCall('directoryservices.status', {
         type: 'ACTIVEDIRECTORY',
         status: DirectoryServiceStatus.Healthy,
       } as DirectoryServicesStatus);
+
+      // Run ngOnInit now that the status is mocked
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       // Trigger DS groups being added
       // eslint-disable-next-line @typescript-eslint/dot-notation
