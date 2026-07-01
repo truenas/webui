@@ -13,7 +13,7 @@ import {
   TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   map, shareReplay, take,
 } from 'rxjs/operators';
@@ -119,14 +119,19 @@ export class PrivilegeListComponent implements OnInit {
 
   searchQuery: SearchQuery<Privilege>;
 
-  private groupsSuggestions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
-    map((groups) => groups.map((group) => ({
-      label: group.group,
-      value: `"${group.group}"`,
-    }))),
-    take(1),
-    shareReplay({ refCount: true, bufferSize: 1 }),
-  );
+  private groupSuggestions$(local: boolean): Observable<Option[]> {
+    return this.api.call('group.query', [[['local', '=', local]]]).pipe(
+      map((groups) => groups.map((group) => ({
+        label: group.group,
+        value: `"${group.group}"`,
+      }))),
+      take(1),
+      shareReplay({ refCount: true, bufferSize: 1 }),
+    );
+  }
+
+  private readonly localGroupsSuggestions$ = this.groupSuggestions$(true);
+  private readonly dsGroupsSuggestions$ = this.groupSuggestions$(false);
 
   private readonly rolesSuggestions$ = of(Object.values(Role)).pipe(
     map((roles) => roles.map((key) => ({
@@ -199,8 +204,8 @@ export class PrivilegeListComponent implements OnInit {
     this.searchProperties = searchProperties<Privilege>([
       textProperty('name', this.translate.instant('Name'), of<Option[]>([])),
       booleanProperty('web_shell', this.translate.instant('Web Shell Access')),
-      textProperty('local_groups.*.name', this.translate.instant('Local Groups Name'), this.groupsSuggestions$),
-      textProperty('ds_groups.*.name', this.translate.instant('DS Groups Name'), this.groupsSuggestions$),
+      textProperty('local_groups.*.name', this.translate.instant('Local Groups Name'), this.localGroupsSuggestions$),
+      textProperty('ds_groups.*.name', this.translate.instant('DS Groups Name'), this.dsGroupsSuggestions$),
       textProperty('roles', this.translate.instant('Roles'), this.rolesSuggestions$, roleNames),
     ]);
   }
