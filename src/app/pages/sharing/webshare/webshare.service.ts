@@ -1,7 +1,7 @@
 import {
   Injectable, computed, inject, signal,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, of, forkJoin,
@@ -13,6 +13,7 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
@@ -48,11 +49,8 @@ export class WebShareService {
    * Backed by `tn_connect.config` events, so disabling TrueNAS Connect immediately
    * flips this to `false` without requiring a page refresh.
    */
-  private isTruenasConnectConfigured = toSignal(
-    this.truenasConnectService.config$.pipe(
-      map((config) => config?.status === TruenasConnectStatus.Configured),
-    ),
-    { initialValue: false },
+  private isTruenasConnectConfigured = computed(
+    () => this.truenasConnectService.config()?.status === TruenasConnectStatus.Configured,
   );
 
   /**
@@ -88,7 +86,7 @@ export class WebShareService {
    * so the user always sees the actual reason (TrueNAS Connect disabled vs. wrong
    * domain) rather than a tooltip that only ever blames the domain.
    */
-  readonly webShareUnavailableReason = computed<string | null>(() => {
+  readonly webShareUnavailableReason = computed<TranslatedString | null>(() => {
     if (!this.isTruenasConnectConfigured()) {
       return this.translate.instant('WebShare is unavailable because TrueNAS Connect is disabled.');
     }

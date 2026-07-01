@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of } from 'rxjs';
@@ -55,7 +56,7 @@ describe('WebShareService', () => {
       }),
       mockProvider(TruenasConnectService, {
         openStatusModal: jest.fn(),
-        config$: of(mockConfiguredTncConfig),
+        config: signal(mockConfiguredTncConfig),
       }),
       {
         provide: WINDOW,
@@ -221,7 +222,7 @@ describe('WebShareService - non-TrueNAS Direct domain', () => {
       mockProvider(LicenseService),
       mockProvider(SlideIn),
       mockProvider(TruenasConnectService, {
-        config$: of(mockConfiguredTncConfig),
+        config: signal(mockConfiguredTncConfig),
       }),
       {
         provide: WINDOW,
@@ -275,7 +276,7 @@ describe('WebShareService - hostname mapping', () => {
       }),
       mockProvider(SlideIn),
       mockProvider(TruenasConnectService, {
-        config$: of(mockConfiguredTncConfig),
+        config: signal(mockConfiguredTncConfig),
       }),
       {
         provide: WINDOW,
@@ -343,7 +344,7 @@ describe('WebShareService - no hostname mapping', () => {
       }),
       mockProvider(SlideIn),
       mockProvider(TruenasConnectService, {
-        config$: of(mockConfiguredTncConfig),
+        config: signal(mockConfiguredTncConfig),
       }),
       {
         provide: WINDOW,
@@ -405,7 +406,7 @@ describe('WebShareService - TrueNAS Connect disabled', () => {
       }),
       mockProvider(SlideIn),
       mockProvider(TruenasConnectService, {
-        config$: of({ status: TruenasConnectStatus.Disabled } as TruenasConnectConfig),
+        config: signal({ status: TruenasConnectStatus.Disabled } as TruenasConnectConfig),
       }),
       {
         provide: WINDOW,
@@ -471,7 +472,7 @@ describe('WebShareService - TrueNAS Connect not configured', () => {
       }),
       mockProvider(TruenasConnectService, {
         openStatusModal: jest.fn(),
-        config$: of(mockConfiguredTncConfig),
+        config: signal(mockConfiguredTncConfig),
       }),
       {
         provide: WINDOW,
