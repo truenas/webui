@@ -45,4 +45,20 @@ export class EmptyService {
         return tnIconMarker('format-list-text', 'mdi');
     }
   }
+
+  /**
+   * Resolves the empty-state icon, preferring the state icon for error /
+   * no-search-results states so they stay visually distinct, and falling back to
+   * a page-specific `pageIcon` for the first-use / no-data states, where the
+   * feature's own glyph is more meaningful than the generic list icon.
+   */
+  iconForTypeOrDefault(type: EmptyType | null | undefined, pageIcon: string): string {
+    switch (type) {
+      case EmptyType.Errors:
+      case EmptyType.NoSearchResults:
+        return this.iconForType(type);
+      default:
+        return pageIcon;
+    }
+  }
 }

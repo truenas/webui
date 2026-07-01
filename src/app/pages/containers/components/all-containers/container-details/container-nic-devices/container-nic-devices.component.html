@@ -1,8 +1,7 @@
-<tn-card padding="small">
-  <h3 tnCardHeader class="tn-card__title">
-    {{ 'NIC Devices' | translate }}
-  </h3>
-
+<tn-card
+  padding="small"
+  [title]="'NIC Devices' | translate"
+>
   @if (!hasPendingInterfaceChanges()) {
     <ng-template tnCardFooterActions>
       <ix-add-nic-menu [defaultBridge]="defaultBridge()"></ix-add-nic-menu>

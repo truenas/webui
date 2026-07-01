@@ -20,7 +20,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllCloudBackupsComponent } from 'app/pages/data-protection/cloud-backup/all-cloud-backups/all-cloud-backups.component';
@@ -84,7 +84,7 @@ describe('AllCloudBackupsComponent', () => {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
@@ -136,9 +136,13 @@ describe('AllCloudBackupsComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      { wide: true },
+      {
+        title: 'Add TrueCloud Backup Task',
+        wide: true,
+        inputs: { backupToEdit: undefined },
+      },
     );
   });
 
@@ -168,11 +172,12 @@ describe('AllCloudBackupsComponent', () => {
       await menu.open();
       await menu.clickItem({ text: 'Edit' });
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
         CloudBackupFormComponent,
         {
+          title: 'Edit TrueCloud Backup Task',
           wide: true,
-          data: cloudBackups[0],
+          inputs: { backupToEdit: cloudBackups[0] },
         },
       );
     });

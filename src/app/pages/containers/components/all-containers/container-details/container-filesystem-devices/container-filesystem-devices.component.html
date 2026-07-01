@@ -1,18 +1,8 @@
 <tn-card
   class="card"
   [title]="'Filesystem Devices' | translate"
+  [primaryAction]="addAction()"
 >
-  <ng-template tnCardFooterActions>
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      variant="filled"
-      color="primary"
-      testId="add-disk"
-      [label]="'Add' | translate"
-      (onClick)="addDisk()"
-    ></tn-button>
-  </ng-template>
-
   @if (isLoadingDevices()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {

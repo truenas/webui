@@ -64,13 +64,16 @@
   }
 
   .container {
+    flex: 1;
+    min-height: 0;
     padding-top: 0;
 
     .container-content {
       display: flex;
       flex-direction: column;
-      height: calc(100% + 10px);
+      height: 100%;
       justify-content: space-between;
+      min-height: 0;
 
       .banner {
         background: var(--bg1);
@@ -86,6 +89,17 @@
   gap: 5px;
   grid-auto-rows: var(--tile-height);
   grid-template-columns: 1fr;
+
+  // Keep the single-column layout for up to 3 tiles; once every backup type is
+  // configured (4+), wrap into two columns so all tiles fit the fixed-height
+  // card without scrolling. The two-column rows stretch to fill the card height
+  // (like the neighbouring Storage widget) rather than leaving the lower half empty.
+  &.two-columns {
+    flex: 1;
+    grid-auto-rows: minmax(var(--tile-height), 1fr);
+    grid-template-columns: 1fr 1fr;
+    min-height: 0;
+  }
 }
 
 .tile-cell {

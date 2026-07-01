@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnTooltipDirective,
+  TnCardComponent, TnCardFooterActionsDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
@@ -25,7 +25,6 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   imports: [
     TnCardComponent,
     TnCardFooterActionsDirective,
-    TnCardHeaderDirective,
     TranslateModule,
     TnTooltipDirective,
     NgxSkeletonLoaderModule,

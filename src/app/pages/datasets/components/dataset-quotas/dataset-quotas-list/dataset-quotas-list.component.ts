@@ -387,6 +387,7 @@ export class DatasetQuotasListComponent implements OnInit {
       title: this.translate.instant('Remove Invalid Quotas'),
       message: this.translate.instant(helptextQuotas[this.helpTextKey].removeInvalidQuotas.message),
       buttonText: this.translate.instant('Remove'),
+      buttonColor: 'warn',
     };
     return this.dialogService.confirm(confirmOptions);
   }

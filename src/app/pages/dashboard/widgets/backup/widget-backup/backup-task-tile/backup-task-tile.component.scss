@@ -1,6 +1,8 @@
 @import 'mixins/cards';
 
 :host {
+  container: backup-tile / inline-size;
+  display: block;
   height: 100%;
   width: 100%;
 }
@@ -44,18 +46,27 @@ ul {
       }
     }
 
-    ul {
+    ul,
+    .caption {
       box-sizing: border-box;
       display: flex;
       flex: 1 1 100%;
       flex-direction: column;
       justify-content: center;
+    }
 
-      &:first-child {
-        text-align: center;
+    // The title column (first child of the row).
+    .caption {
+      max-width: 25%;
+      text-align: center;
+
+      @media(max-width: $breakpoint-xs) {
+        max-width: 50%;
       }
+    }
 
-      &:first-child,
+    ul {
+      // The task-counts column.
       &:nth-child(3) {
         max-width: 25%;
 
@@ -64,7 +75,9 @@ ul {
         }
       }
 
-      &:nth-child(5) {
+      &.activity {
+        max-width: 50%;
+
         @media(max-width: $breakpoint-xs) {
           display: none;
         }
@@ -93,6 +106,7 @@ ul {
 
     .title {
       font-size: 20px;
+      margin: 0;
       white-space: nowrap;
     }
 
@@ -121,6 +135,74 @@ ul {
 
     &.safe {
       color: var(--green);
+    }
+  }
+}
+
+// The default tile is a wide horizontal row built for full width. When the tile
+// itself gets narrow (e.g. the two-column layout that kicks in once every backup
+// type is configured), the horizontal row no longer fits: stack it vertically —
+// title, then task counts, then the "this week / last successful" activity — and
+// drop the inline backup-actions prompt, which has no room. Keyed off the tile's
+// own width via a container query, so wide tiles (single column, or two columns on
+// a large dashboard) keep the full layout. Scoped through `.tile` to outrank the
+// base `.tile-content` rules above.
+@container backup-tile (max-width: 400px) {
+  .tile .tile-content {
+    // Stretch rows to the full tile width so labels left-align and don't collapse
+    // to a truncated shrink-to-fit width.
+    align-items: stretch;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    padding: 8px 14px;
+
+    .divider {
+      display: none;
+    }
+
+    .backup-actions {
+      display: none;
+    }
+
+    // Full width so labels left-align and don't truncate when stacked.
+    ul,
+    .caption {
+      flex: 0 0 auto;
+      max-width: 100%;
+      text-align: left;
+      width: 100%;
+    }
+
+    // The base row layout caps the counts column at 25% via a `:nth-child(3)`
+    // rule whose specificity (0,3,1) outranks the grouped `ul` selector above;
+    // re-cap it at full width here at matching specificity, otherwise the counts
+    // stay 25% wide and their labels truncate ("0 s…" instead of "0 send tasks").
+    ul:nth-child(3) {
+      max-width: 100%;
+    }
+
+    ul {
+      // "this week / last successful" activity — surface the "Last successful"
+      // row stacked under the counts (separated by a hairline) instead of hiding
+      // the whole column. The per-week rows don't fit alongside the counts, so
+      // keep them for the wide layout only.
+      &.activity {
+        border-top: 1px solid var(--lines);
+        display: flex;
+        max-width: 100%;
+        padding-top: 6px;
+        width: 100%;
+
+        li:not(:last-child) {
+          display: none;
+        }
+      }
+    }
+
+    // Match the neighbouring Storage widget's tile-header-title size.
+    .title {
+      font-size: 24px;
     }
   }
 }

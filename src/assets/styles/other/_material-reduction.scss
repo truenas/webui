@@ -1030,6 +1030,35 @@ mat-tab-nav-panel {
   top: 48px !important;
 }
 
+// A slide-in (e.g. "add new credential") opened over a `tn-side-panel` config form must dim the WHOLE
+// panel and sit flush at the top. The default `top: 48px` (which keeps the global topbar visible for
+// ordinary slide-ins) leaves the panel's header strip un-dimmed and an empty strip above the slide-in,
+// since the panel covers `inset: 0`. When a panel is open, drop the topbar offset so the nested
+// slide-in (and its backdrop) cover full height and read as a clean modal over the panel.
+body:has(.tn-side-panel__overlay--open) {
+  .custom-slide-in-backdrop,
+  .custom-slide-in-nobackdrop {
+    top: 0 !important;
+  }
+
+  // CDK applies the offset as inline `margin-top: 48px` (global position) + `height: calc(100% - 48px)`
+  // on the pane, hence `!important`.
+  .slide-in-panel {
+    margin-top: 0 !important;
+    height: 100% !important;
+  }
+
+  // The slide-in container's own height also bakes in the 48px topbar offset
+  // (`calc(100dvh - 48px - 75px)`), so it stops short of the bottom. Pin it top-to-bottom (the
+  // container is `position: fixed`) so the box is exactly the viewport height regardless of its
+  // `padding-top`/box-sizing, and the form footer reaches the bottom edge.
+  ix-slide-in-container {
+    top: 0 !important;
+    bottom: 0 !important;
+    height: auto !important;
+  }
+}
+
 // Overlay container for mat-menus inside the alert panel.
 // Must be above alert panel (z-index: 1001) so menus render on top.
 .alert-panel-overlay-container {

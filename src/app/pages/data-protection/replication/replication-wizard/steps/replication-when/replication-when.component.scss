@@ -1,9 +1,19 @@
+// Vertical rhythm comes from the `<tn-form-section>` body (flex column, 1.25rem gap) wrapping the
+// fields. (tn-radio stacking is handled globally in `_tn-styles.scss`.)
 .lifetime {
+  // Align the value input and unit select on the SAME baseline even when one label wraps to two
+  // lines (e.g. "Source Snapshot Lifetime" vs "Unit") — otherwise they sit at different heights.
+  align-items: flex-end;
+  column-gap: 8px;
   display: flex;
   width: 50%;
 
-  .value,
+  .value {
+    flex: 1;
+    min-width: 0;
+  }
+
   .unit {
-    width: 50%;
+    width: 120px;
   }
 }

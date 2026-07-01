@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, inject,
+  ChangeDetectionStrategy, Component, Type, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -36,7 +36,8 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { convertStringToId } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   TableActionsCellComponent,
@@ -87,7 +88,7 @@ export class RsyncTaskCardComponent extends JobTaskCardBase<RsyncTaskUi> {
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly cardMenuPath = ['data-protection', 'rsync'];
@@ -152,9 +153,16 @@ export class RsyncTaskCardComponent extends JobTaskCardBase<RsyncTaskUi> {
     this.openForm();
   }
 
+  // RsyncTaskFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
+  private readonly rsyncTaskForm = RsyncTaskFormComponent as unknown as Type<SidePanelForm>;
+
   openForm(row?: RsyncTaskUi): void {
-    this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
-      .onSuccess(() => this.reload(), this.destroyRef);
+    this.formPanel.open(this.rsyncTaskForm, {
+      title: row ? this.translate.instant('Edit Rsync Task') : this.translate.instant('Add Rsync Task'),
+      wide: true,
+      inputs: { taskToEdit: row },
+    }).onSuccess(() => this.reload(), this.destroyRef);
   }
 
   runNow(row: RsyncTaskUi): void {

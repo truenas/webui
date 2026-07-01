@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -110,11 +110,10 @@ describe('ContainerGpuDevicesComponent', () => {
     expect(addMenu).toExist();
   });
 
-  it('shows warning when NVIDIA GPUs detected without drivers enabled', () => {
+  it('shows warning when NVIDIA GPUs detected without drivers enabled', async () => {
     spectator.detectChanges();
-    const warning = spectator.query('.nvidia-drivers-warning');
-    expect(warning).toExist();
-    expect(warning).toHaveText('NVIDIA GPUs detected, but drivers are not enabled.');
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain('NVIDIA GPUs detected, but drivers are not enabled.');
   });
 
   it('enables NVIDIA drivers when clicking enable button', async () => {

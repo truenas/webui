@@ -1,5 +1,4 @@
 @import 'scss-imports/variables';
-@import '../../../radio-group';
 
 :host {
   display: block;
@@ -23,8 +22,6 @@
     flex-direction: column;
     gap: 8px;
   }
-
-  @include tn-radio-group-layout;
 }
 
 .response-editor,

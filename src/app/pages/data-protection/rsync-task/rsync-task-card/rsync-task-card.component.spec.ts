@@ -19,7 +19,7 @@ import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
@@ -103,7 +103,7 @@ describe('RsyncTaskCardComponent', () => {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -153,11 +153,12 @@ describe('RsyncTaskCardComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: /^Edit$/ });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
       {
+        title: 'Edit Rsync Task',
         wide: true,
-        data: rsyncTasks[0],
+        inputs: { taskToEdit: rsyncTasks[0] },
       },
     );
   });
@@ -166,9 +167,13 @@ describe('RsyncTaskCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
-      { wide: true },
+      {
+        title: 'Add Rsync Task',
+        wide: true,
+        inputs: { taskToEdit: undefined },
+      },
     );
   });
 

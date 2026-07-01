@@ -29,7 +29,7 @@
       [tooltip]="helptext.atimeTooltip | translate"
     ></ix-select>
 
-    @if (hasDeduplication) {
+    @if (hasDeduplication()) {
       <ix-select
         formControlName="deduplication"
         [label]="'ZFS Deduplication' | translate"

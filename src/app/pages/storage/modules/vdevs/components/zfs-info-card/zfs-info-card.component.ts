@@ -222,6 +222,7 @@ export class ZfsInfoCardComponent {
       title: this.translate.instant('Detach Disk'),
       message: this.translate.instant('Detach disk {name}?', { name: this.disk()?.devname || this.topologyItem().guid }),
       buttonText: this.translate.instant('Detach'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => {
@@ -243,6 +244,7 @@ export class ZfsInfoCardComponent {
         { name: this.isDisk() ? this.disk()?.devname || this.topologyItem().guid : this.topologyItem().name },
       ),
       buttonText: this.translate.instant('Remove'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => {
