@@ -3,15 +3,19 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 import {
   SourceSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/source-section/source-section.component';
@@ -20,7 +24,6 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 describe('SourceSectionComponent', () => {
   let spectator: Spectator<SourceSectionComponent>;
   let loader: HarnessLoader;
-  let form: IxFieldsetHarness;
   const createComponent = createComponentFactory({
     component: SourceSectionComponent,
     imports: [
@@ -60,30 +63,54 @@ describe('SourceSectionComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         direction: Direction.Push,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFieldsetHarness);
   });
 
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getChips = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
+    TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckedRadioLabel = async (): Promise<string | null> => {
+    const radios = await loader.getAllHarnesses(TnRadioHarness);
+    for (const radio of radios) {
+      if (await radio.isChecked()) {
+        return radio.getLabelText();
+      }
+    }
+    return null;
+  };
+  const setNameOrRegexRadio = async (label: string): Promise<void> => {
+    await (await loader.getHarness(TnRadioHarness.with({ label }))).check();
+  };
+  const getScheduler = (label: string): Promise<SchedulerHarness> => loader.getHarness(
+    SchedulerHarness.with({ label }),
+  );
+
   it('shows default values when creating a replication tasks', async () => {
-    expect(await form.getValues()).toEqual({
-      Source: '',
-      Recursive: false,
-      'Include Dataset Properties': true,
-      'Full Filesystem Replication': false,
-      'Properties Override': [],
-      'Properties Exclude': [],
-      'Periodic Snapshot Tasks': [],
-      'Replicate Specific Snapshots': false,
-      'Also include snapshots with the name': 'Matching naming schema',
-      'Also Include Naming Schema': [],
-      'Save Pending Snapshots': false,
-    });
+    expect(await (await getCheckbox('recursive')).isChecked()).toBe(false);
+    expect(await (await getCheckbox('properties')).isChecked()).toBe(true);
+    expect(await (await getCheckbox('replicate')).isChecked()).toBe(false);
+    expect(await (await getChips('properties_override')).getChips()).toEqual([]);
+    expect(await (await getChips('properties_exclude')).getChips()).toEqual([]);
+    expect(await (await getSelect('periodic_snapshot_tasks')).getDisplayText()).toBe('Select an option');
+    expect(await (await getCheckbox('restrict_schedule')).isChecked()).toBe(false);
+    expect(await getCheckedRadioLabel()).toBe('Matching naming schema');
+    expect(await (await getChips('also_include_naming_schema')).getChips()).toEqual([]);
+    expect(await (await getCheckbox('hold_pending_snapshots')).isChecked()).toBe(false);
   });
 
   it('shows values when editing a replication task', async () => {
@@ -110,35 +137,30 @@ describe('SourceSectionComponent', () => {
       hold_pending_snapshots: true,
     } as ReplicationTask);
 
-    expect(await form.getValues()).toEqual({
-      Source: 'tank/files',
-      'Full Filesystem Replication': true,
-      'Properties Override': ['property1=value1', 'property2=value2'],
-      'Properties Exclude': ['exclude1', 'exclude2'],
-      'Periodic Snapshot Tasks': [
-        'files - auto-%Y-%m - 2 WEEK (S) - Enabled',
-        'system - %Y-%m-%d - 1 DAY (S) - Disabled',
-      ],
-      'Replicate Specific Snapshots': true,
-      'By snapshot creation time': 'Custom Every minute, every hour, every day, every 2 months',
-      'Also include snapshots with the name': 'Matching naming schema',
-      'Also Include Naming Schema': ['%Y-%m-%d'],
-      'Save Pending Snapshots': true,
-    });
+    expect(await (await getCheckbox('replicate')).isChecked()).toBe(true);
+    expect(await (await getChips('properties_override')).getChips()).toEqual(['property1=value1', 'property2=value2']);
+    expect(await (await getChips('properties_exclude')).getChips()).toEqual(['exclude1', 'exclude2']);
+    expect(await (await getSelect('periodic_snapshot_tasks')).getDisplayText()).toBe(
+      'files - auto-%Y-%m - 2 WEEK (S) - Enabled, system - %Y-%m-%d - 1 DAY (S) - Disabled',
+    );
+    expect(await (await getCheckbox('restrict_schedule')).isChecked()).toBe(true);
+    expect(await (await getScheduler('By snapshot creation time')).getValue()).toBe(
+      'Custom Every minute, every hour, every day, every 2 months',
+    );
+    expect(await getCheckedRadioLabel()).toBe('Matching naming schema');
+    expect(await (await getChips('also_include_naming_schema')).getChips()).toEqual(['%Y-%m-%d']);
+    expect(await (await getCheckbox('hold_pending_snapshots')).isChecked()).toBe(true);
   });
 
   it('returns payload when getPayload is called', async () => {
-    await form.fillForm(
-      {
-        Source: ['tank/files'],
-        'Full Filesystem Replication': true,
-        'Periodic Snapshot Tasks': ['files - auto-%Y-%m - 2 WEEK (S) - Enabled'],
-        'Also include snapshots with the name': 'Matching regular expression',
-        'Properties Exclude': ['exclude1'],
-        'Save Pending Snapshots': true,
-        'Matching regular expression': 'test-.*',
-      },
-    );
+    spectator.setInput('nodeProvider', jest.fn());
+    spectator.component.form.controls.source_datasets.setValue(['tank/files']);
+    await (await getCheckbox('replicate')).check();
+    await (await getSelect('periodic_snapshot_tasks')).selectOption('files - auto-%Y-%m - 2 WEEK (S) - Enabled');
+    await setNameOrRegexRadio('Matching regular expression');
+    await (await getChips('properties_exclude')).addChip('exclude1');
+    await (await getCheckbox('hold_pending_snapshots')).check();
+    await (await getInput('name_regex')).setValue('test-.*');
 
     expect(spectator.component.getPayload()).toEqual({
       also_include_naming_schema: [],
@@ -166,7 +188,7 @@ describe('SourceSectionComponent', () => {
     });
 
     it('disables explorer when nodeProvider is not provided', async () => {
-      const explorer = await form.getControl('Source');
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Source' }));
       spectator.setInput('nodeProvider', null);
       expect(await explorer.isDisabled()).toBe(true);
 
@@ -180,16 +202,16 @@ describe('SourceSectionComponent', () => {
     it('does not show Periodic Snapshot Tasks for pull replications', async () => {
       spectator.setInput('direction', Direction.Pull);
 
-      expect(await form.getLabels()).not.toContain('Periodic Snapshot Tasks');
+      const periodicSnapshotTasks = await loader.getHarnessOrNull(
+        TnSelectHarness.with({ selector: '[formControlName="periodic_snapshot_tasks"]' }),
+      );
+      expect(periodicSnapshotTasks).toBeNull();
     });
 
     it('shows Exclude Child Datasets when Recursive is ticked', async () => {
-      await form.fillForm(
-        {
-          Recursive: true,
-          'Exclude Child Datasets': ['pool1/files', 'pool1/storage'],
-        },
-      );
+      await (await getCheckbox('recursive')).check();
+      await (await getChips('exclude')).addChip('pool1/files');
+      await (await getChips('exclude')).addChip('pool1/storage');
 
       expect(spectator.component.getPayload()).toMatchObject({
         recursive: true,
@@ -201,11 +223,9 @@ describe('SourceSectionComponent', () => {
     });
 
     it('shows property fields when Include Dataset Properties is ticked', async () => {
-      await form.fillForm({
-        'Include Dataset Properties': true,
-        'Properties Override': ['property1=value', 'property2=value'],
-        'Properties Exclude': ['excluded'],
-      });
+      await (await getChips('properties_override')).addChip('property1=value');
+      await (await getChips('properties_override')).addChip('property2=value');
+      await (await getChips('properties_exclude')).addChip('excluded');
 
       expect(spectator.component.getPayload()).toMatchObject({
         properties: true,
@@ -218,15 +238,19 @@ describe('SourceSectionComponent', () => {
     });
 
     it('shows property fields and hides other fields when Full Filesystem Replication is ticked', async () => {
-      await form.fillForm({
-        'Full Filesystem Replication': true,
-        'Properties Override': ['property1=value', 'property2=value'],
-        'Properties Exclude': ['excluded'],
-      });
+      await (await getCheckbox('replicate')).check();
+      await (await getChips('properties_override')).addChip('property1=value');
+      await (await getChips('properties_override')).addChip('property2=value');
+      await (await getChips('properties_exclude')).addChip('excluded');
 
-      const controls = await form.getLabels();
-      expect(controls).not.toContain('Recursive');
-      expect(controls).not.toContain('Include Dataset Properties');
+      const recursive = await loader.getHarnessOrNull(
+        TnCheckboxHarness.with({ selector: '[formControlName="recursive"]' }),
+      );
+      const properties = await loader.getHarnessOrNull(
+        TnCheckboxHarness.with({ selector: '[formControlName="properties"]' }),
+      );
+      expect(recursive).toBeNull();
+      expect(properties).toBeNull();
 
       expect(spectator.component.getPayload()).toMatchObject({
         replicate: true,
@@ -244,10 +268,9 @@ describe('SourceSectionComponent', () => {
 
   describe('naming schema or regex', () => {
     it('shows naming schema specific fields when `Matching naming schema` is selected for Push replications', async () => {
-      await form.fillForm({
-        'Also include snapshots with the name': 'Matching naming schema',
-        'Also Include Naming Schema': ['%Y%m%d%H%M', '%Y%m%d%H%M-2'],
-      });
+      await setNameOrRegexRadio('Matching naming schema');
+      await (await getChips('also_include_naming_schema')).addChip('%Y%m%d%H%M');
+      await (await getChips('also_include_naming_schema')).addChip('%Y%m%d%H%M-2');
 
       expect(spectator.component.getPayload()).toMatchObject({
         naming_schema: [],
@@ -258,10 +281,9 @@ describe('SourceSectionComponent', () => {
     it('shows naming schema specific fields when `Matching naming schema` is selected for Pull replications', async () => {
       spectator.setInput('direction', Direction.Pull);
 
-      await form.fillForm({
-        'Include snapshots with the name': 'Matching naming schema',
-        'Matching naming schema': ['%Y%m%d%H%M', '%Y%m%d%H%M-2'],
-      });
+      await setNameOrRegexRadio('Matching naming schema');
+      await (await getChips('naming_schema')).addChip('%Y%m%d%H%M');
+      await (await getChips('naming_schema')).addChip('%Y%m%d%H%M-2');
 
       const payload = spectator.component.getPayload();
       expect(payload).toMatchObject({
@@ -272,12 +294,8 @@ describe('SourceSectionComponent', () => {
     });
 
     it('shows regex specific fields when `Matching regular expression` is selected', async () => {
-      await form.fillForm(
-        {
-          'Also include snapshots with the name': 'Matching regular expression',
-          'Matching regular expression': 'test-.*',
-        },
-      );
+      await setNameOrRegexRadio('Matching regular expression');
+      await (await getInput('name_regex')).setValue('test-.*');
 
       const payload = spectator.component.getPayload();
       expect(payload).toMatchObject({
@@ -290,15 +308,11 @@ describe('SourceSectionComponent', () => {
 
   describe('Replicate Specific Snapshots', () => {
     beforeEach(async () => {
-      await form.fillForm({
-        'Replicate Specific Snapshots': true,
-      });
+      await (await getCheckbox('restrict_schedule')).check();
     });
 
     it('shows schedule fields when Replicate Specific Snapshots is checked', async () => {
-      await form.fillForm({
-        'By snapshot creation time': '0 0 * * 0',
-      });
+      await (await getScheduler('By snapshot creation time')).setValue('0 0 * * 0');
 
       expect(spectator.component.getPayload()).toMatchObject({
         restrict_schedule: {
@@ -315,13 +329,9 @@ describe('SourceSectionComponent', () => {
     });
 
     it('shows Begin and End fields when Replicate Specific Snapshot is set and schedule is hourly', async () => {
-      await form.fillForm(
-        {
-          'By snapshot creation time': '0 * * * *',
-          Begin: '10:00:00',
-          End: '23:15:00',
-        },
-      );
+      await (await getScheduler('By snapshot creation time')).setValue('0 * * * *');
+      await (await getSelect('restrict_schedule_begin')).selectOption('10:00:00');
+      await (await getSelect('restrict_schedule_end')).selectOption('23:15:00');
 
       expect(spectator.component.getPayload()).toMatchObject({
         restrict_schedule: {

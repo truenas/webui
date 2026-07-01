@@ -1,0 +1,10 @@
+[
+  {
+    "selector": "tn-button",
+    "iconSlots": [
+      {
+        "iconAttribute": "icon"
+      }
+    ]
+  }
+]

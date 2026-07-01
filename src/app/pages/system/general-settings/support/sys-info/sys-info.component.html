@@ -120,30 +120,32 @@
     }
   }
 
-  <tn-list-item class="fingerprint-row">
-    <div class="row-with-action">
-      <span class="label">{{ 'System Thumbprint' | translate }}:</span>
-      <span class="value fingerprint-actions">
-        <tn-icon-button
-          name="eye"
-          library="mdi"
-          size="md"
-          [testId]="'view-fingerprint'"
-          [ariaLabel]="'View System Thumbprint' | translate"
-          [tooltip]="'View Thumbprint' | translate"
-          (onClick)="openFingerprintDialog()"
-        ></tn-icon-button>
-        <tn-icon-button
-          name="content-copy"
-          library="mdi"
-          size="md"
-          [testId]="'copy-fingerprint'"
-          [ariaLabel]="'Copy System Thumbprint' | translate"
-          [disabled]="isFingerprintBusy()"
-          [tooltip]="'Copy to Clipboard' | translate"
-          (onClick)="copyFingerprint()"
-        ></tn-icon-button>
-      </span>
-    </div>
-  </tn-list-item>
+  @if (!isEnterprise()) {
+    <tn-list-item class="fingerprint-row">
+      <div class="row-with-action">
+        <span class="label">{{ 'System Thumbprint' | translate }}:</span>
+        <span class="value fingerprint-actions">
+          <tn-icon-button
+            name="eye"
+            library="mdi"
+            size="md"
+            [testId]="'view-fingerprint'"
+            [ariaLabel]="'View System Thumbprint' | translate"
+            [tooltip]="'View Thumbprint' | translate"
+            (onClick)="openFingerprintDialog()"
+          ></tn-icon-button>
+          <tn-icon-button
+            name="content-copy"
+            library="mdi"
+            size="md"
+            [testId]="'copy-fingerprint'"
+            [ariaLabel]="'Copy System Thumbprint' | translate"
+            [disabled]="isFingerprintBusy()"
+            [tooltip]="'Copy to Clipboard' | translate"
+            (onClick)="copyFingerprint()"
+          ></tn-icon-button>
+        </span>
+      </div>
+    </tn-list-item>
+    }
 </tn-list>

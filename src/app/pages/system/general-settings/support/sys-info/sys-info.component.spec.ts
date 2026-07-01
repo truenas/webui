@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl } from '@angular/forms';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnIconButtonHarness, TnDialog } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -13,6 +14,7 @@ import {
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('SysInfoComponent', () => {
   const systemInfo = {
@@ -41,6 +43,11 @@ describe('SysInfoComponent', () => {
       mockAuth(),
       mockProvider(TnDialog, { open: jest.fn() }),
       mockApi([mockCall('truenas.license.fingerprint', fingerprintBase64)]),
+      provideMockStore({
+        selectors: [
+          { selector: selectIsEnterprise, value: false },
+        ],
+      }),
     ],
   });
 
@@ -170,6 +177,19 @@ describe('SysInfoComponent', () => {
   });
 
   describe('License fingerprint', () => {
+    it('shows the thumbprint row on community (non-enterprise) systems', () => {
+      expect(spectator.query('.fingerprint-row')).toExist();
+    });
+
+    it('hides the thumbprint row on enterprise systems', () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectIsEnterprise, true);
+      store$.refreshState();
+      spectator.detectChanges();
+
+      expect(spectator.query('.fingerprint-row')).not.toExist();
+    });
+
     it('renders a View Fingerprint button regardless of license state', async () => {
       spectator.setInput({ hasLicense: false, licenseInfo: undefined });
       expect(spectator.query('.fingerprint-row')).toExist();

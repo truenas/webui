@@ -32,6 +32,20 @@ class TestFormComponent extends SidePanelForm {
   }
 }
 
+@Component({
+  selector: 'ix-second-test-form',
+  template: '<p>smb form body</p>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class SecondTestFormComponent extends SidePanelForm {
+  protected readonly form = new FormControl('');
+  readonly canSubmit = signal(true);
+
+  protected onSubmit(): void {
+    this.close(true);
+  }
+}
+
 @Component({ selector: 'ix-test-host', template: '', changeDetection: ChangeDetectionStrategy.OnPush })
 class TestHostComponent {}
 
@@ -59,7 +73,7 @@ describe('FormSidePanelService', () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [TestHostComponent, TestFormComponent, TranslateModule.forRoot()],
+      imports: [TestHostComponent, TestFormComponent, SecondTestFormComponent, TranslateModule.forRoot()],
       providers: [
         mockAuth(),
         {
@@ -113,11 +127,11 @@ describe('FormSidePanelService', () => {
     expect(document.querySelector('.tn-side-panel__panel')).toBeNull();
   });
 
-  it('does not stack a second panel while one is open, returning the in-flight result', async () => {
+  it('dedupes a re-entrant open of the same component, returning the in-flight result', async () => {
     const first$ = service.open(TestFormComponent, { title: 'NFS' });
     fixture.detectChanges();
 
-    const second$ = service.open(TestFormComponent, { title: 'SMB' });
+    const second$ = service.open(TestFormComponent, { title: 'NFS' });
     fixture.detectChanges();
 
     expect(second$).toBe(first$);
@@ -125,6 +139,30 @@ describe('FormSidePanelService', () => {
 
     const panel = await rootLoader.getHarness(TnSidePanelHarness);
     expect(await panel.getTitle()).toBe('NFS');
+  });
+
+  it('stacks a second panel for a different component (nested open)', () => {
+    service.open(TestFormComponent, { title: 'NFS' });
+    fixture.detectChanges();
+
+    service.open(SecondTestFormComponent, { title: 'SMB' });
+    fixture.detectChanges();
+
+    // Both panels are mounted; the newer one is appended later so it paints on top.
+    expect(document.querySelectorAll('.tn-side-panel__panel')).toHaveLength(2);
+  });
+
+  it('closeAll tears down every panel in the stack', () => {
+    service.open(TestFormComponent, { title: 'NFS' });
+    fixture.detectChanges();
+    service.open(SecondTestFormComponent, { title: 'SMB' });
+    fixture.detectChanges();
+    expect(document.querySelectorAll('.tn-side-panel__panel')).toHaveLength(2);
+
+    service.closeAll();
+    fixture.detectChanges();
+
+    expect(document.querySelector('.tn-side-panel__panel')).toBeNull();
   });
 
   it('allows opening a new panel after the previous one closed', async () => {

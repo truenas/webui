@@ -2,10 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/user-form/allowed-access-section/allowed-access-section.component';
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
@@ -126,7 +125,7 @@ describe('AllowedAccessSectionComponent', () => {
       const truenasAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'TrueNAS Access' }));
       expect(await truenasAccessCheckbox.isDisabled()).toBe(true);
 
-      const truenasAccessDropdown = await loader.getHarness(IxSelectHarness);
+      const truenasAccessDropdown = await loader.getHarness(TnSelectHarness);
       expect(await truenasAccessDropdown.isDisabled()).toBe(true);
     });
 
@@ -146,7 +145,7 @@ describe('AllowedAccessSectionComponent', () => {
       const truenasAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'TrueNAS Access' }));
       expect(await truenasAccessCheckbox.isDisabled()).toBe(false);
 
-      const truenasAccessDropdown = await loader.getHarness(IxSelectHarness);
+      const truenasAccessDropdown = await loader.getHarness(TnSelectHarness);
       expect(await truenasAccessDropdown.isDisabled()).toBe(false);
     });
   });
@@ -171,10 +170,10 @@ describe('AllowedAccessSectionComponent', () => {
     const truenasCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'TrueNAS Access' }));
     await truenasCheckbox.check();
 
-    const roleInput = await loader.getHarness(IxSelectHarness);
+    const roleInput = await loader.getHarness(TnSelectHarness);
     expect(roleInput).toBeTruthy();
 
-    const options = await roleInput.getOptionLabels();
+    const options = await roleInput.getOptions();
     expect(options).toEqual([
       'Select Role',
       'Full Admin',
@@ -187,8 +186,8 @@ describe('AllowedAccessSectionComponent', () => {
     const truenasCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'TrueNAS Access' }));
     await truenasCheckbox.check();
 
-    const roleInput = await loader.getHarness(IxSelectHarness);
-    await roleInput.setValue('Full Admin');
+    const roleInput = await loader.getHarness(TnSelectHarness);
+    await roleInput.selectOption('Full Admin');
 
     expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenCalledWith({
       smbAccess: true,

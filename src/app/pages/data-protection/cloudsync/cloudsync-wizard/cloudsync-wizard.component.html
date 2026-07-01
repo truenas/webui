@@ -1,29 +1,30 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="'Cloud Sync Task Wizard' | translate"
-  [loading]="!!(mergedLoading$ | async)"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles"
+    [title]="'Cloud Sync Task Wizard' | translate"
+    [loading]="!!(mergedLoading$ | async)"
+  ></ix-modal-header>
+}
 
-<mat-card>
-  <mat-card-content>
-    <mat-vertical-stepper [linear]="true">
-      <ix-use-ix-icons-in-stepper></ix-use-ix-icons-in-stepper>
+<!-- TEMP (NAS-141021): the stepper stays on mat-vertical-stepper for now; its tn-stepper/tn-step
+  migration (incl. the step-nav buttons in the step children) is a deliberate later step of the Epic. -->
+<mat-vertical-stepper [linear]="true">
+  <ix-use-ix-icons-in-stepper></ix-use-ix-icons-in-stepper>
 
-      <mat-step [completed]="!!existingCredential">
-        <ng-template matStepLabel>{{ 'Provider' | translate }}</ng-template>
-        <ix-cloudsync-provider
-          (save)="onProviderSaved($event)"
-          (loading)="onProviderLoading($event)"
-        ></ix-cloudsync-provider>
-      </mat-step>
+  <mat-step [completed]="!!existingCredential">
+    <ng-template matStepLabel>{{ 'Provider' | translate }}</ng-template>
+    <ix-cloudsync-provider
+      (save)="onProviderSaved($event)"
+      (loading)="onProviderLoading($event)"
+    ></ix-cloudsync-provider>
+  </mat-step>
 
-      <mat-step [stepControl]="whatAndWhen()?.form">
-        <ng-template matStepLabel>{{ 'What and When' | translate }}</ng-template>
-        <ix-cloudsync-what-and-when
-          [credentialId]="existingCredential?.id"
-          (save)="onSubmit()"
-        ></ix-cloudsync-what-and-when>
-      </mat-step>
-    </mat-vertical-stepper>
-  </mat-card-content>
-</mat-card>
+  <mat-step [stepControl]="whatAndWhen()?.form">
+    <ng-template matStepLabel>{{ 'What and When' | translate }}</ng-template>
+    <ix-cloudsync-what-and-when
+      [credentialId]="existingCredential?.id"
+      [loading]="!!(mergedLoading$ | async)"
+      (save)="onSubmit()"
+    ></ix-cloudsync-what-and-when>
+  </mat-step>
+</mat-vertical-stepper>

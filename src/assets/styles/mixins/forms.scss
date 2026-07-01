@@ -1,35 +1,39 @@
-// Vertical rhythm for tn-form-field rows inside a form (matches the spacing
-// the old ix-* form controls carried). Shared across the migrated service
-// forms so the literal values live in one place.
-@mixin tn-form-field-spacing() {
-  tn-form-field {
-    display: block;
-    margin-bottom: 16px;
-  }
+// Vertical rhythm matching the `<tn-form-section>` body (flex column with a 1.25rem gap). Apply to a
+// plain `<form>` or a field-grouping `<div>` that ISN'T itself a tn-form-section, so its rows get the
+// same spacing the section bodies provide — without per-field margins. Keeps the 1.25rem gap in one
+// place instead of hand-writing the flex-column trio at each call site.
+@mixin tn-form-stack($gap: 1.25rem) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
 }
 
-// Same intent, but scoped to the legacy SlideIn host (`ix-slide-in-container`).
-// A dual-host form (SlideIn + `<tn-side-panel>`) must NOT carry an unconditional
-// field margin: `<tn-side-panel>` already spaces fields via tn-form-field's
-// reserved subscript area, so a flat margin double-spaces the side-panel. The
-// SlideIn host has no such rhythm and renders fields flush, so restore the
-// original ix-* spacing (margin: 12px 0; padding: 8px 0) there only. Mirrors the
-// `tn-dialog-shell tn-form-field` rule in `_tn-styles.scss`.
-@mixin tn-form-field-spacing-slide-in() {
-  :host-context(ix-slide-in-container) tn-form-field {
-    display: block;
-    margin: 12px 0;
-    padding: 8px 0;
-  }
+// Two-column form body: a `.fieldsets` flex-wrap row of two 50% columns (e.g.
+// Local/Remote, Source/Destination — the columns are `.fieldset` sections or, for
+// replication, per-section components). The migrated tn-* controls fill their
+// column edge-to-edge, so without a horizontal gutter the left and right columns'
+// inputs butt against each other in the middle. Add a gutter and shrink each
+// column by half of it so two columns + gutter still total 100% (and don't wrap).
+// Stacks to a single full-width column below tablet width. Targets every direct
+// child so it covers both the `.fieldset` sections and replication's section
+// components. Requires `$breakpoint-tablet` (from `scss-imports/variables`) in scope.
+@mixin tn-form-fieldsets-columns($gutter: 24px) {
+  .fieldsets {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: $gutter;
 
-  // `tn-form-section` has no outer margin and its internal `gap` only spaces
-  // fields *within* a section, so two adjacent sections butt together in the
-  // `<tn-side-panel>` host (a section heading sits flush under the previous
-  // field). The legacy SlideIn host happens to avoid this because the per-field
-  // margin above gives the last field bottom spacing. Space sibling sections to
-  // match the section's own internal rhythm, host-agnostically.
-  tn-form-section + tn-form-section {
-    display: block;
-    margin-top: 1.25rem;
+    @media (max-width: $breakpoint-tablet) {
+      display: block;
+    }
+
+    > * {
+      width: calc(50% - #{$gutter * 0.5});
+
+      @media (max-width: $breakpoint-tablet) {
+        padding-bottom: 0;
+        width: 100%;
+      }
+    }
   }
 }

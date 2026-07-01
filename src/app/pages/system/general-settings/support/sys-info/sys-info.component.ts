@@ -1,8 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, input, output, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -26,6 +27,8 @@ import {
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-sys-info',
@@ -51,6 +54,9 @@ export class SysInfoComponent {
   private translate = inject(TranslateService);
   private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
+  private store$ = inject<Store<AppState>>(Store);
+
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   readonly hasLicense = input<boolean>();
   readonly licenseInfo = input<LicenseInfoInSupport>();

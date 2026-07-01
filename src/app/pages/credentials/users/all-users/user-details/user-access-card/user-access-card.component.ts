@@ -18,7 +18,7 @@ import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { userAccessCardElements } from 'app/pages/credentials/users/all-users/user-details/user-access-card/user-access-card.elements';
@@ -56,7 +56,7 @@ export class UserAccessCardComponent {
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private downloadService = inject(DownloadService);
   private urlOptions = inject(UrlOptionsService);
   private authService = inject(AuthService);
@@ -176,11 +176,12 @@ export class UserAccessCardComponent {
   }
 
   protected onAddApiKey(): void {
-    this.slideIn
-      .open(ApiKeyFormComponent, { data: { username: this.user().username } })
-      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-        this.reloadUsers.emit();
-      });
+    this.formPanel
+      .open(ApiKeyFormComponent, {
+        title: this.translate.instant('Add API Key'),
+        inputs: { presetUsername: this.user().username },
+      })
+      .onSuccess(() => this.reloadUsers.emit(), this.destroyRef);
   }
 
   protected onClearTwoFactorAuth(): void {

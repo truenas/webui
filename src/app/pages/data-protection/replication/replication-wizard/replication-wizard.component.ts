@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, output, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge } from 'lodash-es';
@@ -51,8 +50,6 @@ import { ReplicationService } from 'app/services/replication.service';
   providers: [ReplicationService],
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     MatStepper,
     MatStep,
     MatStepLabel,
@@ -72,13 +69,19 @@ export class ReplicationWizardComponent {
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
   private authService = inject(AuthService);
-  slideInRef = inject<SlideInRef<undefined, ReplicationTask | undefined>>(SlideInRef);
+  // Optional: present only in the legacy SlideIn host. Absent when hosted in the `<tn-side-panel>`
+  // form panel (opened via FormSidePanelService with `footerless: true` — the stepper owns its own
+  // Next/Save buttons), where close happens through {@link closed}.
+  slideInRef = inject<SlideInRef<undefined, ReplicationTask | undefined>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
   protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);
   protected when = viewChild.required(ReplicationWhenComponent);
 
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (true = saved). */
+  readonly closed = output<boolean>();
 
   isLoading = false;
   defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
@@ -92,9 +95,17 @@ export class ReplicationWizardComponent {
   createdReplication: ReplicationTask | undefined;
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty));
-    });
+    this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) — dirty across either step. */
+  hasUnsavedChanges(): boolean {
+    return Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty);
+  }
+
+  /** Whether the form is currently submitting; the host shows a progress bar while true. */
+  isBusy(): boolean {
+    return this.isLoading;
   }
 
   private getSteps(): [
@@ -170,7 +181,11 @@ export class ReplicationWizardComponent {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (createdReplication) => {
-        this.slideInRef.close({ response: createdReplication });
+        if (this.slideInRef) {
+          this.slideInRef.close({ response: createdReplication });
+        } else {
+          this.closed.emit(true);
+        }
       },
       error: (err: unknown) => {
         this.handleError(err);

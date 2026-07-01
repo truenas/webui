@@ -1,13 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { KeyValuePipe } from '@angular/common';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -42,7 +41,7 @@ describe('ContainerGeneralInfoComponent', () => {
 
   const createComponent = createComponentFactory({
     component: ContainerGeneralInfoComponent,
-    imports: [RequiresRolesDirective, YesNoPipe, MapValuePipe, KeyValuePipe],
+    imports: [YesNoPipe, MapValuePipe, KeyValuePipe],
     providers: [
       IxFormatterService,
       mockAuth(),
@@ -74,12 +73,11 @@ describe('ContainerGeneralInfoComponent', () => {
   });
 
   it('checks card title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('General Info');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('General Info');
   });
 
   it('renders details in card', () => {
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('Autostart: Yes');
     expect(cardContent).toContainText('CPU Set: 0-3');
   });
@@ -89,12 +87,12 @@ describe('ContainerGeneralInfoComponent', () => {
       cpuset: null,
     }));
 
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('CPU Set: All Host CPUs');
   });
 
   it('deletes container when "Delete" button is pressed and redirects to list root', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
@@ -107,7 +105,7 @@ describe('ContainerGeneralInfoComponent', () => {
   });
 
   it('opens edit container form when Edit is pressed', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ContainerFormComponent, { data: container });
@@ -118,7 +116,7 @@ describe('ContainerGeneralInfoComponent', () => {
     const dialogService = spectator.inject(DialogService);
     (dialogService.confirmDelete as jest.Mock).mockReturnValue(EMPTY);
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.delete', expect.anything());
@@ -130,7 +128,7 @@ describe('ContainerGeneralInfoComponent', () => {
       capabilities_policy: ContainerCapabilitiesPolicy.Allow,
     }));
 
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('Capabilities Policy: Allow All');
   });
 
@@ -139,7 +137,7 @@ describe('ContainerGeneralInfoComponent', () => {
       idmap: { type: ContainerIdmapType.Default },
     }));
 
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('ID Map Type: Default');
   });
 
@@ -148,7 +146,7 @@ describe('ContainerGeneralInfoComponent', () => {
       idmap: { type: ContainerIdmapType.Isolated, slice: 5 },
     }));
 
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('ID Map Type: Isolated');
     expect(cardContent).toContainText('Slice: 5');
   });
@@ -158,7 +156,7 @@ describe('ContainerGeneralInfoComponent', () => {
       idmap: null,
     }));
 
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('ID Map Type: Privileged');
   });
 });

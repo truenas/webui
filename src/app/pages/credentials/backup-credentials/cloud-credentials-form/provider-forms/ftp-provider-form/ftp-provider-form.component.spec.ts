@@ -1,14 +1,15 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnInputHarness } from '@truenas/ui-components';
 import {
   FtpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/ftp-provider-form/ftp-provider-form.component';
 
 describe('FtpProviderFormComponent', () => {
   let spectator: Spectator<FtpProviderFormComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: FtpProviderFormComponent,
     imports: [
@@ -16,9 +17,13 @@ describe('FtpProviderFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
@@ -29,22 +34,16 @@ describe('FtpProviderFormComponent', () => {
       port: 112,
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      Host: 'truenas.com',
-      Port: '112',
-      Username: 'jerry',
-      Password: '1234567',
-    });
+    expect(await (await getInput('host')).getValue()).toBe('truenas.com');
+    expect(await (await getInput('port')).getValue()).toBe('112');
+    expect(await (await getInput('user')).getValue()).toBe('jerry');
+    expect(await (await getInput('pass')).getValue()).toBe('1234567');
   });
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
-    await form.fillForm({
-      Host: 'falsenas.com',
-      Port: 9000,
-      Username: 'thomas',
-      Password: '',
-    });
+    await (await getInput('host')).setValue('falsenas.com');
+    await (await getInput('port')).setValue('9000');
+    await (await getInput('user')).setValue('thomas');
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({

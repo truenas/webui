@@ -1,11 +1,20 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   Observable, of, throwError,
 } from 'rxjs';
@@ -23,23 +32,16 @@ import {
   KeychainCredentialUpdate,
   KeychainSshCredentials,
 } from 'app/interfaces/keychain-credential.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
@@ -53,24 +55,19 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
   styleUrls: ['./ssh-connection-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    IxTextareaComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    FormActionsComponent,
+    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
   ],
 })
-export class SshConnectionFormComponent implements OnInit {
+export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential | null> implements OnInit {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -82,10 +79,13 @@ export class SshConnectionFormComponent implements OnInit {
   formatter = inject(IxFormatterService);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
-  slideInRef = inject<SlideInRef<KeychainSshCredentials | undefined, KeychainCredential | null>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.KeychainCredentialWrite];
+  readonly requiredRoles = [Role.KeychainCredentialWrite];
+  protected readonly InputType = InputType;
+
+  /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
+  readonly editConnection = input<KeychainSshCredentials | undefined>(undefined);
 
   form = this.formBuilder.group({
     connection_name: ['', Validators.required],
@@ -123,17 +123,14 @@ export class SshConnectionFormComponent implements OnInit {
     return !this.existingConnection;
   }
 
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('New SSH Connection')
-      : this.translate.instant('Edit SSH Connection');
-  }
-
   get isManualSetup(): boolean {
     return this.form.controls.setup_method.value === SshConnectionsSetupMethod.Manual;
   }
 
   protected isLoading = signal(false);
+
+  /** Read by the `<tn-side-panel>` host to enable/disable its footer Save action. */
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   readonly setupMethods$ = of([
     {
@@ -147,7 +144,9 @@ export class SshConnectionFormComponent implements OnInit {
 
   readonly privateKeys$ = this.keychainCredentialService.getSshKeys().pipe(
     idNameArrayToOptions(),
-    map((keyOptions) => {
+    // Typed as Option[] (value: string | number | null) so the synchronous `tn-select`
+    // accepts both the numeric key ids and the string "Generate New" sentinel.
+    map((keyOptions): Option[] => {
       if (!this.isNew) {
         return keyOptions;
       }
@@ -170,14 +169,8 @@ export class SshConnectionFormComponent implements OnInit {
 
   private existingConnection: KeychainSshCredentials | undefined;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.existingConnection = this.slideInRef.getData();
-  }
-
   ngOnInit(): void {
+    this.existingConnection = this.editConnection();
     if (this.existingConnection) {
       this.setConnectionForEdit();
     }
@@ -231,7 +224,10 @@ export class SshConnectionFormComponent implements OnInit {
       next: (newCredential) => {
         this.isLoading.set(false);
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        this.slideInRef.close({ response: newCredential });
+        // Richer payload than the base boolean — hand back the created/updated credential so
+        // `ix-ssh-credentials-select` can auto-select it. `closeWith` routes it through
+        // whichever host opened the form.
+        this.closeWith(newCredential);
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
@@ -261,7 +257,11 @@ export class SshConnectionFormComponent implements OnInit {
       } as SshCredentials;
     } else {
       params.semi_automatic_setup = {
-        url: values.url,
+        // tn-input has no `[parse]`; normalize the bare URL (prepend protocol) at submit,
+        // matching the legacy ix-input `stringAsUrlParsing` behavior. Safe to defer to submit:
+        // the `url` control only validates presence (conditional `Validators.required`), so the
+        // normalized value never feeds a format validator.
+        url: this.formatter.stringAsUrlParsing(values.url),
         admin_username: values.admin_username,
         password: values.password,
         username: values.username,
