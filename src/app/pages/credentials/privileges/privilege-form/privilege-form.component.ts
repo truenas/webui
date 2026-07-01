@@ -13,7 +13,7 @@ import {
   TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, combineLatest, finalize, map, of, switchMap,
+  Observable, Subject, combineLatest, finalize, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
@@ -85,6 +85,9 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
 
   /** String-mode suggestions for the local-groups chip input, refreshed on each search. */
   protected localGroupsSuggestions = signal<string[]>([]);
+
+  /** Emits the latest chip-input search term; `switchMap` cancels stale in-flight queries. */
+  private readonly localGroupsSearch$ = new Subject<string>();
 
   protected readonly form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -170,9 +173,7 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
    * autocomplete from {@link localGroupsProvider}.
    */
   protected onLocalGroupsSearch(query: string): void {
-    this.localGroupsProvider(query).pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
+    this.localGroupsSearch$.next(query);
   }
 
   ngOnInit(): void {
@@ -209,6 +210,13 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
     ).subscribe((dsGroups) => {
       this.updateDsAuthButtonVisibility(dsGroups);
     });
+
+    // Drive suggestions off the latest search term only; `switchMap` cancels any
+    // earlier in-flight query so out-of-order responses can't overwrite fresh results.
+    this.localGroupsSearch$.pipe(
+      switchMap((query) => this.localGroupsProvider(query)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
 
     // Preload local-group suggestions so the chip-input dropdown is populated on first focus.
     this.onLocalGroupsSearch('');

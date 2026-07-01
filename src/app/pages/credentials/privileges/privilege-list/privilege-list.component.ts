@@ -19,12 +19,12 @@ import {
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { Option } from 'app/interfaces/option.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
@@ -69,6 +69,7 @@ export class PrivilegeListComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
+  protected emptyService = inject(EmptyService);
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
@@ -114,32 +115,6 @@ export class PrivilegeListComponent implements OnInit {
 
   protected onSortChange(event: TnSortEvent): void {
     this.dataProvider.setSorting(mapTnSortToTableSort<Privilege>(event, this.displayedColumns));
-  }
-
-  protected emptyMessage(type: EmptyType | null | undefined): string {
-    switch (type) {
-      case EmptyType.Loading:
-        return this.translate.instant('Loading…');
-      case EmptyType.Errors:
-        return this.translate.instant('Cannot retrieve response');
-      case EmptyType.NoSearchResults:
-        return this.translate.instant('No Search Results.');
-      default:
-        return this.translate.instant('No Privileges');
-    }
-  }
-
-  protected emptyIcon(type: EmptyType | null | undefined): string {
-    switch (type) {
-      case EmptyType.Loading:
-        return 'mdi-loading';
-      case EmptyType.Errors:
-        return 'mdi-alert-octagon';
-      case EmptyType.NoSearchResults:
-        return 'mdi-magnify-scan';
-      default:
-        return 'mdi-format-list-text';
-    }
   }
 
   searchQuery: SearchQuery<Privilege>;
