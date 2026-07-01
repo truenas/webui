@@ -5,6 +5,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
+  TnProgressBarComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
   type TnTestIdValue,
@@ -42,6 +43,12 @@ export interface SidePanelFooterAction {
 export type HostedSidePanelForm = SidePanelForm & {
   readonly requiredRoles?: Role[];
   readonly footerActions?: SidePanelFooterAction[];
+  /**
+   * Whether the form is currently submitting / busy. The host shows an indeterminate progress bar
+   * at the top of the panel while true (Save is independently disabled via `canSubmit`). Optional —
+   * forms that don't expose it simply never show the bar.
+   */
+  readonly isBusy?: () => boolean;
 };
 
 /**
@@ -55,14 +62,13 @@ export type HostedSidePanelForm = SidePanelForm & {
 @Component({
   selector: 'ix-form-side-panel-container',
   templateUrl: './form-side-panel-container.component.html',
-  // `display: contents` dissolves the secondary-actions wrapper box so its buttons flex directly
-  // in the panel footer alongside Save (the wrapper exists only to project the group as one node).
-  styles: ['.footer-actions-group { display: contents; }'],
+  styleUrls: ['./form-side-panel-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnSidePanelComponent,
     TnSidePanelActionDirective,
     TnButtonComponent,
+    TnProgressBarComponent,
     RequiresRolesDirective,
     CdkPortalOutlet,
     TranslateModule,
@@ -75,6 +81,11 @@ export class FormSidePanelContainerComponent {
   readonly width = input<string>('480px');
   readonly testId = input<TnTestIdValue | undefined>(undefined);
   readonly saveLabel = input<string>('Save');
+  /**
+   * Hide the panel footer (Save + secondary actions). For hosted components that manage their own
+   * actions inline — e.g. a `mat-stepper` wizard whose Next/Back/Save buttons live inside the steps.
+   */
+  readonly footerless = input<boolean>(false);
   readonly portal = input<ComponentPortal<SidePanelForm> | null>(null);
   /** Inputs applied to the hosted form before its first change detection (before `ngOnInit`). */
   readonly formInputs = input<Record<string, unknown>>({});

@@ -15,11 +15,15 @@
 >
   <ng-content />
 
-  <ix-form-actions>
-    <ng-content select="[ixExtraActions]" />
+  <!--
+    SlideIn host only: in the <tn-side-panel> host the footer owns the Save and any
+    extra actions, so the whole actions row is empty there — don't render it (it would
+    otherwise leave an empty submit-button-wrapper taking vertical space in the panel).
+  -->
+  @if (slideInRef) {
+    <ix-form-actions>
+      <ng-content select="[ixExtraActions]" />
 
-    <!-- SlideIn host only: the <tn-side-panel> host owns the Save in its footer. -->
-    @if (slideInRef) {
       <button
         *ixRequiresRoles="requiredRoles()"
         mat-button
@@ -36,6 +40,6 @@
           {{ 'Save' | translate }}
         }
       </button>
-    }
-  </ix-form-actions>
+    </ix-form-actions>
+  }
 </form>
