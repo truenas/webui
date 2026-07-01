@@ -8,7 +8,9 @@ import {
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/containers/components/all-containers/all-containers-header/global-config-form/global-config-form.component';
@@ -22,6 +24,7 @@ import { AllContainersHeaderComponent } from './all-containers-header.component'
 describe('AllContainersHeaderComponent', () => {
   let spectator: Spectator<AllContainersHeaderComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
   const storeMock = {
     isLoading: signal(false),
     config: signal({ dataset: 'pool1/dataset1' }),
@@ -51,6 +54,9 @@ describe('AllContainersHeaderComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of(undefined)),
       }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
       mockProvider(TnDialog, {
         open: jest.fn(),
       }),
@@ -60,6 +66,7 @@ describe('AllContainersHeaderComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   describe('elements visibility', () => {
@@ -88,30 +95,26 @@ describe('AllContainersHeaderComponent', () => {
   });
 
   describe('actions', () => {
-    it('opens the global config side panel when Settings menu item is pressed', async () => {
+    it('opens the global config form in a side panel when Settings menu item is pressed', async () => {
       const configButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configuration' }));
       await configButton.click();
 
       const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
       await menu.clickItem({ label: 'Settings' });
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
 
-      expect(spectator.query('ix-global-config-form', { root: true })).toBeTruthy();
+      expect(formPanel.open).toHaveBeenCalledWith(GlobalConfigFormComponent, {
+        title: 'Global Configuration',
+      });
     });
 
     it('reinitializes stores when the config form reports a successful save', async () => {
+      jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(true));
+
       const configButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configuration' }));
       await configButton.click();
 
       const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
       await menu.clickItem({ label: 'Settings' });
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      const configForm = spectator.query(GlobalConfigFormComponent, { root: true });
-      configForm!.closed.emit(true);
-      spectator.detectChanges();
 
       expect(spectator.inject(ContainerConfigStore).initialize).toHaveBeenCalled();
       expect(spectator.inject(ContainersStore).initialize).toHaveBeenCalled();
@@ -131,26 +134,6 @@ describe('AllContainersHeaderComponent', () => {
           panelClass: 'map-user-group-dialog',
         },
       );
-    });
-
-    it('submits the config form via the side panel Save action', async () => {
-      const configButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configuration' }));
-      await configButton.click();
-
-      const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
-      await menu.clickItem({ label: 'Settings' });
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      const configForm = spectator.query(GlobalConfigFormComponent, { root: true });
-      expect(configForm).toBeInstanceOf(GlobalConfigFormComponent);
-
-      const submitSpy = jest.spyOn(configForm!, 'submit');
-      const saveButton = await TnMenuTesting.rootLoader(spectator.fixture)
-        .getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
-
-      expect(submitSpy).toHaveBeenCalled();
     });
   });
 });

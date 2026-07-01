@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnSidePanelHarness,
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockJob, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -16,6 +16,8 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
@@ -97,6 +99,9 @@ describe('AppInfoCardComponent', () => {
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => mockDialogRef),
+      }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
       }),
       mockProvider(RedirectService),
       mockAuth(),
@@ -249,14 +254,13 @@ describe('AppInfoCardComponent', () => {
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
-    spectator.detectChanges();
 
-    const panel = await loader.getHarness(TnSidePanelHarness);
-    expect(await panel.isOpen()).toBe(true);
-
-    const form = spectator.query(CustomAppFormComponent);
-    expect(form).toBeTruthy();
-    expect(form?.app()).toEqual(customApp);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(CustomAppFormComponent, {
+      title: 'Edit App YAML',
+      wide: true,
+      testId: 'custom-app-edit',
+      inputs: { app: customApp },
+    });
   });
 
   it('opens delete app dialog when Delete button is pressed', async () => {

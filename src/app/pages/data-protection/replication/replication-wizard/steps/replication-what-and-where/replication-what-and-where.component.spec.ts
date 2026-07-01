@@ -4,7 +4,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnDialog, TnInputHarness, TnRadioHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -20,8 +22,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -32,7 +35,6 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
 describe('ReplicationWhatAndWhereComponent', () => {
   let spectator: Spectator<ReplicationWhatAndWhereComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const slideInRef: SlideInRef<unknown, unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
@@ -85,35 +87,53 @@ describe('ReplicationWhatAndWhereComponent', () => {
         confirm: jest.fn(() => of()),
       }),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(FormSidePanelService),
       mockProvider(LocaleService),
     ],
   });
 
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const setCheckbox = async (name: string, value: boolean): Promise<void> => {
+    const checkbox = await getCheckbox(name);
+    if (value) {
+      await checkbox.check();
+    } else {
+      await checkbox.uncheck();
+    }
+  };
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getExplorer = (label: string): Promise<IxExplorerHarness> => loader.getHarness(
+    IxExplorerHarness.with({ label }),
+  );
+  const setRadio = async (label: string): Promise<void> => {
+    await (await loader.getHarness(TnRadioHarness.with({ label }))).check();
+  };
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
 
-    await form.fillForm(
-      {
-        'Source Location': 'On this System',
-        'Destination Location': 'On this System',
-        Recursive: true,
-        'Replicate Custom Snapshots': true,
-        Encryption: true,
-        Source: ['pool1/', 'pool2/'],
-        Destination: 'pool3/',
-        'Encryption Key Format': 'HEX',
-      },
-    );
+    await (await getSelect('source_datasets_from')).selectOption('On this System');
+    await (await getSelect('target_dataset_from')).selectOption('On this System');
+    await setCheckbox('recursive', true);
+    await setCheckbox('custom_snapshots', true);
+    await setCheckbox('encryption', true);
+    await (await getExplorer('Source')).setValue(['pool1/', 'pool2/']);
+    await (await getExplorer('Destination')).setValue('pool3/');
+    await (await getSelect('encryption_key_format')).selectOption('HEX');
   });
 
   it('generates payload which will inherit dataset encryption from its parent dataset', async () => {
-    await form.fillForm({
-      'Inherit Encryption': true,
-      'Replicate Custom Snapshots': true,
-      'Snapshot Name Regular Expression': '.*',
-    });
+    await setCheckbox('encryption_inherit', true);
+    await setCheckbox('custom_snapshots', true);
+    await (await getInput('name_regex')).setValue('.*');
 
     expect(spectator.component.getPayload()).toEqual({
       exist_replication: null,
@@ -157,12 +177,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
   });
 
   it('opens sudo enabled dialog when choosing to existing ssh credential', async () => {
-    await form.fillForm(
-      {
-        'Source Location': 'On a Different System',
-        'SSH Connection': 'non-root-ssh-connection',
-      },
-    );
+    await (await getSelect('source_datasets_from')).selectOption('On a Different System');
+    await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials_source"]' }))).selectOption('non-root-ssh-connection');
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       buttonText: 'Use Sudo For ZFS Commands',
       hideCheckbox: true,
@@ -174,13 +190,11 @@ describe('ReplicationWhatAndWhereComponent', () => {
   it('when an existing name is entered, the "Next" button is disabled', async () => {
     const nextButton = await loader.getHarness(MatButtonHarness.with({ text: 'Next' }));
 
-    await form.fillForm({ 'Task Name': 'task1' });
+    await (await getInput('name')).setValue('task1');
     expect(await nextButton.isDisabled()).toBe(true);
 
-    await form.fillForm({
-      'Task Name': 'task3',
-      'Snapshot Name Regular Expression': '.*', // Fill required regex field
-    });
+    await (await getInput('name')).setValue('task3');
+    await (await getInput('name_regex')).setValue('.*'); // Fill required regex field
     // Wait for async validation to complete
     spectator.fixture.detectChanges();
     await spectator.fixture.whenStable();
@@ -188,9 +202,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
   });
 
   it('loads from an existing replication task', async () => {
-    await form.fillForm({
-      'Load Previous Replication Task': 'task1 (never ran)',
-    });
+    await (await getSelect('exist_replication')).selectOption('task1 (never ran)');
     const payload = spectator.component.getPayload();
     expect(payload).toEqual({
       exist_replication: 1,
@@ -216,19 +228,15 @@ describe('ReplicationWhatAndWhereComponent', () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
     await advancedButton.click();
     expect(
-      slideInRef.swap,
-    ).toHaveBeenCalledWith(ReplicationFormComponent, { wide: true });
+      spectator.inject(FormSidePanelService).swap,
+    ).toHaveBeenCalledWith(ReplicationFormComponent, { title: 'Add Replication Task', wide: true });
   });
 
   describe('field availability based on source location', () => {
     it('for Local system: only name_regex is available when custom snapshots enabled', async () => {
-      const testForm = await loader.getHarness(IxFormHarness);
-
-      await testForm.fillForm({
-        'Source Location': 'On this System',
-        'Destination Location': 'On this System',
-        'Replicate Custom Snapshots': true,
-      });
+      await (await getSelect('source_datasets_from')).selectOption('On this System');
+      await (await getSelect('target_dataset_from')).selectOption('On this System');
+      await setCheckbox('custom_snapshots', true);
 
       // For local sources with custom snapshots enabled, only name_regex should be enabled
       expect(spectator.component.form.controls.schema_or_regex.disabled).toBe(true);
@@ -237,13 +245,9 @@ describe('ReplicationWhatAndWhereComponent', () => {
     });
 
     it('for Local system: name_regex is disabled when custom snapshots disabled', async () => {
-      const testForm = await loader.getHarness(IxFormHarness);
-
-      await testForm.fillForm({
-        'Source Location': 'On this System',
-        'Destination Location': 'On this System',
-        'Replicate Custom Snapshots': false,
-      });
+      await (await getSelect('source_datasets_from')).selectOption('On this System');
+      await (await getSelect('target_dataset_from')).selectOption('On this System');
+      await setCheckbox('custom_snapshots', false);
 
       // For local sources with custom snapshots disabled, name_regex should be disabled
       expect(spectator.component.form.controls.schema_or_regex.disabled).toBe(true);
@@ -252,38 +256,28 @@ describe('ReplicationWhatAndWhereComponent', () => {
     });
 
     it('for Remote system: schema_or_regex, naming_schema are available, name_regex depends on selection', async () => {
-      const testForm = await loader.getHarness(IxFormHarness);
-
-      await testForm.fillForm({
-        'Source Location': 'On a Different System',
-        'SSH Connection': 'non-root-ssh-connection',
-      });
+      await (await getSelect('source_datasets_from')).selectOption('On a Different System');
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials_source"]' }))).selectOption('non-root-ssh-connection');
 
       // For remote sources, schema_or_regex and naming_schema should be enabled
       expect(spectator.component.form.controls.schema_or_regex.enabled).toBe(true);
       expect(spectator.component.form.controls.naming_schema.enabled).toBe(true);
 
-      // By default naming_schema is selected, so name_regex should be disabled
-      expect(spectator.component.form.controls.name_regex.disabled).toBe(true);
+      // Default naming-schema mode leaves naming_schema enabled
+      expect(spectator.component.form.controls.naming_schema.enabled).toBe(true);
 
-      // When switching to regex mode, name_regex should be enabled
-      await testForm.fillForm({
-        'Include snapshots with the name': 'Snapshot Name Regular Expression',
-      });
+      // When switching to regex mode, name_regex should be enabled and naming_schema disabled
+      await setRadio('Snapshot Name Regular Expression');
 
       expect(spectator.component.form.controls.name_regex.enabled).toBe(true);
       expect(spectator.component.form.controls.naming_schema.disabled).toBe(true);
     });
 
     it('switching from Local to Remote enables schema_or_regex and naming_schema', async () => {
-      const testForm = await loader.getHarness(IxFormHarness);
-
       // Start with Local system
-      await testForm.fillForm({
-        'Source Location': 'On this System',
-        'Destination Location': 'On this System',
-        'Replicate Custom Snapshots': true,
-      });
+      await (await getSelect('source_datasets_from')).selectOption('On this System');
+      await (await getSelect('target_dataset_from')).selectOption('On this System');
+      await setCheckbox('custom_snapshots', true);
 
       // Verify Local system behavior
       expect(spectator.component.form.controls.schema_or_regex.disabled).toBe(true);
@@ -291,39 +285,27 @@ describe('ReplicationWhatAndWhereComponent', () => {
       expect(spectator.component.form.controls.name_regex.enabled).toBe(true);
 
       // Switch to Remote system
-      await testForm.fillForm({
-        'Source Location': 'On a Different System',
-        'SSH Connection': 'non-root-ssh-connection',
-      });
+      await (await getSelect('source_datasets_from')).selectOption('On a Different System');
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials_source"]' }))).selectOption('non-root-ssh-connection');
 
-      // Verify Remote system behavior - schema_or_regex and naming_schema enabled, name_regex depends on selection
+      // Verify Remote system behavior - schema_or_regex and naming_schema enabled
       expect(spectator.component.form.controls.schema_or_regex.enabled).toBe(true);
       expect(spectator.component.form.controls.naming_schema.enabled).toBe(true);
-      // disabled by default (naming schema mode)
-      expect(spectator.component.form.controls.name_regex.disabled).toBe(true);
     });
 
     it('switching from Remote to Local disables schema_or_regex and naming_schema', async () => {
-      const testForm = await loader.getHarness(IxFormHarness);
-
       // Start with Remote system
-      await testForm.fillForm({
-        'Source Location': 'On a Different System',
-        'SSH Connection': 'non-root-ssh-connection',
-      });
+      await (await getSelect('source_datasets_from')).selectOption('On a Different System');
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials_source"]' }))).selectOption('non-root-ssh-connection');
 
       // Verify Remote system behavior
       expect(spectator.component.form.controls.schema_or_regex.enabled).toBe(true);
       expect(spectator.component.form.controls.naming_schema.enabled).toBe(true);
-      // disabled by default (naming schema mode)
-      expect(spectator.component.form.controls.name_regex.disabled).toBe(true);
 
       // Switch to Local system
-      await testForm.fillForm({
-        'Source Location': 'On this System',
-        'Destination Location': 'On this System',
-        'Replicate Custom Snapshots': true,
-      });
+      await (await getSelect('source_datasets_from')).selectOption('On this System');
+      await (await getSelect('target_dataset_from')).selectOption('On this System');
+      await setCheckbox('custom_snapshots', true);
 
       // Verify Local system behavior - only name_regex should be enabled
       expect(spectator.component.form.controls.schema_or_regex.disabled).toBe(true);

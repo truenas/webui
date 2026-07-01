@@ -1022,3 +1022,27 @@ tn-form-section {
   display: block;
   padding-bottom: 1.25rem;
 }
+
+// Hand-rolled tn-radio groups (repeated `<tn-radio>` via `@for`, since @truenas/ui-components has no
+// radio-group wrapper yet) need stacking — tn-radio defaults to inline-block. Stack every radio and
+// space only CONSECUTIVE siblings, so a radio sitting alone in its own tn-form-field (e.g. a
+// per-option tooltip row) isn't given a stray top gap. Drop once the library ships a radio-group.
+// Tracked under NAS-141021.
+tn-radio {
+  display: block;
+}
+
+tn-radio + tn-radio {
+  margin-top: 8px;
+}
+
+// Side panels open with a bold section heading (or intro banner) sitting flush under the header
+// divider — the library's 24px content padding reads as cramped there. Give a little more
+// breathing room at the very top. The panel renders its overlay on `document.body` (not inside the
+// host component), so it can't be scoped by component ancestry. The library's
+// `.tn-side-panel__content` rule is emulated-encapsulated (`[_ngcontent]` → specificity 0,2,0), so
+// this needs a three-class chain (0,3,0 — the overlay→panel→content ancestry) to win the longhand
+// without `!important`. Tracked under NAS-141021.
+.tn-side-panel__overlay .tn-side-panel__panel .tn-side-panel__content {
+  padding-top: 36px;
+}

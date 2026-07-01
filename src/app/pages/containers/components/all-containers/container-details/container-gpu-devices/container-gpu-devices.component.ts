@@ -3,7 +3,8 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnIconComponent,
+  TnBannerActionDirective, TnBannerComponent, TnButtonComponent,
+  TnCardComponent, TnCardFooterActionsDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
@@ -35,12 +36,12 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   imports: [
     TnCardComponent,
     TnCardFooterActionsDirective,
-    TnCardHeaderDirective,
     TranslateModule,
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
     AddGpuDeviceMenuComponent,
-    TnIconComponent,
+    TnBannerComponent,
+    TnBannerActionDirective,
     TnButtonComponent,
   ],
 })

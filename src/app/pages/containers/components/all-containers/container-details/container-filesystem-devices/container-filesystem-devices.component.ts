@@ -1,16 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
-  TnSidePanelActionDirective, TnSidePanelComponent,
-} from '@truenas/ui-components';
+import { TnCardAction, TnCardComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container, ContainerDevice, ContainerFilesystemDevice } from 'app/interfaces/container.interface';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   ContainerFilesystemDeviceFormComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component';
@@ -25,16 +22,10 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   styleUrls: ['./container-filesystem-devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnButtonComponent,
     TnCardComponent,
-    TnCardFooterActionsDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     NgxSkeletonLoaderModule,
     TranslateModule,
     DeviceActionsMenuComponent,
-    RequiresRolesDirective,
-    ContainerFilesystemDeviceFormComponent,
   ],
 })
 export class ContainerFilesystemDevicesComponent {
@@ -43,25 +34,27 @@ export class ContainerFilesystemDevicesComponent {
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private authService = inject(AuthService);
+  private formPanel = inject(FormSidePanelService);
+  private destroyRef = inject(DestroyRef);
 
   readonly container = input.required<Container>();
 
-  protected readonly editingDisk = signal<ContainerFilesystemDevice | undefined>(undefined);
-  protected readonly configOpen = signal(false);
-  protected readonly configForm = viewChild(ContainerFilesystemDeviceFormComponent);
+  private hasDeviceWriteRole = toSignal(
+    this.authService.hasRole(this.requiredRoles),
+    { initialValue: false },
+  );
 
-  protected readonly panelTitle = computed(() => {
-    return this.editingDisk()
-      ? this.translate.instant('Edit Disk')
-      : this.translate.instant('Add Disk');
+  protected readonly addAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasDeviceWriteRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Add'),
+      testId: 'add-disk',
+      handler: () => this.addDisk(),
+    };
   });
-
-  protected readonly closeGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
   protected readonly isContainerRunning = computed(() => {
@@ -76,24 +69,26 @@ export class ContainerFilesystemDevicesComponent {
   });
 
   protected addDisk(): void {
-    this.editingDisk.set(undefined);
-    this.configOpen.set(true);
+    this.openForm(undefined);
   }
 
   protected editDisk(disk: ContainerFilesystemDevice): void {
-    this.editingDisk.set(disk);
-    this.configOpen.set(true);
+    this.openForm(disk);
   }
 
   protected getDeviceDescription(device: ContainerDevice): string {
     return getDeviceDescription(this.translate, device);
   }
 
-  protected onConfigClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    this.editingDisk.set(undefined);
-    if (saved) {
-      this.devicesStore.reload();
-    }
+  private openForm(disk: ContainerFilesystemDevice | undefined): void {
+    this.formPanel.open(ContainerFilesystemDeviceFormComponent, {
+      title: disk
+        ? this.translate.instant('Edit Disk')
+        : this.translate.instant('Add Disk'),
+      inputs: {
+        disk,
+        container: this.container(),
+      },
+    }).onSuccess(() => this.devicesStore.reload(), this.destroyRef);
   }
 }

@@ -1,17 +1,17 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
-  TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective, TnSidePanelActionDirective,
-  TnSidePanelComponent, TnTableColumnDirective, TnTableComponent, tnIconMarker,
+  TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective,
+  TnTableColumnDirective, TnTableComponent, tnIconMarker,
 } from '@truenas/ui-components';
 import {
-  Observable, filter, map, of, switchMap, tap, take,
+  filter, map, switchMap, tap, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -21,10 +21,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.elements';
 import {
@@ -47,8 +47,6 @@ interface AllowedAddressRow {
   imports: [
     TnCardComponent,
     TnCardFooterActionsDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     UiSearchDirective,
     RequiresRolesDirective,
     TnButtonComponent,
@@ -58,7 +56,6 @@ interface AllowedAddressRow {
     TnCellDefDirective,
     TnEmptyComponent,
     TableActionsCellComponent,
-    AllowedAddressesFormComponent,
     TranslateModule,
     AsyncPipe,
   ],
@@ -71,7 +68,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   private translate = inject(TranslateService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private systemGeneralService = inject(SystemGeneralService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
@@ -80,9 +77,6 @@ export class AllowedAddressesCardComponent implements OnInit {
   protected isDeleting = signal(false);
   protected isDeleting$ = toObservable(this.isDeleting);
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
-
-  protected configOpen = signal(false);
-  protected configForm = viewChild(AllowedAddressesFormComponent);
 
   protected readonly displayedColumns = ['address', 'actions'];
 
@@ -108,12 +102,6 @@ export class AllowedAddressesCardComponent implements OnInit {
     return row.address;
   }
 
-  protected readonly closeGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
-
   ngOnInit(): void {
     const config$ = this.api.call('system.general.config').pipe(
       map((config) => this.getAddressesSourceFromConfig(config)),
@@ -127,14 +115,11 @@ export class AllowedAddressesCardComponent implements OnInit {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.configOpen.set(true));
-  }
-
-  protected onConfigClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    if (saved) {
-      this.getAllowedAddresses();
-    }
+    ).subscribe(() => {
+      this.formPanel.open(AllowedAddressesFormComponent, {
+        title: this.translate.instant('Allowed IP Addresses'),
+      }).onSuccess(() => this.getAllowedAddresses(), this.destroyRef);
+    });
   }
 
   private promptDeleteAllowedAddress(row: AllowedAddressRow): void {
@@ -142,6 +127,7 @@ export class AllowedAddressesCardComponent implements OnInit {
       .confirm({
         title: this.translate.instant('Delete Allowed Address'),
         message: this.translate.instant('Are you sure you want to delete address {ip}?', { ip: row.address }),
+        buttonColor: 'warn',
       })
       .pipe(
         filter(Boolean),

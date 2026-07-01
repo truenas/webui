@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnIconButtonHarness, TnSidePanelHarness, TnTableHarness,
+  TnButtonHarness, TnIconButtonHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -14,6 +14,8 @@ import { dockerHubRegistry, DockerRegistry } from 'app/interfaces/docker-registr
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerRegistriesListComponent } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.component';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
@@ -23,6 +25,7 @@ describe('DockerRegistriesListComponent', () => {
   let spectator: Spectator<DockerRegistriesListComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
+  let formPanel: FormSidePanelService;
 
   const dockerRegistries: DockerRegistry[] = [
     {
@@ -53,6 +56,9 @@ describe('DockerRegistriesListComponent', () => {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
       provideMockStore({
         selectors: [
           {
@@ -68,6 +74,7 @@ describe('DockerRegistriesListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('queries the registries and shows them as table rows', async () => {
@@ -96,28 +103,22 @@ describe('DockerRegistriesListComponent', () => {
   it('opens the form in a side panel with the row when the "Edit" button is pressed', async () => {
     const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'pencil' }));
     await editButton.click();
-    spectator.detectChanges();
 
-    const panel = await loader.getHarness(TnSidePanelHarness);
-    expect(await panel.isOpen()).toBe(true);
-
-    const form = spectator.query(DockerRegistryFormComponent);
-    expect(form).toBeTruthy();
-    expect(form?.registry()).toEqual(dockerRegistries[0]);
-    expect(form?.isLoggedInToDockerHub()).toBe(true);
+    expect(formPanel.open).toHaveBeenCalledWith(DockerRegistryFormComponent, {
+      title: 'Edit Docker Registry',
+      testId: 'docker-registry',
+      inputs: { registry: dockerRegistries[0], isLoggedInToDockerHub: true },
+    });
   });
 
   it('opens the form in a side panel for creating when "Add Registry" is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Registry' }));
     await addButton.click();
-    spectator.detectChanges();
 
-    const panel = await loader.getHarness(TnSidePanelHarness);
-    expect(await panel.isOpen()).toBe(true);
-
-    const form = spectator.query(DockerRegistryFormComponent);
-    expect(form).toBeTruthy();
-    expect(form?.registry()).toBeUndefined();
-    expect(form?.isLoggedInToDockerHub()).toBe(true);
+    expect(formPanel.open).toHaveBeenCalledWith(DockerRegistryFormComponent, {
+      title: 'Create Docker Registry',
+      testId: 'docker-registry',
+      inputs: { isLoggedInToDockerHub: true },
+    });
   });
 });
