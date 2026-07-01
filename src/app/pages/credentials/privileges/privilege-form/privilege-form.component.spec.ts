@@ -6,7 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { lastValueFrom, of, throwError } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -314,15 +314,10 @@ describe('PrivilegeFormComponent', () => {
       // Note: Cannot use IxFormHarness here because this tests an edge case where
       // a group was valid when entered but got deleted before submission.
       // The chips provider would prevent entering invalid groups in normal UI flow.
-
-      // Mock getGroupByName to fail for non-existent groups
-      const userService = spectator.inject(UserService);
-      jest.spyOn(userService, 'getGroupByName').mockImplementation((groupName) => {
-        if (groupName === 'NonExistentDSGroup') {
-          return throwError(() => new Error('Group not found'));
-        }
-        return of({ gr_gid: 1000, gr_mem: [], gr_name: groupName });
-      });
+      //
+      // Submission resolves DS groups via api.call('group.query') in dsGroupsUids$;
+      // the factory group.query mock returns no matches for the local=false (DS) filter,
+      // so 'NonExistentDSGroup' is reported missing and privilege.create is skipped.
 
       // Accessing protected form property via bracket notation for testing
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -360,6 +355,22 @@ describe('PrivilegeFormComponent', () => {
         [['local', '=', true], ['group', '^', 'test']],
         { limit: 50, order_by: ['group'] },
       ]);
+    });
+
+    it('should preserve query case for the server-side prefix filter', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      (api.call as jest.Mock).mockReturnValue(of([{ group: 'Backups' } as Group]));
+
+      const result = await lastValueFrom(provider('Back'));
+
+      // Query passed verbatim so the case-sensitive `^` filter can match uppercase names...
+      expect(api.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', true], ['group', '^', 'Back']],
+        { limit: 50, order_by: ['group'] },
+      ]);
+      // ...while the client-side contains-match stays case-insensitive.
+      expect(result).toEqual(['Backups']);
     });
 
     it('should apply client-side contains filtering for local groups', async () => {

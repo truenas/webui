@@ -148,7 +148,11 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
    * For SMB shares with larger group lists requiring pagination, see GroupComboboxProvider.
    */
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
-    const trimmedQuery = query?.trim().toLowerCase() || '';
+    const trimmedQuery = query?.trim() || '';
+    // The server-side `^` (prefix) filter is case-sensitive, so pass the query verbatim
+    // (matching UserService.smbGroupQueryDsCache) — lowercasing it would drop groups with
+    // uppercase names. The client-side contains-match below is what's intentionally lax.
+    const lowerCaseQuery = trimmedQuery.toLowerCase();
 
     const filters: (['local', '=', true] | ['group', '^', string])[] = [['local', '=', true]];
     if (trimmedQuery) {
@@ -163,7 +167,7 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
           return groupNames;
         }
 
-        return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
+        return groupNames.filter((name) => name.toLowerCase().includes(lowerCaseQuery));
       }),
     );
   };
@@ -268,7 +272,7 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
    * Enables DS authentication immediately when the button is clicked.
    * This is a separate operation from saving the privilege.
    */
-  enableDsAuth(): void {
+  protected enableDsAuth(): void {
     this.isEnablingDsAuth.set(true);
 
     this.api.call('system.general.update', [{ ds_auth: true }]).pipe(

@@ -118,7 +118,6 @@ export class PrivilegeListComponent implements OnInit {
   }
 
   searchQuery: SearchQuery<Privilege>;
-  privileges: Privilege[] = [];
 
   private groupsSuggestions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({
