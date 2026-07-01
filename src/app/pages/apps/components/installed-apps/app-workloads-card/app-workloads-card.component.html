@@ -55,8 +55,8 @@
                 [name]="canAccessShell() ? 'console' : 'lock'"
                 [disabled]="!canAccessShell()"
                 [testId]="[container.service_name, 'shell']"
-                [ariaLabel]="'Shell' | translate"
-                [tooltip]="(canAccessShell() ? 'Shell' : webShellAccessDenied) | translate"
+                [ariaLabel]="(canAccessShell() ? 'Shell' : shellDenialMessage()) | translate"
+                [tooltip]="(canAccessShell() ? 'Shell' : shellDenialMessage()) | translate"
                 (onClick)="goTo(getShellLink(container))"
               ></tn-icon-button>
               <tn-icon-button

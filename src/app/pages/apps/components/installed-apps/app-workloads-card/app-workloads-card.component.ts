@@ -2,9 +2,9 @@ import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnDialog, TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
-import { combineLatest, map } from 'rxjs';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -47,15 +47,28 @@ export class AppWorkloadsCardComponent {
 
   // Opening a container console requires both the apps-write role and the `web_shell`
   // privilege that gates every shell endpoint; lacking either locks the shortcut.
-  // `hasWebShellAccess$` only emits for a resolved user, so this stays `false` until
+  // `hasWebShellAccess$` only emits for a resolved user, so these stay `false` until
   // the user resolves — a fail-closed default that keeps the shortcut locked, not shown.
-  private readonly canAccessShell$ = combineLatest([
+  private readonly hasAppsWriteRole = toSignal(
     this.authService.hasRole(this.requiredRoles),
-    this.authService.hasWebShellAccess$,
-  ]).pipe(map(([hasRole, hasShellAccess]) => hasRole && hasShellAccess));
+    { initialValue: false },
+  );
 
-  protected readonly canAccessShell = toSignal(this.canAccessShell$, { initialValue: false });
-  protected readonly webShellAccessDenied = helptextGlobal.webShellAccessDenied;
+  private readonly hasWebShellAccess = toSignal(
+    this.authService.hasWebShellAccess$,
+    { initialValue: false },
+  );
+
+  protected readonly canAccessShell = computed(() => this.hasAppsWriteRole() && this.hasWebShellAccess());
+
+  // Name the actual missing permission so the lock's tooltip/aria isn't misleading: a
+  // user who has `web_shell` but not apps-write shouldn't be told web-shell is the problem.
+  protected readonly shellDenialMessage = computed(() => {
+    if (!this.hasWebShellAccess()) {
+      return helptextGlobal.webShellAccessDenied;
+    }
+    return T('You do not have permission to open this shell.');
+  });
 
   protected readonly appContainerStateLabels = appContainerStateLabels;
   protected readonly helptext = helptextApps;

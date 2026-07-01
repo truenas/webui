@@ -16,7 +16,11 @@
         >
           <div class="shell-row">
             <span>{{ 'Shell' | translate }}</span>
-            <tn-icon library="mdi" [name]="hasWebShellAccess() ? 'console-line' : 'lock'"></tn-icon>
+            <tn-icon
+              library="mdi"
+              [name]="hasWebShellAccess() ? 'console-line' : 'lock'"
+              [ariaLabel]="shellTooltip() | translate"
+            ></tn-icon>
           </div>
         </tn-list-item>
       </div>
