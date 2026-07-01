@@ -4,8 +4,12 @@ import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerStatus } from 'app/enums/container.enum';
+import { Role } from 'app/enums/role.enum';
 import { Container } from 'app/interfaces/container.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import {
   ContainerToolsComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-tools/container-tools.component';
@@ -28,8 +32,19 @@ describe('ContainerToolsComponent', () => {
     providers: [
       mockProvider(ContainersStore, { selectedContainer }),
       mockProvider(Router, { navigate: jest.fn() }),
+      mockAuth(),
     ],
   });
+
+  const denyWebShellAccess = (): void => {
+    spectator.inject(MockAuthService).setUser({
+      privilege: {
+        roles: { $set: [Role.FullAdmin] },
+        web_shell: false,
+      },
+    } as LoggedInUser);
+    spectator.detectChanges();
+  };
 
   beforeEach(() => {
     selectedContainer.set(runningContainer);
@@ -57,6 +72,21 @@ describe('ContainerToolsComponent', () => {
         status: { state: ContainerStatus.Stopped, pid: null, domain_state: null },
       }));
       spectator.detectChanges();
+
+      spectator.click('tn-list-item');
+
+      expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
+    });
+
+    it('locks the Shell row with a lock icon when the user lacks web_shell access', async () => {
+      denyWebShellAccess();
+
+      const icon = await loader.getHarness(TnIconHarness);
+      expect(await icon.getName()).toBe('lock');
+    });
+
+    it('does not navigate when the user lacks web_shell access', () => {
+      denyWebShellAccess();
 
       spectator.click('tn-list-item');
 
