@@ -95,7 +95,10 @@ export class ServiceWebshareComponent extends SidePanelForm implements OnInit {
     this.api.call('webshare.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config: WebShareConfig) => {
         this.form.patchValue({
-          search: config.search,
+          // `webshare.config` is async, so it can resolve after the guard effect has already
+          // locked the control off. Gate the loaded value too, otherwise a stale `search: true`
+          // from the backend would be restored while Connect is disabled and then submitted.
+          search: config.search && this.isTruenasConnectConfigured(),
           passkey: config.passkey,
         });
         this.isFormLoading.set(false);

@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
@@ -169,6 +169,37 @@ describe('ServiceWebshareComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      'webshare.update',
+      [expect.objectContaining({ search: false })],
+    );
+  });
+
+  it('does not restore search=true from an async config response while Connect is not configured', async () => {
+    // Reproduce the production ordering: Connect is disabled and the async `webshare.config`
+    // resolves AFTER the guard effect has already locked the control off.
+    tnConnectConfig.set({ status: TruenasConnectStatus.Disabled } as TruenasConnectConfig);
+    const config$ = new Subject<WebShareConfig>();
+    const api = spectator.inject(ApiService);
+    jest.spyOn(api, 'call').mockImplementation((method) => {
+      if (method === 'webshare.config') {
+        return config$;
+      }
+      return of(mockWebShareConfig);
+    });
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    // Backend reports stale search=true after the effect already disabled the control.
+    config$.next({ id: 1, search: true, passkey: WebSharePasskey.Enabled });
+    spectator.detectChanges();
+
+    expect(await (await getCheckbox('search')).isChecked()).toBe(false);
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+
+    expect(api.call).toHaveBeenCalledWith(
       'webshare.update',
       [expect.objectContaining({ search: false })],
     );
