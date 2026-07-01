@@ -1,5 +1,5 @@
 import {
-  Directive, OnInit, inject, DestroyRef, input, effect,
+  Directive, OnInit, inject, DestroyRef, input, effect, Type,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, FormControl, Validators } from '@angular/forms';
@@ -9,8 +9,8 @@ import {
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ComponentInSlideIn } from 'app/modules/slide-ins/slide-in.interface';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 export const addNewIxSelectValue = 'ADD_NEW';
@@ -19,9 +19,9 @@ export const addNewIxSelectValue = 'ADD_NEW';
  * Base for the custom "select with an Add New option" controls (cloud / SSH credentials). It renders
  * a `<tn-select>` bound to {@link selectControl} and is itself the {@link ControlValueAccessor} for the
  * host's `formControlName` — subclasses provide it via `NG_VALUE_ACCESSOR`. Picking the prepended
- * "Add New" option opens the relevant create form in a legacy SlideIn (kept here because we need the
- * saved entity back to select it — `FormSidePanelService` only resolves a boolean), then refetches the
- * options and selects the new record; cancelling restores the previous value.
+ * "Add New" option opens the relevant create form in a `tn-side-panel` via {@link FormSidePanelService}
+ * (which resolves the saved record back to us), then refetches the options and selects the new record;
+ * cancelling restores the previous value.
  */
 @Directive()
 export abstract class IxSelectWithNewOption<R = unknown> implements ControlValueAccessor, OnInit {
@@ -37,8 +37,8 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
   /** "Add New" + the fetched options, fed to `<tn-select [options]>`. */
   protected readonly options$ = new BehaviorSubject<Option[]>([]);
 
-  private slideIn = inject(SlideIn);
-  private translateService = inject(TranslateService);
+  private formPanel = inject(FormSidePanelService);
+  protected translateService = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   constructor() {
@@ -58,7 +58,10 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
 
   abstract fetchOptions(): Observable<Option[]>;
   abstract getValueFromSlideInResponse(result: R): IxSelectValue;
-  abstract getFormComponentType(): ComponentInSlideIn<unknown, R>;
+  abstract getFormComponentType(): Type<unknown>;
+  /** Title shown on the `<tn-side-panel>` opened for the "Add New" option. */
+  abstract getFormTitle(): string;
+  /** Inputs applied to the hosted form (e.g. provider filters). Keyed by the form's input name. */
   getFormInputData(): Record<string, unknown> | undefined {
     return undefined;
   }
@@ -108,9 +111,10 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
 
   private openNewForm(): void {
     const previous = this.previousValue;
-    const result$ = this.slideIn.open(this.getFormComponentType(), {
+    const result$ = this.formPanel.open<R>(this.getFormComponentType() as Type<SidePanelForm<R>>, {
+      title: this.getFormTitle(),
       wide: this.formComponentIsWide,
-      data: this.getFormInputData(),
+      inputs: this.getFormInputData(),
     });
 
     merge(

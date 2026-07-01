@@ -1,14 +1,15 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnInputHarness } from '@truenas/ui-components';
 import {
   AzureProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/azure-provider-form/azure-provider-form.component';
 
 describe('AzureProviderFormComponent', () => {
   let spectator: Spectator<AzureProviderFormComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: AzureProviderFormComponent,
     imports: [
@@ -16,9 +17,13 @@ describe('AzureProviderFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
@@ -28,20 +33,15 @@ describe('AzureProviderFormComponent', () => {
       key: 'key-1',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      'Account Key': 'key-1',
-      'Account Name': 'azure',
-      Endpoint: 'blob.core.usgovcloudapi.net',
-    });
+    expect(await (await getInput('account')).getValue()).toBe('azure');
+    expect(await (await getInput('key')).getValue()).toBe('key-1');
+    expect(await (await getInput('endpoint')).getValue()).toBe('blob.core.usgovcloudapi.net');
   });
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
-    await form.fillForm({
-      'Account Key': 'new-key',
-      'Account Name': 'azure2',
-      Endpoint: 'b-lob.usgovcloudapi.net',
-    });
+    await (await getInput('account')).setValue('azure2');
+    await (await getInput('key')).setValue('new-key');
+    await (await getInput('endpoint')).setValue('b-lob.usgovcloudapi.net');
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({

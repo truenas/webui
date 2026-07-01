@@ -40,6 +40,32 @@
     </div>
   }
 
+  @if (!footerless() && form()?.footerMenu; as footerMenu) {
+    <div tnSidePanelAction class="footer-actions-group">
+      <tn-icon-button
+        name="dots-vertical"
+        library="mdi"
+        tnMenuPosition="above"
+        [testId]="footerMenu.testId"
+        [ariaLabel]="footerMenu.label | translate"
+        [tooltip]="footerMenu.label | translate"
+        [tnMenuTriggerFor]="footerActionsMenu"
+      ></tn-icon-button>
+      <tn-menu #footerActionsMenu>
+        @for (item of footerMenu.items; track item.testId) {
+          <tn-menu-item
+            *ixRequiresRoles="item.requiredRoles ?? []"
+            [testId]="item.testId"
+            [icon]="item.icon"
+            [iconLibrary]="item.iconLibrary"
+            [disabled]="item.disabled?.() ?? false"
+            (itemClick)="item.onClick()"
+          >{{ item.label | translate }}</tn-menu-item>
+        }
+      </tn-menu>
+    </div>
+  }
+
   @if (!footerless() && form(); as form) {
     <tn-button
       *ixRequiresRoles="form.requiredRoles || []"

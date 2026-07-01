@@ -1,10 +1,17 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, ViewContainerRef, viewChild, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, ViewContainerRef, viewChild,
+  computed, signal, inject, input,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import {
+  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  combineLatest, of, startWith, Subscription,
+} from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
@@ -14,16 +21,10 @@ import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/c
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseProviderFormComponent,
@@ -42,24 +43,22 @@ export interface CloudCredentialFormInput {
 @Component({
   selector: 'ix-cloud-credentials-form',
   templateUrl: './cloud-credentials-form.component.html',
+  styleUrls: ['./cloud-credentials-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     CloudSyncProviderDescriptionComponent,
-    IxInputComponent,
-    FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
+    AsyncPipe,
   ],
 })
-export class CloudCredentialsFormComponent implements OnInit {
+export class CloudCredentialsFormComponent extends SidePanelForm<CloudSyncCredential | null> implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
@@ -68,17 +67,40 @@ export class CloudCredentialsFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private snackbarService = inject(SnackbarService);
   private cloudCredentialService = inject(CloudCredentialService);
-  slideInRef = inject<SlideInRef<CloudCredentialFormInput, CloudSyncCredential | null>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.CloudSyncWrite];
+  readonly requiredRoles = [Role.CloudSyncWrite];
+
+  /** Data supplied by the `<tn-side-panel>` host (undefined = create with no provider limit). */
+  readonly editInput = input<CloudCredentialFormInput | undefined>(undefined);
 
   commonForm = this.formBuilder.nonNullable.group({
     name: ['Storj', Validators.required],
     type: [CloudSyncProviderName.Storj],
   });
 
+  // Satisfies the `SidePanelForm` abstract `form`; this form additionally tracks a dynamic
+  // provider sub-form, so `canSubmit` / `hasUnsavedChanges` are overridden below.
+  protected readonly form = this.commonForm;
+
   protected isLoading = signal(false);
+
+  private commonStatus = toSignal(
+    this.commonForm.statusChanges.pipe(startWith(this.commonForm.status)),
+    { initialValue: this.commonForm.status },
+  );
+
+  // Mirrors the dynamically-created provider sub-form's validity into a signal so the
+  // `<tn-side-panel>` host's footer Save can react to it (its child validity isn't otherwise
+  // observable from the outside). Re-tracked whenever the provider form is re-rendered.
+  private providerFormValid = signal(false);
+  private providerFormStatusSub?: Subscription;
+
+  /** Read by the `<tn-side-panel>` host to enable/disable its footer Save action. */
+  readonly canSubmit = computed(() => {
+    return this.commonStatus() === 'VALID' && this.providerFormValid() && !this.isLoading();
+  });
+
   existingCredential: CloudSyncCredential;
   limitProviders: CloudSyncProviderName[];
   providers: CloudSyncProvider[] = [];
@@ -91,16 +113,12 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.commonForm.dirty || this.providerForm.form.dirty);
-    });
-
-    const data = this.slideInRef.getData();
-    this.existingCredential = data?.existingCredential;
-    this.limitProviders = data?.providers;
-    // Has to be earlier than potential `setCredentialsForEdit` call
-    this.setFormEvents();
+  /**
+   * Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. Overrides
+   * the base's single-form check to also account for the dynamic provider sub-form.
+   */
+  override hasUnsavedChanges(): boolean {
+    return this.commonForm.dirty || Boolean(this.providerForm?.form?.dirty);
   }
 
   get showProviderDescription(): boolean {
@@ -125,6 +143,12 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const data = this.editInput();
+    this.existingCredential = data?.existingCredential;
+    this.limitProviders = data?.providers;
+    // Has to be earlier than potential `setCredentialsForEdit` call
+    this.setFormEvents();
+
     this.loadProviders();
 
     if (this.existingCredential) {
@@ -164,7 +188,10 @@ export class CloudCredentialsFormComponent implements OnInit {
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.slideInRef.close({ response });
+          // Richer payload than the base boolean — hand back the saved credential so
+          // `ix-cloud-credentials-select` can auto-select it. `closeWith` routes it through
+          // whichever host opened the form.
+          this.closeWith(response);
         },
         error: (error: unknown) => {
           // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
@@ -287,5 +314,20 @@ export class CloudCredentialsFormComponent implements OnInit {
     const formRef = this.providerFormContainer().createComponent(formClass);
     formRef.instance.provider = this.selectedProvider;
     this.providerForm = formRef.instance;
+    this.trackProviderFormValidity();
+  }
+
+  /** Keeps {@link providerFormValid} in sync with the current provider sub-form's status. */
+  private trackProviderFormValidity(): void {
+    this.providerFormStatusSub?.unsubscribe();
+    const providerControl = this.providerForm?.form;
+    if (!providerControl) {
+      this.providerFormValid.set(false);
+      return;
+    }
+    this.providerFormValid.set(providerControl.valid);
+    this.providerFormStatusSub = providerControl.statusChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.providerFormValid.set(providerControl.valid));
   }
 }
