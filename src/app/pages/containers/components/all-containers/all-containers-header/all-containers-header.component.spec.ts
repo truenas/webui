@@ -5,11 +5,9 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import {
   TnButtonHarness, TnMenuHarness, TnMenuTesting, TnDialog,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   GlobalConfigFormComponent,
@@ -17,6 +15,7 @@ import {
 import {
   MapUserGroupIdsDialogComponent,
 } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
+import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { AllContainersHeaderComponent } from './all-containers-header.component';
@@ -51,9 +50,6 @@ describe('AllContainersHeaderComponent', () => {
         containers: signal([]),
       }),
       mockProvider(ContainerConfigStore, storeMock),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => of(undefined)),
-      }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.cancel()),
       }),
@@ -78,11 +74,14 @@ describe('AllContainersHeaderComponent', () => {
       expect(await createNewButton.isDisabled()).toBe(false);
     });
 
-    it('opens ContainerFormComponent when Create New Container is pressed', async () => {
+    it('opens ContainerFormComponent in a side panel when Create New Container is pressed', async () => {
       const createNewButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create New Container' }));
       await createNewButton.click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalled();
+      expect(formPanel.open).toHaveBeenCalledWith(
+        ContainerFormComponent,
+        expect.objectContaining({ title: 'Add Container' }),
+      );
     });
 
     it('shows Settings and Map User/Group IDs menu items', async () => {
