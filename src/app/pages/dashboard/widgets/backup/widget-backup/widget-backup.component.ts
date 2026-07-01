@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnIn
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconAnchor } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -31,6 +30,7 @@ enum BackupType {
   CloudSync = 'Cloud Sync',
   Rsync = 'Rsync',
   Replication = 'Replication',
+  CloudBackup = 'TrueCloud Backup',
 }
 
 interface BackupRow {
@@ -55,8 +55,6 @@ interface BackupRow {
     TestDirective,
     MatTooltip,
     RouterLink,
-    MatGridList,
-    MatGridTile,
     BackupTaskTileComponent,
     BackupTaskEmptyComponent,
     BackupTaskActionsComponent,
@@ -103,6 +101,10 @@ export class WidgetBackupComponent implements OnInit {
     return this.backups.filter((backup) => backup.type === BackupType.Rsync);
   }
 
+  get cloudBackupTasks(): BackupRow[] {
+    return this.backups.filter((backup) => backup.type === BackupType.CloudBackup);
+  }
+
   get backupsTiles(): BackupTile[] {
     const tiles: BackupTile[] = [];
     if (this.cloudSyncTasks.length) {
@@ -115,6 +117,10 @@ export class WidgetBackupComponent implements OnInit {
 
     if (this.rsyncTasks.length) {
       tiles.push(this.getTile(this.translate.instant('Rsync'), this.rsyncTasks));
+    }
+
+    if (this.cloudBackupTasks.length) {
+      tiles.push(this.getTile(this.translate.instant('TrueCloud Backup'), this.cloudBackupTasks));
     }
     return tiles;
   }
@@ -131,7 +137,7 @@ export class WidgetBackupComponent implements OnInit {
     this.isLoading = true;
     this.widgetResourcesService.backups$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([replicationTasks, rsyncTasks, cloudSyncTasks]) => {
+      .subscribe(([replicationTasks, rsyncTasks, cloudSyncTasks, cloudBackupTasks]) => {
         this.isLoading = false;
         this.backups = [
           ...replicationTasks.map((task) => ({
@@ -149,6 +155,12 @@ export class WidgetBackupComponent implements OnInit {
           ...cloudSyncTasks.map((task) => ({
             type: BackupType.CloudSync,
             direction: task.direction,
+            state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
+            timestamp: task.job?.time_finished,
+          })),
+          ...cloudBackupTasks.map((task) => ({
+            type: BackupType.CloudBackup,
+            direction: Direction.Push,
             state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
             timestamp: task.job?.time_finished,
           })),

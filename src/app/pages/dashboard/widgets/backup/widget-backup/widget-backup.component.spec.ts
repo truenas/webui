@@ -9,6 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
+import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
@@ -116,6 +117,29 @@ const cloudSyncTasks = [
   },
 ] as CloudSyncTask[];
 
+const cloudBackupTasks = [
+  {
+    id: 1,
+    job: {
+      id: 1,
+      state: JobState.Success,
+      time_finished: {
+        $date: currentDatetime.getTime() - 20000,
+      },
+    },
+  },
+  {
+    id: 2,
+    job: {
+      id: 2,
+      state: JobState.Failed,
+      time_finished: {
+        $date: currentDatetime.getTime() - 40000,
+      },
+    },
+  },
+] as CloudBackup[];
+
 describe('WidgetBackupComponent', () => {
   let spectator: Spectator<WidgetBackupComponent>;
   let widgetBackup: WidgetBackupHarness;
@@ -144,7 +168,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([[], [], []]),
+            backups$: of([[], [], [], []]),
           }),
         ],
       });
@@ -171,7 +195,7 @@ describe('WidgetBackupComponent', () => {
         },
         providers: [
           mockProvider(WidgetResourcesService, {
-            backups$: of([replicationTasks, rsyncTasks, cloudSyncTasks]),
+            backups$: of([replicationTasks, rsyncTasks, cloudSyncTasks, cloudBackupTasks]),
           }),
         ],
       });
@@ -197,13 +221,17 @@ describe('WidgetBackupComponent', () => {
           firstColumn: ['1 send task', '2 receive tasks', 'Total failed: 0'],
           secondColumn: ['1 sent task this week', '1 received task this week', `Last successful: ${format(currentDatetime.getTime() - 10000, 'yyyy-MM-dd HH:mm:ss')}`],
         },
+        'TrueCloud Backup': {
+          firstColumn: ['2 send tasks', '0 receive tasks', 'Total failed: 1'],
+          secondColumn: ['1 sent task this week', '—', `Last successful: ${format(currentDatetime.getTime() - 20000, 'yyyy-MM-dd HH:mm:ss')}`],
+        },
       });
     });
 
     it('shows alert status when there are errors', async () => {
       const header = await widgetBackup.getHeader();
       expect(header.icon).toBe('alert');
-      expect(header.message).toBe('3 of 8 tasks failed');
+      expect(header.message).toBe('4 of 10 tasks failed');
     });
   });
 
@@ -232,6 +260,7 @@ describe('WidgetBackupComponent', () => {
                   time_finished: { $date: currentDatetime.getTime() - 50000 },
                 },
               }] as RsyncTask[],
+              [],
               [],
             ]),
           }),
@@ -276,6 +305,7 @@ describe('WidgetBackupComponent', () => {
                 },
               }] as RsyncTask[],
               [],
+              [],
             ]),
           }),
         ],
@@ -305,6 +335,7 @@ describe('WidgetBackupComponent', () => {
               [],
               [],
               cloudSyncTasks,
+              [],
             ]),
           }),
         ],

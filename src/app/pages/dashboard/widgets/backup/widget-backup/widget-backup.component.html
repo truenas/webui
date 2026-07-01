@@ -43,17 +43,21 @@
     <div [class]="['container', size()]">
       @if (backupsTiles.length) {
         <div class="container-content">
-          <mat-grid-list gutterSize="5px" [cols]="1" [rowHeight]="hasSendTasks ? 105 : 90">
+          <div
+            class="tiles-grid"
+            [class.two-columns]="backupsTiles.length > 3"
+            [style.--tile-height.px]="hasSendTasks ? 105 : 90"
+          >
             @for (tile of backupsTiles; track trackByTile($index, tile)) {
-              <mat-grid-tile>
+              <div class="tile-cell">
                 <ix-backup-task-tile
                   [tile]="tile"
                   [hasSendTasks]="hasSendTasks"
                   [backupActions]="backupActions"
                 ></ix-backup-task-tile>
-              </mat-grid-tile>
+              </div>
             }
-          </mat-grid-list>
+          </div>
           @if (!hasSendTasks) {
             <div class="banner">
               <ng-template *ngTemplateOutlet="backupActions"></ng-template>
