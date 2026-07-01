@@ -5,7 +5,14 @@
 </ix-page-header>
 
 <div class="terminal-wrapper">
-  @if (!shellConnected()) {
+  @if (accessDenied()) {
+    <div class="terminal-busy-overlay">
+      <div class="busy-content" role="alert">
+        <tn-icon name="lock" library="mdi" size="xl" aria-hidden="true"></tn-icon>
+        <p>{{ 'Your user permissions do not allow Web Shell access.' | translate }}</p>
+      </div>
+    </div>
+  } @else if (!shellConnected()) {
     <div class="terminal-busy-overlay">
       <div class="busy-content">
         @if (isReconnecting()) {
@@ -23,12 +30,14 @@
       </div>
     </div>
   }
-  <div
-    #terminal
-    id="terminal"
-    [ngStyle]="{ 'font-size': fontSize + 'px' }"
-    [class.terminal-dimmed]="!shellConnected()"
-  ></div>
+  @if (!accessDenied()) {
+    <div
+      #terminal
+      id="terminal"
+      [ngStyle]="{ 'font-size': fontSize + 'px' }"
+      [class.terminal-dimmed]="!shellConnected()"
+    ></div>
+  }
 </div>
 
 <ng-template #terminalLoading>

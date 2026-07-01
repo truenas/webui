@@ -8,6 +8,7 @@ import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
 import FontFaceObserver from 'fontfaceobserver';
@@ -37,6 +38,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     NgTemplateOutlet,
     PageHeaderComponent,
     TerminalFontSizeComponent,
+    TnIconComponent,
   ],
 })
 export class TerminalComponent implements OnInit, OnDestroy {
@@ -58,6 +60,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   protected readonly shellConnected = signal(false);
   protected readonly connectionId = signal<string>(undefined);
   protected readonly isReconnecting = signal(false);
+  protected readonly accessDenied = signal(false);
   private autoReconnectEnabled = true;
   protected hasAttemptedAutoReconnect = false;
   terminalSettings = {
@@ -77,6 +80,21 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private resizeTimeout: ReturnType<typeof setTimeout>;
 
   ngOnInit(): void {
+    // Gate shell connection on the `web_shell` privilege. Without this check a user
+    // lacking that privilege is left staring at an indefinite "Connecting..." spinner.
+    this.authService.hasWebShellAccess$.pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((hasAccess) => {
+      if (!hasAccess) {
+        this.accessDenied.set(true);
+        return;
+      }
+      this.startShell();
+    });
+  }
+
+  private startShell(): void {
     if (this.conf().preInit) {
       this.conf().preInit?.().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
         this.initShell();
