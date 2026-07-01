@@ -55,17 +55,22 @@
             </div>
             @if (app().state === AppState.Running || app().state === AppState.Deploying || app().state === AppState.Crashed) {
               <div class="container-action">
-                <a
-                  *ixRequiresRoles="requiredRoles"
-                  mat-icon-button
+                <span
+                  class="shell-button-wrapper"
                   matTooltipPosition="above"
-                  [attr.aria-label]="'Shell' | translate"
-                  [ixTest]="[container.service_name, 'shell']"
-                  [matTooltip]="'Shell' | translate"
-                  [routerLink]="getShellLink(container)"
+                  [matTooltip]="(canAccessShell() ? 'Shell' : shellDenialMessage()) | translate"
                 >
-                  <tn-icon name="console" library="mdi"></tn-icon>
-                </a>
+                  <a
+                    mat-icon-button
+                    [class.disabled]="!canAccessShell()"
+                    [disabled]="!canAccessShell()"
+                    [attr.aria-label]="(canAccessShell() ? 'Shell' : shellDenialMessage()) | translate"
+                    [ixTest]="[container.service_name, 'shell']"
+                    [routerLink]="getShellLink(container)"
+                  >
+                    <tn-icon library="mdi" [name]="canAccessShell() ? 'console' : 'lock'"></tn-icon>
+                  </a>
+                </span>
                 <button
                   mat-icon-button
                   matTooltipPosition="above"

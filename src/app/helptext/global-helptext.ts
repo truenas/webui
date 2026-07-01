@@ -16,6 +16,8 @@ export const helptextGlobal = {
     message: T('No logs are available for this task.'),
   },
 
+  webShellAccessDenied: T('Your user permissions do not allow Web Shell access.'),
+
   scheduler: {
     general: {
       header: T('Minutes/Hours/Days'),
