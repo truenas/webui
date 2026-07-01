@@ -1,16 +1,20 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceWebshareComponent } from './service-webshare.component';
 
@@ -23,6 +27,10 @@ describe('ServiceWebshareComponent', () => {
     search: true,
     passkey: WebSharePasskey.Enabled,
   };
+
+  const tnConnectConfig = signal<TruenasConnectConfig | undefined>(
+    { status: TruenasConnectStatus.Configured } as TruenasConnectConfig,
+  );
 
   const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -48,10 +56,14 @@ describe('ServiceWebshareComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(FormErrorHandlerService),
+      mockProvider(TruenasConnectService, {
+        config: tnConnectConfig,
+      }),
     ],
   });
 
   beforeEach(() => {
+    tnConnectConfig.set({ status: TruenasConnectStatus.Configured } as TruenasConnectConfig);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -138,6 +150,38 @@ describe('ServiceWebshareComponent', () => {
 
     expect(await (await getCheckbox('search')).isChecked()).toBe(false);
     expect(await (await getSelect('passkey')).getDisplayText()).toBe('Disabled');
+  });
+
+  it('disables and clears the TrueSearch toggle when TrueNAS Connect is not configured', async () => {
+    tnConnectConfig.set({ status: TruenasConnectStatus.Disabled } as TruenasConnectConfig);
+    spectator.detectChanges();
+
+    const searchCheckbox = await getCheckbox('search');
+    expect(await searchCheckbox.isDisabled()).toBe(true);
+    expect(await searchCheckbox.isChecked()).toBe(false);
+  });
+
+  it('does not submit TrueSearch as enabled when TrueNAS Connect is not configured', async () => {
+    tnConnectConfig.set({ status: TruenasConnectStatus.Disabled } as TruenasConnectConfig);
+    spectator.detectChanges();
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      'webshare.update',
+      [expect.objectContaining({ search: false })],
+    );
+  });
+
+  it('re-enables the TrueSearch toggle when TrueNAS Connect becomes configured', async () => {
+    tnConnectConfig.set({ status: TruenasConnectStatus.Disabled } as TruenasConnectConfig);
+    spectator.detectChanges();
+    expect(await (await getCheckbox('search')).isDisabled()).toBe(true);
+
+    tnConnectConfig.set({ status: TruenasConnectStatus.Configured } as TruenasConnectConfig);
+    spectator.detectChanges();
+    expect(await (await getCheckbox('search')).isDisabled()).toBe(false);
   });
 
   it('displays the form with correct title', () => {
