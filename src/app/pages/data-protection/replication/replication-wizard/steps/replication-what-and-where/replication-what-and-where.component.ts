@@ -2,19 +2,17 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, output, inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperNext } from '@angular/material/stepper';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnRadioComponent, TnSelectComponent,
+  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnRadioComponent, TnSelectComponent, TnStepperNextDirective,
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
-  debounceTime, map, merge, Observable, of, switchMap,
+  debounceTime, map, merge, Observable, of, startWith, switchMap,
 } from 'rxjs';
 import { emptyRootNode, datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -48,7 +46,6 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -76,9 +73,8 @@ import { ReplicationService } from 'app/services/replication.service';
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperNext,
-    TestDirective,
+    TnButtonComponent,
+    TnStepperNextDirective,
     TranslateModule,
   ],
 })
@@ -154,6 +150,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       ),
     ],
   });
+
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
 
   existReplicationOptions$: Observable<Option[]>;
 

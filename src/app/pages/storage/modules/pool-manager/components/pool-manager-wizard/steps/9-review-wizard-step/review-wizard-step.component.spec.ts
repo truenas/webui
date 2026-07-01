@@ -1,11 +1,9 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   byTextContent, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnStepperComponent } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -74,7 +72,7 @@ describe('ReviewWizardStepComponent', () => {
       TopologyCategoryDescriptionPipe,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -102,14 +100,14 @@ describe('ReviewWizardStepComponent', () => {
 
     it('emits (createPool) when Create Pool is pressed', async () => {
       jest.spyOn(spectator.component.createPool, 'emit');
-      const createPool = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
+      const createPool = await loader.getHarness(TnButtonHarness.with({ label: 'Create Pool' }));
       await createPool.click();
 
       expect(spectator.component.createPool.emit).toHaveBeenCalled();
     });
 
     it('opens an Inspect VDEVs dialog when corresponding button is pressed', async () => {
-      const inspectButton = await loader.getHarness(MatButtonHarness.with({ text: 'Inspect VDEVs' }));
+      const inspectButton = await loader.getHarness(TnButtonHarness.with({ label: 'Inspect VDEVs' }));
       await inspectButton.click();
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(InspectVdevsDialog, {
@@ -215,7 +213,7 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('handles start over logic', async () => {
-      const startOver = await loader.getHarness(MatButtonHarness.with({ text: 'Start Over' }));
+      const startOver = await loader.getHarness(TnButtonHarness.with({ label: 'Start Over' }));
       await startOver.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -226,11 +224,11 @@ describe('ReviewWizardStepComponent', () => {
       expect(store.startOver).toHaveBeenCalled();
     });
 
-    it('shows Start Over button when updating an existing pool', () => {
+    it('shows Start Over button when updating an existing pool', async () => {
       spectator.setInput('isAddingVdevs', true);
       spectator.detectChanges();
 
-      const startOverButton = spectator.query('button[ixTest="start-over"]');
+      const startOverButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Start Over' }));
       expect(startOverButton).toBeTruthy();
     });
   });
@@ -273,7 +271,7 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('disables pool creation button once there are errors', async () => {
-      const createPool = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
+      const createPool = await loader.getHarness(TnButtonHarness.with({ label: 'Create Pool' }));
       expect(createPool.isDisabled).toBeTruthy();
     });
   });

@@ -3,9 +3,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatStepper } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnFormSectionComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnFormSectionComponent, TnStepperComponent } from '@truenas/ui-components';
 import {
   catchError, EMPTY, of, pairwise, startWith,
 } from 'rxjs';
@@ -52,7 +51,7 @@ export class CloudSyncProviderComponent implements OnInit {
   private translate = inject(TranslateService);
   private cloudCredentialService = inject(CloudCredentialService);
   private snackbarService = inject(SnackbarService);
-  private stepper = inject(MatStepper);
+  private stepper = inject(TnStepperComponent);
   private destroyRef = inject(DestroyRef);
 
   readonly save = output<CloudSyncCredential>();

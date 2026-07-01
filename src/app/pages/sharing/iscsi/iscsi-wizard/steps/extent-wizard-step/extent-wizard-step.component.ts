@@ -1,11 +1,12 @@
 import {
   ChangeDetectionStrategy, Component, input, OnInit, inject, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { of, switchMap } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { IscsiExtentType, iscsiExtentUseforMap } from 'app/enums/iscsi.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -47,6 +48,15 @@ export class ExtentWizardStepComponent implements OnInit {
   formatter = inject(IxFormatterService);
 
   readonly form = input.required<IscsiWizardComponent['form']['controls']['extent']>();
+
+  // Drives the stepper's "finished step" indicator.
+  readonly completed = toSignal(
+    toObservable(this.form).pipe(
+      switchMap((form) => form.statusChanges.pipe(startWith(form.status))),
+      map(() => this.form().valid),
+    ),
+    { initialValue: false },
+  );
 
   readonly helptextSharingIscsi = helptextIscsi;
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();

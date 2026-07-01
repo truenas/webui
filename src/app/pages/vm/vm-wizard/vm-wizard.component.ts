@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import {
-  MatStepper, MatStep, MatStepLabel, MatStepperPrevious, MatStepperNext,
-} from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnStepComponent, TnStepperComponent, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { pick } from 'lodash-es';
 import {
   forkJoin, Observable, of, switchMap,
@@ -21,15 +19,11 @@ import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-mac
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import {
-  UseIconsInStepperComponent,
-} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { OsStepComponent } from 'app/pages/vm/vm-wizard/steps/1-os-step/os-step.component';
@@ -55,11 +49,9 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   standalone: true,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
-    MatStepper,
-    MatStep,
-    MatStepLabel,
+    TnCardComponent,
+    TnStepperComponent,
+    TnStepComponent,
     OsStepComponent,
     CpuAndMemoryStepComponent,
     DiskStepComponent,
@@ -68,13 +60,10 @@ import { GpuService } from 'app/services/gpu/gpu.service';
     GpuStepComponent,
     SummaryComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
+    TnButtonComponent,
+    TnStepperPreviousDirective,
     RequiresRolesDirective,
-    MatStepperNext,
     TranslateModule,
-    UseIconsInStepperComponent,
   ],
 })
 export class VmWizardComponent implements OnInit {
@@ -97,7 +86,7 @@ export class VmWizardComponent implements OnInit {
   protected readonly networkInterfaceStep = viewChild.required(NetworkInterfaceStepComponent);
   protected readonly installationMediaStep = viewChild.required(InstallationMediaStepComponent);
   protected readonly gpuStep = viewChild.required(GpuStepComponent);
-  protected readonly stepper = viewChild.required(MatStepper);
+  protected readonly stepper = viewChild.required(TnStepperComponent);
 
   protected readonly requiredRoles = [Role.VmWrite];
 
@@ -197,7 +186,7 @@ export class VmWizardComponent implements OnInit {
               conversionFailed: { message: error.message },
             });
             // Navigate back to step 3 (disk step)
-            this.stepper().selectedIndex = 2;
+            this.stepper().selectedIndex.set(2);
           } else {
             // For other errors, show the error modal
             this.errorHandler.showErrorModal(error);

@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of, switchMap } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
@@ -32,6 +33,15 @@ export class TargetWizardStepComponent {
   formatter = inject(IxFormatterService);
 
   form = input.required<IscsiWizardComponent['form']['controls']['target']>();
+
+  // Drives the stepper's "finished step" indicator.
+  readonly completed = toSignal(
+    toObservable(this.form).pipe(
+      switchMap((form) => form.statusChanges.pipe(startWith(form.status))),
+      map(() => this.form().valid),
+    ),
+    { initialValue: false },
+  );
 
   readonly helptextSharingIscsi = helptextIscsi;
 

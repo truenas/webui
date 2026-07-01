@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, output, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnStepComponent, TnStepperComponent } from '@truenas/ui-components';
 import { merge } from 'lodash-es';
 import {
   catchError, EMPTY, forkJoin, map, Observable, of, switchMap, tap,
@@ -27,9 +27,6 @@ import { Schedule } from 'app/interfaces/schedule.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import {
-  UseIconsInStepperComponent,
-} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -50,13 +47,11 @@ import { ReplicationService } from 'app/services/replication.service';
   providers: [ReplicationService],
   imports: [
     ModalHeaderComponent,
-    MatStepper,
-    MatStep,
-    MatStepLabel,
+    TnStepperComponent,
+    TnStepComponent,
     ReplicationWhatAndWhereComponent,
     ReplicationWhenComponent,
     TranslateModule,
-    UseIconsInStepperComponent,
   ],
 })
 export class ReplicationWizardComponent {

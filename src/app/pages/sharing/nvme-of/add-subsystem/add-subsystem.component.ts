@@ -1,18 +1,18 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import {
-  MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious,
-} from '@angular/material/stepper';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnStepComponent, TnStepperComponent,
+  TnStepperNextDirective, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import {
   catchError,
   finalize, forkJoin, map, Observable, of, switchMap,
   tap,
 } from 'rxjs';
+import { startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -26,13 +26,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import {
-  UseIconsInStepperComponent,
-} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSubsystemHostsComponent,
@@ -58,17 +54,14 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   imports: [
     ModalHeaderComponent,
     TranslateModule,
-    MatCard,
+    TnCardComponent,
     ReactiveFormsModule,
-    MatStep,
-    MatStepLabel,
-    MatStepper,
-    UseIconsInStepperComponent,
-    MatButton,
-    MatStepperNext,
-    TestDirective,
+    TnStepperComponent,
+    TnStepComponent,
+    TnButtonComponent,
+    TnStepperNextDirective,
     IxInputComponent,
-    MatStepperPrevious,
+    TnStepperPreviousDirective,
     IxCheckboxComponent,
     AddSubsystemHostsComponent,
     AddSubsystemNamespacesComponent,
@@ -112,6 +105,15 @@ export class AddSubsystemComponent {
   });
 
   protected readonly helptext = helptextNvmeOf;
+
+  // Drives the stepper's "finished step" pencil icon (replaces mat's [stepControl]).
+  protected readonly whatToShareCompleted = toSignal(
+    this.form.controls.name.statusChanges.pipe(
+      startWith(this.form.controls.name.status),
+      map(() => this.form.controls.name.valid),
+    ),
+    { initialValue: this.form.controls.name.valid },
+  );
 
   protected onSubmit(): void {
     this.isLoading.set(true);

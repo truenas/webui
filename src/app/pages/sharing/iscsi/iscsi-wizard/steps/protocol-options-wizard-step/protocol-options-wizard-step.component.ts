@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, input, OnInit, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { map, of, switchMap } from 'rxjs';
+import {
+  map, of, startWith, switchMap,
+} from 'rxjs';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
@@ -48,6 +50,15 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
   deleteFcPort = input.required<(index: number) => void>();
   getUsedPhysicalPorts = input.required<(excludeIndex: number) => string[]>();
   availablePorts = input.required<string[]>();
+
+  // Drives the stepper's "finished step" indicator.
+  readonly completed = toSignal(
+    toObservable(this.form).pipe(
+      switchMap((form) => form.statusChanges.pipe(startWith(form.status))),
+      map(() => this.form().valid),
+    ),
+    { initialValue: false },
+  );
 
   readonly helptextSharingIscsi = helptextIscsi;
 

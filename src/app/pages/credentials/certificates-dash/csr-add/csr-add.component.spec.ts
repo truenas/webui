@@ -1,10 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -40,7 +38,7 @@ describe('CsrAddComponent', () => {
   let spectator: Spectator<CsrAddComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let nextButton: MatStepperNextHarness;
+  let nextButton: TnButtonHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -63,7 +61,6 @@ describe('CsrAddComponent', () => {
     component: CsrAddComponent,
     imports: [
       ReactiveFormsModule,
-      MatStepperModule,
     ],
     declarations: [
       CsrIdentifierAndTypeComponent,
@@ -103,11 +100,10 @@ describe('CsrAddComponent', () => {
   });
 
   async function updateStepHarnesses(): Promise<void> {
-    const stepper = await loader.getHarness(MatStepperHarness);
-    const activeStep = (await stepper.getSteps({ selected: true }))[0];
-
-    form = await activeStep.getHarness(IxFormHarness);
-    nextButton = await activeStep.getHarness(MatStepperNextHarness.with({ text: 'Next' }));
+    // tn-stepper renders only the active step's content, so the single visible
+    // form and Next button resolve straight from the document-root loader.
+    form = await loader.getHarness(IxFormHarness);
+    nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
   }
 
   it('creates a new certificate when Type = Certificate Signing Request and form is submitted', async () => {
@@ -149,7 +145,7 @@ describe('CsrAddComponent', () => {
 
     await nextButton.click();
 
-    await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Save' }))).click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [
       {
@@ -204,7 +200,7 @@ describe('CsrAddComponent', () => {
 
     await nextButton.click();
 
-    await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Save' }))).click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'import',
@@ -249,13 +245,15 @@ describe('CsrAddComponent', () => {
   });
 
   it('updates form fields and sets constrains when Profile is emitted by CertificateIdentifierAndTypeComponent', async () => {
-    const optionsForm = spectator.query(CsrOptionsComponent)!;
-    const subjectForm = spectator.query(CsrSubjectComponent)!;
+    // tn-stepper only renders the active step's content, so inactive step
+    // components are resolved via the parent's viewChild signals rather than a DOM query.
+    const optionsForm = spectator.component.options()!;
+    const subjectForm = spectator.component.subject()!;
 
     jest.spyOn(optionsForm.form, 'patchValue');
     jest.spyOn(subjectForm.form, 'patchValue');
 
-    const constraintsForm = spectator.query(CsrConstraintsComponent)!;
+    const constraintsForm = spectator.component.constraints()!;
     jest.spyOn(constraintsForm, 'setFromProfile');
 
     await form.fillForm({

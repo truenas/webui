@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -32,7 +31,6 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
 describe('AddSubsystemComponent', () => {
   let spectator: Spectator<AddSubsystemComponent>;
   let loader: HarnessLoader;
-  let stepper: MatStepperHarness;
   const newSubsystem = { id: 7 } as NvmeOfSubsystem;
   const createComponent = createComponentFactory({
     component: AddSubsystemComponent,
@@ -61,20 +59,20 @@ describe('AddSubsystemComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    stepper = await loader.getHarness(MatStepperHarness);
   });
 
   it('creates a subsystem with ports, hosts, and namespaces', async () => {
-    const firstStep = (await stepper.getSteps({ selected: true }))[0];
-    const name = await firstStep.getHarness(IxInputHarness.with({ label: 'Subsystem Name' }));
+    // tn-stepper renders only the active step's content, so harnesses resolve
+    // straight from the document-root loader.
+    const name = await loader.getHarness(IxInputHarness.with({ label: 'Subsystem Name' }));
     await name.setValue('subsystem1');
     await spectator.fixture.whenStable();
     await spectator.fixture.whenRenderingDone();
 
-    const details = await firstStep.getHarness(DetailsTableHarness);
+    const details = await loader.getHarness(DetailsTableHarness);
     await details.setValues({
       NQN: 'my-nqn',
     });
@@ -93,10 +91,8 @@ describe('AddSubsystemComponent', () => {
     ] as NamespaceChanges[];
     (addNamespaces.namespacesControl as unknown as FormControl).setValue(namespaces);
 
-    const nextButton = await firstStep.getHarness(MatStepperNextHarness.with({ text: 'Next' }));
+    const nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
     await nextButton.click();
-
-    const secondStep = (await stepper.getSteps({ selected: true }))[0];
 
     // Ports, hosts
     const addPorts = spectator.query(AddSubsystemPortsComponent);
@@ -104,7 +100,7 @@ describe('AddSubsystemComponent', () => {
       { id: 100 } as NvmeOfPort,
     ]);
 
-    const allowAnyHost = await secondStep.getHarness(IxCheckboxHarness.with({ label: 'Allow any host to connect' }));
+    const allowAnyHost = await loader.getHarness(IxCheckboxHarness.with({ label: 'Allow any host to connect' }));
     await allowAnyHost.setValue(false);
 
     const addHosts = spectator.query(AddSubsystemHostsComponent);
@@ -112,7 +108,7 @@ describe('AddSubsystemComponent', () => {
       { id: 200 } as NvmeOfHost,
     ]);
 
-    const saveButton = await secondStep.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.create', [

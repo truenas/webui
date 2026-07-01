@@ -1,16 +1,13 @@
-import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDestroy, OnInit, output, ViewChild, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCard } from '@angular/material/card';
-import {
-  MatStepper, MatStep, MatStepLabel,
-} from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnDialog, TnStepComponent, TnStepperComponent,
+} from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -20,9 +17,6 @@ import {
   CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import {
-  UseIconsInStepperComponent,
-} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -54,15 +48,12 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
   styleUrls: ['./pool-manager-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
     FakeProgressBarComponent,
     ReactiveFormsModule,
-    MatStepper,
-    MatStep,
+    TnStepperComponent,
+    TnStepComponent,
     StepActivationDirective,
-    MatStepLabel,
-    TnIconComponent,
-    TnTooltipDirective,
     GeneralWizardStepComponent,
     EnclosureWizardStepComponent,
     DataWizardStepComponent,
@@ -74,14 +65,9 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     ReviewWizardStepComponent,
     TranslateModule,
     AsyncPipe,
-    UseIconsInStepperComponent,
   ],
   providers: [
     PoolManagerValidationService,
-    {
-      provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: { showError: true },
-    },
   ],
 })
 export class PoolManagerWizardComponent implements OnInit, OnDestroy {
@@ -106,7 +92,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   readonly stepChanged = output<PoolCreationWizardStep>();
 
-  private readonly stepper = viewChild.required('stepper', { read: MatStepper });
+  private readonly stepper = viewChild.required(TnStepperComponent);
 
   isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
@@ -213,13 +199,13 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   }
 
   goToLastStep(): void {
-    this.stepper().selectedIndex = this.stepper().steps.length - 1;
+    this.stepper().selectedIndex.set(this.stepper().steps().length - 1);
     this.cdr.markForCheck();
   }
 
   private listenForStartOver(): void {
     this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.stepper().selectedIndex = 0;
+      this.stepper().selectedIndex.set(0);
       this.activatedSteps = {};
     });
   }
@@ -255,7 +241,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     ).subscribe((result) => {
       this.hasEnclosureStep = result;
       if (result) {
-        setTimeout(() => this.stepper().selectedIndex = getPoolCreationWizardStepIndex[this.activeStep]);
+        setTimeout(() => this.stepper().selectedIndex.set(getPoolCreationWizardStepIndex[this.activeStep]));
       }
       this.cdr.markForCheck();
     });

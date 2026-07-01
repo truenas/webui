@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnBannerComponent } from '@truenas/ui-components';
+import {
+  TnBannerComponent, TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { Observable, forkJoin, of } from 'rxjs';
-import { catchError, debounceTime, map, shareReplay, tap } from 'rxjs/operators';
+import { catchError, debounceTime, map, shareReplay, startWith, tap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { VmDeviceType, VmDiskMode, vmDiskModeLabels } from 'app/enums/vm.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -23,7 +23,6 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AnnotatedZvolOption, buildAnnotatedZvolOptions,
@@ -53,10 +52,9 @@ const validImageExtensions = ['.qcow2', '.qed', '.raw', '.vdi', '.vhdx', '.vmdk'
     IxSelectComponent,
     IxInputComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
-    MatStepperNext,
+    TnButtonComponent,
+    TnStepperPreviousDirective,
+    TnStepperNextDirective,
     TranslateModule,
     TnBannerComponent,
   ],
@@ -85,6 +83,12 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
   }, {
     asyncValidators: [this.freeSpaceValidator.validate],
   });
+
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
 
   readonly hddTypeOptions$ = of(mapToOptions(vmDiskModeLabels, this.translate));
   readonly newOrExistingOptions$ = of([

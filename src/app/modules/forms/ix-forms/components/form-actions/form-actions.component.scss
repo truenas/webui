@@ -69,7 +69,7 @@
   margin-left: 0;
 }
 
-:host-context(mat-vertical-stepper) :host {
+:host-context(tn-stepper) :host {
   flex-wrap: wrap;
   justify-content: flex-start;
 
