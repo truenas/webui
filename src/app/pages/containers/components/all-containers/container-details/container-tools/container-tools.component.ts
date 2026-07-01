@@ -12,6 +12,7 @@ import {
   TnTooltipDirective,
 } from '@truenas/ui-components';
 import { ContainerStatus } from 'app/enums/container.enum';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
@@ -49,7 +50,7 @@ export class ContainerToolsComponent {
 
   protected readonly shellTooltip = computed(() => {
     if (!this.hasWebShellAccess()) {
-      return T('Your user permissions do not allow Web Shell access.');
+      return helptextGlobal.webShellAccessDenied;
     }
     return this.isContainerStopped() ? T('Container is not running') : '';
   });

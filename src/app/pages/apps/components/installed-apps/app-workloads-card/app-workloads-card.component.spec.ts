@@ -166,10 +166,14 @@ describe('AppContainersCardComponent', () => {
       ],
     });
 
-    it('locks the Shell button with a lock icon when the user lacks web_shell access', () => {
+    it('shows the Shell button disabled with a lock icon when the user lacks web_shell access', async () => {
       spectator = createDeniedComponent({ props: { app } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      expect(spectator.query('ix-missing-access-wrapper')).toExist();
+      const shellButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'lock' }));
+
+      expect(await shellButton.isDisabled()).toBe(true);
+      expect(await loader.getHarnessOrNull(TnIconButtonHarness.with({ name: 'console' }))).toBeNull();
     });
   });
 });

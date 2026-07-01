@@ -13,6 +13,7 @@ import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
 import FontFaceObserver from 'fontfaceobserver';
 import { filter, take, tap } from 'rxjs/operators';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -61,6 +62,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   protected readonly connectionId = signal<string>(undefined);
   protected readonly isReconnecting = signal(false);
   protected readonly accessDenied = signal(false);
+  protected readonly webShellAccessDenied = helptextGlobal.webShellAccessDenied;
   private autoReconnectEnabled = true;
   protected hasAttemptedAutoReconnect = false;
   terminalSettings = {

@@ -50,13 +50,13 @@
           @if (app().state === AppState.Running || app().state === AppState.Deploying || app().state === AppState.Crashed) {
             <div class="container-action">
               <tn-icon-button
-                *ixHasAccess="(canAccessShell$ | async) ?? false"
-                name="console"
                 library="mdi"
                 tooltipPosition="above"
+                [name]="canAccessShell() ? 'console' : 'lock'"
+                [disabled]="!canAccessShell()"
                 [testId]="[container.service_name, 'shell']"
                 [ariaLabel]="'Shell' | translate"
-                [tooltip]="'Shell' | translate"
+                [tooltip]="(canAccessShell() ? 'Shell' : webShellAccessDenied) | translate"
                 (onClick)="goTo(getShellLink(container))"
               ></tn-icon-button>
               <tn-icon-button

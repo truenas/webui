@@ -13,6 +13,7 @@ import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
@@ -336,7 +337,7 @@ describe('TerminalComponent access control', () => {
   let loader: HarnessLoader;
   let getOneTimeToken: jest.Mock;
 
-  const accessDeniedText = 'Your user permissions do not allow Web Shell access.';
+  const accessDeniedText = helptextGlobal.webShellAccessDenied;
 
   const getLockIcon = (): Promise<TnIconHarness | null> => loader.getHarnessOrNull(TnIconHarness.with({ name: 'lock' }));
 
