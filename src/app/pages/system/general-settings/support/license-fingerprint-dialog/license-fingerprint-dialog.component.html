@@ -7,10 +7,6 @@
       <span>{{ 'Loading thumbprint…' | translate }}</span>
     </div>
   } @else {
-    <p class="hint">
-      {{ 'This identifies your system to the licensing service. Share it with TrueNAS support to request or update a license.' | translate }}
-    </p>
-
     @if (fingerprintFields(); as fields) {
       <dl class="fingerprint-fields">
         @for (field of fields; track field.key) {
