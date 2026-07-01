@@ -55,6 +55,10 @@ describe('EmailFormComponent', () => {
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
 
+  // since there's only one button on this form, we can guarantee that this loader will grab the right thing
+  // AND avoid any flakiness on part of the label.
+  const getSendTestMailButton = (): Promise<TnButtonHarness> => loader.getHarness(TnButtonHarness);
+
   const createComponent = createComponentFactory({
     component: EmailFormComponent,
     imports: [
@@ -121,11 +125,9 @@ describe('EmailFormComponent', () => {
     });
 
     it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
-      await spectator.fixture.whenStable();
-      spectator.detectChanges();
       spectator.inject(MockApiService).mockCall('mail.local_administrator_email', null);
 
-      const button = await loader.getHarness(TnButtonHarness.with({ label: /Send Test Mail/ }));
+      const button = await getSendTestMailButton();
       await button.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.local_administrator_email');
@@ -201,14 +203,12 @@ describe('EmailFormComponent', () => {
     });
 
     it('sends test email with Gmail Oauth config when Gmail used and Send Test Mail is pressed', async () => {
-      await spectator.fixture.whenStable();
-      spectator.detectChanges();
       await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
 
-      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: /Send Test Mail/ }));
+      const sendTestEmailButton = await getSendTestMailButton();
       await sendTestEmailButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -301,14 +301,12 @@ describe('EmailFormComponent', () => {
     });
 
     it('sends test email with Outlook Oauth config when Outlook used and Send Test Mail is pressed', async () => {
-      await spectator.fixture.whenStable();
-      spectator.detectChanges();
       await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
       await logInButton.click();
 
-      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: /Send Test Mail/ }));
+      const sendTestEmailButton = await getSendTestMailButton();
       await sendTestEmailButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -383,9 +381,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('sends test email with SMTP settings when SMTP form is used and Send Test Mail is pressed', async () => {
-      await spectator.fixture.whenStable();
-      spectator.detectChanges();
-      const sendTestEmailButton = await loader.getHarness(TnButtonHarness.with({ label: /Send Test Mail/ }));
+      const sendTestEmailButton = await getSendTestMailButton();
       await sendTestEmailButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
