@@ -1,9 +1,9 @@
 import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnInputHarness } from '@truenas/ui-components';
 import {
   CsrImportComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-import/csr-import.component';
@@ -11,11 +11,24 @@ import {
 describe('CsrImportComponent', () => {
   let spectator: Spectator<CsrImportComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const csr = '-----BEGIN CERTIFICATE REQUEST-----\n'
     + 'ABCDEFGHAwIBAgIJAKZQZ2Z0Z0ZmMA0GCSqGSIb3DQEBCwUA0987654321\n'
     + '-----END CERTIFICATE REQUEST-----';
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  async function setInputs(values: Record<string, string>): Promise<void> {
+    for (const [name, value] of Object.entries(values)) {
+      if (value.trim() === '') {
+        (spectator.component.form.controls as Record<string, AbstractControl>)[name].setValue(value);
+      } else {
+        await (await getInput(name)).setValue(value);
+      }
+    }
+  }
 
   const createComponent = createComponentFactory({
     component: CsrImportComponent,
@@ -30,12 +43,11 @@ describe('CsrImportComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Signing Request': csr,
-      'Private Key': 'ABHDDJJKEY',
-      Passphrase: '123456',
-      'Confirm Passphrase': '123456',
+    await setInputs({
+      CSR: csr,
+      privatekey: 'ABHDDJJKEY',
+      passphrase: '123456',
+      passphrase2: '123456',
     });
   });
 
@@ -61,11 +73,11 @@ describe('CsrImportComponent', () => {
   });
 
   it('converts empty strings to null in getPayload()', async () => {
-    await form.fillForm({
-      'Signing Request': csr,
-      'Private Key': '',
-      Passphrase: '',
-      'Confirm Passphrase': '',
+    await setInputs({
+      CSR: csr,
+      privatekey: '',
+      passphrase: '',
+      passphrase2: '',
     });
 
     expect(spectator.component.getPayload()).toEqual({
@@ -76,11 +88,11 @@ describe('CsrImportComponent', () => {
   });
 
   it('returns summary without passphrase when passphrase is empty', async () => {
-    await form.fillForm({
-      'Signing Request': csr,
-      'Private Key': 'ABHDDJJKEY',
-      Passphrase: '',
-      'Confirm Passphrase': '',
+    await setInputs({
+      CSR: csr,
+      privatekey: 'ABHDDJJKEY',
+      passphrase: '',
+      passphrase2: '',
     });
 
     expect(spectator.component.getSummary()).toEqual([
@@ -92,11 +104,11 @@ describe('CsrImportComponent', () => {
   });
 
   it('handles whitespace-only strings by converting to null', async () => {
-    await form.fillForm({
-      'Signing Request': csr,
-      'Private Key': '   ',
-      Passphrase: ' \t ',
-      'Confirm Passphrase': ' \t ',
+    await setInputs({
+      CSR: csr,
+      privatekey: '   ',
+      passphrase: ' \t ',
+      passphrase2: ' \t ',
     });
 
     const payload = spectator.component.getPayload();
@@ -108,11 +120,11 @@ describe('CsrImportComponent', () => {
     const privateKey = '-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----';
     const passphrase = 'my-secure-passphrase';
 
-    await form.fillForm({
-      'Signing Request': csr,
-      'Private Key': privateKey,
-      Passphrase: passphrase,
-      'Confirm Passphrase': passphrase,
+    await setInputs({
+      CSR: csr,
+      privatekey: privateKey,
+      passphrase,
+      passphrase2: passphrase,
     });
 
     expect(spectator.component.getPayload()).toEqual({

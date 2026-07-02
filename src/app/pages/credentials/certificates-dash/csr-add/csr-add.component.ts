@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import {
-  MatStepper, MatStep, MatStepLabel, MatStepperPrevious, MatStepperNext,
+  MatStepper, MatStep, MatStepLabel,
 } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCardComponent } from '@truenas/ui-components';
 import { merge } from 'lodash-es';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -21,7 +20,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CsrConstraintsComponent,
@@ -47,8 +45,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     MatStepper,
     MatStep,
     MatStepLabel,
@@ -59,11 +56,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     CsrConstraintsComponent,
     SummaryComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
+    TnButtonComponent,
     RequiresRolesDirective,
-    MatStepperNext,
     TranslateModule,
     UseIconsInStepperComponent,
   ],
@@ -89,7 +83,7 @@ export class CsrAddComponent {
   protected readonly requiredRoles = [Role.CertificateWrite];
 
   protected isLoading = signal(false);
-  summary: SummarySection[];
+  protected summary: SummarySection[];
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
