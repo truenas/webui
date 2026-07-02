@@ -463,7 +463,8 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "Localization"
+      "Localization",
+      "Localization Settings"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -481,20 +482,17 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "Localization",
-      "Localization Settings"
+      "Localization"
     ],
     "synonyms": [],
-    "requiredRoles": [
-      "SYSTEM_GENERAL_WRITE"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
     ],
     "routerLink": null,
-    "anchor": "localization-settings",
+    "anchor": "localization-card",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -540,7 +538,8 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "GUI"
+      "GUI",
+      "GUI Settings"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -558,20 +557,17 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "GUI",
-      "GUI Settings"
+      "GUI"
     ],
     "synonyms": [],
-    "requiredRoles": [
-      "SYSTEM_GENERAL_WRITE"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
     ],
     "routerLink": null,
-    "anchor": "gui-settings",
+    "anchor": "gui-card",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -759,24 +755,6 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "Email"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "email-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
       "Email",
       "Configure Email"
     ],
@@ -792,7 +770,25 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "email-settings",
+    "anchor": "email-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General Settings",
+      "Email"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "email-card",
     "triggerAnchor": null,
     "section": "ui"
   },

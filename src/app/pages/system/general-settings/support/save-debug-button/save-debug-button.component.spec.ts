@@ -1,8 +1,8 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -57,7 +57,7 @@ describe('SaveDebugButtonComponent', () => {
 
   it('saves debug with confirmation when Save Debug is pressed', async () => {
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Debug' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save Debug' }));
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();

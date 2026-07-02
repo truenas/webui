@@ -8,15 +8,17 @@ export const localizationCardElements = {
     localization: {
       anchor: 'localization-card',
     },
-    settings: {
-      anchor: 'localization-settings',
-      hierarchy: [T('Localization Settings')],
-    },
     consoleKeyboardMap: {
       hierarchy: [T('Console Keyboard Map')],
     },
     timezone: {
       hierarchy: [T('Timezone')],
+    },
+  },
+  manualRenderElements: {
+    settings: {
+      anchor: 'localization-card',
+      hierarchy: [T('Localization Settings')],
     },
   },
 } satisfies UiSearchableElement;
