@@ -30,8 +30,7 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import {
   OtherOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/other-options-section/other-options-section.component';
-import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsEnterprise, selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('OtherOptionsSectionComponent', () => {
   let spectator: Spectator<OtherOptionsSectionComponent>;
@@ -199,19 +198,18 @@ describe('OtherOptionsSectionComponent', () => {
         mockCall('pool.dataset.recordsize_choices', ['1K', '64K']),
         mockCall('pool.dataset.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
       ]),
-      mockProvider(SystemGeneralService, {
-        getProductType: jest.fn(() => ProductType.CommunityEdition),
-      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       provideMockStore({
-        selectors: [
-          {
-            selector: selectSystemInfo,
-            value: {} as SystemInfo,
+        initialState: {
+          systemInfo: {
+            productType: ProductType.CommunityEdition,
+            systemInfo: {
+              license: { features: [] },
+            } as SystemInfo,
           },
-        ],
+        },
       }),
     ],
   });
@@ -414,25 +412,31 @@ describe('OtherOptionsSectionComponent', () => {
     });
 
     it('does not show deduplication field on Enterprise systems that do not have a dedup license', async () => {
-      const systemGeneralService = spectator.inject(SystemGeneralService);
-      jest.spyOn(systemGeneralService, 'getProductType').mockReturnValue(ProductType.Enterprise);
       const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectIsEnterprise, true);
       store$.overrideSelector(selectSystemInfo, {
         license: {
           features: [],
         },
-      });
-      spectator.component.ngOnInit();
+      } as SystemInfo);
+      store$.refreshState();
+      spectator.detectChanges();
+
       expect(await form.getLabels()).not.toContain('ZFS Deduplication');
 
       store$.overrideSelector(selectSystemInfo, {
         license: {
           features: [LicenseFeature.Dedup],
         },
-      });
-      spectator.component.ngOnInit();
+      } as SystemInfo);
+      store$.refreshState();
+      spectator.detectChanges();
 
       expect(await form.getLabels()).toContain('ZFS Deduplication');
+
+      // overrideSelector mutates the module-singleton selectors, so reset them
+      // to avoid leaking the enterprise/license state into other tests.
+      store$.resetSelectors();
     });
   });
 

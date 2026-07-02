@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, Observable, of, take,
@@ -23,9 +23,7 @@ import {
   datasetSyncLabels,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting, deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -48,9 +46,7 @@ import {
 } from 'app/pages/datasets/components/dataset-form/utils/special-small-block-size-options.constant';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { getUserProperty } from 'app/pages/datasets/utils/dataset.utils';
-import { SystemGeneralService } from 'app/services/system-general.service';
-import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { LicenseService } from 'app/services/license.service';
 
 @UntilDestroy()
 @Component({
@@ -70,9 +66,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private store$ = inject<Store<AppState>>(Store);
+  private licenseService = inject(LicenseService);
   private cdr = inject(ChangeDetectorRef);
-  private systemGeneralService = inject(SystemGeneralService);
   private dialogService = inject(DialogService);
   private formatter = inject(IxFormatterService);
   private api = inject(ApiService);
@@ -86,7 +81,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   readonly advancedModeChange = output();
   readonly formValidityChange = output<boolean>();
 
-  hasDeduplication = false;
+  protected readonly hasDeduplication = toSignal(this.licenseService.hasDedup$, { initialValue: false });
   hasRecordsizeWarning = false;
   wasDedupChecksumWarningShown = false;
   minimumRecommendedRecordsize = '128K' as DatasetRecordSize;
@@ -183,8 +178,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.checkIfDedupIsSupported();
-
     this.form.controls.acltype.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateAclMode();
     });
@@ -212,27 +205,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;
-  }
-
-  private checkIfDedupIsSupported(): void {
-    this.hasDeduplication = false;
-    this.cdr.markForCheck();
-
-    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
-      this.hasDeduplication = true;
-      this.cdr.markForCheck();
-      return;
-    }
-
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
-      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-      if (!systemInfo.license || !systemInfo.license.features.includes(LicenseFeature.Dedup)) {
-        return;
-      }
-
-      this.hasDeduplication = true;
-      this.cdr.markForCheck();
-    });
   }
 
   private setFormValues(): void {

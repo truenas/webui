@@ -60,6 +60,19 @@ export class LicenseService {
     }),
   );
 
+  hasDedup$ = combineLatest([
+    this.store$.select(selectSystemInfo),
+    this.store$.select(selectIsEnterprise),
+  ]).pipe(
+    map(([systemInfo, isEnterprise]) => {
+      if (!isEnterprise) {
+        return true;
+      }
+
+      return Boolean(systemInfo?.license?.features?.includes(LicenseFeature.Dedup));
+    }),
+  );
+
   readonly hasKmip$ = this.store$.select(selectIsEnterprise);
 
   readonly shouldShowContainers$ = combineLatest([
