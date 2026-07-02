@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import {
-  FormBuilder, FormControl, FormGroup, ReactiveFormsModule,
+  FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -1195,6 +1195,38 @@ describe('IxFormComponent', () => {
       const ixForm = editSpectator.component.ixForm();
       expect(ixForm.isEdit()).toBe(false);
       expect(ixForm.resolvedTitle()).toBe('Add X');
+    });
+  });
+
+  describe('canSubmit (host-owned Save)', () => {
+    it('stays submittable while async validators are pending, not only when VALID', () => {
+      spectator = createComponent();
+      const form = spectator.component.form;
+
+      // An edit form runs async validators (e.g. name/path uniqueness) against unchanged,
+      // already-valid data on open; hold a control PENDING as those in-flight checks do
+      // before they settle.
+      form.controls.name.setAsyncValidators(() => NEVER);
+      form.controls.name.updateValueAndValidity();
+      spectator.detectChanges();
+
+      expect(form.status).toBe('PENDING');
+      // Regression: gating on `formStatus === 'VALID'` disabled the `<tn-side-panel>` footer
+      // Save through this window ("Save disabled until I change something" on WebShare Edit).
+      expect(spectator.component.ixForm().canSubmit()).toBe(true);
+    });
+
+    it('is not submittable while INVALID', () => {
+      spectator = createComponent();
+      const form = spectator.component.form;
+
+      form.controls.name.setValidators(Validators.required);
+      form.controls.name.setValue('');
+      form.controls.name.updateValueAndValidity();
+      spectator.detectChanges();
+
+      expect(form.status).toBe('INVALID');
+      expect(spectator.component.ixForm().canSubmit()).toBe(false);
     });
   });
 });

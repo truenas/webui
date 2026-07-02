@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject, output } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ServicesService } from 'app/services/services.service';
@@ -28,7 +28,8 @@ export class ServiceActionsCellComponent {
   private urlOptions = inject(UrlOptionsService);
   private router = inject(Router);
   private servicesService = inject(ServicesService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
 
   readonly service = input.required<Service>();
 
@@ -62,10 +63,14 @@ export class ServiceActionsCellComponent {
   configureService(): void {
     switch (this.service().service) {
       case ServiceName.NvmeOf:
-        this.slideIn.open(NvmeOfConfigurationComponent);
+        this.formPanel.open(NvmeOfConfigurationComponent, {
+          title: this.translate.instant('NVMe-oF Global Configuration'),
+        });
         break;
       case ServiceName.Iscsi:
-        this.slideIn.open(GlobalTargetConfigurationComponent);
+        this.formPanel.open(GlobalTargetConfigurationComponent, {
+          title: this.translate.instant('iSCSI Global Configuration'),
+        });
         break;
       default:
         // The service config forms are hosted in the page-level side panel.

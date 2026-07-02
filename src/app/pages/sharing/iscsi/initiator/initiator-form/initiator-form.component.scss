@@ -8,6 +8,12 @@
   margin-top: 15px;
 }
 
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
 .header-container {
   align-items: center;
   display: flex;
@@ -15,7 +21,7 @@
   justify-content: space-between;
   padding-bottom: 10px;
 
-  ix-checkbox {
+  tn-form-field:first-child {
     min-width: 60%;
 
     @media(max-width: $breakpoint-sm) {
@@ -33,7 +39,7 @@
       width: 100%;
     }
 
-    ix-input {
+    tn-form-field {
       margin: 0;
       padding: 0;
       width: 100%;

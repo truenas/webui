@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, inject, OnInit, DestroyRef,
+  ChangeDetectionStrategy, Component, computed, inject, OnInit, DestroyRef, Type,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -45,7 +45,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TableActionsCellComponent,
@@ -97,8 +97,12 @@ export class WebShareCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
   protected readonly cardMenuPath = ['sharing', 'webshare'];
 
+  // WebShareSharesFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type, mirroring
+  // how FormSidePanelService.openForm casts the renderer.
+  private readonly webShareForm = WebShareSharesFormComponent as unknown as Type<SidePanelForm>;
+
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private router = inject(Router);
   private translate = inject(TranslateService);
@@ -258,13 +262,16 @@ export class WebShareCardComponent implements OnInit {
   }
 
   protected doEdit(row: WebShareTableRow): void {
-    this.slideIn.open(WebShareSharesFormComponent, {
-      data: {
-        id: row.id,
-        isNew: false,
-        name: row.name,
-        path: row.path,
-        isHomeBase: row.isHomeBase,
+    this.formPanel.open(this.webShareForm, {
+      title: this.translate.instant(this.helptext.webshare_form_title_edit),
+      inputs: {
+        webShareData: {
+          id: row.id,
+          isNew: false,
+          name: row.name,
+          path: row.path,
+          isHomeBase: row.isHomeBase,
+        },
       },
     }).onSuccess(() => this.refreshConfig$.next(), this.destroyRef);
   }

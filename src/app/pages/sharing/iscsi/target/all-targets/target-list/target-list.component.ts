@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, input, OnInit, output, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, input, OnInit, output, inject, signal, Type } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -24,7 +24,8 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { targetListElements } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.elements';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
@@ -57,7 +58,7 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
 })
 export class TargetListComponent implements OnInit {
   emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
@@ -144,12 +145,18 @@ export class TargetListComponent implements OnInit {
     });
   }
 
+  // TargetFormComponent structurally provides the side-panel host surface (closed/canSubmit/
+  // submit/hasUnsavedChanges/requiredRoles); cast past the nominal base type.
+  private readonly targetForm = TargetFormComponent as unknown as Type<SidePanelForm>;
+
   doAdd(): void {
-    this.slideIn.open(TargetFormComponent, { wide: true })
-      .onSuccess((response) => {
-        this.dataProvider().expandedRow = response;
-        this.dataProvider().load();
-      }, this.destroyRef);
+    // The created target's expand + reload is driven by `iscsiService.refreshData(...)` (emitted
+    // from the form's onSuccess) which `all-targets` listens for and reloads the shared
+    // dataProvider — so no explicit reload here (it would double-load).
+    this.formPanel.open(this.targetForm, {
+      title: this.translate.instant('Add ISCSI Target'),
+      wide: true,
+    });
   }
 
   onListFiltered(query: string): void {

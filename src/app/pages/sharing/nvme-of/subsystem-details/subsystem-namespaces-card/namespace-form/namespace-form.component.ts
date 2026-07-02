@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -26,7 +26,6 @@ export interface NamespaceFormParams {
   ],
 })
 export class NamespaceFormComponent {
-  slideInRef = inject<SlideInRef<NamespaceFormParams, NamespaceChanges>>(SlideInRef);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
@@ -34,18 +33,26 @@ export class NamespaceFormComponent {
   private destroyRef = inject(DestroyRef);
   private baseForm = viewChild(BaseNamespaceFormComponent);
 
-  protected existingNamespace = signal<NvmeOfNamespace>(undefined);
+  /** Form data supplied by the `tn-side-panel` host. */
+  readonly namespaceData = input<NamespaceFormParams>();
+
+  /** Emitted to a `tn-side-panel` host with the saved namespace on success. */
+  readonly closed = output<NamespaceChanges>();
+
+  protected existingNamespace = computed<NvmeOfNamespace>(() => this.namespaceData()?.namespace);
   protected error = signal<unknown>(null);
 
-  constructor() {
-    this.existingNamespace.set(this.slideInRef.getData().namespace);
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.baseForm()?.isFormDirty || false);
-    });
+  private get data(): NamespaceFormParams | undefined {
+    return this.namespaceData();
   }
 
   protected get subsystemId(): number {
-    return this.slideInRef.getData().subsystemId;
+    return this.data?.subsystemId;
+  }
+
+  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.baseForm()?.isFormDirty || false;
   }
 
   protected onSubmit(newNamespace: NamespaceChanges): void {
@@ -70,9 +77,7 @@ export class NamespaceFormComponent {
 
           this.snackbar.success(message);
 
-          this.slideInRef.close({
-            response: newNamespace,
-          });
+          this.closed.emit(newNamespace);
         },
         error: (error: unknown) => {
           this.error.set(error);

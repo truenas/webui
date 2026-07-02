@@ -35,6 +35,9 @@ import { ServiceWebshareComponent } from 'app/pages/services/components/service-
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import {
+  WebShareSharesFormComponent,
+} from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebShareCardComponent } from './webshare-card.component';
@@ -185,6 +188,32 @@ describe('WebShareCardComponent', () => {
     await addButton.click();
 
     expect(slideIn.open).toHaveBeenCalled();
+  });
+
+  it('opens the WebShare edit form in a side panel when a row is edited', () => {
+    // The row Edit action is served by ix-table-actions-cell (not a tn-* component, so no
+    // tn-* harness applies) — drive it through the rendered button, matching the Delete test.
+    const editButtons = spectator.queryAll('[aria-label*="Edit"]');
+    expect(editButtons.length).toBeGreaterThan(0);
+
+    editButtons[0].dispatchEvent(new Event('click'));
+    spectator.detectChanges();
+
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      WebShareSharesFormComponent,
+      {
+        title: 'Edit WebShare',
+        inputs: {
+          webShareData: {
+            id: 1,
+            isNew: false,
+            name: 'documents',
+            path: '/mnt/tank/documents',
+            isHomeBase: false,
+          },
+        },
+      },
+    );
   });
 
   it('toggles the WebShare service when the projected header toggle is changed', async () => {

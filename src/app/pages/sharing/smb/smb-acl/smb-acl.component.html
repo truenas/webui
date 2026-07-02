@@ -1,102 +1,92 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="true"
+  [title]="'Share ACL' | translate"
   [requiredRoles]="requiredRoles"
-  [title]="'Share ACL for {share}' | translate: { share: shareName }"
-  [loading]="isLoading()"
-></ix-modal-header>
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section [heading]="'ACL Entries' | translate">
+    <p>{{ helptext.shareAclDescription | translate }}</p>
 
-<mat-card>
-  <p>{{ helptext.shareAclDescription | translate }}</p>
-
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="'ACL Entries' | translate">
-        <ix-list
-          formArrayName="entries"
-          [formArray]="form.get('entries')"
-          [empty]="form.controls.entries.length === 0 && !isLoading()"
-          [label]="'Add entry' | translate"
-          (add)="addAce()"
+    <ix-list
+      formArrayName="entries"
+      [formArray]="form.get('entries')"
+      [empty]="form.controls.entries.length === 0 && !isLoading()"
+      [label]="'Add entry' | translate"
+      (add)="addAce()"
+    >
+      @for (entry of form.controls.entries.controls; track entry; let i = $index) {
+        <ix-list-item
+          [formGroupName]="i"
+          [label]="'ACL Entries' | translate"
+          (delete)="removeAce(i)"
         >
-          @for (entry of form.controls.entries.controls; track entry; let i = $index) {
-            <ix-list-item
-              [formGroupName]="i"
-              [label]="'ACL Entries' | translate"
-              (delete)="removeAce(i)"
-            >
-              @if (entry.controls.ae_who_sid.value) {
-                <div class="entry-row">
-                  {{ 'SID' | translate }}:
-                  {{ entry.controls.ae_who_sid.value }}
-                </div>
-              }
-
-              <div class="entry-row">
-                <ix-select
-                  formControlName="ae_who"
-                  [label]="'Who' | translate"
-                  [options]="tags$"
-                  [required]="true"
-                ></ix-select>
-
-                @if (entry.controls.ae_who.value === nfsAclTag.User) {
-                  <ix-combobox
-                    formControlName="user"
-                    [label]="'User' | translate"
-                    [provider]="userProvider"
-                    [allowCustomValue]="true"
-                    [required]="true"
-                  ></ix-combobox>
-                }
-
-                @if (groupProvider && entry.controls.ae_who.value === nfsAclTag.UserGroup) {
-                  <ix-combobox
-                    formControlName="group"
-                    [label]="'Group' | translate"
-                    [provider]="groupProvider"
-                    [allowCustomValue]="true"
-                    [required]="true"
-                  ></ix-combobox>
-                }
-              </div>
-
-              <div class="entry-row">
-                <ix-errors [control]="entry"></ix-errors>
-              </div>
-
-              <div class="entry-row">
-                <ix-select
-                  formControlName="ae_perm"
-                  [label]="'Permission' | translate"
-                  [options]="permissions$"
-                  [required]="true"
-                  [tooltip]="helptext.aePermTooltip | translate"
-                ></ix-select>
-
-                <ix-select
-                  formControlName="ae_type"
-                  [label]="'Type' | translate"
-                  [options]="types$"
-                  [required]="true"
-                  [tooltip]="helptext.aeTypeTooltip | translate"
-                ></ix-select>
-              </div>
-            </ix-list-item>
+          @if (entry.controls.ae_who_sid.value) {
+            <div class="entry-row">
+              {{ 'SID' | translate }}:
+              {{ entry.controls.ae_who_sid.value }}
+            </div>
           }
-        </ix-list>
-      </ix-fieldset>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+          <div class="entry-row">
+            <tn-form-field [label]="'Who' | translate" [required]="true">
+              <tn-select
+                formControlName="ae_who"
+                [options]="(tags$ | async) ?? []"
+              ></tn-select>
+            </tn-form-field>
+
+            @if (entry.controls.ae_who.value === nfsAclTag.User) {
+              <ix-combobox
+                formControlName="user"
+                [label]="'User' | translate"
+                [provider]="userProvider"
+                [allowCustomValue]="true"
+                [required]="true"
+              ></ix-combobox>
+            }
+
+            @if (groupProvider && entry.controls.ae_who.value === nfsAclTag.UserGroup) {
+              <ix-combobox
+                formControlName="group"
+                [label]="'Group' | translate"
+                [provider]="groupProvider"
+                [allowCustomValue]="true"
+                [required]="true"
+              ></ix-combobox>
+            }
+          </div>
+
+          <div class="entry-row">
+            <ix-errors [control]="entry"></ix-errors>
+          </div>
+
+          <div class="entry-row">
+            <tn-form-field
+              [label]="'Permission' | translate"
+              [required]="true"
+              [tooltip]="helptext.aePermTooltip | translate"
+            >
+              <tn-select
+                formControlName="ae_perm"
+                [options]="(permissions$ | async) ?? []"
+              ></tn-select>
+            </tn-form-field>
+
+            <tn-form-field
+              [label]="'Type' | translate"
+              [required]="true"
+              [tooltip]="helptext.aeTypeTooltip | translate"
+            >
+              <tn-select
+                formControlName="ae_type"
+                [options]="(types$ | async) ?? []"
+              ></tn-select>
+            </tn-form-field>
+          </div>
+        </ix-list-item>
+      }
+    </ix-list>
+  </tn-form-section>
+</ix-form>

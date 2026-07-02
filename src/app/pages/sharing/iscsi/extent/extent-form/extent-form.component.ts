@@ -1,19 +1,25 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, inject, input, output, viewChild, DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  InputType,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnIconComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import { sortBy, startsWith } from 'lodash-es';
 import {
   BehaviorSubject, combineLatest, Observable, of,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -21,20 +27,15 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiExtent, IscsiExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -47,23 +48,20 @@ import { IscsiService } from 'app/services/iscsi.service';
   styleUrls: ['./extent-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
     IxInputComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
     IxExplorerComponent,
     TnIconComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
     TranslateOptionsPipe,
     ExplorerCreateDatasetComponent,
+    AsyncPipe,
   ],
 })
 export class ExtentFormComponent implements OnInit {
@@ -71,11 +69,20 @@ export class ExtentFormComponent implements OnInit {
   protected formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
-  private errorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
   private filesystemService = inject(FilesystemService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<IscsiExtent | undefined, boolean>>(SlideInRef);
+
+  /** Edit data supplied by the `<tn-side-panel>` host. */
+  readonly extentData = input<IscsiExtent | undefined>(undefined);
+
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
+  readonly closed = output<boolean>();
+
+  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  protected readonly InputType = InputType;
 
   get isNew(): boolean {
     return !this.editingExtent;
@@ -92,12 +99,6 @@ export class ExtentFormComponent implements OnInit {
   get isSnapshot(): boolean {
     const diskValue = this.form.controls.disk.value;
     return this.isDevice && !!diskValue && diskValue.includes('@');
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Extent')
-      : this.translate.instant('Edit Extent');
   }
 
   form = this.formBuilder.group({
@@ -119,7 +120,6 @@ export class ExtentFormComponent implements OnInit {
     ro: [false],
   });
 
-  protected isLoading = signal(false);
   protected editingExtent: IscsiExtent | undefined;
 
   private extentDiskBeingEdited$ = new BehaviorSubject<Option | undefined>(undefined);
@@ -151,14 +151,25 @@ export class ExtentFormComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingExtent = this.slideInRef.getData();
+  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
+  }
+
+  /** Whether the form may be submitted right now. Delegates to the inner `<ix-form>`. */
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
+  submit(): void {
+    this.ixForm()?.submit();
   }
 
   ngOnInit(): void {
+    // Edit data arrives via the `extentData` input from the side-panel host.
+    this.editingExtent = this.extentData();
+
     this.form.controls.type.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((value: IscsiExtentType) => {
@@ -201,7 +212,7 @@ export class ExtentFormComponent implements OnInit {
     }
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     // Use getRawValue to include disabled fields like 'ro' when a snapshot is selected
     const values = {
       ...this.form.getRawValue(),
@@ -222,28 +233,17 @@ export class ExtentFormComponent implements OnInit {
       values.product_id = null;
     }
 
-    this.isLoading.set(true);
-    let request$: Observable<unknown>;
-    if (this.editingExtent) {
-      request$ = this.api.call('iscsi.extent.update', [
-        this.editingExtent.id,
-        values,
-      ]);
-    } else {
-      request$ = this.api.call('iscsi.extent.create', [values]);
-    }
+    const request$: Observable<unknown> = this.editingExtent
+      ? this.api.call('iscsi.extent.update', [this.editingExtent.id, values])
+      : this.api.call('iscsi.extent.create', [values]);
 
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.slideInRef.close({ response: true });
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$,
+      successMessage: this.isNew
+        ? this.translate.instant('Extent added')
+        : this.translate.instant('Extent updated'),
+    };
+  };
 
   private setExtentDisk(extent: IscsiExtent): void {
     if (!startsWith(extent.path, 'zvol')) {

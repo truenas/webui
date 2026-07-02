@@ -191,9 +191,17 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    */
   private readonly formStatus = signal<FormControlStatus>('INVALID');
 
-  /** True while the form may be submitted; drives a host-owned Save button. */
+  /**
+   * True while the form may be submitted; drives a host-owned Save button (the `<tn-side-panel>`
+   * footer). Mirrors {@link isSaveDisabled} — which gates the in-body SlideIn Save — so both hosts
+   * enable Save under the same condition. Blocks only on `INVALID`, not `PENDING`: an edit form
+   * runs its async validators (e.g. name/path uniqueness) against unchanged, already-valid data on
+   * open, and gating on `=== 'VALID'` would leave Save disabled through that pending window (the
+   * "Save disabled until I change something" on WebShare Edit). `form.invalid` is false while
+   * PENDING, so the SlideIn Save stayed enabled there — match it.
+   */
   readonly canSubmit = computed(
-    () => this.formStatus() === 'VALID' && !this.isLoading() && !this.extraDisabled(),
+    () => this.formStatus() !== 'INVALID' && !this.isLoading() && !this.extraDisabled(),
   );
 
   private readonly internalSnapshot = signal<Partial<T> | null>(null);

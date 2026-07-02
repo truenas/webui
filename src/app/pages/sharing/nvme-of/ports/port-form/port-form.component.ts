@@ -1,30 +1,26 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, OnInit, computed, inject, input, output, signal, viewChild,
+} from '@angular/core';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, merge, of, switchMap,
-} from 'rxjs';
+  InputType,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import { merge, of, switchMap } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NvmeOfTransportType, nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
@@ -35,18 +31,14 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    IxFieldsetComponent,
-    MatCard,
-    MatCardContent,
-    ModalHeaderComponent,
     TranslateModule,
     ReactiveFormsModule,
-    IxSelectComponent,
-    IxInputComponent,
-    FormActionsComponent,
-    MatButton,
-    TestDirective,
-    RequiresRolesDirective,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    AsyncPipe,
   ],
 })
 export class PortFormComponent implements OnInit {
@@ -54,11 +46,20 @@ export class PortFormComponent implements OnInit {
   private nvmeOfService = inject(NvmeOfService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private formErrorHandler = inject(FormErrorHandlerService);
-  slideInRef = inject<SlideInRef<NvmeOfPort | undefined, NvmeOfPort | null>>(SlideInRef);
-  private destroyRef = inject(DestroyRef);
 
-  protected isLoading = signal(false);
+  /** Edit data supplied by a `<tn-side-panel>` host. */
+  readonly port = input<NvmeOfPort | undefined>(undefined);
+
+  /** Created/updated record emitted on a successful submit when hosted in a `<tn-side-panel>`. */
+  readonly closed = output<NvmeOfPort | null>();
+
+  // Captured on a successful submit so `closed` can hand the created/updated record
+  // back to the side-panel host (and through it to the add-port picker).
+  private createdRecord: NvmeOfPort | null = null;
+
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  protected readonly InputType = InputType;
 
   private existingPort = signal<NvmeOfPort | null>(null);
 
@@ -74,13 +75,7 @@ export class PortFormComponent implements OnInit {
 
   protected readonly helptext = helptextNvmeOf;
 
-  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
-
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected form = this.formBuilder.group({
     addr_trtype: [NvmeOfTransportType.Tcp],
@@ -112,8 +107,24 @@ export class PortFormComponent implements OnInit {
     return (this.isFibreChannel ? '' : '4420') as TranslatedString;
   }
 
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
+  }
+
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  protected onFormClosed(): void {
+    this.closed.emit(this.createdRecord);
+  }
+
   ngOnInit(): void {
-    const existingPort = this.slideInRef.getData();
+    const existingPort = this.port();
 
     if (existingPort) {
       this.existingPort.set(existingPort);
@@ -122,9 +133,7 @@ export class PortFormComponent implements OnInit {
     }
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const payload = this.form.getRawValue();
 
     // Use default port 4420 if no port was specified (only for TCP/RDMA, not for Fibre Channel)
@@ -136,18 +145,14 @@ export class PortFormComponent implements OnInit {
       ? this.api.call('nvmet.port.create', [payload])
       : this.api.call('nvmet.port.update', [this.existingPort().id, payload]);
 
-    request$.pipe(
-      finalize(() => this.isLoading.set(false)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (port) => {
-        this.slideInRef.close({
-          response: port,
-        });
+    return {
+      request$,
+      successMessage: this.isNew()
+        ? this.translate.instant('Port added')
+        : this.translate.instant('Port updated'),
+      onSuccess: (record) => {
+        this.createdRecord = record as NvmeOfPort;
       },
-      error: (error: unknown) => {
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    };
+  };
 }

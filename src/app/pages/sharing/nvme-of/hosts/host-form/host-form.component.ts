@@ -1,15 +1,18 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, output, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, ValidatorFn, AbstractControl, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { omit } from 'lodash-es';
-import { finalize, of, switchMap } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { finalize, switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
@@ -17,16 +20,9 @@ import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -37,36 +33,40 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    IxFieldsetComponent,
-    MatCard,
-    MatCardContent,
-    ModalHeaderComponent,
     TranslateModule,
-    IxInputComponent,
-    FormActionsComponent,
-    MatButton,
-    TestDirective,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    IxTextareaComponent,
-    IxSelectComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnButtonComponent,
+    TnSelectComponent,
     EditableComponent,
     DetailsTableComponent,
     DetailsItemComponent,
     TnTooltipDirective,
-    RequiresRolesDirective,
+    AsyncPipe,
   ],
 })
 export class HostFormComponent implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
-  slideInRef = inject<SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected isLoading = signal(false);
+  /** Edit data supplied by a `<tn-side-panel>` host. */
+  readonly host = input<NvmeOfHost | undefined>(undefined);
+
+  /** Created/updated record emitted on a successful submit when hosted in a `<tn-side-panel>`. */
+  readonly closed = output<NvmeOfHost | null>();
+
+  // Captured on a successful submit so `closed` can hand the created/updated record
+  // back to the side-panel host (and through it to the add-host picker).
+  private createdRecord: NvmeOfHost | null = null;
+
+  private readonly ixForm = viewChild(IxFormComponent);
 
   private existingHost = signal<NvmeOfHost | null>(null);
 
@@ -140,16 +140,26 @@ export class HostFormComponent implements OnInit {
   protected isGeneratingHostKey = signal(false);
   protected isGeneratingTrueNasKey = signal(false);
 
-  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+  readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
+  }
+
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  protected onFormClosed(): void {
+    this.closed.emit(this.createdRecord);
   }
 
   ngOnInit(): void {
-    const existingHost = this.slideInRef.getData();
+    const existingHost = this.host();
 
     if (existingHost) {
       this.existingHost.set(existingHost);
@@ -200,9 +210,7 @@ export class HostFormComponent implements OnInit {
       });
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const value = this.form.getRawValue();
     const payload = {
       ...omit(value, 'requireHostAuthentication', 'addDhKeyExchange'),
@@ -214,21 +222,16 @@ export class HostFormComponent implements OnInit {
       ? this.api.call('nvmet.host.create', [payload])
       : this.api.call('nvmet.host.update', [this.existingHost().id, payload]);
 
-    request$.pipe(
-      finalize(() => this.isLoading.set(false)),
-      this.errorHandler.withErrorHandler(),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (savedHost) => {
-        this.slideInRef.close({
-          response: savedHost,
-        });
+    return {
+      request$,
+      successMessage: this.isNew()
+        ? this.translate.instant('Host added')
+        : this.translate.instant('Host updated'),
+      onSuccess: (record) => {
+        this.createdRecord = record as NvmeOfHost;
       },
-      error: (error: unknown) => {
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    };
+  };
 
   protected readonly helptext = helptextNvmeOf;
 }
