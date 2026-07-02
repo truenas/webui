@@ -32,4 +32,9 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  // Muted em-dash placeholder shown when a text cell (e.g. Description) has no value.
+  ::ng-deep .empty-value {
+    color: var(--fg2);
+  }
 }

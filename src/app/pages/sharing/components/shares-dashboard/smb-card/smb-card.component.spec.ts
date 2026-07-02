@@ -322,4 +322,36 @@ describe('SmbCardComponent', () => {
       expect(await menu.isItemDisabled({ label: 'Edit Filesystem ACL' })).toBe(true);
     });
   });
+
+  describe('with a share that has no description', () => {
+    const createNoCommentComponent = createComponentFactory({
+      component: SmbCardComponent,
+      imports: commonImports,
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('sharing.smb.query', [{
+            ...smbShares[0],
+            comment: '',
+          }] as SmbShare[]),
+          mockCall('sharing.smb.delete'),
+          mockCall('sharing.smb.update'),
+          mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
+          mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
+        ]),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createNoCommentComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+    });
+
+    it('renders an em-dash placeholder in the Description cell', async () => {
+      expect(await table.getAllRowTexts()).toEqual([
+        ['smb123', '/mnt/APPS/smb1', '—', '', 'Yes', ''],
+      ]);
+    });
+  });
 });
