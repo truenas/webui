@@ -135,7 +135,7 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
   readonly canSubmit: Signal<boolean> = this.isFormValidSignal.asReadonly();
 
   /** Whether the form is currently submitting; the host shows a progress bar while true. */
-  isBusy(): boolean {
+  override isBusy(): boolean {
     return this.isLoading();
   }
 
