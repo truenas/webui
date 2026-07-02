@@ -53,3 +53,23 @@
     ></tn-button>
   }
 </tn-side-panel>
+
+<tn-side-panel
+  [title]="'Add Container' | translate"
+  [closeGuard]="containerFormCloseGuard"
+  [(open)]="containerFormOpen"
+>
+  @if (containerFormOpen()) {
+    <ix-container-form (closed)="onContainerFormClosed()"></ix-container-form>
+  }
+  @if (containerForm(); as form) {
+    <tn-button
+      tnSidePanelAction
+      color="primary"
+      testId="save"
+      [label]="'Create' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>
