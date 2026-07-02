@@ -62,7 +62,7 @@
       [loading]="!!(dataProvider.isLoading$ | async)"
       (sortChange)="onSortChange($event)"
     >
-      <ng-container [tnColumnDef]="'name'" [sortable]="true">
+      <ng-container [tnColumnDef]="'name'" [sortable]="true" [width]="'22%'">
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
@@ -72,7 +72,7 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'path'" [sortable]="true">
+      <ng-container [tnColumnDef]="'path'" [sortable]="true" [width]="'30%'">
         <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           @let path = getPathValue(row);
@@ -110,7 +110,7 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'audit'">
+      <ng-container [tnColumnDef]="'audit'" [width]="'120px'">
         <ng-template tnHeaderCellDef>{{ 'Audit Logging' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span

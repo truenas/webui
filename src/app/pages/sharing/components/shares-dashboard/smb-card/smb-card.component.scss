@@ -30,4 +30,16 @@
   ::ng-deep .tn-table__table {
     table-layout: fixed;
   }
+
+  // TEMP: tn-table's `.tn-table__cell-content` is a flex container, so its
+  // `text-overflow: ellipsis` never applies — long Name/Path values get clipped
+  // with no "…". Apply real ellipsis to the text cell so truncated values show it
+  // (the full value stays available via the cell's tooltip). Remove once the
+  // library renders ellipsis on truncated cell content itself.
+  ::ng-deep .tn-table__cell-content > span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

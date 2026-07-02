@@ -51,6 +51,7 @@ const typeOptions: Option[] = [
 @Component({
   selector: 'ix-base-namespace-form',
   templateUrl: './base-namespace-form.component.html',
+  styleUrl: './base-namespace-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxExplorerComponent,

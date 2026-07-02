@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
@@ -78,7 +78,9 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 })
 export class AddSubsystemComponent {
   private formBuilder = inject(FormBuilder);
-  slideInRef = inject<SlideInRef<void, NvmeOfSubsystem>>(SlideInRef);
+  // Present when opened via the legacy SlideIn host; absent when hosted in a `tn-side-panel`
+  // (footerless — the stepper owns its Next/Back/Save buttons), where close happens via {@link closed}.
+  slideInRef = inject<SlideInRef<void, NvmeOfSubsystem>>(SlideInRef, { optional: true });
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
@@ -91,10 +93,18 @@ export class AddSubsystemComponent {
   protected isLoading = signal(false);
   requiredRoles = [Role.SharingNvmeTargetWrite];
 
+  /** Emitted to a `tn-side-panel` host with the created subsystem on save. */
+  readonly closed = output<NvmeOfSubsystem>();
+
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
+    this.slideInRef?.requireConfirmationWhen(() => {
+      return of(this.hasUnsavedChanges());
     });
+  }
+
+  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   protected form = this.formBuilder.group({
@@ -132,7 +142,11 @@ export class AddSubsystemComponent {
       }
 
       this.snackbar.success(this.translate.instant('New subsystem added'));
-      this.slideInRef.close({ response: subsystem });
+      if (this.slideInRef) {
+        this.slideInRef.close({ response: subsystem });
+      } else {
+        this.closed.emit(subsystem);
+      }
     });
   }
 

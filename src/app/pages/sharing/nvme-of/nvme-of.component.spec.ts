@@ -10,6 +10,7 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import {
   NvmeOfHost, NvmeOfPort, NvmeOfSubsystemDetails,
 } from 'app/interfaces/nvme-of.interface';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
@@ -49,6 +50,11 @@ describe('NvmeOfComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => {
           return SlideInResult.success({ id: 1 });
+        }),
+      }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => {
+          return SlideInResult.success({ name: 'test-subsystem' });
         }),
       }),
       mockAuth(),
