@@ -6,15 +6,15 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnIconComponent, TnInputComponent, TnSelectComponent, InputType,
 } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemEmail } from 'app/helptext/system/email';
@@ -33,6 +33,7 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
+import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -55,9 +56,7 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
     TnSelectComponent,
     TnCheckboxComponent,
     TnIconComponent,
-    TnButtonComponent,
     OauthButtonComponent,
-    RequiresRolesDirective,
     TranslateModule,
   ],
 })
@@ -82,7 +81,17 @@ export class EmailFormComponent implements OnInit {
 
   protected readonly InputType = InputType;
   readonly requiredRoles = [Role.AlertWrite];
-  protected readonly requiredRolesMailWrite = [Role.MailWrite];
+  private readonly requiredRolesMailWrite = [Role.MailWrite];
+
+  // the save button is rendered by default, but we still need to add the 'Send Test Mail'
+  // button to the form, so we have to add that as an extra footer action.
+  readonly footerActions: SidePanelFooterAction[] = [{
+    label: T('Send Test Mail'),
+    testId: 'send-test-mail',
+    requiredRoles: this.requiredRolesMailWrite,
+    disabled: () => !this.isValid || this.isLoading(),
+    onClick: () => this.onSendTestEmailPressed(),
+  }];
 
   sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
 
@@ -219,7 +228,7 @@ export class EmailFormComponent implements OnInit {
     closeWith: () => true,
   });
 
-  protected onSendTestEmailPressed(): void {
+  private onSendTestEmailPressed(): void {
     this.api.call('mail.local_administrator_email')
       .pipe(
         this.errorHandler.withErrorHandler(),

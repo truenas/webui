@@ -104,14 +104,4 @@
       ></ix-oauth-button>
     }
   </tn-form-section>
-
-  <tn-button
-    *ixRequiresRoles="requiredRolesMailWrite"
-    ixExtraActions
-    type="button"
-    [testId]="'send-test-mail'"
-    [label]="'Send Test Mail' | translate"
-    [disabled]="!isValid || isLoading()"
-    (onClick)="onSendTestEmailPressed()"
-  ></tn-button>
 </ix-form>

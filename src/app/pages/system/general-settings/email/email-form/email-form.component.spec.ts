@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { when } from 'jest-when';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -55,9 +55,12 @@ describe('EmailFormComponent', () => {
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
 
-  // since there's only one button on this form, we can guarantee that this loader will grab the right thing
-  // AND avoid any flakiness on part of the label.
-  const getSendTestMailButton = (): Promise<TnButtonHarness> => loader.getHarness(TnButtonHarness);
+  // pattern to click a footer action borrowed from:
+  // src/app/pages/system/alert-service/alert-service/alert-service.component.spec.ts
+  const clickSendTestMail = (): void => {
+    spectator.component.footerActions[0].onClick();
+    spectator.detectChanges();
+  };
 
   const createComponent = createComponentFactory({
     component: EmailFormComponent,
@@ -124,11 +127,10 @@ describe('EmailFormComponent', () => {
       api = spectator.inject(ApiService);
     });
 
-    it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
+    it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', () => {
       spectator.inject(MockApiService).mockCall('mail.local_administrator_email', null);
 
-      const button = await getSendTestMailButton();
-      await button.click();
+      clickSendTestMail();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.local_administrator_email');
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
@@ -208,8 +210,7 @@ describe('EmailFormComponent', () => {
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
 
-      const sendTestEmailButton = await getSendTestMailButton();
-      await sendTestEmailButton.click();
+      clickSendTestMail();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'mail.send',
@@ -306,8 +307,7 @@ describe('EmailFormComponent', () => {
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
       await logInButton.click();
 
-      const sendTestEmailButton = await getSendTestMailButton();
-      await sendTestEmailButton.click();
+      clickSendTestMail();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'mail.send',
@@ -380,9 +380,8 @@ describe('EmailFormComponent', () => {
       expect(await (await getInput('user')).getValue()).toBe('authuser@ixsystems.com');
     });
 
-    it('sends test email with SMTP settings when SMTP form is used and Send Test Mail is pressed', async () => {
-      const sendTestEmailButton = await getSendTestMailButton();
-      await sendTestEmailButton.click();
+    it('sends test email with SMTP settings when SMTP form is used and Send Test Mail is pressed', () => {
+      clickSendTestMail();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'mail.send',
@@ -422,7 +421,7 @@ describe('EmailFormComponent', () => {
     };
 
     beforeEach(async () => {
-      spectator = createComponent({ props: { config: fakeGmailEmailConfig } });
+      spectator = createComponent({ props: { config: fakeGmailEmailConfig as MailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
@@ -541,7 +540,7 @@ describe('EmailFormComponent', () => {
     };
 
     beforeEach(async () => {
-      spectator = createComponent({ props: { config: fakeOutlookEmailConfig } });
+      spectator = createComponent({ props: { config: fakeOutlookEmailConfig as MailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
