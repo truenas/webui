@@ -13,10 +13,14 @@
   .initial-loader {
     padding-top: 5px;
 
-    mat-card {
-      @include background-logo-loader(1);
+    /**
+     * this is absolutely necessary to ensure that the card loading state
+     * displays properly instead of just collapsing the card to 0 size
+     */
+    tn-card {
+      display: block;
+      height: 430px;
       margin: 0 6px;
-      min-height: 325px;
     }
   }
 
@@ -40,15 +44,6 @@
       z-index: 30;
     }
   }
-}
-
-.mat-mdc-card.ghost-card {
-  min-height: 430px;
-}
-
-.mat-button-toggle .tn-icon {
-  line-height: normal;
-  margin-bottom: 4px;
 }
 
 .master-container {
