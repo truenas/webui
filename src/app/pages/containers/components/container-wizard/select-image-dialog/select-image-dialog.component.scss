@@ -54,9 +54,14 @@ form {
     display: block;
   }
 
-  tn-form-section {
-    border-right: 1px solid var(--lines);
-    height: 100%;
+  // The divider lives on the table side: the filter section must stay
+  // content-height for `position: sticky` to have room to move, so it cannot
+  // carry a full-height border itself.
+  .table-wrapper {
+    @media(min-width: $breakpoint-sm) {
+      border-left: 1px solid var(--lines);
+      min-height: 100%;
+    }
   }
 }
 
