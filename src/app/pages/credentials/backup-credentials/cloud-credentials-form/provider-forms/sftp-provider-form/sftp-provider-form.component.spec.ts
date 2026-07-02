@@ -1,12 +1,12 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { lastValueFrom } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SftpProviderFormComponent,
@@ -14,7 +14,7 @@ import {
 
 describe('SftpProviderFormComponent', () => {
   let spectator: Spectator<SftpProviderFormComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: SftpProviderFormComponent,
     imports: [
@@ -37,14 +37,22 @@ describe('SftpProviderFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('loads and shows private keys together with Generate New in Private Key select', async () => {
-    const privateKeySelect = await form.getControl('Private Key') as IxSelectHarness;
-    expect(await privateKeySelect.getOptionLabels()).toEqual(['--', 'Generate New', 'Key 1', 'Key 2']);
+    const privateKeySelect = await getSelect('private_key');
+    await privateKeySelect.open();
+    expect(await privateKeySelect.getOptions()).toEqual(['Generate New', 'Key 1', 'Key 2']);
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
@@ -56,23 +64,18 @@ describe('SftpProviderFormComponent', () => {
       private_key: 1,
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      Host: 'fbi.gov',
-      Port: '22',
-      Username: 'mulder',
-      Password: 'iwanttobelieve',
-      'Private Key': 'Key 1',
-    });
+    expect(await (await getInput('host')).getValue()).toBe('fbi.gov');
+    expect(await (await getInput('port')).getValue()).toBe('22');
+    expect(await (await getInput('user')).getValue()).toBe('mulder');
+    expect(await (await getInput('pass')).getValue()).toBe('iwanttobelieve');
+    expect(await (await getSelect('private_key')).getDisplayText()).toBe('Key 1');
   });
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
-    await form.fillForm({
-      Host: 'fbi.gov',
-      Username: 'redacted',
-      Password: 'redacted',
-      'Private Key': 'Key 2',
-    });
+    await (await getInput('host')).setValue('fbi.gov');
+    await (await getInput('user')).setValue('redacted');
+    await (await getInput('pass')).setValue('redacted');
+    await (await getSelect('private_key')).selectOption('Key 2');
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({
@@ -85,10 +88,8 @@ describe('SftpProviderFormComponent', () => {
 
   it(`creates a new ssh keypair and updates private key field with new keypair id
    when Generate key is selected as Private Key and beforeSubmit is called`, async () => {
-    await form.fillForm({
-      Host: 'sftp.truenas.com',
-      'Private Key': 'Generate New',
-    });
+    await (await getInput('host')).setValue('sftp.truenas.com');
+    await (await getSelect('private_key')).selectOption('Generate New');
 
     await lastValueFrom(spectator.component.beforeSubmit());
 

@@ -1,19 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
-import { of, Subject } from 'rxjs';
+import {
+  TnButtonHarness, TnCardComponent, TnDialog, TnIconButtonHarness, TnTableHarness,
+} from '@truenas/ui-components';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SshConnectionCardComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.component';
@@ -23,7 +23,8 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
 describe('SshConnectionCardComponent', () => {
   let spectator: Spectator<SshConnectionCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+  let connections$: BehaviorSubject<KeychainSshCredentials[]>;
 
   const connections = [
     {
@@ -68,7 +69,7 @@ describe('SshConnectionCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -77,7 +78,7 @@ describe('SshConnectionCardComponent', () => {
         })),
       }),
       mockProvider(KeychainCredentialService, {
-        getSshConnections: jest.fn(() => of(connections)),
+        getSshConnections: jest.fn(() => connections$),
         refetchSshKeys: new Subject<void>(),
         refetchSshConnections: new Subject<void>(),
       }),
@@ -86,49 +87,54 @@ describe('SshConnectionCardComponent', () => {
   });
 
   beforeEach(async () => {
+    connections$ = new BehaviorSubject<KeychainSshCredentials[]>(connections);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('checks page title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('SSH Connections');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('SSH Connections');
   });
 
   it('opens form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SshConnectionFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SshConnectionFormComponent, {
+      title: 'New SSH Connection',
+    });
   });
 
   it('opens form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 1);
+    const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       SshConnectionFormComponent,
       {
-        data: {
-          attributes: {
-            connect_timeout: 10,
-            host: 'fake.host.name',
-            port: 22,
-            private_key: 4,
-            remote_host_key: 'ssh-rsa FAAAKE',
-            username: 'root',
+        title: 'Edit SSH Connection',
+        inputs: {
+          editConnection: {
+            attributes: {
+              connect_timeout: 10,
+              host: 'fake.host.name',
+              port: 22,
+              private_key: 4,
+              remote_host_key: 'ssh-rsa FAAAKE',
+              username: 'root',
+            },
+            id: 5,
+            name: 'test-conn-1',
+            type: 'SSH_CREDENTIALS',
           },
-          id: 5,
-          name: 'test-conn-1',
-          type: 'SSH_CREDENTIALS',
         },
       },
     );
   });
 
   it('shows cascade checkbox when connection has associated keypair', async () => {
-    const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+    const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
@@ -154,11 +160,11 @@ describe('SshConnectionCardComponent', () => {
       },
     };
 
-    spectator.component.credentials = [connectionWithoutKeypair];
-    spectator.component.dataProvider.setRows([connectionWithoutKeypair]);
+    connections$.next([connectionWithoutKeypair]);
+    spectator.inject(KeychainCredentialService).refetchSshConnections.next();
     spectator.detectChanges();
 
-    const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+    const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButton.click();
 
     // When no keypair, uses simple confirm dialog (no secondaryCheckbox property)
@@ -178,7 +184,7 @@ describe('SshConnectionCardComponent', () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of({ confirmed: true, secondaryCheckbox: true }));
     const refetchSpy = jest.spyOn(spectator.inject(KeychainCredentialService).refetchSshKeys, 'next');
 
-    const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+    const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButton.click();
 
     // Should delete keypair with cascade, which also deletes the connection
@@ -205,7 +211,7 @@ describe('SshConnectionCardComponent', () => {
       return of(null);
     });
 
-    const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+    const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [4]);
@@ -234,7 +240,7 @@ describe('SshConnectionCardComponent', () => {
       return of(null);
     });
 
-    const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+    const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [4]);
@@ -250,13 +256,10 @@ describe('SshConnectionCardComponent', () => {
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Name', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['test-conn-1', ''],
       ['test-conn-2', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 });

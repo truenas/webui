@@ -29,6 +29,7 @@
       <tn-slide-toggle
         *ixRequiresRoles="requiredRoles"
         [checked]="actionsMenu.isServiceRunning(service)"
+        [disabled]="!hasTruenasConnect() && !actionsMenu.isServiceRunning(service)"
         [testId]="actionsMenu.serviceControlTestId(service)"
         [ariaLabel]="'Toggle service' | translate"
         (change)="actionsMenu.toggleServiceState(service)"
