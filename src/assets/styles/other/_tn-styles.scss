@@ -983,13 +983,25 @@ ix-slide-in-container tn-form-field {
   padding: 8px 0;
 }
 
-// …but when those fields live inside a `tn-form-section`, the section's own 1.25rem body
-// gap already spaces them — the flat margin above would double it (the "too big" spacing on
-// SlideIn-hosted section forms, e.g. WebShare Add). Inside a section, drop the flat margin and
-// let the section rhythm own the spacing, matching the `<tn-side-panel>` host.
-ix-slide-in-container tn-form-section tn-form-field {
+// `ix-dynamic-form` hard-codes `margin: 12px 0; padding: 8px 0` on its
+// `tn-form-field` children for the slide-in/dialog rhythm. In the
+// `<tn-side-panel>` host that double-spaces (the panel already spaces fields via
+// tn-form-field's reserved subscript area — see the dual-host note above), so
+// reset it to the flush default there. Tracked under NAS-141021.
+.tn-side-panel__content ix-dynamic-form tn-form-field {
   margin: 0;
   padding: 0;
+}
+
+// `ix-dynamic-form` renders an item for every property across all of a
+// (multi-)schema's branches; the inactive ones render empty (their field `@if` is
+// false, leaving only a wrapper `<div>` with no control). As flex children of
+// `tn-form-section`'s gap-spaced body each empty item would add a blank gap,
+// stacking into a large void. Collapse items that hold no real control element
+// (a `*:not(div)` descendant — i.e. a tn-form-field / ix-list / etc.). Scoped to the
+// `<tn-side-panel>` host so other `ix-dynamic-form` usages are untouched. Tracked NAS-141021.
+.tn-side-panel__content ix-dynamic-form ix-dynamic-form-item:not(:has(*:not(div))) {
+  display: none;
 }
 
 // `tn-form-section` has no outer margin and its internal `gap` only spaces fields

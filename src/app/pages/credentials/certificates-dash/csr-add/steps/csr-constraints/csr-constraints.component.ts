@@ -1,9 +1,12 @@
+import { CdkStepper } from '@angular/cdk/stepper';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { omit } from 'lodash-es';
 import { of } from 'rxjs';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
@@ -18,11 +21,7 @@ import {
 } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -40,15 +39,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './csr-constraints.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    IxInputComponent,
-    IxSelectComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
-    MatStepperNext,
+    TnButtonComponent,
     TranslateModule,
     TranslateOptionsPipe,
   ],
@@ -60,6 +58,7 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
+  private stepper = inject(CdkStepper);
 
   form = this.formBuilder.nonNullable.group({
     BasicConstraints: this.formBuilder.nonNullable.group({
@@ -80,6 +79,8 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
 
   readonly helptext = helptextSystemCertificates;
 
+  protected readonly InputType = InputType;
+
   readonly basicConstraintsOptions$ = of(basicConstraintOptions);
   readonly keyUsageOptions$ = of(keyUsageOptions);
   extendedKeyUsageOptions$ = of<Option[]>([]);
@@ -93,6 +94,14 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
 
   hasExtension(extension: CertificateExtension): boolean {
     return this.form.getRawValue()[extension].enabled;
+  }
+
+  protected goBack(): void {
+    this.stepper.previous();
+  }
+
+  protected goNext(): void {
+    this.stepper.next();
   }
 
   getSummary(): SummarySection {

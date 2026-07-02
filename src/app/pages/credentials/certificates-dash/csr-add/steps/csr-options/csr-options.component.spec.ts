@@ -3,10 +3,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   CsrOptionsComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-options/csr-options.component';
@@ -14,7 +14,13 @@ import {
 describe('CsrOptionsComponent', () => {
   let spectator: Spectator<CsrOptionsComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
+
+  const selectValue = async (name: string, label: string): Promise<void> => {
+    const select = await loader.getHarness(
+      TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+    );
+    await select.selectOption(label);
+  };
 
   const createComponent = createComponentFactory({
     component: CsrOptionsComponent,
@@ -32,19 +38,16 @@ describe('CsrOptionsComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   describe('RSA key type', () => {
     beforeEach(async () => {
-      await form.fillForm({
-        'Key Type': 'RSA',
-        'Key Length': '4096',
-        'Digest Algorithm': 'SHA384',
-      });
+      await selectValue('key_type', 'RSA');
+      await selectValue('key_length', '4096');
+      await selectValue('digest_algorithm', 'SHA384');
     });
 
     it('returns fields when getPayload() is called', () => {
@@ -75,13 +78,9 @@ describe('CsrOptionsComponent', () => {
 
   describe('EC key type', () => {
     beforeEach(async () => {
-      await form.fillForm(
-        {
-          'Key Type': 'EC',
-          'Digest Algorithm': 'SHA384',
-          'EC Curve': 'SECP256K1',
-        },
-      );
+      await selectValue('key_type', 'EC');
+      await selectValue('digest_algorithm', 'SHA384');
+      await selectValue('ec_curve', 'SECP256K1');
     });
 
     it('returns fields when getPayload() is called for a key of EC type', () => {
@@ -114,9 +113,10 @@ describe('CsrOptionsComponent', () => {
     it('shows Lifetime field when hasLifetime is true', async () => {
       spectator.setInput({ hasLifetime: true });
 
-      await form.fillForm({
-        Lifetime: '3660',
-      });
+      const lifetime = await loader.getHarness(
+        TnInputHarness.with({ selector: '[formControlName="lifetime"]' }),
+      );
+      await lifetime.setValue('3660');
 
       expect(spectator.component.getPayload()).toMatchObject({
         lifetime: 3660,
