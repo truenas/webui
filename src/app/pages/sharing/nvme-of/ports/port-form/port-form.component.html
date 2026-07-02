@@ -26,6 +26,7 @@
     <tn-form-field
       [label]="'Address' | translate"
       [hint]="isTcp ? (helptext.onlyStaticIpsShown | translate) : ''"
+      [required]="true"
     >
       <tn-select
         formControlName="addr_traddr"

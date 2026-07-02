@@ -11,8 +11,9 @@
   <input
     #addressInput
     type=""
+    tnTestIdType="input"
     [required]="required()"
-    [ixTest]="controlDirective.name"
+    [tnTestId]="controlDirective.name"
     [disabled]="isDisabled"
     [value]="address"
     [attr.aria-label]="label()"

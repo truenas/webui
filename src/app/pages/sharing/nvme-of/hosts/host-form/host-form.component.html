@@ -45,7 +45,6 @@
                 name="dhchap_hash"
                 formControlName="dhchap_hash"
                 [options]="(hashOptions$ | async) ?? []"
-                [required]="true"
               ></tn-select>
             </div>
           </ix-editable>
@@ -62,7 +61,7 @@
       <div class="generate-key-row">
         <tn-button
           type="button"
-          [testId]="'generate-key'"
+          [testId]="'generate-key-host'"
           [label]="'Generate Key' | translate"
           [disabled]="!hasNqn || isGeneratingHostKey()"
           [tnTooltip]="!hasNqn ? (helptext.generateHostKeyDisabled | translate) : ''"
@@ -80,7 +79,7 @@
       <div class="generate-key-row">
         <tn-button
           type="button"
-          [testId]="'generate-key'"
+          [testId]="'generate-key-ctrl'"
           [label]="'Generate Key' | translate"
           [disabled]="isGeneratingTrueNasKey()"
           (onClick)="generateTrueNasKey()"

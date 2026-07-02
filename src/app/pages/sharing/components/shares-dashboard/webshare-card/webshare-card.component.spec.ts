@@ -191,12 +191,13 @@ describe('WebShareCardComponent', () => {
   });
 
   it('opens the WebShare edit form in a side panel when a row is edited', () => {
-    (spectator.component as unknown as { doEdit: (row: unknown) => void }).doEdit({
-      id: 1,
-      name: 'documents',
-      path: '/mnt/tank/documents',
-      isHomeBase: false,
-    });
+    // The row Edit action is served by ix-table-actions-cell (not a tn-* component, so no
+    // tn-* harness applies) — drive it through the rendered button, matching the Delete test.
+    const editButtons = spectator.queryAll('[aria-label*="Edit"]');
+    expect(editButtons.length).toBeGreaterThan(0);
+
+    editButtons[0].dispatchEvent(new Event('click'));
+    spectator.detectChanges();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       WebShareSharesFormComponent,

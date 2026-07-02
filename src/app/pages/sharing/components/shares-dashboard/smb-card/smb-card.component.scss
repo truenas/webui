@@ -10,16 +10,6 @@
   text-decoration: none;
 }
 
-.card-title {
-  align-items: center;
-  display: flex;
-  margin: 0;
-
-  tn-icon {
-    margin-left: 5px;
-  }
-}
-
 // TEMP: tn-table defaults to `table-layout: auto`, so the SMB card's extra columns
 // (Audit Logging, Storage Tier) push the table wider than the fixed-width dashboard
 // card — and tn-card's `overflow: hidden` clips the rightmost columns (Audit Logging

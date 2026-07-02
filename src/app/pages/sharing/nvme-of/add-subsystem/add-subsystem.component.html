@@ -5,6 +5,11 @@
   ></ix-modal-header>
 }
 
+<!--
+  NAS-141552: mat-card + mat-vertical-stepper intentionally held on Material for this wizard.
+  The inner step controls/buttons are already migrated to tn-*; the stepper shell migration to
+  tn-stepper is tracked as follow-up under Epic NAS-141021.
+-->
 <mat-card class="card">
   <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
     <mat-vertical-stepper #stepper>
