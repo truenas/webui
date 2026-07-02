@@ -124,9 +124,7 @@ describe('SmbAclComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent({
-      providers: [
-        mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => 'myshare') }),
-      ],
+      props: { shareName: 'myshare' },
     });
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

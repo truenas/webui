@@ -43,7 +43,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TableActionsCellComponent,
@@ -95,12 +94,14 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class IscsiCardComponent implements OnInit {
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   // TargetFormComponent structurally provides the host surface (closed/canSubmit/submit/
   // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type,
   // mirroring how FormSidePanelService.openForm casts the renderer.
   private readonly targetForm = TargetFormComponent as unknown as Type<SidePanelForm>;
+  // IscsiWizardComponent structurally provides the host surface (closed / hasUnsavedChanges) the
+  // panel reads; cast past its nominal type. Opened footerless — its stepper owns Next/Back/Save.
+  private readonly iscsiWizard = IscsiWizardComponent as unknown as Type<SidePanelForm<IscsiTarget>>;
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   protected emptyService = inject(EmptyService);
@@ -209,8 +210,11 @@ export class IscsiCardComponent implements OnInit {
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
     if (openWizard) {
-      this.slideIn.open(IscsiWizardComponent, { data: row, wide: true })
-        .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+      this.formPanel.open(this.iscsiWizard, {
+        title: this.translate.instant('iSCSI Wizard'),
+        wide: true,
+        footerless: true,
+      }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
     } else {
       this.formPanel.open(this.targetForm, {
         wide: true,

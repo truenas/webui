@@ -23,7 +23,6 @@ import { EditableComponent } from 'app/modules/forms/editable/editable.component
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -55,13 +54,9 @@ export class HostFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-  // Present only when opened via the legacy SlideIn host; absent inside a
-  // `<tn-side-panel>` (the go-forward host), where edit data arrives via the
-  // `host` input and the created record is emitted through `closed`.
-  private slideInRef = inject<SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
-  /** Edit data supplied by a `<tn-side-panel>` host (legacy host uses `slideInRef.getData()`). */
+  /** Edit data supplied by a `<tn-side-panel>` host. */
   readonly host = input<NvmeOfHost | undefined>(undefined);
 
   /** Created/updated record emitted on a successful submit when hosted in a `<tn-side-panel>`. */
@@ -164,7 +159,7 @@ export class HostFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const existingHost = this.slideInRef?.getData() ?? this.host();
+    const existingHost = this.host();
 
     if (existingHost) {
       this.existingHost.set(existingHost);

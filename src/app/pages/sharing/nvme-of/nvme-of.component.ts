@@ -18,7 +18,6 @@ import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import {
@@ -56,7 +55,6 @@ import { setSubsystemNameInUrl } from 'app/pages/sharing/nvme-of/utils/router-ut
 })
 export class NvmeOfComponent implements OnInit {
   private nvmeOfStore = inject(NvmeOfStore);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   // AddSubsystemComponent structurally provides the host surface (closed / hasUnsavedChanges) the
@@ -135,7 +133,9 @@ export class NvmeOfComponent implements OnInit {
   }
 
   protected openGlobalConfiguration(): void {
-    this.slideIn.open(NvmeOfConfigurationComponent);
+    this.formPanel.open(NvmeOfConfigurationComponent, {
+      title: this.translate.instant('NVMe-oF Global Configuration'),
+    });
   }
 
   protected addSubsystem(): void {

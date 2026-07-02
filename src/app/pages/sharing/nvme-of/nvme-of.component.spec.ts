@@ -11,7 +11,6 @@ import {
   NvmeOfHost, NvmeOfPort, NvmeOfSubsystemDetails,
 } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   NvmeOfConfigurationComponent,
@@ -47,11 +46,6 @@ describe('NvmeOfComponent', () => {
       mockApi([
         mockCall('tn_connect.config'),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => {
-          return SlideInResult.success({ id: 1 });
-        }),
-      }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => {
           return SlideInResult.success({ name: 'test-subsystem' });
@@ -91,7 +85,10 @@ describe('NvmeOfComponent', () => {
     const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Configuration' }));
     await configurationButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      NvmeOfConfigurationComponent,
+      { title: 'NVMe-oF Global Configuration' },
+    );
   });
 
   it('shows a table with subsystems', () => {

@@ -35,7 +35,6 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -82,19 +81,11 @@ export class NfsFormComponent implements OnInit {
   private filesystemService = inject(FilesystemService);
   private datasetService = inject(DatasetService);
   private store$ = inject<Store<ServicesState>>(Store);
-  // Public + statically non-null so the legacy `slideIn.open(NfsFormComponent)` call sites still
-  // satisfy ComponentInSlideIn<NfsFormData, boolean>. Injected optionally — absent in the
-  // `<tn-side-panel>` form panel (data then arrives via {@link nfsShareData}) — so the form
-  // always reads it defensively via `?.`.
-  readonly slideInRef = inject<SlideInRef<NfsFormData, boolean> | null>(
-    SlideInRef,
-    { optional: true },
-  ) as SlideInRef<NfsFormData, boolean>;
 
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
 
-  /** Edit/default data supplied by the `<tn-side-panel>` host (legacy host uses `slideInRef.getData()`). */
+  /** Edit/default data supplied by the `<tn-side-panel>` host. */
   readonly nfsShareData = input<NfsFormData | undefined>(undefined);
 
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
@@ -177,9 +168,8 @@ export class NfsFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // The legacy SlideIn host exposes data via `getData()`; the side-panel host via the
-    // `nfsShareData` input — both resolved here (inputs aren't set until after construction).
-    const data = this.slideInRef?.getData() ?? this.nfsShareData();
+    // Edit/default data arrives via the `nfsShareData` input from the side-panel host.
+    const data = this.nfsShareData();
     this.existingNfsShare = data?.existingNfsShare;
     this.defaultNfsShare = data?.defaultNfsShare;
 

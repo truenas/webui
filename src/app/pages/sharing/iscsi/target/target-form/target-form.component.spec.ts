@@ -247,9 +247,9 @@ describe('TargetFormComponent', () => {
   describe('edit new target', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingTarget }),
-        ],
+        props: {
+          targetData: existingTarget,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
@@ -401,9 +401,9 @@ describe('TargetFormComponent', () => {
   describe('groups in API calls based on mode', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingTarget }),
-        ],
+        props: {
+          targetData: existingTarget,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);

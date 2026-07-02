@@ -32,7 +32,6 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { ExtentWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/extent-wizard-step/extent-wizard-step.component';
@@ -48,12 +47,6 @@ describe('IscsiWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let store$: Store<AppState>;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(() => true),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const createComponent = createComponentFactory({
     component: IscsiWizardComponent,
@@ -130,7 +123,6 @@ describe('IscsiWizardComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -157,6 +149,11 @@ describe('IscsiWizardComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
+    let createdTarget: IscsiTarget | undefined;
+    spectator.component.closed.subscribe((target) => {
+      createdTarget = target;
+    });
+
     await (await getTnInput('name')).setValue('test-name');
     await (await getTnSelect('disk')).selectOption('Create New');
     await form.fillForm({
@@ -233,13 +230,18 @@ describe('IscsiWizardComponent', () => {
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(createdTarget).toEqual({ id: 15 } as IscsiTarget);
   });
 
   it('fibre channel: creates objects when wizard is submitted', async () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
+    let createdTarget: IscsiTarget | undefined;
+    spectator.component.closed.subscribe((target) => {
+      createdTarget = target;
+    });
+
     await (await getTnInput('name')).setValue('test-name');
     await (await getTnSelect('disk')).selectOption('Create New');
     await form.fillForm({
@@ -316,7 +318,7 @@ describe('IscsiWizardComponent', () => {
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(createdTarget).toEqual({ id: 15 } as IscsiTarget);
   });
 
   describe('FC MPIO validation', () => {

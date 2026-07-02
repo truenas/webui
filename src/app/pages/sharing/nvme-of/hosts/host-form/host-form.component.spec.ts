@@ -19,7 +19,6 @@ import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/hos
 
 describe('HostFormComponent', () => {
   const savedHost = { id: 1 } as NvmeOfHost;
-  const slideInGetData = jest.fn((): NvmeOfHost | undefined => undefined);
   const createComponent = createComponentFactory({
     component: HostFormComponent,
     providers: [
@@ -38,7 +37,6 @@ describe('HostFormComponent', () => {
         openSlideIns: jest.fn(() => 1),
       }),
       mockProvider(SlideInRef, {
-        getData: slideInGetData,
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(),
       }),
@@ -69,7 +67,6 @@ describe('HostFormComponent', () => {
   };
 
   beforeEach(() => {
-    slideInGetData.mockReturnValue(undefined);
     spectator = createComponent();
     component = spectator.component;
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -106,15 +103,20 @@ describe('HostFormComponent', () => {
 
   describe('edits', () => {
     beforeEach(() => {
-      slideInGetData.mockReturnValue({
-        id: 23,
-        hostnqn: 'nqn.2014-08.org',
-        dhchap_key: '1234567890',
-        dhchap_ctrl_key: '111222',
-        dhchap_dhgroup: '2048-BIT',
-      } as NvmeOfHost);
-
-      component.ngOnInit();
+      spectator = createComponent({
+        props: {
+          host: {
+            id: 23,
+            hostnqn: 'nqn.2014-08.org',
+            dhchap_key: '1234567890',
+            dhchap_ctrl_key: '111222',
+            dhchap_dhgroup: '2048-BIT',
+          } as NvmeOfHost,
+        },
+      });
+      component = spectator.component;
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current values when editing an existing host', async () => {
@@ -259,13 +261,17 @@ describe('HostFormComponent', () => {
     });
 
     it('updates description when editing an existing host', async () => {
-      slideInGetData.mockReturnValue({
-        id: 24,
-        hostnqn: 'nqn.2014-08.org',
-        description: 'Old description',
-      } as NvmeOfHost);
-
-      component.ngOnInit();
+      spectator = createComponent({
+        props: {
+          host: {
+            id: 24,
+            hostnqn: 'nqn.2014-08.org',
+            description: 'Old description',
+          } as NvmeOfHost,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
 
       await (await getTnInput('description')).setValue('Updated description');
 

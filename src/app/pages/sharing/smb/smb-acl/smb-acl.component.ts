@@ -32,7 +32,6 @@ import {
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -77,16 +76,8 @@ export class SmbAclComponent implements OnInit {
   private translate = inject(TranslateService);
   private userService = inject(UserService);
   private destroyRef = inject(DestroyRef);
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
-  // `<tn-side-panel>` form panel, where data arrives via {@link shareName}.
-  // Public + statically non-null so the legacy `slideIn.open(SmbAclComponent)` call sites still
-  // satisfy ComponentInSlideIn; injected optionally (absent in the panel host), read via `?.`.
-  readonly slideInRef = inject<SlideInRef<string, boolean> | null>(
-    SlideInRef,
-    { optional: true },
-  ) as SlideInRef<string, boolean>;
 
-  /** Share name supplied by the `<tn-side-panel>` host (legacy host uses `slideInRef.getData()`). */
+  /** Share name supplied by the `<tn-side-panel>` host. */
   readonly shareName = input<string | undefined>(undefined);
 
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
@@ -157,9 +148,8 @@ export class SmbAclComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // The legacy SlideIn host exposes data via `getData()`; the side-panel host via the
-    // `shareName` input — both resolved here (inputs aren't set until after construction).
-    this.resolvedShareName = this.slideInRef?.getData() ?? this.shareName();
+    // Share name arrives via the `shareName` input from the side-panel host.
+    this.resolvedShareName = this.shareName();
     if (this.resolvedShareName) {
       this.loadSmbAcl(this.resolvedShareName);
     }

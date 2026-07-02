@@ -22,7 +22,6 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareValidatorService } from 'app/pages/sharing/webshare/webshare-validator.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -103,18 +102,11 @@ export class WebShareSharesFormComponent implements OnInit {
   private validatorService = inject(WebShareValidatorService);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
-  // Public + statically non-null so the legacy `slideIn.open(WebShareSharesFormComponent)` call
-  // sites still satisfy ComponentInSlideIn. Injected optionally — absent in the `<tn-side-panel>`
-  // form panel (data then arrives via {@link webShareData}) — so read defensively via `?.`.
-  readonly slideInRef = inject<SlideInRef<WebShareFormData, boolean> | null>(
-    SlideInRef,
-    { optional: true },
-  ) as SlideInRef<WebShareFormData, boolean>;
 
   private store$ = inject(Store<AppState>);
   private destroyRef = inject(DestroyRef);
 
-  /** Edit/default data supplied by the `<tn-side-panel>` host (legacy host uses `slideInRef.getData()`). */
+  /** Edit/default data supplied by the `<tn-side-panel>` host. */
   readonly webShareData = input<WebShareFormData | undefined>(undefined);
 
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
@@ -172,9 +164,7 @@ export class WebShareSharesFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // The legacy SlideIn host exposes data via `getData()`; the side-panel host via the
-    // `webShareData` input — both resolved here (inputs aren't set until after construction).
-    this.formData = this.slideInRef?.getData() ?? this.webShareData();
+    this.formData = this.webShareData();
 
     // Set editingShareId before loading shares so the computed signal works correctly
     const shareId: number | undefined = this.formData?.id;
@@ -256,13 +246,9 @@ export class WebShareSharesFormComponent implements OnInit {
       });
   }
 
-  /** Closes through whichever host opened the form (legacy SlideIn or `<tn-side-panel>`). */
+  /** Closes the form when hosted in a `<tn-side-panel>`. */
   private closeForm(): void {
-    if (this.slideInRef) {
-      this.slideInRef.close({ response: undefined });
-    } else {
-      this.closed.emit(false);
-    }
+    this.closed.emit(false);
   }
 
   private setupValidators(): void {

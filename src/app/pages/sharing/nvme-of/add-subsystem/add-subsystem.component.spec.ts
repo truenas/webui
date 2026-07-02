@@ -12,7 +12,6 @@ import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSubsystemHostsComponent,
@@ -53,10 +52,6 @@ describe('AddSubsystemComponent', () => {
         mockCall('nvmet.subsys.create', newSubsystem),
         mockCall('nvmet.namespace.create'),
       ]),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
     ],
   });
 
@@ -67,6 +62,9 @@ describe('AddSubsystemComponent', () => {
   });
 
   it('creates a subsystem with ports, hosts, and namespaces', async () => {
+    const closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
+
     const firstStep = (await stepper.getSteps({ selected: true }))[0];
     const name = await firstStep.getHarness(TnInputHarness.with({ selector: '[formControlName="name"]' }));
     await name.setValue('subsystem1');
@@ -140,8 +138,6 @@ describe('AddSubsystemComponent', () => {
       device_path: '/mnt/pool/file.img',
     }]);
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-      response: newSubsystem,
-    });
+    expect(closedSpy).toHaveBeenCalledWith(newSubsystem);
   });
 });

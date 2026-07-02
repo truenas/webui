@@ -29,8 +29,6 @@ import { EditableComponent } from 'app/modules/forms/editable/editable.component
 import {
   UseIconsInStepperComponent,
 } from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -55,7 +53,6 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   templateUrl: './add-subsystem.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     TranslateModule,
     MatCard,
     ReactiveFormsModule,
@@ -78,9 +75,6 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 })
 export class AddSubsystemComponent {
   private formBuilder = inject(FormBuilder);
-  // Present when opened via the legacy SlideIn host; absent when hosted in a `tn-side-panel`
-  // (footerless — the stepper owns its Next/Back/Save buttons), where close happens via {@link closed}.
-  slideInRef = inject<SlideInRef<void, NvmeOfSubsystem>>(SlideInRef, { optional: true });
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
@@ -95,12 +89,6 @@ export class AddSubsystemComponent {
 
   /** Emitted to a `tn-side-panel` host with the created subsystem on save. */
   readonly closed = output<NvmeOfSubsystem>();
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
-      return of(this.hasUnsavedChanges());
-    });
-  }
 
   /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
   hasUnsavedChanges(): boolean {
@@ -142,11 +130,7 @@ export class AddSubsystemComponent {
       }
 
       this.snackbar.success(this.translate.instant('New subsystem added'));
-      if (this.slideInRef) {
-        this.slideInRef.close({ response: subsystem });
-      } else {
-        this.closed.emit(subsystem);
-      }
+      this.closed.emit(subsystem);
     });
   }
 

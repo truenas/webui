@@ -19,7 +19,6 @@ import {
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -46,11 +45,8 @@ export class PortalFormComponent implements OnInit {
   private translate = inject(TranslateService);
   protected api = inject(ApiService);
   protected iscsiService = inject(IscsiService);
-  // Panel-only form: opened exclusively via FormSidePanelService, so the legacy SlideIn ref is
-  // injected optionally and is absent in the `<tn-side-panel>` host (data arrives via {@link portalData}).
-  private slideInRef = inject<SlideInRef<IscsiPortal, boolean>>(SlideInRef, { optional: true });
 
-  /** Edit data supplied by the `<tn-side-panel>` host (legacy host uses `slideInRef.getData()`). */
+  /** Edit data supplied by the `<tn-side-panel>` host. */
   readonly portalData = input<IscsiPortal | undefined>(undefined);
 
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
@@ -107,9 +103,8 @@ export class PortalFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // The legacy SlideIn host exposes data via `getData()`; the side-panel host via the
-    // `portalData` input — both resolved here (inputs aren't set until after construction).
-    this.editingIscsiPortal = this.slideInRef?.getData() ?? this.portalData();
+    // Edit data arrives via the `portalData` input from the side-panel host.
+    this.editingIscsiPortal = this.portalData();
 
     if (this.editingIscsiPortal) {
       this.setupForm(this.editingIscsiPortal);

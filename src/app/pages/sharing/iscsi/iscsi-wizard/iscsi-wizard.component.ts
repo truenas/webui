@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject, viewChild,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, output, signal, inject, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -51,8 +51,6 @@ import {
   UseIconsInStepperComponent,
 } from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
@@ -69,7 +67,6 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     MatCard,
     ReactiveFormsModule,
     MatStepper,
@@ -94,7 +91,9 @@ export class IscsiWizardComponent implements OnInit {
   private loader = inject(LoaderService);
   private store$ = inject<Store<ServicesState>>(Store);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, IscsiTarget>>(SlideInRef);
+
+  /** Emitted to the `tn-side-panel` host with the created target on save. */
+  readonly closed = output<IscsiTarget>();
 
   // Stepper navigation is driven imperatively from tn-button clicks (tn-button can't
   // bind matStepperNext/matStepperPrevious directives the way mat-button could).
@@ -268,11 +267,12 @@ export class IscsiWizardComponent implements OnInit {
     } as IscsiTargetExtentUpdate;
   }
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
+  }
 
+  constructor() {
     this.iscsiService.getExtents().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((extents) => {
       this.namesInUse.set(extents.map((extent) => extent.name));
     });
@@ -572,6 +572,6 @@ export class IscsiWizardComponent implements OnInit {
 
     this.isLoading.set(false);
     this.form.markAsPristine();
-    this.slideInRef.close({ response: this.createdTarget });
+    this.closed.emit(this.createdTarget);
   }
 }

@@ -146,9 +146,9 @@ describe('ExtentFormComponent', () => {
   describe('edits extent', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingExtent }),
-        ],
+        props: {
+          extentData: existingExtent,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });

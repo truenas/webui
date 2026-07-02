@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
@@ -36,7 +36,8 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
@@ -82,7 +83,7 @@ export class NfsListComponent implements OnInit {
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
@@ -158,8 +159,10 @@ export class NfsListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (nfsShare) => {
-            this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } })
-              .onSuccess(() => this.refresh(), this.destroyRef);
+            this.formPanel.open(this.nfsForm, {
+              title: this.translate.instant('Edit NFS Share'),
+              inputs: { nfsShareData: { existingNfsShare: nfsShare } },
+            }).onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         this.tierAction,
@@ -222,9 +225,16 @@ export class NfsListComponent implements OnInit {
     });
   }
 
+  // NfsFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type,
+  // mirroring how FormSidePanelService.openForm casts the renderer.
+  private readonly nfsForm = NfsFormComponent as unknown as Type<SidePanelForm>;
+
   protected doAdd(): void {
-    this.slideIn.open(NfsFormComponent)
-      .onSuccess(() => this.refresh(), this.destroyRef);
+    this.formPanel.open(this.nfsForm, {
+      title: this.translate.instant('Add NFS Share'),
+      inputs: { nfsShareData: { existingNfsShare: undefined } },
+    }).onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {

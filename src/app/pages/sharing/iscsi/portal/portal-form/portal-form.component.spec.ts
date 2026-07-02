@@ -106,9 +106,9 @@ describe('PortalFormComponent', () => {
   describe('editing a portal group', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => editingPortal }),
-        ],
+        props: {
+          portalData: editingPortal,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);

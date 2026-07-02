@@ -19,7 +19,6 @@ describe('PortFormComponent', () => {
   let spectator: Spectator<PortFormComponent>;
   let loader: HarnessLoader;
   const newPort = { id: 1 } as NvmeOfPort;
-  const slideInGetData = jest.fn((): NvmeOfPort | undefined => undefined);
 
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -50,7 +49,6 @@ describe('PortFormComponent', () => {
         openSlideIns: jest.fn(() => 1),
       }),
       mockProvider(SlideInRef, {
-        getData: slideInGetData,
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(),
       }),
@@ -136,14 +134,17 @@ describe('PortFormComponent', () => {
 
   describe('edits', () => {
     beforeEach(() => {
-      slideInGetData.mockReturnValue({
-        id: 23,
-        addr_traddr: '10.220.8.2',
-        addr_trtype: NvmeOfTransportType.Tcp,
-        addr_trsvcid: 15000,
-      } as NvmeOfPort);
-
-      spectator.component.ngOnInit();
+      spectator = createComponent({
+        props: {
+          port: {
+            id: 23,
+            addr_traddr: '10.220.8.2',
+            addr_trtype: NvmeOfTransportType.Tcp,
+            addr_trsvcid: 15000,
+          } as NvmeOfPort,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('shows current values when editing an existing port', async () => {

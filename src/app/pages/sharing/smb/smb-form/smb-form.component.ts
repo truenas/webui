@@ -68,7 +68,6 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
@@ -130,20 +129,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private smbValidationService = inject(SmbValidationService);
   private userService = inject(UserService);
   private groupExistenceValidator = inject(UserGroupExistenceValidationService);
-  // Public + statically non-null so the legacy `slideIn.open(SmbFormComponent)` call sites still
-  // satisfy ComponentInSlideIn. Injected optionally — absent in the `<tn-side-panel>` form panel
-  // (data then arrives via {@link smbShareData}) — so the form reads it defensively via `?.`.
-  readonly slideInRef = inject<SlideInRef<{
-    existingSmbShare?: SmbShare;
-    defaultSmbShare?: SmbShare;
-  }, boolean> | null>(SlideInRef, { optional: true }) as SlideInRef<{
-    existingSmbShare?: SmbShare;
-    defaultSmbShare?: SmbShare;
-  }, boolean>;
 
   private destroyRef = inject(DestroyRef);
 
-  /** Edit/default data supplied by the `<tn-side-panel>` host (legacy host uses `slideInRef.getData()`). */
+  /** Edit/default data supplied by the `<tn-side-panel>` host. */
   readonly smbShareData = input<{
     existingSmbShare?: SmbShare;
     defaultSmbShare?: SmbShare;
@@ -464,9 +453,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // The legacy SlideIn host exposes data via `getData()`; the side-panel host via the
-    // `smbShareData` input — both resolved here (inputs aren't set until after construction).
-    const data = this.slideInRef?.getData() ?? this.smbShareData();
+    // Edit/default data arrives via the `smbShareData` input from the side-panel host.
+    const data = this.smbShareData();
     this.existingSmbShare = data?.existingSmbShare;
     this.defaultSmbShare = data?.defaultSmbShare;
     this.setupExplorerRootNodes();

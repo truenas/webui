@@ -95,16 +95,13 @@ describe('WebShareSharesFormComponent', () => {
   describe('Add new WebShare', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              isNew: true,
-              name: '',
-              path: '',
-            } as WebShareFormData),
-          }),
-        ],
+        props: {
+          webShareData: {
+            isNew: true,
+            name: '',
+            path: '',
+          } as WebShareFormData,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
@@ -174,12 +171,9 @@ describe('WebShareSharesFormComponent', () => {
 
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => editData,
-          }),
-        ],
+        props: {
+          webShareData: editData,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
@@ -265,12 +259,9 @@ describe('WebShareSharesFormComponent', () => {
 
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => homeShareEditData,
-          }),
-        ],
+        props: {
+          webShareData: homeShareEditData,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
@@ -303,16 +294,13 @@ describe('WebShareSharesFormComponent', () => {
   describe('Path auto-population', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              isNew: true,
-              name: '',
-              path: '',
-            } as WebShareFormData),
-          }),
-        ],
+        props: {
+          webShareData: {
+            isNew: true,
+            name: '',
+            path: '',
+          } as WebShareFormData,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.detectChanges();
@@ -344,28 +332,33 @@ describe('WebShareSharesFormComponent', () => {
       const mockApiCall = jest.fn().mockReturnValue(throwError(() => new Error('Failed to load shares')));
 
       spectator = createComponent({
+        detectChanges: false,
+        props: {
+          webShareData: {
+            isNew: true,
+            name: '',
+            path: '',
+          } as WebShareFormData,
+        },
         providers: [
           mockProvider(ApiService, { call: mockApiCall }),
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              isNew: true,
-              name: '',
-              path: '',
-            } as WebShareFormData),
-          }),
         ],
       });
 
+      const closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
+
       const dialogService = spectator.inject(DialogService);
       jest.spyOn(dialogService, 'error');
+
+      spectator.detectChanges();
 
       expect(dialogService.error).toHaveBeenCalledWith({
         title: 'Error Loading WebShares',
         message: 'Could not retrieve existing WebShare configurations. Please check your connection and try again.',
         stackTrace: 'Failed to load shares',
       });
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: undefined });
+      expect(closedSpy).toHaveBeenCalledWith(false);
     });
 
     it('should handle update API errors gracefully', async () => {
@@ -381,17 +374,16 @@ describe('WebShareSharesFormComponent', () => {
       });
 
       spectator = createComponent({
+        props: {
+          webShareData: {
+            id: 1,
+            isNew: false,
+            name: 'documents',
+            path: '/mnt/tank/documents',
+          } as WebShareFormData,
+        },
         providers: [
           mockProvider(ApiService, { call: mockApiCall }),
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              id: 1,
-              isNew: false,
-              name: 'documents',
-              path: '/mnt/tank/documents',
-            } as WebShareFormData),
-          }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -414,16 +406,13 @@ describe('WebShareSharesFormComponent', () => {
   describe('Pre-filled data', () => {
     it('should initialize with pre-filled path when creating from dataset', () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              isNew: true,
-              name: '',
-              path: '/mnt/tank/predefined',
-            } as WebShareFormData),
-          }),
-        ],
+        props: {
+          webShareData: {
+            isNew: true,
+            name: '',
+            path: '/mnt/tank/predefined',
+          } as WebShareFormData,
+        },
       });
       spectator.detectChanges();
 
@@ -434,16 +423,13 @@ describe('WebShareSharesFormComponent', () => {
 
     it('should initialize with both name and path pre-filled', () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              isNew: true,
-              name: 'prefilled_name',
-              path: '/mnt/tank/prefilled',
-            } as WebShareFormData),
-          }),
-        ],
+        props: {
+          webShareData: {
+            isNew: true,
+            name: 'prefilled_name',
+            path: '/mnt/tank/prefilled',
+          } as WebShareFormData,
+        },
       });
       spectator.detectChanges();
 

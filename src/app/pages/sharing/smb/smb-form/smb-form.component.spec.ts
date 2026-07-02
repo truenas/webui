@@ -199,16 +199,13 @@ describe('SmbFormComponent', () => {
 
   async function setupTest(share?: Partial<SmbShare>): Promise<void> {
     spectator = createComponent({
-      providers: [
-        mockProvider(SlideInRef, {
-          ...slideInRef,
-          getData: () => ({
-            existingSmbShare: share
-              ? { ...existingShare, ...share }
-              : null,
-          }),
-        }),
-      ],
+      props: {
+        smbShareData: {
+          existingSmbShare: share
+            ? { ...existingShare, ...share }
+            : null,
+        },
+      },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     mockStore$ = spectator.inject(MockStore);

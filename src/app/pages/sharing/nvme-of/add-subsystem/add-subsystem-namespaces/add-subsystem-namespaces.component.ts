@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input, Type } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
@@ -27,9 +28,15 @@ import {
   ],
 })
 export class AddSubsystemNamespacesComponent {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
+
+  // AddSubsystemNamespaceComponent structurally provides the host surface (closed / hasUnsavedChanges)
+  // the panel reads; cast past its nominal type. Opened footerless — the base form owns Save.
+  private readonly addNamespaceForm = AddSubsystemNamespaceComponent as unknown as
+    Type<SidePanelForm<NamespaceChanges>>;
 
   namespacesControl = input.required<FormControl<NamespaceChanges[]>>();
 
@@ -38,7 +45,10 @@ export class AddSubsystemNamespacesComponent {
   }
 
   protected onAddNamespace(): void {
-    this.slideIn.open(AddSubsystemNamespaceComponent)
+    this.formPanel.open(this.addNamespaceForm, {
+      title: this.translate.instant('Add Namespace'),
+      footerless: true,
+    })
       .onSuccess((response) => {
         const newNamespaces = [...this.namespaces, response];
         this.namespacesControl().setValue(uniqBy(newNamespaces, 'device_path'));

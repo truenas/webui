@@ -21,7 +21,6 @@ import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
@@ -47,12 +46,8 @@ export class PortFormComponent implements OnInit {
   private nvmeOfService = inject(NvmeOfService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  // Present only when opened via the legacy SlideIn host; absent inside a
-  // `<tn-side-panel>` (the go-forward host), where edit data arrives via the
-  // `port` input and the created record is emitted through `closed`.
-  private slideInRef = inject<SlideInRef<NvmeOfPort | undefined, NvmeOfPort | null>>(SlideInRef, { optional: true });
 
-  /** Edit data supplied by a `<tn-side-panel>` host (legacy host uses `slideInRef.getData()`). */
+  /** Edit data supplied by a `<tn-side-panel>` host. */
   readonly port = input<NvmeOfPort | undefined>(undefined);
 
   /** Created/updated record emitted on a successful submit when hosted in a `<tn-side-panel>`. */
@@ -129,7 +124,7 @@ export class PortFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const existingPort = this.slideInRef?.getData() ?? this.port();
+    const existingPort = this.port();
 
     if (existingPort) {
       this.existingPort.set(existingPort);

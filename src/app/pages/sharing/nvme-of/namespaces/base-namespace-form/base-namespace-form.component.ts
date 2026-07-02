@@ -22,7 +22,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -58,7 +57,6 @@ const typeOptions: Option[] = [
     ReactiveFormsModule,
     TranslateModule,
     TnCardComponent,
-    ModalHeaderComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,

@@ -36,7 +36,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -73,11 +72,8 @@ export class ExtentFormComponent implements OnInit {
   private api = inject(ApiService);
   private filesystemService = inject(FilesystemService);
   private destroyRef = inject(DestroyRef);
-  // Panel-only form: opened exclusively via FormSidePanelService, so the legacy SlideIn ref is
-  // injected optionally and is absent in the `<tn-side-panel>` host (data arrives via {@link extentData}).
-  private slideInRef = inject<SlideInRef<IscsiExtent, boolean>>(SlideInRef, { optional: true });
 
-  /** Edit data supplied by the `<tn-side-panel>` host (legacy host uses `slideInRef.getData()`). */
+  /** Edit data supplied by the `<tn-side-panel>` host. */
   readonly extentData = input<IscsiExtent | undefined>(undefined);
 
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
@@ -171,9 +167,8 @@ export class ExtentFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // The legacy SlideIn host exposes data via `getData()`; the side-panel host via the
-    // `extentData` input — both resolved here (inputs aren't set until after construction).
-    this.editingExtent = this.slideInRef?.getData() ?? this.extentData();
+    // Edit data arrives via the `extentData` input from the side-panel host.
+    this.editingExtent = this.extentData();
 
     this.form.controls.type.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),

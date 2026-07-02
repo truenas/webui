@@ -29,7 +29,6 @@ import {
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -78,11 +77,8 @@ export class TargetFormComponent implements OnInit {
   private license = inject(LicenseService);
   private targetNameValidationService = inject(TargetNameValidationService);
   private destroyRef = inject(DestroyRef);
-  // Panel-only form: opened exclusively via FormSidePanelService, so the legacy SlideIn ref is
-  // injected optionally and is absent in the `<tn-side-panel>` host (data arrives via {@link targetData}).
-  private slideInRef = inject<SlideInRef<IscsiTarget, IscsiTarget>>(SlideInRef, { optional: true });
 
-  /** Edit data supplied by the `<tn-side-panel>` host (legacy host uses `slideInRef.getData()`). */
+  /** Edit data supplied by the `<tn-side-panel>` host. */
   readonly targetData = input<IscsiTarget | undefined>(undefined);
 
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
@@ -205,9 +201,8 @@ export class TargetFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // The legacy SlideIn host exposes data via `getData()`; the side-panel host via the
-    // `targetData` input — both resolved here (inputs aren't set until after construction).
-    this.editingTarget = this.slideInRef?.getData() ?? this.targetData();
+    // Edit data arrives via the `targetData` input from the side-panel host.
+    this.editingTarget = this.targetData();
 
     this.form.controls.name.setAsyncValidators(
       [this.targetNameValidationService.validateTargetName(String(this.editingTarget?.name))],
