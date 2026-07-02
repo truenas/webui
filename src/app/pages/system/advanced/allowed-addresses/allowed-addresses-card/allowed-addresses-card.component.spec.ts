@@ -9,9 +9,9 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllowedAddressesCardComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
@@ -22,11 +22,7 @@ describe('AllowedAddressesCardComponent', () => {
   let spectator: Spectator<AllowedAddressesCardComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
-  const componentRef: SlideInRef<unknown, unknown> = {
-    close: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-    requireConfirmationWhen: jest.fn(),
-  };
+  let formPanel: FormSidePanelService;
 
   const config = {
     ui_allowlist: [
@@ -51,10 +47,9 @@ describe('AllowedAddressesCardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
-      mockProvider(UnsavedChangesService, {
-        showConfirmDialog: jest.fn(() => of(true)),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
       }),
-      mockProvider(SlideInRef, componentRef),
       mockProvider(SystemGeneralService, {
         handleUiServiceRestart: jest.fn(() => of(true)),
       }),
@@ -65,6 +60,7 @@ describe('AllowedAddressesCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('should show table rows', async () => {
@@ -75,26 +71,13 @@ describe('AllowedAddressesCardComponent', () => {
   });
 
   it('opens the side panel form when Configure button is pressed', async () => {
-    expect(spectator.query('ix-allowed-addresses-form')).toBeNull();
-
     const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
-    spectator.detectChanges();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.query('ix-allowed-addresses-form')).not.toBeNull();
-  });
-
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
-    await configureButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-allowed-addresses-form')).not.toBeNull();
-
-    spectator.query(AllowedAddressesFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-allowed-addresses-form')).toBeNull();
+    expect(formPanel.open).toHaveBeenCalledWith(AllowedAddressesFormComponent, {
+      title: 'Allowed IP Addresses',
+    });
   });
 
   it('deletes a Allowed IP Address with confirmation when Delete icon is pressed', async () => {

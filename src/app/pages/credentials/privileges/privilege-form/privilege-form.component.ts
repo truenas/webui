@@ -1,16 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, signal, inject,
-  DestroyRef,
+  DestroyRef, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, combineLatest, finalize, map, of, switchMap,
+  TnButtonComponent, TnChipInputComponent, TnCheckboxComponent, TnFormFieldComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  Observable, Subject, combineLatest, finalize, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
@@ -18,19 +21,12 @@ import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -43,33 +39,37 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxChipsComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnChipInputComponent,
     IxGroupChipsComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
+    AsyncPipe,
   ],
 })
-export class PrivilegeFormComponent implements OnInit {
+export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
-  private dialog = inject(DialogService);
-  slideInRef = inject<SlideInRef<Privilege | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
+
+  /**
+   * Row to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
+   * carry data). Absent for Add, and unused in the legacy SlideIn host (which
+   * supplies the row via `slideInRef.getData()`).
+   */
+  readonly editPrivilege = input<Privilege | undefined>(undefined);
 
   /**
    * Maximum number of groups to return in autocomplete queries.
@@ -83,13 +83,21 @@ export class PrivilegeFormComponent implements OnInit {
   protected dsAuthEnabled = signal(false);
   private dsStatus = signal<DirectoryServicesStatus | null>(null);
 
-  protected form = this.formBuilder.group({
+  /** String-mode suggestions for the local-groups chip input, refreshed on each search. */
+  protected localGroupsSuggestions = signal<string[]>([]);
+
+  /** Emits the latest chip-input search term; `switchMap` cancels stale in-flight queries. */
+  private readonly localGroupsSearch$ = new Subject<string>();
+
+  protected readonly form = this.formBuilder.group({
     name: ['', [Validators.required]],
     local_groups: [[] as string[]],
     ds_groups: [[] as string[]],
     web_shell: [false],
     roles: [[] as Role[]],
   });
+
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   protected readonly helptext = helptextPrivilege;
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -140,7 +148,11 @@ export class PrivilegeFormComponent implements OnInit {
    * For SMB shares with larger group lists requiring pagination, see GroupComboboxProvider.
    */
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
-    const trimmedQuery = query?.trim().toLowerCase() || '';
+    const trimmedQuery = query?.trim() || '';
+    // The server-side `^` (prefix) filter is case-sensitive, so pass the query verbatim
+    // (matching UserService.smbGroupQueryDsCache) — lowercasing it would drop groups with
+    // uppercase names. The client-side contains-match below is what's intentionally lax.
+    const lowerCaseQuery = trimmedQuery.toLowerCase();
 
     const filters: (['local', '=', true] | ['group', '^', string])[] = [['local', '=', true]];
     if (trimmedQuery) {
@@ -155,19 +167,24 @@ export class PrivilegeFormComponent implements OnInit {
           return groupNames;
         }
 
-        return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
+        return groupNames.filter((name) => name.toLowerCase().includes(lowerCaseQuery));
       }),
     );
   };
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.existingPrivilege = this.slideInRef.getData();
+  /**
+   * Refreshes the local-groups chip-input suggestions as the user types, driving the
+   * autocomplete from {@link localGroupsProvider}.
+   */
+  protected onLocalGroupsSearch(query: string): void {
+    this.localGroupsSearch$.next(query);
   }
 
   ngOnInit(): void {
+    this.existingPrivilege = this.slideInRef
+      ? this.slideInRef.getData() as Privilege | undefined
+      : this.editPrivilege();
+
     if (this.existingPrivilege) {
       this.setPrivilegeForEdit(this.existingPrivilege);
       if (this.existingPrivilege.builtin_name) {
@@ -197,6 +214,16 @@ export class PrivilegeFormComponent implements OnInit {
     ).subscribe((dsGroups) => {
       this.updateDsAuthButtonVisibility(dsGroups);
     });
+
+    // Drive suggestions off the latest search term only; `switchMap` cancels any
+    // earlier in-flight query so out-of-order responses can't overwrite fresh results.
+    this.localGroupsSearch$.pipe(
+      switchMap((query) => this.localGroupsProvider(query)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
+
+    // Preload local-group suggestions so the chip-input dropdown is populated on first focus.
+    this.onLocalGroupsSearch('');
   }
 
   private setPrivilegeForEdit(existingPrivilege: Privilege): void {
@@ -245,7 +272,7 @@ export class PrivilegeFormComponent implements OnInit {
    * Enables DS authentication immediately when the button is clicked.
    * This is a separate operation from saving the privilege.
    */
-  enableDsAuth(): void {
+  protected enableDsAuth(): void {
     this.isEnablingDsAuth.set(true);
 
     this.api.call('system.general.update', [{ ds_auth: true }]).pipe(
@@ -266,7 +293,7 @@ export class PrivilegeFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     // Resolve all group names to UIDs before submitting
@@ -288,7 +315,7 @@ export class PrivilegeFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.errorHandler.handleValidationErrors(error, this.form);
