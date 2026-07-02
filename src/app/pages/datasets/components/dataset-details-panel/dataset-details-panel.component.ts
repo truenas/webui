@@ -1,10 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -14,7 +13,6 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
@@ -34,13 +32,12 @@ import { doesDatasetHaveShares, getDatasetLabel, isIocageMounted } from 'app/pag
   styleUrls: ['./dataset-details-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
     AsyncPipe,
     MobileBackButtonComponent,
     TranslateModule,
     DatasetIconComponent,
     TnTooltipDirective,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
     UiSearchDirective,
     DatasetDetailsCardComponent,

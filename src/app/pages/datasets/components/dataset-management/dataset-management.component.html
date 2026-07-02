@@ -19,7 +19,6 @@
       <div
         #ixTreeHeader
         class="sticky-header"
-        (scroll)="treeHeaderScrolled()"
       >
         <div class="tree-header" [style.width.px]="ixTreeHeaderWidth">
           <div>
@@ -41,74 +40,66 @@
 
       <div
         #ixTree
+        ixContentVirtualScrollable
         class="tree-wrapper"
+        (scroll)="datasetTreeWrapperScrolled()"
       >
         <div class="tree-inner">
 
-          @if (searchQuery() && !dataSource.filteredData.length && !isLoading) {
+          <!--
+            No-results empty state. IMPORTANT: the tree below is kept MOUNTED (hidden via
+            a class) rather than swapped out with @else. Destroying the tn-tree causes
+            CdkTree.ngOnDestroy to disconnect the data source, which permanently kills its
+            debounced filter subscription and breaks the search after the first no-results.
+          -->
+          @let noSearchResults = searchQuery() && !dataSource.filteredData.length && !isLoading;
+
+          @if (noSearchResults) {
             <ng-container [ngTemplateOutlet]="empty"></ng-container>
-          } @else {
-            <ix-tree-virtual-scroll-view
-              [ixDataSource]="dataSource"
-              [ixTreeControl]="treeControl"
-              [ixItemSize]="52"
-              [ixMinBufferPx]="52"
-              [ixMaxBufferPx]="52"
-              [trackBy]="trackById"
-              (viewportScrolled)="datasetTreeScrolled($event)"
-              (viewportResized)="datasetTreeWidthChanged($event)"
-            >
-              <ix-tree-node
-                *treeNodeDef="let dataset; dataSource: dataSource"
-                routerLinkActive="selected"
-                cdkTreeNodePadding
-                [cdkTreeNodePaddingIndent]="40"
-                [treeNodeDefDataSource]="dataSource"
-                [routerLink]="['/datasets', dataset.id]"
-                (click)="viewDetails(dataset)"
-                (keydown.enter)="viewDetails(dataset)"
-              >
-                <span class="spacer"></span>
-                <ix-dataset-node
-                  [dataset]="dataset"
-                  [isSystemDataset]="isSystemDataset(dataset)"
-                ></ix-dataset-node>
-                <tn-icon name="chevron-right" library="mdi" class="mobile-actions"></tn-icon>
-              </ix-tree-node>
-
-              <ix-tree-node
-                *treeNodeDef="let dataset; dataSource: dataSource; when: hasChild"
-                routerLinkActive="selected"
-                cdkTreeNodePadding
-                [cdkTreeNodePaddingIndent]="40"
-                [treeNodeDefDataSource]="dataSource"
-                [routerLink]="['/datasets', dataset.id]"
-                (click)="viewDetails(dataset)"
-                (keydown.enter)="viewDetails(dataset)"
-              >
-                <button
-                  mat-icon-button
-                  treeNodeToggle
-                  [ixTest]="['toggle-row', dataset.name]"
-                  [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
-                  (keydown.enter)="$event.stopPropagation()"
-                >
-                  <tn-icon
-                    class="mat-icon-rtl-mirror"
-                    library="mdi"
-                    [name]="treeControl.isExpanded(dataset) ? 'chevron-down' : 'chevron-right'"
-                  ></tn-icon>
-                </button>
-
-                <ix-dataset-node
-                  [dataset]="dataset"
-                  [isSystemDataset]="isSystemDataset(dataset)"
-                ></ix-dataset-node>
-
-                <tn-icon name="chevron-right" library="mdi" class="mobile-actions"></tn-icon>
-              </ix-tree-node>
-            </ix-tree-virtual-scroll-view>
           }
+
+          <tn-tree-virtual-scroll-view
+            class="dataset-tree"
+            [class.tree-hidden]="noSearchResults"
+            [dataSource]="dataSource"
+            [treeControl]="treeControl"
+            [scrollWindow]="false"
+            [itemSize]="52"
+            [minBufferPx]="52"
+            [maxBufferPx]="52"
+            [nodeTrackBy]="trackById"
+            (viewportResized)="datasetTreeWidthChanged()"
+          >
+              <tn-tree-node
+                *cdkTreeNodeDef="let dataset"
+                class="dataset-tree-node"
+                routerLinkActive="selected"
+                cdkTreeNodePadding
+                [cdkTreeNodePaddingIndent]="40"
+                [routerLink]="['/datasets', dataset.id]"
+                [testId]="['dataset', dataset.name]"
+              >
+                <!--
+                  Navigation lives on the projected content, not the tn-tree-node host:
+                  the library node's cdkTreeNodeToggle stops click propagation, so a host
+                  (click) never fires. Handling it here (and stopping propagation) gives
+                  row-click = open details, while the chevron alone still expands/collapses.
+                -->
+                <div
+                  class="dataset-node-click"
+                  role="button"
+                  tabindex="0"
+                  (click)="viewDetails(dataset); $event.stopPropagation()"
+                  (keydown.enter)="viewDetails(dataset)"
+                >
+                  <ix-dataset-node
+                    [dataset]="dataset"
+                    [isSystemDataset]="isSystemDataset(dataset)"
+                  ></ix-dataset-node>
+                  <tn-icon name="chevron-right" library="mdi" class="mobile-actions"></tn-icon>
+                </div>
+              </tn-tree-node>
+          </tn-tree-virtual-scroll-view>
         </div>
       </div>
     </div>
@@ -139,8 +130,13 @@
 }
 
 <ng-template #empty>
-  <ix-empty
-    [conf]="emptyConfig()"
-    [requiredRoles]="requiredRoles"
-  ></ix-empty>
+  <tn-empty
+    iconSize="56px"
+    [title]="emptyConfig().title || ''"
+    [description]="emptyConfig().message"
+    [icon]="emptyIcon().name"
+    [iconLibrary]="emptyIcon().library"
+    [actionText]="emptyActionText()"
+    (onAction)="onEmptyAction()"
+  ></tn-empty>
 </ng-template>

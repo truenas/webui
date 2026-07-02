@@ -1,8 +1,7 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>{{ 'Usage' | translate }}</h3>
-  </mat-card-header>
-  <mat-card-content>
+<tn-card
+  padding="small"
+  [title]="'Usage' | translate"
+>
     @if (dataset().apps?.length || isApplications()) {
       <div class="details-item">
         <tn-icon class="icon" name="apps"></tn-icon>
@@ -160,5 +159,4 @@
         </div>
       }
     }
-  </mat-card-content>
-</mat-card>
+</tn-card>

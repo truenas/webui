@@ -21,6 +21,31 @@ ix-dataset-details-panel {
   width: 100%;
 }
 
+// Size the tree column to its content instead of stretching to fill the row height. The
+// layout mixin's fill chain (`.tree-wrapper { flex: 1; min-height: 100% }` +
+// `.tree-inner { flex: 1 }`) was meant for a background-filled list panel; here the tree
+// has no background, so filling just leaves a large empty area below the last row when the
+// list is short. Content-height keeps the list ending at its last row; the page still
+// scrolls when the list is longer than the viewport (content-height tree > viewport).
+.tree-wrapper {
+  flex: none;
+  min-height: 0;
+}
+
+.tree-inner {
+  flex: none;
+}
+
+// The header row is stretched to the tree's full (horizontally-scrollable) content width
+// so its columns can track the rows, so it can be wider than the visible tree box. Clip it
+// to the box so it can't spill past the rounded panel edge into the details column.
+// `overflow-x: clip` (not `hidden`) clips without becoming a scroll container — so the
+// mixin's `position: sticky` still works and the header height isn't collapsed.
+.sticky-header {
+  overflow-x: clip;
+}
+
+
 .details-container.details-container-mobile {
   ix-dataset-details-panel {
     margin-top: -12px;
@@ -28,14 +53,17 @@ ix-dataset-details-panel {
 }
 
 .tree-header {
-  grid-template-columns: auto 125px 125px 125px 125px 40px;
+  // Mirrors the row grid (.tree-node-grid). Its width is synced (in TS) to the tree's
+  // full content width so it can scroll horizontally in step with the rows. Below
+  // $breakpoint-hidden a trailing column reserves space for the row's mobile chevron.
+  grid-template-columns: auto 125px 125px 125px 125px;
+
+  @media (max-width: $breakpoint-hidden) {
+    grid-template-columns: auto 125px 125px 125px 125px 40px;
+  }
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0 0;
-  }
-
-  @media (min-width: $breakpoint-singlecolumn) {
-    grid-template-columns: auto 125px 125px 125px 125px;
   }
 
   .available-header {
@@ -48,6 +76,147 @@ ix-dataset-details-panel {
       font-size: 11px;
       font-weight: normal;
       opacity: 0.8;
+    }
+  }
+}
+
+// Dataset tree (migrated ix-tree-virtual-scroll-view -> tn-tree). tn-tree renders
+// with ViewEncapsulation.None, so its internals are reachable via ::ng-deep here.
+// Hidden while the no-search-results empty state is shown. Kept in the DOM (not
+// destroyed) so its CdkTree data source stays connected and the search keeps working.
+:host ::ng-deep .dataset-tree.tree-hidden {
+  display: none;
+}
+
+:host ::ng-deep .dataset-tree {
+  display: block;
+  width: 100%;
+  // Size to content vertically (the CDK viewport spacer sets the height) so the tree ends
+  // at its last row — the page (.rightside-content-hold) provides the scroll. Do NOT
+  // stretch to fill the column height: with no background of its own the stretch would
+  // just show empty space under a short list (see the .tree-wrapper/.tree-inner overrides).
+  min-height: 0;
+  // Size to content so long names/deep rows can scroll horizontally (not truncate).
+  min-width: fit-content;
+
+  // Bridge the library's --tn-* design tokens onto webui's theme variables so the
+  // tree's borders/hover/focus render correctly in both themes (the global token
+  // bridge is not wired yet; mirrors the tn-detail-card mixin workaround).
+  --tn-lines: var(--lines);
+  --tn-alt-bg1: var(--hover-bg);
+  --tn-alt-bg2: var(--hover-bg);
+  --tn-fg1: var(--fg1);
+  --tn-fg2: var(--fg2);
+  --tn-primary: var(--primary);
+  --tn-bg1: transparent;
+
+  // The viewport virtualizes against the page scroll container (.rightside-content-hold,
+  // via ixContentVirtualScrollable) instead of scrolling itself, so it owns no scrollbar;
+  // hide any residual one so it can never shift the columns out of step with the header.
+  .tn-tree-virtual-scroll-view__viewport {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .tn-tree-node__content {
+    height: 52px;
+    min-height: 52px;
+    box-sizing: border-box;
+    // Left offset lands the projected 5-column grid so its fixed (Used/Available/…)
+    // columns line up under the sticky column header. No right padding: it would
+    // inflate the measured content width (and thus the synced header) by 8px and
+    // shift every data column left of its header label.
+    padding: 0 0 0 9px;
+    gap: 0;
+  }
+
+  // The library projects our content into a block-level __text; force a single flex
+  // row so the row body and the mobile chevron stay on one line (block would stack
+  // them vertically and inflate the row past itemSize).
+  .tn-tree-node__text {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .dataset-node-click {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    // The full-width focus ring is drawn on the row host (see below); suppress the
+    // default outline here so it doesn't render a partial ring behind the cells.
+    outline: none;
+  }
+
+  // Remove the library node's background transition so hover / hover-off matches the
+  // (instant) row-host and grid-cell backgrounds — otherwise the inner content fades
+  // out of step and the hover looks delayed and only partially full-width.
+  .tn-tree-node {
+    transition: none;
+  }
+
+  // The mobile-only chevron affordance. The shared layout mixin hides it via
+  // `.ix-tree-node`, which no longer matches the migrated `tn-tree-node`, so scope
+  // the same behaviour here: hidden on desktop, shown when details are collapsed.
+  .mobile-actions {
+    display: none;
+
+    // Shown at the end of the row when the details panel is hidden (narrow screens).
+    // The header reserves a matching trailing column at the same breakpoint.
+    @media (max-width: $breakpoint-hidden) {
+      display: flex;
+      margin: 4px 12px;
+      position: relative;
+      right: 8px;
+    }
+  }
+
+  .dataset-tree-node {
+    color: var(--fg1);
+    position: relative;
+
+    // Paint the background on the ROW HOST, not the inner content, so it covers the
+    // full width INCLUDING the cdkTreeNodePadding indent on the left (otherwise the
+    // indent shows the darker page background). The projected grid cells paint their
+    // own matching hover/selected colour over the content area.
+    background-color: var(--bg2);
+
+    &:hover {
+      background-color: var(--hover-bg);
+    }
+
+    &.selected {
+      background-color: var(--hover-bg);
+      color: var(--fg2);
+
+      // Selection accent bar at the very left edge of the row (before the indent).
+      &::before {
+        background-color: var(--primary);
+        content: '';
+        height: 100%;
+        left: 0;
+        opacity: 1;
+        position: absolute;
+        top: 0;
+        width: 6px;
+        z-index: 2;
+      }
+    }
+
+    // Keyboard-focus ring spanning the WHOLE row (left to right, over the indent and
+    // the grid cells). Drawn as an overlay on the host so it isn't clipped/segmented
+    // by the opaque cell backgrounds the way an inset outline on the content would be.
+    &:has(.dataset-node-click:focus-visible)::after {
+      border: 2px solid var(--primary);
+      content: '';
+      inset: 0;
+      pointer-events: none;
+      position: absolute;
+      z-index: 3;
     }
   }
 }

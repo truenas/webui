@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents, MockModule } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
@@ -117,9 +117,11 @@ describe('DatasetCapacityManagementCardComponent', () => {
       });
     });
 
-    it('shows header', () => {
-      expect(spectator.query('mat-card-header h3')).toHaveText('Space Management');
-      expect(spectator.query('mat-card-header button')).toHaveText('Edit');
+    it('shows header', async () => {
+      expect(spectator.query('.tn-card__title')).toHaveText('Space Management');
+      const editButton = await TestbedHarnessEnvironment.loader(spectator.fixture)
+        .getHarnessOrNull(TnButtonHarness.with({ label: 'Edit' }));
+      expect(editButton).not.toBeNull();
     });
 
     it('shows SpaceManagementChartComponent', () => {
@@ -166,9 +168,11 @@ describe('DatasetCapacityManagementCardComponent', () => {
       });
     });
 
-    it('shows header', () => {
-      expect(spectator.query('mat-card-header h3')).toHaveText('Zvol Space Management');
-      expect(spectator.query('mat-card-header button')).not.toExist();
+    it('shows header', async () => {
+      expect(spectator.query('.tn-card__title')).toHaveText('Zvol Space Management');
+      const editButton = await TestbedHarnessEnvironment.loader(spectator.fixture)
+        .getHarnessOrNull(TnButtonHarness.with({ label: 'Edit' }));
+      expect(editButton).toBeNull();
     });
 
     it('shows SpaceManagementChartComponent', () => {
@@ -207,7 +211,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
   });
 
   it('opens capacity settings form when Edit button is clicked', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open)

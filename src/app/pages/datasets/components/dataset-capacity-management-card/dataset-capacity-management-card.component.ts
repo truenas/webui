@@ -1,11 +1,8 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnChanges, OnInit, input, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnCardComponent, type TnCardAction } from '@truenas/ui-components';
 import { maxBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { forkJoin, Subject } from 'rxjs';
@@ -13,7 +10,6 @@ import {
   map, take, switchMap, tap,
   filter,
 } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
@@ -21,6 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { isQuotaSet } from 'app/helpers/storage.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -38,14 +35,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./dataset-capacity-management-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardTitle,
-    MatCardHeader,
+    TnCardComponent,
     TranslateModule,
-    MatButton,
-    RequiresRolesDirective,
     TestDirective,
-    MatCardContent,
     SpaceManagementChartComponent,
     FileSizePipe,
     RouterLink,
@@ -61,10 +53,13 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   private slideIn = inject(SlideIn);
   private destroyRef = inject(DestroyRef);
   private sharingTierService = inject(SharingTierService);
+  private authService = inject(AuthService);
+  private translate = inject(TranslateService);
 
   readonly dataset = input.required<DatasetDetails>();
 
-  protected readonly requiredRoles = [Role.DatasetWrite];
+  private hasDatasetWrite = toSignal(this.authService.hasRole(Role.DatasetWrite), { initialValue: false });
+
   protected readonly searchableElements = datasetCapacityManagementElements;
   protected readonly tierEnabled = this.sharingTierService.tierEnabled;
   protected readonly performanceTierAvailable = signal<number | null>(null);
@@ -105,6 +100,17 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
 
   protected hasInheritedQuotas = computed(() => {
     return this.inheritedQuotasDataset?.quota?.parsed && this.inheritedQuotasDataset?.id !== this.dataset()?.id;
+  });
+
+  protected readonly editAction = computed<TnCardAction | undefined>(() => {
+    if (this.isZvol() || !this.hasDatasetWrite()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Edit'),
+      testId: 'edit-quotas',
+      handler: () => this.editDataset(),
+    };
   });
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

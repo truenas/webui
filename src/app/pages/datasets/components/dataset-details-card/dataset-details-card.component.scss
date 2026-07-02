@@ -1,15 +1,38 @@
 @import 'mixins/cards';
+@import 'mixins/animations';
 
-.card {
-  @include details-card();
+@include tn-detail-card;
 
+:host {
   ix-copy-button {
     height: 24px;
     width: 24px;
   }
 
   .details-item {
+    @include fade-in();
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
     align-items: flex-start;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    .label {
+      font-weight: bold;
+      margin-right: 5px;
+      white-space: normal;
+    }
+
+    .value {
+      font-weight: normal;
+      margin-right: 5px;
+      white-space: normal;
+    }
 
     .root-dataset {
       align-items: center;
@@ -112,10 +135,4 @@
 // outside this component's host, so the class must be global rather than :host-scoped.
 ::ng-deep .dataset-path-tooltip {
   word-break: break-all;
-}
-
-:host ::ng-deep {
-  .mat-mdc-card-header-text {
-    width: 100%;
-  }
 }

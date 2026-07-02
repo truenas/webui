@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -49,7 +49,7 @@ describe('DataProtectionComponent', () => {
   it('opens the snapshot add from when button clicked', async () => {
     const slideInRef = spectator.inject(SlideIn);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Take Snapshot' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Take Snapshot' }));
     await editButton.click();
 
     expect(slideInRef.open).toHaveBeenCalledWith(SnapshotAddFormComponent, { data: '/mnt/pool/ds' });

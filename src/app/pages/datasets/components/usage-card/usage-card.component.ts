@@ -1,11 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnCardComponent } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -33,11 +30,8 @@ export interface InheritedWebShare {
   styleUrls: ['./usage-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
     TranslateModule,
-    MatCardContent,
     TnIconComponent,
     RouterLink,
     TestDirective,

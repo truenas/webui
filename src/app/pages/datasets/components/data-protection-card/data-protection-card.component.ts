@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { TnCardComponent, type TnCardAction } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -19,16 +19,11 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
   styleUrls: ['./data-protection-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatButton,
-    RequiresRolesDirective,
+    TnCardComponent,
     TestDirective,
     UiSearchDirective,
     TranslateModule,
-    MatCardContent,
     RouterLink,
-
   ],
 })
 export class DataProtectionCardComponent {
@@ -36,11 +31,25 @@ export class DataProtectionCardComponent {
   private snackbarService = inject(SnackbarService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
   readonly dataset = input.required<DatasetDetails>();
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
   protected readonly searchableElements = dataProtectionCardElements;
+
+  private hasSnapshotWrite = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
+
+  protected readonly addSnapshotAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasSnapshotWrite()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Take Snapshot'),
+      testId: 'create-snapshot',
+      handler: () => this.addSnapshot(),
+    };
+  });
 
   get backupTasksLabel(): string {
     const replicationCount = this.dataset()?.replication_tasks_count || 0;

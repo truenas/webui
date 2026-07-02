@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
@@ -112,7 +112,7 @@ describe('DatasetDetailsPanelComponent', () => {
   });
 
   it('opens a dataset form when Add Dataset is pressed', async () => {
-    const addDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Dataset' }));
+    const addDatasetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Dataset' }));
     await addDatasetButton.click();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       DatasetFormComponent,
@@ -121,7 +121,7 @@ describe('DatasetDetailsPanelComponent', () => {
   });
 
   it('opens a zvol form when Add Zvol is pressed', async () => {
-    const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol' }));
+    const addZvolButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Zvol' }));
     await addZvolButton.click();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       ZvolFormComponent,
