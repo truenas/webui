@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, inject, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -45,6 +45,8 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -90,6 +92,7 @@ export class CloudSyncListComponent implements OnInit {
   private translate = inject(TranslateService);
   private taskService = inject(TaskService);
   private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
@@ -292,13 +295,25 @@ export class CloudSyncListComponent implements OnInit {
       });
   }
 
+  // CloudSyncFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
+  private readonly cloudSyncForm = CloudSyncFormComponent as unknown as Type<SidePanelForm>;
+  // Wizard is hosted `footerless` — its mat-stepper owns its own Next/Save buttons.
+  private readonly cloudSyncWizard = CloudSyncWizardComponent as unknown as Type<SidePanelForm>;
+
   protected openForm(row?: CloudSyncTaskUi): void {
     if (row) {
-      this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true })
-        .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
+      this.formPanel.open(this.cloudSyncForm, {
+        title: this.translate.instant('Edit Cloud Sync Task'),
+        wide: true,
+        inputs: { taskToEdit: row },
+      }).onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
     } else {
-      this.slideIn.open(CloudSyncWizardComponent, { wide: true })
-        .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
+      this.formPanel.open(this.cloudSyncWizard, {
+        title: this.translate.instant('Cloud Sync Task Wizard'),
+        wide: true,
+        footerless: true,
+      }).onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
     }
   }
 

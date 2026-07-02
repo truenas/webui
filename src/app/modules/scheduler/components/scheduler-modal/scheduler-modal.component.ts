@@ -8,13 +8,12 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
+} from '@truenas/ui-components';
 import * as cronParser from 'cron-parser';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
-import { of } from 'rxjs';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
@@ -35,9 +34,10 @@ import { SchedulerPreviewColumnComponent } from './scheduler-preview-column/sche
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxSelectComponent,
+    TnSelectComponent,
     TooltipComponent,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     TnCheckboxComponent,
     TnButtonComponent,
     SchedulerPreviewColumnComponent,
@@ -105,7 +105,11 @@ export class SchedulerModalComponent implements OnInit {
   ];
 
   readonly presets = getDefaultCrontabPresets(this.translate);
-  readonly presetOptions$ = of(this.presets);
+  readonly presetSelectOptions: TnSelectOption<string>[] = this.presets.map((preset) => ({
+    label: preset.label,
+    value: preset.value,
+  }));
+
   readonly tooltips = {
     general: helptextGlobal.scheduler.general.tooltip,
     minutes: helptextGlobal.scheduler.minutes.tooltip,

@@ -13,10 +13,9 @@
   position: relative;
   display: inline-block;
 
-  // The wrapper is always rendered for the projected `[type=submit]` button, but in the
-  // `<tn-side-panel>` host no Save is projected (it lives in the panel footer), leaving an empty
-  // inline-block that the flex `gap` still spaces — pushing an `ixExtraActions` toggle (e.g.
-  // "Advanced Options") a few px right of the form's left edge. Collapse it when empty.
+  // No submit button projected (e.g. a wizard's `ix-form-actions` holds only Next/Back/Advanced):
+  // collapse the empty wrapper so the `gap` after it doesn't shift the visible buttons off the
+  // form's left edge.
   &:empty {
     display: none;
   }

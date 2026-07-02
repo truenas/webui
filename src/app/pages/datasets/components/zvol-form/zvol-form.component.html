@@ -88,22 +88,24 @@
           </div>
         </ix-editable>
       </ix-details-item>
-      <ix-details-item
-        [label]="helptext.deduplicationLabel | translate"
-        [tooltip]="helptext.deduplicationTooltip | translate"
-      >
-        <ix-editable>
-          <div view>{{ getOptionLabel(deduplicationOptions, form.controls.deduplication.value) }}</div>
-          <div edit>
-            <ix-select
-              formControlName="deduplication"
-              [options]="deduplicationOptions$"
-              [attr.aria-label]="helptext.deduplicationLabel | translate"
-              [required]="true"
-            ></ix-select>
-          </div>
-        </ix-editable>
-      </ix-details-item>
+      @if (hasDeduplication) {
+        <ix-details-item
+          [label]="helptext.deduplicationLabel | translate"
+          [tooltip]="helptext.deduplicationTooltip | translate"
+        >
+          <ix-editable>
+            <div view>{{ getOptionLabel(deduplicationOptions, form.controls.deduplication.value) }}</div>
+            <div edit>
+              <ix-select
+                formControlName="deduplication"
+                [options]="deduplicationOptions$"
+                [attr.aria-label]="helptext.deduplicationLabel | translate"
+                [required]="true"
+              ></ix-select>
+            </div>
+          </ix-editable>
+        </ix-details-item>
+      }
       <ix-details-item
         [label]="helptext.readonlyLabel | translate"
         [tooltip]="helptext.readonlyTooltip | translate"

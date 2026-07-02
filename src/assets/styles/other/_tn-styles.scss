@@ -1032,47 +1032,26 @@ tn-form-section {
   padding-bottom: 1.25rem;
 }
 
-// The form-actions row (e.g. an "Advanced Options" toggle) must align with the tn-form-field
-// column on ANY form built from tn-form-section — both the `<ix-form>` wrapper (Edit SMB) and
-// legacy hand-rolled forms that render `<ix-form-actions>` directly (service-smb). form-actions
-// adds a 10px left gutter inside `.ix-form-container` for legacy ix-fieldset forms (whose fields
-// share that indent); tn-form-section columns have no gutter, so the toggle looked indented.
-// `:has(tn-form-section)` scopes the override to migrated forms; legacy ix-fieldset forms keep the
-// gutter. `!important` beats form-actions' component-scoped rule (whose `[_nghost]` attr boosts it).
-.ix-form-container:has(tn-form-section) ix-form-actions {
-  margin-left: 0 !important;
-}
-
-// Multiple `tn-radio` projected into a single `tn-form-field` (an `@for` radio list migrated from
-// `ix-radio-group`, e.g. NVMe-oF "Implementation") render inline and butt together — stack them
-// vertically with a gap.
-tn-form-field tn-radio {
+// Hand-rolled tn-radio groups (repeated `<tn-radio>` via `@for`, since @truenas/ui-components has no
+// radio-group wrapper yet) need stacking — tn-radio defaults to inline-block. Stack every radio and
+// space only CONSECUTIVE siblings, so a radio sitting alone in its own tn-form-field (e.g. a
+// per-option tooltip row) isn't given a stray top gap. Drop once the library ships a radio-group.
+// Tracked under NAS-141021.
+tn-radio {
   display: block;
 }
 
-tn-form-field tn-radio + tn-radio {
+tn-radio + tn-radio {
   margin-top: 8px;
 }
 
-// Inside a tn-form-section, the section body's own `gap: 1.25rem` is the sole vertical spacer.
-// Form components ship their own margins (ix-combobox/ix-user-combobox `margin-bottom: 12px`,
-// ix-explorer, etc.) that otherwise stack on top of the gap and over-space the section. Zero
-// every direct child's vertical margin so spacing is uniform and owned by the section.
-// TEMP: depends on the library-internal `.tn-form-section__body` class, which is not a public
-// contract — a rename would silently break form spacing app-wide. Remove once tn-form-section
-// exposes a public spacing input / the projected controls drop their own margins upstream.
-tn-form-section .tn-form-section__body > * {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-// Some controls carry their own margins deep in the tree (ix-combobox `margin-bottom: 12px`,
-// nested inside ix-user-combobox/ix-group-combobox; ix-ip-input-with-netmask `margin: 18px/12px`,
-// nested inside ix-list-item) where the direct-child rule above can't reach. Zero them wherever
-// they sit under a section so the section / list-item gap owns the spacing. `!important` beats the
-// components' `[_nghost]`-boosted `:host`.
-tn-form-section ix-combobox,
-tn-form-section ix-ip-input-with-netmask {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
+// Side panels open with a bold section heading (or intro banner) sitting flush under the header
+// divider — the library's 24px content padding reads as cramped there. Give a little more
+// breathing room at the very top. The panel renders its overlay on `document.body` (not inside the
+// host component), so it can't be scoped by component ancestry. The library's
+// `.tn-side-panel__content` rule is emulated-encapsulated (`[_ngcontent]` → specificity 0,2,0), so
+// this needs a three-class chain (0,3,0 — the overlay→panel→content ancestry) to win the longhand
+// without `!important`. Tracked under NAS-141021.
+.tn-side-panel__overlay .tn-side-panel__panel .tn-side-panel__content {
+  padding-top: 36px;
 }

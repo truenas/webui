@@ -142,6 +142,7 @@ export class AllowedAddressesCardComponent implements OnInit {
       .confirm({
         title: this.translate.instant('Delete Allowed Address'),
         message: this.translate.instant('Are you sure you want to delete address {ip}?', { ip: row.address }),
+        buttonColor: 'warn',
       })
       .pipe(
         filter(Boolean),

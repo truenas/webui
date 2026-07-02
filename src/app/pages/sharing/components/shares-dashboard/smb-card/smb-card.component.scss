@@ -19,3 +19,15 @@
     margin-left: 5px;
   }
 }
+
+// TEMP: tn-table defaults to `table-layout: auto`, so the SMB card's extra columns
+// (Audit Logging, Storage Tier) push the table wider than the fixed-width dashboard
+// card — and tn-card's `overflow: hidden` clips the rightmost columns (Audit Logging
+// was cut off). Fixed layout makes the columns share the card width and truncate; the
+// text cells already carry ellipsis + tooltips. Remove once the library exposes a
+// fit/fixed-layout option for tn-table.
+.table {
+  ::ng-deep .tn-table__table {
+    table-layout: fixed;
+  }
+}

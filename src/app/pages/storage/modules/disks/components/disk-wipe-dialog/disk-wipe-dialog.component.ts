@@ -83,6 +83,7 @@ export class DiskWipeDialog {
     this.dialogService.confirm({
       title: this.title,
       message: this.translate.instant('Wipe this disk?'),
+      buttonColor: 'warn',
     })
       .pipe(
         filter(Boolean),

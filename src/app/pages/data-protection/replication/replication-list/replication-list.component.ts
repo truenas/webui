@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -40,7 +40,8 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -87,7 +88,7 @@ export class ReplicationListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private tnDialog = inject(TnDialog);
@@ -245,13 +246,25 @@ export class ReplicationListComponent implements OnInit {
       .subscribe(() => this.getReplicationTasks());
   }
 
+  // ReplicationFormComponent / ReplicationWizardComponent structurally provide the host surface
+  // (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the
+  // nominal base type.
+  private readonly replicationForm = ReplicationFormComponent as unknown as Type<SidePanelForm>;
+  private readonly replicationWizard = ReplicationWizardComponent as unknown as Type<SidePanelForm>;
+
   protected openForm(row?: ReplicationTask): void {
     if (row) {
-      this.slideIn.open(ReplicationFormComponent, { data: row, wide: true })
-        .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
+      this.formPanel.open(this.replicationForm, {
+        title: this.translate.instant('Edit Replication Task'),
+        wide: true,
+        inputs: { replicationToEdit: row },
+      }).onSuccess(() => this.getReplicationTasks(), this.destroyRef);
     } else {
-      this.slideIn.open(ReplicationWizardComponent, { wide: true })
-        .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
+      this.formPanel.open(this.replicationWizard, {
+        title: this.translate.instant('Replication Task Wizard'),
+        wide: true,
+        footerless: true,
+      }).onSuccess(() => this.getReplicationTasks(), this.destroyRef);
     }
   }
 

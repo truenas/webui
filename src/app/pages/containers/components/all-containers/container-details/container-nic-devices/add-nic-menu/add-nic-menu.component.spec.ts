@@ -1,10 +1,11 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -62,14 +63,14 @@ describe('AddNicMenuComponent', () => {
   });
 
   it('shows available NIC devices grouped by type', async () => {
-    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-    await menu.open();
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await trigger.click();
 
-    const menuItems = await menu.getItems();
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    const itemTexts = await menu.getItemLabels();
     // Expects: "Bridged NICs" header (disabled), truenasbr0, "Macvlan NICs" header (disabled), ens1
-    expect(menuItems.length).toBeGreaterThanOrEqual(4);
+    expect(itemTexts.length).toBeGreaterThanOrEqual(4);
 
-    const itemTexts = await Promise.all(menuItems.map((item) => item.getText()));
     expect(itemTexts).toContain('Bridged NICs');
     expect(itemTexts).toContain('truenasbr0');
     expect(itemTexts).toContain('Macvlan NICs');
@@ -77,8 +78,8 @@ describe('AddNicMenuComponent', () => {
   });
 
   it('adds a NIC device with selected type when it is selected', async () => {
-    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-    await menu.open();
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await trigger.click();
 
     (spectator.inject(TnDialog).open as jest.Mock) = jest.fn(() => ({
       closed: of({
@@ -89,7 +90,8 @@ describe('AddNicMenuComponent', () => {
       close: jest.fn(),
     } as unknown as DialogRef));
 
-    await menu.clickItem({ text: 'truenasbr0' });
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    await menu.clickItem({ label: 'truenasbr0' });
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ContainerNicFormDialog, {
       data: { nic: 'truenasbr0' },
@@ -110,8 +112,8 @@ describe('AddNicMenuComponent', () => {
   });
 
   it('adds a NIC device without trust_guest_rx_filters when E1000 is selected', async () => {
-    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-    await menu.open();
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await trigger.click();
 
     (spectator.inject(TnDialog).open as jest.Mock) = jest.fn(() => ({
       closed: of({
@@ -121,7 +123,8 @@ describe('AddNicMenuComponent', () => {
       close: jest.fn(),
     } as unknown as DialogRef));
 
-    await menu.clickItem({ text: 'truenasbr0' });
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    await menu.clickItem({ label: 'truenasbr0' });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
       container: 123,
@@ -167,11 +170,11 @@ describe('AddNicMenuComponent - Default Bridge Filtering', () => {
   });
 
   it('excludes default bridge from available choices when no NICs are explicitly configured', async () => {
-    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-    await menu.open();
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await trigger.click();
 
-    const menuItems = await menu.getItems();
-    const itemTexts = await Promise.all(menuItems.map((item) => item.getText()));
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    const itemTexts = await menu.getItemLabels();
 
     expect(itemTexts).not.toContain('truenasbr0');
     expect(itemTexts).toContain('ens1');
@@ -243,11 +246,11 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
   });
 
   it('deduplicates NICs that appear in multiple groups', async () => {
-    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-    await menu.open();
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await trigger.click();
 
-    const menuItems = await menu.getItems();
-    const itemTexts = await Promise.all(menuItems.map((item) => item.getText()));
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    const itemTexts = await menu.getItemLabels();
 
     // eth0 should only appear once (in the first group where it's encountered)
     const eth0Count = itemTexts.filter((text) => text === 'eth0').length;

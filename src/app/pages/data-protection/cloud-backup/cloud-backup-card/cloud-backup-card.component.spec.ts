@@ -18,7 +18,7 @@ import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -90,7 +90,7 @@ describe('CloudBackupCardComponent', () => {
       }),
       mockProvider(ErrorHandlerService),
       mockProvider(SnackbarService),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
@@ -161,11 +161,12 @@ describe('CloudBackupCardComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: /^Edit$/ });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
       {
+        title: 'Edit TrueCloud Backup Task',
         wide: true,
-        data: cloudBackups[0],
+        inputs: { backupToEdit: cloudBackups[0] },
       },
     );
   });
@@ -174,9 +175,13 @@ describe('CloudBackupCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      { wide: true },
+      {
+        title: 'Add TrueCloud Backup Task',
+        wide: true,
+        inputs: { backupToEdit: undefined },
+      },
     );
   });
 

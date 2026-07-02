@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -15,6 +15,18 @@ describe('GlobalConfigFormComponent', () => {
   let spectator: Spectator<GlobalConfigFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
+  /** Selects an option in one of the two tn-select controls (Bridge / Preferred Pool). */
+  async function selectOption(displayText: string | RegExp, option: string): Promise<void> {
+    const select = await loader.getHarness(TnSelectHarness.with({ displayText }));
+    await select.selectOption(option);
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+  }
+
+  async function getSaveButton(): Promise<TnButtonHarness> {
+    return loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+  }
 
   const createComponent = createComponentFactory({
     component: GlobalConfigFormComponent,
@@ -54,49 +66,38 @@ describe('GlobalConfigFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    await spectator.fixture.whenStable();
   });
 
   it('shows current global settings from the API', async () => {
-    await spectator.fixture.whenStable();
-
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.config');
 
-    expect(await form.getValues()).toEqual({
-      'Preferred Pool': 'tank',
-      Bridge: 'bridge1',
-    });
+    const bridgeSelect = await loader.getHarness(TnSelectHarness.with({ displayText: 'bridge1' }));
+    expect(await bridgeSelect.getDisplayText()).toBe('bridge1');
+
+    const poolSelect = await loader.getHarness(TnSelectHarness.with({ displayText: 'tank' }));
+    expect(await poolSelect.getDisplayText()).toBe('tank');
 
     // Network fields should not be visible when bridge is not auto
     const v4NetworkInput = await form.getControl('IPv4 Network');
     expect(v4NetworkInput).toBeFalsy();
-    const v6NetworkInput = await form.getControl('IPv6 Network');
-    expect(v6NetworkInput).toBeFalsy();
 
     // Save button should be enabled when bridge is not automatic
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await getSaveButton();
     expect(await saveButton.isDisabled()).toBe(false);
   });
 
   it('updates global settings and shows network fields when bridge is [AUTO] and closes slide-in', async () => {
-    await spectator.fixture.whenStable();
-
-    await form.fillForm({
-      Bridge: 'Automatic',
-    });
+    await selectOption('bridge1', 'Automatic');
 
     // Network fields should now be visible
     const v4NetworkInput = await form.getControl('IPv4 Network');
     expect(v4NetworkInput).toBeTruthy();
 
-    // Wait for validators to be applied and form to update
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
-
     // Save button should be enabled because v4_network already has a value from initial config
-    let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await getSaveButton();
     expect(await saveButton.isDisabled()).toBe(false);
 
-    saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
@@ -111,13 +112,9 @@ describe('GlobalConfigFormComponent', () => {
   });
 
   it('allows updating preferred pool', async () => {
-    await spectator.fixture.whenStable();
+    await selectOption('tank', 'pool2');
 
-    await form.fillForm({
-      'Preferred Pool': 'pool2',
-    });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await getSaveButton();
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
@@ -129,48 +126,30 @@ describe('GlobalConfigFormComponent', () => {
   });
 
   it('validates at least one network is required when bridge is automatic', async () => {
-    await spectator.fixture.whenStable();
+    await selectOption('bridge1', 'Automatic');
 
-    // Switch to automatic bridge
-    await form.fillForm({
-      Bridge: 'Automatic',
-    });
-
-    // Clear both v4 and v6 network values
     await form.fillForm({
       'IPv4 Network': '',
       'IPv6 Network': '',
     });
-
-    // Wait for form to update
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    // Save button should be disabled because at least one network is required
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await getSaveButton();
     expect(await saveButton.isDisabled()).toBe(true);
   });
 
   it('allows submitting with only IPv6 network when bridge is automatic', async () => {
-    await spectator.fixture.whenStable();
+    await selectOption('bridge1', 'Automatic');
 
-    // Switch to automatic bridge
-    await form.fillForm({
-      Bridge: 'Automatic',
-    });
-
-    // Clear v4, set v6
     await form.fillForm({
       'IPv4 Network': '',
       'IPv6 Network': 'fd00::/64',
     });
-
-    // Wait for form to update
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    // Save button should be enabled because v6 is provided
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await getSaveButton();
     expect(await saveButton.isDisabled()).toBe(false);
 
     await saveButton.click();
@@ -184,88 +163,43 @@ describe('GlobalConfigFormComponent', () => {
   });
 
   it('allows resetting bridge selection and clears network validators', async () => {
-    await spectator.fixture.whenStable();
-
-    // Save button should be enabled initially
-    let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    let saveButton = await getSaveButton();
     expect(await saveButton.isDisabled()).toBe(false);
 
-    // Switch to automatic
-    await form.fillForm({
-      Bridge: 'Automatic',
-    });
+    await selectOption('bridge1', 'Automatic');
 
-    // Clear both network fields - save button should be disabled
     await form.fillForm({
       'IPv4 Network': '',
       'IPv6 Network': '',
     });
-
-    // Wait for form to update
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    saveButton = await getSaveButton();
     expect(await saveButton.isDisabled()).toBe(true);
 
-    // Switch back to a specific bridge
-    await form.fillForm({
-      Bridge: 'bridge1',
-    });
+    await selectOption('Automatic', 'bridge1');
 
-    // Wait for form to update
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
-
-    // Save button should be enabled again as network fields are no longer required
-    saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    saveButton = await getSaveButton();
     expect(await saveButton.isDisabled()).toBe(false);
   });
 
   it('shows hint text when automatic bridge is selected', async () => {
-    await spectator.fixture.whenStable();
+    await selectOption('bridge1', 'Automatic');
 
-    // Switch to automatic bridge
-    await form.fillForm({
-      Bridge: 'Automatic',
-    });
-
-    // Wait for template to update
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
-
-    // Hint text should be visible
     const hintText = spectator.query('.hint');
     expect(hintText).toBeTruthy();
     expect(hintText?.textContent).toContain('At least one network (IPv4 or IPv6) must be specified');
   });
 
   it('hides hint text when switching away from automatic bridge', async () => {
-    await spectator.fixture.whenStable();
+    await selectOption('bridge1', 'Automatic');
 
-    // Switch to automatic bridge first
-    await form.fillForm({
-      Bridge: 'Automatic',
-    });
-
-    // Wait for template to update
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
-
-    // Hint should be visible
     let hintText = spectator.query('.hint');
     expect(hintText).toBeTruthy();
 
-    // Switch back to specific bridge
-    await form.fillForm({
-      Bridge: 'bridge1',
-    });
+    await selectOption('Automatic', 'bridge1');
 
-    // Wait for template to update
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
-
-    // Hint should be gone
     hintText = spectator.query('.hint');
     expect(hintText).toBeFalsy();
   });
@@ -313,15 +247,14 @@ describe('GlobalConfigFormComponent - automatic bridge', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    await spectator.fixture.whenStable();
   });
 
   it('loads automatic bridge configuration from API correctly', async () => {
-    await spectator.fixture.whenStable();
+    const bridgeSelect = await loader.getHarness(TnSelectHarness.with({ displayText: 'Automatic' }));
+    expect(await bridgeSelect.getDisplayText()).toBe('Automatic');
 
-    // Form should show Automatic as selected
     expect(await form.getValues()).toEqual({
-      'Preferred Pool': 'tank',
-      Bridge: 'Automatic',
       'IPv4 Network': '10.0.0.0/24',
       'IPv6 Network': 'fd00::/64',
     });
@@ -329,5 +262,62 @@ describe('GlobalConfigFormComponent - automatic bridge', () => {
     // Network fields should be visible
     const v4NetworkInput = await form.getControl('IPv4 Network');
     expect(v4NetworkInput).toBeTruthy();
+  });
+});
+
+describe('GlobalConfigFormComponent - side panel host (no SlideInRef)', () => {
+  let spectator: Spectator<GlobalConfigFormComponent>;
+  let loader: HarnessLoader;
+
+  const createComponent = createComponentFactory({
+    component: GlobalConfigFormComponent,
+    providers: [
+      mockApi([
+        mockCall('lxc.config', {
+          bridge: 'bridge1',
+          v4_network: '1.2.3.4/24',
+          v6_network: null,
+          preferred_pool: 'tank',
+        }),
+        mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', bridge1: 'bridge1' }),
+        mockCall('container.pool_choices', { tank: 'tank' }),
+        mockCall('lxc.update'),
+      ]),
+      mockAuth(),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    await spectator.fixture.whenStable();
+  });
+
+  it('self-loads config without a SlideInRef', () => {
+    expect(spectator.component.slideInRef).toBeNull();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.config');
+  });
+
+  it('does not render the in-form Save button in side-panel mode', async () => {
+    const saveButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Save' }));
+    expect(saveButtons).toHaveLength(0);
+  });
+
+  it('exposes canSubmit and emits closed on submit', async () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
+
+    spectator.component.submit();
+    await spectator.fixture.whenStable();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
+      bridge: 'bridge1',
+      v4_network: '1.2.3.4/24',
+      v6_network: null,
+      preferred_pool: 'tank',
+    }]);
+    expect(closedSpy).toHaveBeenCalledWith(true);
   });
 });

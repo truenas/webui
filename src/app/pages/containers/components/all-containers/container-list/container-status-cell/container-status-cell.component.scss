@@ -18,10 +18,6 @@
   &.unknown {
     border-color: var(--status-in-progress);
     color: var(--status-in-progress);
-
-    mat-spinner::ng-deep circle {
-      stroke: var(--status-in-progress);
-    }
   }
 
   &.stopped {
