@@ -11,7 +11,7 @@
   }
   <div class="two-columns">
     <tn-form-section
-      [title]="helptext.proactive.primaryContact | translate"
+      [heading]="helptext.proactive.primaryContact | translate"
       [tooltip]="helptext.proactive.instructions | translate"
     >
       <tn-form-field [label]="'Name' | translate" [required]="true">
@@ -38,7 +38,10 @@
       </tn-form-field>
     </tn-form-section>
 
-    <tn-form-section [title]="helptext.proactive.secondaryContact | translate">
+    <tn-form-section
+      [heading]="helptext.proactive.secondaryContact | translate"
+      [tooltip]="helptext.proactive.instructions | translate"
+    >
       <tn-form-field [label]="'Secondary Name' | translate" [required]="true">
         <tn-input formControlName="secondary_name"></tn-input>
       </tn-form-field>
