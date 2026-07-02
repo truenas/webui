@@ -19,9 +19,8 @@ import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autoc
 import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnSpinnerComponent } from '@truenas/ui-components';
 import {
   EMPTY,
   fromEvent,
@@ -50,7 +49,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
     IxLabelComponent,
     MatInput,
     MatAutocompleteTrigger,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     TnIconComponent,
     MatAutocomplete,
     MatOption,

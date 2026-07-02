@@ -17,11 +17,12 @@
         ></tn-icon>
       }
       @case (JobState.Running) {
-        <mat-spinner
+        <tn-spinner
           class="running"
+          mode="indeterminate"
           [diameter]="22"
           [tnTooltip]="job().progress.description"
-        ></mat-spinner>
+        ></tn-spinner>
       }
       @case (JobState.Waiting) {
         <tn-icon class="waiting" name="clock-outline" library="mdi"></tn-icon>
