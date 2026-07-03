@@ -15,7 +15,6 @@ import { Role } from 'app/enums/role.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { UserService } from 'app/services/user.service';
@@ -48,12 +47,6 @@ describe('PrivilegeFormComponent', () => {
   let spectator: Spectator<PrivilegeFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   // Test data - all available groups
   const testGroups: Group[] = [
@@ -114,7 +107,6 @@ describe('PrivilegeFormComponent', () => {
           status: DirectoryServiceStatus.Disabled,
         } as DirectoryServicesStatus),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of([])),
         getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
@@ -158,7 +150,10 @@ describe('PrivilegeFormComponent', () => {
       ]);
     });
 
-    it('sends a create payload to websocket and closes modal when save is pressed', async () => {
+    it('sends a create payload to websocket and closes the panel when submitted', async () => {
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
       const name = await loader.getHarness(TnInputHarness);
       await name.setValue('new privilege');
 
@@ -169,8 +164,9 @@ describe('PrivilegeFormComponent', () => {
       const webShell = await loader.getHarness(TnCheckboxHarness);
       await webShell.check();
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('privilege.create', [{
         ds_groups: [],
@@ -179,16 +175,15 @@ describe('PrivilegeFormComponent', () => {
         roles: [Role.SharingAdmin],
         web_shell: true,
       }]);
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
   describe('editing a privilege', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => fakeDataPrivilege }),
-        ],
-      });
+      spectator = createComponent({ detectChanges: false });
+      spectator.setInput('editPrivilege', fakeDataPrivilege);
+      spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
     });
@@ -207,7 +202,7 @@ describe('PrivilegeFormComponent', () => {
       expect(await roles.getDisplayText()).toBe('Readonly Admin');
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    it('sends an update payload to websocket and closes the panel when submitted', async () => {
       const name = await loader.getHarness(TnInputHarness);
       await name.setValue('updated privilege');
 
@@ -219,8 +214,7 @@ describe('PrivilegeFormComponent', () => {
       const webShell = await loader.getHarness(TnCheckboxHarness);
       await webShell.uncheck();
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       // Wait for all pending async operations
       spectator.detectChanges();
@@ -241,16 +235,14 @@ describe('PrivilegeFormComponent', () => {
 
   describe('editing a build-in privilege', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ ...fakeDataPrivilege, builtin_name: 'ADMIN' }) }),
-        ],
-      });
+      spectator = createComponent({ detectChanges: false });
+      spectator.setInput('editPrivilege', { ...fakeDataPrivilege, builtin_name: 'ADMIN' } as Privilege);
+      spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    it('sends an update payload to websocket and closes the panel when submitted', async () => {
       const name = await loader.getHarness(TnInputHarness);
       expect(await name.isDisabled()).toBe(true);
 
@@ -264,8 +256,7 @@ describe('PrivilegeFormComponent', () => {
       expect(await webShell.isDisabled()).toBe(false);
       await webShell.uncheck();
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       // Wait for all pending async operations
       spectator.detectChanges();
@@ -480,7 +471,6 @@ describe('PrivilegeFormComponent', () => {
               },
             ],
           }),
-          mockProvider(SlideInRef, slideInRef),
           mockAuth(),
         ],
       });
@@ -535,7 +525,6 @@ describe('PrivilegeFormComponent', () => {
               },
             ],
           }),
-          mockProvider(SlideInRef, slideInRef),
           mockAuth(),
         ],
       });
@@ -591,7 +580,6 @@ describe('PrivilegeFormComponent', () => {
               },
             ],
           }),
-          mockProvider(SlideInRef, slideInRef),
           mockAuth(),
         ],
       });
@@ -649,7 +637,6 @@ describe('PrivilegeFormComponent', () => {
               },
             ],
           }),
-          mockProvider(SlideInRef, slideInRef),
           mockAuth(),
         ],
       });

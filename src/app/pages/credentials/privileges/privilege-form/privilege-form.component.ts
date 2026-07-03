@@ -15,18 +15,15 @@ import {
 import {
   Observable, Subject, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, switchMap,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
@@ -39,7 +36,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './privilege-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -48,8 +44,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxGroupChipsComponent,
     TnSelectComponent,
     TnCheckboxComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
     TnButtonComponent,
     TranslateModule,
     AsyncPipe,
@@ -65,11 +59,7 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
-  /**
-   * Row to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
-   * carry data). Absent for Add, and unused in the legacy SlideIn host (which
-   * supplies the row via `slideInRef.getData()`).
-   */
+  /** Row to edit, passed in by `FormSidePanelService.open`. Absent for Add. */
   readonly editPrivilege = input<Privilege | undefined>(undefined);
 
   /**
@@ -103,16 +93,6 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
   protected readonly helptext = helptextPrivilege;
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected existingPrivilege: Privilege | undefined;
-
-  get isNew(): boolean {
-    return !this.existingPrivilege;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('New Privilege')
-      : this.translate.instant('Edit Privilege');
-  }
 
   readonly rolesOptions$ = this.api.call('privilege.roles').pipe(
     map((roles) => {
@@ -182,9 +162,7 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.existingPrivilege = this.slideInRef
-      ? this.slideInRef.getData() as Privilege | undefined
-      : this.editPrivilege();
+    this.existingPrivilege = this.editPrivilege();
 
     if (this.existingPrivilege) {
       this.setPrivilegeForEdit(this.existingPrivilege);
@@ -227,8 +205,11 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
 
-    // Preload local-group suggestions so the chip-input dropdown is populated on first focus.
-    this.onLocalGroupsSearch('');
+    // Preload local-group suggestions directly (bypassing the debounced search subject) so the
+    // chip-input dropdown is already populated on first focus, not one debounce interval later.
+    this.localGroupsProvider('').pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
   }
 
   private setPrivilegeForEdit(existingPrivilege: Privilege): void {
