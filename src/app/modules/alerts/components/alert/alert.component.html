@@ -31,9 +31,10 @@
   ></h4>
   @if (isExpandable()) {
     <button
-      mat-button
+      type="button"
       class="expand-collapse-button"
-      [ixTest]="[alert().key, 'expand']"
+      tnTestIdType="button"
+      [tnTestId]="[alert().key, 'expand']"
       [class.collapsed]="isCollapsed()"
       (click)="toggleCollapse()"
     >
@@ -54,9 +55,10 @@
   @if (enhanced.contextualHelp && !alert().dismissed) {
     <div class="context-help">
       <button
-        mat-button
+        type="button"
         class="context-help-toggle"
-        [ixTest]="[alert().key, 'toggle-help']"
+        tnTestIdType="button"
+        [tnTestId]="[alert().key, 'toggle-help']"
         (click)="toggleContextHelp()"
       >
         <tn-icon library="mdi" [name]="showContextHelp() ? 'chevron-up' : 'chevron-down'"></tn-icon>
@@ -85,9 +87,10 @@
     <div class="smart-actions">
       @for (action of enhanced.actions; track action.label) {
         <button
-          mat-button
+          type="button"
+          tnTestIdType="button"
           [class.primary-action]="action.primary"
-          [ixTest]="[alert().key, 'action', action.label]"
+          [tnTestId]="[alert().key, 'action', action.label]"
           (click)="onSmartActionClick(action.handler)"
         >
           <tn-icon [name]="action.icon"></tn-icon>
@@ -104,7 +107,8 @@
         tabindex="0"
         role="button"
         class="action-link"
-        [ixTest]="[alert().key, 'reopen']"
+        tnTestIdType="link"
+        [tnTestId]="[alert().key, 'reopen']"
         (click)="onReopen()"
       >
         {{ 'Re-Open' | translate }}
@@ -115,7 +119,8 @@
         tabindex="0"
         role="button"
         class="action-link"
-        [ixTest]="[alert().key, 'dismiss']"
+        tnTestIdType="link"
+        [tnTestId]="[alert().key, 'dismiss']"
         [tnTooltip]="dismissTooltip()"
         (click)="onDismiss()"
       >
@@ -126,15 +131,14 @@
 </div>
 
 @if (!alert().dismissed && showActions()) {
-  <button
+  <tn-icon-button
     *ixRequiresRoles="requiredRoles"
-    mat-icon-button
     class="dismiss-button"
-    [ixTest]="[alert().key, 'dismiss-icon']"
-    [attr.aria-label]="dismissTooltip() || dismissButtonText()"
-    [tnTooltip]="dismissTooltip() || dismissButtonText()"
-    (click)="onDismiss()"
-  >
-    <tn-icon [name]="closeIcon"></tn-icon>
-  </button>
+    size="sm"
+    [name]="closeIcon"
+    [testId]="[alert().key, 'dismiss-icon']"
+    [ariaLabel]="dismissTooltip() || dismissButtonText()"
+    [tooltip]="dismissTooltip() || dismissButtonText()"
+    (onClick)="onDismiss()"
+  ></tn-icon-button>
 }

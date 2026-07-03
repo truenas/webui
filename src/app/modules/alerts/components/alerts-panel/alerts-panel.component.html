@@ -7,16 +7,20 @@
       library="mdi"
       testId="settings-menu"
       [tooltip]="'Settings' | translate"
-      [matMenuTriggerFor]="alertSettingsMenu"
+      [tnMenuTriggerFor]="alertSettingsMenu"
     ></tn-icon-button>
-    <mat-menu #alertSettingsMenu="matMenu">
-      <button mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
-        {{ 'Alert Settings' | translate }}
-      </button>
-      <button mat-menu-item ixTest="email-settings" (click)="openEmailForm()">
-        {{ 'Email' | translate }}
-      </button>
-    </mat-menu>
+    <tn-menu #alertSettingsMenu>
+      <tn-menu-item
+        testId="alert-settings"
+        [label]="'Alert Settings' | translate"
+        (itemClick)="navigateTo(['/system', 'alert-settings'])"
+      ></tn-menu-item>
+      <tn-menu-item
+        testId="email-settings"
+        [label]="'Email' | translate"
+        (itemClick)="openEmailForm()"
+      ></tn-menu-item>
+    </tn-menu>
     <tn-icon-button
       name="close"
       library="mdi"
@@ -31,8 +35,9 @@
 <div class="severity-filters">
   <button
     class="filter-button"
+    tnTestIdType="button"
     [class.active]="severityFilter() === 'all'"
-    [ixTest]="['filter', 'all']"
+    [tnTestId]="['filter', 'all']"
     (click)="setSeverityFilter('all')"
   >
     {{ 'All Alerts' | translate }}
@@ -40,8 +45,9 @@
   </button>
   <button
     class="filter-button"
+    tnTestIdType="button"
     [class.active]="severityFilter() === 'critical'"
-    [ixTest]="['filter', 'critical']"
+    [tnTestId]="['filter', 'critical']"
     (click)="setSeverityFilter('critical')"
   >
     {{ 'Critical' | translate }}
@@ -49,8 +55,9 @@
   </button>
   <button
     class="filter-button"
+    tnTestIdType="button"
     [class.active]="severityFilter() === 'warning'"
-    [ixTest]="['filter', 'warning']"
+    [tnTestId]="['filter', 'warning']"
     (click)="setSeverityFilter('warning')"
   >
     {{ 'Warnings' | translate }}
@@ -58,8 +65,9 @@
   </button>
   <button
     class="filter-button"
+    tnTestIdType="button"
     [class.active]="severityFilter() === 'info'"
-    [ixTest]="['filter', 'info']"
+    [tnTestId]="['filter', 'info']"
     (click)="setSeverityFilter('info')"
   >
     {{ 'Info' | translate }}
@@ -67,8 +75,9 @@
   </button>
   <button
     class="filter-button"
+    tnTestIdType="button"
     [class.active]="severityFilter() === 'dismissed'"
-    [ixTest]="['filter', 'dismissed']"
+    [tnTestId]="['filter', 'dismissed']"
     (click)="setSeverityFilter('dismissed')"
   >
     {{ 'Dismissed' | translate }}
@@ -78,11 +87,10 @@
 
 @if (isLoading$ | async) {
   <div>
-    <mat-progress-bar
+    <tn-progress-bar
       class="loading-indicator"
-      color="primary"
       mode="indeterminate"
-    ></mat-progress-bar>
+    ></tn-progress-bar>
   </div>
 } @else {
   <!-- TODO: Consider extracting into its own component -->
@@ -137,7 +145,8 @@
     <button
       *ixRequiresRoles="requiredRoles"
       class="button-row"
-      ixTest="dismiss-all-alerts"
+      tnTestIdType="button"
+      tnTestId="dismiss-all-alerts"
       (click)="onDismissAll()"
     >
       {{ dismissAllButtonText() }}
@@ -171,7 +180,8 @@
     <button
       *ixRequiresRoles="requiredRoles"
       class="button-row"
-      ixTest="reopen-all-alerts"
+      tnTestIdType="button"
+      tnTestId="reopen-all-alerts"
       (click)="onReopenAll()"
     >
       {{ reopenAllButtonText() }}
