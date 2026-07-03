@@ -13,7 +13,7 @@ import {
   TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, Subject, combineLatest, finalize, map, of, switchMap,
+  Observable, Subject, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
@@ -24,6 +24,7 @@ import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -215,9 +216,13 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
       this.updateDsAuthButtonVisibility(dsGroups);
     });
 
-    // Drive suggestions off the latest search term only; `switchMap` cancels any
-    // earlier in-flight query so out-of-order responses can't overwrite fresh results.
+    // Drive suggestions off the latest search term only. `tn-chip-input` does not debounce
+    // its `searchChange`, so debounce here (matching the old ix-chips behavior) to avoid a
+    // `group.query` per keystroke; `switchMap` then cancels any earlier in-flight query so
+    // out-of-order responses can't overwrite fresh results.
     this.localGroupsSearch$.pipe(
+      debounceTime(defaultDebounceTimeMs),
+      distinctUntilChanged(),
       switchMap((query) => this.localGroupsProvider(query)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((groups) => this.localGroupsSuggestions.set(groups));

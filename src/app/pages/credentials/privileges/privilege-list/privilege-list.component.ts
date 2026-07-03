@@ -99,18 +99,33 @@ export class PrivilegeListComponent implements OnInit {
     },
   ];
 
+  // Templates call these per cell on every change-detection pass; memoize by row reference
+  // (rows are immutable per fetch) so the translate work runs once per row, not per CD cycle.
+  private readonly ariaLabelCache = new WeakMap<Privilege, string>();
+  private readonly rolesValueCache = new WeakMap<Privilege, string>();
+
   protected uniqueRowTag(row: Privilege): string {
     return 'privilege-' + row.name;
   }
 
   protected ariaLabel(row: Privilege): string {
-    return [row.name, this.translate.instant('Privilege')].join(' ');
+    let label = this.ariaLabelCache.get(row);
+    if (label === undefined) {
+      label = [row.name, this.translate.instant('Privilege')].join(' ');
+      this.ariaLabelCache.set(row, label);
+    }
+    return label;
   }
 
   protected getRolesValue(row: Privilege): string {
-    return row.roles
-      .map((role) => this.translate.instant(roleNames.get(role) || role))
-      .join(', ') || this.translate.instant('N/A');
+    let value = this.rolesValueCache.get(row);
+    if (value === undefined) {
+      value = row.roles
+        .map((role) => this.translate.instant(roleNames.get(role) || role))
+        .join(', ') || this.translate.instant('N/A');
+      this.rolesValueCache.set(row, value);
+    }
+    return value;
   }
 
   protected onSortChange(event: TnSortEvent): void {
