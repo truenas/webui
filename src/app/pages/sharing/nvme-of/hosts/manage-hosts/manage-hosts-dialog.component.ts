@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -24,7 +24,6 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -65,10 +64,6 @@ export class ManageHostsDialog implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
-
-  // HostFormComponent keeps the `<ix-form>` wrapper, so it doesn't nominally extend
-  // SidePanelForm — but it exposes the same closed/canSubmit/submit surface the panel host reads.
-  private readonly hostForm = HostFormComponent as unknown as Type<SidePanelForm<NvmeOfHost | null>>;
 
   protected columns = createTable<NvmeOfHostAndUsage>([
     textColumn({
@@ -128,7 +123,7 @@ export class ManageHostsDialog implements OnInit {
     // The side panel mounts on document.body and paints on top of this dialog's backdrop,
     // so the dialog can stay open behind it (no need to close it first as the slide-in did).
     this.formPanel
-      .open(this.hostForm, { title: this.translate.instant('Add Host') })
+      .open(HostFormComponent, { title: this.translate.instant('Add Host') })
       .onSuccess(() => {
         this.snackbar.success(this.translate.instant('Host Added'));
         this.nvmeOfStore.reloadHosts();
@@ -137,7 +132,7 @@ export class ManageHostsDialog implements OnInit {
 
   onEdit(host: NvmeOfHostAndUsage): void {
     this.formPanel
-      .open(this.hostForm, { title: this.translate.instant('Edit Host'), inputs: { host } })
+      .open(HostFormComponent, { title: this.translate.instant('Edit Host'), inputs: { host } })
       .onSuccess(() => {
         this.snackbar.success(this.translate.instant('Host Updated'));
         this.nvmeOfStore.reloadHosts();

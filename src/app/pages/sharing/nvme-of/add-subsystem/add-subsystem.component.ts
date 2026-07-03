@@ -29,6 +29,7 @@ import { EditableComponent } from 'app/modules/forms/editable/editable.component
 import {
   UseIconsInStepperComponent,
 } from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -73,7 +74,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     EditableComponent,
   ],
 })
-export class AddSubsystemComponent {
+export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsystem> {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);

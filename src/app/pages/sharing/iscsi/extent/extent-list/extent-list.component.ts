@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef, Type,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -28,7 +28,6 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import {
@@ -155,16 +154,12 @@ export class ExtentListComponent implements OnInit {
     });
   }
 
-  // ExtentFormComponent structurally provides the side-panel host surface (closed/canSubmit/
-  // submit/hasUnsavedChanges/requiredRoles); cast past the nominal base type.
-  private readonly extentForm = ExtentFormComponent as unknown as Type<SidePanelForm>;
-
   protected doAdd(): void {
     this.openForm();
   }
 
   protected openForm(extent?: IscsiExtent): void {
-    this.formPanel.open(this.extentForm, {
+    this.formPanel.open(ExtentFormComponent, {
       title: extent
         ? this.translate.instant('Edit Extent')
         : this.translate.instant('Add Extent'),

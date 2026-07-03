@@ -1,8 +1,6 @@
 <ix-form
   [formGroup]="form"
   [isEditMode]="!isNew"
-  [addTitle]="'Add NFS Share' | translate"
-  [editTitle]="'Edit NFS Share' | translate"
   [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"

@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed,
-  inject, DestroyRef, signal, Type,
+  inject, DestroyRef, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -45,7 +45,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -246,14 +245,8 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  // SmbFormComponent / SmbAclComponent structurally provide the host surface (closed/canSubmit/
-  // submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type,
-  // mirroring how FormSidePanelService.openForm casts the renderer.
-  private readonly smbForm = SmbFormComponent as unknown as Type<SidePanelForm>;
-  private readonly smbAclForm = SmbAclComponent as unknown as Type<SidePanelForm>;
-
   protected openForm(row?: SmbShare): void {
-    this.formPanel.open(this.smbForm, {
+    this.formPanel.open(SmbFormComponent, {
       title: row
         ? this.translate.instant('Edit SMB Share')
         : this.translate.instant('Add SMB Share'),
@@ -283,7 +276,7 @@ export class SmbCardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (shareAcl: SmbSharesec) => {
-          this.formPanel.open(this.smbAclForm, {
+          this.formPanel.open(SmbAclComponent, {
             title: this.translate.instant('Share ACL for {share}', { share: shareAcl.share_name }),
             inputs: { shareName: shareAcl.share_name },
           }).onSuccess(() => this.dataProvider.load(), this.destroyRef);

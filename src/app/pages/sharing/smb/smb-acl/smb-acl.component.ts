@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input, output, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -26,6 +26,7 @@ import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -68,7 +69,7 @@ interface FormAclEntry {
     TranslateModule,
   ],
 })
-export class SmbAclComponent implements OnInit {
+export class SmbAclComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -79,12 +80,6 @@ export class SmbAclComponent implements OnInit {
 
   /** Share name supplied by the `<tn-side-panel>` host. */
   readonly shareName = input<string | undefined>(undefined);
-
-  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
-  readonly closed = output<boolean>();
-
-  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
-  private readonly ixForm = viewChild(IxFormComponent);
 
   form = this.formBuilder.group({
     entries: this.formBuilder.array<FormAclEntry>([]),
@@ -131,21 +126,6 @@ export class SmbAclComponent implements OnInit {
   );
 
   protected groupProvider: GroupComboboxProvider;
-
-  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  /** Whether the form may be submitted right now. Delegates to the inner `<ix-form>`. */
-  canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
-  }
-
-  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
-  submit(): void {
-    this.ixForm()?.submit();
-  }
 
   ngOnInit(): void {
     // Share name arrives via the `shareName` input from the side-panel host.

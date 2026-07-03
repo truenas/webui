@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef, Type } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -13,7 +13,6 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
@@ -51,12 +50,6 @@ export class UsageCardComponent {
   private datasetStore = inject(DatasetTreeStore);
   private licenseService = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
-
-  // The share forms structurally provide the side-panel host surface (closed/canSubmit/submit);
-  // cast past their nominal type, mirroring the shares-dashboard cards' openers.
-  private readonly nfsForm = NfsFormComponent as unknown as Type<SidePanelForm>;
-  private readonly smbForm = SmbFormComponent as unknown as Type<SidePanelForm>;
-  private readonly webShareForm = WebShareSharesFormComponent as unknown as Type<SidePanelForm>;
 
   readonly dataset = input.required<DatasetDetails>();
   readonly systemDataset = input.required<string>();
@@ -211,14 +204,14 @@ export class UsageCardComponent {
   );
 
   createSmbShare(): void {
-    this.formPanel.open(this.smbForm, {
+    this.formPanel.open(SmbFormComponent, {
       title: this.translate.instant('Add SMB Share'),
       inputs: { smbShareData: { defaultSmbShare: { path: this.dataset().mountpoint } as SmbShare } },
     }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 
   createNfsShare(): void {
-    this.formPanel.open(this.nfsForm, {
+    this.formPanel.open(NfsFormComponent, {
       title: this.translate.instant('Add NFS Share'),
       inputs: { nfsShareData: { defaultNfsShare: { path: this.dataset().mountpoint } as NfsShare } },
     }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
@@ -228,7 +221,7 @@ export class UsageCardComponent {
     // Extract the dataset name (last part of the dataset path)
     const datasetName = this.dataset().name.split('/').pop() || '';
 
-    this.formPanel.open(this.webShareForm, {
+    this.formPanel.open(WebShareSharesFormComponent, {
       title: this.translate.instant('Add WebShare'),
       inputs: {
         webShareData: {

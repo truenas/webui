@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef, Type,
+  ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -36,7 +36,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -81,11 +80,6 @@ export class WebShareListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
   protected readonly EmptyType = EmptyType;
   protected readonly searchableElements = webshareListElements;
-
-  // WebShareSharesFormComponent structurally provides the host surface (closed/canSubmit/submit/
-  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type, mirroring
-  // how FormSidePanelService.openForm casts the renderer.
-  private readonly webShareForm = WebShareSharesFormComponent as unknown as Type<SidePanelForm>;
 
   private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
@@ -214,7 +208,7 @@ export class WebShareListComponent implements OnInit {
   }
 
   doEdit(row: WebShareTableRow): void {
-    this.formPanel.open(this.webShareForm, {
+    this.formPanel.open(WebShareSharesFormComponent, {
       title: this.translate.instant(this.helptext.webshare_form_title_edit),
       inputs: {
         webShareData: {

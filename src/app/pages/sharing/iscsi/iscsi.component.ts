@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef, Type } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
@@ -8,10 +8,8 @@ import { startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
@@ -42,9 +40,6 @@ import { LicenseService } from 'app/services/license.service';
 export class IscsiComponent {
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
-  // IscsiWizardComponent structurally provides the host surface (closed / hasUnsavedChanges) the
-  // panel reads; cast past its nominal type. Opened footerless — its stepper owns Next/Back/Save.
-  private readonly iscsiWizard = IscsiWizardComponent as unknown as Type<SidePanelForm<IscsiTarget>>;
   private iscsiService = inject(IscsiService);
   private license = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
@@ -91,7 +86,8 @@ export class IscsiComponent {
   });
 
   protected openWizard(): void {
-    this.formPanel.open(this.iscsiWizard, {
+    // Opened footerless — its stepper owns Next/Back/Save.
+    this.formPanel.open(IscsiWizardComponent, {
       title: this.translate.instant('iSCSI Wizard'),
       wide: true,
       footerless: true,

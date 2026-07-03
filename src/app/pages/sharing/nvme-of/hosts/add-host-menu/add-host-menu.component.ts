@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, Type, computed, inject, input, output,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
@@ -11,7 +11,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
@@ -41,10 +40,6 @@ export class AddHostMenuComponent {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  // HostFormComponent keeps the `<ix-form>` wrapper, so it doesn't nominally extend
-  // SidePanelForm — but it exposes the same closed/canSubmit/submit surface the panel host reads.
-  private readonly hostForm = HostFormComponent as unknown as Type<SidePanelForm<NvmeOfHost | null>>;
-
   hosts = input.required<NvmeOfHost[]>();
   showAllowAnyHost = input(false);
   hostSelected = output<NvmeOfHost>();
@@ -64,7 +59,7 @@ export class AddHostMenuComponent {
 
   protected openHostForm(): void {
     this.formPanel
-      .open(this.hostForm, { title: this.translate.instant('Add Host') })
+      .open(HostFormComponent, { title: this.translate.instant('Add Host') })
       .onSuccess((host) => {
         if (host) {
           this.selectHost(host);

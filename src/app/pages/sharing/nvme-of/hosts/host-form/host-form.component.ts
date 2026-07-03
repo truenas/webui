@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, output, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -20,6 +20,7 @@ import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -49,7 +50,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AsyncPipe,
   ],
 })
-export class HostFormComponent implements OnInit {
+export class HostFormComponent extends IxFormHostForm<NvmeOfHost | null> implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private errorHandler = inject(ErrorHandlerService);
@@ -59,14 +60,9 @@ export class HostFormComponent implements OnInit {
   /** Edit data supplied by a `<tn-side-panel>` host. */
   readonly host = input<NvmeOfHost | undefined>(undefined);
 
-  /** Created/updated record emitted on a successful submit when hosted in a `<tn-side-panel>`. */
-  readonly closed = output<NvmeOfHost | null>();
-
-  // Captured on a successful submit so `closed` can hand the created/updated record
+  // Captured on a successful submit so the inherited `closed` can hand the created/updated record
   // back to the side-panel host (and through it to the add-host picker).
   private createdRecord: NvmeOfHost | null = null;
-
-  private readonly ixForm = viewChild(IxFormComponent);
 
   private existingHost = signal<NvmeOfHost | null>(null);
 
@@ -141,18 +137,6 @@ export class HostFormComponent implements OnInit {
   protected isGeneratingTrueNasKey = signal(false);
 
   readonly requiredRoles = [Role.SharingNvmeTargetWrite];
-
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
-  }
-
-  submit(): void {
-    this.ixForm()?.submit();
-  }
 
   protected onFormClosed(): void {
     this.closed.emit(this.createdRecord);

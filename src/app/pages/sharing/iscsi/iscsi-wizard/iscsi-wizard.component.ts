@@ -51,6 +51,7 @@ import {
   UseIconsInStepperComponent,
 } from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
@@ -81,7 +82,7 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
     UseIconsInStepperComponent,
   ],
 })
-export class IscsiWizardComponent implements OnInit {
+export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<IscsiTarget> {
   private fb = inject(FormBuilder);
   private iscsiService = inject(IscsiService);
   private fcService = inject(FibreChannelService);

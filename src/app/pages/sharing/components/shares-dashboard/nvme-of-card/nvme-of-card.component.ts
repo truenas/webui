@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, Type, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -38,7 +38,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TableActionsCellComponent,
@@ -90,9 +89,6 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class NvmeOfCardComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
-  // Opened footerless — the add-subsystem stepper owns its own Next/Back/Save buttons. Uses the
-  // side-panel host (not legacy SlideIn) so a nested panel it opens (e.g. Add Host) stacks on top.
-  private readonly addSubsystemForm = AddSubsystemComponent as unknown as Type<SidePanelForm>;
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
   private store$ = inject<Store<ServicesState>>(Store);
@@ -194,7 +190,9 @@ export class NvmeOfCardComponent implements OnInit {
   }
 
   openForm(): void {
-    this.formPanel.open(this.addSubsystemForm, {
+    // Opened footerless — the add-subsystem stepper owns its own Next/Back/Save buttons. Uses the
+    // side-panel host (not legacy SlideIn) so a nested panel it opens (e.g. Add Host) stacks on top.
+    this.formPanel.open(AddSubsystemComponent, {
       title: this.translate.instant('Add Subsystem'),
       footerless: true,
     })

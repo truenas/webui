@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, computed, inject, input, output, signal, viewChild,
+  ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal,
 } from '@angular/core';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
@@ -18,6 +18,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -41,7 +42,7 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
     AsyncPipe,
   ],
 })
-export class PortFormComponent implements OnInit {
+export class PortFormComponent extends IxFormHostForm<NvmeOfPort | null> implements OnInit {
   private api = inject(ApiService);
   private nvmeOfService = inject(NvmeOfService);
   private formBuilder = inject(NonNullableFormBuilder);
@@ -50,14 +51,9 @@ export class PortFormComponent implements OnInit {
   /** Edit data supplied by a `<tn-side-panel>` host. */
   readonly port = input<NvmeOfPort | undefined>(undefined);
 
-  /** Created/updated record emitted on a successful submit when hosted in a `<tn-side-panel>`. */
-  readonly closed = output<NvmeOfPort | null>();
-
-  // Captured on a successful submit so `closed` can hand the created/updated record
+  // Captured on a successful submit so the inherited `closed` can hand the created/updated record
   // back to the side-panel host (and through it to the add-port picker).
   private createdRecord: NvmeOfPort | null = null;
-
-  private readonly ixForm = viewChild(IxFormComponent);
 
   protected readonly InputType = InputType;
 
@@ -105,18 +101,6 @@ export class PortFormComponent implements OnInit {
 
   get portPlaceholder(): TranslatedString {
     return (this.isFibreChannel ? '' : '4420') as TranslatedString;
-  }
-
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
-  }
-
-  submit(): void {
-    this.ixForm()?.submit();
   }
 
   protected onFormClosed(): void {

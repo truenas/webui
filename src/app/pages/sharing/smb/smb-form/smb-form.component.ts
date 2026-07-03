@@ -8,9 +8,7 @@ import {
   OnInit,
   inject,
   input,
-  output,
   signal,
-  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -58,6 +56,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -110,7 +109,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     SmbExtensionsWarningComponent,
   ],
 })
-export class SmbFormComponent implements OnInit, AfterViewInit {
+export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterViewInit {
   formatter = inject(IxFormatterService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
@@ -137,12 +136,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     existingSmbShare?: SmbShare;
     defaultSmbShare?: SmbShare;
   } | undefined>(undefined);
-
-  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
-  readonly closed = output<boolean>();
-
-  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
-  private readonly ixForm = viewChild(IxFormComponent);
 
   protected readonly InputType = InputType;
 
@@ -416,21 +409,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       ),
     ]],
   });
-
-  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  /** Whether the form may be submitted right now. Delegates to the inner `<ix-form>`. */
-  canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
-  }
-
-  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
-  submit(): void {
-    this.ixForm()?.submit();
-  }
 
   /** Feeds typed text from the audit chip inputs into the server-side group lookup. */
   protected onGroupSearch(search: string): void {

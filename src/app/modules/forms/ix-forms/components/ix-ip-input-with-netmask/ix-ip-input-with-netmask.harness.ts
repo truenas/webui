@@ -43,12 +43,17 @@ export class IxIpInputWithNetmaskHarness extends ComponentHarness implements IxF
   async setValue(addressAndNetmask: string): Promise<void> {
     const [address, netmask] = addressAndNetmask.split('/');
     const addressInput = await this.getAddressInput();
-    const netmaskSelect = await this.getNetmaskHarness();
 
     await addressInput.clear();
     await addressInput.setInputValue(address);
     await addressInput.dispatchEvent('input');
-    await netmaskSelect.selectOption(netmask);
+
+    // A value with no `/…` part (e.g. clearing the field with `''`) leaves the netmask untouched;
+    // selecting `undefined` on the tn-select would throw "Could not find option matching undefined".
+    if (netmask !== undefined) {
+      const netmaskSelect = await this.getNetmaskHarness();
+      await netmaskSelect.selectOption(netmask);
+    }
   }
 
   async isDisabled(): Promise<boolean> {

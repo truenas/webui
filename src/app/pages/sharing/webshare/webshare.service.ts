@@ -1,5 +1,5 @@
 import {
-  Injectable, Type, inject, signal,
+  Injectable, inject, signal,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,7 +13,6 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -145,7 +144,7 @@ export class WebShareService {
     }
 
     return this.formPanel.open(
-      WebShareSharesFormComponent as unknown as Type<SidePanelForm>,
+      WebShareSharesFormComponent,
       {
         title: data.isNew
           ? this.translate.instant(helptextSharingWebshare.webshare_form_title_add)

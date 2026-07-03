@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -25,7 +26,7 @@ export interface NamespaceFormParams {
     BaseNamespaceFormComponent,
   ],
 })
-export class NamespaceFormComponent {
+export class NamespaceFormComponent implements SidePanelHostCloseable<NamespaceChanges> {
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);

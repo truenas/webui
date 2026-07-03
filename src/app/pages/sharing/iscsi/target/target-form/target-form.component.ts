@@ -1,7 +1,6 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject, input, output,
-  viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
@@ -20,6 +19,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -67,7 +67,7 @@ import { LicenseService } from 'app/services/license.service';
     AsyncPipe,
   ],
 })
-export class TargetFormComponent implements OnInit {
+export class TargetFormComponent extends IxFormHostForm implements OnInit {
   protected iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
@@ -80,12 +80,6 @@ export class TargetFormComponent implements OnInit {
 
   /** Edit data supplied by the `<tn-side-panel>` host. */
   readonly targetData = input<IscsiTarget | undefined>(undefined);
-
-  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
-  readonly closed = output<boolean>();
-
-  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
-  private readonly ixForm = viewChild(IxFormComponent);
 
   get isNew(): boolean {
     return !this.editingTarget;
@@ -179,21 +173,6 @@ export class TargetFormComponent implements OnInit {
 
   // Computed signal for current port values (used in edit mode)
   protected currentPorts = computed(() => this.fcPortsSnapshot().map((form) => form.port).filter(Boolean) as string[]);
-
-  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  /** Whether the form may be submitted right now. Delegates to the inner `<ix-form>`. */
-  canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
-  }
-
-  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
-  submit(): void {
-    this.ixForm()?.submit();
-  }
 
   /** Extra Save gate (FC port validity + pending async name validation) ORed into `<ix-form>`. */
   protected isSaveBlocked(): boolean {

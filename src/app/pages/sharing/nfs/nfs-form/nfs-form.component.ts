@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input, output, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -25,6 +25,7 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -74,7 +75,7 @@ export interface NfsFormData {
     AsyncPipe,
   ],
 })
-export class NfsFormComponent implements OnInit {
+export class NfsFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
@@ -87,12 +88,6 @@ export class NfsFormComponent implements OnInit {
 
   /** Edit/default data supplied by the `<tn-side-panel>` host. */
   readonly nfsShareData = input<NfsFormData | undefined>(undefined);
-
-  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
-  readonly closed = output<boolean>();
-
-  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
-  private readonly ixForm = viewChild(IxFormComponent);
 
   existingNfsShare: NfsShare | undefined;
   defaultNfsShare: NfsShare | undefined;
@@ -145,21 +140,6 @@ export class NfsFormComponent implements OnInit {
       value: NfsSecurityProvider.Krb5p,
     },
   ] as Option[]);
-
-  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  /** Whether the form may be submitted right now. Delegates to the inner `<ix-form>`. */
-  canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
-  }
-
-  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
-  submit(): void {
-    this.ixForm()?.submit();
-  }
 
   private setNfsShareForEdit(share: NfsShare): void {
     share.networks.forEach(() => this.addNetworkControl());

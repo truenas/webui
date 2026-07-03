@@ -5,7 +5,6 @@ import {
   Component,
   DestroyRef,
   OnInit,
-  Type,
   inject,
   signal,
 } from '@angular/core';
@@ -48,7 +47,6 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -113,9 +111,6 @@ export class SmbListComponent implements OnInit {
   protected readonly emptyConfig = smbCardEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
-  private readonly smbForm = SmbFormComponent as unknown as Type<SidePanelForm>;
-  private readonly smbAclForm = SmbAclComponent as unknown as Type<SidePanelForm>;
-
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   searchQuery = signal('');
@@ -166,7 +161,7 @@ export class SmbListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (smbShare) => {
-            this.formPanel.open(this.smbForm, {
+            this.formPanel.open(SmbFormComponent, {
               title: this.translate.instant('Edit SMB Share'),
               inputs: { smbShareData: { existingSmbShare: smbShare } },
             }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
@@ -187,7 +182,7 @@ export class SmbListComponent implements OnInit {
               .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe((shareAcl) => {
                 this.loader.close();
-                this.formPanel.open(this.smbAclForm, {
+                this.formPanel.open(SmbAclComponent, {
                   title: this.translate.instant('Share ACL for {share}', { share: shareAcl.share_name }),
                   inputs: { shareName: shareAcl.share_name },
                 }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
@@ -272,7 +267,7 @@ export class SmbListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.formPanel.open(this.smbForm, {
+    this.formPanel.open(SmbFormComponent, {
       title: this.translate.instant('Add SMB Share'),
       inputs: { smbShareData: { existingSmbShare: undefined } },
     }).onSuccess(() => this.dataProvider.load(), this.destroyRef);

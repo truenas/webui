@@ -1,8 +1,6 @@
 <ix-form
   [formGroup]="form"
   [isEditMode]="!isNew"
-  [addTitle]="'Add Extent' | translate"
-  [editTitle]="'Edit Extent' | translate"
   [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"

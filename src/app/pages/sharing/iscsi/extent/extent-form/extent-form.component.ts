@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, inject, input, output, viewChild, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, inject, input, DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -31,6 +31,7 @@ import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -64,7 +65,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     AsyncPipe,
   ],
 })
-export class ExtentFormComponent implements OnInit {
+export class ExtentFormComponent extends IxFormHostForm implements OnInit {
   protected iscsiService = inject(IscsiService);
   protected formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
@@ -75,12 +76,6 @@ export class ExtentFormComponent implements OnInit {
 
   /** Edit data supplied by the `<tn-side-panel>` host. */
   readonly extentData = input<IscsiExtent | undefined>(undefined);
-
-  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
-  readonly closed = output<boolean>();
-
-  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
-  private readonly ixForm = viewChild(IxFormComponent);
 
   protected readonly InputType = InputType;
 
@@ -151,20 +146,6 @@ export class ExtentFormComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  /** Whether the form may be submitted right now. Delegates to the inner `<ix-form>`. */
-  canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
-  }
-
-  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
-  submit(): void {
-    this.ixForm()?.submit();
-  }
 
   ngOnInit(): void {
     // Edit data arrives via the `extentData` input from the side-panel host.

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, computed, effect, input, output, viewChild,
+  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, computed, effect, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -19,6 +19,7 @@ import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -56,7 +57,7 @@ export interface WebShareFormData {
   ],
   providers: [WebShareValidatorService],
 })
-export class WebShareSharesFormComponent implements OnInit {
+export class WebShareSharesFormComponent extends IxFormHostForm implements OnInit {
   readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
   protected readonly helptext = helptextSharingWebshare;
 
@@ -109,12 +110,6 @@ export class WebShareSharesFormComponent implements OnInit {
   /** Edit/default data supplied by the `<tn-side-panel>` host. */
   readonly webShareData = input<WebShareFormData | undefined>(undefined);
 
-  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
-  readonly closed = output<boolean>();
-
-  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
-  private readonly ixForm = viewChild(IxFormComponent);
-
   private formData: WebShareFormData | undefined;
 
   form = this.fb.group({
@@ -127,6 +122,7 @@ export class WebShareSharesFormComponent implements OnInit {
   });
 
   constructor() {
+    super();
     // Disable home share checkbox when another share is already designated as home
     effect(() => {
       const existing = this.existingHomeShare();
@@ -147,21 +143,6 @@ export class WebShareSharesFormComponent implements OnInit {
     directoriesOnly: true,
     includeSnapshots: false,
   });
-
-  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  /** Whether the form may be submitted right now. Delegates to the inner `<ix-form>`. */
-  canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
-  }
-
-  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
-  submit(): void {
-    this.ixForm()?.submit();
-  }
 
   ngOnInit(): void {
     this.formData = this.webShareData();

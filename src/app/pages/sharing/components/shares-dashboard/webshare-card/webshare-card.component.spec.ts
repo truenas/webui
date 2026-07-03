@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Signal } from '@angular/core';
+import { signal, Signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -132,6 +132,9 @@ describe('WebShareCardComponent', () => {
         ],
       }),
       mockProvider(TruenasConnectService, {
+        // `config` is a signal on the real service; WebShareService reads it synchronously to open
+        // the form without a websocket round-trip, so the mock must expose it as a callable signal.
+        config: signal(mockTnConnectConfig),
         config$: of(mockTnConnectConfig),
         openStatusModal: jest.fn(),
       }),
@@ -180,14 +183,14 @@ describe('WebShareCardComponent', () => {
   });
 
   it('opens add form when Add button is clicked', async () => {
-    const slideIn = spectator.inject(SlideIn);
-
+    // Add routes through WebShareService.openWebShareForm, which opens the form in the side panel
+    // via FormSidePanelService (the legacy SlideIn host was retired in this migration).
     const addButton = await loader.getHarness(
       TnButtonHarness.with({ label: 'Add' }),
     );
     await addButton.click();
 
-    expect(slideIn.open).toHaveBeenCalled();
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalled();
   });
 
   it('opens the WebShare edit form in a side panel when a row is edited', () => {

@@ -1,8 +1,6 @@
 <ix-form
   [formGroup]="form"
   [isEditMode]="!isNew"
-  [addTitle]="helptext.webshare_form_title_add | translate"
-  [editTitle]="helptext.webshare_form_title_edit | translate"
   [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild, DestroyRef, Type } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,7 +13,6 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetDetailsComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/target-details.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
@@ -103,15 +102,11 @@ export class AllTargetsComponent implements OnInit {
       });
   }
 
-  // TargetFormComponent structurally provides the side-panel host surface (closed/canSubmit/
-  // submit/hasUnsavedChanges/requiredRoles); cast past the nominal base type.
-  private readonly targetForm = TargetFormComponent as unknown as Type<SidePanelForm>;
-
   editTarget(target: IscsiTarget): void {
     // The updated target's expand + reload is driven by `iscsiService.refreshData(...)` (emitted
     // from the form's onSuccess) which the `listenForDataRefresh` subscription handles by reloading
     // the dataProvider — so no explicit reload here (it would double-load).
-    this.formPanel.open(this.targetForm, {
+    this.formPanel.open(TargetFormComponent, {
       title: this.translate.instant('Edit ISCSI Target'),
       wide: true,
       inputs: { targetData: target },

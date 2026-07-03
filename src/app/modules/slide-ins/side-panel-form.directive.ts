@@ -1,11 +1,43 @@
 import {
-  computed, Directive, inject, output, Signal,
+  computed, Directive, inject, output, OutputRef, Signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
 import { Observable, of, startWith } from 'rxjs';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+
+/**
+ * The minimal surface EVERY side-panel-hosted component exposes — close signalling and the
+ * unsaved-changes guard — which {@link FormSidePanelService} and its container always drive,
+ * regardless of whether the panel renders a Save footer. Footerless hosts (e.g. a `mat-stepper`
+ * wizard that owns its own Next/Back/Save buttons) satisfy only this; that's why `open()` accepts
+ * it rather than the fuller {@link SidePanelHostForm}, so a footerless wizard passes without a cast.
+ *
+ * @typeParam R success payload handed back to the opener (defaults to `boolean`).
+ */
+export interface SidePanelHostCloseable<R = boolean> {
+  /** Emitted when the form closes; a truthy payload is a save (or the created record for richer `R`). */
+  readonly closed: OutputRef<R>;
+  /** Whether the form has edits a host should confirm before discarding. */
+  hasUnsavedChanges(): boolean;
+}
+
+/**
+ * Adds the Save-footer surface (validity gate + submission) to {@link SidePanelHostCloseable}, for
+ * forms the panel renders its own footer Save for. Two shapes satisfy it — the self-contained
+ * {@link SidePanelForm} (where `canSubmit` is a `Signal`) and the `<ix-form>`-delegating
+ * `IxFormHostForm` (where `canSubmit` is a method); `canSubmit` is typed as a plain callable so
+ * either fits. Forms declare this at their own definition (via the base they extend), so a dropped
+ * or misnamed `canSubmit`/`submit` fails there — restoring the compile-time check the old
+ * `as unknown as Type<…>` casts defeated.
+ */
+export interface SidePanelHostForm<R = boolean> extends SidePanelHostCloseable<R> {
+  /** Whether the form may currently be submitted (drives the host-owned Save button). */
+  canSubmit(): boolean;
+  /** Triggers submission from the host (e.g. the panel footer Save). */
+  submit(): void;
+}
 
 /**
  * Base class for any form that can be hosted either in a legacy SlideIn (via {@link SlideInRef})
@@ -22,7 +54,7 @@ import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-chang
  * emit the record through {@link closed}; `FormSidePanelService.open` then resolves with it.
  */
 @Directive()
-export abstract class SidePanelForm<R = boolean> {
+export abstract class SidePanelForm<R = boolean> implements SidePanelHostForm<R> {
   /** Present when opened via legacy SlideIn host. Absent when hosted in `<tn-side-panel>`. */
   readonly slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef, { optional: true });
 

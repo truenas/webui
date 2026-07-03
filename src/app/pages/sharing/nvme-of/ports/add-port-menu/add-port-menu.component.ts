@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, Type, computed, inject, input, output,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
@@ -11,7 +11,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
@@ -42,10 +41,6 @@ export class AddPortMenuComponent {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  // PortFormComponent keeps the `<ix-form>` wrapper, so it doesn't nominally extend
-  // SidePanelForm — but it exposes the same closed/canSubmit/submit surface the panel host reads.
-  private readonly portForm = PortFormComponent as unknown as Type<SidePanelForm<NvmeOfPort | null>>;
-
   subsystemPorts = input.required<NvmeOfPort[]>();
   portSelected = output<NvmeOfPort>();
 
@@ -63,7 +58,7 @@ export class AddPortMenuComponent {
 
   protected openPortForm(): void {
     this.formPanel
-      .open(this.portForm, { title: this.translate.instant('Add Port') })
+      .open(PortFormComponent, { title: this.translate.instant('Add Port') })
       .onSuccess((port) => {
         if (port) {
           this.selectPort(port);

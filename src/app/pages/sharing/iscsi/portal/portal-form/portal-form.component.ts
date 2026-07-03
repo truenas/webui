@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, inject, input, output, viewChild,
+  ChangeDetectionStrategy, Component, OnInit, inject, input,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -13,6 +13,7 @@ import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -40,7 +41,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     AsyncPipe,
   ],
 })
-export class PortalFormComponent implements OnInit {
+export class PortalFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   protected api = inject(ApiService);
@@ -48,12 +49,6 @@ export class PortalFormComponent implements OnInit {
 
   /** Edit data supplied by the `<tn-side-panel>` host. */
   readonly portalData = input<IscsiPortal | undefined>(undefined);
-
-  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
-  readonly closed = output<boolean>();
-
-  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
-  private readonly ixForm = viewChild(IxFormComponent);
 
   listen: IscsiInterface[] = [];
 
@@ -86,21 +81,6 @@ export class PortalFormComponent implements OnInit {
     Role.SharingIscsiWrite,
     Role.SharingWrite,
   ];
-
-  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  /** Whether the form may be submitted right now. Delegates to the inner `<ix-form>`. */
-  canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
-  }
-
-  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
-  submit(): void {
-    this.ixForm()?.submit();
-  }
 
   ngOnInit(): void {
     // Edit data arrives via the `portalData` input from the side-panel host.
