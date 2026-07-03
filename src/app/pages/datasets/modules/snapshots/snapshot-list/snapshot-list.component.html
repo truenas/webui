@@ -1,8 +1,9 @@
 <ix-page-header [pageTitle]="pageTitle">
   @if (loadingExtraColumns$ | async) {
-    <mat-spinner
+    <tn-spinner
+      mode="indeterminate"
       [diameter]="30"
-    ></mat-spinner>
+    ></tn-spinner>
   } @else {
     <ix-slide-toggle
       [formControl]="showExtraColumnsControl"
