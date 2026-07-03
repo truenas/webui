@@ -81,8 +81,12 @@ export interface SubmitResult {
  * ```
  *
  * For self-managed async setup use `initialFormSnapshot` + `externalLoading` +
- * `isEditMode` instead of `editData` (snapshot wins if both are set). Must
- * render inside a slide-in (injects SlideInRef; tests use ixFormTestingProviders()).
+ * `isEditMode` instead of `editData` (snapshot wins if both are set).
+ *
+ * Hosts either way: inside a legacy slide-in (injects `SlideInRef`, closed directly
+ * through it) or host-less inside a `<tn-side-panel>` (`SlideInRef` is `{ optional: true }`
+ * and absent — the {@link closed} output drives the panel to close and reload). Tests use
+ * `ixFormTestingProviders()`.
  *
  * Input surface is FROZEN: no new top-level inputs without team review — keep
  * outlier forms bespoke rather than grow this API.

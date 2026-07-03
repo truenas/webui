@@ -117,13 +117,18 @@ export abstract class SidePanelForm<R = boolean> implements SidePanelHostForm<R>
    * Builds the `canSubmit` signal from the form's validity and the given loading signal.
    * Call from a field initializer after {@link form} is assigned, e.g.
    * `protected readonly canSubmit = this.trackCanSubmit(this.isFormLoading);`
+   *
+   * Blocks only on `INVALID`, not `PENDING`: an async validator briefly parks the form at
+   * `PENDING`, and gating on strict `VALID` would disable Save through that window. Kept in
+   * lock-step with {@link IxFormComponent.canSubmit} so both hosting bases enable Save under
+   * the same condition.
    */
   protected trackCanSubmit(isLoading: Signal<boolean>): Signal<boolean> {
     const status = toSignal(
       this.form.statusChanges.pipe(startWith(this.form.status)),
       { initialValue: this.form.status },
     );
-    return computed(() => status() === 'VALID' && !isLoading());
+    return computed(() => status() !== 'INVALID' && !isLoading());
   }
 }
 

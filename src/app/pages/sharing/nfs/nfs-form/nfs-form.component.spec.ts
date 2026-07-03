@@ -24,7 +24,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -79,6 +78,22 @@ describe('NfsFormComponent', () => {
     await button.click();
   };
 
+  /**
+   * The `<ix-form>` wrapper emits a dev-mode advisory when the form has nested FormArrays
+   * (networks/hosts); the payload here is built from `form.value`, so it's benign. Swallow only
+   * that specific message and forward anything else, so genuine warnings still surface.
+   */
+  const muteNestedFormArrayAdvisory = (): void => {
+    const original = console.warn.bind(console) as (...args: unknown[]) => void;
+    jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+      const [first] = args;
+      if (typeof first === 'string' && first.startsWith('[ix-form] changedValues')) {
+        return;
+      }
+      original(...args);
+    });
+  };
+
   const createComponent = createComponentFactory({
     component: NfsFormComponent,
     imports: [
@@ -94,9 +109,6 @@ describe('NfsFormComponent', () => {
         } as NfsConfig),
       ]),
       mockAuth(),
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-      }),
       mockProvider(FilesystemService),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
@@ -145,9 +157,7 @@ describe('NfsFormComponent', () => {
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
-      // The <ix-form> wrapper emits a dev-mode advisory warning when the form has nested
-      // FormArrays (networks/hosts); the payload here is built from form.value, so it's benign.
-      jest.spyOn(console, 'warn').mockImplementation();
+      muteNestedFormArrayAdvisory();
     });
 
     it('shows Access fields when Advanced Options button is pressed', async () => {
@@ -240,9 +250,7 @@ describe('NfsFormComponent', () => {
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
-      // The <ix-form> wrapper emits a dev-mode advisory warning when the form has nested
-      // FormArrays (networks/hosts); the payload here is built from form.value, so it's benign.
-      jest.spyOn(console, 'warn').mockImplementation();
+      muteNestedFormArrayAdvisory();
     });
 
     it('shows values for an existing NFS share when it is open for edit', async () => {
