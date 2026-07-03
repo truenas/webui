@@ -1,6 +1,7 @@
-import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialog, TnDialogShellComponent, tnIconMarker } from '@truenas/ui-components';
@@ -22,7 +23,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -54,12 +55,11 @@ export class ManageHostsDialog implements OnInit {
   private nvmeOfStore = inject(NvmeOfStore);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);
-  private dialogRef = inject(DialogRef<unknown, ManageHostsDialog>);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
@@ -120,34 +120,23 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onAdd(): void {
-    // Close the dialog immediately to prevent it from appearing behind the slide-in form.
-    this.dialogRef.close();
-    // Note: takeUntilDestroyed is intentionally NOT used here.
-    // The dialog closes immediately (destroying this component), but we need the subscription
-    // to remain active to handle the slide-in response. The slide-in observable completes
-    // naturally when the form is submitted or cancelled, so there's no memory leak.
-    this.slideIn
-      .open(HostFormComponent)
-      .success$
-      .subscribe(() => {
+    // The side panel mounts on document.body and paints on top of this dialog's backdrop,
+    // so the dialog can stay open behind it (no need to close it first as the slide-in did).
+    this.formPanel
+      .open(HostFormComponent, { title: this.translate.instant('Add Host') })
+      .onSuccess(() => {
         this.snackbar.success(this.translate.instant('Host Added'));
         this.nvmeOfStore.reloadHosts();
-      });
+      }, this.destroyRef);
   }
 
   onEdit(host: NvmeOfHostAndUsage): void {
-    // Close the dialog immediately to prevent it from appearing behind the slide-in form.
-    this.dialogRef.close();
-    // Note: takeUntilDestroyed is intentionally NOT used here.
-    // The dialog closes immediately (destroying this component), but we need the subscription
-    // to remain active to handle the slide-in response. The slide-in observable completes
-    // naturally when the form is submitted or cancelled, so there's no memory leak.
-    this.slideIn.open(HostFormComponent, { data: host })
-      .success$
-      .subscribe(() => {
+    this.formPanel
+      .open(HostFormComponent, { title: this.translate.instant('Edit Host'), inputs: { host } })
+      .onSuccess(() => {
         this.snackbar.success(this.translate.instant('Host Updated'));
         this.nvmeOfStore.reloadHosts();
-      });
+      }, this.destroyRef);
   }
 
   onDelete(host: NvmeOfHostAndUsage): void {

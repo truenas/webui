@@ -8,7 +8,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfHost, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -65,7 +65,7 @@ describe('ManageHostsDialog', () => {
         }),
         reloadHosts: jest.fn(),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success({})),
       }),
       mockProvider(DialogRef, {
@@ -93,9 +93,9 @@ describe('ManageHostsDialog', () => {
     const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'nqn.2014-08.org.nvmexpress');
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       HostFormComponent,
-      { data: expect.objectContaining(hosts[0]) },
+      { title: 'Edit Host', inputs: { host: expect.objectContaining(hosts[0]) } },
     );
     expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
   });
@@ -126,7 +126,7 @@ describe('ManageHostsDialog', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add New' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(HostFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(HostFormComponent, { title: 'Add Host' });
     expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
   });
 });

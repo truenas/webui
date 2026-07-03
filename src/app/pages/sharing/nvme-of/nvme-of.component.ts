@@ -1,20 +1,22 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { NvmeOfSubsystem, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import {
@@ -52,7 +54,8 @@ import { setSubsystemNameInUrl } from 'app/pages/sharing/nvme-of/utils/router-ut
 })
 export class NvmeOfComponent implements OnInit {
   private nvmeOfStore = inject(NvmeOfStore);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private activatedRoute = inject(ActivatedRoute);
   private location = inject(Location);
   private destroyRef = inject(DestroyRef);
@@ -126,13 +129,19 @@ export class NvmeOfComponent implements OnInit {
   }
 
   protected openGlobalConfiguration(): void {
-    this.slideIn.open(NvmeOfConfigurationComponent);
+    this.formPanel.open(NvmeOfConfigurationComponent, {
+      title: this.translate.instant('NVMe-oF Global Configuration'),
+    });
   }
 
   protected addSubsystem(): void {
-    this.slideIn.open(AddSubsystemComponent)
+    // Opened footerless — its stepper owns Next/Back/Save.
+    this.formPanel.open(AddSubsystemComponent, {
+      title: this.translate.instant('Add Subsystem'),
+      footerless: true,
+    })
       .onSuccess((response) => {
-        this.selectedSubsystemName = (response as NvmeOfSubsystem).name;
+        this.selectedSubsystemName = response.name;
         this.nvmeOfStore.initialize();
       }, this.destroyRef);
   }

@@ -65,6 +65,8 @@
 // so drop the left indent there only — legacy forms keep the 10px gutter.
 // The `.ix-form-container` in the context keeps this more specific than the
 // rule above, whose `margin` shorthand would otherwise reset margin-left.
+// (The `<ix-form>` wrapper is handled by a global rule in _tn-styles.scss —
+// a scoped `:host-context(ix-form …)` descendant selector is unreliable.)
 :host-context(ix-form-renderer .ix-form-container) :host {
   margin-left: 0;
 }

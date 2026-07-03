@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Signal } from '@angular/core';
+import { signal, Signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -35,6 +35,9 @@ import { ServiceWebshareComponent } from 'app/pages/services/components/service-
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import {
+  WebShareSharesFormComponent,
+} from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebShareCardComponent } from './webshare-card.component';
@@ -129,6 +132,9 @@ describe('WebShareCardComponent', () => {
         ],
       }),
       mockProvider(TruenasConnectService, {
+        // `config` is a signal on the real service; WebShareService reads it synchronously to open
+        // the form without a websocket round-trip, so the mock must expose it as a callable signal.
+        config: signal(mockTnConnectConfig),
         config$: of(mockTnConnectConfig),
         openStatusModal: jest.fn(),
       }),
@@ -177,14 +183,40 @@ describe('WebShareCardComponent', () => {
   });
 
   it('opens add form when Add button is clicked', async () => {
-    const slideIn = spectator.inject(SlideIn);
-
+    // Add routes through WebShareService.openWebShareForm, which opens the form in the side panel
+    // via FormSidePanelService (the legacy SlideIn host was retired in this migration).
     const addButton = await loader.getHarness(
       TnButtonHarness.with({ label: 'Add' }),
     );
     await addButton.click();
 
-    expect(slideIn.open).toHaveBeenCalled();
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalled();
+  });
+
+  it('opens the WebShare edit form in a side panel when a row is edited', () => {
+    // The row Edit action is served by ix-table-actions-cell (not a tn-* component, so no
+    // tn-* harness applies) — drive it through the rendered button, matching the Delete test.
+    const editButtons = spectator.queryAll('[aria-label*="Edit"]');
+    expect(editButtons.length).toBeGreaterThan(0);
+
+    editButtons[0].dispatchEvent(new Event('click'));
+    spectator.detectChanges();
+
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      WebShareSharesFormComponent,
+      {
+        title: 'Edit WebShare',
+        inputs: {
+          webShareData: {
+            id: 1,
+            isNew: false,
+            name: 'documents',
+            path: '/mnt/tank/documents',
+            isHomeBase: false,
+          },
+        },
+      },
+    );
   });
 
   it('toggles the WebShare service when the projected header toggle is changed', async () => {

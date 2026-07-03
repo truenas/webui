@@ -1,8 +1,8 @@
-<ix-modal-header
-  [title]="'Add Subsystem' | translate"
-  [loading]="isLoading()"
-></ix-modal-header>
-
+<!--
+  NAS-141552: mat-card + mat-vertical-stepper intentionally held on Material for this wizard.
+  The inner step controls/buttons are already migrated to tn-*; the stepper shell migration to
+  tn-stepper is tracked as follow-up under Epic NAS-141021.
+-->
 <mat-card class="card">
   <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
     <mat-vertical-stepper #stepper>
@@ -11,12 +11,12 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'What To Share' | translate }}</ng-template>
 
-        <ix-input
+        <tn-form-field
           class="name-input"
-          formControlName="name"
-          [required]="true"
           [label]="'Subsystem Name' | translate"
-        ></ix-input>
+        >
+          <tn-input formControlName="name" [required]="true"></tn-input>
+        </tn-form-field>
 
         <ix-details-table>
           <ix-details-item
@@ -29,11 +29,12 @@
               </div>
 
               <div edit>
-                <ix-input
+                <tn-input
                   class="nqn-input"
+                  name="subnqn"
                   formControlName="subnqn"
-                  aria-label="NQN"
-                ></ix-input>
+                  [ariaLabel]="'NQN' | translate"
+                ></tn-input>
               </div>
             </ix-editable>
           </ix-details-item>
@@ -45,24 +46,25 @@
         ></ix-add-subsystem-namespaces>
 
         <div class="step-buttons">
-          <button
-            mat-button
-            matStepperNext
-            color="primary"
+          <tn-button
             type="button"
-            ixTest="next"
+            [testId]="'next'"
+            [label]="'Next' | translate"
             [disabled]="form.controls.name.invalid"
-          >{{ 'Next' | translate }}</button>
+            (onClick)="stepper.next()"
+          ></tn-button>
         </div>
       </mat-step>
 
       <mat-step>
         <ng-template matStepLabel>{{ 'Access' | translate }}</ng-template>
 
-        <ix-checkbox
-          formControlName="allowAnyHost"
-          [label]="'Allow any host to connect' | translate"
-        ></ix-checkbox>
+        <tn-form-field>
+          <tn-checkbox
+            formControlName="allowAnyHost"
+            [label]="'Allow any host to connect' | translate"
+          ></tn-checkbox>
+        </tn-form-field>
 
         @if (!form.value.allowAnyHost) {
           <ix-add-subsystem-hosts
@@ -77,22 +79,21 @@
         ></ix-add-subsystem-ports>
 
         <div class="step-buttons last-step-buttons">
-          <button
-            mat-button
-            matStepperPrevious
-            color="accent"
+          <tn-button
             type="button"
-            ixTest="back"
-          >{{ 'Back' | translate }}</button>
-          <button
+            [testId]="'back'"
+            [label]="'Back' | translate"
+            (onClick)="stepper.previous()"
+          ></tn-button>
+          <tn-button
             *ixRequiresRoles="requiredRoles"
-            mat-button
-            matStepperNext
-            color="primary"
             type="submit"
-            ixTest="save"
+            variant="filled"
+            [primary]="true"
+            [testId]="'save'"
+            [label]="'Save' | translate"
             [disabled]="form.invalid || isLoading()"
-          >{{ 'Save' | translate }}</button>
+          ></tn-button>
         </div>
       </mat-step>
     </mat-vertical-stepper>

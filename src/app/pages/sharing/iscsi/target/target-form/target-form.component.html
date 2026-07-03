@@ -1,170 +1,174 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
   [requiredRoles]="requiredRoles"
-  [title]="title"
-  [loading]="isLoading()"
-></ix-modal-header>
+  [extraDisabled]="isSaveBlocked()"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <ng-template #fcPortsTemplate>
+    <ix-list
+      formArrayName="fcPorts"
+      [empty]="form.controls.fcPorts.length === 0"
+      [label]="'Fibre Channel Ports' | translate"
+      [formArray]="form.get('fcPorts')"
+      (add)="addFcPort()"
+    >
+      @if (form.controls.fcPorts.length >= 2) {
+        <ix-fc-mpio-info-banner></ix-fc-mpio-info-banner>
+      }
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ng-template #fcPortsTemplate>
-        <ix-list
-          formArrayName="fcPorts"
-          [empty]="form.controls.fcPorts.length === 0"
-          [label]="'Fibre Channel Ports' | translate"
-          [formArray]="form.get('fcPorts')"
-          (add)="addFcPort()"
+      @for (entry of form.controls.fcPorts.controls; track entry; let i = $index) {
+        <ix-list-item
+          [label]="'Port' | translate"
+          (delete)="deleteFcPort(i)"
         >
-          @if (form.controls.fcPorts.length >= 2) {
-            <ix-fc-mpio-info-banner></ix-fc-mpio-info-banner>
-          }
+          <ix-fc-port-item-controls
+            [form]="form.controls.fcPorts.at(i)"
+            [isEdit]="!isNew"
+            [currentPort]="currentPorts()[i]"
+            [usedPhysicalPorts]="usedPhysicalPortsByIndex()[i]"
+            [availablePorts]="availableFcPorts()"
+          ></ix-fc-port-item-controls>
+        </ix-list-item>
+      }
+    </ix-list>
 
-          @for (entry of form.controls.fcPorts.controls; track entry; let i = $index) {
+    @if (fcPortValidationErrors().length > 0) {
+      <div class="fc-port-error" role="alert">
+        {{ fcPortValidationErrors().join(', ') }}
+      </div>
+    }
+  </ng-template>
+
+  <div class="columns">
+    <div class="column">
+      <tn-form-section [heading]="helptext.basicInfo | translate">
+        <tn-form-field
+          [label]="helptext.target.nameLabel | translate"
+          [tooltip]="helptext.target.nameTooltip | translate"
+        >
+          <tn-input
+            formControlName="name"
+            [required]="true"
+            [placeholder]="helptext.target.nameLabel | translate"
+          ></tn-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="helptext.target.aliasLabel | translate"
+          [tooltip]="helptext.target.aliasTooltip | translate"
+        >
+          <tn-input
+            formControlName="alias"
+            [placeholder]="helptext.target.aliasLabel | translate"
+          ></tn-input>
+        </tn-form-field>
+
+        @if (hasFibreChannel()) {
+          <ix-radio-group
+            formControlName="mode"
+            [label]="'Mode' | translate"
+            [options]="modeOptions$"
+          ></ix-radio-group>
+        }
+
+        <ix-list
+          formArrayName="auth_networks"
+          [empty]="form.controls.auth_networks.length === 0"
+          [label]="helptext.authNetwork.label | translate"
+          [formArray]="form.get('auth_networks')"
+          (add)="addNetwork()"
+        >
+          @for (entry of form.controls.auth_networks.controls; track entry; let i = $index) {
             <ix-list-item
-              [label]="'Port' | translate"
-              (delete)="deleteFcPort(i)"
+              [label]="helptext.authNetwork.label | translate"
+              (delete)="deleteNetwork(i)"
             >
-              <ix-fc-port-item-controls
-                [form]="form.controls.fcPorts.at(i)"
-                [isEdit]="!isNew"
-                [currentPort]="currentPorts()[i]"
-                [usedPhysicalPorts]="usedPhysicalPortsByIndex()[i]"
-                [availablePorts]="availableFcPorts()"
-              ></ix-fc-port-item-controls>
+              <ix-ip-input-with-netmask
+                [formControlName]="i"
+                [label]="'Network' | translate"
+                [required]="true"
+              ></ix-ip-input-with-netmask>
             </ix-list-item>
           }
         </ix-list>
 
-        @if (fcPortValidationErrors().length > 0) {
-          <mat-error>
-            {{ fcPortValidationErrors().join(', ') }}
-          </mat-error>
+        @if (showPortControls && showGroupsControls) {
+          <ng-container *ngTemplateOutlet="fcPortsTemplate"></ng-container>
         }
-      </ng-template>
+      </tn-form-section>
+    </div>
 
-      <div class="columns">
-        <div class="column">
-          <ix-fieldset [title]="helptext.basicInfo | translate">
-            <ix-input
-              [formControlName]="'name'"
-              [label]="helptext.target.nameLabel | translate"
-              [tooltip]="helptext.target.nameTooltip | translate"
-              [placeholder]="helptext.target.nameLabel | translate"
-              [required]="true"
-            ></ix-input>
+    <div class="column">
+      @if (showPortControls && !showGroupsControls) {
+        <tn-form-section [heading]="'Fibre Channel Ports' | translate">
+          <ng-container *ngTemplateOutlet="fcPortsTemplate"></ng-container>
+        </tn-form-section>
+      }
 
-            <ix-input
-              [formControlName]="'alias'"
-              [label]="helptext.target.aliasLabel | translate"
-              [tooltip]="helptext.target.aliasTooltip | translate"
-              [placeholder]="helptext.target.aliasLabel | translate"
-            ></ix-input>
-
-            @if (hasFibreChannel()) {
-              <ix-radio-group
-                formControlName="mode"
-                [label]="'Mode' | translate"
-                [options]="modeOptions$"
-              ></ix-radio-group>
-            }
-
-            <ix-list
-              formArrayName="auth_networks"
-              [empty]="form.controls.auth_networks.length === 0"
-              [label]="helptext.authNetwork.label | translate"
-              [formArray]="form.get('auth_networks')"
-              (add)="addNetwork()"
-            >
-              @for (entry of form.controls.auth_networks.controls; track entry; let i = $index) {
-                <ix-list-item
-                  [label]="helptext.authNetwork.label | translate"
-                  (delete)="deleteNetwork(i)"
-                >
-                  <ix-ip-input-with-netmask
-                    [formControlName]="i"
-                    [label]="'Network' | translate"
-                    [required]="true"
-                  ></ix-ip-input-with-netmask>
-                </ix-list-item>
-              }
-            </ix-list>
-
-            @if (showPortControls && showGroupsControls) {
-              <ng-container *ngTemplateOutlet="fcPortsTemplate"></ng-container>
-            }
-          </ix-fieldset>
-        </div>
-
-        <div class="column">
-          @if (showPortControls && !showGroupsControls) {
-            <ix-fieldset [title]="'Fibre Channel Ports' | translate">
-              <ng-container *ngTemplateOutlet="fcPortsTemplate"></ng-container>
-            </ix-fieldset>
-          }
-
-          @if (showGroupsControls) {
-            <ix-fieldset [title]="helptext.targetGroup | translate">
-              <ix-list
-                formArrayName="groups"
-                [formArray]="form.get('groups')"
-                [empty]="form.controls.groups.length === 0"
-                [label]="'Add groups' | translate"
-                (add)="addGroup()"
+      @if (showGroupsControls) {
+        <tn-form-section [heading]="helptext.targetGroup | translate">
+          <ix-list
+            formArrayName="groups"
+            [formArray]="form.get('groups')"
+            [empty]="form.controls.groups.length === 0"
+            [label]="'Add groups' | translate"
+            (add)="addGroup()"
+          >
+            @for (entry of form.controls.groups.controls; track entry; let i = $index) {
+              <ix-list-item
+                [label]="'Groups' | translate"
+                [formGroupName]="i"
+                (delete)="deleteGroup(i)"
               >
-                @for (entry of form.controls.groups.controls; track entry; let i = $index) {
-                  <ix-list-item
-                    [label]="'Groups' | translate"
-                    [formGroupName]="i"
-                    (delete)="deleteGroup(i)"
-                  >
-                    <ix-select
-                      formControlName="portal"
-                      [label]="helptext.target.portalGroupIdLabel | translate"
-                      [options]="portals$"
-                      [tooltip]="helptext.target.portalGroupIdTooltip | translate"
-                      [required]="true"
-                    ></ix-select>
+                <tn-form-field
+                  [label]="helptext.target.portalGroupIdLabel | translate"
+                  [tooltip]="helptext.target.portalGroupIdTooltip | translate"
+                  [required]="true"
+                >
+                  <tn-select
+                    formControlName="portal"
+                    [options]="(portals$ | async) ?? []"
+                  ></tn-select>
+                </tn-form-field>
 
-                    <ix-select
-                      formControlName="initiator"
-                      [label]="helptext.target.initiatorGroupIdLabel | translate"
-                      [options]="initiators$"
-                      [tooltip]="helptext.target.initiatorGrouIpIdTooltip | translate"
-                    ></ix-select>
+                <tn-form-field
+                  [label]="helptext.target.initiatorGroupIdLabel | translate"
+                  [tooltip]="helptext.target.initiatorGrouIpIdTooltip | translate"
+                >
+                  <tn-select
+                    formControlName="initiator"
+                    [allowEmpty]="true"
+                    [options]="(initiators$ | async) ?? []"
+                  ></tn-select>
+                </tn-form-field>
 
-                    <ix-select
-                      formControlName="authmethod"
-                      [label]="helptext.target.authenticationMethodLabel | translate"
-                      [options]="authmethods$ | translateOptions"
-                      [required]="true"
-                    ></ix-select>
+                <tn-form-field
+                  [label]="helptext.target.authenticationMethodLabel | translate"
+                  [required]="true"
+                >
+                  <tn-select
+                    formControlName="authmethod"
+                    [options]="(authmethods$ | translateOptions | async) ?? []"
+                  ></tn-select>
+                </tn-form-field>
 
-                    <ix-select
-                      formControlName="auth"
-                      [label]="helptext.target.authGroupNumberLabel | translate"
-                      [options]="auths$"
-                      [tooltip]="helptext.target.authGroupNumberTooltip | translate"
-                    ></ix-select>
-                  </ix-list-item>
-                }
-              </ix-list>
-            </ix-fieldset>
-          }
-        </div>
-      </div>
-
-      <ix-form-actions [validating]="isAsyncValidatorPending">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || (showPortControls && !areFcPortsValid()) || isLoading() || isAsyncValidatorPending"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+                <tn-form-field
+                  [label]="helptext.target.authGroupNumberLabel | translate"
+                  [tooltip]="helptext.target.authGroupNumberTooltip | translate"
+                >
+                  <tn-select
+                    formControlName="auth"
+                    [allowEmpty]="true"
+                    [options]="(auths$ | async) ?? []"
+                  ></tn-select>
+                </tn-form-field>
+              </ix-list-item>
+            }
+          </ix-list>
+        </tn-form-section>
+      }
+    </div>
+  </div>
+</ix-form>
