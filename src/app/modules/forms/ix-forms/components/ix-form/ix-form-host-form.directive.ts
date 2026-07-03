@@ -30,6 +30,15 @@ export abstract class IxFormHostForm<R = boolean> implements SidePanelHostForm<R
    */
   readonly closed = output<R>();
 
+  /**
+   * Whether the inner `<ix-form>` is currently submitting / loading. The host reads this (as
+   * `HostedSidePanelForm.isBusy`) to show the panel's top progress bar during submit. Delegates to
+   * the inner `<ix-form>` so every wrapped form gets the indicator for free.
+   */
+  isBusy(): boolean {
+    return this.ixForm()?.isLoading() ?? false;
+  }
+
   /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
   hasUnsavedChanges(): boolean {
     return this.ixForm()?.hasUnsavedChanges() ?? false;
