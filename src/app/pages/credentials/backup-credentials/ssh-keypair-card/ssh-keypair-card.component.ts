@@ -1,11 +1,19 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  tnIconMarker,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { filter, map, Observable, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -14,18 +22,12 @@ import { KeychainCredentialUsedBy, KeychainSshKeyPair } from 'app/interfaces/key
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { sshKeypairsCardElements } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.elements';
@@ -42,27 +44,28 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
   styleUrls: ['./ssh-keypair-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnButtonComponent,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnTestIdDirective,
+    TnTooltipDirective,
+    TableActionsCellComponent,
     IxTablePagerShowMoreComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class SshKeypairCardComponent implements OnInit {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
-  protected emptyService = inject(EmptyService);
   private dialog = inject(DialogService);
   private keychainCredentialService = inject(KeychainCredentialService);
   private download = inject(DownloadService);
@@ -73,44 +76,61 @@ export class SshKeypairCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
   protected readonly searchableElements = sshKeypairsCardElements;
 
-  dataProvider: AsyncDataProvider<KeychainSshKeyPair>;
-  credentials: KeychainSshKeyPair[] = [];
-  columns = createTable<KeychainSshKeyPair>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('download', 'mdi'),
-          tooltip: this.translate.instant('Download'),
-          onClick: (row) => this.doDownload(row),
-        },
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.doDelete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'ssh-keypair-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('SSH Key Pair')],
+  protected readonly dataProvider = new AsyncDataProvider<KeychainSshKeyPair>(
+    this.keychainCredentialService.getSshKeys().pipe(takeUntilDestroyed(this.destroyRef)),
+  );
+
+  protected readonly currentPage = toSignal(this.dataProvider.currentPage$, {
+    initialValue: [] as KeychainSshKeyPair[],
   });
 
+  protected readonly isLoading = toSignal(this.dataProvider.isLoading$, { initialValue: false });
+
+  protected readonly isEmpty = computed(() => !this.currentPage().length && !this.isLoading());
+
+  private emptyType = toSignal(this.dataProvider.emptyType$);
+
+  // Reflects the data-provider's state (error / no data / no search results) so the empty state
+  // shows the correct title/message — not a static "no records" message when the query failed.
+  protected readonly emptyConfig = computed(() => this.emptyService.defaultEmptyConfig(this.emptyType()));
+
+  // State icon for error / no-search states, falling back to the card's own icon for no-data.
+  protected readonly emptyIcon = computed(
+    () => this.emptyService.iconForTypeOrDefault(this.emptyType(), tnIconMarker('key-outline', 'mdi')),
+  );
+
+  protected readonly displayedColumns = ['name', 'actions'];
+
+  protected readonly trackById = (_index: number, row: KeychainSshKeyPair): number => row.id;
+
+  protected readonly actions: IconActionConfig<KeychainSshKeyPair>[] = [
+    {
+      iconName: tnIconMarker('download', 'mdi'),
+      tooltip: this.translate.instant('Download'),
+      onClick: (row) => this.doDownload(row),
+    },
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => this.doDelete(row),
+    },
+  ];
+
+  protected uniqueRowTag(row: KeychainSshKeyPair): string {
+    return 'ssh-keypair-' + row.name;
+  }
+
+  protected ariaLabel(row: KeychainSshKeyPair): string {
+    return [row.name, this.translate.instant('SSH Key Pair')].join(' ');
+  }
+
   ngOnInit(): void {
-    const credentials$ = this.keychainCredentialService.getSshKeys().pipe(
-      tap((credentials) => this.credentials = credentials),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<KeychainSshKeyPair>(credentials$);
     this.setDefaultSort();
     this.getCredentials();
 
@@ -119,29 +139,32 @@ export class SshKeypairCardComponent implements OnInit {
       .subscribe(() => this.getCredentials());
   }
 
-  getCredentials(): void {
+  private getCredentials(): void {
     this.dataProvider.load();
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 1,
+      active: null,
       direction: SortDirection.Asc,
       propertyName: 'id',
     });
   }
 
-  doAdd(): void {
-    this.slideIn.open(SshKeypairFormComponent)
-      .onSuccess(() => this.getCredentials(), this.destroyRef);
+  protected doAdd(): void {
+    this.formPanel.open(SshKeypairFormComponent, {
+      title: this.translate.instant('Add SSH Keypair'),
+    }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
-  doEdit(credential: KeychainSshKeyPair): void {
-    this.slideIn.open(SshKeypairFormComponent, { data: credential })
-      .onSuccess(() => this.getCredentials(), this.destroyRef);
+  protected doEdit(credential: KeychainSshKeyPair): void {
+    this.formPanel.open(SshKeypairFormComponent, {
+      title: this.translate.instant('Edit SSH Keypair'),
+      inputs: { editKeypair: credential },
+    }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
-  doDelete(credential: KeychainSshKeyPair): void {
+  protected doDelete(credential: KeychainSshKeyPair): void {
     this.checkKeypairUsage(credential.id).pipe(
       switchMap((usedBy) => {
         return this.confirmDeletion(credential.name, usedBy).pipe(
@@ -209,7 +232,7 @@ export class SshKeypairCardComponent implements OnInit {
     );
   }
 
-  doDownload(credential: KeychainSshKeyPair): void {
+  protected doDownload(credential: KeychainSshKeyPair): void {
     const name = credential.name;
     Object.keys(credential.attributes).forEach((keyType) => {
       const key = credential.attributes[keyType as keyof typeof credential.attributes];

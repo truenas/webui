@@ -61,14 +61,23 @@ export abstract class SidePanelForm<R = boolean> {
 
   /**
    * Closes through whichever host opened the form, emitting the boolean saved-signal. For the
-   * default `R = boolean` this is exact; forms with a richer payload close by emitting `R`
-   * through {@link closed} directly instead of calling this.
+   * default `R = boolean` this is exact; forms with a richer payload should call {@link closeWith}
+   * with the created record instead.
    */
   protected close(saved: boolean): void {
+    this.closeWith(saved as unknown as R);
+  }
+
+  /**
+   * Closes through whichever host opened the form, handing back the full `R` payload. Use from
+   * forms whose `R` is richer than `boolean` (e.g. a picker's "Add New" that returns the created
+   * record) so the legacy SlideIn host is honored too — not just the `<tn-side-panel>` output.
+   */
+  protected closeWith(payload: R): void {
     if (this.slideInRef) {
-      this.slideInRef.close({ response: saved });
+      this.slideInRef.close({ response: payload as unknown as boolean });
     } else {
-      this.closed.emit(saved as unknown as R);
+      this.closed.emit(payload);
     }
   }
 

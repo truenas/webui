@@ -7,7 +7,7 @@ import {
   mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialogHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness, TnInputHarness, TnTableHarness } from '@truenas/ui-components';
 import {
   mockCall,
   mockApi,
@@ -66,8 +66,9 @@ describe('SelectImageDialogComponent', () => {
       );
     });
 
-    it('shows the headers', () => {
-      expect(spectator.queryAll('th').map((item) => item.textContent)).toEqual([
+    it('shows the headers', async () => {
+      const table = await loader.getHarness(TnTableHarness);
+      expect(await table.getHeaderTexts()).toEqual([
         'Label',
         'OS',
         'Release',
@@ -77,12 +78,9 @@ describe('SelectImageDialogComponent', () => {
       ]);
     });
 
-    it('shows the rows', () => {
-      const rows = spectator.queryAll('tr').slice(1).map((row) => {
-        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent!.trim());
-      });
-
-      expect(rows).toEqual([
+    it('shows the rows', async () => {
+      const table = await loader.getHarness(TnTableHarness);
+      expect(await table.getAllRowTexts()).toEqual([
         ['almalinux', 'Linux', '8', 'amd64', 'default', 'Select'],
         ['alpine', 'Alpine', '3.18', 'amd64', 'default', 'Select'],
       ]);
@@ -92,11 +90,8 @@ describe('SelectImageDialogComponent', () => {
       const searchInput = await loader.getHarness(TnInputHarness);
       await searchInput.setValue('ALPINE');
 
-      const rows = spectator.queryAll('tr').slice(1).map((row) => {
-        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent!.trim());
-      });
-
-      expect(rows).toEqual([
+      const table = await loader.getHarness(TnTableHarness);
+      expect(await table.getAllRowTexts()).toEqual([
         ['alpine', 'Alpine', '3.18', 'amd64', 'default', 'Select'],
       ]);
     });
@@ -139,19 +134,16 @@ describe('SelectImageDialogComponent', () => {
       const searchInput = await loader.getHarness(TnInputHarness);
       await searchInput.setValue('nonexistent');
 
-      const rows = spectator.queryAll('tr').slice(1);
-      expect(rows).toHaveLength(0);
+      const table = await loader.getHarness(TnTableHarness);
+      expect(await table.getRowCount()).toBe(0);
     });
 
     it('filters images case-insensitively', async () => {
       const searchInput = await loader.getHarness(TnInputHarness);
       await searchInput.setValue('AlMaLiNuX');
 
-      const rows = spectator.queryAll('tr').slice(1).map((row) => {
-        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent!.trim());
-      });
-
-      expect(rows).toEqual([
+      const table = await loader.getHarness(TnTableHarness);
+      expect(await table.getAllRowTexts()).toEqual([
         ['almalinux', 'Linux', '8', 'amd64', 'default', 'Select'],
       ]);
     });

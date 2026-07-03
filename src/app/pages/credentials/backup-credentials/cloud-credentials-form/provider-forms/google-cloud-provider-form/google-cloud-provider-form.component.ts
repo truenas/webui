@@ -2,12 +2,13 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, D
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { from, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { SomeProviderAttributes } from 'app/interfaces/cloudsync-credential.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -17,11 +18,12 @@ import {
   templateUrl: './google-cloud-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
     ReactiveFormsModule,
     IxFileInputComponent,
-    IxTextareaComponent,
     TranslateModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
   ],
 })
 export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {

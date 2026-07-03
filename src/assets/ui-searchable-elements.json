@@ -3910,22 +3910,6 @@
   {
     "hierarchy": [
       "Reporting",
-      "Select Reporting"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/reportsdashboard"
-    ],
-    "routerLink": null,
-    "anchor": "select-reporting",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Reporting",
       "CPU"
     ],
     "synonyms": [
@@ -4038,6 +4022,26 @@
   {
     "hierarchy": [
       "Reporting",
+      "Target"
+    ],
+    "synonyms": [
+      "Target Stats",
+      "Target Utilization"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "target"
+    ],
+    "routerLink": null,
+    "anchor": "target",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
       "UPS"
     ],
     "synonyms": [
@@ -4073,6 +4077,22 @@
     ],
     "routerLink": null,
     "anchor": "zfs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Select Reporting"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard"
+    ],
+    "routerLink": null,
+    "anchor": "select-reporting",
     "triggerAnchor": null,
     "section": "ui"
   },

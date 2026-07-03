@@ -1,9 +1,10 @@
+import { CdkStepper } from '@angular/cdk/stepper';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent } from '@truenas/ui-components';
 import { pick } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
@@ -12,11 +13,8 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -25,13 +23,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './csr-identifier-and-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxInputComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperNext,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -43,6 +41,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   private cdr = inject(ChangeDetectorRef);
   private validators = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
+  private stepper = inject(CdkStepper);
 
   readonly profileSelected = output<CertificateProfile>();
 
@@ -77,6 +76,10 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   ngOnInit(): void {
     this.loadProfiles();
     this.emitEventOnProfileChange();
+  }
+
+  protected goNext(): void {
+    this.stepper.next();
   }
 
   getSummary(): SummarySection {

@@ -1,3 +1,10 @@
+// tn-form-section's heading carries only a bottom margin, so when it follows a
+// bare field it jams against it. Add top spacing matching the section gap rhythm.
+tn-form-section {
+  display: block;
+  margin-top: 1.25rem;
+}
+
 ix-ip-input-with-netmask {
   margin-bottom: 0;
   margin-top: 0;

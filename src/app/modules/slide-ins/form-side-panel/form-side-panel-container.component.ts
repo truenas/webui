@@ -5,6 +5,10 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
+  TnIconButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
   TnProgressBarComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
@@ -34,15 +38,42 @@ export interface SidePanelFooterAction {
   onClick: () => void;
 }
 
+/** A single action inside a {@link SidePanelFooterMenu}. */
+export interface SidePanelFooterMenuItem {
+  /** Untranslated marker; the container pipes it through `translate`. */
+  label: string;
+  testId: TnTestIdValue;
+  icon?: string;
+  iconLibrary?: 'material' | 'mdi' | 'custom' | 'lucide';
+  /** Roles required to show the item (omit / empty = always shown). */
+  requiredRoles?: Role[];
+  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
+  disabled?: () => boolean;
+  onClick: () => void;
+}
+
 /**
- * A {@link SidePanelForm} that may expose `requiredRoles` to gate its Save action, and optional
- * {@link SidePanelFooterAction}s rendered before Save. Forms declare these independently (not on the
- * base), so the host reads them through this structural augmentation rather than forcing every form
- * to `override` a base member.
+ * A dropdown of secondary actions rendered in the footer before Save. Use instead of a flat
+ * {@link SidePanelFooterAction}[] when several actions would crowd the footer — the container
+ * renders one `dots-vertical` icon-button trigger opening a `tn-menu` of the {@link items}.
+ */
+export interface SidePanelFooterMenu {
+  /** Trigger button accessible name / tooltip (untranslated marker). */
+  label: string;
+  testId: TnTestIdValue;
+  items: SidePanelFooterMenuItem[];
+}
+
+/**
+ * A {@link SidePanelForm} that may expose `requiredRoles` to gate its Save action, plus optional
+ * {@link SidePanelFooterAction}s and/or a {@link SidePanelFooterMenu} rendered before Save. Forms
+ * declare these independently (not on the base), so the host reads them through this structural
+ * augmentation rather than forcing every form to `override` a base member.
  */
 export type HostedSidePanelForm = SidePanelForm & {
   readonly requiredRoles?: Role[];
   readonly footerActions?: SidePanelFooterAction[];
+  readonly footerMenu?: SidePanelFooterMenu;
   /**
    * Whether the form is currently submitting / busy. The host shows an indeterminate progress bar
    * at the top of the panel while true (Save is independently disabled via `canSubmit`). Optional —
@@ -68,6 +99,10 @@ export type HostedSidePanelForm = SidePanelForm & {
     TnSidePanelComponent,
     TnSidePanelActionDirective,
     TnButtonComponent,
+    TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     TnProgressBarComponent,
     RequiresRolesDirective,
     CdkPortalOutlet,

@@ -1,18 +1,16 @@
+import { CdkStepper } from '@angular/cdk/stepper';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent } from '@truenas/ui-components';
 import { pickBy } from 'lodash-es';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Component({
@@ -20,15 +18,14 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './csr-subject.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxSelectComponent,
-    IxInputComponent,
+    TnSelectComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     IxChipsComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
-    MatStepperNext,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -36,6 +33,7 @@ export class CsrSubjectComponent implements SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private systemGeneralService = inject(SystemGeneralService);
   private translate = inject(TranslateService);
+  private stepper = inject(CdkStepper);
 
   form = this.formBuilder.nonNullable.group({
     country: ['US', Validators.required],
@@ -52,6 +50,14 @@ export class CsrSubjectComponent implements SummaryProvider {
 
   readonly countries$ = this.systemGeneralService.getCertificateCountryChoices()
     .pipe(choicesToOptions());
+
+  protected goBack(): void {
+    this.stepper.previous();
+  }
+
+  protected goNext(): void {
+    this.stepper.next();
+  }
 
   getSummary(): SummarySection {
     const values = this.form.value;

@@ -44,7 +44,11 @@
     <div [class]="['container', size()]">
       @if (backupsTiles.length) {
         <div class="container-content">
-          <div class="tiles-grid" [style.--tile-height.px]="hasSendTasks ? 105 : 90">
+          <div
+            class="tiles-grid"
+            [class.two-columns]="backupsTiles.length > 3"
+            [style.--tile-height.px]="hasSendTasks ? 105 : 90"
+          >
             @for (tile of backupsTiles; track trackByTile($index, tile)) {
               <div class="tile-cell">
                 <ix-backup-task-tile
