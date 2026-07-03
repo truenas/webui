@@ -5,7 +5,8 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnDialog, TnEmptyComponent, TnListComponent, TnListItemComponent, TnMenuItem,
+  TnButtonComponent, TnCardAction, TnCardComponent, TnDialog, TnEmptyComponent, TnListComponent, TnListItemComponent,
+  TnMenuItem,
 } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
 import {
@@ -120,6 +121,19 @@ export class DirectoryServicesComponent implements OnInit {
     return null;
   });
 
+  protected readonly settingsAction = computed<TnCardAction | undefined>(() => {
+    const card = this.activeCard();
+    if (!card) {
+      return undefined;
+    }
+
+    return {
+      label: this.translate.instant('Settings'),
+      testId: `button-${kebabCase(card.title)}-settings`,
+      handler: () => card.onSettingsPressed(),
+    };
+  });
+
   protected readonly cardMenu = computed<TnMenuItem[]>(() => {
     const card = this.activeCard();
     if (!card) {
@@ -127,16 +141,7 @@ export class DirectoryServicesComponent implements OnInit {
     }
 
     const baseTestId = kebabCase(card.title);
-    const items: TnMenuItem[] = [
-      {
-        id: 'settings',
-        label: this.translate.instant('Settings'),
-        icon: 'cog',
-        iconLibrary: 'mdi',
-        testId: `button-${baseTestId}-settings`,
-        action: () => card.onSettingsPressed(),
-      },
-    ];
+    const items: TnMenuItem[] = [];
 
     if (this.hasDirectoryServiceWrite()) {
       items.push({

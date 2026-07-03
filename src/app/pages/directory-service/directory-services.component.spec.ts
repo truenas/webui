@@ -1,7 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog, TnMenuHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnMenuHarness } from '@truenas/ui-components';
 import { of, throwError, NEVER } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import { DirectoryServiceStatus, DirectoryServiceType, DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
@@ -23,6 +23,7 @@ import { DirectoryServicesComponent } from './directory-services.component';
 
 type DirectoryServicesComponentWithProtected = DirectoryServicesComponent & {
   onRebuildCachePressed(): void;
+  openDirectoryServicesForm(): void;
   isLoading: {
     (): boolean;
     set(value: boolean): void;
@@ -120,13 +121,26 @@ describe('DirectoryServicesComponent', () => {
   });
 
   describe('Menu visibility and functionality', () => {
-    it('should show Settings menu item for all directory services', async () => {
+    it('should show Settings as a card action button', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
 
-      const menu = await openCardMenu();
-      const labels = await menu.getItemLabels();
-      expect(labels.filter((label) => label.includes('Settings'))).toHaveLength(1);
+      const settingsButton = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(TnButtonHarness.with({ label: /Settings/ }));
+      expect(await settingsButton.getLabel()).toContain('Settings');
+    });
+
+    it('should open the directory services form when Settings action is clicked', async () => {
+      spectator = createComponent();
+      await spectator.fixture.whenStable();
+      const openFormSpy = jest.spyOn(
+        spectator.component as DirectoryServicesComponentWithProtected,
+        'openDirectoryServicesForm',
+      ).mockImplementation();
+
+      const settingsButton = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(TnButtonHarness.with({ label: /Settings/ }));
+      await settingsButton.click();
+
+      expect(openFormSpy).toHaveBeenCalled();
     });
 
     it('should show Leave button for Active Directory when healthy', async () => {
