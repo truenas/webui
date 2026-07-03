@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, DestroyRef, signal, viewChild } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -15,7 +14,6 @@ import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { allContainersHeaderElements } from 'app/pages/containers/components/all-containers/all-containers-header/all-containers-header.elements';
 import {
@@ -47,11 +45,10 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     UiSearchDirective,
     RequiresRolesDirective,
     GlobalConfigFormComponent,
+    ContainerFormComponent,
   ],
 })
 export class AllContainersHeaderComponent {
-  private destroyRef = inject(DestroyRef);
-  private slideIn = inject(SlideIn);
   private tnDialog = inject(TnDialog);
   private unsavedChangesService = inject(UnsavedChangesService);
   private configStore = inject(ContainerConfigStore);
@@ -65,6 +62,9 @@ export class AllContainersHeaderComponent {
   protected readonly configOpen = signal(false);
   protected readonly configForm = viewChild(GlobalConfigFormComponent);
 
+  protected readonly containerFormOpen = signal(false);
+  protected readonly containerForm = viewChild(ContainerFormComponent);
+
   protected readonly closeGuard = (): Observable<boolean> => {
     if (!this.configForm()?.hasUnsavedChanges()) {
       return of(true);
@@ -72,11 +72,19 @@ export class AllContainersHeaderComponent {
     return this.unsavedChangesService.showConfirmDialog();
   };
 
+  protected readonly containerFormCloseGuard = (): Observable<boolean> => {
+    if (!this.containerForm()?.hasUnsavedChanges()) {
+      return of(true);
+    }
+    return this.unsavedChangesService.showConfirmDialog();
+  };
+
   protected onCreateContainer(): void {
-    this.slideIn
-      .open(ContainerFormComponent)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe();
+    this.containerFormOpen.set(true);
+  }
+
+  protected onContainerFormClosed(): void {
+    this.containerFormOpen.set(false);
   }
 
   protected onGlobalConfiguration(): void {
