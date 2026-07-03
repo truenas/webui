@@ -1,28 +1,13 @@
+@import 'mixins/tn-card';
+
 .table-container {
   margin: 0.3333rem;
 }
 
 .card-title-link {
-  color: inherit;
-  display: inline-flex;
-  text-decoration: none;
+  @include tn-card-projected-title-link;
 }
 
 .card-title {
-  align-items: center;
-  // Match the library's projected-title-suppressed `.tn-card__title` typography,
-  // which is view-encapsulated and so doesn't reach projected `[tnCardHeader]` content.
-  // Color stays on webui's `--fg1` theme var (the library's `--tn-fg1` is not mapped
-  // app-wide and would fall back to a static color, breaking dark theme).
-  color: var(--fg1);
-  display: inline-flex;
-  font-size: 1.125rem;
-  font-weight: 600;
-  gap: 8px;
-  line-height: 1.5;
-  margin: 0;
-
-  .title-icon {
-    margin-left: 5px;
-  }
+  @include tn-card-projected-title;
 }
