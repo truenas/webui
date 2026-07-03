@@ -1,7 +1,7 @@
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
 import {
-  ApplicationRef, createComponent, EnvironmentInjector, inject, Injectable, Injector, Type,
+  ApplicationRef, ComponentRef, createComponent, EnvironmentInjector, inject, Injectable, Injector, Type,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import {
@@ -20,6 +20,8 @@ interface OpenPanel {
   component: Type<SidePanelForm<unknown>>;
   result$: SlideInResult<unknown>;
   teardown: () => void;
+  /** The panel's container, kept so {@link FormSidePanelService.swap} can replace its hosted component in place. */
+  containerRef: ComponentRef<FormSidePanelContainerComponent>;
 }
 
 export interface FormSidePanelOptions {
@@ -35,6 +37,11 @@ export interface FormSidePanelOptions {
   saveLabel?: string;
   /** Inputs set on the hosted form before its `ngOnInit` (e.g. the record being edited). */
   inputs?: Record<string, unknown>;
+  /**
+   * Hide the panel footer (Save + secondary actions) — for hosted components that own their
+   * actions inline, e.g. a `mat-stepper` wizard with Next/Back/Save buttons inside the steps.
+   */
+  footerless?: boolean;
 }
 
 /**
@@ -120,6 +127,7 @@ export class FormSidePanelService {
     if (options.saveLabel) {
       containerRef.setInput('saveLabel', options.saveLabel);
     }
+    containerRef.setInput('footerless', options.footerless ?? false);
     containerRef.setInput('portal', portal);
 
     // Single, idempotent teardown so the animated close and a forced (navigation) close
@@ -162,8 +170,41 @@ export class FormSidePanelService {
     }));
 
     const result$ = new SlideInResult<R>(close$);
-    this.stack.push({ component: component as Type<SidePanelForm<unknown>>, result$, teardown });
+    this.stack.push({
+      component: component as Type<SidePanelForm<unknown>>,
+      result$,
+      teardown,
+      containerRef,
+    });
     return result$;
+  }
+
+  /**
+   * Replaces the hosted component in the TOP open panel in place — the panel chrome (header, backdrop,
+   * focus trap, the {@link SlideInResult} listeners) stays, only the projected content swaps. This is
+   * the panel equivalent of the legacy `SlideInRef.swap`, used for wizard ⇄ advanced-form switches.
+   *
+   * The new component's `closed` is re-wired automatically: the container re-emits `formAttached`
+   * when the portal re-attaches, and {@link open}'s subscription wires each attached form's close.
+   * No-op if no panel is open.
+   */
+  swap(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): void {
+    const top = this.stack[this.stack.length - 1];
+    if (!top || top.containerRef.hostView.destroyed) {
+      return;
+    }
+    const { containerRef } = top;
+
+    containerRef.setInput('title', options.title ?? '');
+    containerRef.setInput('width', options.width ?? (options.wide ? '800px' : '480px'));
+    containerRef.setInput('saveLabel', options.saveLabel ?? 'Save');
+    containerRef.setInput('footerless', options.footerless ?? false);
+    containerRef.setInput('formInputs', options.inputs ?? {});
+    // Changing the portal input makes `cdkPortalOutlet` detach the old component and attach the new.
+    containerRef.setInput('portal', new ComponentPortal<SidePanelForm>(component, null, this.injector));
+    containerRef.changeDetectorRef.detectChanges();
+    // Keep the stack entry's component in sync so the re-entrant-open dedupe stays correct.
+    top.component = component as Type<SidePanelForm<unknown>>;
   }
 
   /**

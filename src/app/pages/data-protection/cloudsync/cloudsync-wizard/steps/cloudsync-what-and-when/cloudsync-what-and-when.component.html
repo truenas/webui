@@ -1,23 +1,31 @@
 <form [formGroup]="form">
-  <ix-fieldset>
+  <tn-form-section>
     <div class="direction-mode">
       @if (form.controls.direction.enabled) {
-        <ix-select
-          formControlName="direction"
+        <tn-form-field
           [label]="helptext.directionLabel | translate"
           [tooltip]="helptext.directionTooltip | translate"
           [required]="true"
-          [options]="directionOptions$"
-        ></ix-select>
+        >
+          <tn-select
+            testId="direction"
+            formControlName="direction"
+            [options]="(directionOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
       }
       @if (form.controls.transfer_mode.enabled) {
-        <ix-select
-          formControlName="transfer_mode"
+        <tn-form-field
           [label]="helptext.transferModeLabel | translate"
           [tooltip]="transferModeTooltip | translate"
           [required]="true"
-          [options]="transferModeOptions$"
-        ></ix-select>
+        >
+          <tn-select
+            testId="transfer-mode"
+            formControlName="transfer_mode"
+            [options]="(transferModeOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
       }
       <ix-transfer-mode-explanation
         [mode]="form.controls.transfer_mode.value"
@@ -64,34 +72,47 @@
       }
     </div>
     @if (form.controls.description.enabled) {
-      <ix-input
-        formControlName="description"
-        [label]="helptext.descriptionLabel | translate"
-        [required]="true"
-      ></ix-input>
+      <tn-form-field [label]="helptext.descriptionLabel | translate" [required]="true">
+        <tn-input
+          name="description"
+          testId="description"
+          formControlName="description"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
     }
     @if (form.controls.bucket.enabled) {
-      <ix-select
-        formControlName="bucket"
+      <tn-form-field
         [label]="bucketPlaceholder | translate"
         [tooltip]="bucketTooltip | translate"
-        [options]="bucketOptions$"
-      ></ix-select>
+      >
+        <tn-select
+          testId="bucket"
+          formControlName="bucket"
+          [options]="(bucketOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     }
     @if (form.controls.bucket_input.enabled) {
-      <ix-input
-        formControlName="bucket_input"
+      <tn-form-field
         [label]="helptext.bucketLabel | translate"
         [tooltip]="helptext.bucketInputTooltip | translate"
         [required]="true"
-      ></ix-input>
+      >
+        <tn-input
+          name="bucket_input"
+          testId="bucket-input"
+          formControlName="bucket_input"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
     }
     <ix-scheduler
       formControlName="cloudsync_picker"
       [label]="helptext.scheduleLabel | translate"
       [required]="true"
     ></ix-scheduler>
-  </ix-fieldset>
+  </tn-form-section>
 
   <ix-form-actions>
     <button
@@ -105,7 +126,7 @@
       type="button"
       color="primary"
       ixTest="save"
-      [disabled]="form.invalid"
+      [disabled]="form.invalid || loading()"
       (click)="onSave()"
     >{{ 'Save' | translate }}</button>
     <button

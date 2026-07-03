@@ -1,204 +1,261 @@
-<ix-modal-header [requiredRoles]="requiredRoles" [title]="title" [loading]="isLoading()"></ix-modal-header>
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
+  [addTitle]="'Add Rsync Task' | translate"
+  [editTitle]="'Edit Rsync Task' | translate"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <div class="fieldsets">
+    <tn-form-section class="fieldset" [heading]="'Local' | translate">
+      <ix-explorer
+        formControlName="path"
+        [label]="'Path' | translate"
+        [tooltip]="helptext.rsyncPathTooltip | translate"
+        [required]="true"
+        [nodeProvider]="treeNodeProvider"
+      >
+        <ix-explorer-create-dataset></ix-explorer-create-dataset>
+      </ix-explorer>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <div class="fieldsets">
-        <ix-fieldset class="fieldset" [title]="'Local' | translate">
-          <ix-explorer
-            formControlName="path"
-            [label]="'Path' | translate"
-            [tooltip]="helptext.rsyncPathTooltip | translate"
-            [required]="true"
-            [nodeProvider]="treeNodeProvider"
-          >
-            <ix-explorer-create-dataset></ix-explorer-create-dataset>
-          </ix-explorer>
+      <ix-user-combobox
+        formControlName="user"
+        [label]="'User' | translate"
+        [tooltip]="helptext.rsyncUserTooltip | translate"
+        [required]="true"
+      ></ix-user-combobox>
 
-          <ix-user-combobox
-            formControlName="user"
-            [label]="'User' | translate"
-            [tooltip]="helptext.rsyncUserTooltip | translate"
-            [required]="true"
-          ></ix-user-combobox>
+      <tn-form-field
+        [label]="'Direction' | translate"
+        [tooltip]="helptext.rsyncDirectionTooltip | translate"
+        [required]="true"
+      >
+        <tn-select
+          name="direction"
+          testId="direction"
+          formControlName="direction"
+          [options]="(directions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
-          <ix-select
-            formControlName="direction"
-            [label]="'Direction' | translate"
-            [tooltip]="helptext.rsyncDirectionTooltip | translate"
-            [required]="true"
-            [options]="directions$"
-          ></ix-select>
+      <tn-form-field [label]="'Description' | translate">
+        <tn-input
+          name="desc"
+          testId="desc"
+          formControlName="desc"
+        ></tn-input>
+      </tn-form-field>
+    </tn-form-section>
 
-          <ix-input
-            formControlName="desc"
-            [label]="'Description' | translate"
-          ></ix-input>
-        </ix-fieldset>
+    <tn-form-section class="fieldset" [heading]="'Remote' | translate">
+      <tn-form-field [label]="'Rsync Mode' | translate" [tooltip]="helptext.rsyncModeTooltip | translate">
+        <tn-select
+          name="mode"
+          testId="mode"
+          formControlName="mode"
+          [options]="(rsyncModes$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
-        <ix-fieldset class="fieldset" [title]="'Remote' | translate">
-          <ix-select
-            formControlName="mode"
-            [label]="'Rsync Mode' | translate"
-            [tooltip]="helptext.rsyncModeTooltip | translate"
-            [options]="rsyncModes$"
-            [hideEmpty]="true"
-          ></ix-select>
-
-          @if (isModuleMode) {
-            <ix-input
-              formControlName="remotehost"
-              [label]="'Remote Host' | translate"
-              [required]="true"
-              [tooltip]="helptext.rsyncRemotehostTooltip | translate"
-            ></ix-input>
-            <ix-input
-              formControlName="remotemodule"
-              [label]="'Remote Module Name' | translate"
-              [tooltip]="helptext.rsyncRemotemoduleTooltip | translate"
-              [required]="true"
-            ></ix-input>
-          } @else {
-            <ix-select
-              formControlName="sshconnectmode"
-              [label]="'Connect using:' | translate"
-              [tooltip]="helptext.rsyncSshConnectModeTooltip | translate"
-              [options]="sshConnectModes$"
-              [hideEmpty]="true"
-            ></ix-select>
-
-            @if (isSshConnectionPrivateMode) {
-              <ix-input
-                formControlName="remotehost"
-                [label]="'Remote Host' | translate"
-                [required]="true"
-                [tooltip]="helptext.rsyncRemotehostTooltip | translate"
-              ></ix-input>
-              @if (isRemoteHostSpecified) {
-                <ix-slide-toggle
-                  formControlName="ssh_keyscan"
-                  [label]="'SSH Keyscan' | translate"
-                  [tooltip]="helptext.sshKeyscanTooltip | translate"
-                ></ix-slide-toggle>
-              }
-              <ix-input
-                formControlName="remoteport"
-                type="number"
-                [label]="'Remote SSH Port' | translate"
-                [required]="true"
-                [tooltip]="helptext.rsyncRemoteportTooltip | translate"
-              ></ix-input>
-            } @else {
-              <ix-ssh-credentials-select
-                formControlName="ssh_credentials"
-                [label]="'SSH Connection' | translate"
-                [tooltip]="helptext.rsyncSshCredentialsTooltip | translate"
-                [required]="true"
-              ></ix-ssh-credentials-select>
-            }
-
-            <ix-input
-              formControlName="remotepath"
-              [label]="'Remote Path' | translate"
-            ></ix-input>
-            <ix-checkbox
-              formControlName="validate_rpath"
-              [label]="'Validate Remote Path' | translate"
-              [tooltip]="helptext.rsyncValidateRpathTooltip | translate"
-            ></ix-checkbox>
-          }
-
-        </ix-fieldset>
-
-        <ix-fieldset class="fieldset" [title]="'Schedule' | translate">
-          <ix-scheduler
-            formControlName="schedule"
-            [required]="true"
-            [label]="'Schedule' | translate"
-            [tooltip]="helptext.rsyncPickerTooltip | translate"
-          ></ix-scheduler>
-
-          <ix-checkbox
-            formControlName="recursive"
-            [label]="'Recursive' | translate"
-            [tooltip]="helptext.rsyncRecursiveTooltip | translate"
-          ></ix-checkbox>
-
-          <ix-checkbox
-            formControlName="enabled"
-            [label]="'Enabled' | translate"
-          ></ix-checkbox>
-        </ix-fieldset>
-
-        <ix-fieldset class="fieldset" [title]="'More Options' | translate">
-          <ix-checkbox
-            formControlName="times"
-            [label]="'Times' | translate"
-            [tooltip]="helptext.rsyncTimesTooltip | translate"
-          ></ix-checkbox>
-
-          <ix-checkbox
-            formControlName="compress"
-            [label]="'Compress' | translate"
-            [tooltip]="helptext.rsyncCompressTooltip | translate"
-          ></ix-checkbox>
-
-          <ix-checkbox
-            formControlName="archive"
-            [label]="'Archive' | translate"
-            [tooltip]="helptext.rsyncArchiveTooltip | translate"
-          ></ix-checkbox>
-
-          <ix-checkbox
-            formControlName="delete"
-            [label]="'Delete' | translate"
-            [tooltip]="helptext.rsyncDeleteTooltip | translate"
-          ></ix-checkbox>
-
-          <ix-checkbox
-            formControlName="quiet"
-            [label]="'Quiet' | translate"
-            [tooltip]="helptext.rsyncQuietTooltip | translate"
-          ></ix-checkbox>
-
-          <ix-checkbox
-            formControlName="preserveperm"
-            [label]="'Preserve Permissions' | translate"
-            [tooltip]="helptext.rsyncPreservepermTooltip | translate"
-          ></ix-checkbox>
-
-          <ix-checkbox
-            formControlName="preserveattr"
-            [label]="'Preserve Extended Attributes' | translate"
-            [tooltip]="helptext.rsyncPreserveattrTooltip | translate"
-          ></ix-checkbox>
-
-          <ix-checkbox
-            formControlName="delayupdates"
-            [label]="'Delay Updates' | translate"
-            [tooltip]="helptext.rsyncDelayupdatesTooltip | translate"
-          ></ix-checkbox>
-
-          <ix-chips
-            formControlName="extra"
-            [label]="'Auxiliary Parameters' | translate"
-            [tooltip]="helptext.rsyncExtraTooltip | translate"
-          ></ix-chips>
-        </ix-fieldset>
-      </div>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
+      @if (isModuleMode) {
+        <tn-form-field
+          [label]="'Remote Host' | translate"
+          [tooltip]="helptext.rsyncRemotehostTooltip | translate"
+          [required]="true"
         >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+          <tn-input
+            name="remotehost"
+            testId="remotehost"
+            formControlName="remotehost"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
+        <tn-form-field
+          [label]="'Remote Module Name' | translate"
+          [tooltip]="helptext.rsyncRemotemoduleTooltip | translate"
+          [required]="true"
+        >
+          <tn-input
+            name="remotemodule"
+            testId="remotemodule"
+            formControlName="remotemodule"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
+      } @else {
+        <tn-form-field
+          [label]="'Connect using:' | translate"
+          [tooltip]="helptext.rsyncSshConnectModeTooltip | translate"
+        >
+          <tn-select
+            name="sshconnectmode"
+            testId="sshconnectmode"
+            formControlName="sshconnectmode"
+            [options]="(sshConnectModes$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+
+        @if (isSshConnectionPrivateMode) {
+          <tn-form-field
+            [label]="'Remote Host' | translate"
+            [tooltip]="helptext.rsyncRemotehostTooltip | translate"
+            [required]="true"
+          >
+            <tn-input
+              name="remotehost"
+              testId="remotehost"
+              formControlName="remotehost"
+              [required]="true"
+            ></tn-input>
+          </tn-form-field>
+          @if (isRemoteHostSpecified) {
+            <ix-slide-toggle
+              formControlName="ssh_keyscan"
+              [label]="'SSH Keyscan' | translate"
+              [tooltip]="helptext.sshKeyscanTooltip | translate"
+            ></ix-slide-toggle>
+          }
+          <tn-form-field
+            [label]="'Remote SSH Port' | translate"
+            [tooltip]="helptext.rsyncRemoteportTooltip | translate"
+            [required]="true"
+          >
+            <tn-input
+              name="remoteport"
+              testId="remoteport"
+              formControlName="remoteport"
+              [inputType]="InputType.Number"
+              [required]="true"
+            ></tn-input>
+          </tn-form-field>
+        } @else {
+          <ix-ssh-credentials-select
+            formControlName="ssh_credentials"
+            [label]="'SSH Connection' | translate"
+            [tooltip]="helptext.rsyncSshCredentialsTooltip | translate"
+            [required]="true"
+          ></ix-ssh-credentials-select>
+        }
+
+        <tn-form-field [label]="'Remote Path' | translate">
+          <tn-input
+            name="remotepath"
+            testId="remotepath"
+            formControlName="remotepath"
+          ></tn-input>
+        </tn-form-field>
+
+        <tn-form-field [tooltip]="helptext.rsyncValidateRpathTooltip | translate">
+          <tn-checkbox
+            testId="validate-rpath"
+            formControlName="validate_rpath"
+            [label]="'Validate Remote Path' | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+    </tn-form-section>
+
+    <tn-form-section class="fieldset" [heading]="'Schedule' | translate">
+      <ix-scheduler
+        formControlName="schedule"
+        [required]="true"
+        [label]="'Schedule' | translate"
+        [tooltip]="helptext.rsyncPickerTooltip | translate"
+      ></ix-scheduler>
+
+      <tn-form-field [tooltip]="helptext.rsyncRecursiveTooltip | translate">
+        <tn-checkbox
+          testId="recursive"
+          formControlName="recursive"
+          [label]="'Recursive' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+
+      <tn-form-field>
+        <tn-checkbox
+          testId="enabled"
+          formControlName="enabled"
+          [label]="'Enabled' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    </tn-form-section>
+
+    <tn-form-section class="fieldset" [heading]="'More Options' | translate">
+      <tn-form-field [tooltip]="helptext.rsyncTimesTooltip | translate">
+        <tn-checkbox
+          testId="times"
+          formControlName="times"
+          [label]="'Times' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+
+      <tn-form-field [tooltip]="helptext.rsyncCompressTooltip | translate">
+        <tn-checkbox
+          testId="compress"
+          formControlName="compress"
+          [label]="'Compress' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+
+      <tn-form-field [tooltip]="helptext.rsyncArchiveTooltip | translate">
+        <tn-checkbox
+          testId="archive"
+          formControlName="archive"
+          [label]="'Archive' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+
+      <tn-form-field [tooltip]="helptext.rsyncDeleteTooltip | translate">
+        <tn-checkbox
+          testId="delete"
+          formControlName="delete"
+          [label]="'Delete' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+
+      <tn-form-field [tooltip]="helptext.rsyncQuietTooltip | translate">
+        <tn-checkbox
+          testId="quiet"
+          formControlName="quiet"
+          [label]="'Quiet' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+
+      <tn-form-field [tooltip]="helptext.rsyncPreservepermTooltip | translate">
+        <tn-checkbox
+          testId="preserveperm"
+          formControlName="preserveperm"
+          [label]="'Preserve Permissions' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+
+      <tn-form-field [tooltip]="helptext.rsyncPreserveattrTooltip | translate">
+        <tn-checkbox
+          testId="preserveattr"
+          formControlName="preserveattr"
+          [label]="'Preserve Extended Attributes' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+
+      <tn-form-field [tooltip]="helptext.rsyncDelayupdatesTooltip | translate">
+        <tn-checkbox
+          testId="delayupdates"
+          formControlName="delayupdates"
+          [label]="'Delay Updates' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="'Auxiliary Parameters' | translate"
+        [tooltip]="helptext.rsyncExtraTooltip | translate"
+      >
+        <tn-chip-input
+          testId="extra"
+          formControlName="extra"
+          [allowCustomValue]="true"
+        ></tn-chip-input>
+      </tn-form-field>
+    </tn-form-section>
+  </div>
+</ix-form>

@@ -336,6 +336,13 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
     expect(await banner.getText()).toContain('WebShare service requires TrueNAS Connect to be configured and active.');
   });
 
+  it('disables the service toggle so it cannot be started while TrueNAS Connect is not configured', async () => {
+    const toggle = await loader.getHarness(
+      TnSlideToggleHarness.with({ ancestor: '.tn-card__header-right' }),
+    );
+    expect(await toggle.isDisabled()).toBe(true);
+  });
+
   it('opens TrueNAS Connect dialog when the banner is clicked', () => {
     const truenasConnectService = spectator.inject(TruenasConnectService);
 
@@ -434,5 +441,87 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
     spectator.click('tn-banner');
 
     expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'users']);
+  });
+});
+
+describe('WebShareCardComponent - TrueNAS Connect not configured but service running', () => {
+  let spectator: Spectator<WebShareCardComponent>;
+  let loader: HarnessLoader;
+
+  const mockTnConnectConfigDisabled: TruenasConnectConfig = {
+    enabled: false,
+    status: TruenasConnectStatus.Disabled,
+  } as TruenasConnectConfig;
+
+  const mockService: Service = {
+    id: 10,
+    service: ServiceName.WebShare,
+    enable: true,
+    state: ServiceStatus.Running,
+  } as Service;
+
+  const createComponent = createComponentFactory({
+    component: WebShareCardComponent,
+    imports: [IxTablePagerShowMoreComponent,
+    ],
+    providers: [
+      mockAuth(),
+      mockProvider(SlideIn),
+      mockProvider(DialogService),
+      mockProvider(SnackbarService),
+      mockApi([
+        mockCall('sharing.webshare.query', []),
+        mockCall('user.query', []),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      ]),
+      provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
+        selectors: [
+          {
+            selector: selectSystemInfo,
+            value: {
+              license: { features: [] },
+            },
+          },
+          {
+            selector: selectServices,
+            value: [mockService],
+          },
+        ],
+      }),
+      mockProvider(TruenasConnectService, {
+        config$: of(mockTnConnectConfigDisabled),
+        openStatusModal: jest.fn(),
+      }),
+      provideRouter([]),
+      {
+        provide: WINDOW,
+        useValue: {
+          location: {
+            origin: 'http://test.truenas.direct:4200',
+            hostname: 'test.truenas.direct',
+            protocol: 'http:',
+          } as Location,
+          open: jest.fn(),
+        } as unknown as Window,
+      },
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('keeps the service toggle enabled so a running service can still be stopped', async () => {
+    const toggle = await loader.getHarness(
+      TnSlideToggleHarness.with({ ancestor: '.tn-card__header-right' }),
+    );
+    expect(await toggle.isDisabled()).toBe(false);
   });
 });

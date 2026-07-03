@@ -1,29 +1,60 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component, ChangeDetectionStrategy,
   computed, inject,
   output,
   signal,
+  viewChild,
   DestroyRef,
 } from '@angular/core';
 import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { distinctUntilChanged, map, tap } from 'rxjs';
-import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
-import { WINDOW } from 'app/helpers/window.helper';
-import { Container } from 'app/interfaces/container.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnCellDefDirective,
+  TnDialog,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnIconButtonComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
+import {
+  distinctUntilChanged, filter, map, switchMap, tap,
+} from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ContainerStatus } from 'app/enums/container.enum';
+import { Role } from 'app/enums/role.enum';
+import { Container, ContainerStats, ContainerStopParams } from 'app/interfaces/container.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { LoaderService } from 'app/modules/loader/loader.service';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
-import { ContainerRowComponent } from 'app/pages/containers/components/all-containers/container-list/container-row/container-row.component';
+import { ContainerStatusCellComponent } from 'app/pages/containers/components/all-containers/container-list/container-status-cell/container-status-cell.component';
+import {
+  StopOptionsDialog, StopOptionsOperation,
+} from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+/**
+ * Element-wise reference equality. tn-table clears its selection whenever the
+ * `dataSource` reference changes, and the store's `containers` computed re-emits
+ * a new array on every state change — including the frequent `container.metrics`
+ * patches. Using this as the `filteredContainers` equality keeps the same array
+ * reference while the list content is unchanged, so a metrics tick no longer
+ * wipes the user's row selection. Metric cells still refresh because they read
+ * the `metrics()` signal directly rather than through the row data.
+ */
+function sameContainers(a: Container[], b: Container[]): boolean {
+  return a.length === b.length && a.every((container, index) => container === b[index]);
+}
 
 @Component({
   selector: 'ix-container-list',
@@ -34,14 +65,19 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     TranslateModule,
     BasicSearchComponent,
     FakeProgressBarComponent,
-    ContainerRowComponent,
-    MatCheckboxModule,
-    EmptyComponent,
-    TestDirective,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnIconButtonComponent,
+    TnTooltipDirective,
+    RequiresRolesDirective,
+    ContainerStatusCellComponent,
     ContainerListBulkActionsComponent,
+    YesNoPipe,
   ],
 })
-
 export class ContainerListComponent {
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
@@ -49,32 +85,41 @@ export class ContainerListComponent {
   private containersStore = inject(ContainersStore);
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private tnDialog = inject(TnDialog);
+  private dialog = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
 
   readonly containerId = toSignal(this.activatedRoute.params.pipe(map((params) => +params['id'])));
   readonly toggleShowMobileDetails = output<boolean>();
 
   readonly searchQuery = signal<string>('');
-  protected readonly window = inject<Window>(WINDOW);
-  protected readonly selection = new SelectionModel<number>(true, []);
 
+  protected readonly requiredRoles = [Role.ContainerWrite];
   protected readonly containers = this.containersStore.containers;
   protected readonly isLoading = this.containersStore.isLoading;
-
   protected readonly metrics = this.containersStore.metrics;
-
   protected readonly selectedContainer = this.containersStore.selectedContainer;
-  get isAllSelected(): boolean {
-    return this.selection.selected.length === this.filteredContainers().length;
-  }
 
-  get checkedContainers(): Container[] {
-    return this.selection.selected
-      .map((id: number) => this.containers().find((container) => container.id === id))
-      .filter((container) => !!container);
-  }
+  protected readonly table = viewChild(TnTableComponent);
+
+  protected readonly displayedColumns = ['name', 'status', 'autostart', 'cpu', 'ram', 'io', 'controls'];
+  protected readonly trackByContainerId = (_: number, container: Container): number => container.id;
+
+  // Track the selection as ids and derive checkedContainers from the live list so
+  // the bulk-action getters always read current state for the selected ids rather
+  // than a detached snapshot of the row objects tn-table emits.
+  private readonly checkedContainerIds = signal<Set<number>>(new Set());
+  protected readonly checkedContainers = computed(() => {
+    const ids = this.checkedContainerIds();
+    return this.containers().filter((container) => ids.has(container.id));
+  });
 
   get hasCheckedContainers(): boolean {
-    return this.checkedContainers.length > 0;
+    return this.checkedContainers().length > 0;
   }
 
   readonly isSelectedContainerVisible = computed(() => {
@@ -85,14 +130,7 @@ export class ContainerListComponent {
     return (this.containers() || []).filter((container) => {
       return container?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase());
     });
-  });
-
-  protected readonly emptyConfig = computed<EmptyConfig>(() => {
-    if (this.searchQuery()?.length && !this.filteredContainers()?.length) {
-      return noSearchResultsConfig;
-    }
-    return containersEmptyConfig;
-  });
+  }, { equal: sameContainers });
 
   constructor() {
     toObservable(this.containerId).pipe(
@@ -110,26 +148,97 @@ export class ContainerListComponent {
     });
   }
 
-  toggleAllChecked(checked: boolean): void {
-    if (checked) {
-      this.filteredContainers().forEach((container) => this.selection.select(container.id));
-    } else {
-      this.selection.clear();
-    }
-  }
-
-  navigateToDetails(container: Container): void {
+  protected navigateToDetails(container: Container): void {
     this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', container.id]);
 
     this.toggleShowMobileDetails.emit(true);
   }
 
-  resetSelection(): void {
-    this.selection.clear();
+  protected onSelectionChange(containers: Container[]): void {
+    this.checkedContainerIds.set(new Set(containers.map((container) => container.id)));
+  }
+
+  protected resetSelection(): void {
+    this.table()?.selection.clear();
+    this.checkedContainerIds.set(new Set());
   }
 
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
+  }
+
+  protected isStopped(container: Container): boolean {
+    return container?.status?.state === ContainerStatus.Stopped;
+  }
+
+  protected getMetrics(container: Container): ContainerStats | undefined {
+    return this.metrics()?.[container.id];
+  }
+
+  protected hasMetrics(container: Container): boolean {
+    const metrics = this.getMetrics(container);
+
+    return container?.status?.state === ContainerStatus.Running
+      && !!metrics
+      && Object.keys(metrics).length > 0;
+  }
+
+  protected start(container: Container): void {
+    this.api.call('container.start', [container.id])
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Container started'));
+        this.containersStore.reload();
+      });
+  }
+
+  protected stop(container: Container): void {
+    this.tnDialog
+      .open(StopOptionsDialog, { data: StopOptionsOperation.Stop })
+      .closed
+      .pipe(
+        filter(Boolean),
+        switchMap((options: ContainerStopParams) => {
+          return this.dialog.jobDialog(
+            this.api.job('container.stop', [container.id, options]),
+            { title: this.translate.instant('Stopping Container') },
+          ).afterClosed();
+        }),
+        this.errorHandler.withErrorHandler(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Container stopped'));
+        this.containersStore.reload();
+      });
+  }
+
+  protected restart(container: Container): void {
+    this.tnDialog
+      .open(StopOptionsDialog, { data: StopOptionsOperation.Restart })
+      .closed
+      .pipe(
+        filter(Boolean),
+        switchMap((options: ContainerStopParams) => {
+          return this.dialog.jobDialog(
+            this.api.job('container.stop', [container.id, options]),
+            { title: this.translate.instant('Stopping Container') },
+          ).afterClosed();
+        }),
+        switchMap(() => this.api.call('container.start', [container.id]).pipe(
+          this.loader.withLoader(),
+        )),
+        this.errorHandler.withErrorHandler(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Container restarted'));
+        this.containersStore.reload();
+      });
   }
 
   private handlePendingGlobalSearchElement(): void {

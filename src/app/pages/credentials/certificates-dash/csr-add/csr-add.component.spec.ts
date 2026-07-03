@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperModule } from '@angular/material/stepper';
-import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
+import { MatStepHarness, MatStepperHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -40,7 +40,8 @@ describe('CsrAddComponent', () => {
   let spectator: Spectator<CsrAddComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let nextButton: MatStepperNextHarness;
+  let nextButton: TnButtonHarness;
+  let activeStep: MatStepHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -104,17 +105,37 @@ describe('CsrAddComponent', () => {
 
   async function updateStepHarnesses(): Promise<void> {
     const stepper = await loader.getHarness(MatStepperHarness);
-    const activeStep = (await stepper.getSteps({ selected: true }))[0];
+    activeStep = (await stepper.getSteps({ selected: true }))[0];
 
     form = await activeStep.getHarness(IxFormHarness);
-    nextButton = await activeStep.getHarness(MatStepperNextHarness.with({ text: 'Next' }));
+    nextButton = await activeStep.getHarness(TnButtonHarness.with({ label: 'Next' }));
+  }
+
+  async function setInput(name: string, value: string): Promise<void> {
+    const input = await activeStep.getHarness(TnInputHarness.with({ selector: `[formControlName="${name}"]` }));
+    await input.setValue(value);
+  }
+
+  async function setCheckbox(label: string, value: boolean): Promise<void> {
+    const checkbox = await activeStep.getHarness(TnCheckboxHarness.with({ label }));
+    if (value) {
+      await checkbox.check();
+    } else {
+      await checkbox.uncheck();
+    }
+  }
+
+  async function selectValue(name: string, ...labels: string[]): Promise<void> {
+    const select = await activeStep.getHarness(TnSelectHarness.with({ selector: `[formControlName="${name}"]` }));
+    for (const label of labels) {
+      await select.selectOption(label);
+    }
+    await select.close();
   }
 
   it('creates a new certificate when Type = Certificate Signing Request and form is submitted', async () => {
-    await form.fillForm({
-      Name: 'new',
-      Type: 'Certificate Signing Request',
-    });
+    await setInput('name', 'new');
+    await selectValue('create_type', 'Certificate Signing Request');
 
     await nextButton.click();
     await updateStepHarnesses();
@@ -122,34 +143,29 @@ describe('CsrAddComponent', () => {
     await nextButton.click();
     await updateStepHarnesses();
 
+    await selectValue('country', 'United States');
     await form.fillForm({
-      Country: 'United States',
-      State: 'Pennsylvania',
-      Locality: 'Racoon City',
-      Organization: 'Umbrella Corp',
-      'Organizational Unit': 'Virus Research Dept',
-      Email: 'no-reply@umbrella.com',
       'Subject Alternative Name': ['jobs.umbrella.com'],
     });
+    await setInput('state', 'Pennsylvania');
+    await setInput('city', 'Racoon City');
+    await setInput('organization', 'Umbrella Corp');
+    await setInput('organizational_unit', 'Virus Research Dept');
+    await setInput('email', 'no-reply@umbrella.com');
 
     await nextButton.click();
     await updateStepHarnesses();
 
-    await form.fillForm(
-      {
-        'Basic Constraints': true,
-        'Extended Key Usage': true,
-        'Path Length': 128,
-        'Basic Constraints Config': ['CA', 'Critical Extension'],
-
-        Usages: ['CLIENT_AUTH'],
-        'Critical Extension': true,
-      },
-    );
+    await setCheckbox('Basic Constraints', true);
+    await setCheckbox('Extended Key Usage', true);
+    await setInput('path_length', '128');
+    await selectValue('BasicConstraints', 'CA', 'Critical Extension');
+    await selectValue('usages', 'CLIENT_AUTH');
+    await setCheckbox('Critical Extension', true);
 
     await nextButton.click();
 
-    await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Save' }))).click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [
       {
@@ -187,24 +203,20 @@ describe('CsrAddComponent', () => {
   });
 
   it('imports a certificate when Type = Import CSR and form is submitted', async () => {
-    await form.fillForm({
-      Name: 'import',
-      Type: 'Import Certificate Signing Request',
-    });
+    await setInput('name', 'import');
+    await selectValue('create_type', 'Import Certificate Signing Request');
 
     await nextButton.click();
     await updateStepHarnesses();
 
-    await form.fillForm({
-      'Signing Request': '-----BEGIN CERTIFICATE REQUEST-----',
-      'Private Key': '-----BEGIN PRIVATE REQUEST-----',
-      Passphrase: '1234567890',
-      'Confirm Passphrase': '1234567890',
-    });
+    await setInput('CSR', '-----BEGIN CERTIFICATE REQUEST-----');
+    await setInput('privatekey', '-----BEGIN PRIVATE REQUEST-----');
+    await setInput('passphrase', '1234567890');
+    await setInput('passphrase2', '1234567890');
 
     await nextButton.click();
 
-    await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Save' }))).click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'import',
@@ -216,22 +228,21 @@ describe('CsrAddComponent', () => {
   });
 
   it('shows summary on the last step of the wizard', async () => {
-    await form.fillForm({
-      Name: 'import',
-      Type: 'Import Certificate Signing Request',
-    });
+    await setInput('name', 'import');
+    await selectValue('create_type', 'Import Certificate Signing Request');
 
     await nextButton.click();
     await updateStepHarnesses();
 
-    await form.fillForm({
-      'Signing Request': '-----BEGIN CERTIFICATE REQUEST-----\n'
-        + 'ABCDEFGHAwIBAgIJAKZQZ2Z0Z0ZmMA0GCSqGSIb3DQEBCwUA0987654321\n'
-        + '-----END CERTIFICATE REQUEST-----',
-      'Private Key': '-----BEGIN PRIVATE-----',
-      Passphrase: '1234567890',
-      'Confirm Passphrase': '1234567890',
-    });
+    await setInput(
+      'CSR',
+      '-----BEGIN CERTIFICATE REQUEST-----\n'
+      + 'ABCDEFGHAwIBAgIJAKZQZ2Z0Z0ZmMA0GCSqGSIb3DQEBCwUA0987654321\n'
+      + '-----END CERTIFICATE REQUEST-----',
+    );
+    await setInput('privatekey', '-----BEGIN PRIVATE-----');
+    await setInput('passphrase', '1234567890');
+    await setInput('passphrase2', '1234567890');
 
     await nextButton.click();
 
@@ -258,10 +269,8 @@ describe('CsrAddComponent', () => {
     const constraintsForm = spectator.query(CsrConstraintsComponent)!;
     jest.spyOn(constraintsForm, 'setFromProfile');
 
-    await form.fillForm({
-      Name: 'profile',
-      Profile: 'HTTPS RSA Certificate',
-    });
+    await setInput('name', 'profile');
+    await selectValue('profile', 'HTTPS RSA Certificate');
 
     const { cert_extensions: extensions, ...nonExtensionFields } = profile;
     expect(optionsForm.form.patchValue).toHaveBeenCalledWith(nonExtensionFields);

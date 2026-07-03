@@ -2,7 +2,7 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 0;
 }
 
 .device-description {
@@ -13,28 +13,4 @@
 .no-devices {
   color: var(--fg2);
   padding: 16px 0;
-}
-
-.nvidia-drivers-warning {
-  background-color: var(--bg2);
-  display: flex;
-  font-size: 13px;
-  gap: 8px;
-  padding: 8px 12px;
-
-  .warning-icon {
-    color: var(--primary);
-    flex-shrink: 0;
-    margin-top: 6px;
-  }
-
-  .warning-content {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .enable-button {
-    align-self: flex-start;
-  }
 }

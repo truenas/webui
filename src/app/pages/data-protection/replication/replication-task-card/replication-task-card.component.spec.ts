@@ -17,7 +17,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -107,7 +107,7 @@ describe('ReplicationTaskCardComponent', () => {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -159,11 +159,12 @@ describe('ReplicationTaskCardComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: /^Edit$/ });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       ReplicationFormComponent,
       {
+        title: 'Edit Replication Task',
         wide: true,
-        data: replicationTasks[0],
+        inputs: { replicationToEdit: replicationTasks[0] },
       },
     );
   });
@@ -172,9 +173,13 @@ describe('ReplicationTaskCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       ReplicationWizardComponent,
-      { wide: true },
+      {
+        title: 'Replication Task Wizard',
+        wide: true,
+        footerless: true,
+      },
     );
   });
 

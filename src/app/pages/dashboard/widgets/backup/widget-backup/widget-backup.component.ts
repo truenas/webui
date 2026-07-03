@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, TrackByFunction, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, TrackByFunction, Type, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -12,7 +12,8 @@ import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.definition';
@@ -27,6 +28,7 @@ enum BackupType {
   CloudSync = 'Cloud Sync',
   Rsync = 'Rsync',
   Replication = 'Replication',
+  CloudBackup = 'TrueCloud Backup',
 }
 
 interface BackupRow {
@@ -59,7 +61,7 @@ interface BackupRow {
 export class WidgetBackupComponent implements OnInit {
   translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private widgetResourcesService = inject(WidgetResourcesService);
   private destroyRef = inject(DestroyRef);
 
@@ -95,6 +97,10 @@ export class WidgetBackupComponent implements OnInit {
     return this.backups.filter((backup) => backup.type === BackupType.Rsync);
   }
 
+  get cloudBackupTasks(): BackupRow[] {
+    return this.backups.filter((backup) => backup.type === BackupType.CloudBackup);
+  }
+
   get backupsTiles(): BackupTile[] {
     const tiles: BackupTile[] = [];
     if (this.cloudSyncTasks.length) {
@@ -107,6 +113,10 @@ export class WidgetBackupComponent implements OnInit {
 
     if (this.rsyncTasks.length) {
       tiles.push(this.getTile(this.translate.instant('Rsync'), this.rsyncTasks));
+    }
+
+    if (this.cloudBackupTasks.length) {
+      tiles.push(this.getTile(this.translate.instant('TrueCloud Backup'), this.cloudBackupTasks));
     }
     return tiles;
   }
@@ -123,7 +133,7 @@ export class WidgetBackupComponent implements OnInit {
     this.isLoading = true;
     this.widgetResourcesService.backups$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([replicationTasks, rsyncTasks, cloudSyncTasks]) => {
+      .subscribe(([replicationTasks, rsyncTasks, cloudSyncTasks, cloudBackupTasks]) => {
         this.isLoading = false;
         this.backups = [
           ...replicationTasks.map((task) => ({
@@ -144,25 +154,43 @@ export class WidgetBackupComponent implements OnInit {
             state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
             timestamp: task.job?.time_finished,
           })),
+          ...cloudBackupTasks.map((task) => ({
+            type: BackupType.CloudBackup,
+            direction: Direction.Push,
+            state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
+            timestamp: task.job?.time_finished,
+          })),
         ];
         this.cdr.markForCheck();
       });
   }
 
+  // CloudSyncWizardComponent / ReplicationWizardComponent / RsyncTaskFormComponent structurally
+  // provide the host surface (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel
+  // reads; cast past the nominal base type. The wizards are `footerless` — their mat-stepper owns
+  // its Next/Save buttons, and "Advanced" swaps in place via the form panel.
+  private readonly cloudSyncWizard = CloudSyncWizardComponent as unknown as Type<SidePanelForm>;
+  private readonly replicationWizard = ReplicationWizardComponent as unknown as Type<SidePanelForm>;
+  private readonly rsyncTaskForm = RsyncTaskFormComponent as unknown as Type<SidePanelForm>;
+
   addCloudSyncTask(): void {
-    this.slideIn.open(
-      CloudSyncWizardComponent,
-      { wide: true },
-    ).onSuccess(() => this.getBackups(), this.destroyRef);
+    this.formPanel.open(this.cloudSyncWizard, {
+      title: this.translate.instant('Cloud Sync Task Wizard'),
+      wide: true,
+      footerless: true,
+    }).onSuccess(() => this.getBackups(), this.destroyRef);
   }
 
   addReplicationTask(): void {
-    this.slideIn.open(ReplicationWizardComponent, { wide: true })
-      .onSuccess(() => this.getBackups(), this.destroyRef);
+    this.formPanel.open(this.replicationWizard, {
+      title: this.translate.instant('Replication Task Wizard'),
+      wide: true,
+      footerless: true,
+    }).onSuccess(() => this.getBackups(), this.destroyRef);
   }
 
   addRsyncTask(): void {
-    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
+    this.formPanel.open(this.rsyncTaskForm, { title: this.translate.instant('Add Rsync Task'), wide: true })
       .onSuccess(() => this.getBackups(), this.destroyRef);
   }
 

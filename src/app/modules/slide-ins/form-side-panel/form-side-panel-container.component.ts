@@ -5,6 +5,11 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
+  TnIconButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
+  TnProgressBarComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
   type TnTestIdValue,
@@ -33,15 +38,48 @@ export interface SidePanelFooterAction {
   onClick: () => void;
 }
 
+/** A single action inside a {@link SidePanelFooterMenu}. */
+export interface SidePanelFooterMenuItem {
+  /** Untranslated marker; the container pipes it through `translate`. */
+  label: string;
+  testId: TnTestIdValue;
+  icon?: string;
+  iconLibrary?: 'material' | 'mdi' | 'custom' | 'lucide';
+  /** Roles required to show the item (omit / empty = always shown). */
+  requiredRoles?: Role[];
+  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
+  disabled?: () => boolean;
+  onClick: () => void;
+}
+
 /**
- * A {@link SidePanelForm} that may expose `requiredRoles` to gate its Save action, and optional
- * {@link SidePanelFooterAction}s rendered before Save. Forms declare these independently (not on the
- * base), so the host reads them through this structural augmentation rather than forcing every form
- * to `override` a base member.
+ * A dropdown of secondary actions rendered in the footer before Save. Use instead of a flat
+ * {@link SidePanelFooterAction}[] when several actions would crowd the footer — the container
+ * renders one `dots-vertical` icon-button trigger opening a `tn-menu` of the {@link items}.
+ */
+export interface SidePanelFooterMenu {
+  /** Trigger button accessible name / tooltip (untranslated marker). */
+  label: string;
+  testId: TnTestIdValue;
+  items: SidePanelFooterMenuItem[];
+}
+
+/**
+ * A {@link SidePanelForm} that may expose `requiredRoles` to gate its Save action, plus optional
+ * {@link SidePanelFooterAction}s and/or a {@link SidePanelFooterMenu} rendered before Save. Forms
+ * declare these independently (not on the base), so the host reads them through this structural
+ * augmentation rather than forcing every form to `override` a base member.
  */
 export type HostedSidePanelForm = SidePanelForm & {
   readonly requiredRoles?: Role[];
   readonly footerActions?: SidePanelFooterAction[];
+  readonly footerMenu?: SidePanelFooterMenu;
+  /**
+   * Whether the form is currently submitting / busy. The host shows an indeterminate progress bar
+   * at the top of the panel while true (Save is independently disabled via `canSubmit`). Optional —
+   * forms that don't expose it simply never show the bar.
+   */
+  readonly isBusy?: () => boolean;
 };
 
 /**
@@ -55,14 +93,17 @@ export type HostedSidePanelForm = SidePanelForm & {
 @Component({
   selector: 'ix-form-side-panel-container',
   templateUrl: './form-side-panel-container.component.html',
-  // `display: contents` dissolves the secondary-actions wrapper box so its buttons flex directly
-  // in the panel footer alongside Save (the wrapper exists only to project the group as one node).
-  styles: ['.footer-actions-group { display: contents; }'],
+  styleUrls: ['./form-side-panel-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnSidePanelComponent,
     TnSidePanelActionDirective,
     TnButtonComponent,
+    TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
+    TnProgressBarComponent,
     RequiresRolesDirective,
     CdkPortalOutlet,
     TranslateModule,
@@ -75,6 +116,11 @@ export class FormSidePanelContainerComponent {
   readonly width = input<string>('480px');
   readonly testId = input<TnTestIdValue | undefined>(undefined);
   readonly saveLabel = input<string>('Save');
+  /**
+   * Hide the panel footer (Save + secondary actions). For hosted components that manage their own
+   * actions inline — e.g. a `mat-stepper` wizard whose Next/Back/Save buttons live inside the steps.
+   */
+  readonly footerless = input<boolean>(false);
   readonly portal = input<ComponentPortal<SidePanelForm> | null>(null);
   /** Inputs applied to the hosted form before its first change detection (before `ngOnInit`). */
   readonly formInputs = input<Record<string, unknown>>({});

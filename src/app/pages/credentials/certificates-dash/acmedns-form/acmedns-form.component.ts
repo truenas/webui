@@ -1,12 +1,16 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UntypedFormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnBannerComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
@@ -20,14 +24,8 @@ import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/compon
 import {
   IxDynamicFormComponent,
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudflareAuthValidator } from 'app/pages/credentials/certificates-dash/acmedns-form/cloudflare-auth.validator';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -43,41 +41,26 @@ interface DnsAuthenticatorList {
   styleUrl: './acmedns-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnBannerComponent,
+    TnSelectComponent,
     TranslateModule,
     IxDynamicFormComponent,
   ],
 })
-export class AcmednsFormComponent implements OnInit {
+export class AcmednsFormComponent extends SidePanelForm implements OnInit {
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandlerService = inject(FormErrorHandlerService);
   private api = inject(ApiService);
-  slideInRef = inject<SlideInRef<DnsAuthenticator | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
-
-  get isNew(): boolean {
-    return !this.editingAcmedns;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant(helptext.addTitle)
-      : this.translate.instant(helptext.editTitle);
-  }
 
   form = this.formBuilder.nonNullable.group({
     name: [null as string | null, Validators.required],
@@ -99,6 +82,11 @@ export class AcmednsFormComponent implements OnInit {
   protected isLoading = signal(false);
   protected isLoadingSchemas = signal(true);
 
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+
+  /** Authenticator to edit, supplied by the `<tn-side-panel>` host. Absent for Add. */
+  readonly editingAuthenticator = input<DnsAuthenticator | undefined>(undefined);
+
   dynamicSection: DynamicFormSchema[] = [];
   dnsAuthenticatorList: DnsAuthenticatorList[] = [];
 
@@ -111,14 +99,9 @@ export class AcmednsFormComponent implements OnInit {
   authenticatorOptions$: Observable<Option[]>;
   private editingAcmedns: DnsAuthenticator | undefined;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingAcmedns = this.slideInRef.getData();
-  }
-
   ngOnInit(): void {
+    this.editingAcmedns = this.editingAuthenticator();
+
     this.loadSchemas();
 
     // Listen to authenticator type changes
@@ -163,10 +146,10 @@ export class AcmednsFormComponent implements OnInit {
 
   private createAuthenticatorControls(schemas: AuthenticatorSchema[]): void {
     schemas.forEach((schema) => {
-      Object.values(schema.schema.properties).forEach((input) => {
+      Object.values(schema.schema.properties).forEach((property) => {
         this.form.controls.attributes.addControl(
-          input._name_,
-          new FormControl(input.const || '', input._required_ ? [Validators.required] : []),
+          property._name_,
+          new FormControl(property.const || '', property._required_ ? [Validators.required] : []),
         );
       });
     });
@@ -185,12 +168,12 @@ export class AcmednsFormComponent implements OnInit {
 
   parseSchemaForDynamicSchema(schema: AuthenticatorSchema): DynamicFormSchemaNode[] {
     return Object.values(schema.schema.properties)
-      .filter((input) => !input.const)
-      .map((input) => getDynamicFormSchemaNode(input));
+      .filter((property) => !property.const)
+      .map((property) => getDynamicFormSchemaNode(property));
   }
 
   private parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {
-    const variables = Object.values(schema.schema.properties).map((input) => input._name_);
+    const variables = Object.values(schema.schema.properties).map((property) => property._name_);
     return { key: schema.key, variables };
   }
 
@@ -267,7 +250,7 @@ export class AcmednsFormComponent implements OnInit {
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

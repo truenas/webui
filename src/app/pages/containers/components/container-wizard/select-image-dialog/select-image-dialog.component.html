@@ -1,6 +1,6 @@
 <tn-dialog-shell testId="container-form" [title]="'Select Image' | translate">
   <form [formGroup]="filterForm">
-    <ix-fieldset [title]="'Filters' | translate">
+    <tn-form-section [heading]="'Filters' | translate">
       <tn-form-field [label]="'Search Images' | translate">
         <tn-input
           testId="search-query"
@@ -31,49 +31,48 @@
           [options]="(releaseOptions$ | async) ?? []"
         ></tn-select>
       </tn-form-field>
-    </ix-fieldset>
+    </tn-form-section>
 
     <div class="table-wrapper">
-      <table mat-table tnTestIdType="table" [dataSource]="filteredImages()" [tnTestId]="['images-table']">
-        <ng-container matColumnDef="label">
-          <th *matHeaderCellDef mat-header-cell>{{ 'Label' | translate }}</th>
-          <td *matCellDef="let image" mat-cell>{{ image.label }}</td>
+      <tn-table
+        testId="table-images-table"
+        [dataSource]="filteredImages()"
+        [displayedColumns]="columns"
+        [loading]="isLoading()"
+        [emptyMessage]="emptyMessage()"
+      >
+        <ng-container [tnColumnDef]="'label'">
+          <ng-template tnHeaderCellDef>{{ 'Label' | translate }}</ng-template>
+          <ng-template let-row tnCellDef>{{ row.label }}</ng-template>
         </ng-container>
 
-        <ng-container matColumnDef="os">
-          <th *matHeaderCellDef mat-header-cell>{{ 'OS' | translate }}</th>
-          <td *matCellDef="let image" mat-cell>{{ image.os }}</td>
+        <ng-container [tnColumnDef]="'os'">
+          <ng-template tnHeaderCellDef>{{ 'OS' | translate }}</ng-template>
+          <ng-template let-row tnCellDef>{{ row.os }}</ng-template>
         </ng-container>
 
-        <ng-container matColumnDef="release">
-          <th *matHeaderCellDef mat-header-cell>{{ 'Release' | translate }}</th>
-          <td *matCellDef="let image" mat-cell>{{ image.release }}</td>
+        <ng-container [tnColumnDef]="'release'">
+          <ng-template tnHeaderCellDef>{{ 'Release' | translate }}</ng-template>
+          <ng-template let-row tnCellDef>{{ row.release }}</ng-template>
         </ng-container>
 
-        <ng-container matColumnDef="archs">
-          <th *matHeaderCellDef mat-header-cell>{{ 'Archs' | translate }}</th>
-          <td *matCellDef="let image" mat-cell>{{ image.archs }}</td>
+        <ng-container [tnColumnDef]="'archs'">
+          <ng-template tnHeaderCellDef>{{ 'Archs' | translate }}</ng-template>
+          <ng-template let-row tnCellDef>{{ row.archs }}</ng-template>
         </ng-container>
 
-        <ng-container matColumnDef="variant">
-          <th *matHeaderCellDef mat-header-cell>{{ 'Variant' | translate }}</th>
-          <td *matCellDef="let image" mat-cell>{{ image.variant }}</td>
+        <ng-container [tnColumnDef]="'variant'">
+          <ng-template tnHeaderCellDef>{{ 'Variant' | translate }}</ng-template>
+          <ng-template let-row tnCellDef>{{ row.variant }}</ng-template>
         </ng-container>
 
-        <ng-container matColumnDef="actions">
-          <th *matHeaderCellDef mat-header-cell></th>
-          <td *matCellDef="let image" mat-cell>
-            <tn-button variant="outline" [testId]="['select-image', image.label]" [label]="'Select' | translate" (onClick)="selectImage(image)"></tn-button>
-          </td>
+        <ng-container [tnColumnDef]="'actions'">
+          <ng-template tnHeaderCellDef></ng-template>
+          <ng-template let-row tnCellDef>
+            <tn-button variant="outline" [testId]="['select-image', row.label]" [label]="'Select' | translate" (onClick)="selectImage(row)"></tn-button>
+          </ng-template>
         </ng-container>
-
-        <tr *matHeaderRowDef="columns" mat-header-row tnTestIdType="row" [tnTestId]="['image-table-header']"></tr>
-        <tr *matRowDef="let row; columns: columns" mat-row tnTestIdType="row" [tnTestId]="['image-table-row', row]"></tr>
-      </table>
-
-      @if (!filteredImages().length) {
-        <ix-empty [conf]="entityEmptyConf()"></ix-empty>
-      }
+      </tn-table>
     </div>
   </form>
 </tn-dialog-shell>
