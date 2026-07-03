@@ -13,7 +13,7 @@ import {
   TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, Subject, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, switchMap,
+  Observable, Subject, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, startWith, switchMap,
 } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
@@ -196,18 +196,16 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
 
     // Drive suggestions off the latest search term only. `tn-chip-input` does not debounce
     // its `searchChange`, so debounce here (matching the old ix-chips behavior) to avoid a
-    // `group.query` per keystroke; `switchMap` then cancels any earlier in-flight query so
-    // out-of-order responses can't overwrite fresh results.
+    // `group.query` per keystroke. `startWith('')` preloads the dropdown immediately on init
+    // (it sits after `debounceTime`, so it fires without waiting a debounce interval), and
+    // routing that preload through the same stream means `switchMap` serializes it with the
+    // typed queries — an in-flight empty-query preload is cancelled the moment the user types,
+    // so its stale response can't overwrite fresh search results.
     this.localGroupsSearch$.pipe(
       debounceTime(defaultDebounceTimeMs),
       distinctUntilChanged(),
+      startWith(''),
       switchMap((query) => this.localGroupsProvider(query)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
-
-    // Preload local-group suggestions directly (bypassing the debounced search subject) so the
-    // chip-input dropdown is already populated on first focus, not one debounce interval later.
-    this.localGroupsProvider('').pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
   }

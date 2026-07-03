@@ -101,8 +101,10 @@ export class PrivilegeListComponent implements OnInit {
 
   // Templates call these per cell on every change-detection pass; memoize by row reference
   // (rows are immutable per fetch) so the translate work runs once per row, not per CD cycle.
-  private readonly ariaLabelCache = new WeakMap<Privilege, string>();
-  private readonly rolesValueCache = new WeakMap<Privilege, string>();
+  // Caches are cleared on a live language switch (see ngOnInit) so translated cell values
+  // don't pin the locale that was active when the row was first rendered.
+  private ariaLabelCache = new WeakMap<Privilege, string>();
+  private rolesValueCache = new WeakMap<Privilege, string>();
 
   protected uniqueRowTag(row: Privilege): string {
     return 'privilege-' + row.name;
@@ -162,6 +164,15 @@ export class PrivilegeListComponent implements OnInit {
 
     this.getPrivileges();
     this.setSearchProperties();
+
+    // Invalidate the memoized, translated cell values when the UI language changes so the
+    // table reflects the new locale on the next change-detection pass.
+    this.translate.onLangChange.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.ariaLabelCache = new WeakMap<Privilege, string>();
+      this.rolesValueCache = new WeakMap<Privilege, string>();
+    });
   }
 
   openForm(privilege?: Privilege): void {
