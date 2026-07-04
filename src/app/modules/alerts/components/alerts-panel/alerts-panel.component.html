@@ -6,6 +6,7 @@
       name="cog"
       library="mdi"
       testId="settings-menu"
+      [ariaLabel]="'Settings' | translate"
       [tooltip]="'Settings' | translate"
       [tnMenuTriggerFor]="alertSettingsMenu"
     ></tn-icon-button>
@@ -25,8 +26,9 @@
       name="close"
       library="mdi"
       testId="close-panel"
+      [ariaLabel]="'Close panel' | translate"
       [tooltip]="'Close panel' | translate"
-      (click)="onPanelClosed()"
+      (onClick)="onPanelClosed()"
     ></tn-icon-button>
   </div>
 </div>

@@ -110,6 +110,8 @@
         tnTestIdType="link"
         [tnTestId]="[alert().key, 'reopen']"
         (click)="onReopen()"
+        (keydown.enter)="onReopen()"
+        (keydown.space)="onReopen(); $event.preventDefault()"
       >
         {{ 'Re-Open' | translate }}
       </a>
@@ -123,6 +125,8 @@
         [tnTestId]="[alert().key, 'dismiss']"
         [tnTooltip]="dismissTooltip()"
         (click)="onDismiss()"
+        (keydown.enter)="onDismiss()"
+        (keydown.space)="onDismiss(); $event.preventDefault()"
       >
         {{ dismissButtonText() }}
       </a>

@@ -1,7 +1,9 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { By } from '@angular/platform-browser';
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { ngMocks } from 'ng-mocks';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -106,6 +108,22 @@ describe('AlertComponent', () => {
     const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
     alert.clickDismissLink();
+
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: '[Alert Panel] Dismiss Pressed',
+        ids: ['79'],
+      }),
+    );
+  });
+
+  it('dismisses an open alert when the dismiss icon button is pressed', async () => {
+    const store$ = spectator.inject(Store);
+    const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+    const dismissButton = await TestbedHarnessEnvironment.loader(spectator.fixture)
+      .getHarness(TnIconButtonHarness.with({ name: 'mdi-close' }));
+    await dismissButton.click();
 
     expect(dispatchSpy).toHaveBeenCalledWith(
       expect.objectContaining({

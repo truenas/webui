@@ -38,9 +38,11 @@ describe('HeaderBadgeComponent', () => {
   });
 
   describe('shows new indicator', () => {
-    it('shows new indicator and leave feedback text', () => {
+    it('shows new indicator and leave feedback text', async () => {
       expect(spectator.query('span')).toHaveText('NEW');
-      expect(spectator.query('button')).toHaveText('Leave Feedback');
+
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Leave Feedback' }));
+      expect(button).toBeTruthy();
     });
 
     it('shows leave feedback modal once feedback text pressed', async () => {
