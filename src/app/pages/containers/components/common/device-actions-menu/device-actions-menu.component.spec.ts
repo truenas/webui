@@ -12,10 +12,13 @@ import {
 } from 'app/interfaces/container.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ContainerFilesystemDeviceFormComponent,
+} from 'app/pages/containers/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/containers/components/common/device-actions-menu/device-actions-menu.component';
@@ -38,7 +41,7 @@ describe('DeviceActionsMenuComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success(false)),
       }),
       mockProvider(ErrorHandlerService, {
@@ -115,13 +118,16 @@ describe('DeviceActionsMenuComponent', () => {
         target: '/data',
       } as ContainerDevice);
 
-      jest.spyOn(spectator.inject(SlideIn), 'open');
-
       const menu = await openMenu();
       await menu.clickItem({ label: 'Edit' });
 
-      // Verify that the SlideIn service was called to open the form
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalled();
+      // Verify that the form was opened in a side panel via FormSidePanelService.
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+        ContainerFilesystemDeviceFormComponent,
+        expect.objectContaining({
+          inputs: expect.objectContaining({ disk: expect.objectContaining({ id: 456 }) }),
+        }),
+      );
     });
 
     it('does not show the Edit item when showEdit is false', async () => {

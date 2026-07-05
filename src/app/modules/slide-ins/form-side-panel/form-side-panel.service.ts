@@ -25,7 +25,13 @@ interface OpenPanel {
 }
 
 export interface FormSidePanelOptions {
-  /** Panel header text. */
+  /**
+   * Panel header text. Rendered raw (not piped through `translate`), so pass an
+   * already-translated string, e.g. `translate.instant('Add Container')`.
+   *
+   * Note this is the opposite convention to {@link saveLabel} and footer-action labels, which are
+   * untranslated markers piped in the container template — mind the difference when setting both.
+   */
   title?: string;
   /** Explicit panel width; overrides {@link wide}. */
   width?: string;
@@ -33,7 +39,10 @@ export interface FormSidePanelOptions {
   wide?: boolean;
   /** Test-id applied to the panel root. */
   testId?: string;
-  /** Footer submit-button label; defaults to `Save`. */
+  /**
+   * Footer submit-button label; defaults to `Save`. An untranslated marker (`T('Create')`) — the
+   * container template pipes it through `translate`, so do NOT pre-translate with `instant()`.
+   */
   saveLabel?: string;
   /** Inputs set on the hosted form before its `ngOnInit` (e.g. the record being edited). */
   inputs?: Record<string, unknown>;
