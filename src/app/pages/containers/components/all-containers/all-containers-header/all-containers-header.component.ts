@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -58,7 +59,7 @@ export class AllContainersHeaderComponent {
     this.formPanel.open(ContainerFormComponent, {
       title: this.translate.instant('Add Container'),
       wide: true,
-      saveLabel: this.translate.instant('Create'),
+      saveLabel: T('Create'),
     });
   }
 
