@@ -1,226 +1,365 @@
 <form class="ix-form-container" [formGroup]="form">
-  <ix-fieldset [title]="'LDAP Configuration' | translate">
-    <ix-chips
-      formControlName="server_urls"
+  <tn-form-section [heading]="'LDAP Configuration' | translate">
+    <tn-form-field
       [label]="'Server URLs' | translate"
-      [required]="true"
       [tooltip]="helptext.hostnameTooltip | translate"
-    ></ix-chips>
-
-    <ix-input
-      formControlName="basedn"
-      [label]="'Base DN' | translate"
       [required]="true"
-      [tooltip]="helptext.basednTooltip | translate"
-    ></ix-input>
-
-    <ix-checkbox
-      formControlName="starttls"
-      [label]="'Start TLS' | translate"
-      [tooltip]="helptext.sslTooltip | translate"
-    ></ix-checkbox>
-
-    <ix-checkbox
-      formControlName="validate_certificates"
-      [label]="'Validate Certificates' | translate"
-      [tooltip]="helptext.validateCertificatesTooltip | translate"
-    ></ix-checkbox>
-
-    <ix-select
-      formControlName="schema"
-      [label]="'Schema' | translate"
-      [options]="ldapSchemaOptions$"
-      [required]="true"
-      [tooltip]="helptext.schemaTooltip | translate"
-    ></ix-select>
-
-    <ix-fieldset
-      [title]="'Auxiliary Parameters' | translate"
     >
-      <ix-checkbox
-        formControlName="use_standard_auxiliary_parameters"
-        [label]="'Use Standard Auxiliary Parameters' | translate"
-        [tooltip]="helptext.useStandardAuxiliaryParametersTooltip | translate"
-      ></ix-checkbox>
+      <tn-chip-input
+        formControlName="server_urls"
+        testId="server_urls"
+        [allowCustomValue]="true"
+      ></tn-chip-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Base DN' | translate"
+      [tooltip]="helptext.basednTooltip | translate"
+      [required]="true"
+    >
+      <tn-input
+        name="basedn"
+        testId="basedn"
+        formControlName="basedn"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.sslTooltip | translate">
+      <tn-checkbox
+        formControlName="starttls"
+        testId="starttls"
+        [label]="'Start TLS' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.validateCertificatesTooltip | translate">
+      <tn-checkbox
+        formControlName="validate_certificates"
+        testId="validate_certificates"
+        [label]="'Validate Certificates' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Schema' | translate"
+      [tooltip]="helptext.schemaTooltip | translate"
+      [required]="true"
+    >
+      <tn-select
+        testId="schema"
+        formControlName="schema"
+        [options]="(ldapSchemaOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+
+    <tn-form-section [heading]="'Auxiliary Parameters' | translate">
+      <tn-form-field [tooltip]="helptext.useStandardAuxiliaryParametersTooltip | translate">
+        <tn-checkbox
+          formControlName="use_standard_auxiliary_parameters"
+          testId="use_standard_auxiliary_parameters"
+          [label]="'Use Standard Auxiliary Parameters' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
       @if (!(form.controls.use_standard_auxiliary_parameters.value)) {
-        <ix-textarea
-          formControlName="auxiliary_parameters"
+        <tn-form-field
           [label]="'Auxiliary Parameters' | translate"
           [tooltip]="helptext.auxiliaryParametersTooltip | translate"
-        ></ix-textarea>
+        >
+          <tn-input
+            name="auxiliary_parameters"
+            testId="auxiliary_parameters"
+            formControlName="auxiliary_parameters"
+            [multiline]="true"
+          ></tn-input>
+        </tn-form-field>
       }
-    </ix-fieldset>
+    </tn-form-section>
 
 
-    <ix-fieldset [title]="'Search Bases' | translate">
-      <ix-checkbox
-        formControlName="use_standard_search_bases"
-        [label]="'Use Standard Search Bases' | translate"
-        [tooltip]="helptext.useStandardSearchBasesTooltip | translate"
-      ></ix-checkbox>
+    <tn-form-section [heading]="'Search Bases' | translate">
+      <tn-form-field [tooltip]="helptext.useStandardSearchBasesTooltip | translate">
+        <tn-checkbox
+          formControlName="use_standard_search_bases"
+          testId="use_standard_search_bases"
+          [label]="'Use Standard Search Bases' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
       @if (!(form.controls.use_standard_search_bases.value)) {
         <div [formGroup]="form.controls.search_bases">
-          <ix-input
-            formControlName="base_user"
+          <tn-form-field
             [label]="'User Base DN' | translate"
             [tooltip]="helptext.baseUserTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="base_user"
+              testId="base_user"
+              formControlName="base_user"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="base_group"
+          <tn-form-field
             [label]="'Group Base DN' | translate"
             [tooltip]="helptext.baseGroupTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="base_group"
+              testId="base_group"
+              formControlName="base_group"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="base_netgroup"
+          <tn-form-field
             [label]="'Netgroup Base DN' | translate"
             [tooltip]="helptext.baseNetgroupTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="base_netgroup"
+              testId="base_netgroup"
+              formControlName="base_netgroup"
+            ></tn-input>
+          </tn-form-field>
         </div>
       }
 
-    </ix-fieldset>
+    </tn-form-section>
 
-    <ix-fieldset [title]="'Attribute Maps' | translate">
-      <ix-checkbox
-        formControlName="use_standard_attribute_maps"
-        [label]="'Use Standard Attribute Maps' | translate"
-        [tooltip]="helptext.useStandardAttributeMapsTooltip | translate"
-      ></ix-checkbox>
+    <tn-form-section [heading]="'Attribute Maps' | translate">
+      <tn-form-field [tooltip]="helptext.useStandardAttributeMapsTooltip | translate">
+        <tn-checkbox
+          formControlName="use_standard_attribute_maps"
+          testId="use_standard_attribute_maps"
+          [label]="'Use Standard Attribute Maps' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
       @if (!(form.controls.use_standard_attribute_maps.value)) {
-        <ix-fieldset
-          [title]="'LDAP Password Attributes' | translate"
+        <tn-form-section
+          [heading]="'LDAP Password Attributes' | translate"
           [formGroup]="form.controls.attribute_maps.controls.passwd"
         >
-          <ix-input
-            formControlName="user_object_class"
+          <tn-form-field
             [label]="'User Object Class' | translate"
             [tooltip]="helptext.userObjectClassTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="user_object_class"
+              testId="user_object_class"
+              formControlName="user_object_class"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="user_name"
+          <tn-form-field
             [label]="'Username Attribute' | translate"
             [tooltip]="helptext.userNameTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="user_name"
+              testId="user_name"
+              formControlName="user_name"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="user_uid"
+          <tn-form-field
             [label]="'UID Attribute' | translate"
             [tooltip]="helptext.userUidTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="user_uid"
+              testId="user_uid"
+              formControlName="user_uid"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="user_gid"
+          <tn-form-field
             [label]="'GID Attribute' | translate"
             [tooltip]="helptext.userGidTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="user_gid"
+              testId="user_gid"
+              formControlName="user_gid"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="user_gecos"
+          <tn-form-field
             [label]="'GECOS Attribute' | translate"
             [tooltip]="helptext.userGecosTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="user_gecos"
+              testId="user_gecos"
+              formControlName="user_gecos"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="user_home_directory"
+          <tn-form-field
             [label]="'Home Directory Attribute' | translate"
             [tooltip]="helptext.userHomeDirectoryTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="user_home_directory"
+              testId="user_home_directory"
+              formControlName="user_home_directory"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="user_shell"
+          <tn-form-field
             [label]="'Shell Attribute' | translate"
             [tooltip]="helptext.userShellTooltip | translate"
-          ></ix-input>
-        </ix-fieldset>
-        <ix-fieldset
-          [title]="'LDAP Shadow Attributes' | translate"
+          >
+            <tn-input
+              name="user_shell"
+              testId="user_shell"
+              formControlName="user_shell"
+            ></tn-input>
+          </tn-form-field>
+        </tn-form-section>
+        <tn-form-section
+          [heading]="'LDAP Shadow Attributes' | translate"
           [formGroup]="form.controls.attribute_maps.controls.shadow"
         >
-          <ix-input
-            formControlName="shadow_last_change"
+          <tn-form-field
             [label]="'Last Change Attribute' | translate"
             [tooltip]="helptext.shadowLastChangeTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="shadow_last_change"
+              testId="shadow_last_change"
+              formControlName="shadow_last_change"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="shadow_min"
+          <tn-form-field
             [label]="'Min Days Attribute' | translate"
             [tooltip]="helptext.shadowMinTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="shadow_min"
+              testId="shadow_min"
+              formControlName="shadow_min"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="shadow_max"
+          <tn-form-field
             [label]="'Max Days Attribute' | translate"
             [tooltip]="helptext.shadowMaxTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="shadow_max"
+              testId="shadow_max"
+              formControlName="shadow_max"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="shadow_warning"
+          <tn-form-field
             [label]="'Warning Attribute' | translate"
             [tooltip]="helptext.shadowWarningTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="shadow_warning"
+              testId="shadow_warning"
+              formControlName="shadow_warning"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="shadow_inactive"
+          <tn-form-field
             [label]="'Inactive Attribute' | translate"
             [tooltip]="helptext.shadowInactiveTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="shadow_inactive"
+              testId="shadow_inactive"
+              formControlName="shadow_inactive"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="shadow_expire"
+          <tn-form-field
             [label]="'Expire Attribute' | translate"
             [tooltip]="helptext.shadowExpireTooltip | translate"
-          ></ix-input>
-        </ix-fieldset>
-        <ix-fieldset 
-          [title]="'LDAP Group Attributes' | translate"
+          >
+            <tn-input
+              name="shadow_expire"
+              testId="shadow_expire"
+              formControlName="shadow_expire"
+            ></tn-input>
+          </tn-form-field>
+        </tn-form-section>
+        <tn-form-section
+          [heading]="'LDAP Group Attributes' | translate"
           [formGroup]="form.controls.attribute_maps.controls.group"
         >
-          <ix-input
-            formControlName="group_object_class"
+          <tn-form-field
             [label]="'Group Object Class' | translate"
             [tooltip]="helptext.groupObjectClassTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="group_object_class"
+              testId="group_object_class"
+              formControlName="group_object_class"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="group_gid"
+          <tn-form-field
             [label]="'Group GID Attribute' | translate"
             [tooltip]="helptext.groupGidTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="group_gid"
+              testId="group_gid"
+              formControlName="group_gid"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="group_member"
+          <tn-form-field
             [label]="'Group Member Attribute' | translate"
             [tooltip]="helptext.groupMemberTooltip | translate"
-          ></ix-input>
-        </ix-fieldset>
-        <ix-fieldset
-          [title]="'LDAP Net Group Attributes' | translate"
+          >
+            <tn-input
+              name="group_member"
+              testId="group_member"
+              formControlName="group_member"
+            ></tn-input>
+          </tn-form-field>
+        </tn-form-section>
+        <tn-form-section
+          [heading]="'LDAP Net Group Attributes' | translate"
           [formGroup]="form.controls.attribute_maps.controls.netgroup"
         >
-          <ix-input
-            formControlName="netgroup_object_class"
+          <tn-form-field
             [label]="'Netgroup Object Class' | translate"
             [tooltip]="helptext.netgroupObjectClassTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="netgroup_object_class"
+              testId="netgroup_object_class"
+              formControlName="netgroup_object_class"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="netgroup_member"
+          <tn-form-field
             [label]="'Netgroup Member Attribute' | translate"
             [tooltip]="helptext.netgroupMemberTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input
+              name="netgroup_member"
+              testId="netgroup_member"
+              formControlName="netgroup_member"
+            ></tn-input>
+          </tn-form-field>
 
-          <ix-input
-            formControlName="netgroup_triple"
+          <tn-form-field
             [label]="'Netgroup Triple Attribute' | translate"
             [tooltip]="helptext.netgroupTripleTooltip | translate"
-          ></ix-input>
-        </ix-fieldset>
+          >
+            <tn-input
+              name="netgroup_triple"
+              testId="netgroup_triple"
+              formControlName="netgroup_triple"
+            ></tn-input>
+          </tn-form-field>
+        </tn-form-section>
       }
-    </ix-fieldset>
-  </ix-fieldset>
+    </tn-form-section>
+  </tn-form-section>
 
 </form>
