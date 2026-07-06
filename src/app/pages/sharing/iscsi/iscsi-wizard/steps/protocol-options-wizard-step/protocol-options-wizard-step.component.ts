@@ -1,14 +1,15 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, OnInit, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnChipInputComponent, TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import {
-  map, of, startWith, switchMap,
+  map, of, switchMap,
 } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -54,13 +55,7 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
   availablePorts = input.required<string[]>();
 
   // Drives the stepper's "finished step" indicator.
-  readonly completed = toSignal(
-    toObservable(this.form).pipe(
-      switchMap((form) => form.statusChanges.pipe(startWith(form.status))),
-      map(() => this.form().valid),
-    ),
-    { initialValue: false },
-  );
+  readonly completed = stepCompletedSignal(this.form);
 
   readonly helptextSharingIscsi = helptextIscsi;
 

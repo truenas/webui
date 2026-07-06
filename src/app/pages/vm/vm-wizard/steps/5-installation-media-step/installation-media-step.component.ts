@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialog, TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
-import { map, startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -44,10 +44,7 @@ export class InstallationMediaStepComponent implements SummaryProvider {
   });
 
   // Drives the stepper's linear gating (replaces mat's [stepControl]).
-  readonly completed = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
-    { initialValue: this.form.valid },
-  );
+  readonly completed = stepCompletedSignal(this.form);
 
   readonly helptext = helptextVmWizard;
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();

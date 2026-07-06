@@ -2,17 +2,17 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input, OnInit, inject, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnIconComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { of, switchMap } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { IscsiExtentType, iscsiExtentUseforMap } from 'app/enums/iscsi.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
 import {
@@ -50,13 +50,7 @@ export class ExtentWizardStepComponent implements OnInit {
   readonly form = input.required<IscsiWizardComponent['form']['controls']['extent']>();
 
   // Drives the stepper's "finished step" indicator.
-  readonly completed = toSignal(
-    toObservable(this.form).pipe(
-      switchMap((form) => form.statusChanges.pipe(startWith(form.status))),
-      map(() => this.form().valid),
-    ),
-    { initialValue: false },
-  );
+  readonly completed = stepCompletedSignal(this.form);
 
   protected readonly InputType = InputType;
   readonly helptextSharingIscsi = helptextIscsi;

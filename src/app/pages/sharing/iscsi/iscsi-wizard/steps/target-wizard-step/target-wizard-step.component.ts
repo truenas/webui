@@ -1,13 +1,13 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { Observable, of, switchMap } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
@@ -38,13 +38,7 @@ export class TargetWizardStepComponent {
   form = input.required<IscsiWizardComponent['form']['controls']['target']>();
 
   // Drives the stepper's "finished step" indicator.
-  readonly completed = toSignal(
-    toObservable(this.form).pipe(
-      switchMap((form) => form.statusChanges.pipe(startWith(form.status))),
-      map(() => this.form().valid),
-    ),
-    { initialValue: false },
-  );
+  readonly completed = stepCompletedSignal(this.form);
 
   readonly helptextSharingIscsi = helptextIscsi;
 

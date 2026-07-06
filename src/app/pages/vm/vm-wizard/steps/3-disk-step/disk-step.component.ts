@@ -1,17 +1,18 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { Observable, forkJoin, of } from 'rxjs';
-import { catchError, debounceTime, map, shareReplay, startWith, tap } from 'rxjs/operators';
+import { catchError, debounceTime, map, shareReplay, tap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { VmDeviceType, VmDiskMode, vmDiskModeLabels } from 'app/enums/vm.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
@@ -85,10 +86,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
   });
 
   // Drives the stepper's linear gating (replaces mat's [stepControl]).
-  readonly completed = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
-    { initialValue: this.form.valid },
-  );
+  readonly completed = stepCompletedSignal(this.form);
 
   readonly hddTypeOptions$ = of(mapToOptions(vmDiskModeLabels, this.translate));
   readonly newOrExistingOptions$ = of([

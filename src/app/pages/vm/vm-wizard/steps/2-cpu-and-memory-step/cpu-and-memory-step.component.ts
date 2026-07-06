@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
 import { VmCpuMode, vmCpuModeLabels } from 'app/enums/vm.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -84,10 +84,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
   maxVcpus: number;
 
   // Drives the stepper's linear gating (replaces mat's [stepControl]).
-  readonly completed = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
-    { initialValue: this.form.valid },
-  );
+  readonly completed = stepCompletedSignal(this.form);
 
   readonly helptext = helptextVmWizard;
 

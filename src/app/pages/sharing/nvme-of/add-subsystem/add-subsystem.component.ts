@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, output, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -12,10 +12,10 @@ import {
   finalize, forkJoin, map, Observable, of, switchMap,
   tap,
 } from 'rxjs';
-import { startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import {
   CreateNvmeOfNamespace, NvmeOfHost, NvmeOfPort, NvmeOfSubsystem,
@@ -105,13 +105,7 @@ export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsy
   protected readonly helptext = helptextNvmeOf;
 
   // Drives the stepper's "finished step" pencil icon (replaces mat's [stepControl]).
-  protected readonly whatToShareCompleted = toSignal(
-    this.form.controls.name.statusChanges.pipe(
-      startWith(this.form.controls.name.status),
-      map(() => this.form.controls.name.valid),
-    ),
-    { initialValue: this.form.controls.name.valid },
-  );
+  protected readonly whatToShareCompleted = stepCompletedSignal(this.form.controls.name);
 
   protected onSubmit(): void {
     this.isLoading.set(true);
