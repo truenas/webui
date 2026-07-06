@@ -372,7 +372,7 @@ describe('PoolManagerValidationService', () => {
     it('adds a warning when dRAID children is less than 10', async () => {
       const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
       expect(errors).toContainEqual({
-        text: 'In order for dRAID to overweight its benefits over RaidZ the minimum recommended number of disks per dRAID vdev is 10.',
+        text: 'For dRAID\'s benefits to outweigh those of RaidZ, we recommend at least 10 disks per dRAID vdev.',
         severity: PoolCreationSeverity.Warning,
         step: PoolCreationWizardStep.Data,
       });
@@ -381,7 +381,7 @@ describe('PoolManagerValidationService', () => {
     it('adds a warning when dRAID does not have spares added', async () => {
       const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
       expect(errors).toContainEqual({
-        text: 'At least one spare is recommended for dRAID. Spares cannot be added later.',
+        text: 'At least one distributed spare is recommended for dRAID. Distributed spares cannot be added after the pool is created.',
         severity: PoolCreationSeverity.Warning,
         step: PoolCreationWizardStep.Data,
       });

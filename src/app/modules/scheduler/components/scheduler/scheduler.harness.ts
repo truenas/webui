@@ -1,7 +1,6 @@
 import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
-import { MatSelectHarness, SelectHarnessFilters } from '@angular/material/select/testing';
+import { TnFormFieldHarness, TnSelectHarness, SelectHarnessFilters } from '@truenas/ui-components';
 import * as cronParser from 'cron-parser';
-import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 import { SchedulerModalHarness } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.harness';
@@ -18,25 +17,24 @@ export class SchedulerHarness extends ComponentHarness implements IxFormControlH
       .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
-  getSelectHarness = this.locatorFor(MatSelectHarness);
+  getSelectHarness = this.locatorFor(TnSelectHarness);
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
-    const label = await this.locatorForOptional(IxLabelHarness)();
-    if (!label) {
+    const formField = await this.locatorForOptional(TnFormFieldHarness)();
+    if (!formField) {
       return '';
     }
-    return label.getLabel();
+    return formField.getLabel();
   }
 
   async openCustomModal(): Promise<void> {
     const select = await this.getSelectHarness();
-    await select.open();
-    await select.clickOptions({ text: /Create/ });
+    await select.selectOption(/Create/);
   }
 
   async getValue(): Promise<string> {
-    return (await this.getSelectHarness()).getValueText();
+    return (await this.getSelectHarness()).getDisplayText();
   }
 
   async setValue(crontab: string): Promise<void> {

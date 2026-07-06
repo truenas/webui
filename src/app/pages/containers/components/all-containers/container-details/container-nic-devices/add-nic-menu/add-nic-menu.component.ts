@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, Observable, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,7 +18,6 @@ import {
 } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
@@ -32,13 +30,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./add-nic-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatDivider,
-    MatMenu,
-    MatMenuItem,
-    TestDirective,
+    TnButtonComponent,
+    TnMenuComponent,
+    TnMenuTriggerDirective,
     TranslateModule,
-    MatMenuTrigger,
     NgxSkeletonLoaderModule,
     RequiresRolesDirective,
   ],
@@ -56,7 +51,7 @@ export class AddNicMenuComponent {
   private translate = inject(TranslateService);
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
 
   protected readonly helptext = containersHelptext;
 
@@ -114,6 +109,37 @@ export class AddNicMenuComponent {
     return this.availableNicGroups().some((group) => group.nics.length > 0);
   });
 
+  protected readonly menuItems = computed<TnMenuItem[]>(() => {
+    const groups = this.availableNicGroups();
+    const items: TnMenuItem[] = [];
+
+    groups.forEach((group, index) => {
+      if (group.label) {
+        items.push({
+          id: `header-${group.type}`,
+          label: group.label,
+          disabled: true,
+        });
+      }
+
+      group.nics.forEach((nic) => {
+        items.push({
+          id: nic.key,
+          label: nic.label,
+          testId: ['add-nic', nic.key],
+          action: () => this.addNic(nic.key),
+        });
+      });
+
+      const isLast = index === groups.length - 1;
+      if (!isLast && group.label) {
+        items.push({ id: `separator-${group.type}`, label: '', separator: true });
+      }
+    });
+
+    return items;
+  });
+
   protected addNic(nicKey: string): void {
     this.addDevice(nicKey);
   }
@@ -128,10 +154,10 @@ export class AddNicMenuComponent {
       return;
     }
 
-    this.matDialog.open(ContainerNicFormDialog, {
+    this.tnDialog.open(ContainerNicFormDialog, {
       data: { nic: nicKey },
       minWidth: '500px',
-    }).afterClosed().pipe(
+    }).closed.pipe(
       filter(Boolean),
       switchMap((config: {
         mac?: string;

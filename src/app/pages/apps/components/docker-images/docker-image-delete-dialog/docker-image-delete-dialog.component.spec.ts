@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -12,7 +12,6 @@ import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -51,11 +50,11 @@ describe('DockerImageDeleteDialogComponent', () => {
     providers: [
       mockAuth(),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: fakeDockerImagesDataSource,
       },
       mockProvider(LoaderService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DialogService, {
         confirm: () => of(true),
       }),
@@ -83,18 +82,16 @@ describe('DockerImageDeleteDialogComponent', () => {
 
     expect(spectator.fixture.nativeElement).toHaveText('The following 2 docker images will be deleted. Are you sure you want to proceed?');
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Confirm: true,
-    });
+    const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.check();
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('2 docker images has been deleted.');
 
-    const closeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
+    const closeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
     await closeButton.click();
   });
 
@@ -108,13 +105,12 @@ describe('DockerImageDeleteDialogComponent', () => {
     ];
     spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Confirm: true,
-      Force: true,
-    });
+    const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
+    await forceCheckbox.check();
+    const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.check();
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
@@ -130,18 +126,16 @@ describe('DockerImageDeleteDialogComponent', () => {
     ];
     spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Confirm: true,
-    });
+    const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.check();
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="delete"]' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('Warning: 2 of 2 docker images could not be deleted.');
 
-    const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="close"]' }));
+    const closeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
     await closeButton.click();
   });
 });

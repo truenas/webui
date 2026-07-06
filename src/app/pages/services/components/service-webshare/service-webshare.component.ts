@@ -1,51 +1,48 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, computed, effect,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey, webSharePasskeyLabels } from 'app/enums/webshare-passkey.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceWebshare } from 'app/helptext/services/components/service-webshare';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-service-webshare',
   templateUrl: './service-webshare.component.html',
+  styleUrls: ['./service-webshare.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
     RequiresRolesDirective,
   ],
 })
-export class ServiceWebshareComponent implements OnInit {
-  protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
+export class ServiceWebshareComponent extends SidePanelForm implements OnInit {
+  readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -53,21 +50,43 @@ export class ServiceWebshareComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject(SlideInRef<undefined, boolean>);
+  private truenasConnectService = inject(TruenasConnectService);
 
-  protected isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     search: [false],
     passkey: [WebSharePasskey.Disabled, Validators.required],
   });
 
   readonly helptext = helptextServiceWebshare;
-  readonly passkeyOptions$ = of(mapToOptions(webSharePasskeyLabels, this.translate));
+  readonly passkeyOptions = mapToOptions(webSharePasskeyLabels, this.translate);
+
+  /**
+   * TrueSearch depends on TrueNAS Connect, so it can only be enabled while Connect is
+   * configured. Backed by the shared `tn_connect.config` signal, this reacts immediately
+   * when Connect is disabled without requiring a page refresh.
+   */
+  protected readonly isTruenasConnectConfigured = computed(
+    () => this.truenasConnectService.config()?.status === TruenasConnectStatus.Configured,
+  );
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
+    super();
+    // Keep the TrueSearch control enabled only while TrueNAS Connect is configured. When
+    // Connect is disabled we force the toggle off and lock it so it can neither be enabled
+    // in the UI nor submitted as `true`.
+    effect(() => {
+      const searchControl = this.form.controls.search;
+      if (this.isTruenasConnectConfigured()) {
+        searchControl.enable({ emitEvent: false });
+      } else {
+        searchControl.setValue(false, { emitEvent: false });
+        searchControl.disable({ emitEvent: false });
+      }
     });
   }
 
@@ -76,7 +95,10 @@ export class ServiceWebshareComponent implements OnInit {
     this.api.call('webshare.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config: WebShareConfig) => {
         this.form.patchValue({
-          search: config.search,
+          // `webshare.config` is async, so it can resolve after the guard effect has already
+          // locked the control off. Gate the loaded value too, otherwise a stale `search: true`
+          // from the backend would be restored while Connect is disabled and then submitted.
+          search: config.search && this.isTruenasConnectConfigured(),
           passkey: config.passkey,
         });
         this.isFormLoading.set(false);
@@ -96,7 +118,7 @@ export class ServiceWebshareComponent implements OnInit {
       next: () => {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Service configuration saved'));
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

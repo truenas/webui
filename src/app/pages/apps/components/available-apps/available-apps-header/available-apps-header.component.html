@@ -1,30 +1,30 @@
 <div class="search-filters">
-  <ix-input
+  <tn-input
     [prefixIcon]="tnIconMarker('magnify', 'mdi')"
-    [maxLength]="100"
     [formControl]="searchControl"
     [placeholder]="'Search' | translate"
-  ></ix-input>
+  ></tn-input>
   <div class="actions">
-    <a
-      mat-button
-      ixTest="show-all"
+    <tn-button
+      class="ghost-button"
+      testId="show-all"
+      [label]="'Show All' | translate"
       [routerLink]="['/apps/available', AppExtraCategory.All]"
-    >
-      {{ 'Show All' | translate }}
-    </a>
-    <button
-      mat-button
-      ixTest="filter"
-      (click)="changeFiltersVisible()"
-    >
-      {{ 'Filters' | translate }}
-      @if (showFilters) {
-        <tn-icon name="chevron-up" library="mdi"></tn-icon>
-      } @else {
-        <tn-icon name="chevron-down" library="mdi"></tn-icon>
-      }
-    </button>
+    ></tn-button>
+    <span class="filters-button">
+      <tn-button
+        class="ghost-button"
+        testId="filter"
+        [label]="'Filters' | translate"
+        (onClick)="changeFiltersVisible()"
+      ></tn-button>
+      <tn-icon
+        class="filters-caret"
+        library="mdi"
+        aria-hidden="true"
+        [name]="showFilters ? 'chevron-up' : 'chevron-down'"
+      ></tn-icon>
+    </span>
   </div>
   @if (showFilters) {
     <div class="filters-container">
@@ -36,12 +36,14 @@
           [options]="(sortOptions$ | async) || []"
         ></ix-filter-select-list>
         <div class="categories">
-          <ix-chips
-            [formControl]="form.controls.categories"
-            [label]="'Categories' | translate"
-            [autocompleteProvider]="categoriesProvider$"
-            [allowNewEntries]="false"
-          ></ix-chips>
+          <tn-form-field [label]="'Categories' | translate">
+            <tn-chip-input
+              testId="categories"
+              [formControl]="form.controls.categories"
+              [suggestions]="categorySuggestions()"
+              [allowCustomValue]="false"
+            ></tn-chip-input>
+          </tn-form-field>
         </div>
       </div>
     </div>
@@ -51,10 +53,11 @@
 <div class="header-numbers">
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
-    <a class="header-link" ixTest="refresh-apps">
+    <a class="header-link" tnTestId="available-apps-section" tnTestIdType="link">
       @if (areLoaded$ | async) {
         <a
-          ixTest="available-apps"
+          tnTestId="available-apps"
+          tnTestIdType="link"
           [routerLink]="['/apps/available', AppExtraCategory.All]"
         >
           <h2>{{ (availableApps$ | async)?.length }}</h2>
@@ -64,7 +67,8 @@
       }
       <a
         *ixRequiresRoles="requiredRoles"
-        ixTest="refresh-apps"
+        tnTestId="refresh-apps"
+        tnTestIdType="link"
         class="refresh-apps"
         (click)="refreshCatalog()"
       >
@@ -75,7 +79,7 @@
 
   <div class="header-number">
     <div class="header-number-title">{{ 'Installed Apps' | translate }}</div>
-    <a class="header-link" ixTest="manage-installed-apps" [routerLink]="['/apps/installed']">
+    <a class="header-link" tnTestId="manage-installed-apps" tnTestIdType="link" [routerLink]="['/apps/installed']">
       @if (areLoaded$ | async) {
         <h2>{{ (installedApps$ | async)?.length }}</h2>
       } @else {

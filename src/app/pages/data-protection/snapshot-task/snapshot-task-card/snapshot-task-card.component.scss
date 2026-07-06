@@ -1,25 +1,24 @@
-.card-title {
+@import '../../card-title';
+
+@include card-title;
+@include card-table-scroll;
+
+// Hand-rolled footer mirroring tn-card's small-padding footer. Negative margins
+// break out of the 16px content padding so the border-top spans the card width and
+// the row sits flush at the bottom, matching the tnCardFooterActions footer on sibling cards.
+.card-footer {
+  display: flex;
   align-items: center;
-  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 -16px -16px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--tn-lines, #e5e7eb);
 
-  tn-icon {
-    margin-left: 5px;
-  }
-}
-
-ix-table {
-  height: 100%;
-}
-
-.footer-actions {
-  display: flex;
-  gap: 8px;
-  padding: 10px;
-}
-
-:host ::ng-deep {
-  .state-button {
-    text-overflow: inherit !important;
-    width: 78px;
+  &__start {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 }

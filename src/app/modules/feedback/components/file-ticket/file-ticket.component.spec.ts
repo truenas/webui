@@ -1,10 +1,13 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { NgTemplateOutlet } from '@angular/common';
 import { ReactiveFormsModule, ValidationErrors } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { By } from '@angular/platform-browser';
 import {
-  createComponentFactory, createSpyObject, mockProvider, Spectator,
+  createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
@@ -21,17 +24,18 @@ import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/ima
 import { NewTicketResponse } from '../../interfaces/file-ticket.interface';
 
 describe('FileTicketComponent', () => {
-  let spectator: Spectator<FileTicketComponent>;
+  let spectator: SpectatorHost<FileTicketComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let loginToJiraButton: OauthButtonComponent;
   let feedbackService: FeedbackService;
-  const dialogRef = createSpyObject(MatDialogRef);
+  const dialogRef = createSpyObject(DialogRef);
 
-  const createComponent = createComponentFactory({
+  const createHost = createHostFactory({
     component: FileTicketComponent,
     imports: [
       ReactiveFormsModule,
+      NgTemplateOutlet,
     ],
     declarations: [
       MockComponent(OauthButtonComponent),
@@ -54,16 +58,23 @@ describe('FileTicketComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent({
-      props: {
-        dialogRef,
-        isLoading: false,
-        type: FeedbackType.Bug,
+    // The dialog projects the form's actions into the shell footer; render that template here.
+    spectator = createHost(
+      `<ix-file-ticket #ticket [type]="type" [dialogRef]="dialogRef" [isLoading]="isLoading"></ix-file-ticket>
+       <ng-container [ngTemplateOutlet]="ticket.dialogActions() ?? null"></ng-container>`,
+      {
+        hostProps: {
+          dialogRef,
+          isLoading: false,
+          type: FeedbackType.Bug,
+        },
       },
-    });
+    );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    loginToJiraButton = spectator.query(OauthButtonComponent)!;
+    // The login button is projected into the dialog footer (host level), so query from the fixture root.
+    loginToJiraButton = spectator.fixture.debugElement.query(By.directive(OauthButtonComponent))
+      ?.componentInstance as OauthButtonComponent;
     feedbackService = spectator.inject(FeedbackService);
   });
 
@@ -87,13 +98,16 @@ describe('FileTicketComponent', () => {
   it('submits a ticket using form values and type input once user fill form and logs in to Jira', async () => {
     const fakeAttachments = [fakeFile('attachment1.png'), fakeFile('attachment2.png')];
 
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Attach debug' }))).check();
+    await (await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Take screenshot of the current page' }),
+    )).check();
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Attach additional images' }))).check();
+
     await form.fillForm(
       {
         Subject: 'Cannot shutdown',
         Message: 'Help me',
-        'Attach debug': true,
-        'Take screenshot of the current page': true,
-        'Attach additional images': true,
         'Attach images (optional)': fakeAttachments,
       },
     );
@@ -116,9 +130,7 @@ describe('FileTicketComponent', () => {
     const ticketSubmission$ = new Subject<NewTicketResponse>();
     jest.spyOn(feedbackService, 'createTicket').mockReturnValue(ticketSubmission$.asObservable());
 
-    await form.fillForm({
-      'Attach additional images': true,
-    });
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Attach additional images' }))).check();
 
     const fileInput = await loader.getHarness(IxFileInputHarness);
 

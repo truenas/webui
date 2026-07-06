@@ -1,13 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter, signal } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnIconComponent, TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
+import {
+  TnDialog, TnIconButtonHarness, TnIconComponent, TnIconHarness, TnSpriteLoaderService,
+} from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -16,7 +16,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { selectImportantUnreadAlertsCount, selectIsAlertPanelOpen, selectTopAlertSeverity } from 'app/modules/alerts/store/alert.selectors';
-import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
@@ -48,7 +48,7 @@ const fakeRebootInfo: RebootInfoState = {
 interface ComponentOptions {
   updateJob?: Job[];
   updateRunningStatus$?: EventEmitter<'true' | 'false'>;
-  matDialog?: Partial<MatDialog>;
+  tnDialog?: Partial<TnDialog>;
 }
 
 function createTopbarComponent(options: ComponentOptions = {}): {
@@ -63,12 +63,12 @@ function createTopbarComponent(options: ComponentOptions = {}): {
       } as Job,
     ],
     updateRunningStatus$ = new EventEmitter<'true' | 'false'>(),
-    matDialog = {
+    tnDialog = {
       open: jest.fn(() => ({
         componentInstance: {
           setMessage: jest.fn(),
         },
-        afterClosed: () => of({}),
+        closed: of({}),
       })),
     },
   } = options;
@@ -98,7 +98,11 @@ function createTopbarComponent(options: ComponentOptions = {}): {
         updateRunningNoticeSent: new EventEmitter<string>(),
       }),
       mockProvider(UiSearchProvider),
-      mockProvider(MatDialog, matDialog),
+      mockProvider(TnDialog, tnDialog),
+      mockProvider(DialogService, {
+        update: jest.fn(() => ({ close: jest.fn() })),
+        rebootRequired: jest.fn(() => of(undefined)),
+      }),
       mockApi([]),
       mockProvider(TruenasConnectService, {
         config: mockConfigSignal,
@@ -170,7 +174,7 @@ describe('TopbarComponent', () => {
 
   it('shows Reboot Info button', async () => {
     const rebootInfoButton = await loader.getHarnessOrNull(
-      MatButtonHarness.with({ selector: '[ixTest="reboot-info"]' }),
+      TnIconButtonHarness.with({ name: 'update' }),
     );
     expect(rebootInfoButton).not.toBeNull();
   });
@@ -186,18 +190,9 @@ describe('TopbarComponent', () => {
     updateRunningStatus$.emit('true');
     spectator.detectChanges();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenNthCalledWith(1, UpdateDialog, {
-      hasBackdrop: true,
-      panelClass: 'topbar-panel',
-      position: {
-        right: '16px',
-        top: '48px',
-      },
-      width: '400px',
-      data: {
-        title: 'Update in Progress',
-        message: 'A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.',
-      },
+    expect(spectator.inject(DialogService).update).toHaveBeenCalledWith({
+      title: 'Update in Progress',
+      message: 'A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.',
     });
   });
 
@@ -265,9 +260,9 @@ describe('TopbarComponent', () => {
   });
 
   describe('feedback button', () => {
-    it('should not be disabled', () => {
-      const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
-      expect(feedbackButton).not.toHaveAttribute('disabled');
+    it('should not be disabled', async () => {
+      const feedbackButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'emoticon' }));
+      expect(await feedbackButton.isDisabled()).toBe(false);
     });
   });
 
@@ -304,9 +299,7 @@ describe('TopbarComponent', () => {
     it('applies severity-critical class to alert button when severity is critical', async () => {
       setSeverity('critical');
 
-      const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[aria-label="Alerts - Critical alerts present"]' }),
-      );
+      const alertButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'bell' }));
       const host = await alertButton.host();
       expect(await host.hasClass('severity-critical')).toBe(true);
     });
@@ -314,31 +307,41 @@ describe('TopbarComponent', () => {
     it('applies severity-warning class to alert button when severity is warning', async () => {
       setSeverity('warning');
 
-      const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[aria-label="Alerts - Warnings present"]' }),
-      );
+      const alertButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'bell' }));
       const host = await alertButton.host();
       expect(await host.hasClass('severity-warning')).toBe(true);
     });
 
-    it('updates aria-label and tooltip on alert button when severity is critical', async () => {
+    // The bell's tooltip and aria-label are both bound to the same alertTooltip()
+    // computed, and TnIconButtonHarness exposes no tooltip getter, so asserting the
+    // aria-label here also covers the tooltip text.
+    it('updates aria-label on alert button when severity is critical', () => {
       setSeverity('critical');
 
-      const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[aria-label^="Alerts"]' }),
-      );
-      const host = await alertButton.host();
-      expect(await host.getAttribute('aria-label')).toBe('Alerts - Critical alerts present');
+      expect(spectator.query('[aria-label="Alerts - Critical alerts present"]')).not.toBeNull();
     });
 
-    it('updates aria-label and tooltip on alert button when severity is warning', async () => {
+    it('updates aria-label on alert button when severity is warning', () => {
       setSeverity('warning');
 
-      const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[aria-label^="Alerts"]' }),
-      );
-      const host = await alertButton.host();
-      expect(await host.getAttribute('aria-label')).toBe('Alerts - Warnings present');
+      expect(spectator.query('[aria-label="Alerts - Warnings present"]')).not.toBeNull();
+    });
+  });
+
+  describe('focusAlertIndicator', () => {
+    // Guards against TnIconButtonComponent losing its public `focus()` method
+    // in a future library version — the call site uses `?.` and would silently
+    // become a no-op, breaking keyboard focus restoration after the alert
+    // panel closes. Asserts the public outcome (the rendered button is focused)
+    // rather than spying the private viewChild instance.
+    it('focuses the rendered alert indicator button', () => {
+      const alertButton = spectator.query<HTMLButtonElement>('button[aria-label="Alerts"]');
+      expect(alertButton).not.toBeNull();
+      const focusSpy = jest.spyOn(alertButton!, 'focus');
+
+      spectator.component.focusAlertIndicator();
+
+      expect(focusSpy).toHaveBeenCalled();
     });
   });
 });

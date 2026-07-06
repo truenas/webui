@@ -1,12 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective,
+  TnTableColumnDirective, TnTableComponent, tnIconMarker,
+} from '@truenas/ui-components';
 import {
   filter, map, switchMap, tap, take,
 } from 'rxjs';
@@ -17,16 +20,11 @@ import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.elements';
 import {
@@ -44,21 +42,20 @@ interface AllowedAddressRow {
 
 @Component({
   selector: 'ix-allowed-addresses-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss', './allowed-addresses-card.component.scss'],
   templateUrl: './allowed-addresses-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatToolbarRow,
-    TooltipComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
+    TableActionsCellComponent,
     TranslateModule,
     AsyncPipe,
   ],
@@ -67,11 +64,11 @@ export class AllowedAddressesCardComponent implements OnInit {
   private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private dialog = inject(DialogService);
-  private slideIn = inject(SlideIn);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private systemGeneralService = inject(SystemGeneralService);
+  private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
@@ -81,26 +78,29 @@ export class AllowedAddressesCardComponent implements OnInit {
   protected isDeleting$ = toObservable(this.isDeleting);
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
 
-  columns = createTable<AllowedAddressRow>([
-    textColumn({
-      title: this.translate.instant('Address'),
-      propertyName: 'address',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.promptDeleteAllowedAddress(row),
-          requiredRoles: [Role.SystemGeneralWrite],
-          disabled: () => this.isDeleting$,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'allowed-address-' + row.address,
-    ariaLabels: (row) => [row.address, this.translate.instant('Allowed Address')],
-  });
+  protected readonly displayedColumns = ['address', 'actions'];
+
+  protected readonly actions: IconActionConfig<AllowedAddressRow>[] = [
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.promptDeleteAllowedAddress(row),
+      requiredRoles: [Role.SystemGeneralWrite],
+      disabled: () => this.isDeleting$,
+    },
+  ];
+
+  protected uniqueRowTag(row: AllowedAddressRow): string {
+    return 'allowed-address-' + row.address;
+  }
+
+  protected ariaLabel(row: AllowedAddressRow): string {
+    return [row.address, this.translate.instant('Allowed Address')].join(' ');
+  }
+
+  protected trackByAddress(_: number, row: AllowedAddressRow): string {
+    return row.address;
+  }
 
   ngOnInit(): void {
     const config$ = this.api.call('system.general.config').pipe(
@@ -113,12 +113,13 @@ export class AllowedAddressesCardComponent implements OnInit {
 
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(AllowedAddressesFormComponent).success$),
-      tap(() => {
-        this.getAllowedAddresses();
-      }),
+      take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    ).subscribe(() => {
+      this.formPanel.open(AllowedAddressesFormComponent, {
+        title: this.translate.instant('Allowed IP Addresses'),
+      }).onSuccess(() => this.getAllowedAddresses(), this.destroyRef);
+    });
   }
 
   private promptDeleteAllowedAddress(row: AllowedAddressRow): void {
@@ -126,6 +127,7 @@ export class AllowedAddressesCardComponent implements OnInit {
       .confirm({
         title: this.translate.instant('Delete Allowed Address'),
         message: this.translate.instant('Are you sure you want to delete address {ip}?', { ip: row.address }),
+        buttonColor: 'warn',
       })
       .pipe(
         filter(Boolean),
@@ -166,7 +168,6 @@ export class AllowedAddressesCardComponent implements OnInit {
       },
     });
   }
-
 
   private getAllowedAddresses(): void {
     this.dataProvider.load();

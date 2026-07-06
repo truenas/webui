@@ -1,4 +1,4 @@
-@if (isPanelOpen$ | async; as isOpen) {
+@if (isPanelOpen(); as isOpen) {
   <div
     class="websocket-debug-panel"
     [class.open]="isOpen"
@@ -15,30 +15,35 @@
             name="close"
             library="mdi"
             class="toggle-button"
-            ixTest="debug-panel-toggle"
+            testId="debug-panel-toggle"
             [attr.aria-label]="isOpen ? 'Close debug panel' : 'Open debug panel'"
             (click)="togglePanel()"
           ></tn-icon-button>
         </div>
       </div>
 
-      <mat-tab-group
+      <tn-tabs
         class="panel-tabs"
-        [selectedIndex]="selectedTabIndex$ | async"
+        [selectedIndex]="selectedTabIndex()"
         (selectedIndexChange)="onTabChange($event)">
-        <mat-tab [label]="'Messages' | translate">
+        <tn-tab [label]="'Messages' | translate"></tn-tab>
+        <tn-tab [label]="'Mock Configurations' | translate"></tn-tab>
+        <tn-tab [label]="'Enclosure Mock' | translate"></tn-tab>
+        <tn-tab [label]="'Alert Classes' | translate"></tn-tab>
+
+        <tn-tab-panel>
           <ix-websocket-tab></ix-websocket-tab>
-        </mat-tab>
-        <mat-tab [label]="'Mock Configurations' | translate">
+        </tn-tab-panel>
+        <tn-tab-panel>
           <ix-mock-configurations-tab></ix-mock-configurations-tab>
-        </mat-tab>
-        <mat-tab [label]="'Enclosure Mock' | translate">
+        </tn-tab-panel>
+        <tn-tab-panel>
           <ix-enclosure-mock-tab></ix-enclosure-mock-tab>
-        </mat-tab>
-        <mat-tab [label]="'Alert Classes' | translate">
+        </tn-tab-panel>
+        <tn-tab-panel>
           <ix-alert-classes-tab></ix-alert-classes-tab>
-        </mat-tab>
-      </mat-tab-group>
+        </tn-tab-panel>
+      </tn-tabs>
     </div>
   </div>
 }

@@ -84,7 +84,7 @@
         <button
           mat-button
           ixTest="lock"
-          [matTooltip]="!hasPassphrase() ? ('You can only lock a dataset if it was encrypted with a passphrase' | translate) : ''"
+          [tnTooltip]="!hasPassphrase() ? ('You can only lock a dataset if it was encrypted with a passphrase' | translate) : ''"
           [disabled]="!hasPassphrase()"
           (click)="onLock()"
         >

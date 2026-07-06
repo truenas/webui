@@ -1,12 +1,13 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { NgTemplateOutlet } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import {
-  createComponentFactory, createSpyObject, mockProvider, Spectator,
+  createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -18,18 +19,19 @@ import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 
 describe('FileReviewComponent', () => {
-  let spectator: Spectator<FileReviewComponent>;
+  let spectator: SpectatorHost<FileReviewComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let submitButton: MatButtonHarness;
+  let submitButton: TnButtonHarness;
   let feedbackService: FeedbackService;
-  const dialogRef = createSpyObject(MatDialogRef);
+  const dialogRef = createSpyObject(DialogRef);
 
-  const createComponent = createComponentFactory({
+  const createHost = createHostFactory({
     component: FileReviewComponent,
     imports: [
       ReactiveFormsModule,
       IxStarRatingComponent,
+      NgTemplateOutlet,
     ],
     providers: [
       mockApi([
@@ -49,26 +51,32 @@ describe('FileReviewComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent({
-      props: {
-        dialogRef,
-      },
-    });
+    // The dialog projects the form's actions into the shell footer; render that template here.
+    spectator = createHost(
+      `<ix-file-review #review [dialogRef]="dialogRef"></ix-file-review>
+       <ng-container [ngTemplateOutlet]="review.dialogActions() ?? null"></ng-container>`,
+      { hostProps: { dialogRef } },
+    );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
+    submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));
     feedbackService = spectator.inject(FeedbackService);
   });
 
   it('uploads a new rating when form is submitted', async () => {
     const fakeAttachments = [fakeFile('attachment1.png'), fakeFile('attachment2.png')];
 
+    await (await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Take screenshot of the current page' }),
+    )).check();
+    await (await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Attach additional images' }),
+    )).check();
+
     await form.fillForm(
       {
         'Select Rating': 1,
         Message: 'Git gud',
-        'Take screenshot of the current page': true,
-        'Attach additional images': true,
         'Attach images (optional)': fakeAttachments,
       },
     );

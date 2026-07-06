@@ -880,7 +880,6 @@ ix-nested-tree-node[aria-level='2'] {
   }
 }
 
-// Preserves explicit \n line breaks in matTooltip content.
 .tooltip-multiline {
   white-space: pre-line;
 }
@@ -945,4 +944,126 @@ mat-form-field {
 .multi-error-dialog.mat-mdc-dialog-container,
 .multi-error-dialog.mat-mdc-dialog-content {
   overflow: auto !important;
+}
+
+// `tn-side-panel` renders its overlay inline (position: fixed; z-index: 1000) rather than
+// through the CDK overlay container, which is also z-index: 1000. Because the panel appears
+// later in the DOM, the tie resolves in its favor, so any CDK overlay opened while the panel
+// is open (e.g. the unsaved-changes confirm dialog from its closeGuard, ix-select dropdowns,
+// menus, tooltips) renders BEHIND the panel backdrop — darkened and click-blocked.
+// Drop the panel one below the CDK modal layer so those overlays stack above it as intended.
+.tn-side-panel__overlay {
+  z-index: 999 !important;
+}
+
+.app-loader-overlay .cdk-dialog-container {
+  height: 100%;
+  outline: none;
+}
+
+// Dialogs migrated to tn-form-field want the original ix-* dialog rhythm
+// (margin: 12px 0; padding: 8px 0), slightly tighter than the global default.
+// Scoped to `tn-dialog-shell` so it only touches migrated dialogs.
+tn-dialog-shell tn-form-field {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  padding: 8px 0;
+}
+
+// Same intent for forms hosted in the legacy SlideIn (`ix-slide-in-container`).
+// A dual-host form (SlideIn + `<tn-side-panel>`) must NOT carry an unconditional
+// field margin: `<tn-side-panel>` already spaces fields via tn-form-field's
+// reserved subscript area, so a flat margin double-spaces the side-panel. Scoped
+// to the SlideIn host, which has no such rhythm and renders fields flush, so
+// restore the original ix-* spacing (margin: 12px 0; padding: 8px 0) there only.
+ix-slide-in-container tn-form-field {
+  display: block;
+  margin: 12px 0;
+  padding: 8px 0;
+}
+
+// `ix-dynamic-form` hard-codes `margin: 12px 0; padding: 8px 0` on its
+// `tn-form-field` children for the slide-in/dialog rhythm. In the
+// `<tn-side-panel>` host that double-spaces (the panel already spaces fields via
+// tn-form-field's reserved subscript area — see the dual-host note above), so
+// reset it to the flush default there. Tracked under NAS-141021.
+.tn-side-panel__content ix-dynamic-form tn-form-field {
+  margin: 0;
+  padding: 0;
+}
+
+// `ix-dynamic-form` renders an item for every property across all of a
+// (multi-)schema's branches; the inactive ones render empty (their field `@if` is
+// false, leaving only a wrapper `<div>` with no control). As flex children of
+// `tn-form-section`'s gap-spaced body each empty item would add a blank gap,
+// stacking into a large void. Collapse items that hold no real control element
+// (a `*:not(div)` descendant — i.e. a tn-form-field / ix-list / etc.). Scoped to the
+// `<tn-side-panel>` host so other `ix-dynamic-form` usages are untouched. Tracked NAS-141021.
+.tn-side-panel__content ix-dynamic-form ix-dynamic-form-item:not(:has(*:not(div))) {
+  display: none;
+}
+
+// `tn-form-section` has no outer margin and its internal `gap` only spaces fields
+// *within* a section, so two adjacent sections butt together in the
+// `<tn-side-panel>` host (a section heading sits flush under the previous field).
+// Space sibling sections to match the section's own internal rhythm.
+tn-form-section + tn-form-section {
+  display: block;
+  margin-top: 1.25rem;
+}
+
+// A required tn-input / tn-select with no label renders its `*` asterisk inline,
+// which flips .tn-form-field-wrapper to display:flex. A bare input/select is not
+// flex-grow by default, so it collapses to its intrinsic width (e.g. the app
+// delete-confirmation field). Keep the control full-width next to the asterisk.
+// TEMP: reaches the private .tn-form-field-wrapper--inline class until
+// @truenas/ui-components flex-grows a no-label required control itself.
+// Tracked under NAS-141021.
+.tn-form-field-wrapper--inline > tn-input,
+.tn-form-field-wrapper--inline > tn-select {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+// The error / info / warn dialogs render their icon + title as a body heading,
+// because tn-dialog-shell's title is text-only and can't show an icon. The shell
+// still renders an (otherwise empty) header bar with a close button, leaving a
+// stray strip above the content. Collapse it. A global tag-scoped rule is used
+// because the components' own `:host ::ng-deep .tn-dialog__header` does not
+// reliably pierce into the projected tn-dialog-shell.
+// TEMP: until @truenas/ui-components ships an icon/custom title for
+// tn-dialog-shell. Tracked under NAS-141021.
+ix-error-dialog .tn-dialog__header,
+ix-info-dialog .tn-dialog__header {
+  display: none;
+}
+
+tn-form-section {
+  display: block;
+  padding-bottom: 1.25rem;
+}
+
+// Hand-rolled tn-radio groups (repeated `<tn-radio>` via `@for`, since @truenas/ui-components has no
+// radio-group wrapper yet) need stacking — tn-radio defaults to inline-block. Stack every radio and
+// space only CONSECUTIVE siblings, so a radio sitting alone in its own tn-form-field (e.g. a
+// per-option tooltip row) isn't given a stray top gap. Drop once the library ships a radio-group.
+// Tracked under NAS-141021.
+tn-radio {
+  display: block;
+}
+
+tn-radio + tn-radio {
+  margin-top: 8px;
+}
+
+// Side panels open with a bold section heading (or intro banner) sitting flush under the header
+// divider — the library's 24px content padding reads as cramped there. Give a little more
+// breathing room at the very top. The panel renders its overlay on `document.body` (not inside the
+// host component), so it can't be scoped by component ancestry. The library's
+// `.tn-side-panel__content` rule is emulated-encapsulated (`[_ngcontent]` → specificity 0,2,0), so
+// this needs a three-class chain (0,3,0 — the overlay→panel→content ancestry) to win the longhand
+// without `!important`. Tracked under NAS-141021.
+.tn-side-panel__overlay .tn-side-panel__panel .tn-side-panel__content {
+  padding-top: 36px;
 }

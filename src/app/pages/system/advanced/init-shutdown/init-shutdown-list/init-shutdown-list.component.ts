@@ -1,9 +1,20 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
@@ -13,21 +24,14 @@ import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interfac
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import {
-  actionsColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import {
-  yesNoColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownFormComponent,
@@ -41,23 +45,25 @@ import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
     TnTablePagerComponent,
+    TableActionsCellComponent,
     TranslateModule,
     AsyncPipe,
+    YesNoPipe,
   ],
 })
 export class InitShutdownListComponent implements OnInit {
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
+  private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
@@ -66,55 +72,49 @@ export class InitShutdownListComponent implements OnInit {
 
   dataProvider: AsyncDataProvider<InitShutdownScript>;
 
-  columns = createTable<InitShutdownScript>([
-    textColumn({
-      title: this.translate.instant('Type'),
-      propertyName: 'type',
-      getValue: (row) => {
-        const typeLabel = initShutdownScriptTypeLabels.get(row.type) || row.type;
-        return this.translate.instant(typeLabel);
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'comment',
-    }),
-    textColumn({
-      title: this.translate.instant('When'),
-      propertyName: 'when',
-      getValue: (row) => {
-        const whenLabel = initShutdownScriptWhenLabels.get(row.when) || row.when;
-        return this.translate.instant(whenLabel);
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Command/Script'),
-      propertyName: 'script',
-      getValue: (row) => (row.type === InitShutdownScriptType.Command ? row.command : row.script),
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.editScript(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.deleteScript(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'init-shutdown-' + row.command + '-' + row.type,
-    ariaLabels: (row) => [row.command, this.translate.instant('Init/Shutdown Script')],
-  });
+  protected readonly displayedColumns = ['type', 'comment', 'when', 'script', 'enabled', 'actions'];
+
+  protected readonly trackByScriptId = (_: number, row: InitShutdownScript): number => row.id;
+
+  protected readonly actions: IconActionConfig<InitShutdownScript>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.editScript(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.deleteScript(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected uniqueRowTag(row: InitShutdownScript): string {
+    return 'init-shutdown-' + row.command + '-' + row.type;
+  }
+
+  protected ariaLabel(row: InitShutdownScript): string {
+    return [row.command, this.translate.instant('Init/Shutdown Script')].join(' ');
+  }
+
+  protected getScriptValue(row: InitShutdownScript): string {
+    return row.type === InitShutdownScriptType.Command ? row.command : row.script;
+  }
+
+  protected getTypeLabel(row: InitShutdownScript): string {
+    const typeLabel = initShutdownScriptTypeLabels.get(row.type) || row.type;
+    return this.translate.instant(typeLabel);
+  }
+
+  protected getWhenLabel(row: InitShutdownScript): string {
+    const whenLabel = initShutdownScriptWhenLabels.get(row.when) || row.when;
+    return this.translate.instant(whenLabel);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<InitShutdownScript>(event, this.displayedColumns));
+  }
 
   ngOnInit(): void {
     this.dataProvider = new AsyncDataProvider(this.api.call('initshutdownscript.query'));
@@ -122,12 +122,16 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   protected addScript(): void {
-    this.slideIn.open(InitShutdownFormComponent).onSuccess(() => this.dataProvider.load(), this.destroyRef);
+    this.formPanel.open(InitShutdownFormComponent, {
+      title: this.translate.instant('Add Init/Shutdown Script'),
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private editScript(script: InitShutdownScript): void {
-    this.slideIn.open(InitShutdownFormComponent, { data: script })
-      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+    this.formPanel.open(InitShutdownFormComponent, {
+      title: this.translate.instant('Edit Init/Shutdown Script'),
+      inputs: { editScript: script },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private deleteScript(script: InitShutdownScript): void {

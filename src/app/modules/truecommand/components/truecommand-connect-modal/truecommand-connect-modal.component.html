@@ -1,66 +1,50 @@
-<h1
-  mat-dialog-title
-  class="truecommand-connect-modal-form-title"
-  [innerHTML]="title | translate"
-></h1>
-
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <div
-    mat-dialog-content
-    class="truecommand-connect-modal-form-content"
-  >
-    <ix-input
-      formControlName="api_key"
+<tn-dialog-shell testId="truecommand-connect" [title]="title | translate">
+  <form class="ix-form-container truecommand-connect-modal-form-content" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <tn-form-field
       [label]="helptext.updateDialog.apiKey | translate"
       [tooltip]="helptext.updateDialog.apiTooltip | translate"
-    ></ix-input>
-
-    <ix-checkbox
-      formControlName="enabled"
-      [label]="helptext.updateDialog.enabledLabel | translate"
-      [tooltip]="helptext.updateDialog.enabledTooltip | translate"
-    ></ix-checkbox>
-  </div>
-
-  <div mat-dialog-actions>
-    <button
-      mat-button
-      type="button"
-      class="action-btn"
-      name="Cancel_button"
-      ixTest="cancel"
-      (click)="onCancel()"
     >
-      {{ 'Cancel' | translate }}
-    </button>
+      <tn-input
+        testId="api-key"
+        formControlName="api_key"
+      ></tn-input>
+    </tn-form-field>
 
-    @if (isConnected) {
-      <span>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="button"
-          class="action-btn"
-          id="cust_button_deregister"
-          ixTest="deregister"
-          [name]="helptext.tcDeregisterBtn + '_button'"
-          (click)="onDeregister()"
-        >
-          {{ helptext.tcDeregisterBtn | translate }}
-        </button>
-      </span>
-    }
+    <tn-form-field [tooltip]="helptext.updateDialog.enabledTooltip | translate">
+      <tn-checkbox
+        testId="enabled"
+        formControlName="enabled"
+        [label]="helptext.updateDialog.enabledLabel | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </form>
 
-    <button
+  <tn-button
+    tnDialogAction
+    class="action-btn"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="onCancel()"
+  ></tn-button>
+
+  @if (isConnected) {
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="save"
-      [name]="saveButtonText + '_button'"
-      [disabled]="form.invalid"
-    >
-      {{ saveButtonText | translate }}
-    </button>
-  </div>
-</form>
+      tnDialogAction
+      class="action-btn"
+      testId="deregister"
+      [label]="helptext.tcDeregisterBtn | translate"
+      (onClick)="onDeregister()"
+    ></tn-button>
+  }
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    tnDialogAction
+    color="primary"
+    testId="save"
+    [label]="saveButtonText | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</tn-dialog-shell>

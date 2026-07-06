@@ -1,16 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, OnInit, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnChipInputComponent, TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { map, of, switchMap } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
-import { newOption } from 'app/interfaces/option.interface';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import {
   FcMpioInfoBannerComponent,
@@ -27,13 +27,15 @@ import { IscsiService } from 'app/services/iscsi.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnChipInputComponent,
     IxListComponent,
     IxListItemComponent,
-    IxChipsComponent,
     FcPortItemControlsComponent,
     FcMpioInfoBannerComponent,
     TranslateModule,
+    AsyncPipe,
   ],
 })
 export class ProtocolOptionsWizardStepComponent implements OnInit {
@@ -61,7 +63,9 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
         };
       });
     }),
-    switchMap((options) => of([
+    // `value` mixes the numeric portal ids with the `newOption` string sentinel, so the
+    // tn-select option type must span both (a bare `Option<number>[]` would reject the sentinel).
+    switchMap((options) => of<Option<string | number>[]>([
       { label: this.translate.instant('Create New'), value: newOption },
       ...options,
     ])),

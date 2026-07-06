@@ -66,7 +66,8 @@ describe('WidgetCpuComponent', () => {
   });
 
   it('shows cpu stats for the system', () => {
-    const stats = spectator.queryAll('.cpu-data mat-list-item');
+    // TODO: replace with TnListItemHarness once @truenas/ui-components ships one.
+    const stats = spectator.queryAll('.cpu-data tn-list-item');
     expect(stats).toHaveLength(4);
     expect(stats[0]).toHaveText('Cores: 2 cores');
     expect(stats[1]).toHaveText('Threads: 4 threads');

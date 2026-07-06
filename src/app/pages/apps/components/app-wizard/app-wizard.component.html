@@ -27,16 +27,14 @@
           <ix-app-metadata-card [appMetadata]="catalogApp.app_metadata"></ix-app-metadata-card>
         }
         <div class="actions">
-          <button
+          <tn-button
             *ixRequiresRoles="requiredRoles"
-            mat-button
             type="submit"
             color="primary"
-            ixTest="save"
+            testId="save"
+            [label]="isNew ? ('Install' | translate) : ('Update' | translate)"
             [disabled]="form.invalid || isLoading"
-          >
-            {{ isNew ? ('Install' | translate) : ('Update' | translate) }}
-          </button>
+          ></tn-button>
         </div>
       </form>
     </div>

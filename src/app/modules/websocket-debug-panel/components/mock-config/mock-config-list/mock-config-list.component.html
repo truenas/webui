@@ -6,33 +6,33 @@
         type="file"
         accept=".json"
         style="display: none"
-        ixTest="import-file-input"
+        tnTestIdType="input"
+        [tnTestId]="'import-file-input'"
         (change)="importConfigs($event)"
       />
       <tn-icon-button
         name="upload"
         library="mdi"
-        ixTest="import-button"
+        testId="import-button"
         [tooltip]="'Import' | translate"
+        [ariaLabel]="'Import' | translate"
         (click)="fileInput.click()"
       ></tn-icon-button>
       <tn-icon-button
         name="download"
         library="mdi"
-        ixTest="export-button"
+        testId="export-button"
         [tooltip]="'Export' | translate"
+        [ariaLabel]="'Export' | translate"
         [disabled]="mockConfigs().length === 0"
         (click)="exportConfigs()"
       ></tn-icon-button>
-      <button
-        mat-button
-        ixTest="add-mock-button"
+      <tn-button
+        testId="add-mock-button"
         color="primary"
-        (click)="addNewConfig()"
-      >
-        <tn-icon name="plus" library="mdi"></tn-icon>
-        {{ 'Add Mock' | translate }}
-      </button>
+        [label]="'Add Mock' | translate"
+        (onClick)="addNewConfig()"
+      ></tn-button>
     </div>
   </div>
 
@@ -55,11 +55,12 @@
       <div class="config-list">
         @for (config of mockConfigs(); track config.id) {
           <div class="config-item" [class.enabled]="config.enabled">
-            <mat-slide-toggle
+            <tn-slide-toggle
               [checked]="config.enabled"
-              [matTooltip]="config.enabled ? ('Disable' | translate) : ('Enable' | translate)"
+              [ariaLabel]="(config.enabled ? 'Disable mock for {name}' : 'Enable mock for {name}') | translate: { name: config.methodName }"
+              [tnTooltip]="config.enabled ? ('Disable' | translate) : ('Enable' | translate)"
               (change)="toggleConfig(config.id)"
-            ></mat-slide-toggle>
+            ></tn-slide-toggle>
 
             <div class="config-info">
               <div class="method-name">
@@ -75,15 +76,17 @@
               <tn-icon-button
                 name="pencil"
                 library="mdi"
-                ixTest="edit-config-button"
+                testId="edit-config-button"
                 [tooltip]="'Edit' | translate"
+                [ariaLabel]="'Edit mock for {name}' | translate: { name: config.methodName }"
                 (click)="editConfig(config)"
               ></tn-icon-button>
               <tn-icon-button
                 name="delete"
                 library="mdi"
-                ixTest="delete-config-button"
+                testId="delete-config-button"
                 [tooltip]="'Delete' | translate"
+                [ariaLabel]="'Delete mock for {name}' | translate: { name: config.methodName }"
                 (click)="deleteConfig(config.id)"
               ></tn-icon-button>
             </div>

@@ -11,24 +11,13 @@
 
 .form-buttons {
   display: flex;
-  flex: 1;
-  flex-direction: row-reverse;
-
-  a,
-  button {
-    margin-left: 10px;
-  }
+  gap: 8px;
 }
 
 .form-actions {
   align-items: center;
   display: flex;
   flex-wrap: nowrap;
-  justify-content: space-between;
-  padding-top: 16px;
-  margin-top: 12px;
-
-  ix-checkbox {
-    margin: 0;
-  }
+  gap: 8px;
+  justify-content: flex-end;
 }

@@ -1,12 +1,12 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   OauthProviderComponent,
@@ -17,7 +17,7 @@ import {
 
 describe('OneDriveProviderFormComponent', () => {
   let spectator: Spectator<OneDriveProviderFormComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: OneDriveProviderFormComponent,
     detectChanges: false,
@@ -46,13 +46,20 @@ describe('OneDriveProviderFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
     spectator.component.provider = {
       credentials_oauth: 'http://truenas.com/oauth',
     } as CloudSyncProvider;
     spectator.detectChanges();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
@@ -62,13 +69,10 @@ describe('OneDriveProviderFormComponent', () => {
       drive_id: 'driveid',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      'Access Token': 'token',
-      'Drives List': '',
-      'Drive Account Type': 'PERSONAL',
-      'Drive ID': 'driveid',
-    });
+    expect(await (await getInput('token')).getValue()).toBe('token');
+    expect(await (await getSelect('drives')).getDisplayText()).toBe('');
+    expect(await (await getSelect('drive_type')).getDisplayText()).toBe('PERSONAL');
+    expect(await (await getInput('drive_id')).getValue()).toBe('driveid');
   });
 
   it('loads a list of OneDrive drives and populates Drives List select when oAuth flow is completed', async () => {
@@ -83,9 +87,9 @@ describe('OneDriveProviderFormComponent', () => {
       token: 'newtoken',
     }]);
 
-    const drivesSelect = await form.getControl('Drives List') as IxSelectHarness;
-    expect(await drivesSelect.getOptionLabels()).toEqual([
-      '--',
+    const drivesSelect = await getSelect('drives');
+    await drivesSelect.open();
+    expect(await drivesSelect.getOptions()).toEqual([
       'ODCMetadataArchive - ODC Archived Metadata',
       'OneDrive',
     ]);
@@ -99,8 +103,7 @@ describe('OneDriveProviderFormComponent', () => {
       client_secret: 'newsecret',
     });
 
-    const drivesSelect = await form.getControl('Drives List') as IxSelectHarness;
-    await drivesSelect.setValue('ODCMetadataArchive - ODC Archived Metadata');
+    await (await getSelect('drives')).selectOption('ODCMetadataArchive - ODC Archived Metadata');
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toMatchObject({
@@ -110,11 +113,9 @@ describe('OneDriveProviderFormComponent', () => {
   });
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
-    await form.fillForm({
-      'Access Token': 'newtoken',
-      'Drive Account Type': 'PERSONAL',
-      'Drive ID': 'driveid',
-    });
+    await (await getInput('token')).setValue('newtoken');
+    await (await getSelect('drive_type')).selectOption('PERSONAL');
+    await (await getInput('drive_id')).setValue('driveid');
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({

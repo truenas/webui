@@ -4,10 +4,9 @@ import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTooltipDirective, TnDialog } from '@truenas/ui-components';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
@@ -47,7 +46,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     MatCardContent,
     OrNotAvailablePipe,
-    MatTooltip,
+    TnTooltipDirective,
     CopyButtonComponent,
     MatCardActions,
     TooltipComponent,
@@ -56,7 +55,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class DatasetDetailsCardComponent {
   private translate = inject(TranslateService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private datasetStore = inject(DatasetTreeStore);
   private slideIn = inject(SlideIn);
   private errorHandler = inject(ErrorHandlerService);
@@ -103,8 +102,8 @@ export class DatasetDetailsCardComponent {
   }
 
   deleteDataset(): void {
-    this.matDialog.open(DeleteDatasetDialog, { data: this.dataset() })
-      .afterClosed()
+    this.tnDialog.open(DeleteDatasetDialog, { data: this.dataset() })
+      .closed
       .pipe(
         filter(Boolean),
         switchMap(() => {

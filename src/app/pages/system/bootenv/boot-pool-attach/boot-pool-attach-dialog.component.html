@@ -1,6 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Attach' | translate }}
-</h1>
+<tn-dialog-shell testId="boot-pool-attach" [title]="'Attach' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset>
     <ix-unused-disk-select
@@ -10,31 +8,35 @@
       [tooltip]="helptextSystemBootenv.memberDiskTooltip | translate"
       [required]="true"
     ></ix-unused-disk-select>
-    <ix-checkbox
-      [formControlName]="expand.fcName"
-      [label]="expand.label | translate"
-      [tooltip]="expand.tooltip | translate"
-    ></ix-checkbox>
+    <tn-form-field [tooltip]="expand.tooltip | translate">
+      <tn-checkbox
+        testId="expand"
+        [formControlName]="expand.fcName"
+        [label]="expand.label | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   </ix-fieldset>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button
-      *ixRequiresRoles="[Role.DiskWrite]"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="save"
-      [disabled]="form.invalid || isFormLoading"
-    >
-      {{ 'Save' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
 
 @if (isFormLoading) {
   <ix-fake-progress-bar></ix-fake-progress-bar>
 }
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="[Role.DiskWrite]"
+    color="primary"
+    testId="save"
+    [label]="'Save' | translate"
+    [disabled]="form.invalid || isFormLoading"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

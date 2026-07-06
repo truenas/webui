@@ -5,11 +5,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
@@ -65,7 +64,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     ReactiveFormsModule,
     FormsModule,
     MatButton,
-    MatTooltip,
+    TnTooltipDirective,
     TranslateModule,
     SaveDebugButtonComponent,
   ],
@@ -73,7 +72,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class SupportCardComponent implements OnInit {
   protected api = inject(ApiService);
   private loader = inject(LoaderService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
@@ -175,7 +174,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   feedbackDialog(): void {
-    this.matDialog.open(FeedbackDialog, { data: FeedbackType.Bug });
+    this.tnDialog.open(FeedbackDialog, { data: FeedbackType.Bug });
   }
 
   openProactive(): void {
@@ -186,7 +185,7 @@ export class SupportCardComponent implements OnInit {
   private updateProductionStatus(newStatus: boolean): void {
     let request$: Observable<boolean | SetProductionStatusDialogResult>;
     if (newStatus) {
-      request$ = this.matDialog.open(SetProductionStatusDialog).afterClosed().pipe(
+      request$ = this.tnDialog.open(SetProductionStatusDialog).closed.pipe(
         filter((result: SetProductionStatusDialogResult | false) => {
           if (result) {
             return true;

@@ -36,7 +36,7 @@
         }
         <span
           class="edit-contacts-wrapper"
-          [matTooltip]="isProactiveSupportAvailable() ? '' : (helptext.proactive.unavailableMessage | translate)"
+          [tnTooltip]="isProactiveSupportAvailable() ? '' : (helptext.proactive.unavailableMessage | translate)"
         >
           <button
             *ixRequiresRoles="manageProactiveRoles"
@@ -120,30 +120,32 @@
     }
   }
 
-  <mat-list-item class="fingerprint-row">
-    <span class="label">{{ 'System Thumbprint' | translate }}:</span>
-    <span class="value fingerprint-actions">
-      <button
-        mat-icon-button
-        type="button"
-        ixTest="view-fingerprint"
-        [attr.aria-label]="'View System Thumbprint' | translate"
-        [matTooltip]="'View Thumbprint' | translate"
-        (click)="openFingerprintDialog()"
-      >
-        <tn-icon name="eye" library="mdi" size="md"></tn-icon>
-      </button>
-      <button
-        mat-icon-button
-        type="button"
-        ixTest="copy-fingerprint"
-        [attr.aria-label]="'Copy System Thumbprint' | translate"
-        [disabled]="isFingerprintBusy()"
-        [matTooltip]="'Copy to Clipboard' | translate"
-        (click)="copyFingerprint()"
-      >
-        <tn-icon name="content-copy" library="mdi" size="md"></tn-icon>
-      </button>
-    </span>
-  </mat-list-item>
+  @if (!isEnterprise()) {
+    <mat-list-item class="fingerprint-row">
+      <span class="label">{{ 'System Thumbprint' | translate }}:</span>
+      <span class="value fingerprint-actions">
+        <button
+          mat-icon-button
+          type="button"
+          ixTest="view-fingerprint"
+          [attr.aria-label]="'View System Thumbprint' | translate"
+          [tnTooltip]="'View Thumbprint' | translate"
+          (click)="openFingerprintDialog()"
+        >
+          <tn-icon name="eye" library="mdi" size="md"></tn-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
+          ixTest="copy-fingerprint"
+          [attr.aria-label]="'Copy System Thumbprint' | translate"
+          [disabled]="isFingerprintBusy()"
+          [tnTooltip]="'Copy to Clipboard' | translate"
+          (click)="copyFingerprint()"
+        >
+          <tn-icon name="content-copy" library="mdi" size="md"></tn-icon>
+        </button>
+      </span>
+    </mat-list-item>
+  }
 </mat-list>

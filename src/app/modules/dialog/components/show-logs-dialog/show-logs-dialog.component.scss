@@ -1,4 +1,7 @@
 :host {
+  display: block;
+  max-width: 768px;
+
   .logs {
     position: relative;
 
@@ -33,7 +36,3 @@
   }
 }
 
-.mat-mdc-dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-}

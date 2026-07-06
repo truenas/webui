@@ -2,11 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -25,7 +24,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatIconButton,
-    MatTooltip,
+    TnTooltipDirective,
     TnIconComponent,
     AsyncPipe,
     TranslateModule,

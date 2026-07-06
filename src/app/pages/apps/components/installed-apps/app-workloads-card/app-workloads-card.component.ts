@@ -1,23 +1,19 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, computed, inject } from '@angular/core';
-import { MatIconAnchor, MatIconButton } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { TnCardComponent, TnDialog, TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import {
   App, AppContainerDetails, appContainerStateLabels,
 } from 'app/interfaces/app.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import {
   VolumeMountsDialog,
@@ -29,31 +25,51 @@ import {
   styleUrls: ['./app-workloads-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
     TranslateModule,
-    MatTooltip,
-    RequiresRolesDirective,
-    TestDirective,
-    TnIconComponent,
+    TnTooltipDirective,
     MapValuePipe,
-    MatIconButton,
-    MatCardContent,
+    TnIconButtonComponent,
     DecimalPipe,
     TooltipComponent,
-    RouterLink,
-    MatIconAnchor,
   ],
 })
 export class AppWorkloadsCardComponent {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
+  private router = inject(Router);
+  private authService = inject(AuthService);
 
   readonly app = input.required<App>();
 
   readonly AppState = AppState;
 
   protected readonly requiredRoles = [Role.AppsWrite];
+
+  // Opening a container console requires both the apps-write role and the `web_shell`
+  // privilege that gates every shell endpoint; lacking either locks the shortcut.
+  // `hasWebShellAccess$` only emits for a resolved user, so these stay `false` until
+  // the user resolves — a fail-closed default that keeps the shortcut locked, not shown.
+  private readonly hasAppsWriteRole = toSignal(
+    this.authService.hasRole(this.requiredRoles),
+    { initialValue: false },
+  );
+
+  private readonly hasWebShellAccess = toSignal(
+    this.authService.hasWebShellAccess$,
+    { initialValue: false },
+  );
+
+  protected readonly canAccessShell = computed(() => this.hasAppsWriteRole() && this.hasWebShellAccess());
+
+  // Name the actual missing permission so the lock's tooltip/aria isn't misleading: a
+  // user who has `web_shell` but not apps-write shouldn't be told web-shell is the problem.
+  protected readonly shellDenialMessage = computed(() => {
+    if (!this.hasWebShellAccess()) {
+      return helptextGlobal.webShellAccessDenied;
+    }
+    return T('You do not have permission to open this shell.');
+  });
+
   protected readonly appContainerStateLabels = appContainerStateLabels;
   protected readonly helptext = helptextApps;
 
@@ -75,7 +91,7 @@ export class AppWorkloadsCardComponent {
   });
 
   volumeButtonPressed(containerDetails: AppContainerDetails): void {
-    this.matDialog.open(VolumeMountsDialog, {
+    this.tnDialog.open(VolumeMountsDialog, {
       minWidth: '60vw',
       data: containerDetails,
     });
@@ -101,5 +117,11 @@ export class AppWorkloadsCardComponent {
       'shell',
       containerDetails.id,
     ];
+  }
+
+  // tn-icon-button renders as a button, not an anchor, so the shell/logs shortcuts
+  // can't use [routerLink] — route programmatically instead of from the template.
+  protected goTo(commands: string[]): void {
+    this.router.navigate(commands);
   }
 }

@@ -1,13 +1,14 @@
+import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { AppLoaderComponent } from 'app/modules/loader/components/app-loader/app-loader.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 
 describe('LoaderService', () => {
   let service: LoaderService;
-  let matDialog: MatDialog;
-  let mockDialogRef: Partial<MatDialogRef<AppLoaderComponent>>;
+  let tnDialog: TnDialog;
+  let mockDialogRef: Partial<DialogRef<unknown, AppLoaderComponent>>;
   let mockComponentInstance: Partial<AppLoaderComponent>;
 
   beforeEach(() => {
@@ -18,24 +19,29 @@ describe('LoaderService', () => {
     mockDialogRef = {
       id: 'test-dialog-id',
       componentInstance: mockComponentInstance as AppLoaderComponent,
-      afterClosed: jest.fn(() => of(true)),
+      closed: of(true),
       close: jest.fn(),
     };
 
-    const mockMatDialog = {
+    const mockTnDialog = {
       open: jest.fn(() => mockDialogRef),
-      openDialogs: [] as MatDialogRef<unknown>[],
+    };
+
+    // The loader reads `openDialogs` off the cdk `Dialog` for focus restoration.
+    const mockDialog = {
+      openDialogs: [] as DialogRef[],
     };
 
     TestBed.configureTestingModule({
       providers: [
         LoaderService,
-        { provide: MatDialog, useValue: mockMatDialog },
+        { provide: TnDialog, useValue: mockTnDialog },
+        { provide: Dialog, useValue: mockDialog },
       ],
     });
 
     service = TestBed.inject(LoaderService);
-    matDialog = TestBed.inject(MatDialog);
+    tnDialog = TestBed.inject(TnDialog);
   });
 
   afterEach(() => {
@@ -46,8 +52,9 @@ describe('LoaderService', () => {
     it('opens a dialog with default title', () => {
       service.open();
 
-      expect(matDialog.open).toHaveBeenCalledWith(AppLoaderComponent, {
-        disableClose: false,
+      expect(tnDialog.open).toHaveBeenCalledWith(AppLoaderComponent, {
+        disableClose: true,
+        panelClass: 'app-loader-overlay',
         width: '200px',
         height: '200px',
       });
@@ -65,7 +72,7 @@ describe('LoaderService', () => {
 
       service.open('Test title');
 
-      expect(matDialog.open).toHaveBeenCalled();
+      expect(tnDialog.open).toHaveBeenCalled();
       expect(mockComponentInstance.setTitle).not.toHaveBeenCalled();
     });
   });

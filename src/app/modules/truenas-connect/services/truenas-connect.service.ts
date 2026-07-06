@@ -1,12 +1,15 @@
+import { Overlay } from '@angular/cdk/overlay';
 import { Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   filter, map, merge, Observable, switchMap, tap,
 } from 'rxjs';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { topbarDialogPositionStrategy } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -20,7 +23,9 @@ export class TruenasConnectService {
   private window = inject<Window>(WINDOW);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
+  private overlay = inject(Overlay);
+  private translate = inject(TranslateService);
   private wsStatus = inject(WebSocketStatusService);
 
   /**
@@ -109,14 +114,14 @@ export class TruenasConnectService {
   }
 
   openStatusModal(): void {
-    this.matDialog.open(TruenasConnectStatusModalComponent, {
+    this.tnDialog.open(TruenasConnectStatusModalComponent, {
       width: '400px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
-      position: {
-        top: '48px',
-        right: '16px',
-      },
+      // The dialog's visible title slot holds the logo, so the shell renders no
+      // heading text. Give assistive tech an accessible name for the dialog.
+      ariaLabel: this.translate.instant('TrueNAS Connect'),
+      positionStrategy: topbarDialogPositionStrategy(this.overlay),
     });
   }
 }

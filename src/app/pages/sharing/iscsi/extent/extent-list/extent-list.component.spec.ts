@@ -1,10 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -17,7 +18,7 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
@@ -66,13 +67,14 @@ describe('ExtentListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(null)),
-        })),
+          closed: of(null),
+          close: jest.fn(),
+        } as unknown as DialogRef)),
       }),
       provideMockStore({
         selectors: [
@@ -101,7 +103,11 @@ describe('ExtentListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ExtentFormComponent, { wide: true });
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ExtentFormComponent, {
+      title: 'Add Extent',
+      wide: true,
+      inputs: { extentData: undefined },
+    });
   });
 
   it('opens extent form when "Edit" button is pressed', async () => {
@@ -109,9 +115,10 @@ describe('ExtentListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ExtentFormComponent, {
-      data: extents[0],
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ExtentFormComponent, {
+      title: 'Edit Extent',
       wide: true,
+      inputs: { extentData: extents[0] },
     });
   });
 
@@ -120,7 +127,7 @@ describe('ExtentListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteExtentDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteExtentDialog, {
       data: extents[0],
     });
   });

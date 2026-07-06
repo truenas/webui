@@ -10,6 +10,7 @@
 
   <div class="input-container" [class.disabled]="disabledState">
     <mat-select
+      #matSelect="matSelect"
       [required]="required()"
       [compareWith]="compareWith()"
       [disabled]="disabledState"
@@ -59,11 +60,12 @@
         @for (option of opts; track option.label) {
           <mat-option
             #ixOption
-            matTooltipPosition="right"
+            tnTooltipPosition="right"
             [value]="option.value"
             [disabled]="option.disabled"
             [ixTest]="[controlDirective.name, option.label]"
-            [matTooltip]="option.hoverTooltip ? (option.hoverTooltip | translate) : ''"
+            [tnTooltip]="option.hoverTooltip ? (option.hoverTooltip | translate) : ''"
+            [tnTooltipDisabled]="!matSelect.panelOpen"
             [attr.aria-label]="option.label | translate"
           >
             @if (multiple()) {
@@ -93,11 +95,11 @@
     </mat-select>
 
     @if (isLoadingState) {
-      <mat-progress-spinner
+      <tn-spinner
         class="loader"
         mode="indeterminate"
         [diameter]="15"
-      ></mat-progress-spinner>
+      ></tn-spinner>
     }
   </div>
 

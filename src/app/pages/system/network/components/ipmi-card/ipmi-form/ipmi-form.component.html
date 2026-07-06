@@ -101,7 +101,7 @@
           (click)="toggleFlashing()"
         >
           @if (isFlashingLoading()) {
-            <mat-spinner [diameter]="20"></mat-spinner>
+            <tn-spinner mode="indeterminate" [diameter]="20"></tn-spinner>
           } @else {
             <tn-icon name="lightbulb-on-outline" library="mdi"></tn-icon>
           }

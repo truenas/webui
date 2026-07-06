@@ -1,14 +1,13 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, input, output, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
-import { MatTooltip } from '@angular/material/tooltip';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { Observable, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -26,6 +25,8 @@ import {
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-sys-info',
@@ -36,7 +37,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     MatIconButton,
     MatListModule,
-    MatTooltip,
+    TnTooltipDirective,
     ReactiveFormsModule,
     IxSlideToggleComponent,
     RequiresRolesDirective,
@@ -50,8 +51,11 @@ export class SysInfoComponent {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
+  private store$ = inject<Store<AppState>>(Store);
+
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   readonly hasLicense = input<boolean>();
   readonly licenseInfo = input<LicenseInfoInSupport>();
@@ -71,7 +75,7 @@ export class SysInfoComponent {
   private fingerprintRaw: string | null = null;
 
   protected openFingerprintDialog(): void {
-    this.matDialog.open(LicenseFingerprintDialog, { autoFocus: false });
+    this.tnDialog.open(LicenseFingerprintDialog, { autoFocus: false });
   }
 
   protected copyFingerprint(): void {

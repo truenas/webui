@@ -5,15 +5,6 @@
   max-width: 480px;
   position: relative;
   width: 100%;
-
-  .mat-mdc-card-content {
-    padding: 0 !important;
-  }
-
-  >.mat-mdc-card {
-    border: 0;
-    margin: 0;
-  }
 }
 
 .login-form {
@@ -39,19 +30,29 @@
   text-align: center;
 }
 
-.mat-mdc-card {
-  background-color: var(--bg2);
+tn-card {
+  // Keep the card on the active webui theme palette even for custom themes,
+  // where the component-library theme sync falls back to a preset.
+  --tn-bg2: var(--bg2);
+
   color: var(--fg2);
-  padding: 0 0 18px !important;
+  display: block;
 }
 
-.mat-mdc-card .mat-mdc-card-content>div {
-  padding: 0;
+// TEMP: until @truenas/ui-components ships a full-width input on tn-button.
+// Covers the submit buttons of both child forms.
+:host ::ng-deep .submit-button button {
+  width: 100%;
+}
+
+ix-disconnected-message {
+  padding-bottom: 18px;
 }
 
 .card-bottom {
   overflow: auto;
-  padding: 0 16px;
+  // 18px bottom replaces the legacy mat-card's bottom inset on the main card.
+  padding: 0 16px 18px;
 }
 
 .form-container {
@@ -63,10 +64,10 @@
   background-color: var(--bg2);
 
   // Fallback for browsers that don't support image-set
-  background-image: url('assets/images/signin/stars-sky-800w.jpg');
-  background-image: image-set(url('assets/images/signin/stars-sky-400w.avif') 1x,
-  url('assets/images/signin/stars-sky-800w.avif') 2x,
-  url('assets/images/signin/stars-sky-1200w.avif') 3x);
+  background-image: url('assets/images/signin/login-background-960w.jpg');
+  background-image: image-set(url('assets/images/signin/login-background-480w.avif') 1x,
+  url('assets/images/signin/login-background-960w.avif') 2x,
+  url('assets/images/signin/login-background-1440w.avif') 3x);
   background-size: cover;
   border-bottom: solid 1px var(--lines);
   display: flex;
@@ -78,7 +79,8 @@
   text-align: center;
 
   .logo {
-    fill: #fff;
+    --tn-icon-color: var(--tn-white);
+
     height: auto;
     max-width: 80%;
     position: relative;
@@ -120,7 +122,9 @@
     width: 100vw;
   }
 
-  .mat-mdc-card {
+  tn-card {
+    // Grid so the card's inner wrapper stretches to fill the full viewport height.
+    display: grid;
     min-height: 100vh;
     min-height: 100dvh;
     top: 0;
@@ -154,7 +158,8 @@
 .logging-in {
   box-sizing: border-box;
   color: var(--fg2);
-  padding: 49px 16px 37px;
+  // 55px = legacy 37px + the removed mat-card's 18px bottom inset.
+  padding: 49px 16px 55px;
   text-align: center;
   width: 100%;
 }

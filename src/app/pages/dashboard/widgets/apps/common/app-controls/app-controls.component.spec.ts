@@ -1,9 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import {
+  TnIconButtonHarness, TnMenuHarness, TnMenuTesting,
+} from '@truenas/ui-components';
 import { of, Observable } from 'rxjs';
 import { mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { AppState } from 'app/enums/app-state.enum';
@@ -88,7 +89,7 @@ describe('AppControlsComponent', () => {
   it('checks open web portal', async () => {
     const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
 
-    const portalButton = await loader.getHarness(TnIconHarness.with({ name: 'web' }));
+    const portalButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'web' }));
     await portalButton.click();
 
     expect(redirectSpy).toHaveBeenCalledWith('http://test.com/');
@@ -97,24 +98,24 @@ describe('AppControlsComponent', () => {
   it('should open portal menu and show other portals', async () => {
     const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
 
-    const otherPortalsButton = await loader.getHarness(TnIconHarness.with({ name: 'menu-down' }));
-    expect(otherPortalsButton).toExist();
+    const otherPortalsButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
+    await otherPortalsButton.click();
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Other UI' });
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    expect(await menu.getItemLabels()).toEqual(['Other UI']);
+    await menu.clickItem({ label: 'Other UI' });
 
     expect(redirectSpy).toHaveBeenCalledWith('https://other.example.com/');
   });
 
-  it('should call openPortal with correct url when menu item clicked', () => {
+  it('should call openPortal with correct url when menu item clicked', async () => {
     const openPortalSpy = jest.spyOn(spectator.component, 'openPortal');
 
-    spectator.click('[ixTest="apps-web-portal-dropdown"]');
-    spectator.detectChanges();
+    const otherPortalsButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
+    await otherPortalsButton.click();
 
-    const menuItem = spectator.queryAll('button[mat-menu-item]')[0];
-    spectator.click(menuItem);
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    await menu.clickItem({ label: 'Other UI' });
 
     expect(openPortalSpy).toHaveBeenCalledWith('https://other.example.com');
   });
@@ -123,7 +124,7 @@ describe('AppControlsComponent', () => {
     const restartSpy = jest.spyOn(spectator.inject(ApplicationsService), 'restartApplication');
     const dialogSpy = jest.spyOn(spectator.inject(DialogService), 'jobDialog');
 
-    const restartButton = await loader.getHarness(TnIconHarness.with({ name: 'restart' }));
+    const restartButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'restart' }));
     await restartButton.click();
 
     expect(restartSpy).toHaveBeenCalledWith(app.name);
@@ -139,7 +140,7 @@ describe('AppControlsComponent', () => {
   it('checks redirect to installed apps page', async () => {
     jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
 
-    const appButton = await loader.getHarness(TnIconHarness.with({ name: 'cog' }));
+    const appButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'cog' }));
     await appButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'installed', app.metadata.train, app.id]);
@@ -161,7 +162,7 @@ describe('AppControlsComponent', () => {
     spectator.detectChanges();
 
     const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
-    const portalButton = await loader.getHarness(TnIconHarness.with({ name: 'web' }));
+    const portalButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'web' }));
     await portalButton.click();
 
     expect(redirectSpy).toHaveBeenCalledWith('http://localhost:8000/ui?q=ui#yes');

@@ -1,24 +1,18 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogContent, MatDialogModule, MatDialogRef,
-} from '@angular/material/dialog';
-import { MatTableModule } from '@angular/material/table';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCellDefDirective, TnDialogShellComponent, TnFormFieldComponent,
+  TnFormSectionComponent, TnHeaderCellDefDirective, TnInputComponent, TnSelectComponent,
+  TnTableColumnDirective, TnTableComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { catchError, Observable, of } from 'rxjs';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { ContainerImage, ContainerImageRegistryResponse } from 'app/interfaces/container.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -30,19 +24,20 @@ export type ContainerImageWithId = ContainerImage & {
 @Component({
   selector: 'ix-select-image-dialog',
   imports: [
-    MatTableModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    AsyncPipe,
     ReactiveFormsModule,
-    MatDialogContent,
-    MatDialogModule,
+    TnButtonComponent,
+    TnCellDefDirective,
+    TnDialogShellComponent,
+    TnFormFieldComponent,
+    TnFormSectionComponent,
+    TnHeaderCellDefDirective,
+    TnInputComponent,
+    TnSelectComponent,
+    TnTableColumnDirective,
+    TnTableComponent,
+    TnTestIdDirective,
     TranslateModule,
-    TnIconComponent,
-    IxInputComponent,
-    MatButton,
-    MatIconButton,
-    TestDirective,
-    EmptyComponent,
   ],
   templateUrl: './select-image-dialog.component.html',
   styleUrls: ['./select-image-dialog.component.scss'],
@@ -50,7 +45,7 @@ export type ContainerImageWithId = ContainerImage & {
 })
 export class SelectImageDialog implements OnInit {
   private api = inject(ApiService);
-  private dialogRef = inject<MatDialogRef<SelectImageDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, SelectImageDialog>>(DialogRef);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -58,7 +53,7 @@ export class SelectImageDialog implements OnInit {
   protected data = inject<{
     remote: ContainerRemote;
     type: ContainerType;
-  }>(MAT_DIALOG_DATA);
+  }>(DIALOG_DATA);
 
   protected readonly columns = ['label', 'os', 'release', 'archs', 'variant', 'actions'];
   protected filterForm = this.fb.group({
@@ -74,10 +69,8 @@ export class SelectImageDialog implements OnInit {
 
   protected images = signal<ContainerImageWithId[]>([]);
   protected filteredImages = signal<ContainerImageWithId[]>([]);
-  protected entityEmptyConf = signal({
-    type: EmptyType.Loading,
-    large: true,
-  } as EmptyConfig);
+  protected isLoading = signal(true);
+  protected emptyMessage = signal('');
 
   constructor() {
     this.filterForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.filterImages());
@@ -85,10 +78,6 @@ export class SelectImageDialog implements OnInit {
 
   ngOnInit(): void {
     this.getImages();
-  }
-
-  protected onClose(): void {
-    this.dialogRef.close();
   }
 
   protected selectImage(image: ContainerImageWithId): void {
@@ -100,11 +89,8 @@ export class SelectImageDialog implements OnInit {
       .pipe(
         catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
-          this.entityEmptyConf.set({
-            type: EmptyType.Errors,
-            large: true,
-            title: this.translate.instant('Failed to load images'),
-          });
+          this.emptyMessage.set(this.translate.instant('Failed to load images'));
+          this.isLoading.set(false);
           return of([]);
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -112,6 +98,7 @@ export class SelectImageDialog implements OnInit {
       .subscribe((registryImages: ContainerImageRegistryResponse[]) => {
         this.setFilteringOptions(registryImages);
         this.filterImages();
+        this.isLoading.set(false);
       });
   }
 
@@ -120,12 +107,10 @@ export class SelectImageDialog implements OnInit {
     const variantSet = new Set<string>();
     const releaseSet = new Set<string>();
 
-    // Flatten the registry response into individual selectable images
     const imageArray: ContainerImageWithId[] = [];
 
     registryImages.forEach((registryImage) => {
       registryImage.versions.forEach((version: unknown) => {
-        // Handle different version object structures
         let versionString: string;
         let archsArray: string[] = ['amd64'];
         let variantString = 'default';
@@ -133,7 +118,6 @@ export class SelectImageDialog implements OnInit {
         if (typeof version === 'string') {
           versionString = version;
         } else if (version && typeof version === 'object') {
-          // If version is an object, extract the version string from its properties
           const versionObj = version as Record<string, unknown>;
           versionString = (versionObj.version as string)
             || (versionObj.name as string)
@@ -147,7 +131,6 @@ export class SelectImageDialog implements OnInit {
 
         const imageId = `${registryImage.name}:${versionString}`;
 
-        // Create a ContainerImage-compatible object
         const image: ContainerImageWithId = {
           id: imageId,
           archs: archsArray,
@@ -182,7 +165,6 @@ export class SelectImageDialog implements OnInit {
   }
 
   private extractOs(imageName: string): string {
-    // Try to extract OS name from image name
     const lowerName = imageName.toLowerCase();
 
     if (lowerName.includes('ubuntu')) return 'Ubuntu';
@@ -194,7 +176,6 @@ export class SelectImageDialog implements OnInit {
     if (lowerName.includes('node')) return 'Linux';
     if (lowerName.includes('python')) return 'Linux';
 
-    // Default fallback
     return 'Linux';
   }
 
@@ -212,14 +193,7 @@ export class SelectImageDialog implements OnInit {
       return matchesOs && matchesVariant && matchesRelease && matchesSearch;
     });
 
-    if (!filtered.length) {
-      this.entityEmptyConf.set({
-        type: EmptyType.NoSearchResults,
-        large: true,
-        title: this.translate.instant('No images found'),
-      });
-    }
-
+    this.emptyMessage.set(filtered.length ? '' : this.translate.instant('No images found'));
     this.filteredImages.set(filtered);
   }
 }

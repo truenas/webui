@@ -1,29 +1,39 @@
+import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   OnInit,
   inject,
+  input,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  endWith, Observable, of,
+  InputType,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnChipInputComponent,
+  TnDialog,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  BehaviorSubject, endWith, Observable, of,
 } from 'rxjs';
 import {
-  debounceTime, filter, map, switchMap, take, tap,
+  debounceTime, distinctUntilChanged, filter, map, shareReplay, switchMap, take, tap,
 } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
@@ -43,25 +53,21 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
@@ -72,6 +78,7 @@ import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -82,34 +89,31 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './smb-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnChipInputComponent,
+    TnButtonComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    IxChipsComponent,
-    IxGroupChipsComponent,
     IxErrorsComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
+    AsyncPipe,
     WarningComponent,
     SmbUsersWarningComponent,
     SmbExtensionsWarningComponent,
   ],
 })
-export class SmbFormComponent implements OnInit, AfterViewInit {
+export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterViewInit {
   formatter = inject(IxFormatterService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private dialogService = inject(DialogService);
   private datasetService = inject(DatasetService);
   private translate = inject(TranslateService);
@@ -122,17 +126,31 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private validatorsService = inject(IxValidatorsService);
   private store$ = inject<Store<ServicesState>>(Store);
   private smbValidationService = inject(SmbValidationService);
-  slideInRef = inject<SlideInRef<{
-    existingSmbShare?: SmbShare;
-    defaultSmbShare?: SmbShare;
-  } | undefined, boolean>>(SlideInRef);
+  private userService = inject(UserService);
+  private groupExistenceValidator = inject(UserGroupExistenceValidationService);
 
   private destroyRef = inject(DestroyRef);
+
+  /** Edit/default data supplied by the `<tn-side-panel>` host. */
+  readonly smbShareData = input<{
+    existingSmbShare?: SmbShare;
+    defaultSmbShare?: SmbShare;
+  } | undefined>(undefined);
+
+  protected readonly InputType = InputType;
 
   private existingSmbShare: SmbShare | undefined;
   private defaultSmbShare: SmbShare | undefined;
 
-  protected isLoading = signal(false);
+  // Tracks async name/audit validation so the wrapper's host-owned Save (canSubmit)
+  // re-evaluates under OnPush; FormGroup.status isn't a signal.
+  private pendingValidation = signal(false);
+
+  /** Extra Save-disable gate ORed into the `<ix-form>` wrapper checks. */
+  protected readonly extraDisabled = computed(
+    () => this.showExtensionsWarning() || this.pendingValidation(),
+  );
+
   protected showLegacyWarning = signal(false);
   protected showExtensionsWarning = signal(false);
   protected legacyWarningMessage = this.translate.instant(
@@ -145,7 +163,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   protected isAdvancedMode = false;
   private namesInUse: string[] = [];
   protected readonly helptextSharingSmb = helptextSharingSmb;
-  protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   private wasStripAclWarningShown = false;
   private smbConfig = signal<SmbConfig | null>(null);
@@ -183,6 +201,23 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   });
 
   protected purposeOptions$: Observable<SelectOption<SmbSharePurpose>[]>;
+
+  /** Drives server-side group lookups for the audit Watch/Ignore List chip inputs. */
+  private readonly groupSearch$ = new BehaviorSubject<string>('');
+
+  /**
+   * Group-name autocomplete suggestions for the audit Watch/Ignore List chip inputs. Re-queries the
+   * server as the user types (fed from `(searchChange)` via {@link onGroupSearch}), restoring the
+   * query-as-you-type behavior the old `ix-group-chips` provided — a single empty query only returned
+   * the first 50 groups. `shareReplay` keeps both chip inputs on one subscription / one request.
+   */
+  protected readonly groupSuggestions$ = this.groupSearch$.pipe(
+    debounceTime(250),
+    distinctUntilChanged(),
+    switchMap((search) => this.userService.groupQueryDsCache(search)),
+    map((groups) => groups.map((group) => group.group)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   get isRestartRequired(): boolean {
     return this.isNew || this.form.dirty;
@@ -375,15 +410,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ]],
   });
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-
-    this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
-    this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
-    this.setupExplorerRootNodes();
-    this.purposeOptions$ = of(this.buildPurposeOptions());
+  /** Feeds typed text from the audit chip inputs into the server-side group lookup. */
+  protected onGroupSearch(search: string): void {
+    this.groupSearch$.next(search);
   }
 
   get shouldShowNamingSchema(): boolean {
@@ -402,6 +431,13 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    // Edit/default data arrives via the `smbShareData` input from the side-panel host.
+    const data = this.smbShareData();
+    this.existingSmbShare = data?.existingSmbShare;
+    this.defaultSmbShare = data?.defaultSmbShare;
+    this.setupExplorerRootNodes();
+    this.purposeOptions$ = of(this.buildPurposeOptions());
+
     this.setupPurposeControl();
     this.loadSmbConfig();
 
@@ -428,11 +464,26 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.setupAclControl();
     this.setupAuditValidation();
     this.openAdvancedOptionsIfInvalid();
+
+    // Keep `pendingValidation` in sync with async validators so the wrapper's
+    // host-owned Save (canSubmit) reacts; FormGroup.status isn't a signal.
+    this.form.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.pendingValidation.set(this.isAsyncValidatorPending);
+    });
   }
 
   ngAfterViewInit(): void {
     this.form.controls.name.addAsyncValidators([
       this.smbValidationService.validate(this.existingSmbShare?.name),
+    ]);
+
+    // Validate that entered Watch/Ignore List groups exist (previously supplied by ix-group-chips).
+    const auditGroup = this.form.controls.audit;
+    auditGroup.controls.watch_list.addAsyncValidators([
+      this.groupExistenceValidator.validateGroupsExist(),
+    ]);
+    auditGroup.controls.ignore_list.addAsyncValidators([
+      this.groupExistenceValidator.validateGroupsExist(),
     ]);
     // Duplicate check removed - already handled in ngOnInit() via openAdvancedOptionsIfInvalid()
   }
@@ -676,15 +727,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  protected submit(): void {
-    if (this.form.invalid || this.isAsyncValidatorPending) {
-      this.form.markAllAsTouched();
-      if (this.hasAdvancedErrorsInternal()) {
-        this.isAdvancedMode = true;
-      }
-      return;
-    }
-
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const smbShare = { ...this.form.value } as SmbShare;
     const purpose = smbShare.purpose;
     const presetFields = presetEnabledFields[purpose] ?? [];
@@ -723,68 +766,69 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       timeMachineOptions.timemachine_quota = 0;
     }
 
-    let request$: Observable<SmbShare>;
+    const apiCall$: Observable<SmbShare> = this.existingSmbShare
+      ? this.api.call('sharing.smb.update', [this.existingSmbShare.id, smbShare])
+      : this.api.call('sharing.smb.create', [smbShare]);
 
-    if (this.existingSmbShare) {
-      request$ = this.api.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
-    } else {
-      request$ = this.api.call('sharing.smb.create', [smbShare]);
-    }
-
-    this.datasetService.rootLevelDatasetWarning(
+    // The root-level dataset warning prompts confirmation before the create/update fires;
+    // a cancel completes the chain without emitting, so the wrapper just resets its loading state.
+    const request$ = this.datasetService.rootLevelDatasetWarning(
       smbShare.path,
       this.translate.instant(helptextSharingSmb.rootLevelWarning),
       !this.form.controls.path.dirty || smbShare.purpose === SmbSharePurpose.ExternalShare,
     ).pipe(
       filter(Boolean),
-      tap(() => {
-        this.isLoading.set(true);
-      }),
-      switchMap(() => request$),
+      switchMap(() => apiCall$),
       switchMap((smbShareResponse) => this.restartCifsServiceIfNecessary().pipe(
         map(() => smbShareResponse),
       )),
       switchMap((smbShareResponse) => this.shouldRedirectToAclEdit().pipe(
-        map((shouldRedirect) => ({ smbShareResponse, shouldRedirect })),
+        switchMap((shouldRedirect) => this.confirmAclRedirectIfNeeded(smbShareResponse, shouldRedirect)),
+        map(() => smbShareResponse),
       )),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: ({ smbShareResponse, shouldRedirect }) => {
-        this.isLoading.set(false);
-        if (shouldRedirect) {
-          this.dialogService.confirm({
-            title: this.translate.instant('Configure ACL'),
-            message: this.translate.instant('Do you want to configure the ACL?'),
-            buttonText: this.translate.instant('Configure'),
-            cancelText: this.translate.instant('No'),
-            hideCheckbox: true,
-          }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isConfigure) => {
-            if (isConfigure) {
-              const homeShare = this.form.controls.home.value;
-              this.router.navigate(
-                ['/', 'datasets', 'acl', 'edit'],
-                { queryParams: { homeShare, path: smbShareResponse.path } },
-              );
-            }
-            this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-            this.slideInRef.close({ response: true });
-          });
-        } else {
-          this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-          this.slideInRef.close({ response: true });
-        }
-      },
-      error: (error: unknown) => {
-        const apiError = extractApiErrorDetails(error);
+    );
 
+    return {
+      request$,
+      successMessage: this.isNew
+        ? this.translate.instant('SMB share created')
+        : this.translate.instant('SMB share updated'),
+      onSuccess: () => {
+        this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
+      },
+      onError: (error: unknown) => {
+        const apiError = extractApiErrorDetails(error);
         if (apiError?.reason?.includes('[ENOENT]') || apiError?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }
-
-        this.isLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form, {}, 'smb-form-toggle-advanced-options');
+        return true;
       },
-    });
+    };
+  };
+
+  private confirmAclRedirectIfNeeded(smbShareResponse: SmbShare, shouldRedirect: boolean): Observable<unknown> {
+    if (!shouldRedirect) {
+      return of(undefined);
+    }
+
+    return this.dialogService.confirm({
+      title: this.translate.instant('Configure ACL'),
+      message: this.translate.instant('Do you want to configure the ACL?'),
+      buttonText: this.translate.instant('Configure'),
+      cancelText: this.translate.instant('No'),
+      hideCheckbox: true,
+    }).pipe(
+      tap((isConfigure) => {
+        if (isConfigure) {
+          const homeShare = this.form.controls.home.value;
+          this.router.navigate(
+            ['/', 'datasets', 'acl', 'edit'],
+            { queryParams: { homeShare, path: smbShareResponse.path } },
+          );
+        }
+      }),
+    );
   }
 
   private restartCifsServiceIfNecessary(): Observable<boolean> {
@@ -804,7 +848,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       map((service) => service.state === ServiceStatus.Running),
       switchMap((isRunning) => {
         if (isRunning && this.isRestartRequired) {
-          return this.matDialog.open(RestartSmbDialog).afterClosed();
+          return this.tnDialog.open<RestartSmbDialog, void, boolean>(RestartSmbDialog).closed as Observable<boolean>;
         }
         return of(false);
       }),

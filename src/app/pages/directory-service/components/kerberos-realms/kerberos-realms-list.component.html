@@ -1,64 +1,125 @@
 @if (!inCard()) {
   <ix-page-header>
     <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
       color="primary"
-      ixTest="add-kerberos-realms"
+      variant="filled"
+      [testId]="'add-kerberos-realms'"
+      [label]="'Add' | translate"
       [ixUiSearch]="searchableElements.elements.add"
-      (click)="doAdd()"
-    >
-      {{ 'Add' | translate }}
-    </button>
+      (onClick)="doAdd()"
+    ></tn-button>
   </ix-page-header>
 }
 
-<div class="table-container" [ixUiSearch]="searchableElements.elements.kerberosRealms">
-  @if (inCard()) {
-    <mat-toolbar-row class="table-header">
-      <div
-        class="heading"
+@if (inCard()) {
+  <tn-card
+    padding="small"
+    [ixUiSearch]="searchableElements.elements.kerberosRealms"
+  >
+    <h3 tnCardHeader class="card-title">
+      <a
+        class="card-title-link"
+        tnTestIdType="link"
+        [tnTestId]="['kerberos-realms', 'open-in-new']"
         [routerLink]="['/', 'directoryservice', 'kerberosrealms']"
-        [matTooltip]="'Open Kerberos Realms list in full page' | translate"
+        [tnTooltip]="'Open Kerberos Realms list in full page' | translate"
       >
-        <h3>{{ 'Kerberos Realms' | translate }}</h3>
+        {{ 'Kerberos Realms' | translate }}
         <tn-icon
           name="open-in-new"
           library="mdi"
+          class="title-icon"
           [attr.aria-label]="'Open Kerberos Realms list in full page' | translate"
         ></tn-icon>
-      </div>
-      <div class="action">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          ixTest="add-idmap"
-          (click)="doAdd()"
-        >
-          {{ 'Add' | translate }}
-        </button>
-      </div>
-    </mat-toolbar-row>
-  }
-  <ix-table
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+      </a>
+    </h3>
+
+    <ng-container [ngTemplateOutlet]="tableTpl"></ng-container>
+
+    <ng-template tnCardFooterActions>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        variant="filled"
+        [testId]="'add-kerberos-realms'"
+        [label]="'Add' | translate"
+        (onClick)="doAdd()"
+      ></tn-button>
+    </ng-template>
+  </tn-card>
+} @else {
+  <div class="table-container" [ixUiSearch]="searchableElements.elements.kerberosRealms">
+    <ng-container [ngTemplateOutlet]="tableTpl"></ng-container>
+  </div>
+}
+
+<ng-template #tableTpl>
+  <tn-table
+    class="table"
+    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [displayedColumns]="displayedColumns"
+    [trackBy]="trackByRealmId"
+    [loading]="!!(dataProvider.isLoading$ | async)"
+    [emptyMessage]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async).title"
+    (sortChange)="onSortChange($event)"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    >
-    </tbody>
-  </ix-table>
+    <ng-container [tnColumnDef]="'realm'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Realm' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Realm' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.realm }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'kdc_string'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'KDC' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('KDC' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.kdc_string }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'admin_server_string'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Admin Server' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Admin Server' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.admin_server_string }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'kpasswd_server_string'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Password Server' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Password Server' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.kpasswd_server_string }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+      <ng-template tnHeaderCellDef></ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-actions-cell
+          mode="inline"
+          [actions]="actions"
+          [row]="row"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [ariaLabel]="ariaLabel(row)"
+        ></ix-table-actions-cell>
+      </ng-template>
+    </ng-container>
+  </tn-table>
+
   @if (paginator()) {
     <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
   }
-</div>
+</ng-template>

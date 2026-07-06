@@ -1,21 +1,19 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
+} from '@truenas/ui-components';
 import * as cronParser from 'cron-parser';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
-import { of } from 'rxjs';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
@@ -24,7 +22,6 @@ import {
   CrontabPartValidatorService,
 } from 'app/modules/scheduler/services/crontab-part-validator.service';
 import { getDefaultCrontabPresets } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -37,24 +34,24 @@ import { SchedulerPreviewColumnComponent } from './scheduler-preview-column/sche
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxSelectComponent,
+    TnSelectComponent,
     TooltipComponent,
-    IxInputComponent,
-    MatCheckbox,
-    TestDirective,
-    MatButton,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnButtonComponent,
     SchedulerPreviewColumnComponent,
     TranslateModule,
     AsyncPipe,
   ],
 })
 export class SchedulerModalComponent implements OnInit {
-  private dialogRef = inject<MatDialogRef<SchedulerModalComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<string, SchedulerModalComponent>>(DialogRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private validators = inject(CrontabPartValidatorService);
   private store$ = inject<Store<AppState>>(Store);
-  config = inject<SchedulerModalConfig>(MAT_DIALOG_DATA);
+  config = inject<SchedulerModalConfig>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({
@@ -108,7 +105,11 @@ export class SchedulerModalComponent implements OnInit {
   ];
 
   readonly presets = getDefaultCrontabPresets(this.translate);
-  readonly presetOptions$ = of(this.presets);
+  readonly presetSelectOptions: TnSelectOption<string>[] = this.presets.map((preset) => ({
+    label: preset.label,
+    value: preset.value,
+  }));
+
   readonly tooltips = {
     general: helptextGlobal.scheduler.general.tooltip,
     minutes: helptextGlobal.scheduler.minutes.tooltip,
@@ -131,6 +132,10 @@ export class SchedulerModalComponent implements OnInit {
 
   onDone(): void {
     this.dialogRef.close(this.crontab);
+  }
+
+  closeModal(): void {
+    this.dialogRef.close();
   }
 
   private setInitialValues(): void {

@@ -1,3 +1,5 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -5,6 +7,7 @@ import {
   Spectator, createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnTableHarness } from '@truenas/ui-components';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
@@ -18,7 +21,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
-import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
@@ -30,6 +32,7 @@ import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-
 describe('InstalledAppsComponent', () => {
   let spectator: Spectator<InstalledAppsComponent>;
   let applicationsService: ApplicationsService;
+  let loader: HarnessLoader;
   let searchQuery$: BehaviorSubject<string>;
   let sortingInfo$: BehaviorSubject<{ active: string; direction: string }>;
 
@@ -55,7 +58,6 @@ describe('InstalledAppsComponent', () => {
     ],
     declarations: [
       MockDeclaration(AppDetailsPanelComponent),
-      MockDeclaration(AppRowComponent),
     ],
     providers: [
       mockProvider(DockerStore, {
@@ -114,28 +116,32 @@ describe('InstalledAppsComponent', () => {
       }),
       mockApi([]),
       mockAuth(),
-      mockProvider(AppsStatsService),
+      mockProvider(AppsStatsService, {
+        getStatsForApp: jest.fn(() => of(null)),
+      }),
     ],
     params: { appId: 'ix-test-app' },
   });
 
   beforeEach(() => {
     spectator = createComponent();
-    spectator.component.installedAppsList().dataSource = [app];
+    spectator.component.installedAppsList().dataSource.set([app]);
+    spectator.detectChanges();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     applicationsService = spectator.inject(ApplicationsService);
   });
 
-  it('shows a list of installed apps', () => {
-    const rows = spectator.queryAll(AppRowComponent);
-
-    expect(rows).toHaveLength(1);
-    expect(rows[0].app()).toEqual(app);
+  it('shows a list of installed apps', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.getRowCount()).toBe(1);
   });
 
-  it('shows details', () => {
+  it('shows details', async () => {
     const installedAppsList = spectator.component.installedAppsList();
     const locationSpy = jest.spyOn(spectator.inject(Location), 'replaceState');
-    spectator.click(spectator.query('ix-app-row')!);
+    const table = await loader.getHarness(TnTableHarness);
+    await table.clickRow(0);
+
     expect(locationSpy).toHaveBeenCalledWith('/apps/installed/test-catalog-train/ix-test-app');
     expect(installedAppsList.selectedApp).toEqual(app);
   });
@@ -151,7 +157,7 @@ describe('InstalledAppsComponent', () => {
   });
 
   it('restarts application', () => {
-    spectator.query(AppRowComponent)!.restartApp.emit();
+    spectator.component.installedAppsList().restart('test-app');
     expect(applicationsService.restartApplication).toHaveBeenCalledWith('test-app');
   });
 });

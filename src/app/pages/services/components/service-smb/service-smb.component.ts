@@ -1,12 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
+import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -19,21 +22,16 @@ import { helptextServiceSmb } from 'app/helptext/services/components/service-smb
 import { SmbConfigUpdate, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -50,27 +48,26 @@ interface BindIp {
   styleUrls: ['./service-smb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
     IxChipsComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
     IxListComponent,
     IxListItemComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class ServiceSmbComponent implements OnInit {
+export class ServiceSmbComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
@@ -81,12 +78,11 @@ export class ServiceSmbComponent implements OnInit {
   private truenasConnectService = inject(TruenasConnectService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
-  protected isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
   protected hasIncompatibleShares = signal(false);
   protected isSmb1Enabled = signal(false);
-  protected readonly minimumProtocolOptions$ = of(mapToOptions(smbMinProtocolLabels, this.translate));
+  protected readonly minimumProtocolOptions = mapToOptions(smbMinProtocolLabels, this.translate);
 
   protected isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { initialValue: false });
   protected isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed), { initialValue: false });
@@ -116,9 +112,7 @@ export class ServiceSmbComponent implements OnInit {
    * incompatible shares, and SMB1 status.
    */
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+    super();
 
     effect(() => {
       const isEnabled = this.isSpotlightEnabled();
@@ -141,7 +135,7 @@ export class ServiceSmbComponent implements OnInit {
 
   protected isBasicMode = true;
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
     netbiosalias: [[] as string[], [
       this.validatorsService.customValidator(
@@ -171,7 +165,11 @@ export class ServiceSmbComponent implements OnInit {
     stateful_failover: [false, []],
   });
 
-  protected readonly requiredRoles = [Role.SharingSmbWrite];
+  readonly requiredRoles = [Role.SharingSmbWrite];
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
     netbiosname: helptextServiceSmb.netbiosnameTooltip,
@@ -211,7 +209,7 @@ export class ServiceSmbComponent implements OnInit {
     }),
   );
 
-  readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
+  readonly encryptionOptions = mapToOptions(smbEncryptionLabels, this.translate);
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
@@ -288,7 +286,7 @@ export class ServiceSmbComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

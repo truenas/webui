@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnDialog,
+  TnIconButtonComponent,
+  TnMenuComponent,
+  TnMenuItem,
+  TnMenuTriggerDirective,
+} from '@truenas/ui-components';
 import {
   NEVER, filter, switchMap,
 } from 'rxjs';
@@ -19,9 +21,8 @@ import {
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ContainerFilesystemDeviceFormComponent,
@@ -39,13 +40,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    TestDirective,
-    TnIconComponent,
-    MatIconButton,
-    MatTooltip,
-    MatMenu,
-    MatMenuTrigger,
-    MatMenuItem,
+    TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuTriggerDirective,
     RequiresRolesDirective,
   ],
 })
@@ -54,7 +51,7 @@ export class DeviceActionsMenuComponent {
 
   private destroyRef = inject(DestroyRef);
   private dialog = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
@@ -62,7 +59,7 @@ export class DeviceActionsMenuComponent {
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
   private loader = inject(LoaderService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
 
   readonly device = input.required<ContainerDevice>();
   readonly showEdit = input(true);
@@ -91,6 +88,28 @@ export class DeviceActionsMenuComponent {
     return null;
   });
 
+  protected readonly menuItems = computed<TnMenuItem[]>(() => {
+    const items: TnMenuItem[] = [];
+
+    if (this.showEdit()) {
+      items.push({
+        id: 'edit',
+        label: this.translate.instant('Edit'),
+        testId: ['edit', this.deviceDescription()],
+        action: () => this.editPressed(),
+      });
+    }
+
+    items.push({
+      id: 'delete',
+      label: this.translate.instant('Delete'),
+      testId: ['delete', this.deviceDescription()],
+      action: () => this.deletePressed(),
+    });
+
+    return items;
+  });
+
   protected editPressed(): void {
     const device = this.device();
 
@@ -101,8 +120,9 @@ export class DeviceActionsMenuComponent {
         return;
       }
 
-      this.slideIn.open(ContainerFilesystemDeviceFormComponent, {
-        data: {
+      this.formPanel.open(ContainerFilesystemDeviceFormComponent, {
+        title: this.translate.instant('Edit Disk'),
+        inputs: {
           container,
           disk: device as ContainerFilesystemDevice,
         },
@@ -112,12 +132,12 @@ export class DeviceActionsMenuComponent {
 
     // For NIC devices, open the dialog
     if (device.dtype === ContainerDeviceType.Nic) {
-      this.matDialog.open(ContainerNicFormDialog, {
+      this.tnDialog.open(ContainerNicFormDialog, {
         data: {
           device: device as ContainerNicDevice & { id: number },
         },
         minWidth: '500px',
-      }).afterClosed().pipe(
+      }).closed.pipe(
         filter(Boolean),
         switchMap((config: {
           mac?: string;

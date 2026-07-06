@@ -4,11 +4,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import {
   BehaviorSubject, EMPTY, forkJoin, of, Observable,
@@ -96,7 +95,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TranslateModule,
     AsyncPipe,
     IxRadioGroupComponent,
-    MatTooltip,
+    TnTooltipDirective,
   ],
 })
 export class InterfaceFormComponent implements OnInit {
@@ -110,7 +109,7 @@ export class InterfaceFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private validatorsService = inject(IxValidatorsService);
   private interfaceFormValidator = inject(InterfaceNameValidatorService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private systemGeneralService = inject(SystemGeneralService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
@@ -315,7 +314,7 @@ export class InterfaceFormComponent implements OnInit {
 
         this.api.call('interface.network_config_to_be_removed').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((configToRemove) => {
           if (configToRemove && Object.keys(configToRemove).length > 0) {
-            this.matDialog.open(DefaultGatewayDialog, {
+            this.tnDialog.open(DefaultGatewayDialog, {
               width: '600px',
               data: configToRemove,
             });

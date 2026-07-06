@@ -1,5 +1,6 @@
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import {
   BehaviorSubject, firstValueFrom, of,
 } from 'rxjs';
@@ -70,9 +71,9 @@ describe('PoolManagerStore', () => {
         selectableDisks$: of(disks),
         hasSedCapableDisks$: of(false),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(dialogReturnValue)),
+          closed: of(dialogReturnValue),
         })),
       }),
       GenerateVdevsService,
@@ -259,6 +260,24 @@ describe('PoolManagerStore', () => {
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({ topology: initialState.topology });
     });
 
+    it('setTopologyCategoryLayout – keeps configured dedicated spares when switching the data layout to dRAID', async () => {
+      const spareVdevs = [[{ devname: 'sda' }]] as DetailsDisk[][];
+      spectator.service.setManualTopologyCategory(VDevType.Spare, spareVdevs);
+
+      spectator.service.setTopologyCategoryLayout(VDevType.Data, CreateVdevLayout.Draid1);
+
+      let state = await firstValueFrom(spectator.service.state$);
+      expect(state.topology[VDevType.Data].layout).toBe(CreateVdevLayout.Draid1);
+      expect(state.topology[VDevType.Spare].vdevs).toEqual(spareVdevs);
+
+      // Changing the dRAID parity must not discard already-configured spares.
+      spectator.service.setTopologyCategoryLayout(VDevType.Data, CreateVdevLayout.Draid2);
+
+      state = await firstValueFrom(spectator.service.state$);
+      expect(state.topology[VDevType.Data].layout).toBe(CreateVdevLayout.Draid2);
+      expect(state.topology[VDevType.Spare].vdevs).toEqual(spareVdevs);
+    });
+
     it('resetTopology – completely resets pool topology', async () => {
       spectator.service.setManualTopologyCategory(VDevType.Data, [{}] as DetailsDisk[][]);
       spectator.service.setManualTopologyCategory(VDevType.Log, [{}] as DetailsDisk[][]);
@@ -294,7 +313,7 @@ describe('PoolManagerStore', () => {
       jest.spyOn(spectator.service, 'setManualTopologyCategory');
       spectator.service.openManualSelectionDialog(VDevType.Data);
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManualDiskSelectionComponent, {
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ManualDiskSelectionComponent, {
         data: {
           enclosures,
           inventory: [expect.objectContaining({ devname: 'sdb' })],
@@ -313,11 +332,11 @@ describe('PoolManagerStore', () => {
     it('resets layout when manual selection dialog results in no vdevs', () => {
       dialogReturnValue = [];
       jest.spyOn(spectator.service, 'resetTopologyCategory');
-      const openFnSpy = jest.spyOn(spectator.inject(MatDialog), 'open');
+      const openFnSpy = jest.spyOn(spectator.inject(TnDialog), 'open');
       openFnSpy.mockImplementation(() => {
         return {
-          afterClosed: () => of([]),
-        } as MatDialogRef<unknown>;
+          closed: of([]),
+        } as DialogRef;
       });
       spectator.service.openManualSelectionDialog(VDevType.Data);
       expect(spectator.service.resetTopologyCategory).toHaveBeenCalledWith(VDevType.Data);

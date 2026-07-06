@@ -1,17 +1,19 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -20,6 +22,7 @@ import { selectAdvancedConfig } from 'app/store/system-config/system-config.sele
 describe('SyslogCardComponent', () => {
   let spectator: Spectator<SyslogCardComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
 
   const createComponent = createComponentFactory({
     component: SyslogCardComponent,
@@ -29,6 +32,22 @@ describe('SyslogCardComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockApi([
+        mockCall('system.advanced.syslog_certificate_choices', {
+          1: 'Certificate 1',
+          2: 'Certificate 2',
+        }),
+        mockCall('system.advanced.syslog_certificate_authority_choices', {
+          1: 'Authority 1',
+          2: 'Authority 2',
+        }),
+        mockCall('system.advanced.update'),
+      ]),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
+      mockProvider(SnackbarService),
+      mockProvider(FormErrorHandlerService),
       provideMockStore({
         selectors: [
           {
@@ -50,20 +69,18 @@ describe('SyslogCardComponent', () => {
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
-  it('shows syslog related settings', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+  it('shows syslog related settings', () => {
+    const items = spectator.queryAll('.details-item');
+    const itemTexts = items.map((item) => item.textContent.replace(/\s+/g, ' ').trim());
 
     expect(itemTexts).toEqual([
       'Use FQDN for Logging: Enabled',
@@ -73,28 +90,12 @@ describe('SyslogCardComponent', () => {
     ]);
   });
 
-
-  it('opens Syslog form when Configure button is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+  it('opens the Syslog form in a side panel when Configure is pressed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      SyslogFormComponent,
-      {
-        data: {
-          fqdn_syslog: true,
-          syslog_audit: false,
-          sysloglevel: 'F_ALERT',
-          syslogservers: [
-            {
-              host: '127.1.2.3',
-              transport: 'TCP',
-            },
-          ],
-        },
-      },
-    );
+    expect(formPanel.open).toHaveBeenCalledWith(SyslogFormComponent, { title: 'Syslog' });
   });
 
   it('displays multiple syslog servers correctly', () => {

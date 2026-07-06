@@ -2,8 +2,8 @@
   class="job-item"
   [class.abortable]="job().state === JobState.Running && job().abortable"
   [class.interactive]="clickable()"
-  [matTooltip]="job().state === JobState.Failed ? job().error : null"
-  [matTooltipPosition]="'left'"
+  [tnTooltip]="job().state === JobState.Failed ? job().error : null"
+  [tnTooltipPosition]="'left'"
 >
   <div class="job-item-body" (click)="clickable() && open()">
     <div class="description-line">
@@ -100,8 +100,8 @@
     name="stop-circle"
     library="mdi"
     [class.job-icon-abort]="true"
-    [ixTest]="['abort', job().description, job().method]"
-    [matTooltip]="'Abort' | translate"
+    [testId]="['abort', job().description, job().method]"
+    [tnTooltip]="'Abort' | translate"
     (click)="abort()"
   ></tn-icon-button>
 }
@@ -112,7 +112,7 @@
     name="clock-outline"
     library="mdi"
     [class.job-icon-waiting]="true"
-    [ixTest]="['waiting', job().description, job().method]"
+    [testId]="['waiting', job().description, job().method]"
     [disabled]="true"
   ></tn-icon-button>
 }
@@ -122,10 +122,10 @@
     type="button"
     name="close-circle"
     library="mdi"
-    matTooltipPosition="left"
+    tnTooltipPosition="left"
     [class.job-icon-failed]="true"
-    [ixTest]="['failed', job().description, job().method]"
-    [matTooltip]="job().error"
+    [testId]="['failed', job().description, job().method]"
+    [tnTooltip]="job().error"
     [disabled]="true"
   ></tn-icon-button>
 }
@@ -136,7 +136,7 @@
     name="check-circle"
     library="mdi"
     [class.job-icon-success]="true"
-    [ixTest]="['success', job().description, job().method]"
+    [testId]="['success', job().description, job().method]"
     [disabled]="true"
   ></tn-icon-button>
 }

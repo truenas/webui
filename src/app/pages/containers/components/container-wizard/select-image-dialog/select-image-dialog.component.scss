@@ -6,6 +6,7 @@
       overflow: auto;
     }
 
+    // TEMP: tn-table does not expose sticky-header or row line-height as public inputs — track via @truenas/ui-components issue.
     table thead {
       position: sticky;
       top: 0;
@@ -17,7 +18,7 @@
     }
   }
 
-  ix-fieldset fieldset {
+  tn-form-section {
     padding: 0;
 
     @media(min-width: $breakpoint-sm) {
@@ -25,21 +26,15 @@
       position: sticky;
       top: 0;
     }
-  }
-}
 
-.header {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-
-  h1 {
-    margin-bottom: 0;
-    padding-top: 20px;
-  }
-
-  button {
-    margin-right: 20px;
+    // The global `tn-dialog-shell tn-form-field` rule (_tn-styles.scss) adds the
+    // ix-* dialog rhythm (12px margin + 8px padding) to every field, which is too
+    // airy for this compact filter sidebar. Drop it and let the section's own
+    // `gap` space the fields.
+    tn-form-field {
+      margin: 0;
+      padding: 0;
+    }
   }
 }
 
@@ -59,9 +54,14 @@ form {
     display: block;
   }
 
-  ix-fieldset {
-    border-right: 1px solid var(--lines);
-    height: 100%;
+  // The divider lives on the table side: the filter section must stay
+  // content-height for `position: sticky` to have room to move, so it cannot
+  // carry a full-height border itself.
+  .table-wrapper {
+    @media(min-width: $breakpoint-sm) {
+      border-left: 1px solid var(--lines);
+      min-height: 100%;
+    }
   }
 }
 

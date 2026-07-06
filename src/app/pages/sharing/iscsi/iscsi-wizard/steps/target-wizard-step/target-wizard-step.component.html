@@ -6,11 +6,14 @@
       [options]="modeOptions$"
     ></ix-radio-group>
   }
-  <ix-select
-    formControlName="target"
+  <tn-form-field
     [label]="helptextSharingIscsi.targetLabel | translate"
     [tooltip]="helptextSharingIscsi.targetTooltip | translate"
-    [options]="targetOptions$"
     [required]="true"
-  ></ix-select>
+  >
+    <tn-select
+      formControlName="target"
+      [options]="(targetOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 </ng-container>

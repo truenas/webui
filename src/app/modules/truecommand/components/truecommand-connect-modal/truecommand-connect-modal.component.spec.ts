@@ -1,18 +1,19 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnDialogHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TruecommandConnectModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -50,12 +51,12 @@ describe('TruecommandConnectModalComponent', () => {
         ]),
         mockProvider(LoaderService),
         mockProvider(DialogService),
-        mockProvider(MatDialogRef),
+        mockProvider(DialogRef),
         mockAuth(),
       ],
       componentProviders: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useFactory: () => ({
             isConnected,
             config: getFakeConfig(config),
@@ -73,10 +74,7 @@ describe('TruecommandConnectModalComponent', () => {
       },
       isConnected: false,
       expectedTitle: 'Connect to TrueCommand Cloud',
-      expectedFormValue: {
-        'API Key': '',
-        Enable: true,
-      },
+      expectedApiKey: '',
       expectedSubmitButtonText: 'Connect',
     },
     {
@@ -86,14 +84,11 @@ describe('TruecommandConnectModalComponent', () => {
       },
       isConnected: true,
       expectedTitle: 'Update TrueCommand Settings',
-      expectedFormValue: {
-        'API Key': '1234567890123456',
-        Enable: true,
-      },
+      expectedApiKey: '1234567890123456',
       expectedSubmitButtonText: 'Save',
     },
   ].forEach(({
-    fakeConfig, isConnected, expectedFormValue, expectedTitle, expectedSubmitButtonText,
+    fakeConfig, isConnected, expectedApiKey, expectedTitle, expectedSubmitButtonText,
   }) => {
     describe(`when api_key = '${fakeConfig.api_key}'`, () => {
       const createComponent = createComponentWithData(fakeConfig, isConnected);
@@ -104,20 +99,21 @@ describe('TruecommandConnectModalComponent', () => {
         api = spectator.inject(ApiService);
       });
 
-      it(`it has title '${expectedTitle}'`, () => {
-        expect(spectator.query('.truecommand-connect-modal-form-title'))
-          .toContainText(expectedTitle);
+      it(`it has title '${expectedTitle}'`, async () => {
+        const dialog = await loader.getHarness(TnDialogHarness);
+        expect(await dialog.getTitle()).toBe(expectedTitle);
       });
 
       it('shows current settings for Truecommand when form is opened', async () => {
-        const form = await loader.getHarness(IxFormHarness);
-        const values = await form.getValues();
+        const apiKeyInput = await loader.getHarness(TnInputHarness);
+        expect(await apiKeyInput.getValue()).toBe(expectedApiKey);
 
-        expect(values).toEqual(expectedFormValue);
+        const enableCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable' }));
+        expect(await enableCheckbox.isChecked()).toBe(true);
       });
 
       it(`submit button has text ${expectedSubmitButtonText}`, async () => {
-        const button = await loader.getHarness(MatButtonHarness.with({ text: expectedSubmitButtonText }));
+        const button = await loader.getHarness(TnButtonHarness.with({ label: expectedSubmitButtonText }));
         expect(button).toBeTruthy();
       });
     });
@@ -145,21 +141,57 @@ describe('TruecommandConnectModalComponent', () => {
       api = spectator.inject(ApiService);
     });
 
-    it('sends an update payload', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'API Key': '1234567890123456',
-        Enable: true,
-      });
+    it('disables the submit button when the API key is empty while enabled', async () => {
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: expectedSubmitButtonText }));
+      expect(await submitButton.isDisabled()).toBe(true);
+    });
 
-      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: expectedSubmitButtonText }));
+    it('enables the submit button once an API key is entered', async () => {
+      const apiKeyInput = await loader.getHarness(TnInputHarness);
+      await apiKeyInput.setValue('1234567890123456');
+
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: expectedSubmitButtonText }));
+      expect(await submitButton.isDisabled()).toBe(false);
+    });
+
+    it('sends an update payload', async () => {
+      const apiKeyInput = await loader.getHarness(TnInputHarness);
+      await apiKeyInput.setValue('1234567890123456');
+      const enableCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable' }));
+      await enableCheckbox.check();
+
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: expectedSubmitButtonText }));
       expect(await submitButton.isDisabled()).toBeFalsy();
       await submitButton.click();
+
+      // The save tn-button is projected via [tnDialogAction] into the shell footer,
+      // so in the rendered DOM it is *outside* the <form>. That keeps the (onClick)
+      // handler and the form's (ngSubmit) as independent paths — a single click
+      // must not trigger both and double-fire the API call.
+      expect(api.call).toHaveBeenCalledTimes(1);
+      expect(api.call).toHaveBeenCalledWith('truecommand.update', [{
+        api_key: '1234567890123456',
+        enabled: true,
+      }]);
+    });
+
+    it('submits the form when it is submitted (e.g. via Enter) while valid', async () => {
+      const apiKeyInput = await loader.getHarness(TnInputHarness);
+      await apiKeyInput.setValue('1234567890123456');
+      const enableCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable' }));
+      await enableCheckbox.check();
+
+      spectator.dispatchFakeEvent(spectator.query('form')!, 'submit');
 
       expect(api.call).toHaveBeenCalledWith('truecommand.update', [{
         api_key: '1234567890123456',
         enabled: true,
       }]);
+    });
+
+    it('does not submit when the form is submitted while invalid', () => {
+      spectator.dispatchFakeEvent(spectator.query('form')!, 'submit');
+      expect(api.call).not.toHaveBeenCalled();
     });
   });
 
@@ -186,13 +218,12 @@ describe('TruecommandConnectModalComponent', () => {
     });
 
     it('sends an update payload', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'API Key': 'qwertyuiopasdfgh',
-        Enable: false,
-      });
+      const apiKeyInput = await loader.getHarness(TnInputHarness);
+      await apiKeyInput.setValue('qwertyuiopasdfgh');
+      const enableCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable' }));
+      await enableCheckbox.uncheck();
 
-      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: expectedSubmitButtonText }));
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: expectedSubmitButtonText }));
       expect(await submitButton.isDisabled()).toBeFalsy();
       await submitButton.click();
 
@@ -232,7 +263,7 @@ describe('TruecommandConnectModalComponent', () => {
     });
 
     it('sends an update payload', async () => {
-      const deregisterButton = await loader.getHarness(MatButtonHarness.with({ text: expectedSubmitButtonText }));
+      const deregisterButton = await loader.getHarness(TnButtonHarness.with({ label: expectedSubmitButtonText }));
       expect(await deregisterButton.isDisabled()).toBeFalsy();
       await deregisterButton.click();
 

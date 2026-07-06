@@ -1,12 +1,19 @@
+@import 'mixins/tier-status';
+
 .status-badge {
   border: 1px solid currentColor;
-  border-radius: 4px;
+  border-radius: 25px;
   display: inline-block;
   font-size: 12px;
+  font-weight: 500;
   line-height: 1.5;
   margin-left: 8px;
-  padding: 0 8px;
-  vertical-align: middle;
+  padding: 1px 12px;
+  white-space: nowrap;
+
+  // Outline pill: transparent fill with the status color on the text and border.
+  // The color mapping is shared with the tier-status indicator.
+  @include tier-status-colors;
 }
 
 .dataset-name {
@@ -34,7 +41,7 @@
   color: var(--fg2);
 }
 
-mat-progress-bar {
+tn-progress-bar {
   margin-bottom: 16px;
 }
 

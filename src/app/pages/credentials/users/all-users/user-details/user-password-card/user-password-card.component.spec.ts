@@ -1,9 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCardComponent, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -46,9 +44,9 @@ describe('UserPasswordCardComponent', () => {
           enable_gpos_stig: false,
         } as SystemSecurityConfig),
       ]),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockAuth(),
@@ -79,7 +77,7 @@ describe('UserPasswordCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('mat-card-header h3')).toHaveText('Password');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Password');
   });
 
   it('shows password details when no change is required', () => {
@@ -113,7 +111,7 @@ describe('UserPasswordCardComponent', () => {
   });
 
   it('generates Generate One-Time Password when Generate One-Time Password button is pressed', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: /Generate One-Time Password/ }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: /Generate One-Time Password/ }));
     await button.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
@@ -126,7 +124,7 @@ describe('UserPasswordCardComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('auth.generate_onetime_password', [{ username: 'test-user' }]);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenLastCalledWith(OneTimePasswordCreatedDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenLastCalledWith(OneTimePasswordCreatedDialog, {
       data: 'test-password',
     });
   });
@@ -134,12 +132,12 @@ describe('UserPasswordCardComponent', () => {
   it('shows disabled Generate OTP button with tooltip for users without roles', async () => {
     spectator.setInput('user', { ...user, roles: [] });
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: /Generate One-Time Password/ }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: /Generate One-Time Password/ }));
     expect(await button.isDisabled()).toBe(true);
 
-    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltips = spectator.queryAll(TnTooltipDirective);
     const tooltip = tooltips.find(
-      (tip) => tip.message === 'Generating a one-time password requires the user to have TrueNAS access roles.',
+      (tip) => String(tip.message) === 'Generating a one-time password requires the user to have TrueNAS access roles.',
     );
     expect(tooltip).toBeTruthy();
   });
@@ -147,7 +145,7 @@ describe('UserPasswordCardComponent', () => {
   it('shows enabled Generate OTP button for non-local users with roles', async () => {
     spectator.setInput('user', { ...user, local: false, roles: [Role.FullAdmin] });
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: /Generate One-Time Password/ }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: /Generate One-Time Password/ }));
     expect(await button.isDisabled()).toBe(false);
   });
 });

@@ -1,13 +1,12 @@
-<h3 mat-dialog-title>{{ title }}</h3>
-
-@if (isEnterprise()) {
-  <div mat-dialog-content>
-    <ix-select
-      [formControl]="form.controls.reason"
-      [label]="'Reason' | translate"
-      [options]="reasonOptions$"
-      [required]="true"
-    ></ix-select>
+<tn-dialog-shell testId="reboot-or-shutdown" [title]="title">
+  @if (isEnterprise()) {
+    <tn-form-field [label]="'Reason' | translate" [required]="true">
+      <tn-select
+        testId="reason"
+        [formControl]="form.controls.reason"
+        [options]="(reasonOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
     @if(form.controls.customReason.enabled) {
       <ix-input
@@ -16,29 +15,33 @@
         [required]="true"
       ></ix-input>
     }
-  </div>
-}
+  }
 
-<ix-form-actions mat-dialog-actions>
-  <ix-checkbox
-    class="confirm"
-    [formControl]="form.controls.confirm"
-    [label]="'Confirm' | translate"
-    [required]="true"
-  ></ix-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="confirm"
+      class="confirm"
+      [formControl]="form.controls.confirm"
+      [label]="'Confirm' | translate"
+      [required]="true"
+      [error]="form.controls.confirm.touched && form.controls.confirm.invalid ? ('Confirm is required' | translate) : null"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <button mat-button type="button" matDialogClose ixTest="cancel">
-    {{ 'Cancel' | translate }}
-  </button>
+  <ix-form-actions tnDialogAction>
+    <tn-button
+      variant="outline"
+      testId="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
 
-  <button
-    mat-button
-    type="button"
-    color="primary"
-    ixTest="submit"
-    [disabled]="!form.controls.confirm.value || (isEnterprise() && form.invalid)"
-    (click)="onSubmit()"
-  >
-    {{ buttonText }}
-  </button>
-</ix-form-actions>
+    <tn-button
+      color="primary"
+      testId="submit"
+      [label]="buttonText"
+      [disabled]="!form.controls.confirm.value || (!!isEnterprise() && form.invalid)"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  </ix-form-actions>
+</tn-dialog-shell>

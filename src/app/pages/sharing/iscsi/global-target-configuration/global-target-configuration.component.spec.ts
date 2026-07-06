@@ -1,11 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import {
+  TnDialog, TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -13,7 +14,6 @@ import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,6 +37,16 @@ describe('TargetGlobalConfigurationComponent', () => {
     getData: jest.fn((): undefined => undefined),
   };
 
+  const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnChipInput = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
+    TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
   const createComponent = createComponentFactory({
     component: GlobalTargetConfigurationComponent,
     imports: [
@@ -54,7 +64,7 @@ describe('TargetGlobalConfigurationComponent', () => {
         } as IscsiGlobalConfig),
         mockCall('iscsi.global.update'),
       ]),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -101,30 +111,28 @@ describe('TargetGlobalConfigurationComponent', () => {
   });
 
   it('shows current values for iSCSI global settings', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const formValues = await form.getValues();
-
-    expect(formValues).toEqual({
-      'Base Name': 'iqn.2005-10.org.freenas.ctl',
-      'ISNS Servers': ['188.23.4.23', '92.233.1.1'],
-      'Pool Available Space Threshold (%)': '20',
-      'iSCSI listen port': '3260',
-      'Asymmetric Logical Unit Access (ALUA)': false,
-      'Enable iSCSI Extensions for RDMA (iSER)': false,
-    });
+    expect(await (await getTnInput('basename')).getValue()).toBe('iqn.2005-10.org.freenas.ctl');
+    expect(await (await getTnChipInput('isns_servers')).getChips()).toEqual(['188.23.4.23', '92.233.1.1']);
+    expect(await (await getTnInput('pool_avail_threshold')).getValue()).toBe('20');
+    expect(await (await getTnInput('listen_port')).getValue()).toBe('3260');
+    expect(await (await getTnCheckbox('alua')).isChecked()).toBe(false);
+    expect(await (await getTnCheckbox('iser')).isChecked()).toBe(false);
   });
 
   it('saves form values when Save is pressed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Base Name': 'iqn.new.org.freenas.ctl',
-      'ISNS Servers': ['32.12.112.42', '8.2.1.2'],
-      'Pool Available Space Threshold (%)': '15',
-      'iSCSI listen port': '3270',
-      'Asymmetric Logical Unit Access (ALUA)': false,
-    });
+    await (await getTnInput('basename')).setValue('iqn.new.org.freenas.ctl');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const isnsServers = await getTnChipInput('isns_servers');
+    await isnsServers.removeChip('188.23.4.23');
+    await isnsServers.removeChip('92.233.1.1');
+    await isnsServers.addChip('32.12.112.42');
+    await isnsServers.addChip('8.2.1.2');
+
+    await (await getTnInput('pool_avail_threshold')).setValue('15');
+    await (await getTnInput('listen_port')).setValue('3270');
+    await (await getTnCheckbox('alua')).uncheck();
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('iscsi.global.update', [{
@@ -145,7 +153,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     } as Service]);
     mockStore$.refreshState();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
@@ -159,65 +167,49 @@ describe('TargetGlobalConfigurationComponent', () => {
     } as Service]);
     mockStore$.refreshState();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
   });
 
   it('disables iSER field unless it is an enterprise system with RDMA capable NIC', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-
-    expect(await form.getDisabledState()).toMatchObject({
-      'Enable iSCSI Extensions for RDMA (iSER)': true,
-    });
+    expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(true);
 
     mockStore$.overrideSelector(selectIsEnterprise, true);
     spectator.component.ngOnInit();
 
-    expect(await form.getDisabledState()).toMatchObject({
-      'Enable iSCSI Extensions for RDMA (iSER)': false,
-    });
+    expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(false);
   });
 
   it('validates Base Name field only when it is being modified', async () => {
-    const form = await loader.getHarness(IxFormHarness);
+    const basename = await getTnInput('basename');
 
     // Original value is 'iqn.2005-10.org.freenas.ctl' from mock
     // Form should be valid initially even if we don't touch the basename
     expect(spectator.component.form.controls.basename.valid).toBe(true);
 
     // Test with uppercase letters - validation should trigger
-    await form.fillForm({
-      'Base Name': 'IQN.2005-10.ORG.FREENAS.CTL',
-    });
+    await basename.setValue('IQN.2005-10.ORG.FREENAS.CTL');
     expect(spectator.component.form.controls.basename.invalid).toBe(true);
     expect(spectator.component.form.controls.basename.errors).toMatchObject({
       pattern: { message: 'Only lowercase alphanumeric characters and . : - are allowed.' },
     });
 
     // Test with special characters like @ and !
-    await form.fillForm({
-      'Base Name': 'iqn.2005-10.org.freenas.ctl@%!!',
-    });
+    await basename.setValue('iqn.2005-10.org.freenas.ctl@%!!');
     expect(spectator.component.form.controls.basename.invalid).toBe(true);
 
     // Test with spaces
-    await form.fillForm({
-      'Base Name': 'iqn 2005-10 org freenas ctl',
-    });
+    await basename.setValue('iqn 2005-10 org freenas ctl');
     expect(spectator.component.form.controls.basename.invalid).toBe(true);
 
     // Test with valid value (lowercase, dots, dashes, colons)
-    await form.fillForm({
-      'Base Name': 'iqn.2005-10.org.freenas.ctl:target',
-    });
+    await basename.setValue('iqn.2005-10.org.freenas.ctl:target');
     expect(spectator.component.form.controls.basename.valid).toBe(true);
 
     // Change back to original value - should be valid again
-    await form.fillForm({
-      'Base Name': 'iqn.2005-10.org.freenas.ctl',
-    });
+    await basename.setValue('iqn.2005-10.org.freenas.ctl');
     expect(spectator.component.form.controls.basename.valid).toBe(true);
   });
 
@@ -241,17 +233,13 @@ describe('TargetGlobalConfigurationComponent', () => {
     spectator.component.ngOnInit();
     spectator.detectChanges();
 
-    const form = await loader.getHarness(IxFormHarness);
-
     // Don't touch basename, only modify listen_port
-    await form.fillForm({
-      'iSCSI listen port': '3270',
-    });
+    await (await getTnInput('listen_port')).setValue('3270');
 
     // Form should be valid because we didn't modify the basename
     expect(spectator.component.form.valid).toBe(true);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     // Should successfully call the API

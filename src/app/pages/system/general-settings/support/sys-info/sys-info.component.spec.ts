@@ -2,8 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContractType } from 'app/interfaces/system-info.interface';
@@ -14,6 +15,7 @@ import {
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('SysInfoComponent', () => {
   const systemInfo = {
@@ -40,8 +42,13 @@ describe('SysInfoComponent', () => {
     component: SysInfoComponent,
     providers: [
       mockAuth(),
-      mockProvider(MatDialog, { open: jest.fn() }),
+      mockProvider(TnDialog, { open: jest.fn() }),
       mockApi([mockCall('truenas.license.fingerprint', fingerprintBase64)]),
+      provideMockStore({
+        selectors: [
+          { selector: selectIsEnterprise, value: false },
+        ],
+      }),
     ],
   });
 
@@ -171,6 +178,19 @@ describe('SysInfoComponent', () => {
   });
 
   describe('License fingerprint', () => {
+    it('shows the thumbprint row on community (non-enterprise) systems', () => {
+      expect(spectator.query('.fingerprint-row')).toExist();
+    });
+
+    it('hides the thumbprint row on enterprise systems', () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectIsEnterprise, true);
+      store$.refreshState();
+      spectator.detectChanges();
+
+      expect(spectator.query('.fingerprint-row')).not.toExist();
+    });
+
     it('renders a View Fingerprint button regardless of license state', async () => {
       spectator.setInput({ hasLicense: false, licenseInfo: undefined });
       expect(spectator.query('.fingerprint-row')).toExist();
@@ -194,7 +214,7 @@ describe('SysInfoComponent', () => {
       );
       await viewButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
         LicenseFingerprintDialog,
         expect.any(Object),
       );
@@ -217,7 +237,7 @@ describe('SysInfoComponent', () => {
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.license.fingerprint');
       expect(writeText).toHaveBeenCalledWith(fingerprintBase64);
-      expect(spectator.inject(MatDialog).open).not.toHaveBeenCalled();
+      expect(spectator.inject(TnDialog).open).not.toHaveBeenCalled();
     });
 
     it('caches the fingerprint after the first copy and does not refetch', async () => {

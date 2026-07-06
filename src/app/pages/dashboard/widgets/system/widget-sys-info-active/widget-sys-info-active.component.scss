@@ -26,9 +26,9 @@
 }
 
 .use-enterprise {
-  height: calc(var(--mdc-list-list-item-one-line-container-height, 48px) * 2);
+  height: calc(48px * 2);
 
   @media (max-width: $breakpoint-sm) {
-    height: calc(var(--mdc-list-list-item-one-line-container-height, 48px) * 1.2);
+    height: calc(48px * 1.2);
   }
 }

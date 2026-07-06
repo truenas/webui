@@ -2,13 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -42,12 +42,12 @@ describe('AddHostMenuComponent', () => {
       mockProvider(NvmeOfStore, {
         hosts: allHosts,
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success(newHost)),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
     ],
@@ -68,7 +68,7 @@ describe('AddHostMenuComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(HostFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(HostFormComponent, { title: 'Add Host' });
     expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(newHost);
   });
 
@@ -129,7 +129,7 @@ describe('AddHostMenuComponent', () => {
 
       await items[1].click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(HostFormComponent);
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(HostFormComponent, { title: 'Add Host' });
       expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(newHost);
     });
 
@@ -142,7 +142,7 @@ describe('AddHostMenuComponent', () => {
 
       await items[2].click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManageHostsDialog, { minWidth: '450px' });
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ManageHostsDialog, { minWidth: '450px', maxWidth: '768px' });
     });
   });
 });

@@ -1,8 +1,10 @@
+// cspell:ignore ngneat cloudsync bwlimit
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -18,11 +20,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
@@ -199,9 +198,7 @@ describe('CloudSyncFormComponent', () => {
           credentials_oauth: null,
         }]),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
+      ...ixFormTestingProviders(),
       mockProvider(FilesystemService),
       mockProvider(SlideInRef, slideInRef),
     ],
@@ -341,7 +338,9 @@ describe('CloudSyncFormComponent', () => {
       spectator.component.isCredentialInvalid$.next(true);
       spectator.detectChanges();
 
-      const bucketInput = await loader.getHarness(IxInputHarness.with({ label: 'Bucket' }));
+      const bucketInput = await loader.getHarness(
+        TnInputHarness.with({ selector: '[formControlName="bucket_input"]' }),
+      );
       await bucketInput.setValue('selected');
 
       expect(spectator.component.getPayload()).toEqual(expect.objectContaining({
@@ -374,6 +373,29 @@ describe('CloudSyncFormComponent', () => {
       });
 
       expect(() => spectator.component.getPayload()).toThrow(`Specified bandwidth limit ${bwlimitStr} is invalid`);
+    });
+  });
+
+  describe('side panel host (no SlideInRef)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+        ],
+        props: {
+          taskToEdit: existingTask,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('emits closed and updates when saved via the host submit() entry point', () => {
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.update', [1, expect.anything()]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 
@@ -452,9 +474,12 @@ describe('CloudSyncFormComponent', () => {
     });
 
     it('doesnt load buckets', async () => {
-      const buckets = await loader.getHarness(IxSelectHarness.with({ label: 'Bucket' }));
-      const options = await buckets.getOptionLabels();
-      expect(options).toEqual(['--', 'test3']);
+      const buckets = await loader.getHarness(
+        TnSelectHarness.with({ selector: '[formControlName="bucket"]' }),
+      );
+      await buckets.open();
+      const options = await buckets.getOptions();
+      expect(options).toEqual(['test3']);
     });
   });
 });

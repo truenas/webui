@@ -4,8 +4,12 @@ import { signal } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { BehaviorSubject, map } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,7 +19,6 @@ import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxPermissionsHarness } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -33,6 +36,16 @@ describe('AdditionalDetailsSectionComponent', () => {
   function setShellAccess(value: boolean): void {
     shellAccess.set(value);
     shellAccess$.next(value);
+  }
+
+  // Opens the editable for a details item, sets the value on its tn-input, and closes it.
+  async function setEditableInput(itemLabel: string, controlName: string, value: string): Promise<void> {
+    const table = await loader.getHarness(DetailsTableHarness);
+    const editable = await table.getHarnessForItem(itemLabel, EditableHarness);
+    await editable.open();
+    const input = await loader.getHarness(TnInputHarness.with({ name: controlName }));
+    await input.setValue(value);
+    await editable.tryToClose();
   }
   const mockUser = {
     id: 69,
@@ -109,6 +122,7 @@ describe('AdditionalDetailsSectionComponent', () => {
           mode: 16889,
         } as FileSystemStat),
       ]),
+      provideTnFormFieldErrors(),
     ],
   });
 
@@ -178,12 +192,9 @@ describe('AdditionalDetailsSectionComponent', () => {
     });
 
     it('fill editables with custom value', async () => {
-      await (await loader.getHarness(DetailsTableHarness)).setValues({
-        'Full Name': 'Editable field',
-        Email: 'editable@truenas.local',
-        Groups: 'test-group',
-        UID: 1234,
-      });
+      await setEditableInput('Full Name', 'full_name', 'Editable field');
+      await setEditableInput('Email', 'email', 'editable@truenas.local');
+      await setEditableInput('UID', 'uid', '1234');
 
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenLastCalledWith({
         full_name: 'Editable field',
@@ -199,6 +210,35 @@ describe('AdditionalDetailsSectionComponent', () => {
         home_create: true,
         uid: 1234,
       });
+    });
+
+    it('resolves a selected auxiliary group label to its id in the form control', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const groupsEditable = await table.getHarnessForItem('Groups', EditableHarness);
+      await groupsEditable.open();
+
+      // tn-chip-input is fed { label, value } options; selecting by label must
+      // commit the group's numeric id (the control is typed number[]).
+      // Only the aux-groups chip-input is rendered here (shell access is off, so
+      // no sudo-command chip-inputs exist).
+      const chipInput = await loader.getHarness(TnChipInputHarness);
+      await chipInput.selectSuggestion('test-group-2');
+
+      expect(spectator.component.form.controls.groups.value).toEqual([102]);
+    });
+
+    it('shows a validation message when the Email editable holds an invalid address', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const editable = await table.getHarnessForItem('Email', EditableHarness);
+      await editable.open();
+
+      const input = await loader.getHarness(TnInputHarness.with({ name: 'email' }));
+      await input.setValue('not-an-email');
+
+      // The Email editable is the only one open, so its wrapping field is the only
+      // tn-form-field rendered; without the wrapper the validation message has nowhere to surface.
+      const field = await loader.getHarness(TnFormFieldHarness);
+      expect(await field.getErrorMessage()).toBe('Value must be a valid email address');
     });
 
     it('clears default path and adds required validator when home editable is opened', async () => {
@@ -263,8 +303,8 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.component.form.controls.home.hasError('required')).toBe(true);
 
       // Uncheck home_create
-      const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
-      await createCheckbox.setValue(false);
+      const createCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Create Home Directory' }));
+      await createCheckbox.uncheck();
 
       // Required validator should be removed and default path restored
       expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
@@ -463,16 +503,16 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
-      const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
-      await createCheckbox.setValue(true);
+      const createCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Create Home Directory' }));
+      await createCheckbox.check();
 
       const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
       await explorer.setValue('/mnt/tank/user');
       spectator.detectChanges();
 
-      const checkbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Default Permissions' }));
+      const checkbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Default Permissions' }));
       if (checkbox) {
-        await checkbox.setValue(false);
+        await checkbox.uncheck();
       }
 
       const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
@@ -489,8 +529,8 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
-      const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
-      await createCheckbox.setValue(true);
+      const createCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Create Home Directory' }));
+      await createCheckbox.check();
 
       // Before setting a path, label should be 'Home Directory'
       const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
@@ -515,16 +555,16 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
-      const checkbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Default Permissions' }));
+      const checkbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Default Permissions' }));
       if (checkbox) {
-        await checkbox.setValue(false);
+        await checkbox.uncheck();
       }
 
       const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       await perms.setValue('755');
 
-      const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
-      await createCheckbox.setValue(true);
+      const createCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Create Home Directory' }));
+      await createCheckbox.check();
       spectator.detectChanges();
 
       // When "Create Home Directory" is checked, it should set default permissions and hide the permissions component
@@ -629,7 +669,7 @@ describe('AdditionalDetailsSectionComponent', () => {
 
       const explorer = await loader.getHarnessOrNull(IxExplorerHarness.with({ label: 'Home Directory' }));
       const perms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
-      const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
+      const createCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Create Home Directory' }));
 
       expect(await explorer.isDisabled()).toBe(true);
       expect(await createCheckbox.isDisabled()).toBe(true);
@@ -686,7 +726,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
-      const defaultPermsCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Default Permissions' }));
+      const defaultPermsCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Default Permissions' }));
       const permissionsComponent = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
 
       expect(defaultPermsCheckbox).toBeNull();
@@ -705,7 +745,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
-      const defaultPermsCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Default Permissions' }));
+      const defaultPermsCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Default Permissions' }));
       expect(defaultPermsCheckbox).not.toBeNull();
     });
   });

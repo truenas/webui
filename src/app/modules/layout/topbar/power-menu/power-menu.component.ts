@@ -1,12 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -21,8 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './power-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
-    MatTooltip,
+    TnIconButtonComponent,
     MatMenuTrigger,
     TnIconComponent,
     MatMenu,
@@ -34,7 +30,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class PowerMenuComponent {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
@@ -43,9 +39,9 @@ export class PowerMenuComponent {
   protected searchableElements = powerMenuElements;
 
   onReboot(): void {
-    this.matDialog.open(RebootOrShutdownDialog, {
+    this.tnDialog.open<RebootOrShutdownDialog, boolean, string>(RebootOrShutdownDialog, {
       width: '430px',
-    }).afterClosed().pipe(
+    }).closed.pipe(
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((reason: string) => {
@@ -57,10 +53,10 @@ export class PowerMenuComponent {
   }
 
   onShutdown(): void {
-    this.matDialog.open(RebootOrShutdownDialog, {
+    this.tnDialog.open<RebootOrShutdownDialog, boolean, string>(RebootOrShutdownDialog, {
       width: '430px',
       data: true,
-    }).afterClosed().pipe(
+    }).closed.pipe(
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((reason: string) => {

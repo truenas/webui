@@ -2,14 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
 import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
@@ -49,12 +49,12 @@ describe('AddPortMenuComponent', () => {
       mockProvider(NvmeOfStore, {
         ports: allPorts,
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success(newPort)),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
     ],
@@ -74,7 +74,7 @@ describe('AddPortMenuComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PortFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(PortFormComponent, { title: 'Add Port' });
     expect(spectator.component.portSelected.emit).toHaveBeenCalledWith(newPort);
   });
 
@@ -111,7 +111,7 @@ describe('AddPortMenuComponent', () => {
 
       await items[1].click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PortFormComponent);
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(PortFormComponent, { title: 'Add Port' });
       expect(spectator.component.portSelected.emit).toHaveBeenCalledWith(newPort);
     });
 
@@ -124,7 +124,7 @@ describe('AddPortMenuComponent', () => {
 
       await items[2].click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManagePortsDialog, { minWidth: '450px' });
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ManagePortsDialog, { minWidth: '450px', maxWidth: '768px' });
     });
   });
 });

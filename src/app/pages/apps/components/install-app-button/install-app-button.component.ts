@@ -2,10 +2,9 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, input, ViewContainerRef,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
 import {
   filter, Observable, of, switchMap, take,
 } from 'rxjs';
@@ -14,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -25,16 +23,15 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   templateUrl: './install-app-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class InstallAppButtonComponent {
   private dockerStore = inject(DockerStore);
   private router = inject(Router);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private authService = inject(AuthService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
@@ -82,7 +79,7 @@ export class InstallAppButtonComponent {
 
   showChoosePoolModal(): void {
     this.showAgreementWarning().pipe(
-      switchMap(() => this.matDialog.open(SelectPoolDialog, { viewContainerRef: this.viewContainerRef }).afterClosed()),
+      switchMap(() => this.tnDialog.open(SelectPoolDialog, { viewContainerRef: this.viewContainerRef }).closed),
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.navigateToInstallPage());

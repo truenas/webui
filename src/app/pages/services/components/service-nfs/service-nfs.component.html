@@ -1,140 +1,148 @@
-<ix-modal-header
-  title="NFS"
-  [requiredRoles]="requiredRoles"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    title="NFS"
+    [requiredRoles]="requiredRoles"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
 
-<mat-card class="card">
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="'General Options' | translate">
-        <ix-select
-          formControlName="bindip"
-          [label]="'Bind IP Addresses' | translate"
-          [options]="ipChoices$"
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <tn-form-section [heading]="'General Options' | translate">
+    <tn-form-field
+      [label]="'Bind IP Addresses' | translate"
+      [tooltip]="tooltips.bindip | translate"
+    >
+      <tn-select
+        formControlName="bindip"
+        [options]="(ipChoices$ | async) ?? []"
+        [multiple]="true"
+      ></tn-select>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="tooltips.servers_auto | translate">
+      <tn-checkbox
+        formControlName="servers_auto"
+        [label]="'Calculate number of threads dynamically' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    @if (!form.controls.servers_auto.value) {
+      <tn-form-field
+        [label]="'Specify number of threads manually' | translate"
+        [required]="true"
+        [tooltip]="tooltips.servers | translate"
+      >
+        <tn-input formControlName="servers" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
+    }
+  </tn-form-section>
+
+  <div class="two-columns">
+    <tn-form-section [heading]="'NFSv4' | translate">
+      <tn-form-field
+        [label]="'Enabled Protocols' | translate"
+        [tooltip]="tooltips.protocols | translate"
+        [required]="true"
+      >
+        <tn-select
+          formControlName="protocols"
+          [options]="(protocolOptions$ | async) ?? []"
           [multiple]="true"
-          [tooltip]="tooltips.bindip | translate"
-        ></ix-select>
+        ></tn-select>
+      </tn-form-field>
 
-        <ix-checkbox
-          formControlName="servers_auto"
-          [label]="'Calculate number of threads dynamically' | translate"
-          [tooltip]="tooltips.servers_auto | translate"
-        ></ix-checkbox>
+      <tn-form-field
+        [label]="'NFSv4 DNS Domain' | translate"
+        [tooltip]="tooltips.v4_domain | translate"
+      >
+        <tn-input formControlName="v4_domain"></tn-input>
+      </tn-form-field>
 
-        @if (!form.controls.servers_auto.value) {
-          <ix-input
-            formControlName="servers"
-            type="number"
-            [label]="'Specify number of threads manually' | translate"
-            [required]="true"
-            [tooltip]="tooltips.servers | translate"
-          ></ix-input>
-        }
-      </ix-fieldset>
+      <tn-form-field [tooltip]="tooltips.v4_krb | translate">
+        <tn-checkbox
+          formControlName="v4_krb"
+          [label]="'Require Kerberos for NFSv4' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    </tn-form-section>
+    <tn-form-section [heading]="'Ports' | translate">
+      <tn-form-field
+        [label]="'mountd(8) bind port' | translate"
+        [tooltip]="tooltips.mountd_port | translate"
+      >
+        <tn-input formControlName="mountd_port" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
 
-      <div class="two-columns">
-        <ix-fieldset [title]="'NFSv4' | translate">
-          <ix-select
-            formControlName="protocols"
-            [label]="'Enabled Protocols' | translate"
-            [options]="protocolOptions$"
-            [multiple]="true"
-            [tooltip]="tooltips.protocols | translate"
-            [required]="true"
-          ></ix-select>
+      <tn-form-field
+        [label]="'rpc.statd(8) bind port' | translate"
+        [tooltip]="tooltips.rpcstatd_port | translate"
+      >
+        <tn-input formControlName="rpcstatd_port" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
 
-          <ix-input
-            formControlName="v4_domain"
-            [label]="'NFSv4 DNS Domain' | translate"
-            [tooltip]="tooltips.v4_domain | translate"
-          ></ix-input>
+      <tn-form-field
+        [label]="'rpc.lockd(8) bind port' | translate"
+        [tooltip]="tooltips.rpclockd_port | translate"
+      >
+        <tn-input formControlName="rpclockd_port" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
+    </tn-form-section>
+  </div>
 
-          <ix-checkbox
-            formControlName="v4_krb"
-            [label]="'Require Kerberos for NFSv4' | translate"
-            [tooltip]="tooltips.v4_krb | translate"
-          ></ix-checkbox>
-        </ix-fieldset>
-        <ix-fieldset [title]="'Ports' | translate">
-          <ix-input
-            formControlName="mountd_port"
-            type="number"
-            [label]="'mountd(8) bind port' | translate"
-            [tooltip]="tooltips.mountd_port | translate"
-          ></ix-input>
+  <tn-form-section [heading]="'Other Options' | translate">
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="rdma"
+        [label]="'Enable NFS over RDMA' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-          <ix-input
-            formControlName="rpcstatd_port"
-            type="number"
-            [label]="'rpc.statd(8) bind port' | translate"
-            [tooltip]="tooltips.rpcstatd_port | translate"
-          ></ix-input>
+    <tn-form-field [tooltip]="tooltips.allow_nonroot | translate">
+      <tn-checkbox
+        formControlName="allow_nonroot"
+        [label]="'Allow non-root mount' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-          <ix-input
-            formControlName="rpclockd_port"
-            type="number"
-            [label]="'rpc.lockd(8) bind port' | translate"
-            [tooltip]="tooltips.rpclockd_port | translate"
-          ></ix-input>
-        </ix-fieldset>
+    <tn-form-field [tooltip]="tooltips.userd_manage_gids | translate">
+      <tn-checkbox
+        formControlName="userd_manage_gids"
+        [label]="'Manage Groups Server-side' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
+
+  <ix-form-actions>
+    @if (slideInRef) {
+      <div>
+        <tn-button
+          *ixRequiresRoles="requiredRoles"
+          color="primary"
+          type="submit"
+          [testId]="'save'"
+          [label]="'Save' | translate"
+          [disabled]="form.invalid || isFormLoading()"
+        ></tn-button>
       </div>
-
-      <ix-fieldset [title]="'Other Options' | translate">
-        <ix-checkbox
-          formControlName="rdma"
-          [label]="'Enable NFS over RDMA' | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="allow_nonroot"
-          [label]="'Allow non-root mount' | translate"
-          [tooltip]="tooltips.allow_nonroot | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="userd_manage_gids"
-          [label]="'Manage Groups Server-side' | translate"
-          [tooltip]="tooltips.userd_manage_gids | translate"
-        ></ix-checkbox>
-      </ix-fieldset>
-
-      <ix-form-actions>
-        <div>
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            type="submit"
+    }
+    <div class="add-spn-container">
+      @if (isAddSpnVisible && isAddSpnDisabled()) {
+        <ix-tooltip
+          [header]="'Add SPN' | translate"
+          [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
+        ></ix-tooltip>
+      }
+      @if (isAddSpnVisible) {
+        <ng-container *ixRequiresRoles="requiredRoles">
+          <tn-button
             color="primary"
-            ixTest="save"
-            [disabled]="form.invalid || isFormLoading()"
-          >
-            {{ 'Save' | translate }}
-          </button>
-        </div>
-        <div class="add-spn-container">
-          @if (isAddSpnVisible && isAddSpnDisabled()) {
-            <ix-tooltip
-              [header]="'Add SPN' | translate"
-              [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
-            ></ix-tooltip>
-          }
-          @if (isAddSpnVisible) {
-            <ng-container *ixRequiresRoles="requiredRoles">
-              <button
-                mat-button
-                type="button"
-                color="primary"
-                ixTest="add-spn"
-                [disabled]="isAddSpnDisabled()"
-                (click)="addSpn()"
-              >
-                {{ 'Add SPN' | translate }}
-              </button>
-            </ng-container>
-          }
-        </div>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+            [testId]="'add-spn'"
+            [label]="'Add SPN' | translate"
+            [disabled]="isAddSpnDisabled()"
+            (onClick)="addSpn()"
+          ></tn-button>
+        </ng-container>
+      }
+    </div>
+  </ix-form-actions>
+</form>

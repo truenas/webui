@@ -7,9 +7,8 @@ import {
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, HostBinding, inject, Input, IterableDiffers, OnChanges, OnDestroy, OnInit, output, TrackByFunction, viewChild, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { ResizedEvent, AngularResizeEventModule } from 'angular-resize-event';
 import {
   animationFrameScheduler, asapScheduler, BehaviorSubject,
@@ -20,7 +19,6 @@ import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeVirtualScrollNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-virtual-scroll-node-outlet.directive';
 import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export const defaultSize = 48;
 export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
@@ -43,8 +41,7 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
     AngularResizeEventModule,
     TreeVirtualScrollNodeOutletDirective,
     TreeNodeOutletDirective,
-    TestDirective,
-    MatTooltip,
+    TnTooltipDirective,
     TnIconButtonComponent,
     TranslateModule,
     AsyncPipe,

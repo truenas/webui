@@ -2,10 +2,8 @@ import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, inject, input,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 import {
   DataMigrationStatusDialogComponent,
@@ -22,13 +20,13 @@ import {
   imports: [
     TranslateModule,
     TnIconComponent,
-    MatTooltip,
+    TnTooltipDirective,
     NgClass,
   ],
 })
 export class TierStatusComponent {
   private translate = inject(TranslateService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
 
   readonly tier = input<SharingTierInfo | null | undefined>();
 
@@ -56,7 +54,7 @@ export class TierStatusComponent {
     const tier = this.tier();
     if (!tier?.tier_job) return;
 
-    this.matDialog.open(DataMigrationStatusDialogComponent, {
+    this.tnDialog.open(DataMigrationStatusDialogComponent, {
       data: {
         tierJob: tier.tier_job,
         targetTier: tier.tier_type,

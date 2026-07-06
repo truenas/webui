@@ -1,7 +1,7 @@
 import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   BehaviorSubject, catchError, filter, Observable, of, repeat, Subject, switchMap, take,
 } from 'rxjs';
@@ -33,7 +33,7 @@ export class VmService {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
@@ -106,8 +106,8 @@ export class VmService {
   }
 
   doStop(vm: VirtualMachine): Observable<boolean> {
-    return this.matDialog.open<StopVmDialogComponent, unknown, StopVmDialogData>(StopVmDialogComponent, { data: vm })
-      .afterClosed()
+    return this.tnDialog.open<StopVmDialogComponent, unknown, StopVmDialogData>(StopVmDialogComponent, { data: vm })
+      .closed
       .pipe(
         take(1),
         switchMap((data) => {

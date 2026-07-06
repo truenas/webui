@@ -1,8 +1,11 @@
+import { CdkStepper } from '@angular/cdk/stepper';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
   CertificateDigestAlgorithm,
@@ -14,10 +17,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -25,14 +25,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './csr-options.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxSelectComponent,
-    IxInputComponent,
+    TnSelectComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
-    MatStepperNext,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -40,8 +39,11 @@ export class CsrOptionsComponent implements SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private stepper = inject(CdkStepper);
 
   hasLifetime = input(false);
+
+  protected readonly InputType = InputType;
 
   form = this.formBuilder.nonNullable.group({
     key_type: [CertificateKeyType.Rsa],
@@ -61,6 +63,14 @@ export class CsrOptionsComponent implements SummaryProvider {
   readonly digestAlgorithms$ = of(mapToOptions(certificateDigestAlgorithmLabels, this.translate));
   readonly keyLengths$ = of(certificateKeyLengths);
   readonly ecCurves$ = this.api.call('certificate.ec_curve_choices').pipe(choicesToOptions());
+
+  protected goBack(): void {
+    this.stepper.previous();
+  }
+
+  protected goNext(): void {
+    this.stepper.next();
+  }
 
   getSummary(): SummarySection {
     const values = this.form.getRawValue();

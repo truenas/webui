@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnDialogHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -22,13 +21,13 @@ describe('UnlockSedDialog', () => {
       mockApi([
         mockCall('disk.unlock_sed'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(SnackbarService),
       mockProvider(LoaderService, {
         withLoader: () => <T>(source$: T) => source$,
       }),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: { diskName: 'sda' },
       },
     ],
@@ -39,9 +38,9 @@ describe('UnlockSedDialog', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows dialog title with disk name', () => {
-    const title = spectator.query('h1');
-    expect(title).toHaveText('Unlock SED for sda');
+  it('shows dialog title with disk name', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('Unlock SED for sda');
   });
 
   it('shows informational message', () => {
@@ -50,12 +49,10 @@ describe('UnlockSedDialog', () => {
   });
 
   it('calls disk.unlock_sed with correct payload when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Password: 'test-password',
-    });
+    const passwordInput = await loader.getHarness(TnInputHarness);
+    await passwordInput.setValue('test-password');
 
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
     await unlockButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.unlock_sed', [{
@@ -63,11 +60,11 @@ describe('UnlockSedDialog', () => {
       password: 'test-password',
     }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('disables submit button when password is empty', async () => {
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
     expect(await unlockButton.isDisabled()).toBe(true);
   });
 });

@@ -1,12 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
 import {
-  MatDialog, MatDialogClose, MatDialogContent, MatDialogTitle,
-} from '@angular/material/dialog';
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnDialogShellComponent, tnIconMarker } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
 import { Role } from 'app/enums/role.enum';
@@ -23,9 +21,8 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -42,14 +39,9 @@ interface NvmeOfPortAndUsage extends NvmeOfPort {
   styleUrl: './manage-ports-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnIconComponent,
-    MatButton,
-    MatDialogContent,
-    MatDialogTitle,
-    MatIconButton,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TranslateModule,
-    TestDirective,
-    MatDialogClose,
     AsyncPipe,
     IxTableBodyComponent,
     IxTableComponent,
@@ -61,11 +53,11 @@ export class ManagePortsDialog implements OnInit {
   private nvmeOfStore = inject(NvmeOfStore);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
@@ -129,8 +121,8 @@ export class ManagePortsDialog implements OnInit {
   }
 
   onAdd(): void {
-    this.slideIn
-      .open(PortFormComponent)
+    this.formPanel
+      .open(PortFormComponent, { title: this.translate.instant('Add Port') })
       .onSuccess(() => {
         this.snackbar.success(this.translate.instant('Port Added'));
         this.nvmeOfStore.reloadPorts();
@@ -138,7 +130,8 @@ export class ManagePortsDialog implements OnInit {
   }
 
   onEdit(port: NvmeOfPort): void {
-    this.slideIn.open(PortFormComponent, { data: port })
+    this.formPanel
+      .open(PortFormComponent, { title: this.translate.instant('Edit Port'), inputs: { port } })
       .onSuccess(() => {
         this.snackbar.success(this.translate.instant('Port Updated'));
         this.nvmeOfStore.reloadPorts();
@@ -150,7 +143,7 @@ export class ManagePortsDialog implements OnInit {
     const subsystemsInUse = this.nvmeOfStore?.subsystems?.()
       .filter((subsystem) => subsystem.ports.some((subsystemPort) => subsystemPort.id === port.id)) || [];
 
-    this.matDialog.open(
+    this.tnDialog.open(
       SubsystemPortOrHostDeleteDialogComponent,
       {
         data: {
@@ -162,7 +155,7 @@ export class ManagePortsDialog implements OnInit {
         minWidth: '500px',
       },
     )
-      .afterClosed()
+      .closed
       .pipe(
         filter((data: { confirmed: boolean; force: boolean }) => !!data?.confirmed),
         switchMap(({ force }) => {

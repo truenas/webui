@@ -3,11 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnSpinnerComponent } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -48,7 +46,7 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     MatCardHeader,
     MatCardTitle,
     ReactiveFormsModule,
@@ -74,7 +72,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private formBuilder = inject(NonNullableFormBuilder);
   private destroyRef = inject(DestroyRef);
   private unsavedChangesService = inject(UnsavedChangesService);
@@ -190,12 +188,12 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   }
 
   onStripAclPressed(): void {
-    this.matDialog.open(StripAclModalComponent, {
+    this.tnDialog.open(StripAclModalComponent, {
       data: {
         path: this.datasetPath,
       } as StripAclModalData,
     })
-      .afterClosed()
+      .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((wasStripped) => {
         if (!wasStripped) {
@@ -210,7 +208,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   }
 
   onSavePreset(): void {
-    this.matDialog.open(SaveAsPresetModalComponent, {
+    this.tnDialog.open(SaveAsPresetModalComponent, {
       data: {
         aclType: this.acl.acltype,
         datasetPath: this.datasetPath,
@@ -219,7 +217,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   }
 
   onUsePresetPressed(): void {
-    this.matDialog.open(SelectPresetModalComponent, {
+    this.tnDialog.open(SelectPresetModalComponent, {
       data: {
         allowCustom: false,
         datasetPath: this.datasetPath,
@@ -250,7 +248,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
       return;
     }
 
-    this.matDialog.open(SelectPresetModalComponent, {
+    this.tnDialog.open(SelectPresetModalComponent, {
       data: {
         allowCustom: true,
         datasetPath: this.datasetPath,

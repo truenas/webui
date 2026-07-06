@@ -1,14 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnDividerComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DatasetUnlockComponent,
 } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
@@ -19,18 +16,17 @@ import {
   styleUrls: ['./unlock-summary-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
-    MatDialogContent,
-    MatDivider,
-    TestDirective,
+    TnDividerComponent,
+    TnTestIdDirective,
     TnIconComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
   ],
 })
 export class UnlockSummaryDialog {
-  dialogRef = inject<MatDialogRef<UnlockSummaryDialog>>(MatDialogRef);
+  dialogRef = inject<DialogRef>(DialogRef);
   private dialogService = inject(DialogService);
 
   title: string = helptextUnlock.unlockDatasetDialog.title;

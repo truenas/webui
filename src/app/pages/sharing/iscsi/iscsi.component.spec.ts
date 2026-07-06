@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { LicenseService } from 'app/services/license.service';
@@ -36,7 +36,7 @@ describe('IscsiComponent', () => {
       }),
       mockAuth(),
       mockApi(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -51,7 +51,9 @@ describe('IscsiComponent', () => {
     const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Target Configuration' }));
     await configurationButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent, {
+      title: 'iSCSI Global Configuration',
+    });
   });
 
   it('shows a navtab with supported links', async () => {

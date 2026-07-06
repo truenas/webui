@@ -4,10 +4,9 @@ import { MatAnchor, MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTooltipDirective, TnDialog } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -41,7 +40,7 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
     MatCard,
     MatCardHeader,
     MatCardTitle,
-    MatTooltipModule,
+    TnTooltipDirective,
     TranslateModule,
     MatButton,
     TestDirective,
@@ -54,7 +53,7 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
   ],
 })
 export class ZfsEncryptionCardComponent {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private datasetStore = inject(DatasetTreeStore);
   private destroyRef = inject(DestroyRef);
@@ -99,35 +98,35 @@ export class ZfsEncryptionCardComponent {
   });
 
   onEditPressed(): void {
-    const dialog = this.matDialog.open(EncryptionOptionsDialog, {
+    const dialog = this.tnDialog.open(EncryptionOptionsDialog, {
       data: {
         dataset: this.dataset(),
         parent: this.parentDataset(),
       } as EncryptionOptionsDialogData,
     });
     dialog
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   onLock(): void {
-    this.matDialog.open(LockDatasetDialog, {
+    this.tnDialog.open(LockDatasetDialog, {
       data: this.dataset(),
     })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   onExportKey(): void {
-    this.matDialog.open(ExportDatasetKeyDialog, {
+    this.tnDialog.open(ExportDatasetKeyDialog, {
       data: this.dataset(),
     });
   }
 
   onExportAllKeys(): void {
-    this.matDialog.open(ExportAllKeysDialog, {
+    this.tnDialog.open(ExportAllKeysDialog, {
       data: this.dataset(),
     });
   }

@@ -8,6 +8,11 @@ import {
   provideNativeDateAdapter,
 } from '@angular/material/core';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+// Legacy animations engine required by @truenas/ui-components (tn-table's [@detailExpand]);
+// all provide*Animations* APIs are deprecated in Angular 20.2+. Revisit once the library
+// moves to animate.enter/leave.
+// eslint-disable-next-line sonarjs/deprecation
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import {
   withPreloading,
   provideRouter,
@@ -36,6 +41,7 @@ import { filter, take } from 'rxjs';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { provideTnTablePagerLabels } from 'app/core/providers/tn-table-pager-labels.provider';
 import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
@@ -54,6 +60,11 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
+    // Align @truenas/ui-components with webui's long-standing data-test attribute convention
+    // (see the [ixTest] directive). Library default is data-testid; this single provider
+    // routes every component-level testId input and TnTestIdDirective binding through data-test
+    // so existing automated tests keep matching their selectors.
+    { provide: TN_TEST_ATTR, useValue: 'data-test' },
     importProvidersFrom(
       BrowserModule,
       TranslateModule.forRoot({
@@ -101,6 +112,11 @@ bootstrapApplication(AppComponent, {
       serializer: CustomRouterStateSerializer,
     }),
     provideNgxWebstorage(withLocalStorage()),
+    // Registers a no-op animation engine so synthetic animation bindings (e.g. tn-table's
+    // [@detailExpand] detail row) resolve without errors, while keeping the app's
+    // long-standing instant (non-animated) behavior unchanged.
+    // eslint-disable-next-line sonarjs/deprecation -- see import note above.
+    provideNoopAnimations(),
     provideNativeDateAdapter(),
     {
       provide: OVERLAY_DEFAULT_CONFIG,
@@ -114,10 +130,14 @@ bootstrapApplication(AppComponent, {
       provide: WINDOW,
       useFactory: getWindow,
     },
+    {
+      // webui targets `data-test` (thousands of existing selectors), so switch the
+      // ui-components library off its `data-testid` default for all `testId` inputs.
+      provide: TN_TEST_ATTR,
+      useValue: 'data-test',
+    },
     provideTnTablePagerLabels(),
-    // webui targets `data-test` (thousands of existing selectors), so switch the
-    // ui-components library off its `data-testid` default for all `testId` inputs.
-    { provide: TN_TEST_ATTR, useValue: 'data-test' },
+    provideTnFormFieldErrors(),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();

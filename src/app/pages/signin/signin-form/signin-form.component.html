@@ -1,84 +1,108 @@
-<form novalidate role="form" aria-label="Sign In Form" [formGroup]="form" (submit)="hasTwoFactor ? loginWithOtp() : login()">
-  @if (!hasTwoFactor) {
-    <ix-input
-      formControlName="username"
-      autocomplete="username"
-      name="username"
-      class="username-input"
-      [prefixIcon]="tnIconMarker('account', 'mdi')"
-      [label]="'Username' | translate"
-    ></ix-input>
+<form
+  novalidate
+  role="form"
+  [attr.aria-label]="'Sign In Form' | translate"
+  [formGroup]="form"
+  (submit)="hasTwoFactor() ? loginWithOtp() : login()"
+>
+  @if (!hasTwoFactor()) {
+    <tn-form-field class="username-input" [label]="'Username' | translate">
+      <tn-input
+        formControlName="username"
+        name="username"
+        autocomplete="username"
+        [testId]="'username'"
+        [ariaLabel]="'Username' | translate"
+        [prefixIcon]="tnIconMarker('account', 'mdi')"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="password"
-      type="password"
-      name="password"
-      autocomplete="current-password"
-      [prefixIcon]="tnIconMarker('lock', 'mdi')"
-      [label]="'Password' | translate"
-    ></ix-input>
+    <tn-form-field class="password-input" [label]="'Password' | translate">
+      <tn-input
+        formControlName="password"
+        name="password"
+        autocomplete="current-password"
+        suffixActionTestId="toggle-password-password"
+        [testId]="'password'"
+        [ariaLabel]="'Password' | translate"
+        [inputType]="isPasswordVisible() ? InputType.PlainText : InputType.Password"
+        [prefixIcon]="tnIconMarker('lock', 'mdi')"
+        [suffixIcon]="isPasswordVisible() ? tnIconMarker('eye', 'mdi') : tnIconMarker('eye-off', 'mdi')"
+        [suffixIconAriaLabel]="isPasswordVisible() ? ('Hide Password' | translate) : ('Show Password' | translate)"
+        (onSuffixAction)="togglePasswordVisibility()"
+      ></tn-input>
+    </tn-form-field>
 
-    @if (showSecurityWarning) {
-      <ix-insecure-connection></ix-insecure-connection>
+    @if (showSecurityWarning()) {
+      <tn-banner
+        type="warning"
+        [bordered]="true"
+        [heading]="'Connection is insecure' | translate"
+        [message]="'You are using an insecure connection. Switch to HTTPS for secure access.' | translate"
+      ></tn-banner>
     }
 
-    <button
+    <tn-button
       class="submit-button"
-      mat-button
       type="submit"
       color="primary"
-      ixTest="log-in"
+      [testId]="'log-in'"
+      [label]="'Log In' | translate"
       [disabled]="isFormDisabled()"
-    >
-      {{ 'Log In' | translate }}
-    </button>
-    @if (isLastLoginAttemptFailed) {
+    ></tn-button>
+    @if (isLastLoginAttemptFailed()) {
       <div class="error">
-        <p [innerHTML]="lastLoginError"></p>
+        <p [innerHTML]="lastLoginError()"></p>
       </div>
     }
   }
-  @if (hasTwoFactor) {
-    <p>
-      {{ '2FA has been configured for this account. Enter the OTP to continue.' | translate }}
-    </p>
+  @if (hasTwoFactor()) {
+    <tn-banner
+      class="otp-banner"
+      type="info"
+      [bordered]="true"
+      [heading]="'Enter one-time password' | translate"
+      [message]="'2FA has been configured for this account. Enter the OTP to continue.' | translate"
+    ></tn-banner>
 
-    <ix-input
-      formControlName="otp"
-      autocomplete="one-time-code"
-      [prefixIcon]="tnIconMarker('cellphone-link', 'mdi')"
+    <tn-form-field
+      class="otp-input"
       [label]="'Two-Factor Authentication Code' | translate"
-      [required]="true"
-    ></ix-input>
-
-    @if (showSecurityWarning) {
-      <ix-insecure-connection></ix-insecure-connection>
-    }
+      [errorMessages]="otpErrorMessages"
+    >
+      <tn-input
+        formControlName="otp"
+        name="otp"
+        autocomplete="one-time-code"
+        [testId]="'otp'"
+        [ariaLabel]="'Two-Factor Authentication Code' | translate"
+        [required]="true"
+        [prefixIcon]="tnIconMarker('cellphone-link', 'mdi')"
+      ></tn-input>
+    </tn-form-field>
 
     <div>
-      <button
+      <tn-button
         class="submit-button"
-        mat-button
         type="submit"
         color="primary"
-        ixTest="log-in"
+        [testId]="'log-in'"
+        [label]="'Proceed' | translate"
         [disabled]="isFormDisabled()"
-      >
-        {{ 'Proceed' | translate }}
-      </button>
-      <button
+      ></tn-button>
+      <tn-button
         class="submit-button"
-        mat-button
         type="button"
-        ixTest="otp-log-in"
+        [testId]="'otp-log-in'"
+        [label]="'Cancel' | translate"
         [disabled]="isFormDisabled()"
-        (click)="cancelOtpLogin()"
-      >{{ 'Cancel' | translate }}</button>
+        (onClick)="cancelOtpLogin()"
+      ></tn-button>
     </div>
 
-    @if (isLastOtpAttemptFailed) {
+    @if (isLastOtpAttemptFailed()) {
       <div class="error">
-        <p>{{ lastLoginError }}</p>
+        <p>{{ lastLoginError() }}</p>
       </div>
     }
   }

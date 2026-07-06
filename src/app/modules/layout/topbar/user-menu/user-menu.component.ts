@@ -1,15 +1,11 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { filter, map, of, switchMap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
@@ -30,22 +26,21 @@ import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.ac
   styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
-    MatTooltip,
+    TnIconButtonComponent,
+    TnTestIdDirective,
     MatMenuTrigger,
     TnIconComponent,
     MatMenu,
     MatMenuItem,
     RouterLink,
     MatDivider,
-    AsyncPipe,
     TranslateModule,
     UiSearchDirective,
     TestDirective,
   ],
 })
 export class UserMenuComponent {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);
   private store$ = inject(Store);
   private authService = inject(AuthService);
@@ -56,20 +51,23 @@ export class UserMenuComponent {
   protected searchableElements = userMenuElements;
   protected readonly AccountAttribute = AccountAttribute;
 
-  protected loggedInUser$ = this.authService.user$.pipe(filter(Boolean));
-  protected isTwoFactorEnabledGlobally$ = this.authService.user$.pipe(
-    switchMap((user) => {
-      if (!user) {
-        return of(false);
-      }
-      return this.authService.getGlobalTwoFactorConfig().pipe(
-        map((config) => config.enabled),
-      );
-    }),
+  protected readonly loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
+  protected readonly isTwoFactorEnabledGlobally = toSignal(
+    this.authService.user$.pipe(
+      switchMap((user) => {
+        if (!user) {
+          return of(false);
+        }
+        return this.authService.getGlobalTwoFactorConfig().pipe(
+          map((config) => config.enabled),
+        );
+      }),
+    ),
+    { initialValue: false },
   );
 
   openChangePasswordDialog(): void {
-    this.matDialog.open(ChangePasswordDialog);
+    this.tnDialog.open(ChangePasswordDialog);
   }
 
   openPreferencesForm(): void {

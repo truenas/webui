@@ -1,15 +1,16 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { sortBy } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
@@ -33,9 +34,10 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
   ],
 })
 export class AddHostMenuComponent {
-  private slideIn = inject(SlideIn);
-  private matDialog = inject(MatDialog);
+  private formPanel = inject(FormSidePanelService);
+  private tnDialog = inject(TnDialog);
   private nvmeOfStore = inject(NvmeOfStore);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   hosts = input.required<NvmeOfHost[]>();
@@ -56,9 +58,13 @@ export class AddHostMenuComponent {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected openHostForm(): void {
-    this.slideIn
-      .open(HostFormComponent)
-      .onSuccess((host) => this.selectHost(host), this.destroyRef);
+    this.formPanel
+      .open(HostFormComponent, { title: this.translate.instant('Add Host') })
+      .onSuccess((host) => {
+        if (host) {
+          this.selectHost(host);
+        }
+      }, this.destroyRef);
   }
 
   protected selectHost(host: NvmeOfHost): void {
@@ -66,8 +72,9 @@ export class AddHostMenuComponent {
   }
 
   protected manageHosts(): void {
-    this.matDialog.open(ManageHostsDialog, {
+    this.tnDialog.open(ManageHostsDialog, {
       minWidth: '450px',
+      maxWidth: '768px',
     });
   }
 

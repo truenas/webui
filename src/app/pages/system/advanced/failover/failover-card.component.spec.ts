@@ -1,21 +1,25 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverCardComponent } from 'app/pages/system/advanced/failover/failover-card.component';
 import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('FailoverCardComponent', () => {
   let spectator: Spectator<FailoverCardComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
   const fakeConfig = {
     disabled: false,
     master: true,
@@ -27,13 +31,22 @@ describe('FailoverCardComponent', () => {
     providers: [
       mockApi([
         mockCall('failover.config', fakeConfig),
+        mockCall('failover.update'),
+        mockCall('failover.sync_to_peer'),
+        mockCall('failover.sync_from_peer'),
       ]),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(SnackbarService),
+      mockProvider(DialogService),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
       }),
+      mockProvider(WebSocketStatusService, {
+        isConnected$: of(true),
+      }),
+      provideMockStore(),
       mockAuth(),
     ],
   });
@@ -41,11 +54,12 @@ describe('FailoverCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
-  it('displays failover configuration', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+  it('displays failover configuration', () => {
+    const items = spectator.queryAll('.details-item');
+    const itemTexts = items.map((item) => item.textContent.replace(/\s+/g, ' ').trim());
 
     expect(itemTexts).toEqual([
       'Enabled: Yes',
@@ -54,11 +68,11 @@ describe('FailoverCardComponent', () => {
     ]);
   });
 
-  it('opens FailoverFormComponent when Configure button is pressed', async () => {
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+  it('opens the Failover form in a side panel when Configure is pressed', async () => {
+    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(FailoverFormComponent, { data: fakeConfig });
+    expect(formPanel.open).toHaveBeenCalledWith(FailoverFormComponent, { title: 'Failover' });
   });
 });

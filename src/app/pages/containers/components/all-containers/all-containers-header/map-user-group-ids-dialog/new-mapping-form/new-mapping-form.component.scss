@@ -3,12 +3,8 @@
   margin-top: 24px;
 }
 
-:host ix-fieldset {
+:host tn-form-section {
   margin-top: 0;
-
-  ::ng-deep fieldset {
-    padding: 0;
-  }
 
   form.form {
     align-items: flex-start;
@@ -30,7 +26,7 @@
       align-items: center;
       display: flex;
       gap: 8px;
-      margin-top: 30px;
+      margin-top: 39px;
 
       .default-checkbox {
         ::ng-deep label {

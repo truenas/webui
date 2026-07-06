@@ -65,28 +65,21 @@
   outline-width: 0;
 }
 
-:host ::ng-deep .topbar-button-right {
-  &.mat-badge.mat-badge-small.mat-badge-overlap.mat-badge-after {
-    .mat-badge-content {
-      left: unset;
-      margin: 0;
-      right: 0;
-      top: 0;
-      z-index: 1;
-    }
-  }
+// tn-icon-button renders its own inner <button>, which the scoped rule above
+// can't reach. Override the library's default focus outline with the branded
+// inset shadow (a plain outline gets clipped by the bar).
+:host ::ng-deep .tn-icon-button:focus-visible {
+  background: var(--focus-bg);
+  box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
+  outline: none;
+}
 
-  /*
-   * When the bell icon is already colored red/orange, keep the badge neutral
-   * so the icon remains the primary severity indicator.
-   * !important is required to override Material's inline badge styles.
-   */
-  &.severity-critical,
-  &.severity-warning {
-    .mat-badge-content {
-      background: var(--bg2) !important;
-      color: var(--fg2) !important;
-    }
+:host ::ng-deep .topbar-button-right {
+  // The status / count badges are projected into the tn-icon-button and anchor
+  // to its inner button. Pin them to the corner so every topbar badge lines up.
+  ix-status-badge {
+    top: 0;
+    right: 0;
   }
 }
 
@@ -109,9 +102,7 @@ ix-truenas-logo {
   }
 
   button tn-icon,
-  button span,
-  .mat-icon-button,
-  .mat-icon-button tn-icon.logo {
+  button span {
     color: var(--topbar-txt) !important;
   }
 
@@ -149,6 +140,8 @@ ix-truenas-logo {
 
   .topbar-button-right {
     margin-left: 0.5rem !important;
+    display: flex;
+    align-items: center;
   }
 }
 

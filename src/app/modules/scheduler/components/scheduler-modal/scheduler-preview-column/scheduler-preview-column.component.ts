@@ -1,9 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, OnInit, Signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, OnInit, output, Signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
-import { MatDialogClose } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import {
@@ -14,7 +13,6 @@ import { toZonedTime } from 'date-fns-tz';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { SchedulerDateExamplesComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-date-examples/scheduler-date-examples.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-scheduler-preview-column',
@@ -22,8 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./scheduler-preview-column.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
-    MatDialogClose,
     TnIconButtonComponent,
     MatCalendar,
     SchedulerDateExamplesComponent,
@@ -39,6 +35,8 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   readonly startTime = input<string>();
   readonly endTime = input<string>();
+
+  readonly closeRequested = output();
 
   /**
    * 1 for 1st day of the month, etc.

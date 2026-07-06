@@ -1,19 +1,17 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
@@ -21,7 +19,6 @@ import { SshConnectionFormComponent } from './ssh-connection-form.component';
 describe('SshConnectionFormComponent', () => {
   let spectator: Spectator<SshConnectionFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let api: ApiService;
 
   const existingConnection = {
@@ -37,9 +34,15 @@ describe('SshConnectionFormComponent', () => {
     },
   } as KeychainSshCredentials;
 
-  const closeSlideInRef = jest.fn();
-  const getNoData = jest.fn((): undefined => undefined);
-  const getData = jest.fn(() => existingConnection);
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const createComponent = createComponentFactory({
     component: SshConnectionFormComponent,
@@ -60,61 +63,37 @@ describe('SshConnectionFormComponent', () => {
         addSshConnection: jest.fn(() => of(existingConnection)),
       }),
       mockProvider(DialogService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockAuth(),
-      mockProvider(SlideInRef, {
-        close: closeSlideInRef,
-        getData: getNoData,
-        swap: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      } as SlideInRef<KeychainSshCredentials | undefined, unknown>),
     ],
   });
 
   describe('Edit existing SSH', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            close: closeSlideInRef,
-            getData,
-            swap: jest.fn(),
-            requireConfirmationWhen: jest.fn(),
-          } as SlideInRef<KeychainSshCredentials, unknown>),
-        ],
+        props: { editConnection: existingConnection },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
     });
 
     it('shows values for an existing SSH connection', async () => {
-      spectator.component.setConnectionForEdit();
-
-      const values = await form.getValues();
-      expect(values).toEqual({
-        'Connection Name': 'auto',
-
-        Host: '127.0.0.1',
-        Port: '22',
-        Username: 'root',
-        'Private Key': 'key1',
-        'Remote Host Key': 'ssh-rsaAAAAB3NzaC1',
-
-        'Connect Timeout': '10',
-      });
+      expect(await (await getInput('connection_name')).getValue()).toBe('auto');
+      expect(await (await getInput('host')).getValue()).toBe('127.0.0.1');
+      expect(await (await getInput('port')).getValue()).toBe('22');
+      expect(await (await getInput('username')).getValue()).toBe('root');
+      expect(await (await getInput('remote_host_key')).getValue()).toBe('ssh-rsaAAAAB3NzaC1');
+      expect(await (await getInput('connect_timeout')).getValue()).toBe('10');
+      expect(await (await getSelect('private_key')).getDisplayText()).toBe('key1');
     });
 
     it('saves an updated SSH connection when edit form is submitted', async () => {
-      spectator.component.setConnectionForEdit();
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
-      await form.fillForm({
-        'Connection Name': 'Updated',
-        'Remote Host Key': 'ssh-rsaAAAAUpdated',
-      });
+      await (await getInput('connection_name')).setValue('Updated');
+      await (await getInput('remote_host_key')).setValue('ssh-rsaAAAAUpdated');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('keychaincredential.update', [11, {
         name: 'Updated',
@@ -127,34 +106,30 @@ describe('SshConnectionFormComponent', () => {
           username: 'root',
         },
       }]);
-      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection });
+      expect(closedSpy).toHaveBeenCalledWith(existingConnection);
     });
   });
 
   describe('Add new SSH', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
     });
 
     it('saves new SSH connection added manually', async () => {
-      await form.fillForm(
-        {
-          'Connection Name': 'New',
-          'Setup Method': 'Manual',
-          Host: 'truenas.com',
-          Port: 23,
-          Username: 'john',
-          'Private Key': 'key2',
-          'Remote Host Key': 'ssh-rsaNew',
-          'Connect Timeout': '20',
-        },
-      );
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await (await getSelect('setup_method')).selectOption('Manual');
+      await (await getInput('connection_name')).setValue('New');
+      await (await getInput('host')).setValue('truenas.com');
+      await (await getInput('port')).setValue('23');
+      await (await getInput('username')).setValue('john');
+      await (await getSelect('private_key')).selectOption('key2');
+      await (await getInput('remote_host_key')).setValue('ssh-rsaNew');
+      await (await getInput('connect_timeout')).setValue('20');
+
+      spectator.component.submit();
 
       expect(spectator.inject(KeychainCredentialService).addSshConnection).toHaveBeenCalledWith({
         setup_type: SshConnectionsSetupMethod.Manual,
@@ -171,27 +146,21 @@ describe('SshConnectionFormComponent', () => {
           username: 'john',
         },
       });
-      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection });
+      expect(closedSpy).toHaveBeenCalledWith(existingConnection);
     });
 
     it('saves new SSH connection added using semi-automatic setup', async () => {
-      await form.fillForm(
-        {
-          'Connection Name': 'Update',
-          'Setup Method': 'Semi-automatic (TrueNAS only)',
+      await (await getSelect('setup_method')).selectOption('Semi-automatic (TrueNAS only)');
+      await (await getInput('connection_name')).setValue('Update');
+      await (await getInput('url')).setValue('10.11.12.13');
+      await (await getInput('username')).setValue('john');
+      await (await getInput('admin_username')).setValue('admin');
+      await (await getInput('password')).setValue('12345678');
+      await (await getInput('otp_token')).setValue('1234');
+      await (await getSelect('private_key')).selectOption('key2');
+      await (await getCheckbox('sudo')).check();
 
-          'TrueNAS URL': '10.11.12.13',
-          Username: 'john',
-          'Admin Username': 'admin',
-          'Admin Password': '12345678',
-          'One-Time Password (if necessary)': '1234',
-          'Private Key': 'key2',
-          'Enable passwordless sudo for zfs commands': true,
-        },
-      );
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.inject(KeychainCredentialService).addSshConnection).toHaveBeenCalledWith({
         connection_name: 'Update',
@@ -213,22 +182,17 @@ describe('SshConnectionFormComponent', () => {
     });
 
     it('gets remote host key and puts it in corresponding textarea when Discover Remote Host Key is pressed', async () => {
-      await form.fillForm(
-        {
-          'Setup Method': 'Manual',
-          Port: '24',
-          Host: 'remote.com',
-          Username: 'john',
-          'Private Key': 'Generate New',
-          'Connect Timeout': '30',
-        },
-      );
+      await (await getSelect('setup_method')).selectOption('Manual');
+      await (await getInput('port')).setValue('24');
+      await (await getInput('host')).setValue('remote.com');
+      await (await getInput('username')).setValue('john');
+      await (await getSelect('private_key')).selectOption('Generate New');
+      await (await getInput('connect_timeout')).setValue('30');
 
-      const discoverButton = await loader.getHarness(MatButtonHarness.with({ text: 'Discover Remote Host Key' }));
+      const discoverButton = await loader.getHarness(TnButtonHarness.with({ label: 'Discover Remote Host Key' }));
       await discoverButton.click();
 
-      const values = await form.getValues();
-      expect(values['Remote Host Key']).toBe('ssh-rsaAREMOTE');
+      expect(await (await getInput('remote_host_key')).getValue()).toBe('ssh-rsaAREMOTE');
       expect(api.call).toHaveBeenCalledWith('keychaincredential.remote_ssh_host_key_scan', [{
         connect_timeout: 30,
         host: 'remote.com',
@@ -237,15 +201,12 @@ describe('SshConnectionFormComponent', () => {
     });
 
     it('allows new primary key to be generated when creating a new connection', async () => {
-      await form.fillForm({
-        'Connection Name': 'Test',
-        'TrueNAS URL': 'truenas.com',
-        'Admin Password': '123456',
-        'Private Key': 'Generate New',
-      });
+      await (await getInput('connection_name')).setValue('Test');
+      await (await getInput('url')).setValue('truenas.com');
+      await (await getInput('password')).setValue('123456');
+      await (await getSelect('private_key')).selectOption('Generate New');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.inject(KeychainCredentialService).addSshConnection).toHaveBeenCalledWith({
         connection_name: 'Test',

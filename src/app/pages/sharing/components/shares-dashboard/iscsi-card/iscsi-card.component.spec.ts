@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
+import {
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,20 +15,17 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
 import {
-  ServiceExtraActionsComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import {
-  ServiceStateButtonComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { LicenseService } from 'app/services/license.service';
@@ -37,7 +34,10 @@ import { selectServices } from 'app/store/services/services.selectors';
 describe('IscsiCardComponent', () => {
   let spectator: Spectator<IscsiCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+
+  // The "⋮" row-action trigger test id, derived from the row's uniqueRowTag.
+  const rowMenuTrigger = '[data-test="button-card-iscsi-target-grow-more-action"]';
 
   const iscsiShares = [
     {
@@ -67,12 +67,6 @@ describe('IscsiCardComponent', () => {
     component: IscsiCardComponent,
     imports: [IxTablePagerShowMoreComponent,
     ],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
-    ],
     providers: [
       mockAuth(),
       mockApi([
@@ -82,16 +76,16 @@ describe('IscsiCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(LicenseService, {
         hasFibreChannel$: of(true),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       provideMockStore({
@@ -118,40 +112,63 @@ describe('IscsiCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
+
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    spectator.click(rowMenuTrigger);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
 
   it('should render title', () => {
     expect(spectator.query('h3')).toHaveText('Block (iSCSI/FC) Shares Targets');
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Target Name', 'Target Alias', 'Mode', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Target Name', 'Target Alias', 'Mode', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['grow', 'kokok', 'Both', ''],
-    ];
+    ]);
+  });
 
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+  it('opens the iSCSI wizard when the projected Wizard button is clicked', async () => {
+    const wizardButton = await loader.getHarness(TnButtonHarness.with({ label: 'Wizard' }));
+    await wizardButton.click();
+
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(IscsiWizardComponent, {
+      title: 'iSCSI Wizard',
+      wide: true,
+      footerless: true,
+    });
+  });
+
+  it('toggles the iSCSI service when the projected header toggle is changed', async () => {
+    const toggleState = jest.spyOn(spectator.inject(ServiceActionsMenuService), 'toggleServiceState')
+      .mockImplementation(() => {});
+    const toggle = await loader.getHarness(
+      TnSlideToggleHarness.with({ ancestor: '.tn-card__header-right' }),
+    );
+    await toggle.toggle();
+
+    expect(toggleState).toHaveBeenCalledWith(expect.objectContaining({ service: ServiceName.Iscsi }));
   });
 
   it('shows form to edit an existing iSCSI Share when Edit button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: /^Edit$/ });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(TargetFormComponent, {
-      data: expect.objectContaining(iscsiShares[0]),
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(TargetFormComponent, {
       wide: true,
+      title: 'Edit ISCSI Target',
+      inputs: { targetData: expect.objectContaining(iscsiShares[0]) },
     });
   });
 
   it('shows confirmation to delete iSCSI Share when Delete button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
       DeleteTargetDialog,
       { data: iscsiShares[0], width: '600px' },
     );

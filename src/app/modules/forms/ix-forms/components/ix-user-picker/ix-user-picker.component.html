@@ -24,11 +24,11 @@
     />
     <span class="reset-input" [class.with-opacity]="shouldShowResetInput() && !isValueFromOptions(ixInput.value)">
       @if (loading()) {
-        <mat-progress-spinner
+        <tn-spinner
           class="loader"
           mode="indeterminate"
           [diameter]="15"
-        ></mat-progress-spinner>
+        ></tn-spinner>
       }
 
       @if (shouldShowResetInput() && !isValueFromOptions(ixInput.value)) {

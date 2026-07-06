@@ -1,0 +1,33 @@
+// Shared title styling for the data-protection task cards' projected `tnCardHeader`
+// `<h3 class="tn-card__title card-title">` (anchor + open-in-new icon). The library's
+// `tn-card__title` owns the font (size/weight/line-height); `.card-title` is a thin
+// modifier that only adds the icon/badge flex layout and resets the `<h3>` margin so the
+// header divider doesn't drift. Keeps the five cards in sync.
+@mixin card-title {
+  .card-title {
+    align-items: center;
+    display: flex;
+    margin: 0;
+
+    // Scope to the title's own open-in-new icon — a bare `tn-icon` selector
+    // also matches the projected `ix-card-alert-badge` icon (a sibling inside
+    // this `<h3>`) and would shift it 5px.
+    .title-icon {
+      margin-left: 5px;
+    }
+  }
+}
+
+// The dashboard task tables carry fixed-width state/enabled/actions columns (270px total); in a
+// narrow card those get squeezed and the right-most columns clip. `tn-table`'s host is already
+// `overflow-x: auto`, but its inner table is `width: 100%`, so it shrinks to fit instead of
+// scrolling. Give the inner table a min-width — once the card is narrower than the columns need,
+// the inner table overflows and the host scrolls horizontally instead of clipping. Scoped to the
+// card's own `tn-table.table`, so `::ng-deep` only reaches this card's table internals.
+// TEMP: reaches the private .tn-table__table class until @truenas/ui-components exposes a
+// min-width / table-layout input on tn-table. Tracked under NAS-141021.
+@mixin card-table-scroll {
+  .table ::ng-deep .tn-table__table {
+    min-width: 420px;
+  }
+}

@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
+} from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -14,7 +14,6 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { manageConfigurationElements } from 'app/pages/system/advanced/manage-configuration-menu/manage-configuration-menu.elements';
 import {
   SaveConfigDialog,
@@ -29,20 +28,18 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatMenuTrigger,
     UiSearchDirective,
-    TnIconComponent,
-    MatMenu,
-    MatMenuItem,
+    TnButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     TranslateModule,
     AsyncPipe,
   ],
 })
 export class ManageConfigurationMenuComponent {
   private dialogService = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private authService = inject(AuthService);
   private router = inject(Router);
   private translate = inject(TranslateService);
@@ -51,13 +48,14 @@ export class ManageConfigurationMenuComponent {
   protected readonly Role = Role;
   protected isSysAdmin$ = this.authService.isSysAdmin$;
   protected readonly searchableElements = manageConfigurationElements;
+  protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
   onDownloadConfig(): void {
-    this.matDialog.open(SaveConfigDialog);
+    this.tnDialog.open(SaveConfigDialog);
   }
 
   onUploadConfig(): void {
-    this.matDialog.open(UploadConfigDialog);
+    this.tnDialog.open(UploadConfigDialog);
   }
 
   onResetToDefaults(): void {

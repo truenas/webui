@@ -3,9 +3,8 @@ import {
   Component, ChangeDetectionStrategy, input, output,
 } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
@@ -14,7 +13,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-job-item',
@@ -22,7 +20,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./job-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatTooltip,
+    TnTooltipDirective,
     MatProgressBar,
     TnIconButtonComponent,
     TranslateModule,
@@ -30,7 +28,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     JobStateDisplayPipe,
     MapValuePipe,
     DecimalPipe,
-    TestDirective,
   ],
 })
 export class JobItemComponent {

@@ -4,11 +4,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -56,7 +54,7 @@ import { StorageHealthCardComponent } from './storage-health-card/storage-health
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
-    MatTooltip,
+    TnTooltipDirective,
     TestDirective,
     UiSearchDirective,
     TnIconComponent,
@@ -72,7 +70,7 @@ import { StorageHealthCardComponent } from './storage-health-card/storage-health
   ],
 })
 export class DashboardPoolComponent implements OnChanges {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
@@ -109,11 +107,11 @@ export class DashboardPoolComponent implements OnChanges {
   }
 
   onDisconnect(): void {
-    this.matDialog
+    this.tnDialog
       .open(ExportDisconnectModalComponent, {
         data: this.pool(),
       })
-      .afterClosed()
+      .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((needRefresh: boolean) => {
         if (!needRefresh) {
@@ -168,9 +166,9 @@ export class DashboardPoolComponent implements OnChanges {
   }
 
   onEditAutotrim(): void {
-    this.matDialog
+    this.tnDialog
       .open(AutotrimDialog, { data: this.pool() })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.store.loadDashboard());
   }

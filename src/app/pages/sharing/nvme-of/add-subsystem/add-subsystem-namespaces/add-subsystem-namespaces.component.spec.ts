@@ -1,12 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   AddSubsystemNamespaceComponent,
@@ -36,7 +35,7 @@ describe('AddSubsystemNamespacesComponent', () => {
       MockComponent(NamespaceDescriptionComponent),
     ],
     providers: [
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success(newNamespace)),
       }),
     ],
@@ -78,11 +77,14 @@ describe('AddSubsystemNamespacesComponent', () => {
   });
 
   it('opens AddSubsystemNamespaceComponent and adds new namespace to the list when it closes', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
     spectator.detectChanges();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AddSubsystemNamespaceComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      AddSubsystemNamespaceComponent,
+      { title: 'Add Namespace', footerless: true },
+    );
 
     expect(formControl.value).toEqual([newNamespace]);
     expect(spectator.query('.empty-state')).not.toExist();
@@ -116,7 +118,7 @@ describe('AddSubsystemNamespacesComponent', () => {
   });
 
   it('prevents duplicate namespaces from being added', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
     spectator.detectChanges();
 

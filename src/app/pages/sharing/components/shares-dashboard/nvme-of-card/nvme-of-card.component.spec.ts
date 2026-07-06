@@ -1,12 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
+import {
+  TnButtonHarness,
+  TnDialog,
+  TnMenuHarness,
+  TnMenuTesting,
+  TnSlideToggleHarness,
+  TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,13 +20,14 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfHost, NvmeOfNamespace, NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import {
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -29,7 +35,10 @@ import { selectServices } from 'app/store/services/services.selectors';
 describe('NvmeOfCardComponent', () => {
   let spectator: Spectator<NvmeOfCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+
+  // The "⋮" row-action trigger test id, derived from the row's uniqueRowTag.
+  const rowMenuTrigger = '[data-test="button-nvmeof-subsys-subsys-1-more-action"]';
 
   const mockSubsystems = [
     {
@@ -49,21 +58,15 @@ describe('NvmeOfCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: NvmeOfCardComponent,
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
-    ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(NvmeOfStore, mockNvmeOfStore),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of({ confirmed: true, force: true }),
+          closed: of({ confirmed: true, force: true }),
         })),
       }),
       mockApi([
@@ -96,38 +99,60 @@ describe('NvmeOfCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
+
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    spectator.click(rowMenuTrigger);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
 
   it('should initialize store on init', () => {
     expect(mockNvmeOfStore.initialize).toHaveBeenCalled();
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Namespaces', 'Ports', 'Hosts', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Namespaces', 'Ports', 'Hosts', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['subsys-1', '2', '4', '3', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
   it('shows confirmation to delete NVME-oF Share when Delete button is pressed', async () => {
-    const menu = await table.getHarnessInRow(MatMenuHarness, 'subsys-1');
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SubsystemDeleteDialogComponent, expect.anything());
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SubsystemDeleteDialogComponent, expect.anything());
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [1, { force: true }]);
   });
 
+  it('opens the NVMe-oF form when the projected Add button is clicked', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      AddSubsystemComponent,
+      expect.objectContaining({ footerless: true }),
+    );
+  });
+
+  it('toggles the NVMe-oF service when the projected header toggle is changed', async () => {
+    const toggleState = jest.spyOn(spectator.inject(ServiceActionsMenuService), 'toggleServiceState')
+      .mockImplementation(() => {});
+    const toggle = await loader.getHarness(
+      TnSlideToggleHarness.with({ ancestor: '.tn-card__header-right' }),
+    );
+    await toggle.toggle();
+
+    expect(toggleState).toHaveBeenCalledWith(expect.objectContaining({ service: ServiceName.NvmeOf }));
+  });
+
   it('navigates to shares list when view is clicked', async () => {
-    const menu = await table.getHarnessInRow(MatMenuHarness, 'subsys-1');
-    await menu.open();
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockImplementation();
-    await menu.clickItem({ text: 'View' });
+
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'View' });
 
     expect(router.navigate).toHaveBeenCalledWith(['/sharing/nvme-of', 'subsys-1']);
   });
