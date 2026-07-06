@@ -47,22 +47,23 @@
     [loading]="isLoading()"
     (rowClick)="navigateToDetails($event)"
     (selectionChange)="onSelectionChange($event)"
+    (sortChange)="onSortChange($event)"
   >
-    <ng-container [tnColumnDef]="'name'">
+    <ng-container [tnColumnDef]="'name'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span class="name">{{ row.name }}</span>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'status'" [width]="'15%'">
+    <ng-container [tnColumnDef]="'status'" [width]="'15%'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-container-status-cell [container]="row"></ix-container-status-cell>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'autostart'" [width]="'11%'">
+    <ng-container [tnColumnDef]="'autostart'" [width]="'11%'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Autostart' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         {{ row.autostart | yesNo }}

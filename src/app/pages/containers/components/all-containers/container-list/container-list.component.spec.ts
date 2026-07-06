@@ -12,6 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Container, ContainerStats } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -20,7 +21,7 @@ import { ContainerListComponent } from 'app/pages/containers/components/all-cont
 import {
   StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
-import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -62,6 +63,8 @@ describe('ContainerListComponent', () => {
         selectedContainer: jest.fn(() => runningContainer),
         selectContainer: jest.fn(),
         reload: jest.fn(),
+        sort: jest.fn(() => ({ active: ContainerSortField.Name, direction: SortDirection.Asc })),
+        setSort: jest.fn(),
       }),
       mockProvider(Router, { events: of() }),
       mockProvider(LayoutService, {
@@ -174,5 +177,24 @@ describe('ContainerListComponent', () => {
 
     expect(await table.isRowSelected(0)).toBe(true);
     expect(spectator.component.hasCheckedContainers).toBe(true);
+  });
+
+  it('marks Name, Status and Autostart columns as sortable', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+
+    expect(await table.isSortable('name')).toBe(true);
+    expect(await table.isSortable('status')).toBe(true);
+    expect(await table.isSortable('autostart')).toBe(true);
+    expect(await table.isSortable('cpu')).toBe(false);
+  });
+
+  it('updates the store sort when a sortable column header is clicked', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    await table.clickSortHeader('status');
+
+    expect(spectator.inject(ContainersStore).setSort).toHaveBeenCalledWith({
+      active: ContainerSortField.Status,
+      direction: SortDirection.Asc,
+    });
   });
 });

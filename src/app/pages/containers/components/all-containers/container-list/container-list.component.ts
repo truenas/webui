@@ -1,6 +1,6 @@
 import {
   Component, ChangeDetectionStrategy,
-  computed, inject,
+  computed, effect, inject,
   output,
   signal,
   viewChild,
@@ -15,6 +15,7 @@ import {
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconButtonComponent,
+  TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
@@ -29,6 +30,7 @@ import { Container, ContainerStats, ContainerStopParams } from 'app/interfaces/c
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -40,7 +42,7 @@ import { ContainerStatusCellComponent } from 'app/pages/containers/components/al
 import {
   StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
-import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
@@ -103,6 +105,7 @@ export class ContainerListComponent {
   protected readonly isLoading = this.containersStore.isLoading;
   protected readonly metrics = this.containersStore.metrics;
   protected readonly selectedContainer = this.containersStore.selectedContainer;
+  protected readonly sort = this.containersStore.sort;
 
   protected readonly table = viewChild(TnTableComponent);
 
@@ -133,6 +136,15 @@ export class ContainerListComponent {
   }, { equal: sameContainers });
 
   constructor() {
+    // tn-table owns its header sort indicator internally (sortColumn/sortDirection are not inputs),
+    // so mirror the store's sort state onto the table to reflect the default and any programmatic sort.
+    effect(() => {
+      const sort = this.sort();
+      const table = this.table();
+      table?.sortColumn.set(sort.active);
+      table?.sortDirection.set(sort.direction);
+    });
+
     toObservable(this.containerId).pipe(
       distinctUntilChanged(),
       tap((containerId) => {
@@ -146,6 +158,16 @@ export class ContainerListComponent {
     setTimeout(() => {
       this.handlePendingGlobalSearchElement();
     });
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    // tn-table cycles asc → desc → unsorted; the containers list is always sorted, so an
+    // empty direction falls back to the default Name-ascending order.
+    const active = event.direction && event.column
+      ? event.column as ContainerSortField
+      : ContainerSortField.Name;
+    const direction = event.direction === 'desc' ? SortDirection.Desc : SortDirection.Asc;
+    this.containersStore.setSort({ active, direction });
   }
 
   protected navigateToDetails(container: Container): void {

@@ -2,12 +2,14 @@ import { Router, NavigationEnd } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
   Container, ContainerDevice, ContainerMetrics,
 } from 'app/interfaces/container.interface';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
 describe('ContainersStore', () => {
@@ -19,6 +21,8 @@ describe('ContainersStore', () => {
     fakeContainer({ id: 1, name: 'container1' }),
     fakeContainer({ id: 2, name: 'container2' }),
   ];
+
+  const defaultSort = { active: ContainerSortField.Name, direction: SortDirection.Asc };
 
   const devices = [
     { id: 1, dtype: 'FILESYSTEM' },
@@ -63,6 +67,7 @@ describe('ContainersStore', () => {
       selectedContainerId: null,
       containers: undefined,
       metrics: {},
+      sort: defaultSort,
     });
     expect(spectator.service.hasLoaded()).toBe(false);
   });
@@ -70,13 +75,14 @@ describe('ContainersStore', () => {
   it('should load containers when initialize is called', () => {
     spectator.service.initialize();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.query');
     expect(spectator.service.state()).toEqual({
       containers,
       selectedContainer: undefined,
       selectedContainerId: null,
       isLoading: false,
       metrics: {},
+      sort: defaultSort,
     });
   });
 
@@ -110,6 +116,7 @@ describe('ContainersStore', () => {
       selectedContainer: containers[0],
       selectedContainerId: 1,
       metrics: {},
+      sort: defaultSort,
     });
   });
 
@@ -122,6 +129,7 @@ describe('ContainersStore', () => {
       selectedContainer: containers[0],
       selectedContainerId: 1,
       metrics: {},
+      sort: defaultSort,
     });
     spectator.service.resetContainer();
     expect(spectator.service.state()).toEqual({
@@ -130,6 +138,7 @@ describe('ContainersStore', () => {
       selectedContainer: null,
       selectedContainerId: 1,
       metrics: {},
+      sort: defaultSort,
     });
   });
 
@@ -184,6 +193,21 @@ describe('ContainersStore', () => {
       expect(spectator.service.containers()).toEqual([
         ...containers,
         newContainer,
+      ]);
+    });
+
+    it('sorts containers by name when an out-of-order container is added', () => {
+      const newContainer = fakeContainer({ id: 3, name: 'aaa-container' });
+      event$.next({
+        collection: 'container.query',
+        id: 3,
+        msg: CollectionChangeType.Added,
+        fields: newContainer,
+      });
+
+      expect(spectator.service.containers()).toEqual([
+        newContainer,
+        ...containers,
       ]);
     });
 
@@ -284,6 +308,47 @@ describe('ContainersStore', () => {
       });
 
       expect(spectator.service.metrics()).toEqual(mockInstanceMetrics);
+    });
+  });
+
+  describe('sorting', () => {
+    const bravoRunning = fakeContainer({
+      id: 1, name: 'bravo', autostart: false, status: { state: ContainerStatus.Running },
+    } as Partial<Container>);
+    const alphaStopped = fakeContainer({
+      id: 2, name: 'alpha', autostart: true, status: { state: ContainerStatus.Stopped },
+    } as Partial<Container>);
+
+    beforeEach(() => {
+      spectator.service.initialize();
+      spectator.service.patchState({ containers: [bravoRunning, alphaStopped] });
+    });
+
+    it('sorts by name descending', () => {
+      spectator.service.setSort({ active: ContainerSortField.Name, direction: SortDirection.Desc });
+
+      expect(spectator.service.containers().map((container) => container.name)).toEqual(['bravo', 'alpha']);
+    });
+
+    it('sorts by autostart', () => {
+      spectator.service.setSort({ active: ContainerSortField.Autostart, direction: SortDirection.Asc });
+
+      // autostart false (bravo) sorts before true (alpha).
+      expect(spectator.service.containers().map((container) => container.name)).toEqual(['bravo', 'alpha']);
+    });
+
+    it('sorts by status', () => {
+      spectator.service.setSort({ active: ContainerSortField.Status, direction: SortDirection.Asc });
+
+      // Running < Stopped alphabetically.
+      expect(spectator.service.containers().map((container) => container.name)).toEqual(['bravo', 'alpha']);
+    });
+
+    it('sorts client-side without sending order_by to the backend', () => {
+      spectator.service.setSort({ active: ContainerSortField.Name, direction: SortDirection.Desc });
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.query');
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.query', expect.anything());
     });
   });
 });
