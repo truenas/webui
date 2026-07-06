@@ -20,7 +20,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -64,7 +64,7 @@ export class NetworkComponent implements OnInit {
   private dialogService = inject(DialogService);
   private loader = inject(LoaderService);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
   private errorHandler = inject(ErrorHandlerService);
@@ -373,12 +373,13 @@ export class NetworkComponent implements OnInit {
           return;
         }
 
-        const slideInRef$ = this.slideIn.open(InterfaceFormComponent, {
-          data: {
-            interface: interfaces[0],
+        const result$ = this.formPanel.open(InterfaceFormComponent, {
+          title: this.translate.instant('Edit Interface'),
+          inputs: {
+            editInterface: interfaces[0],
           },
         });
-        this.handleSlideInClosed(slideInRef$);
+        this.handleSlideInClosed(result$);
       });
   }
 }

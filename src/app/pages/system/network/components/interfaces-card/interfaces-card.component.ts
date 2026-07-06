@@ -24,7 +24,7 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { convertStringToId, dataProviderRows } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -66,7 +66,7 @@ export class InterfacesCardComponent implements OnInit {
   private interfacesStore$ = inject(InterfacesStore);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
@@ -179,9 +179,10 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   protected onAddNew(): void {
-    this.slideIn.open(InterfaceFormComponent, {
-      data: {
-        interfaces: this.interfaces(),
+    this.formPanel.open(InterfaceFormComponent, {
+      title: this.translate.instant('Add Interface'),
+      inputs: {
+        interfacesList: this.interfaces(),
       },
     }).onSuccess(() => {
       this.interfacesUpdated.emit();
@@ -190,9 +191,10 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   protected onEdit(row: NetworkInterface): void {
-    this.slideIn.open(InterfaceFormComponent, {
-      data: {
-        interface: row,
+    this.formPanel.open(InterfaceFormComponent, {
+      title: this.translate.instant('Edit Interface'),
+      inputs: {
+        editInterface: row,
       },
     }).onSuccess(() => {
       this.interfacesUpdated.emit();

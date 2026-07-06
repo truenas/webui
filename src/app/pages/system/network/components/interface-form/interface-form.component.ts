@@ -1,6 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, input, computed,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
@@ -42,7 +44,7 @@ import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-for
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -91,7 +93,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnTooltipDirective,
   ],
 })
-export class InterfaceFormComponent implements OnInit {
+export class InterfaceFormComponent extends SidePanelForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
@@ -105,14 +107,19 @@ export class InterfaceFormComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<{
-    interfaces?: NetworkInterface[];
-    interface?: NetworkInterface;
-  }, boolean>>(SlideInRef);
+
+  /**
+   * Interface to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to carry
+   * data). Unused in the legacy SlideIn host, which supplies it via `slideInRef.getData()`.
+   */
+  readonly editInterface = input<NetworkInterface | undefined>(undefined);
+  /** Existing interfaces (for auto-naming), when hosted in a `<tn-side-panel>`. */
+  readonly interfacesList = input<NetworkInterface[]>([]);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly InputType = InputType;
   protected existingInterface: NetworkInterface | undefined;
+  private interfaceList: NetworkInterface[] = [];
 
   readonly defaultMtu = 1500;
   protected readonly isHaEnabled$ = new BehaviorSubject(false);
@@ -162,6 +169,11 @@ export class InterfaceFormComponent implements OnInit {
     aliases: this.formBuilder.array<NetworkInterfaceFormAlias>([]),
   });
 
+  private readonly baseCanSubmit = this.trackCanSubmit(this.isLoading);
+  private readonly isHaEnabled = toSignal(this.isHaEnabled$, { initialValue: false });
+  // Editing interfaces is disallowed while HA is enabled, so a side-panel host's Save must be gated on it too.
+  readonly canSubmit = computed(() => this.baseCanSubmit() && !this.isHaEnabled());
+
   interfaceTypes$ = of([
     { label: this.translate.instant('Bridge'), value: NetworkInterfaceType.Bridge },
     { label: this.translate.instant('Link Aggregation'), value: NetworkInterfaceType.LinkAggregation },
@@ -197,15 +209,6 @@ export class InterfaceFormComponent implements OnInit {
 
   readonly helptext = helptextInterfacesForm;
 
-  constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.existingInterface = slideInRef.getData()?.interface;
-  }
-
   get isNew(): boolean {
     return !this.existingInterface;
   }
@@ -239,6 +242,15 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Edit record and the existing-interfaces list arrive via `slideInRef.getData()` in the legacy
+    // SlideIn host, or via the `editInterface` / `interfacesList` inputs in a `<tn-side-panel>` host.
+    const slideInData = this.slideInRef?.getData() as {
+      interfaces?: NetworkInterface[];
+      interface?: NetworkInterface;
+    } | undefined;
+    this.existingInterface = this.slideInRef ? slideInData?.interface : this.editInterface();
+    this.interfaceList = this.slideInRef ? (slideInData?.interfaces ?? []) : this.interfacesList();
+
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();
     this.checkFailoverDisabled();
@@ -313,7 +325,7 @@ export class InterfaceFormComponent implements OnInit {
             });
           }
 
-          this.slideInRef.close({ response: true });
+          this.close(true);
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Network interface updated'));
         });
@@ -326,7 +338,7 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   private generateNextAvailableNameByType(type: NetworkInterfaceType): string | null {
-    const interfaces = this.slideInRef.getData()?.interfaces ?? [];
+    const interfaces = this.interfaceList;
     const prefix = this.getPrefixByType(type);
     if (!prefix) return null;
 

@@ -24,6 +24,7 @@ import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -141,6 +142,9 @@ describe('NetworkComponent', () => {
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(SlideIn, {
+        open: jest.fn(() => SlideInResult.success(true)),
+      }),
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success(true)),
       }),
     ],

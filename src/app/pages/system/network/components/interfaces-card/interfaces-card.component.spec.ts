@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   InterfaceStatusIconComponent,
 } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
@@ -92,7 +92,7 @@ describe('InterfacesCardComponent', () => {
         subscribeToInOutUpdates: jest.fn(() => updateSubject$),
         getIsHaEnabled: jest.fn(() => failoverConfig$.pipe(map((config) => !config.disabled))),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success(true)),
       }),
       mockProvider(DialogService, {
@@ -132,8 +132,9 @@ describe('InterfacesCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent, {
-      data: { interfaces },
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(InterfaceFormComponent, {
+      title: 'Add Interface',
+      inputs: { interfacesList: interfaces },
     });
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
@@ -143,8 +144,9 @@ describe('InterfacesCardComponent', () => {
     const menu = await openRowMenu('interface-eno1');
     await menu.clickItem({ label: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent, {
-      data: { interface: interfaces[0] },
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(InterfaceFormComponent, {
+      title: 'Edit Interface',
+      inputs: { editInterface: interfaces[0] },
     });
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
