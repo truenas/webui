@@ -162,12 +162,17 @@ export class ContainerListComponent {
 
   protected onSortChange(event: TnSortEvent): void {
     // tn-table cycles asc → desc → unsorted; the containers list is always sorted, so an
-    // empty direction falls back to the default Name-ascending order.
-    const active = event.direction && event.column
-      ? event.column as ContainerSortField
+    // empty direction (or a column that isn't a known sort field) falls back to the default
+    // Name-ascending order rather than a bogus enum value.
+    const active = event.direction && this.isSortField(event.column)
+      ? event.column
       : ContainerSortField.Name;
     const direction = event.direction === 'desc' ? SortDirection.Desc : SortDirection.Asc;
     this.containersStore.setSort({ active, direction });
+  }
+
+  private isSortField(column: string): column is ContainerSortField {
+    return (Object.values(ContainerSortField) as string[]).includes(column);
   }
 
   protected navigateToDetails(container: Container): void {

@@ -1,5 +1,6 @@
 import { Router, NavigationEnd } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { TranslateService } from '@ngx-translate/core';
 import { of, Subject } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ContainerStatus } from 'app/enums/container.enum';
@@ -52,6 +53,9 @@ describe('ContainersStore', () => {
         events: routerEvents$,
         url: '/containers/view/instance1',
         navigate: jest.fn(),
+      }),
+      mockProvider(TranslateService, {
+        instant: jest.fn((key: string) => key),
       }),
     ],
   });
