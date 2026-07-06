@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -24,6 +25,9 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import {
+  SidePanelFooterMenu,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -109,6 +113,30 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
   vlanEnabled = toSignal(this.form.controls.vlan_id_enable.valueChanges);
 
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
+
+  /** Secondary actions rendered in the side-panel footer's overflow (three-dots) menu. */
+  get footerMenu(): SidePanelFooterMenu {
+    return {
+      label: T('IPMI Actions'),
+      testId: 'ipmi-actions',
+      items: [
+        {
+          label: T('Manage'),
+          testId: 'manage-ipmi',
+          disabled: () => this.isManageButtonDisabled || this.isLoading(),
+          onClick: () => this.openManageWindow(),
+        },
+        {
+          label: this.isFlashing() ? T('Stop Flashing') : T('Flash Identify Light'),
+          testId: 'toggle-identify-light',
+          icon: 'lightbulb-on-outline',
+          iconLibrary: 'mdi',
+          disabled: () => this.isFlashingLoading(),
+          onClick: () => this.toggleFlashing(),
+        },
+      ],
+    };
+  }
 
   ngOnInit(): void {
     this.ipmiId = this.slideInRef

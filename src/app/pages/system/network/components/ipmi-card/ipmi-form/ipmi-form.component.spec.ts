@@ -545,4 +545,29 @@ describe('IpmiFormComponent', () => {
       expect(await flashButton.isDisabled()).toBe(false);
     });
   });
+
+  describe('side-panel footer menu', () => {
+    beforeEach(async () => {
+      await setupTest(ProductType.Enterprise);
+    });
+
+    it('exposes Manage and Flash actions in the footer overflow menu', () => {
+      const items = spectator.component.footerMenu.items;
+      expect(items.map((item) => item.testId)).toEqual(['manage-ipmi', 'toggle-identify-light']);
+    });
+
+    it('flashes the identify light from the footer menu', () => {
+      const flashItem = spectator.component.footerMenu.items.find((item) => item.testId === 'toggle-identify-light');
+      flashItem!.onClick();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.On }]);
+    });
+
+    it('opens the management window from the footer menu', () => {
+      const manageItem = spectator.component.footerMenu.items.find((item) => item.testId === 'manage-ipmi');
+      manageItem!.onClick();
+
+      expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('https://10.220.15.114');
+    });
+  });
 });

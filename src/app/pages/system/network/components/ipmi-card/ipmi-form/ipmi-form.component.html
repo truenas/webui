@@ -87,8 +87,10 @@
 
   <tn-divider></tn-divider>
 
-  <ix-form-actions class="buttons">
-    @if (slideInRef) {
+  <!-- Legacy SlideIn host only: the tn-side-panel host renders Save in its footer and Manage /
+       Flash Identify Light in the footer's overflow menu (see `footerMenu`). -->
+  @if (slideInRef) {
+    <ix-form-actions class="buttons">
       <tn-button
         *ixRequiresRoles="requiredRoles"
         color="primary"
@@ -97,22 +99,22 @@
         [disabled]="form.invalid || isLoading()"
         (onClick)="onSubmit()"
       ></tn-button>
-    }
 
-    <tn-button
-      [testId]="'manage-ipmi'"
-      [label]="'Manage' | translate"
-      [disabled]="isManageButtonDisabled || isLoading()"
-      (onClick)="openManageWindow()"
-    ></tn-button>
+      <tn-button
+        [testId]="'manage-ipmi'"
+        [label]="'Manage' | translate"
+        [disabled]="isManageButtonDisabled || isLoading()"
+        (onClick)="openManageWindow()"
+      ></tn-button>
 
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      [testId]="'toggle-identify-light'"
-      [icon]="identifyLightIcon"
-      [label]="(isFlashing() ? 'Stop Flashing' : 'Flash Identify Light') | translate"
-      [disabled]="isFlashingLoading()"
-      (onClick)="toggleFlashing()"
-    ></tn-button>
-  </ix-form-actions>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        [testId]="'toggle-identify-light'"
+        [icon]="identifyLightIcon"
+        [label]="(isFlashing() ? 'Stop Flashing' : 'Flash Identify Light') | translate"
+        [disabled]="isFlashingLoading()"
+        (onClick)="toggleFlashing()"
+      ></tn-button>
+    </ix-form-actions>
+  }
 </form>
