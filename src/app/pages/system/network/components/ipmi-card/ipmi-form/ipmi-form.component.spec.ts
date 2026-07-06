@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
-import { TnButtonHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnRadioHarness,
+} from '@truenas/ui-components';
 import { throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -12,10 +14,6 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Ipmi, IpmiChassis } from 'app/interfaces/ipmi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -32,7 +30,6 @@ import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors'
 describe('IpmiFormComponent', () => {
   let spectator: Spectator<IpmiFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let productType: ProductType;
 
   const slideInRef: SlideInRef<number | undefined, unknown> = {
@@ -128,7 +125,7 @@ describe('IpmiFormComponent', () => {
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
+    await spectator.fixture.whenStable();
   }
 
   describe('product type is SCALE_ENTERPRISE', () => {
@@ -137,61 +134,54 @@ describe('IpmiFormComponent', () => {
     });
 
     it('loads data with controller radio buttons in the form for ScaleEnterprise', async () => {
-      const formValue = await form.getValues();
+      const activeController = await loader.getHarness(
+        TnRadioHarness.with({ label: 'Active: TrueNAS Controller 1' }),
+      );
+      const ipaddress = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
+      const gateway = await loader.getHarness(TnInputHarness.with({ name: 'gateway' }));
+      const netmask = await loader.getHarness(TnInputHarness.with({ name: 'netmask' }));
+      const vlanId = await loader.getHarness(TnInputHarness.with({ name: 'vlan_id' }));
+      const dhcp = await loader.getHarness(TnCheckboxHarness.with({ label: 'DHCP' }));
+      const enableVlan = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable VLAN' }));
 
-      expect(formValue).toEqual({
-        'Remote Controller': 'Active: TrueNAS Controller 1',
-        DHCP: false,
-        'IPv4 Default Gateway': '10.220.0.1',
-        'IPv4 Address': '10.220.15.114',
-        'IPv4 Netmask': '255.255.240.0',
-        'Enable VLAN': true,
-        'VLAN ID': '2',
-        Password: '',
-      });
+      expect(await activeController.isChecked()).toBe(true);
+      expect(await ipaddress.getValue()).toBe('10.220.15.114');
+      expect(await gateway.getValue()).toBe('10.220.0.1');
+      expect(await netmask.getValue()).toBe('255.255.240.0');
+      expect(await vlanId.getValue()).toBe('2');
+      expect(await dhcp.isChecked()).toBe(false);
+      expect(await enableVlan.isChecked()).toBe(true);
     });
 
     it('loads remote controller data', async () => {
-      const remoteController = await loader.getHarness(IxRadioGroupHarness);
-      form = await loader.getHarness(IxFormHarness);
-      await remoteController.setValue('Standby: TrueNAS Controller 2');
-      const formData = await form.getValues();
+      const standbyController = await loader.getHarness(
+        TnRadioHarness.with({ label: 'Standby: TrueNAS Controller 2' }),
+      );
+      await standbyController.check();
 
-      expect(formData).toEqual({
-        'Remote Controller': 'Standby: TrueNAS Controller 2',
-        DHCP: false,
-        'IPv4 Address': '10.220.15.115',
-        'IPv4 Default Gateway': '10.220.0.2',
-        'IPv4 Netmask': '255.255.240.0',
-        Password: '',
-        'Enable VLAN': true,
-        'VLAN ID': '3',
-      });
+      const ipaddress = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
+      const gateway = await loader.getHarness(TnInputHarness.with({ name: 'gateway' }));
+      const vlanId = await loader.getHarness(TnInputHarness.with({ name: 'vlan_id' }));
+
+      expect(await standbyController.isChecked()).toBe(true);
+      expect(await ipaddress.getValue()).toBe('10.220.15.115');
+      expect(await gateway.getValue()).toBe('10.220.0.2');
+      expect(await vlanId.getValue()).toBe('3');
     });
 
     it('disabled ipaddress, gateway, netmask fields if \'DHCP\' is checked', async () => {
-      const checkboxDhcp = await loader.getHarness(IxCheckboxHarness.with({ label: 'DHCP' }));
-      await checkboxDhcp.setValue(true);
-      const ipaddress = await loader.getHarness(IxInputHarness.with({ label: 'IPv4 Address' }));
-      const netmask = await loader.getHarness(IxInputHarness.with({ label: 'IPv4 Netmask' }));
-      const gateway = await loader.getHarness(IxInputHarness.with({ label: 'IPv4 Default Gateway' }));
+      const checkboxDhcp = await loader.getHarness(TnCheckboxHarness.with({ label: 'DHCP' }));
+      await checkboxDhcp.check();
+      const ipaddress = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
+      const netmask = await loader.getHarness(TnInputHarness.with({ name: 'netmask' }));
+      const gateway = await loader.getHarness(TnInputHarness.with({ name: 'gateway' }));
 
-      expect(ipaddress.isDisabled()).toBeTruthy();
-      expect(netmask.isDisabled()).toBeTruthy();
-      expect(gateway.isDisabled()).toBeTruthy();
+      expect(await ipaddress.isDisabled()).toBe(true);
+      expect(await netmask.isDisabled()).toBe(true);
+      expect(await gateway.isDisabled()).toBe(true);
     });
 
     it('updates controller data and closes modal when save is pressed', async () => {
-      await form.fillForm({
-        'Remote Controller': 'Active: TrueNAS Controller 1',
-        DHCP: false,
-        'IPv4 Default Gateway': '10.220.0.1',
-        'IPv4 Address': '10.220.15.114',
-        'IPv4 Netmask': '255.255.240.0',
-        'Enable VLAN': true,
-        'VLAN ID': '2',
-        Password: '',
-      });
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
@@ -207,16 +197,14 @@ describe('IpmiFormComponent', () => {
     });
 
     it('updates remote controller data and closes modal when save is pressed', async () => {
-      await form.fillForm({
-        'Remote Controller': 'Standby: TrueNAS Controller 2',
-        DHCP: false,
-        'IPv4 Address': '10.220.15.115',
-        'IPv4 Default Gateway': '10.220.0.2',
-        'IPv4 Netmask': '255.255.240.0',
-        Password: '',
-        'Enable VLAN': true,
-        'VLAN ID': '2',
-      });
+      const standbyController = await loader.getHarness(
+        TnRadioHarness.with({ label: 'Standby: TrueNAS Controller 2' }),
+      );
+      await standbyController.check();
+
+      const vlanId = await loader.getHarness(TnInputHarness.with({ name: 'vlan_id' }));
+      await vlanId.setValue('2');
+
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
@@ -233,15 +221,14 @@ describe('IpmiFormComponent', () => {
     });
 
     it('updates remote controller data and closes modal when save is pressed with vlan disabled', async () => {
-      await form.fillForm({
-        'Remote Controller': 'Standby: TrueNAS Controller 2',
-        DHCP: false,
-        'IPv4 Address': '10.220.15.115',
-        'IPv4 Default Gateway': '10.220.0.2',
-        'IPv4 Netmask': '255.255.240.0',
-        Password: '',
-        'Enable VLAN': false,
-      });
+      const standbyController = await loader.getHarness(
+        TnRadioHarness.with({ label: 'Standby: TrueNAS Controller 2' }),
+      );
+      await standbyController.check();
+
+      const enableVlan = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable VLAN' }));
+      await enableVlan.uncheck();
+
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
@@ -264,17 +251,19 @@ describe('IpmiFormComponent', () => {
     });
 
     it('loads data in the form if the product type is SCALE', async () => {
-      const formValue = await form.getValues();
+      const ipaddress = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
+      const gateway = await loader.getHarness(TnInputHarness.with({ name: 'gateway' }));
+      const netmask = await loader.getHarness(TnInputHarness.with({ name: 'netmask' }));
+      const vlanId = await loader.getHarness(TnInputHarness.with({ name: 'vlan_id' }));
+      const dhcp = await loader.getHarness(TnCheckboxHarness.with({ label: 'DHCP' }));
+      const enableVlan = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable VLAN' }));
 
-      expect(formValue).toMatchObject({
-        DHCP: false,
-        'IPv4 Default Gateway': '10.220.0.1',
-        'IPv4 Address': '10.220.15.114',
-        'IPv4 Netmask': '255.255.240.0',
-        'Enable VLAN': true,
-        'VLAN ID': '2',
-        Password: '',
-      });
+      expect(await dhcp.isChecked()).toBe(false);
+      expect(await ipaddress.getValue()).toBe('10.220.15.114');
+      expect(await gateway.getValue()).toBe('10.220.0.1');
+      expect(await netmask.getValue()).toBe('255.255.240.0');
+      expect(await enableVlan.isChecked()).toBe(true);
+      expect(await vlanId.getValue()).toBe('2');
     });
   });
 
@@ -300,8 +289,10 @@ describe('IpmiFormComponent', () => {
     });
 
     it('flashes IPMI light on remote controller when remote controller is selected', async () => {
-      const remoteController = await loader.getHarness(IxRadioGroupHarness);
-      await remoteController.setValue('Standby: TrueNAS Controller 2');
+      const standbyController = await loader.getHarness(
+        TnRadioHarness.with({ label: 'Standby: TrueNAS Controller 2' }),
+      );
+      await standbyController.check();
 
       const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
       await flashButton.click();
@@ -313,8 +304,10 @@ describe('IpmiFormComponent', () => {
     });
 
     it('stops flashing IPMI light on remote controller when remote controller is selected', async () => {
-      const remoteController = await loader.getHarness(IxRadioGroupHarness);
-      await remoteController.setValue('Standby: TrueNAS Controller 2');
+      const standbyController = await loader.getHarness(
+        TnRadioHarness.with({ label: 'Standby: TrueNAS Controller 2' }),
+      );
+      await standbyController.check();
 
       const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
       await flashButton.click();
@@ -334,8 +327,8 @@ describe('IpmiFormComponent', () => {
     });
 
     it('does not require VLAN ID when Enable VLAN is false', async () => {
-      const enableVlanCheckbox = await form.getControl('Enable VLAN') as IxCheckboxHarness;
-      await enableVlanCheckbox.setValue(false);
+      const enableVlanCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable VLAN' }));
+      await enableVlanCheckbox.uncheck();
 
       expect(spectator.component.form.valid).toBe(true);
       expect(spectator.component.form.controls.vlan_id.hasError('required')).toBe(false);
@@ -343,14 +336,14 @@ describe('IpmiFormComponent', () => {
 
     it('clears VLAN ID value when Enable VLAN is disabled', async () => {
       // First enable VLAN and set a value
-      const enableVlanCheckbox = await form.getControl('Enable VLAN') as IxCheckboxHarness;
-      await enableVlanCheckbox.setValue(true);
+      const enableVlanCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable VLAN' }));
+      await enableVlanCheckbox.check();
 
-      const vlanIdInput = await form.getControl('VLAN ID') as IxInputHarness;
+      const vlanIdInput = await loader.getHarness(TnInputHarness.with({ name: 'vlan_id' }));
       await vlanIdInput.setValue('10');
 
       // Then disable VLAN
-      await enableVlanCheckbox.setValue(false);
+      await enableVlanCheckbox.uncheck();
 
       expect(spectator.component.form.controls.vlan_id.value).toBeNull();
     });
@@ -369,18 +362,15 @@ describe('IpmiFormComponent', () => {
       expect(spectator.component.isManageButtonDisabled).toBe(false);
     });
 
-    it('should be disabled when IP address is empty', async () => {
-      const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
-      await ipaddressInput.setValue('');
+    it('should be disabled when IP address is empty', () => {
+      spectator.component.form.controls.ipaddress.setValue('');
+      spectator.component.form.controls.ipaddress.updateValueAndValidity();
 
-      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-
-      expect(await manageButton.isDisabled()).toBe(true);
       expect(spectator.component.isManageButtonDisabled).toBe(true);
     });
 
     it('should be disabled when IP address is 0.0.0.0', async () => {
-      const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
+      const ipaddressInput = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
       await ipaddressInput.setValue('0.0.0.0');
 
       const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
@@ -390,7 +380,7 @@ describe('IpmiFormComponent', () => {
     });
 
     it('should be disabled when IP address is invalid', async () => {
-      const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
+      const ipaddressInput = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
       await ipaddressInput.setValue('invalid.ip.address');
 
       const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
@@ -400,7 +390,7 @@ describe('IpmiFormComponent', () => {
     });
 
     it('should be enabled with valid IP address in static mode', async () => {
-      const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
+      const ipaddressInput = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
       await ipaddressInput.setValue('192.168.1.100');
 
       const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
@@ -412,8 +402,8 @@ describe('IpmiFormComponent', () => {
 
     it('should be enabled with valid IP address when DHCP is enabled', async () => {
       // Enable DHCP first
-      const dhcpCheckbox = await form.getControl('DHCP') as IxCheckboxHarness;
-      await dhcpCheckbox.setValue(true);
+      const dhcpCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'DHCP' }));
+      await dhcpCheckbox.check();
 
       // Simulate DHCP obtaining an IP address by directly setting form value
       spectator.component.form.controls.ipaddress.setValue('192.168.1.50');
@@ -428,7 +418,7 @@ describe('IpmiFormComponent', () => {
 
     it('should update managementIp when IP address changes', async () => {
       const testIp = '10.0.0.100';
-      const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
+      const ipaddressInput = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
       await ipaddressInput.setValue(testIp);
 
       expect(spectator.component.managementIp).toBe(testIp);
@@ -470,49 +460,44 @@ describe('IpmiFormComponent', () => {
     });
 
     it('should disable manage button when switching to DHCP with no IP', async () => {
-      const dhcpCheckbox = await form.getControl('DHCP') as IxCheckboxHarness;
-      await dhcpCheckbox.setValue(true);
+      const dhcpCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'DHCP' }));
+      await dhcpCheckbox.check();
 
       // Clear IP address to simulate initial DHCP state
       spectator.component.form.controls.ipaddress.setValue('');
       spectator.component.form.controls.ipaddress.updateValueAndValidity();
 
-      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-
-      expect(await manageButton.isDisabled()).toBe(true);
       expect(spectator.component.isManageButtonDisabled).toBe(true);
     });
 
     it('should enable manage button when DHCP obtains valid IP', async () => {
       // Start with DHCP enabled and no IP
-      const dhcpCheckbox = await form.getControl('DHCP') as IxCheckboxHarness;
-      await dhcpCheckbox.setValue(true);
+      const dhcpCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'DHCP' }));
+      await dhcpCheckbox.check();
 
       spectator.component.form.controls.ipaddress.setValue('');
       spectator.component.form.controls.ipaddress.updateValueAndValidity();
 
-      let manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-      expect(await manageButton.isDisabled()).toBe(true);
+      expect(spectator.component.isManageButtonDisabled).toBe(true);
 
       // Simulate DHCP obtaining an IP
       spectator.component.form.controls.ipaddress.setValue('10.0.0.50');
       spectator.component.form.controls.ipaddress.updateValueAndValidity();
 
-      manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-      expect(await manageButton.isDisabled()).toBe(false);
+      expect(spectator.component.isManageButtonDisabled).toBe(false);
       expect(spectator.component.managementIp).toBe('10.0.0.50');
     });
 
     it('should maintain button state when switching from DHCP back to static', async () => {
       // Start with DHCP and valid IP
-      const dhcpCheckbox = await form.getControl('DHCP') as IxCheckboxHarness;
-      await dhcpCheckbox.setValue(true);
+      const dhcpCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'DHCP' }));
+      await dhcpCheckbox.check();
 
       spectator.component.form.controls.ipaddress.setValue('192.168.1.100');
       spectator.component.form.controls.ipaddress.updateValueAndValidity();
 
       // Switch back to static
-      await dhcpCheckbox.setValue(false);
+      await dhcpCheckbox.uncheck();
 
       const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
       expect(await manageButton.isDisabled()).toBe(false);

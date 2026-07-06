@@ -1,10 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDividerComponent, tnIconMarker } from '@truenas/ui-components';
+import {
+  InputType,
+  TnButtonComponent, TnCheckboxComponent, TnDividerComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnRadioComponent, tnIconMarker,
+} from '@truenas/ui-components';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -15,10 +20,6 @@ import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
@@ -38,13 +39,15 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './ipmi-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ModalHeaderComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxRadioGroupComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnRadioComponent,
     TnDividerComponent,
-    IxCheckboxComponent,
-    IxInputComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     TnButtonComponent,
@@ -67,6 +70,7 @@ export class IpmiFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.IpmiWrite];
   protected readonly identifyLightIcon = tnIconMarker('lightbulb-on-outline', 'mdi');
+  protected readonly InputType = InputType;
 
   isManageButtonDisabled = false;
   remoteControllerOptions: Observable<RadioOption[]>;

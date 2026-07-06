@@ -6,65 +6,82 @@
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   @if (remoteControllerOptions) {
-    <ix-fieldset [title]="helptext.ipmiRemoteController | translate">
-      <ix-radio-group
-        formControlName="apply_remote"
-        [label]="helptext.ipmiRemoteController | translate"
-        [options]="remoteControllerOptions"
-      >
-      </ix-radio-group>
-    </ix-fieldset>
+    <tn-form-section [heading]="helptext.ipmiRemoteController | translate">
+      <tn-form-field [label]="helptext.ipmiRemoteController | translate">
+        @for (option of (remoteControllerOptions | async) ?? []; track option.value) {
+          <tn-radio
+            name="apply_remote"
+            formControlName="apply_remote"
+            [value]="option.value"
+            [label]="option.label"
+          ></tn-radio>
+        }
+      </tn-form-field>
+    </tn-form-section>
     <tn-divider></tn-divider>
   }
 
-  <ix-fieldset [title]="helptext.ipmiConfiguration | translate">
-    <ix-checkbox
-      formControlName="dhcp"
-      [label]="'DHCP' | translate"
-      [tooltip]="helptext.dhcpTooltip | translate"
-    ></ix-checkbox>
+  <tn-form-section [heading]="helptext.ipmiConfiguration | translate">
+    <tn-form-field [tooltip]="helptext.dhcpTooltip | translate">
+      <tn-checkbox
+        formControlName="dhcp"
+        [label]="'DHCP' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="ipaddress"
+    <tn-form-field
       [label]="'IPv4 Address' | translate"
       [tooltip]="helptext.ipAddressTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input name="ipaddress" formControlName="ipaddress"></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="netmask"
+    <tn-form-field
       [label]="'IPv4 Netmask' | translate"
       [tooltip]="helptext.netmaskTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input name="netmask" formControlName="netmask"></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="gateway"
-      [label]="'IPv4 Default Gateway' | translate"
-    ></ix-input>
+    <tn-form-field [label]="'IPv4 Default Gateway' | translate">
+      <tn-input name="gateway" formControlName="gateway"></tn-input>
+    </tn-form-field>
 
-    <ix-checkbox
-      formControlName="vlan_id_enable"
-      [label]="'Enable VLAN' | translate"
-    ></ix-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="vlan_id_enable"
+        [label]="'Enable VLAN' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
     @if (vlanEnabled()) {
-      <ix-input
-        formControlName="vlan_id"
-        type="number"
-        [required]="true"
+      <tn-form-field
         [label]="'VLAN ID' | translate"
         [tooltip]="helptext.vlanTooltip | translate"
-      ></ix-input>
+      >
+        <tn-input
+          name="vlan_id"
+          formControlName="vlan_id"
+          [inputType]="InputType.Number"
+          [allowDecimals]="false"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
     }
-  </ix-fieldset>
+  </tn-form-section>
   <tn-divider></tn-divider>
 
-  <ix-fieldset [title]="helptext.ipmiPasswordReset | translate">
-    <ix-input
-      formControlName="password"
-      type="password"
+  <tn-form-section [heading]="helptext.ipmiPasswordReset | translate">
+    <tn-form-field
       [label]="'Password' | translate"
       [tooltip]="helptext.passwordTooltip | translate"
-    ></ix-input>
-  </ix-fieldset>
+    >
+      <tn-input
+        name="password"
+        formControlName="password"
+        [inputType]="InputType.Password"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
 
   <tn-divider></tn-divider>
 
