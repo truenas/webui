@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { distinctUntilChanged, map, tap } from 'rxjs';
@@ -18,12 +19,13 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
 import { ContainerRowComponent } from 'app/pages/containers/components/all-containers/container-list/container-row/container-row.component';
-import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 @Component({
   selector: 'ix-container-list',
@@ -36,6 +38,8 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     FakeProgressBarComponent,
     ContainerRowComponent,
     MatCheckboxModule,
+    MatSort,
+    MatSortHeader,
     EmptyComponent,
     TestDirective,
     ContainerListBulkActionsComponent,
@@ -59,6 +63,8 @@ export class ContainerListComponent {
 
   protected readonly containers = this.containersStore.containers;
   protected readonly isLoading = this.containersStore.isLoading;
+  protected readonly sort = this.containersStore.sort;
+  protected readonly sortField = ContainerSortField;
 
   protected readonly metrics = this.containersStore.metrics;
 
@@ -130,6 +136,13 @@ export class ContainerListComponent {
 
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
+  }
+
+  protected onSortChange(sort: Sort): void {
+    this.containersStore.setSort({
+      active: sort.active as ContainerSortField,
+      direction: sort.direction as SortDirection,
+    });
   }
 
   private handlePendingGlobalSearchElement(): void {

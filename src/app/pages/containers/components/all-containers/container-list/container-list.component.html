@@ -23,7 +23,14 @@
   <ix-empty [conf]="emptyConfig()"></ix-empty>
 } @else {
   <div class="containers">
-    <div class="containers-header-row">
+    <div
+      class="containers-header-row"
+      matSort
+      matSortDisableClear
+      [matSortActive]="sort().active"
+      [matSortDirection]="sort().direction"
+      (matSortChange)="onSortChange($event)"
+    >
       <div class="cell checkbox">
         @if (containers().length) {
           <mat-checkbox
@@ -36,9 +43,9 @@
           ></mat-checkbox>
         }
       </div>
-      <div class="cell">{{ 'Name' | translate }}</div>
-      <div class="cell">{{ 'Status' | translate }}</div>
-      <div class="cell">{{ 'Autostart' | translate }}</div>
+      <div class="cell" [mat-sort-header]="sortField.Name">{{ 'Name' | translate }}</div>
+      <div class="cell" [mat-sort-header]="sortField.Status">{{ 'Status' | translate }}</div>
+      <div class="cell" [mat-sort-header]="sortField.Autostart">{{ 'Autostart' | translate }}</div>
       <div class="cell">CPU</div>
       <div class="cell">RAM</div>
       <div class="cell">Disk I/O</div>

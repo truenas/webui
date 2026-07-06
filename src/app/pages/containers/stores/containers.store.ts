@@ -12,8 +12,50 @@ import {
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { Container, ContainerMetrics } from 'app/interfaces/container.interface';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+export enum ContainerSortField {
+  Name = 'name',
+  Status = 'status',
+  Autostart = 'autostart',
+}
+
+export interface ContainerSort {
+  active: ContainerSortField;
+  direction: SortDirection;
+}
+
+function compareContainerNames(a: Container, b: Container): number {
+  return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+}
+
+// Sorting is done client-side, mirroring the Installed Apps list (which sorts its
+// in-memory list rather than relying on the backend to order the query response).
+function compareContainers(a: Container, b: Container, sort: ContainerSort): number {
+  const modifier = sort.direction === SortDirection.Desc ? -1 : 1;
+  let result: number;
+
+  switch (sort.active) {
+    case ContainerSortField.Status:
+      result = (a.status?.state ?? '').localeCompare(b.status?.state ?? '');
+      break;
+    case ContainerSortField.Autostart:
+      result = Number(a.autostart) - Number(b.autostart);
+      break;
+    default:
+      result = compareContainerNames(a, b);
+      break;
+  }
+
+  // Stable, predictable ordering: break ties on name.
+  if (result === 0 && sort.active !== ContainerSortField.Name) {
+    result = compareContainerNames(a, b);
+  }
+
+  return result * modifier;
+}
 
 export interface ContainersState {
   isLoading: boolean;
@@ -21,6 +63,7 @@ export interface ContainersState {
   selectedContainerId: number | null;
   selectedContainer: Container | undefined;
   metrics: ContainerMetrics;
+  sort: ContainerSort;
 }
 
 const initialState: ContainersState = {
@@ -29,6 +72,7 @@ const initialState: ContainersState = {
   selectedContainerId: null,
   selectedContainer: undefined,
   metrics: {},
+  sort: { active: ContainerSortField.Name, direction: SortDirection.Asc },
 };
 
 @Injectable()
@@ -41,8 +85,11 @@ export class ContainersStore extends ComponentStore<ContainersState> {
   readonly isLoading = computed(() => this.state().isLoading);
   readonly selectedContainer = computed(() => this.state().selectedContainer);
   readonly selectedContainerId = computed(() => this.state().selectedContainerId);
+  readonly sort = computed(() => this.state().sort);
   readonly containers = computed(() => {
-    return this.state().containers?.filter((container) => !!container) ?? [];
+    const sort = this.state().sort;
+    return (this.state().containers?.filter((container) => !!container) ?? [])
+      .sort((a, b) => compareContainers(a, b, sort));
   });
 
   /**
@@ -207,6 +254,14 @@ export class ContainersStore extends ComponentStore<ContainersState> {
         this.patchState({ containers: prevContainers.filter((container) => container.id !== event.id) });
         break;
     }
+  }
+
+  /**
+   * Update the sort order. The `containers` selector re-sorts client-side immediately, so live
+   * add/change events stay ordered and no reload is needed.
+   */
+  setSort(sort: ContainerSort): void {
+    this.patchState({ sort });
   }
 
   containerUpdated(updated: Container): void {
