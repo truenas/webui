@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
@@ -24,7 +24,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -54,7 +54,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TranslateModule,
   ],
 })
-export class IpmiFormComponent implements OnInit {
+export class IpmiFormComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private redirect = inject(RedirectService);
@@ -65,8 +65,13 @@ export class IpmiFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<number, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
+
+  /**
+   * IPMI channel id to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
+   * carry data). Unused in the legacy SlideIn host, which supplies it via `slideInRef.getData()`.
+   */
+  readonly editIpmiId = input<number | undefined>(undefined);
 
   protected readonly requiredRoles = [Role.IpmiWrite];
   protected readonly identifyLightIcon = tnIconMarker('lightbulb-on-outline', 'mdi');
@@ -81,7 +86,7 @@ export class IpmiFormComponent implements OnInit {
   protected isFlashingLoading = signal(false);
 
   queryParams: IpmiQueryParams;
-  protected ipmiId: number;
+  protected ipmiId: number | undefined;
 
   readonly helptext = helptextIpmi;
 
@@ -103,14 +108,12 @@ export class IpmiFormComponent implements OnInit {
 
   vlanEnabled = toSignal(this.form.controls.vlan_id_enable.valueChanges);
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.ipmiId = this.slideInRef.getData();
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
+    this.ipmiId = this.slideInRef
+      ? this.slideInRef.getData() as number
+      : this.editIpmiId();
     this.setFormRelations();
     this.loadFormData();
 
@@ -246,7 +249,7 @@ export class IpmiFormComponent implements OnInit {
       });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     const updateParams: IpmiUpdate = {
@@ -271,7 +274,7 @@ export class IpmiFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
+          this.close(true);
           this.snackbar.success(
             this.translate.instant('Successfully saved IPMI settings.'),
           );

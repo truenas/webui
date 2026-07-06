@@ -9,7 +9,7 @@ import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -40,7 +40,7 @@ import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card
 })
 export class IpmiCardComponent implements OnInit {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -87,7 +87,10 @@ export class IpmiCardComponent implements OnInit {
   }
 
   onEdit(ipmi: Ipmi): void {
-    this.slideIn.open(IpmiFormComponent, { data: ipmi.id }).onSuccess(() => this.loadIpmiEntries(), this.destroyRef);
+    this.formPanel.open(IpmiFormComponent, {
+      title: this.translate.instant('IPMI'),
+      inputs: { editIpmiId: ipmi.id },
+    }).onSuccess(() => this.loadIpmiEntries(), this.destroyRef);
   }
 
   private onOpen(ipmi: Ipmi): void {
