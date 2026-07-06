@@ -16,7 +16,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -46,7 +45,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 export class GuiCardComponent {
   private store$ = inject<Store<AppState>>(Store);
   private formPanel = inject(FormSidePanelService);
-  private authService = inject(AuthService);
   private translate = inject(TranslateService);
 
   protected readonly searchableElements = guiCardElements;

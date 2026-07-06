@@ -17,7 +17,6 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -49,7 +48,6 @@ export class LocalizationCardComponent {
   private store$ = inject<Store<AppState>>(Store);
   private formPanel = inject(FormSidePanelService);
   private sysGeneralService = inject(SystemGeneralService);
-  private authService = inject(AuthService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
 
