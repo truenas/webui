@@ -138,6 +138,7 @@ export class ContainerListComponent {
   constructor() {
     // tn-table owns its header sort indicator internally (sortColumn/sortDirection are not inputs),
     // so mirror the store's sort state onto the table to reflect the default and any programmatic sort.
+    // TODO: replace with a template binding once @truenas/ui-components exposes sort state as inputs.
     effect(() => {
       const sort = this.sort();
       const table = this.table();
@@ -161,12 +162,10 @@ export class ContainerListComponent {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    // tn-table cycles asc → desc → unsorted; the containers list is always sorted, so an
-    // empty direction (or a column that isn't a known sort field) falls back to the default
-    // Name-ascending order rather than a bogus enum value.
-    const active = event.direction && this.isSortField(event.column)
-      ? event.column
-      : ContainerSortField.Name;
+    // tn-table cycles asc → desc → unsorted, but the containers list is always sorted. Treat the
+    // unsorted step as ascending on the same column so the indicator stays on the clicked column
+    // (asc → desc → asc) instead of visibly jumping back to Name. Unknown columns fall back to Name.
+    const active = this.isSortField(event.column) ? event.column : ContainerSortField.Name;
     const direction = event.direction === 'desc' ? SortDirection.Desc : SortDirection.Asc;
     this.containersStore.setSort({ active, direction });
   }

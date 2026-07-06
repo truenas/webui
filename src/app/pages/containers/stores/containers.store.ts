@@ -97,9 +97,13 @@ export class ContainersStore extends ComponentStore<ContainersState> {
   readonly selectedContainer = computed(() => this.state().selectedContainer);
   readonly selectedContainerId = computed(() => this.state().selectedContainerId);
   readonly sort = computed(() => this.state().sort);
+  // Read the raw list through its own computed so the expensive sort below only re-runs when the
+  // list or sort actually change. Frequent metrics patches keep the same `containers`/`sort`
+  // references, so this computed's dependencies stay stable and the sort is skipped on those ticks.
+  private readonly rawContainers = computed(() => this.state().containers);
   readonly containers = computed(() => {
-    const sort = this.state().sort;
-    return (this.state().containers?.filter((container) => !!container) ?? [])
+    const sort = this.sort();
+    return (this.rawContainers()?.filter((container) => !!container) ?? [])
       .sort((a, b) => compareContainers(a, b, sort, this.translate));
   });
 

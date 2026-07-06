@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnIconButtonHarness, TnDialog, TnTableHarness,
+  TnIconButtonHarness, TnDialog, TnTableHarness, TnSortEvent,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -191,6 +191,16 @@ describe('ContainerListComponent', () => {
   it('updates the store sort when a sortable column header is clicked', async () => {
     const table = await loader.getHarness(TnTableHarness);
     await table.clickSortHeader('status');
+
+    expect(spectator.inject(ContainersStore).setSort).toHaveBeenCalledWith({
+      active: ContainerSortField.Status,
+      direction: SortDirection.Asc,
+    });
+  });
+
+  it('keeps the clicked column ascending when tn-table cycles to the unsorted state', () => {
+    const component = spectator.component as unknown as { onSortChange: (event: TnSortEvent) => void };
+    component.onSortChange({ column: ContainerSortField.Status, direction: '' });
 
     expect(spectator.inject(ContainersStore).setSort).toHaveBeenCalledWith({
       active: ContainerSortField.Status,
