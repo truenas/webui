@@ -5,8 +5,8 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent,
+  TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnRadioComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -18,8 +18,6 @@ import {
   NetworkConfiguration,
   NetworkConfigurationActivity,
 } from 'app/interfaces/network-configuration.interface';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -58,8 +56,8 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    IxChipsComponent,
-    IxRadioGroupComponent,
+    TnChipInputComponent,
+    TnRadioComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     TranslateModule,

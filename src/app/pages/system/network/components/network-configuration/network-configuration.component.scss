@@ -11,6 +11,7 @@
 
 .two-columns {
   display: flex;
+  gap: 24px;
 
   @media (max-width: $breakpoint-tablet) {
     display: block;
@@ -18,7 +19,8 @@
 
   > * {
     display: block;
-    width: 50%;
+    flex: 1;
+    min-width: 0;
 
     @media (max-width: $breakpoint-tablet) {
       width: 100%;

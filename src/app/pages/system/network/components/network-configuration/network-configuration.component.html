@@ -42,12 +42,16 @@
         <tn-input [name]="domain.fcName" [formControlName]="domain.fcName"></tn-input>
       </tn-form-field>
 
-      <ix-chips
-        [formControlName]="domains.fcName"
+      <tn-form-field
         [label]="domains.label | translate"
-        [placeholder]="domains.label | translate"
         [tooltip]="domains.tooltip | translate"
-      ></ix-chips>
+      >
+        <tn-chip-input
+          [formControlName]="domains.fcName"
+          [placeholder]="domains.label | translate"
+          [allowCustomValue]="true"
+        ></tn-chip-input>
+      </tn-form-field>
     </tn-form-section>
     <tn-form-section [heading]="helptext.serviceAnnouncement | translate">
       <tn-form-field class="mt-field" [tooltip]="netbios.tooltip | translate">
@@ -106,13 +110,20 @@
 
   <div class="two-columns">
     <tn-form-section [heading]="helptext.outboundNetwork | translate">
-      <ix-radio-group
-        class="mt-field outbound-network-radio"
-        [formControlName]="outboundNetworkActivity.fcName"
+      <tn-form-field
+        class="mt-field"
         [label]="outboundNetworkActivity.label | translate"
         [tooltip]="outboundNetworkActivity.tooltip | translate"
-        [options]="outboundNetworkActivity.options"
-      ></ix-radio-group>
+      >
+        @for (option of (outboundNetworkActivity.options | async) ?? []; track option.value) {
+          <tn-radio
+            name="outbound_network_activity"
+            [formControlName]="outboundNetworkActivity.fcName"
+            [value]="option.value"
+            [label]="option.label"
+          ></tn-radio>
+        }
+      </tn-form-field>
 
       @if (!outboundNetworkValue.hidden) {
         <tn-form-field [label]="outboundNetworkValue.label | translate">
@@ -134,12 +145,16 @@
         <tn-input [name]="httpproxy.fcName" [formControlName]="httpproxy.fcName"></tn-input>
       </tn-form-field>
 
-      <ix-chips
-        [formControlName]="hosts.fcName"
+      <tn-form-field
         [label]="hosts.label | translate"
-        [placeholder]="hosts.label | translate"
         [tooltip]="hosts.tooltip | translate"
-      ></ix-chips>
+      >
+        <tn-chip-input
+          [formControlName]="hosts.fcName"
+          [placeholder]="hosts.label | translate"
+          [allowCustomValue]="true"
+        ></tn-chip-input>
+      </tn-form-field>
     </tn-form-section>
   </div>
 
