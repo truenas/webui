@@ -25,7 +25,8 @@
     [dataSource]="rows()"
     [displayedColumns]="displayedColumns"
     [loading]="isLoading()"
-    [emptyMessage]="'No static routes configured' | translate"
+    [emptyMessage]="emptyMessage()"
+    [emptyIcon]="emptyIcon()"
     (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'destination'" [sortable]="true">

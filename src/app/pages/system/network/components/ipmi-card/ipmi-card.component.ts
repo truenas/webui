@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnCellDefDirective, TnDialog, TnHeaderCellDefDirective, tnIconMarker, TnTableColumnDirective, TnTableComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
@@ -43,6 +45,7 @@ export class IpmiCardComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
+  private emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private window = inject<Window>(WINDOW);
 
@@ -53,6 +56,18 @@ export class IpmiCardComponent implements OnInit {
   protected readonly rows = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly displayedColumns = ['channel', 'actions'];
+
+  private readonly emptyType = toSignal(this.dataProvider.emptyType$);
+
+  // Keep the page-specific message for the no-records case, but surface the API
+  // error state distinctly instead of masking it as "No IPMI channels found".
+  protected readonly emptyMessage = computed(() => {
+    return this.emptyType() === EmptyType.Errors
+      ? this.translate.instant(this.emptyService.defaultEmptyConfig(EmptyType.Errors).title)
+      : this.translate.instant('No IPMI channels found');
+  });
+
+  protected readonly emptyIcon = computed(() => this.emptyService.iconForTypeOrDefault(this.emptyType(), ''));
 
   protected readonly actions: IconActionConfig<Ipmi>[] = [
     {

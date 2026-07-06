@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardHeaderDirective,
@@ -9,8 +9,10 @@ import {
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
@@ -56,6 +58,7 @@ export class StaticRoutesCardComponent implements OnInit {
   private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
+  private emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = staticRoutesCardElements.elements;
@@ -69,6 +72,18 @@ export class StaticRoutesCardComponent implements OnInit {
   protected readonly rows = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly displayedColumns = ['destination', 'gateway', 'actions'];
+
+  private readonly emptyType = toSignal(this.dataProvider.emptyType$);
+
+  // Keep the page-specific message for the no-records case, but surface the API
+  // error state distinctly instead of masking it as "No static routes configured".
+  protected readonly emptyMessage = computed(() => {
+    return this.emptyType() === EmptyType.Errors
+      ? this.translate.instant(this.emptyService.defaultEmptyConfig(EmptyType.Errors).title)
+      : this.translate.instant('No static routes configured');
+  });
+
+  protected readonly emptyIcon = computed(() => this.emptyService.iconForTypeOrDefault(this.emptyType(), ''));
 
   protected readonly actions: IconActionConfig<StaticRoute>[] = [
     {

@@ -18,7 +18,8 @@
       [dataSource]="rows()"
       [displayedColumns]="displayedColumns"
       [loading]="isLoading()"
-      [emptyMessage]="'No IPMI channels found' | translate"
+      [emptyMessage]="emptyMessage()"
+      [emptyIcon]="emptyIcon()"
     >
       <ng-container [tnColumnDef]="'channel'">
         <ng-template tnHeaderCellDef></ng-template>

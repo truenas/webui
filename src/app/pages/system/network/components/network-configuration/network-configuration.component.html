@@ -113,7 +113,7 @@
       <tn-form-field
         class="mt-field"
         [label]="outboundNetworkActivity.label | translate"
-        [tooltip]="outboundNetworkActivity.tooltip | translate"
+        [tooltip]="outboundNetworkActivity.tooltip"
       >
         @for (option of (outboundNetworkActivity.options | async) ?? []; track option.value) {
           <tn-radio
