@@ -250,57 +250,48 @@ describe('IscsiWizardComponent', () => {
     expect(createdTarget).toEqual({ id: 15 } as IscsiTarget);
   });
 
-  it('fibre channel: creates objects when wizard is submitted', async () => {
+  it('fibre channel: creates a Fibre Channel target when wizard is submitted', async () => {
     let createdTarget: IscsiTarget | undefined;
     spectator.component.closed.subscribe((target) => {
       createdTarget = target;
     });
 
-    await fillIscsiWizard();
+    // Target step: switch to Fibre Channel mode
+    form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ Mode: 'Fibre Channel' });
+    await clickNext();
+
+    // Extent step
+    form = await loader.getHarness(IxFormHarness);
+    await (await getTnInput('name')).setValue('test-name');
+    await (await getTnSelect('disk')).selectOption('Create New');
+    await form.fillForm({ 'Pool/Dataset': '/mnt/new_pool' });
+    await (await getTnInput('volsize')).setValue('1024 MiB');
+    await clickNext();
+
+    // Protocol Options step: FC mode swaps portals/initiators for Fibre Channel ports
+    // and auto-adds an empty first port row, so fill it rather than adding another.
+    form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Port Mode': 'Use existing port',
+      'Existing Port': 'fc0',
+    });
+
     await submitWizard();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
-      name: 'new_pool/test-name',
-      type: 'VOLUME',
-      volsize: 1073741824,
-    }]);
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.create', [{
-      blocksize: 512,
-      disk: 'zvol/my+pool/test_zvol',
-      insecure_tpc: true,
-      name: 'test-name',
-      product_id: null,
-      ro: false,
-      rpm: 'SSD',
-      type: 'DISK',
-      xen: false,
-    }]);
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.portal.create', [{
-      comment: 'test-name',
-      listen: [{ ip: '::' }],
-    }]);
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.initiator.create', [{
-      comment: 'test-name',
-      initiators: ['initiator1', 'initiator2'],
-    }]);
-
+    // FC targets carry no iSCSI portal/initiator groups.
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.target.create', [{
       name: 'test-name',
-      mode: 'ISCSI',
-      groups: [{
-        auth: null,
-        authmethod: 'NONE',
-        initiator: 14,
-        portal: 13,
-      }],
+      mode: 'FC',
+      groups: [],
     }]);
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('iscsi.portal.create', expect.anything());
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('iscsi.initiator.create', expect.anything());
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.targetextent.create', [{
-      extent: 11,
-      target: 15,
+    // The chosen port is linked to the created target.
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fcport.create', [{
+      port: 'fc0',
+      target_id: 15,
     }]);
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
