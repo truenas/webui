@@ -128,6 +128,7 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
         {
           label: this.isFlashing() ? T('Stop Flashing') : T('Flash Identify Light'),
           testId: 'toggle-identify-light',
+          requiredRoles: this.requiredRoles,
           icon: 'lightbulb-on-outline',
           iconLibrary: 'mdi',
           disabled: () => this.isFlashingLoading(),

@@ -186,7 +186,27 @@ export class NetworkConfigurationComponent extends SidePanelForm implements OnIn
   outboundNetworkActivity = {
     fcName: 'outbound_network_activity',
     label: helptextNetworkConfiguration.outboundActivity,
-    tooltip: '',
+    // tn-radio has no per-option tooltip, so the per-option help is combined into a
+    // single field-level tooltip. Pre-translated for the same reason the labels below are.
+    tooltip: [
+      {
+        label: helptextNetworkConfiguration.outboundNetworkActivity.allow.label,
+        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.allow.tooltip,
+      },
+      {
+        label: helptextNetworkConfiguration.outboundNetworkActivity.deny.label,
+        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.deny.tooltip,
+      },
+      {
+        label: helptextNetworkConfiguration.outboundNetworkActivity.allowSpecific.label,
+        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.allowSpecific.tooltip,
+      },
+      {
+        label: helptextNetworkConfiguration.outboundNetworkActivity.denySpecific.placeholder,
+        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.denySpecific.tooltip,
+      },
+    ].map(({ label, tooltip }) => `<b>${this.translate.instant(label)}</b>: ${this.translate.instant(tooltip)}`)
+      .join('<br><br>'),
     // Mismatch between enum and label is expected.
     // We will send empty list of services when Allow All or Deny All is selected.
     // I.e. selecting 'Allow All' will send Deny [], effectively allowing all services.
