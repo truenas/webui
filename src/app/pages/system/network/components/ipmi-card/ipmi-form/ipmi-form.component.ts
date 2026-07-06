@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent, TnCheckboxComponent, TnDividerComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnRadioComponent, tnIconMarker,
 } from '@truenas/ui-components';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
@@ -49,7 +49,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnRadioComponent,
-    TnDividerComponent,
     TnCheckboxComponent,
     TnInputComponent,
     FormActionsComponent,
