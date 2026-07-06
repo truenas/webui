@@ -80,7 +80,7 @@
                 [attr.aria-label]="helptext.goToHa | translate"
                 (click)="goToHa()"
                 (keydown.enter)="goToHa()"
-                (keydown.space)="goToHa()"
+                (keydown.space)="goToHa(); $event.preventDefault()"
               >
                 {{ helptext.goToHa | translate }}
               </span>

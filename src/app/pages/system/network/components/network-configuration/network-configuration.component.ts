@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnIn
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnRadioComponent, TnSelectComponent,
@@ -72,6 +72,7 @@ export class NetworkConfigurationComponent extends SidePanelForm implements OnIn
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
@@ -186,29 +187,26 @@ export class NetworkConfigurationComponent extends SidePanelForm implements OnIn
     fcName: 'outbound_network_activity',
     label: helptextNetworkConfiguration.outboundActivity,
     tooltip: '',
+    // Mismatch between enum and label is expected.
+    // We will send empty list of services when Allow All or Deny All is selected.
+    // I.e. selecting 'Allow All' will send Deny [], effectively allowing all services.
+    // Labels are pre-translated because tn-radio does not translate its [label] input.
     options: of([
-      // Mismatch between enum and label is expected.
-      // We will send empty list of services when Allow All or Deny All is selected.
-      // I.e. selecting 'Allow All' will send Deny [], effectively allowing all services.
       {
-        label: helptextNetworkConfiguration.outboundNetworkActivity.allow.label,
+        label: this.translate.instant(helptextNetworkConfiguration.outboundNetworkActivity.allow.label),
         value: UiNetworkActivityType.Deny,
-        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.allow.tooltip,
       },
       {
-        label: helptextNetworkConfiguration.outboundNetworkActivity.deny.label,
+        label: this.translate.instant(helptextNetworkConfiguration.outboundNetworkActivity.deny.label),
         value: UiNetworkActivityType.Allow,
-        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.deny.tooltip,
       },
       {
-        label: helptextNetworkConfiguration.outboundNetworkActivity.allowSpecific.label,
+        label: this.translate.instant(helptextNetworkConfiguration.outboundNetworkActivity.allowSpecific.label),
         value: UiNetworkActivityType.AllowSpecific,
-        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.allowSpecific.tooltip,
       },
       {
-        label: helptextNetworkConfiguration.outboundNetworkActivity.denySpecific.placeholder,
+        label: this.translate.instant(helptextNetworkConfiguration.outboundNetworkActivity.denySpecific.placeholder),
         value: UiNetworkActivityType.DenySpecific,
-        tooltip: helptextNetworkConfiguration.outboundNetworkActivity.denySpecific.tooltip,
       },
     ]),
   };
