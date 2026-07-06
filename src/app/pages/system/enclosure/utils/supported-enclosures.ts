@@ -124,9 +124,14 @@ const xSeries = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/x-series/x-series-front.svg',
 };
 
-const vSeries = {
+const v100Series = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/v-series/v-series-front.svg',
-  [EnclosureSide.Rear]: 'assets/images/new-hardware/v-series/v-series-rear.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/v-series/v100-series-rear.svg',
+};
+
+const v200Series = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/v-series/v-series-front.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/v-series/v200-series-rear.svg',
 };
 
 export const supportedEnclosures: Record<string, EnclosureViews> = {
@@ -165,10 +170,10 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.R50B]: r50b,
   [EnclosureModel.R50BM]: r50bm,
   [EnclosureModel.R60]: r60,
-  [EnclosureModel.V140]: vSeries,
-  [EnclosureModel.V160]: vSeries,
-  [EnclosureModel.V260]: vSeries,
-  [EnclosureModel.V280]: vSeries,
+  [EnclosureModel.V140]: v100Series,
+  [EnclosureModel.V160]: v100Series,
+  [EnclosureModel.V260]: v200Series,
+  [EnclosureModel.V280]: v200Series,
   [EnclosureModel.X10]: xSeries,
   [EnclosureModel.X20]: xSeries,
 };
