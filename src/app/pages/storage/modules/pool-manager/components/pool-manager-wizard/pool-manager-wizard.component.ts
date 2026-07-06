@@ -151,6 +151,15 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     return Boolean(this.activatedSteps?.[step]);
   }
 
+  // Mirrors mat-stepper's `showError && hasError && !isCurrentStep`: an error indicator is shown only for a
+  // step that has been activated and is not the one currently being viewed. tn-stepper renders [hasError]
+  // unconditionally, so without the active-step guard the first step would flash its error on open.
+  isStepErrorVisible(step: PoolCreationWizardStep): boolean {
+    return Boolean(this.getTopLevelErrorForStep(step))
+      && this.getWasStepActivated(step)
+      && this.activeStep !== step;
+  }
+
   createPool(): void {
     const payload = this.prepareCreatePayload();
 

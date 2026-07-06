@@ -5,7 +5,7 @@
       <tn-step
         ixStepActivation
         [label]="'General Info' | translate"
-        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.General)"
+        [hasError]="isStepErrorVisible(PoolCreationWizardStep.General)"
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.General)"
         [completed]="!getTopLevelErrorForStep(PoolCreationWizardStep.General)"
         (activate)="onStepActivated(PoolCreationWizardStep.General)"
@@ -21,7 +21,7 @@
         <tn-step
           ixStepActivation
           [label]="'Enclosure Options' | translate"
-          [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions) && getWasStepActivated(PoolCreationWizardStep.EnclosureOptions)"
+          [hasError]="isStepErrorVisible(PoolCreationWizardStep.EnclosureOptions)"
           [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions)"
           [completed]="!getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions)"
           (activate)="onStepActivated(PoolCreationWizardStep.EnclosureOptions)"
@@ -37,7 +37,7 @@
       <tn-step
         ixStepActivation
         [label]="'Data' | translate"
-        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Data) && getWasStepActivated(PoolCreationWizardStep.Data)"
+        [hasError]="isStepErrorVisible(PoolCreationWizardStep.Data)"
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Data)"
         [completed]="!getTopLevelErrorForStep(PoolCreationWizardStep.Data)"
         (activate)="onStepActivated(PoolCreationWizardStep.Data)"
@@ -52,7 +52,7 @@
       <tn-step
         ixStepActivation
         [label]="('Log' | translate) + ' ' + ('(Optional)' | translate)"
-        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Log) && getWasStepActivated(PoolCreationWizardStep.Log)"
+        [hasError]="isStepErrorVisible(PoolCreationWizardStep.Log)"
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Log)"
         [completed]="!getTopLevelErrorForStep(PoolCreationWizardStep.Log)"
         (activate)="onStepActivated(PoolCreationWizardStep.Log)"
@@ -68,7 +68,7 @@
         <tn-step
           ixStepActivation
           [label]="('Spare' | translate) + ' ' + ('(Optional)' | translate)"
-          [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Spare) && getWasStepActivated(PoolCreationWizardStep.Spare)"
+          [hasError]="isStepErrorVisible(PoolCreationWizardStep.Spare)"
           [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Spare)"
           [completed]="!getTopLevelErrorForStep(PoolCreationWizardStep.Spare)"
           (activate)="onStepActivated(PoolCreationWizardStep.Spare)"
@@ -84,7 +84,7 @@
       <tn-step
         ixStepActivation
         [label]="('Cache' | translate) + ' ' + ('(Optional)' | translate)"
-        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Cache) && getWasStepActivated(PoolCreationWizardStep.Cache)"
+        [hasError]="isStepErrorVisible(PoolCreationWizardStep.Cache)"
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Cache)"
         [completed]="!getTopLevelErrorForStep(PoolCreationWizardStep.Cache)"
         (activate)="onStepActivated(PoolCreationWizardStep.Cache)"
@@ -99,7 +99,7 @@
       <tn-step
         ixStepActivation
         [label]="('Special' | translate) + ' ' + ('(Optional)' | translate)"
-        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Metadata) && getWasStepActivated(PoolCreationWizardStep.Metadata)"
+        [hasError]="isStepErrorVisible(PoolCreationWizardStep.Metadata)"
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Metadata)"
         [completed]="!getTopLevelErrorForStep(PoolCreationWizardStep.Metadata)"
         (activate)="onStepActivated(PoolCreationWizardStep.Metadata)"
@@ -114,7 +114,7 @@
       <tn-step
         ixStepActivation
         [label]="('Dedup' | translate) + ' ' + ('(Optional)' | translate)"
-        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Dedup) && getWasStepActivated(PoolCreationWizardStep.Dedup)"
+        [hasError]="isStepErrorVisible(PoolCreationWizardStep.Dedup)"
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Dedup)"
         [completed]="!getTopLevelErrorForStep(PoolCreationWizardStep.Dedup)"
         (activate)="onStepActivated(PoolCreationWizardStep.Dedup)"
