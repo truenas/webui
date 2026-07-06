@@ -1,8 +1,18 @@
 <tn-card
   [ixUiSearch]="searchableElements.elements.email"
-  [secondaryAction]="settingsAction()"
 >
   <h3 tnCardHeader class="tn-card__title">{{ 'Email' | translate }}</h3>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      [ixUiSearch]="searchableElements.elements.settings"
+      [testId]="'email-settings'"
+      [label]="'Settings' | translate"
+      [disabled]="!hasLoadedConfig()"
+      (onClick)="openEmailSettings()"
+    ></tn-button>
+  </ng-template>
+
   <tn-list>
     <tn-list-item [ixUiSearch]="searchableElements.elements.sendMethod">
       <span class="label">{{ 'Send Mail Method' | translate }}:</span>

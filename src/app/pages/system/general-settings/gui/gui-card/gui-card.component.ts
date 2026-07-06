@@ -1,7 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, Type, computed, inject,
+  ChangeDetectionStrategy, Component, Type, inject,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -9,8 +8,10 @@ import {
   TnCardHeaderDirective,
   TnListComponent,
   TnListItemComponent,
-  type TnCardAction,
+  TnButtonComponent,
+  TnCardFooterActionsDirective,
 } from '@truenas/ui-components';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -33,10 +34,13 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     TnCardComponent,
     TnCardHeaderDirective,
     TnListComponent,
+    TnButtonComponent,
     TnListItemComponent,
     UiSearchDirective,
     WithLoadingStateDirective,
+    TnCardFooterActionsDirective,
     TranslateModule,
+    RequiresRolesDirective,
   ],
 })
 export class GuiCardComponent {
@@ -46,6 +50,7 @@ export class GuiCardComponent {
   private translate = inject(TranslateService);
 
   protected readonly searchableElements = guiCardElements;
+  protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,
@@ -53,23 +58,6 @@ export class GuiCardComponent {
   );
 
   readonly helptext = helptext;
-
-  private hasSettingsRole = toSignal(
-    this.authService.hasRole([Role.SystemGeneralWrite]),
-    { initialValue: false },
-  );
-
-  protected settingsAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasSettingsRole()) {
-      return undefined;
-    }
-
-    return {
-      label: this.translate.instant('Settings'),
-      testId: 'gui-settings',
-      handler: () => this.openSettings(),
-    };
-  });
 
   // GuiFormComponent structurally provides the host surface (closed/canSubmit/submit/
   // hasUnsavedChanges) the panel reads; cast past the nominal base type, mirroring how

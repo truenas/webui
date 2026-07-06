@@ -463,8 +463,7 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "Localization",
-      "Localization Settings"
+      "Localization"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -482,17 +481,20 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "Localization"
+      "Localization",
+      "Localization Settings"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "SYSTEM_GENERAL_WRITE"
+    ],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
     ],
     "routerLink": null,
-    "anchor": "localization-card",
+    "anchor": "localization-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -538,8 +540,7 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "GUI",
-      "GUI Settings"
+      "GUI"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -557,17 +558,20 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "GUI"
+      "GUI",
+      "GUI Settings"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "SYSTEM_GENERAL_WRITE"
+    ],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
     ],
     "routerLink": null,
-    "anchor": "gui-card",
+    "anchor": "gui-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -755,14 +759,9 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "Email",
-      "Configure Email"
+      "Email"
     ],
-    "synonyms": [
-      "Send Test Email",
-      "Config Email",
-      "Set email"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -778,9 +777,14 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "Email"
+      "Email",
+      "Configure Email"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Send Test Email",
+      "Config Email",
+      "Set email"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -788,7 +792,7 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "email-card",
+    "anchor": "email-settings",
     "triggerAnchor": null,
     "section": "ui"
   },

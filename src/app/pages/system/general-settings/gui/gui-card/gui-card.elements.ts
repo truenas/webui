@@ -8,6 +8,10 @@ export const guiCardElements = {
     gui: {
       anchor: 'gui-card',
     },
+    settings: {
+      anchor: 'gui-settings',
+      hierarchy: [T('GUI Settings')],
+    },
     sslCertificate: {
       hierarchy: [T('SSL Certificate')],
     },
@@ -38,12 +42,6 @@ export const guiCardElements = {
     },
     consoleMsg: {
       hierarchy: [T('Show Console Messages')],
-    },
-  },
-  manualRenderElements: {
-    settings: {
-      anchor: 'gui-card',
-      hierarchy: [T('GUI Settings')],
     },
   },
 } satisfies UiSearchableElement;

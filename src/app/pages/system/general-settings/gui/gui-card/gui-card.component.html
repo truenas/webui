@@ -1,8 +1,19 @@
 <tn-card
+  class="system-card"
   [ixUiSearch]="searchableElements.elements.gui"
-  [secondaryAction]="settingsAction()"
 >
   <h3 tnCardHeader class="tn-card__title">{{ helptext.guiTitle | translate }}</h3>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      [ixUiSearch]="searchableElements.elements.settings"
+      [testId]="'gui-settings'"
+      [label]="'Settings' | translate"
+      (onClick)="openSettings()"
+    ></tn-button>
+  </ng-template>
+
   <tn-list>
     <tn-list-item [ixUiSearch]="searchableElements.elements.sslCertificate">
       <span class="label">{{ helptext.uiCertificate.label | translate }}:</span>

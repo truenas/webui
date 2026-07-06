@@ -8,7 +8,8 @@ import {
   TnCardHeaderDirective,
   TnListComponent,
   TnListItemComponent,
-  type TnCardAction,
+  TnButtonComponent,
+  TnCardFooterActionsDirective,
 } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -34,6 +35,8 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
     UiSearchDirective,
     WithLoadingStateDirective,
     TranslateModule,
+    TnButtonComponent,
+    TnCardFooterActionsDirective,
   ],
 })
 export class EmailCardComponent implements OnInit {
@@ -51,13 +54,6 @@ export class EmailCardComponent implements OnInit {
   });
 
   protected hasLoadedConfig = computed(() => Boolean(this.emailConfigState().value));
-
-  protected settingsAction = computed<TnCardAction>(() => ({
-    label: this.translate.instant('Settings'),
-    testId: 'email-settings',
-    disabled: !this.hasLoadedConfig(),
-    handler: () => this.openEmailSettings(),
-  }));
 
   ngOnInit(): void {
     this.loadEmailConfig();

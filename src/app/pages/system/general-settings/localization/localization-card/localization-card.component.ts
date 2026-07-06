@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -7,8 +7,10 @@ import {
   TnCardHeaderDirective,
   TnListComponent,
   TnListItemComponent,
-  type TnCardAction,
+  TnButtonComponent,
+  TnCardFooterActionsDirective,
 } from '@truenas/ui-components';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -38,6 +40,9 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     UiSearchDirective,
     WithLoadingStateDirective,
     TranslateModule,
+    TnButtonComponent,
+    TnCardFooterActionsDirective,
+    RequiresRolesDirective,
   ],
 })
 export class LocalizationCardComponent {
@@ -49,37 +54,20 @@ export class LocalizationCardComponent {
   private translate = inject(TranslateService);
 
   protected readonly searchableElements = localizationCardElements;
+  protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,
     toLoadingState(),
   );
 
-  private rawConfig = toSignal(this.store$.pipe(waitForGeneralConfig));
+  protected rawConfig = toSignal(this.store$.pipe(waitForGeneralConfig));
 
   readonly mapChoices$ = this.sysGeneralService.kbdMapChoices().pipe(
     toLoadingState(),
   );
 
   readonly helptext = helptext;
-
-  private hasSettingsRole = toSignal(
-    this.authService.hasRole([Role.SystemGeneralWrite]),
-    { initialValue: false },
-  );
-
-  protected settingsAction = computed<TnCardAction | undefined>(() => {
-    const config = this.rawConfig();
-    if (!config || !this.hasSettingsRole()) {
-      return undefined;
-    }
-
-    return {
-      label: this.translate.instant('Settings'),
-      testId: 'localization-settings',
-      handler: () => this.openSettings(config),
-    };
-  });
 
   getKeyboardMapValue(mapChoices: Option[], config: SystemGeneralConfig): string {
     const keyboardMap = mapChoices.find((option) => option.value === config.kbdmap);
