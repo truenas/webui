@@ -170,6 +170,12 @@ export class AlertConfigFormComponent implements OnInit {
   }
 
   private moveHaRebootClassesToHaCategory(categories: AlertCategory[]): AlertCategory[] {
+    // If the backend omits the HA category we have nowhere to move the reboot classes,
+    // so leave them in their original categories rather than dropping them entirely.
+    if (!categories.some((category) => category.id === this.haCategoryId)) {
+      return categories;
+    }
+
     const movedClasses: AlertClass[] = [];
 
     const categoriesWithoutRebootClasses = categories.map((category) => {
@@ -185,13 +191,15 @@ export class AlertConfigFormComponent implements OnInit {
       };
     });
 
-    return categoriesWithoutRebootClasses.map((category) => {
-      if (category.id !== this.haCategoryId) {
-        return category;
-      }
+    return categoriesWithoutRebootClasses
+      .map((category) => {
+        if (category.id !== this.haCategoryId) {
+          return category;
+        }
 
-      return { ...category, classes: [...category.classes, ...movedClasses] };
-    });
+        return { ...category, classes: [...category.classes, ...movedClasses] };
+      })
+      .filter((category) => category.classes.length > 0);
   }
 
   protected onSubmit(): void {

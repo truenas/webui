@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnMenuHarness, TnSelectHarness } from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
@@ -231,6 +232,44 @@ describe('AlertConfigFormComponent', () => {
     it('removes the reboot classes from the System category', async () => {
       await openCategory('System');
       expect(getClassLabels()).toEqual(['Boot Pool Status']);
+    });
+  });
+
+  describe('HA system without an HA category in the response', () => {
+    beforeEach(() => {
+      spectator = createComponent({ detectChanges: false });
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectIsHaLicensed, true);
+      api = spectator.inject(ApiService);
+      (api.call as jest.Mock).mockImplementation((method: string) => {
+        if (method === 'alert.list_categories') {
+          return of([
+            {
+              id: 'SYSTEM',
+              title: 'System',
+              classes: [
+                { id: AlertClassName.BootPoolStatus, title: 'Boot Pool Status', level: AlertLevel.Critical },
+                { id: AlertClassName.FailoverReboot, title: 'Failover Event Caused System Reboot', level: AlertLevel.Critical },
+              ],
+            },
+          ]);
+        }
+        if (method === 'alertclasses.config') {
+          return of({ id: 1, classes: {} });
+        }
+        if (method === 'alert.list_policies') {
+          return of([AlertPolicy.Immediately]);
+        }
+        return of(undefined);
+      });
+      spectator.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
+    });
+
+    it('keeps the reboot classes in their original category instead of dropping them', () => {
+      // System is the only category, so it is selected by default.
+      expect(getClassLabels()).toEqual(['Boot Pool Status', 'Failover Event Caused System Reboot']);
     });
   });
 });
