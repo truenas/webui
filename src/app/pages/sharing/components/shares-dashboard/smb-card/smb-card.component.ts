@@ -45,7 +45,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -103,7 +102,6 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class SmbCardComponent implements OnInit {
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -248,8 +246,12 @@ export class SmbCardComponent implements OnInit {
   }
 
   protected openForm(row?: SmbShare): void {
-    this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } })
-      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+    this.formPanel.open(SmbFormComponent, {
+      title: row
+        ? this.translate.instant('Edit SMB Share')
+        : this.translate.instant('Add SMB Share'),
+      inputs: { smbShareData: { existingSmbShare: row } },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected openConfig(): void {
@@ -274,8 +276,10 @@ export class SmbCardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (shareAcl: SmbSharesec) => {
-          this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name })
-            .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+          this.formPanel.open(SmbAclComponent, {
+            title: this.translate.instant('Share ACL for {share}', { share: shareAcl.share_name }),
+            inputs: { shareName: shareAcl.share_name },
+          }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
         },
         error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);

@@ -6,7 +6,7 @@
     [class.compact]="conf().compact"
   >
     @if (isLoading()) {
-      <mat-spinner [diameter]="40"></mat-spinner>
+      <tn-spinner mode="indeterminate" [diameter]="40"></tn-spinner>
     } @else {
       <div class="icon-div">
         <tn-icon [customSize]="conf().large ? '100px' : '50px'" [name]="getIcon()"></tn-icon>

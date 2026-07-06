@@ -31,6 +31,7 @@ export const helptextApps = {
   advanced: T('Advanced Settings'),
 
   dockerSettings: {
+    addressPoolsBase: T('Base network the pool allocates subnets from. Host bits are ignored; the value is saved as its canonical network address (for example, 172.17.0.0/12 becomes 172.16.0.0/12).'),
     addressPoolsSize: T('Network size of each docker network which will be cut off from base subnet.'),
   },
 

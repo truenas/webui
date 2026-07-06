@@ -2,16 +2,19 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness } from '@truenas/ui-components';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
 import { DomainIdmap } from 'app/interfaces/active-directory-config.interface';
-import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { TrustedDomainsConfigComponent } from 'app/pages/directory-service/components/directory-services-form/active-directory-config/trusted-domains-config/trusted-domains-config.component';
 
 describe('TrustedDomainsConfigComponent', () => {
   let spectator: Spectator<TrustedDomainsConfigComponent>;
   let loader: HarnessLoader;
-  let form: IxFieldsetHarness;
+
+  const getEnableCheckbox = (): Promise<TnCheckboxHarness> => {
+    return loader.getHarness(TnCheckboxHarness.with({ label: 'Enable Trusted Domains' }));
+  };
 
   const mockTrustedDomains: DomainIdmap[] = [
     {
@@ -39,7 +42,7 @@ describe('TrustedDomainsConfigComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         enableTrustedDomains: false,
@@ -47,7 +50,6 @@ describe('TrustedDomainsConfigComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFieldsetHarness);
   });
 
   it('should create', () => {
@@ -57,18 +59,17 @@ describe('TrustedDomainsConfigComponent', () => {
   it('should initialize form with enabled state', async () => {
     spectator.setInput('enableTrustedDomains', true);
     spectator.component.ngOnInit();
+    spectator.detectChanges();
 
-    expect((await form.getValues())).toEqual(expect.objectContaining({
-      'Enable Trusted Domains': true,
-    }));
+    const enableCheckbox = await getEnableCheckbox();
+    expect(await enableCheckbox.isChecked()).toBe(true);
   });
 
   it('should initialize with existing trusted domains', async () => {
     spectator.setInput('trustedDomains', mockTrustedDomains);
     spectator.component.ngOnInit();
-    await form.fillForm({
-      'Enable Trusted Domains': true,
-    });
+    spectator.detectChanges();
+    await (await getEnableCheckbox()).check();
 
     spectator.detectChanges();
     const trustedDomainsList = await loader.getHarness(IxListHarness.with({ label: 'Trusted Domains' }));
@@ -99,9 +100,7 @@ describe('TrustedDomainsConfigComponent', () => {
       emittedValue = value;
     });
 
-    await form.fillForm({
-      'Enable Trusted Domains': true,
-    });
+    await (await getEnableCheckbox()).check();
 
     expect(emittedValue).toBeDefined();
     expect(emittedValue[0]).toBe(true);
@@ -114,9 +113,7 @@ describe('TrustedDomainsConfigComponent', () => {
       emittedValid = valid;
     });
 
-    await form.fillForm({
-      'Enable Trusted Domains': true,
-    });
+    await (await getEnableCheckbox()).check();
 
     expect(emittedValid).toBe(true);
   });
@@ -152,7 +149,7 @@ describe('TrustedDomainsConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({ 'Enable Trusted Domains': true });
+      await (await getEnableCheckbox()).check();
       spectator.detectChanges();
 
       const trustedDomainsList = await loader.getHarness(IxListHarness.with({ label: 'Trusted Domains' }));
@@ -176,7 +173,7 @@ describe('TrustedDomainsConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({ 'Enable Trusted Domains': true });
+      await (await getEnableCheckbox()).check();
       spectator.detectChanges();
 
       const trustedDomainsList = await loader.getHarness(IxListHarness.with({ label: 'Trusted Domains' }));
@@ -201,7 +198,7 @@ describe('TrustedDomainsConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({ 'Enable Trusted Domains': true });
+      await (await getEnableCheckbox()).check();
       spectator.detectChanges();
 
       const trustedDomainsList = await loader.getHarness(IxListHarness.with({ label: 'Trusted Domains' }));
@@ -225,7 +222,7 @@ describe('TrustedDomainsConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({ 'Enable Trusted Domains': true });
+      await (await getEnableCheckbox()).check();
       spectator.detectChanges();
 
       const trustedDomainsList = await loader.getHarness(IxListHarness.with({ label: 'Trusted Domains' }));

@@ -1,9 +1,8 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnInputHarness, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
@@ -22,7 +21,7 @@ describe('CsrSubjectComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(SystemGeneralService, {
         getCertificateCountryChoices: () => of({
           CA: 'Canada',

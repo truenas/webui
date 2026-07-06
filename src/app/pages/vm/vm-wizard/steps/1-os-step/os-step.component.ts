@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnStepperNextDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
@@ -15,6 +14,7 @@ import {
 } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -24,7 +24,6 @@ import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 
@@ -39,9 +38,8 @@ import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
     IxCheckboxComponent,
     IxInputComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperNext,
-    TestDirective,
+    TnButtonComponent,
+    TnStepperNextDirective,
     TranslateModule,
   ],
 })
@@ -73,6 +71,9 @@ export class OsStepComponent implements SummaryProvider {
     vnc_bind: ['0.0.0.0', [Validators.required]],
     vnc_password: ['', [Validators.required, Validators.maxLength(8)]],
   });
+
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = stepCompletedSignal(this.form);
 
   readonly helptext = helptextVmWizard;
   readonly VmOs = VmOs;

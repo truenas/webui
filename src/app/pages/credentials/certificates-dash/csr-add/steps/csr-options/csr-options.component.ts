@@ -1,12 +1,14 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import {
   CertificateDigestAlgorithm,
   certificateDigestAlgorithmLabels,
@@ -32,6 +34,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TnInputComponent,
     FormActionsComponent,
     TnButtonComponent,
+    TnStepperPreviousDirective,
+    TnStepperNextDirective,
     TranslateModule,
   ],
 })
@@ -39,7 +43,6 @@ export class CsrOptionsComponent implements SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
-  private stepper = inject(CdkStepper);
 
   hasLifetime = input(false);
 
@@ -53,6 +56,12 @@ export class CsrOptionsComponent implements SummaryProvider {
     lifetime: [3650, [Validators.required, Validators.min(0)]],
   });
 
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
+
   readonly helptext = helptextSystemCertificates;
 
   get isRsa(): boolean {
@@ -63,14 +72,6 @@ export class CsrOptionsComponent implements SummaryProvider {
   readonly digestAlgorithms$ = of(mapToOptions(certificateDigestAlgorithmLabels, this.translate));
   readonly keyLengths$ = of(certificateKeyLengths);
   readonly ecCurves$ = this.api.call('certificate.ec_curve_choices').pipe(choicesToOptions());
-
-  protected goBack(): void {
-    this.stepper.previous();
-  }
-
-  protected goNext(): void {
-    this.stepper.next();
-  }
 
   getSummary(): SummarySection {
     const values = this.form.getRawValue();

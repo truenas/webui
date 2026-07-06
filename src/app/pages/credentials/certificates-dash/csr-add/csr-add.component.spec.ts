@@ -1,8 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatStepHarness, MatStepperHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
@@ -41,7 +39,6 @@ describe('CsrAddComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: TnButtonHarness;
-  let activeStep: MatStepHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -64,7 +61,6 @@ describe('CsrAddComponent', () => {
     component: CsrAddComponent,
     imports: [
       ReactiveFormsModule,
-      MatStepperModule,
     ],
     declarations: [
       CsrIdentifierAndTypeComponent,
@@ -104,20 +100,19 @@ describe('CsrAddComponent', () => {
   });
 
   async function updateStepHarnesses(): Promise<void> {
-    const stepper = await loader.getHarness(MatStepperHarness);
-    activeStep = (await stepper.getSteps({ selected: true }))[0];
-
-    form = await activeStep.getHarness(IxFormHarness);
-    nextButton = await activeStep.getHarness(TnButtonHarness.with({ label: 'Next' }));
+    // tn-stepper renders only the active step's content, so the single visible
+    // form, controls and Next button resolve straight from the document-root loader.
+    form = await loader.getHarness(IxFormHarness);
+    nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
   }
 
   async function setInput(name: string, value: string): Promise<void> {
-    const input = await activeStep.getHarness(TnInputHarness.with({ selector: `[formControlName="${name}"]` }));
+    const input = await loader.getHarness(TnInputHarness.with({ selector: `[formControlName="${name}"]` }));
     await input.setValue(value);
   }
 
   async function setCheckbox(label: string, value: boolean): Promise<void> {
-    const checkbox = await activeStep.getHarness(TnCheckboxHarness.with({ label }));
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label }));
     if (value) {
       await checkbox.check();
     } else {
@@ -126,7 +121,7 @@ describe('CsrAddComponent', () => {
   }
 
   async function selectValue(name: string, ...labels: string[]): Promise<void> {
-    const select = await activeStep.getHarness(TnSelectHarness.with({ selector: `[formControlName="${name}"]` }));
+    const select = await loader.getHarness(TnSelectHarness.with({ selector: `[formControlName="${name}"]` }));
     for (const label of labels) {
       await select.selectOption(label);
     }
@@ -260,13 +255,15 @@ describe('CsrAddComponent', () => {
   });
 
   it('updates form fields and sets constrains when Profile is emitted by CertificateIdentifierAndTypeComponent', async () => {
-    const optionsForm = spectator.query(CsrOptionsComponent)!;
-    const subjectForm = spectator.query(CsrSubjectComponent)!;
+    // tn-stepper only renders the active step's content, so inactive step
+    // components are resolved via the parent's viewChild signals rather than a DOM query.
+    const optionsForm = spectator.component.options()!;
+    const subjectForm = spectator.component.subject()!;
 
     jest.spyOn(optionsForm.form, 'patchValue');
     jest.spyOn(subjectForm.form, 'patchValue');
 
-    const constraintsForm = spectator.query(CsrConstraintsComponent)!;
+    const constraintsForm = spectator.component.constraints()!;
     jest.spyOn(constraintsForm, 'setFromProfile');
 
     await setInput('name', 'profile');

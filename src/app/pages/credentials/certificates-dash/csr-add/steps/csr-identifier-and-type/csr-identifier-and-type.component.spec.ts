@@ -1,9 +1,8 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnInputHarness, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
@@ -32,7 +31,7 @@ describe('CsrIdentifierAndTypeComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockApi([
         mockCall('webui.crypto.csr_profiles', {
           'HTTPS ECC Certificate': httpsProfile,

@@ -22,6 +22,7 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -89,6 +90,9 @@ describe('NfsCardComponent', () => {
     mockProvider(SlideIn, {
       open: jest.fn(() => SlideInResult.empty()),
     }),
+    mockProvider(FormSidePanelService, {
+      open: jest.fn(() => SlideInResult.empty()),
+    }),
     mockProvider(SnackbarService),
     provideMockStore({
       initialState: {
@@ -150,8 +154,9 @@ describe('NfsCardComponent', () => {
       const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent, {
-        data: { existingNfsShare: undefined },
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(NfsFormComponent, {
+        title: 'Add NFS Share',
+        inputs: { nfsShareData: { existingNfsShare: undefined } },
       });
     });
 
@@ -170,8 +175,9 @@ describe('NfsCardComponent', () => {
       const menu = await openRowMenu();
       await menu.clickItem({ label: /^Edit$/ });
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent, {
-        data: { existingNfsShare: expect.objectContaining(nfsShares[0]) },
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(NfsFormComponent, {
+        title: 'Edit NFS Share',
+        inputs: { nfsShareData: { existingNfsShare: expect.objectContaining(nfsShares[0]) } },
       });
     });
 

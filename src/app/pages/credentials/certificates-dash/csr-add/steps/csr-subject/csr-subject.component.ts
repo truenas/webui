@@ -1,10 +1,14 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnStepperNextDirective, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { pickBy } from 'lodash-es';
+import { map, startWith } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -26,6 +30,8 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     IxChipsComponent,
     FormActionsComponent,
     TnButtonComponent,
+    TnStepperPreviousDirective,
+    TnStepperNextDirective,
     TranslateModule,
   ],
 })
@@ -33,7 +39,6 @@ export class CsrSubjectComponent implements SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private systemGeneralService = inject(SystemGeneralService);
   private translate = inject(TranslateService);
-  private stepper = inject(CdkStepper);
 
   form = this.formBuilder.nonNullable.group({
     country: ['US', Validators.required],
@@ -46,18 +51,16 @@ export class CsrSubjectComponent implements SummaryProvider {
     san: [[] as string[], Validators.required],
   });
 
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
+
   readonly helptext = helptextSystemCertificates;
 
   readonly countries$ = this.systemGeneralService.getCertificateCountryChoices()
     .pipe(choicesToOptions());
-
-  protected goBack(): void {
-    this.stepper.previous();
-  }
-
-  protected goNext(): void {
-    this.stepper.next();
-  }
 
   getSummary(): SummarySection {
     const values = this.form.value;

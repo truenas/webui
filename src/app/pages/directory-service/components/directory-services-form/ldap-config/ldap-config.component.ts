@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, output, OnInit, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -6,6 +7,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnCheckboxComponent,
+  TnChipInputComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { LdapSchema } from 'app/enums/directory-services.enum';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
@@ -14,12 +23,6 @@ import {
 } from 'app/interfaces/active-directory-config.interface';
 import { LdapConfig, LdapSearchBases, LdapAttributeMaps } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { hasDeepNonNullValue } from 'app/pages/directory-service/components/directory-services-form/utils';
 
 @Component({
@@ -28,13 +31,14 @@ import { hasDeepNonNullValue } from 'app/pages/directory-service/components/dire
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    IxChipsComponent,
-    IxTextareaComponent,
+    TnFormFieldComponent,
+    TnFormSectionComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnChipInputComponent,
     TranslateModule,
   ],
 })

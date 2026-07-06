@@ -2,84 +2,111 @@
   <ix-page-header>
     <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
     @if (isActiveDirectoryEnabled()) {
-      <button
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="sync-kerberos-keytab"
+        [testId]="'sync-kerberos-keytab'"
+        [label]="'Sync' | translate"
         [ixUiSearch]="searchableElements.elements.sync"
-        (click)="syncKeytab()"
-      >
-        {{ 'Sync' | translate }}
-      </button>
+        (onClick)="syncKeytab()"
+      ></tn-button>
     }
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
       color="primary"
-      ixTest="add-kerberos-keytabs"
+      variant="filled"
+      [testId]="'add-kerberos-keytabs'"
+      [label]="'Add' | translate"
       [ixUiSearch]="searchableElements.elements.add"
-      (click)="doAdd()"
-    >
-      {{ 'Add' | translate }}
-    </button>
+      (onClick)="doAdd()"
+    ></tn-button>
   </ix-page-header>
 }
 
-<div class="table-container" [ixUiSearch]="searchableElements.elements.kerberosKeytabs">
-  @if (inCard()) {
-    <mat-toolbar-row class="table-header">
-      <div
-        class="heading"
+@if (inCard()) {
+  <tn-card
+    padding="small"
+    [ixUiSearch]="searchableElements.elements.kerberosKeytabs"
+  >
+    <h3 tnCardHeader class="card-title">
+      <a
+        class="card-title-link"
+        tnTestIdType="link"
+        [tnTestId]="['kerberos-keytab', 'open-in-new']"
         [routerLink]="['/', 'directoryservice', 'kerberoskeytabs']"
         [tnTooltip]="'Open Kerberos Keytab list in full page' | translate"
       >
-        <h3>{{ 'Kerberos Keytab' | translate }}</h3>
+        {{ 'Kerberos Keytab' | translate }}
         <tn-icon
           name="open-in-new"
           library="mdi"
+          class="title-icon"
           [attr.aria-label]="'Open Kerberos Keytab list in full page' | translate"
         ></tn-icon>
-      </div>
-      <div class="action">
-        @if (isActiveDirectoryEnabled()) {
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            ixTest="sync-kerberos-keytab"
-            (click)="syncKeytab()"
-          >
-            {{ 'Sync' | translate }}
-          </button>
-        }
-        <button
+      </a>
+    </h3>
+
+    <ng-container [ngTemplateOutlet]="tableTpl"></ng-container>
+
+    <ng-template tnCardFooterActions>
+      @if (isActiveDirectoryEnabled()) {
+        <tn-button
           *ixRequiresRoles="requiredRoles"
-          mat-button
-          ixTest="add-kerberos-keytabs"
-          (click)="doAdd()"
-        >
-          {{ 'Add' | translate }}
-        </button>
-      </div>
-    </mat-toolbar-row>
-  }
-  <ix-table
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+          [testId]="'sync-kerberos-keytab'"
+          [label]="'Sync' | translate"
+          (onClick)="syncKeytab()"
+        ></tn-button>
+      }
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        variant="filled"
+        [testId]="'add-kerberos-keytabs'"
+        [label]="'Add' | translate"
+        (onClick)="doAdd()"
+      ></tn-button>
+    </ng-template>
+  </tn-card>
+} @else {
+  <div class="table-container" [ixUiSearch]="searchableElements.elements.kerberosKeytabs">
+    <ng-container [ngTemplateOutlet]="tableTpl"></ng-container>
+  </div>
+}
+
+<ng-template #tableTpl>
+  <tn-table
+    class="table"
+    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [displayedColumns]="displayedColumns"
+    [trackBy]="trackByKeytabId"
+    [loading]="!!(dataProvider.isLoading$ | async)"
+    [emptyMessage]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async).title"
+    (sortChange)="onSortChange($event)"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    >
-    </tbody>
-  </ix-table>
+    <ng-container [tnColumnDef]="'name'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.name }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+      <ng-template tnHeaderCellDef></ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-actions-cell
+          mode="inline"
+          [actions]="actions"
+          [row]="row"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [ariaLabel]="ariaLabel(row)"
+        ></ix-table-actions-cell>
+      </ng-template>
+    </ng-container>
+  </tn-table>
+
   @if (paginator()) {
     <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
   }
-</div>
+</ng-template>

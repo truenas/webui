@@ -13,6 +13,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ContainerGeneralInfoComponent,
@@ -43,6 +45,9 @@ describe('ContainerGeneralInfoComponent', () => {
     providers: [
       IxFormatterService,
       mockAuth(),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.success(true)),
+      }),
       mockProvider(ContainersStore, {
         selectedContainer: jest.fn(),
         containerUpdated: jest.fn(),
@@ -50,15 +55,6 @@ describe('ContainerGeneralInfoComponent', () => {
       }),
       mockApi([
         mockCall('container.delete'),
-        mockCall('container.get_instance', container),
-        mockCall('container.query', []),
-        mockCall('container.pool_choices', { pool1: 'pool1' }),
-        mockCall('lxc.config', {
-          bridge: 'lxdbr0',
-          v4_network: null,
-          v6_network: null,
-          preferred_pool: 'pool1',
-        }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -108,27 +104,14 @@ describe('ContainerGeneralInfoComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers']);
   });
 
-  it('opens the edit container form side panel with the container when Edit is pressed', async () => {
+  it('opens edit container form in a side panel when Edit is pressed', async () => {
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
 
-    const form = spectator.query(ContainerFormComponent, { root: true });
-    expect(form).toBeInstanceOf(ContainerFormComponent);
-    expect(form!.editContainer()).toEqual(container);
-  });
-
-  it('reloads containers when the edit form reports a successful save', async () => {
-    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
-    await editButton.click();
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
-
-    const form = spectator.query(ContainerFormComponent, { root: true });
-    form!.closed.emit(true);
-    spectator.detectChanges();
-
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      ContainerFormComponent,
+      expect.objectContaining({ inputs: { editContainer: container } }),
+    );
     expect(spectator.inject(ContainersStore).reload).toHaveBeenCalled();
   });
 

@@ -1,7 +1,7 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import {
   mockProvider, Spectator, SpectatorFactory, createComponentFactory,
 } from '@ngneat/spectator/jest';
+import { TnStepperComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
@@ -41,7 +41,7 @@ describe('MetadataWizardStepComponent', () => {
       MockComponent(LayoutStepComponent),
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(AddVdevsStore, {
         pool$: of(pool as Pool | null),
         isLoading$: of(false),

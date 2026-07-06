@@ -1,42 +1,44 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
 import {
-  filter, map, of, switchMap,
-  take,
-} from 'rxjs';
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnDialog,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnSortEvent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  tnIconMarker,
+} from '@truenas/ui-components';
+import { filter, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
-import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { sizeColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolDeleteDialog } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { getBootenvFormConfig } from 'app/pages/system/bootenv/bootenv-form/bootenv.form-config';
@@ -44,33 +46,28 @@ import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-
 import { BootenvStatsDialog } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-// TODO: Exclude AnythingUi when NAS-127632 is done
-interface BootEnvironmentUi extends BootEnvironment {
-  selected?: boolean;
-}
-
 @Component({
   selector: 'ix-bootenv-list',
   templateUrl: './bootenv-list.component.html',
   styleUrls: ['./bootenv-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    { provide: MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS, useValue: { disableToggleValue: true } },
-  ],
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
     RouterLink,
-    TnIconComponent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
     TnTablePagerComponent,
+    TableActionsCellComponent,
+    FormatDateTimePipe,
+    FileSizePipe,
+    YesNoPipe,
     TranslateModule,
     AsyncPipe,
   ],
@@ -89,132 +86,83 @@ export class BootEnvironmentListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.BootEnvWrite];
   protected readonly searchableElements = bootListElements;
-  protected dataProvider: AsyncDataProvider<BootEnvironmentUi>;
+  protected dataProvider: AsyncDataProvider<BootEnvironment>;
   protected readonly searchQuery = signal('');
-  private bootenvs: BootEnvironmentUi[] = [];
 
-  columns = createTable<BootEnvironmentUi>([
-    checkboxColumn({
-      propertyName: 'selected',
-      onRowCheck: (row, checked) => {
-        const bootEnvToSelect = this.bootenvs.find((bootenv) => row.id === bootenv.id);
-        if (bootEnvToSelect) {
-          bootEnvToSelect.selected = checked;
-        }
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.searchQuery());
-      },
-      onColumnCheck: (checked) => {
-        this.dataProvider.currentPage$.pipe(
-          take(1),
-          takeUntilDestroyed(this.destroyRef),
-        ).subscribe((bootEnvs) => {
-          bootEnvs.forEach((bootEnv) => bootEnv.selected = checked);
-          this.dataProvider.setRows([]);
-          this.onListFiltered(this.searchQuery());
-        });
-      },
-      cssClass: 'checkboxs-column',
-    }),
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'id',
-    }),
-    textColumn({
-      title: this.translate.instant('Active'),
-      propertyName: 'active',
-      getValue: (row) => {
-        if (row.active) {
-          return this.translate.instant('Now');
-        }
-        if (row.activated) {
-          return this.translate.instant('Restart');
-        }
-        return this.translate.instant('No');
-      },
-    }),
-    dateColumn({
-      title: this.translate.instant('Date Created'),
-      propertyName: 'created',
-      sortBy: (row) => row.created.$date,
-    }),
-    sizeColumn({
-      title: this.translate.instant('Used Space'),
-      propertyName: 'used_bytes',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Keep'),
-      propertyName: 'keep',
-      cssClass: 'keep-column',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('check-decagram', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Activate'),
-          hidden: (row) => of(!row.can_activate || row.activated),
-          onClick: (row) => this.doActivate(row),
-        },
-        {
-          iconName: tnIconMarker('bookmark-outline', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Keep'),
-          hidden: (row) => of(row.keep),
-          onClick: (row) => this.toggleKeep(row),
-        },
-        {
-          iconName: tnIconMarker('bookmark', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Unkeep'),
-          hidden: (row) => of(!row.keep),
-          onClick: (row) => this.toggleKeep(row),
-        },
-        {
-          iconName: tnIconMarker('content-copy', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Clone'),
-          onClick: (row) => this.doClone(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Delete'),
-          hidden: (row) => of(row.active || row.activated),
-          onClick: (row) => this.doDelete([row]),
-        },
-      ],
-      cssClass: 'actions-column',
-    }),
-  ], {
-    uniqueRowTag: (row) => `bootenv-${row.id}`,
-    ariaLabels: (row) => [row.id, this.translate.instant('Boot Environment')],
+  protected readonly displayedColumns = ['id', 'active', 'created', 'used_bytes', 'keep', 'actions'];
+
+  protected readonly trackByBootenvId = (_: number, row: BootEnvironment): string => row.id;
+
+  private readonly tnTable = viewChild(TnTableComponent);
+
+  protected readonly selectedBootenvs = signal<BootEnvironment[]>([]);
+
+  protected readonly selectionHasItems = computed(() => {
+    return this.selectedBootenvs().some((bootenv) => !bootenv.active && !bootenv.activated);
   });
 
-  protected get selectedBootenvs(): BootEnvironmentUi[] {
-    return this.bootenvs.filter((bootenv) => bootenv.selected);
-  }
-
-  protected get selectionHasItems(): boolean {
-    return this.selectedBootenvs.some((bootenv) => !bootenv.active && !bootenv.activated);
-  }
+  protected readonly actions: IconActionConfig<BootEnvironment>[] = [
+    {
+      iconName: tnIconMarker('check-decagram', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      tooltip: this.translate.instant('Activate'),
+      hidden: (row) => of(!row.can_activate || row.activated),
+      onClick: (row) => this.doActivate(row),
+    },
+    {
+      iconName: tnIconMarker('bookmark-outline', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      tooltip: this.translate.instant('Keep'),
+      hidden: (row) => of(row.keep),
+      onClick: (row) => this.toggleKeep(row),
+    },
+    {
+      iconName: tnIconMarker('bookmark', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      tooltip: this.translate.instant('Unkeep'),
+      hidden: (row) => of(!row.keep),
+      onClick: (row) => this.toggleKeep(row),
+    },
+    {
+      iconName: tnIconMarker('content-copy', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      tooltip: this.translate.instant('Clone'),
+      onClick: (row) => this.doClone(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      tooltip: this.translate.instant('Delete'),
+      hidden: (row) => of(row.active || row.activated),
+      onClick: (row) => this.doDelete([row]),
+    },
+  ];
 
   ngOnInit(): void {
-    const request$ = this.api.call('boot.environment.query').pipe(
-      map((bootenvs) => {
-        this.bootenvs = bootenvs.map((bootenv) => ({
-          ...bootenv,
-          selected: false,
-        }));
-        return this.bootenvs;
-      }),
-    );
-    this.dataProvider = new AsyncDataProvider(request$);
+    this.dataProvider = new AsyncDataProvider(this.api.call('boot.environment.query'));
     this.refresh();
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
+  }
+
+  protected activeLabel(row: BootEnvironment): string {
+    if (row.active) {
+      return this.translate.instant('Now');
+    }
+    if (row.activated) {
+      return this.translate.instant('Restart');
+    }
+    return this.translate.instant('No');
+  }
+
+  protected uniqueRowTag(row: BootEnvironment): string {
+    return `bootenv-${row.id}`;
+  }
+
+  protected ariaLabel(row: BootEnvironment): string {
+    return [row.id, this.translate.instant('Boot Environment')].join(' ');
   }
 
   protected handleSlideInClosed(result$: SlideInResult<boolean>): void {
@@ -251,18 +199,17 @@ export class BootEnvironmentListComponent implements OnInit {
     });
   }
 
-  protected doDelete(bootenvs: BootEnvironmentUi[]): void {
+  protected doDelete(bootenvs: BootEnvironment[]): void {
     const data = bootenvs.filter((bootenv) => !bootenv.active && !bootenv.activated);
     this.tnDialog.open(BootPoolDeleteDialog, { data })
       .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        bootenvs.forEach((bootenv) => delete bootenv.selected);
         this.refresh();
       });
   }
 
-  private doActivate(bootenv: BootEnvironmentUi): void {
+  private doActivate(bootenv: BootEnvironment): void {
     this.dialogService.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
@@ -279,7 +226,7 @@ export class BootEnvironmentListComponent implements OnInit {
     ).subscribe(() => this.refresh());
   }
 
-  private toggleKeep(bootenv: BootEnvironmentUi): void {
+  private toggleKeep(bootenv: BootEnvironment): void {
     if (!bootenv.keep) {
       this.dialogService.confirm({
         title: this.translate.instant('Keep'),
@@ -315,12 +262,24 @@ export class BootEnvironmentListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
-    this.dataProvider.setFilter({ list: this.bootenvs, query, columnKeys: ['id'] });
+    this.dataProvider.setFilter({ query, columnKeys: ['id'] });
+  }
+
+  protected onSelectionChange(bootenvs: BootEnvironment[]): void {
+    this.selectedBootenvs.set(bootenvs);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    const sorting = mapTnSortToTableSort<BootEnvironment>(event, this.displayedColumns);
+    if (sorting.propertyName === 'created') {
+      sorting.sortBy = (row) => row.created.$date;
+    }
+    this.dataProvider.setSorting(sorting);
   }
 
   private setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 3,
+      active: 2,
       direction: SortDirection.Desc,
       propertyName: 'created',
       sortBy: (row) => row.created.$date,
@@ -328,6 +287,8 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   private refresh(): void {
+    this.tnTable()?.selection.clear();
+    this.selectedBootenvs.set([]);
     this.dataProvider.load();
   }
 }

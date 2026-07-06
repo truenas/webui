@@ -18,7 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
@@ -76,7 +76,7 @@ describe('IscsiCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
@@ -135,9 +135,10 @@ describe('IscsiCardComponent', () => {
     const wizardButton = await loader.getHarness(TnButtonHarness.with({ label: 'Wizard' }));
     await wizardButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(IscsiWizardComponent, {
-      data: undefined,
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(IscsiWizardComponent, {
+      title: 'iSCSI Wizard',
       wide: true,
+      footerless: true,
     });
   });
 
@@ -156,9 +157,10 @@ describe('IscsiCardComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: /^Edit$/ });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(TargetFormComponent, {
-      data: expect.objectContaining(iscsiShares[0]),
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(TargetFormComponent, {
       wide: true,
+      title: 'Edit ISCSI Target',
+      inputs: { targetData: expect.objectContaining(iscsiShares[0]) },
     });
   });
 
