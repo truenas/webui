@@ -128,6 +128,20 @@ describe('InterfacesCardComponent', () => {
     ]);
   });
 
+  it('sorts interfaces by name when the Name header is clicked', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.isSortable('name')).toBe(true);
+
+    await table.clickSortHeader('name'); // ascending
+    await table.clickSortHeader('name'); // descending
+
+    expect(await table.getAllRowTexts()).toEqual([
+      ['', 'vlan1', '', '', ''],
+      ['', 'eno2 (Main NIC)', '', 'ac:1f:6b:ca:32:24', ''],
+      ['', 'eno1', '84.23.23.1/24', '', ''],
+    ]);
+  });
+
   it('shows form to add new interface when Add button is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();

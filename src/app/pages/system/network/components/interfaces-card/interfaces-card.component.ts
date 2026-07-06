@@ -5,7 +5,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardHeaderDirective,
   TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
-  TnTooltipDirective, tnIconMarker,
+  TnTooltipDirective, tnIconMarker, type TnSortEvent,
 } from '@truenas/ui-components';
 import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import {
@@ -22,7 +22,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { convertStringToId, dataProviderRows } from 'app/modules/ix-table/utils';
+import { convertStringToId, dataProviderRows, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
@@ -141,6 +141,30 @@ export class InterfacesCardComponent implements OnInit {
 
   protected ariaLabel(row: NetworkInterface): string {
     return [row.name, this.translate.instant('Interface')].join(' ');
+  }
+
+  // Restores the header-click sorting the ix-table version had. Each sortable column needs a
+  // custom key because none map to a plain NetworkInterface property (name folds in the
+  // description, ip_addresses/mac live on nested structures).
+  protected onSortChange(event: TnSortEvent): void {
+    const base = mapTnSortToTableSort<NetworkInterface>(event, this.displayedColumns);
+    this.dataProvider.setSorting({
+      ...base,
+      sortBy: base.direction ? this.sortByForColumn(event.column) : undefined,
+    });
+  }
+
+  private sortByForColumn(column: string): ((row: NetworkInterface) => string) | undefined {
+    switch (column) {
+      case 'name':
+        return (row) => this.nameWithDescription(row);
+      case 'ip_addresses':
+        return (row) => row.aliases.map((alias) => alias.address).join(', ');
+      case 'mac':
+        return (row) => row.state.permanent_link_address;
+      default:
+        return undefined;
+    }
   }
 
   readonly helptext = helptextInterfaces;

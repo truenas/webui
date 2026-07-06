@@ -21,6 +21,7 @@
     [dataSource]="rows()"
     [displayedColumns]="displayedColumns"
     [loading]="isLoading()"
+    (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'state'" [width]="'40px'">
       <ng-template tnHeaderCellDef></ng-template>
@@ -29,19 +30,19 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'name'">
+    <ng-container [tnColumnDef]="'name'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
       <ng-template let-row tnCellDef>{{ nameWithDescription(row) }}</ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'ip_addresses'">
+    <ng-container [tnColumnDef]="'ip_addresses'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'IP Addresses' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-ip-addresses-cell [row]="row"></ix-ip-addresses-cell>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'mac'">
+    <ng-container [tnColumnDef]="'mac'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'MAC Address' | translate }}</ng-template>
       <ng-template let-row tnCellDef>{{ row.state.permanent_link_address }}</ng-template>
     </ng-container>
