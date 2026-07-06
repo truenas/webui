@@ -34,7 +34,7 @@ import {
   LabelMarkupPipe,
   TN_TEST_ATTR, TnButtonComponent, TnIconButtonComponent, TnIconComponent, TnIconTesting,
   TnInputComponent,
-  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTablePagerComponent,
+  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTablePagerComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
@@ -114,6 +114,15 @@ ngMocks.globalKeep(LabelMarkupPipe);
 // element. Keep the lightweight input real everywhere so a deep-mocked parent never
 // blanks an unrelated real search field.
 ngMocks.globalKeep(TnInputComponent);
+
+// Every tn-* component hosts `TnTestIdDirective` in its own template to compose its
+// `data-test` attribute. When ng-mocks deep-mocks any component whose standalone import
+// graph transitively includes the directive (e.g. `MockComponent(PageHeaderComponent)`
+// once breadcrumb imports it), the mock leaks into the *library components'* template
+// scope too — silently dropping every library-composed `data-test` in the TestBed and
+// breaking `[data-test=...]` selectors on unrelated real components. Keep the pure,
+// render-only directive real everywhere.
+ngMocks.globalKeep(TnTestIdDirective);
 
 const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
   if (methodName === 'error' && message.startsWith('Error: Could not parse CSS stylesheet')) {
