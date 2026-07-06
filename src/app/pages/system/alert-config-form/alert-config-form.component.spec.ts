@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnMenuHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -13,6 +14,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 describe('AlertConfigFormComponent', () => {
   let spectator: Spectator<AlertConfigFormComponent>;
@@ -59,6 +61,38 @@ describe('AlertConfigFormComponent', () => {
               },
             ],
           },
+          {
+            id: 'SYSTEM',
+            title: 'System',
+            classes: [
+              {
+                id: AlertClassName.BootPoolStatus,
+                title: 'Boot Pool Status',
+                level: AlertLevel.Critical,
+              },
+              {
+                id: AlertClassName.FailoverReboot,
+                title: 'Failover Event Caused System Reboot',
+                level: AlertLevel.Critical,
+              },
+              {
+                id: AlertClassName.FencedReboot,
+                title: 'Fenced Event Caused System Reboot',
+                level: AlertLevel.Critical,
+              },
+            ],
+          },
+          {
+            id: 'HA',
+            title: 'High-Availability',
+            classes: [
+              {
+                id: AlertClassName.FailoverFailed,
+                title: 'Failover Failed',
+                level: AlertLevel.Critical,
+              },
+            ],
+          },
         ]),
         mockCall('alertclasses.config', {
           id: 1,
@@ -83,15 +117,27 @@ describe('AlertConfigFormComponent', () => {
       mockProvider(LoaderService),
       mockProvider(DialogService),
       mockProvider(FormErrorHandlerService),
+      provideMockStore({
+        selectors: [
+          { selector: selectIsHaLicensed, value: false },
+        ],
+      }),
       mockAuth(),
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
+  function setup(isHaLicensed = false): void {
+    spectator = createComponent({ detectChanges: false });
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectIsHaLicensed, isHaLicensed);
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
     api = spectator.inject(ApiService);
+  }
+
+  beforeEach(() => {
+    setup();
   });
 
   it('loads current config and shows values in the form', async () => {
@@ -141,5 +187,50 @@ describe('AlertConfigFormComponent', () => {
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     expect(await saveButton.isDisabled()).toBe(true);
+  });
+
+  async function openCategory(category: string): Promise<void> {
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Applications' }));
+    await trigger.click();
+    const menu = await rootLoader.getHarness(TnMenuHarness);
+    await menu.clickItem({ label: category });
+  }
+
+  function getClassLabels(): (string | undefined)[] {
+    return spectator.queryAll('.class-label').map((el) => el.textContent?.trim());
+  }
+
+  describe('non-HA system', () => {
+    beforeEach(() => setup(false));
+
+    it('hides the High-Availability category', async () => {
+      const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Applications' }));
+      await trigger.click();
+      const menu = await rootLoader.getHarness(TnMenuHarness);
+      expect(await menu.getItemLabels()).not.toContain('High-Availability');
+    });
+
+    it('hides the HA reboot alert classes from the System category', async () => {
+      await openCategory('System');
+      expect(getClassLabels()).toEqual(['Boot Pool Status']);
+    });
+  });
+
+  describe('HA system', () => {
+    beforeEach(() => setup(true));
+
+    it('shows the High-Availability category with the moved reboot classes', async () => {
+      await openCategory('High-Availability');
+      expect(getClassLabels()).toEqual([
+        'Failover Failed',
+        'Failover Event Caused System Reboot',
+        'Fenced Event Caused System Reboot',
+      ]);
+    });
+
+    it('removes the reboot classes from the System category', async () => {
+      await openCategory('System');
+      expect(getClassLabels()).toEqual(['Boot Pool Status']);
+    });
   });
 });

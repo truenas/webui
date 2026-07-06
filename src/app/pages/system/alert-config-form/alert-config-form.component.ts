@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ControlsOf, FormBuilder, FormGroup } from '@ngneat/reactive-forms';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -18,18 +19,23 @@ import {
   TnSelectComponent,
 } from '@truenas/ui-components';
 import { forkJoin, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
-import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
+import {
+  AlertCategory, AlertClass, AlertClassesUpdate, AlertClassSettings,
+} from 'app/interfaces/alert.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @Component({
   selector: 'ix-alert-config-form',
@@ -62,7 +68,20 @@ export class AlertConfigFormComponent implements OnInit {
   protected translate = inject(TranslateService);
   private snackbarService = inject(SnackbarService);
   private formBuilder = inject(FormBuilder);
+  private store$ = inject<Store<AppState>>(Store);
   private destroyRef = inject(DestroyRef);
+
+  /** Category id returned by `alert.list_categories` for High-Availability alerts. */
+  private readonly haCategoryId = 'HA';
+
+  /**
+   * HA-specific alert classes that the backend places under the System category.
+   * They belong under High-Availability and must be hidden on non-HA systems.
+   */
+  private readonly haRebootClasses: AlertClassName[] = [
+    AlertClassName.FailoverReboot,
+    AlertClassName.FencedReboot,
+  ];
 
   protected readonly requiredRoles = [Role.AlertWrite];
 
@@ -94,17 +113,18 @@ export class AlertConfigFormComponent implements OnInit {
     forkJoin([
       this.api.call('alert.list_categories'),
       this.api.call('alertclasses.config'),
+      this.store$.select(selectIsHaLicensed).pipe(take(1)),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: ([categories, alertConfig]) => {
-          this.categories = categories;
+        next: ([categories, alertConfig, isHaLicensed]) => {
+          this.categories = this.processCategories(categories, isHaLicensed);
 
-          if (categories.length) {
-            this.selectedCategory = categories[0];
+          if (this.categories.length) {
+            this.selectedCategory = this.categories[0];
           }
 
-          categories.forEach((category) => {
+          this.categories.forEach((category) => {
             category.classes.forEach((cls) => {
               this.form.addControl(cls.id, this.formBuilder.group<AlertClassSettings>({
                 level: cls.level,
@@ -127,6 +147,51 @@ export class AlertConfigFormComponent implements OnInit {
 
   protected onCategoryChanged(category: AlertCategory): void {
     this.selectedCategory = category;
+  }
+
+  /**
+   * On non-HA systems the High-Availability category and any HA-specific alert classes are hidden.
+   * On HA systems the HA reboot classes are grouped under the High-Availability category instead of System.
+   */
+  private processCategories(categories: AlertCategory[], isHaLicensed: boolean): AlertCategory[] {
+    return isHaLicensed
+      ? this.moveHaRebootClassesToHaCategory(categories)
+      : this.removeHaClasses(categories);
+  }
+
+  private removeHaClasses(categories: AlertCategory[]): AlertCategory[] {
+    return categories
+      .filter((category) => category.id !== this.haCategoryId)
+      .map((category) => ({
+        ...category,
+        classes: category.classes.filter((cls) => !this.haRebootClasses.includes(cls.id)),
+      }))
+      .filter((category) => category.classes.length > 0);
+  }
+
+  private moveHaRebootClassesToHaCategory(categories: AlertCategory[]): AlertCategory[] {
+    const movedClasses: AlertClass[] = [];
+
+    const categoriesWithoutRebootClasses = categories.map((category) => {
+      if (category.id === this.haCategoryId) {
+        return category;
+      }
+
+      movedClasses.push(...category.classes.filter((cls) => this.haRebootClasses.includes(cls.id)));
+
+      return {
+        ...category,
+        classes: category.classes.filter((cls) => !this.haRebootClasses.includes(cls.id)),
+      };
+    });
+
+    return categoriesWithoutRebootClasses.map((category) => {
+      if (category.id !== this.haCategoryId) {
+        return category;
+      }
+
+      return { ...category, classes: [...category.classes, ...movedClasses] };
+    });
   }
 
   protected onSubmit(): void {
