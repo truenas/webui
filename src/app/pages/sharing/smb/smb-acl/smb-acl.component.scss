@@ -1,11 +1,10 @@
+// TEMP: scoped styles can't reach the host of a control projected into a tn-* slot,
+// so we reset the projected tn-select's default top margin here. Remove once the
+// library exposes a spacing input on tn-select / tn-form-field.
 :host ::ng-deep {
-  ix-select {
+  tn-select {
     margin-top: 0;
   }
-}
-
-mat-card {
-  overflow: hidden !important;
 }
 
 .entry-row {
@@ -13,6 +12,12 @@ mat-card {
   display: flex;
   padding-left: 10px;
   padding-right: 10px;
+
+  // Space the SID / Who / Permission+Type rows within an entry — without this the
+  // tn-form-field rows butt together (the migrated controls dropped the ix-* row margins).
+  &:not(:last-child) {
+    margin-bottom: 12px;
+  }
 
   > * {
     flex: 1;

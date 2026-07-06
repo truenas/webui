@@ -1,18 +1,13 @@
-<ix-modal-header
-  [title]="'Add Subsystem' | translate"
-  [loading]="isLoading()"
-></ix-modal-header>
-
 <tn-card class="card">
   <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
     <tn-stepper #stepper orientation="vertical">
       <tn-step [label]="'What To Share' | translate" [completed]="whatToShareCompleted()">
-        <ix-input
+        <tn-form-field
           class="name-input"
-          formControlName="name"
-          [required]="true"
           [label]="'Subsystem Name' | translate"
-        ></ix-input>
+        >
+          <tn-input formControlName="name" [required]="true"></tn-input>
+        </tn-form-field>
 
         <ix-details-table>
           <ix-details-item
@@ -25,11 +20,12 @@
               </div>
 
               <div edit>
-                <ix-input
+                <tn-input
                   class="nqn-input"
+                  name="subnqn"
                   formControlName="subnqn"
-                  aria-label="NQN"
-                ></ix-input>
+                  [ariaLabel]="'NQN' | translate"
+                ></tn-input>
               </div>
             </ix-editable>
           </ix-details-item>
@@ -52,10 +48,12 @@
       </tn-step>
 
       <tn-step [label]="'Access' | translate">
-        <ix-checkbox
-          formControlName="allowAnyHost"
-          [label]="'Allow any host to connect' | translate"
-        ></ix-checkbox>
+        <tn-form-field>
+          <tn-checkbox
+            formControlName="allowAnyHost"
+            [label]="'Allow any host to connect' | translate"
+          ></tn-checkbox>
+        </tn-form-field>
 
         @if (!form.value.allowAnyHost) {
           <ix-add-subsystem-hosts

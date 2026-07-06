@@ -9,6 +9,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   IsolatedGpusCardComponent,
@@ -23,6 +25,7 @@ import { selectAdvancedConfig } from 'app/store/system-config/system-config.sele
 describe('IsolatedGpusCardComponent', () => {
   let spectator: Spectator<IsolatedGpusCardComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
 
   const createComponent = createComponentFactory({
     component: IsolatedGpusCardComponent,
@@ -50,6 +53,9 @@ describe('IsolatedGpusCardComponent', () => {
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
       provideMockStore({
         selectors: [
           {
@@ -67,6 +73,7 @@ describe('IsolatedGpusCardComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      formPanel = spectator.inject(FormSidePanelService);
     });
 
     it('shows currently isolated GPUs', () => {
@@ -75,26 +82,13 @@ describe('IsolatedGpusCardComponent', () => {
     });
 
     it('opens the Isolated GPU form in a side panel when Configure is pressed', async () => {
-      expect(spectator.query('ix-isolated-gpus-form')).toBeNull();
-
       const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
       await configureButton.click();
-      spectator.detectChanges();
 
       expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-      expect(spectator.query('ix-isolated-gpus-form')).not.toBeNull();
-    });
-
-    it('closes the side panel when the hosted form emits closed', async () => {
-      const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
-      await configureButton.click();
-      spectator.detectChanges();
-      expect(spectator.query('ix-isolated-gpus-form')).not.toBeNull();
-
-      spectator.query(IsolatedGpusFormComponent).closed.emit(true);
-      spectator.detectChanges();
-
-      expect(spectator.query('ix-isolated-gpus-form')).toBeNull();
+      expect(formPanel.open).toHaveBeenCalledWith(IsolatedGpusFormComponent, {
+        title: 'Isolated GPU Device(s)',
+      });
     });
   });
 

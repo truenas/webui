@@ -1,14 +1,15 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnInputHarness } from '@truenas/ui-components';
 import {
   PagerDutyServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/pager-duty-service/pager-duty-service.component';
 
 describe('PagerDutyServiceComponent', () => {
   let spectator: Spectator<PagerDutyServiceComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: PagerDutyServiceComponent,
     imports: [
@@ -16,9 +17,13 @@ describe('PagerDutyServiceComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('renders a form with alert service values', async () => {
@@ -27,18 +32,13 @@ describe('PagerDutyServiceComponent', () => {
       service_key: 'KEY123',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      'Client Name': 'ixsystems',
-      'Service Key': 'KEY123',
-    });
+    expect(await (await getInput('client_name')).getValue()).toBe('ixsystems');
+    expect(await (await getInput('service_key')).getValue()).toBe('KEY123');
   });
 
   it('returns alert service form values when getSubmitAttributes is called', async () => {
-    await form.fillForm({
-      'Client Name': 'ixsystems2',
-      'Service Key': 'KEY1234',
-    });
+    await (await getInput('client_name')).setValue('ixsystems2');
+    await (await getInput('service_key')).setValue('KEY1234');
 
     const submittedValues = spectator.component.getSubmitAttributes();
     expect(submittedValues).toEqual({

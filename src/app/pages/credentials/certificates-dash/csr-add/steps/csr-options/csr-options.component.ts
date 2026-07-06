@@ -1,8 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
+import {
+  InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnStepperNextDirective, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import {
@@ -15,8 +19,6 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -25,9 +27,11 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './csr-options.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxSelectComponent,
-    IxInputComponent,
+    TnSelectComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
     TnButtonComponent,
     TnStepperPreviousDirective,
@@ -41,6 +45,8 @@ export class CsrOptionsComponent implements SummaryProvider {
   private api = inject(ApiService);
 
   hasLifetime = input(false);
+
+  protected readonly InputType = InputType;
 
   form = this.formBuilder.nonNullable.group({
     key_type: [CertificateKeyType.Rsa],

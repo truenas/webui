@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -13,14 +13,12 @@ import {
   TnDialog,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
   TnTableColumnDirective,
   TnTableComponent,
 } from '@truenas/ui-components';
 import { isValid } from 'date-fns';
 import {
-  filter, map, switchMap, take, tap, Observable, of,
+  filter, map, switchMap, take, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -34,10 +32,10 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { cronCardElements } from 'app/pages/system/advanced/cron/cron-card/cron-card.elements';
 import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
@@ -54,8 +52,6 @@ import { TaskService } from 'app/services/task.service';
   imports: [
     TnCardComponent,
     TnCardFooterActionsDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     RequiresRolesDirective,
     TnButtonComponent,
     UiSearchDirective,
@@ -65,7 +61,6 @@ import { TaskService } from 'app/services/task.service';
     TnCellDefDirective,
     TnEmptyComponent,
     TableActionsCellComponent,
-    CronFormComponent,
     TranslateModule,
     AsyncPipe,
     YesNoPipe,
@@ -81,7 +76,7 @@ export class CronCardComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemCronWrite];
@@ -90,16 +85,6 @@ export class CronCardComponent implements OnInit {
   title = helptextSystemAdvanced.cronTitle;
   cronjobs: CronjobRow[] = [];
   dataProvider: AsyncDataProvider<CronjobRow>;
-
-  protected configOpen = signal(false);
-  protected editingCronjob = signal<CronjobRow | undefined>(undefined);
-  protected configForm = viewChild(CronFormComponent);
-
-  protected readonly panelTitle = computed(() => (
-    this.editingCronjob()
-      ? this.translate.instant('Edit Cron Job')
-      : this.translate.instant('Add Cron Job')
-  ));
 
   protected readonly displayedColumns = ['user', 'command', 'description', 'schedule', 'enabled', 'next_run', 'actions'];
 
@@ -141,12 +126,6 @@ export class CronCardComponent implements OnInit {
     return isValid(nextRun) ? formatDistanceToNowShortened(nextRun as Date) : (nextRun as string);
   }
 
-  protected readonly closeGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
-
   ngOnInit(): void {
     const cronjobs$ = this.api.call('cronjob.query').pipe(
       map((cronjobs) => {
@@ -167,8 +146,8 @@ export class CronCardComponent implements OnInit {
       take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.editingCronjob.set(undefined);
-      this.configOpen.set(true);
+      this.formPanel.open(CronFormComponent, { title: this.translate.instant('Add Cron Job') })
+        .onSuccess(() => this.getCronJobs(), this.destroyRef);
     });
   }
 
@@ -214,16 +193,10 @@ export class CronCardComponent implements OnInit {
       take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.editingCronjob.set(row);
-      this.configOpen.set(true);
+      this.formPanel.open(CronFormComponent, {
+        title: this.translate.instant('Edit Cron Job'),
+        inputs: { editCronjob: row },
+      }).onSuccess(() => this.getCronJobs(), this.destroyRef);
     });
-  }
-
-  protected onConfigClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    this.editingCronjob.set(undefined);
-    if (saved) {
-      this.getCronJobs();
-    }
   }
 }

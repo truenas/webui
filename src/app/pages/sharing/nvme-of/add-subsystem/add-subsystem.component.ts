@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnStepComponent, TnStepperComponent,
-  TnStepperNextDirective, TnStepperPreviousDirective,
+  TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
+  TnStepComponent, TnStepperComponent, TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import {
   catchError,
@@ -24,10 +24,7 @@ import { DetailsItemComponent } from 'app/modules/details-table/details-item/det
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -52,7 +49,6 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   templateUrl: './add-subsystem.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     TranslateModule,
     TnCardComponent,
     ReactiveFormsModule,
@@ -60,9 +56,10 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     TnStepComponent,
     TnButtonComponent,
     TnStepperNextDirective,
-    IxInputComponent,
     TnStepperPreviousDirective,
-    IxCheckboxComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     AddSubsystemHostsComponent,
     AddSubsystemNamespacesComponent,
     RequiresRolesDirective,
@@ -72,9 +69,8 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     EditableComponent,
   ],
 })
-export class AddSubsystemComponent {
+export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsystem> {
   private formBuilder = inject(FormBuilder);
-  slideInRef = inject<SlideInRef<void, NvmeOfSubsystem>>(SlideInRef);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
@@ -87,10 +83,12 @@ export class AddSubsystemComponent {
   protected isLoading = signal(false);
   requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+  /** Emitted to a `tn-side-panel` host with the created subsystem on save. */
+  readonly closed = output<NvmeOfSubsystem>();
+
+  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   protected form = this.formBuilder.group({
@@ -137,7 +135,7 @@ export class AddSubsystemComponent {
       }
 
       this.snackbar.success(this.translate.instant('New subsystem added'));
-      this.slideInRef.close({ response: subsystem });
+      this.closed.emit(subsystem);
     });
   }
 

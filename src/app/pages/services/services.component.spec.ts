@@ -119,10 +119,13 @@ describe('ServicesComponent', () => {
     expect(api.call).toHaveBeenCalledWith('service.update', [0, { enable: true }]);
   });
 
-  it('opens the iSCSI global configuration form via SlideIn', () => {
+  it('opens the iSCSI global configuration form in a side panel', () => {
     spectator.click('[data-test="button-service-iscsitarget-edit-service"]');
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      GlobalTargetConfigurationComponent,
+      { title: 'iSCSI Global Configuration' },
+    );
   });
 
   it('opens the matching config form in a side panel when a service is edited', () => {

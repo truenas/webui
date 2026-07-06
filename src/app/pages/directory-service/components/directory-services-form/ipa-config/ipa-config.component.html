@@ -1,81 +1,112 @@
 <form class="ix-form-container" [formGroup]="form">
-  <ix-fieldset [title]="'IPA Configuration' | translate">
-    <ix-input
-      formControlName="target_server"
+  <tn-form-section [heading]="'IPA Configuration' | translate">
+    <tn-form-field
       [label]="'Target Server' | translate"
-      [required]="true"
       [tooltip]="helptext.targetServerTooltip | translate"
-    ></ix-input>
+      [required]="true"
+    >
+      <tn-input name="target_server" testId="target_server" formControlName="target_server" [required]="true"></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="hostname"
+    <tn-form-field
       [label]="'TrueNAS Hostname' | translate"
-      [required]="true"
       [tooltip]="helptext.hostnameTooltip | translate"
-    ></ix-input>
+      [required]="true"
+    >
+      <tn-input name="hostname" testId="hostname" formControlName="hostname" [required]="true"></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="domain"
+    <tn-form-field
       [label]="'Domain' | translate"
-      [required]="true"
       [tooltip]="helptext.domainTooltip | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="basedn"
-      [label]="'Base DN' | translate"
       [required]="true"
+    >
+      <tn-input name="domain" testId="domain" formControlName="domain" [required]="true"></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Base DN' | translate"
       [tooltip]="helptext.basednTooltip | translate"
-    ></ix-input>
+      [required]="true"
+    >
+      <tn-input name="basedn" testId="basedn" formControlName="basedn" [required]="true"></tn-input>
+    </tn-form-field>
 
-    <ix-checkbox
-      formControlName="validate_certificates"
-      [label]="'Validate Certificates' | translate"
-      [tooltip]="helptext.validateCertificatesTooltip | translate"
-    ></ix-checkbox>
-  </ix-fieldset>
+    <tn-form-field [tooltip]="helptext.validateCertificatesTooltip | translate">
+      <tn-checkbox
+        formControlName="validate_certificates"
+        testId="validate_certificates"
+        [label]="'Validate Certificates' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
 
-  <ix-fieldset [title]="'SMB Domain Configuration' | translate">
-    <ix-checkbox
-      formControlName="use_default_smb_domain"
-      [label]="'Use Default SMB Domain Configuration' | translate"
-      [tooltip]="helptext.useDefaultSmbDomainTooltip | translate"
-    ></ix-checkbox>
+  <tn-form-section [heading]="'SMB Domain Configuration' | translate">
+    <tn-form-field [tooltip]="helptext.useDefaultSmbDomainTooltip | translate">
+      <tn-checkbox
+        formControlName="use_default_smb_domain"
+        testId="use_default_smb_domain"
+        [label]="'Use Default SMB Domain Configuration' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
     @if (!useDefaultSmbDomain()) {
-      <ix-input
-        formControlName="smb_domain_name"
+      <tn-form-field
         [label]="'Name' | translate"
         [tooltip]="helptext.smbDomainNameTooltip | translate"
-      ></ix-input>
+      >
+        <tn-input name="smb_domain_name" testId="smb_domain_name" formControlName="smb_domain_name"></tn-input>
+      </tn-form-field>
 
-      <ix-input
-        formControlName="smb_domain_domain_name"
+      <tn-form-field
         [label]="'Domain Name' | translate"
         [tooltip]="helptext.smbDomainDomainNameTooltip | translate"
-      ></ix-input>
+      >
+        <tn-input
+          name="smb_domain_domain_name"
+          testId="smb_domain_domain_name"
+          formControlName="smb_domain_domain_name"
+        ></tn-input>
+      </tn-form-field>
 
-      <ix-input
-        formControlName="smb_domain_range_low"
-        [type]="'number'"
+      <tn-form-field
         [label]="'Range Low' | translate"
-        [required]="true"
         [tooltip]="helptext.smbDomainRangeLowTooltip | translate"
-      ></ix-input>
-
-      <ix-input
-        formControlName="smb_domain_range_high"
-        [type]="'number'"
-        [label]="'Range High' | translate"
         [required]="true"
-        [tooltip]="helptext.smbDomainRangeHighTooltip | translate"
-      ></ix-input>
+      >
+        <tn-input
+          name="smb_domain_range_low"
+          testId="smb_domain_range_low"
+          formControlName="smb_domain_range_low"
+          [inputType]="InputType.Number"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
 
-      <ix-input
-        formControlName="smb_domain_domain_sid"
+      <tn-form-field
+        [label]="'Range High' | translate"
+        [tooltip]="helptext.smbDomainRangeHighTooltip | translate"
+        [required]="true"
+      >
+        <tn-input
+          name="smb_domain_range_high"
+          testId="smb_domain_range_high"
+          formControlName="smb_domain_range_high"
+          [inputType]="InputType.Number"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
         [label]="'Domain SID' | translate"
         [tooltip]="helptext.smbDomainDomainSidTooltip | translate"
-      ></ix-input>
+      >
+        <tn-input
+          name="smb_domain_domain_sid"
+          testId="smb_domain_domain_sid"
+          formControlName="smb_domain_domain_sid"
+        ></tn-input>
+      </tn-form-field>
     }
-  </ix-fieldset>
+  </tn-form-section>
 </form>

@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
+import {
+  InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent,
+  TnStepperNextDirective, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { map, startWith } from 'rxjs/operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
@@ -19,8 +20,8 @@ import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxTextareaComponent,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
     TnButtonComponent,
     TnStepperPreviousDirective,
@@ -31,6 +32,8 @@ import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates
 export class CsrImportComponent implements SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
+
+  protected readonly InputType = InputType;
 
   form = this.formBuilder.nonNullable.group({
     CSR: ['', Validators.required],

@@ -9,7 +9,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
@@ -39,7 +39,7 @@ import { LicenseService } from 'app/services/license.service';
 })
 export class IscsiComponent {
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private iscsiService = inject(IscsiService);
   private license = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
@@ -86,13 +86,20 @@ export class IscsiComponent {
   });
 
   protected openWizard(): void {
-    this.slideIn.open(IscsiWizardComponent)
+    // Opened footerless — its stepper owns Next/Back/Save.
+    this.formPanel.open(IscsiWizardComponent, {
+      title: this.translate.instant('iSCSI Wizard'),
+      wide: true,
+      footerless: true,
+    })
       .onSuccess((response) => {
         this.iscsiService.refreshData(response);
       }, this.destroyRef);
   }
 
   protected openGlobalTargetConfiguration(): void {
-    this.slideIn.open(GlobalTargetConfigurationComponent);
+    this.formPanel.open(GlobalTargetConfigurationComponent, {
+      title: this.translate.instant('iSCSI Global Configuration'),
+    });
   }
 }

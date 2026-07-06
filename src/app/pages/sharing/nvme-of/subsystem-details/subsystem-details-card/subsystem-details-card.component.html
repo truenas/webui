@@ -1,9 +1,5 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>{{ 'Details' | translate }}</h3>
-  </mat-card-header>
-  <mat-card-content>
-    <ix-details-table [formGroup]="form">
+<tn-card class="card" [title]="'Details' | translate">
+  <ix-details-table [formGroup]="form">
       <ix-details-item [label]="'Name' | translate">
         <ix-editable
           editableSaveOnEnter
@@ -16,10 +12,10 @@
           </div>
 
           <div edit>
-            <ix-input
+            <tn-input
               formControlName="name"
-              [attr.aria-label]="'Name' | translate"
-            ></ix-input>
+              [ariaLabel]="'Name' | translate"
+            ></tn-input>
           </div>
         </ix-editable>
       </ix-details-item>
@@ -36,16 +32,18 @@
           </div>
 
           <div edit>
-            <ix-textarea
+            <tn-input
               formControlName="subnqn"
-              aria-label="NQN"
-            ></ix-textarea>
+              [multiline]="true"
+              [ariaLabel]="'NQN' | translate"
+            ></tn-input>
           </div>
         </ix-editable>
 
         <a
           class="copy-link"
-          ixTest="copy-link"
+          tnTestIdType="link"
+          [tnTestId]="'copy-link'"
           [ixUiSearch]="searchableElements.elements.copyNqn"
           (click)="copyNqn()"
         >
@@ -53,5 +51,4 @@
         </a>
       </ix-details-item>
     </ix-details-table>
-  </mat-card-content>
-</mat-card>
+</tn-card>

@@ -1,14 +1,15 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnInputHarness } from '@truenas/ui-components';
 import {
   InfluxDbServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/influx-db-service/influx-db-service.component';
 
 describe('InfluxDbServiceComponent', () => {
   let spectator: Spectator<InfluxDbServiceComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: InfluxDbServiceComponent,
     imports: [
@@ -16,9 +17,13 @@ describe('InfluxDbServiceComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('renders a form with alert service values', async () => {
@@ -30,24 +35,19 @@ describe('InfluxDbServiceComponent', () => {
       username: 'john',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      Database: 'my-db',
-      Host: 'truenas.com',
-      Password: '12345678',
-      Series: 'AB1234',
-      Username: 'john',
-    });
+    expect(await (await getInput('host')).getValue()).toBe('truenas.com');
+    expect(await (await getInput('username')).getValue()).toBe('john');
+    expect(await (await getInput('password')).getValue()).toBe('12345678');
+    expect(await (await getInput('database')).getValue()).toBe('my-db');
+    expect(await (await getInput('series_name')).getValue()).toBe('AB1234');
   });
 
   it('returns alert service form values when getSubmitAttributes is called', async () => {
-    await form.fillForm({
-      Database: 'new-db',
-      Host: 'new.truenas.com',
-      Password: '87654321',
-      Series: 'ABC1234',
-      Username: 'johny',
-    });
+    await (await getInput('host')).setValue('new.truenas.com');
+    await (await getInput('username')).setValue('johny');
+    await (await getInput('password')).setValue('87654321');
+    await (await getInput('database')).setValue('new-db');
+    await (await getInput('series_name')).setValue('ABC1234');
 
     const submittedValues = spectator.component.getSubmitAttributes();
     expect(submittedValues).toEqual({

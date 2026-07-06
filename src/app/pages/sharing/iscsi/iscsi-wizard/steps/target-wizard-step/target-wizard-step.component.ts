@@ -1,7 +1,9 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { Observable, of, switchMap } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
@@ -9,7 +11,6 @@ import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -22,8 +23,10 @@ import { LicenseService } from 'app/services/license.service';
   imports: [
     ReactiveFormsModule,
     TranslateModule,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     IxRadioGroupComponent,
+    AsyncPipe,
   ],
 })
 export class TargetWizardStepComponent {
@@ -47,7 +50,9 @@ export class TargetWizardStepComponent {
 
   readonly targetOptions$ = this.iscsiService.getTargets().pipe(
     idNameArrayToOptions(),
-    switchMap((options) => of([
+    // `value` mixes the numeric target ids with the `newOption` string sentinel, so the
+    // tn-select option type must span both (a bare `Option<number>[]` would reject the sentinel).
+    switchMap((options) => of<Option<string | number>[]>([
       { label: this.translate.instant('Create New'), value: newOption },
       ...options,
     ])),

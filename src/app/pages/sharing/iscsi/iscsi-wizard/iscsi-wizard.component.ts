@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, viewChild, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, output, signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -47,8 +47,7 @@ import { newOption } from 'app/interfaces/option.interface';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
@@ -65,7 +64,6 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     TnCardComponent,
     ReactiveFormsModule,
     TnStepperComponent,
@@ -80,7 +78,7 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
     TranslateModule,
   ],
 })
-export class IscsiWizardComponent implements OnInit {
+export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<IscsiTarget> {
   private fb = inject(FormBuilder);
   private iscsiService = inject(IscsiService);
   private fcService = inject(FibreChannelService);
@@ -90,7 +88,9 @@ export class IscsiWizardComponent implements OnInit {
   private loader = inject(LoaderService);
   private store$ = inject<Store<ServicesState>>(Store);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, IscsiTarget>>(SlideInRef);
+
+  /** Emitted to the `tn-side-panel` host with the created target on save. */
+  readonly closed = output<IscsiTarget>();
 
   protected readonly targetStep = viewChild.required(TargetWizardStepComponent);
   protected readonly extentStep = viewChild.required(ExtentWizardStepComponent);
@@ -264,11 +264,12 @@ export class IscsiWizardComponent implements OnInit {
     } as IscsiTargetExtentUpdate;
   }
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
+  }
 
+  constructor() {
     this.iscsiService.getExtents().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((extents) => {
       this.namesInUse.set(extents.map((extent) => extent.name));
     });
@@ -560,6 +561,6 @@ export class IscsiWizardComponent implements OnInit {
 
     this.isLoading.set(false);
     this.form.markAsPristine();
-    this.slideInRef.close({ response: this.createdTarget });
+    this.closed.emit(this.createdTarget);
   }
 }

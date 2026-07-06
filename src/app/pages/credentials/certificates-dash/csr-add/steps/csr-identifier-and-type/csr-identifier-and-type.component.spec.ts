@@ -2,12 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnStepperComponent } from '@truenas/ui-components';
+import { TnInputHarness, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   CsrIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
@@ -15,7 +14,13 @@ import {
 describe('CsrIdentifierAndTypeComponent', () => {
   let spectator: Spectator<CsrIdentifierAndTypeComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
+
+  const selectValue = async (name: string, label: string): Promise<void> => {
+    const select = await loader.getHarness(
+      TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+    );
+    await select.selectOption(label);
+  };
 
   const httpsProfile = {} as CertificateProfile;
   const openvpnProfile = {} as CertificateProfile;
@@ -37,20 +42,22 @@ describe('CsrIdentifierAndTypeComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const setName = async (value: string): Promise<void> => {
+    const name = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="name"]' }));
+    await name.setValue(value);
+  };
+
+  beforeEach(() => {
     spectator = createComponent();
     jest.spyOn(spectator.component.profileSelected, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   describe('creating new CSR', () => {
     beforeEach(async () => {
-      await form.fillForm({
-        Name: 'New',
-        Type: 'Certificate Signing Request',
-        Profile: 'Openvpn Client Certificate',
-      });
+      await setName('New');
+      await selectValue('create_type', 'Certificate Signing Request');
+      await selectValue('profile', 'Openvpn Client Certificate');
     });
 
     it('returns name and type when getPayload is called', () => {
@@ -84,15 +91,15 @@ describe('CsrIdentifierAndTypeComponent', () => {
 
   describe('importing a certificate', () => {
     beforeEach(async () => {
-      await form.fillForm({
-        Name: 'Import',
-        Type: 'Import Certificate Signing Request',
-      });
+      await setName('Import');
+      await selectValue('create_type', 'Import Certificate Signing Request');
     });
 
     it('does not show a Profile field when Type is changed to Import', async () => {
-      const fields = await form.getLabels();
-      expect(fields).not.toContain('Profile');
+      const profileSelect = await loader.getHarnessOrNull(
+        TnSelectHarness.with({ selector: '[formControlName="profile"]' }),
+      );
+      expect(profileSelect).toBeNull();
     });
 
     it('returns summary with Name and Type when getSummary is called', () => {

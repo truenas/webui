@@ -10,7 +10,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -30,7 +30,7 @@ export class ServiceActionsMenuService {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private router = inject(Router);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private urlOptions = inject(UrlOptionsService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
@@ -213,19 +213,23 @@ export class ServiceActionsMenuService {
   private configureService(service: Service): void {
     switch (service.service) {
       case ServiceName.NvmeOf:
-        this.slideIn.open(NvmeOfConfigurationComponent);
+        this.formPanel.open(NvmeOfConfigurationComponent, {
+          title: this.translate.instant('NVMe-oF Global Configuration'),
+        });
         break;
       case ServiceName.Iscsi:
-        this.slideIn.open(GlobalTargetConfigurationComponent);
+        this.formPanel.open(GlobalTargetConfigurationComponent, {
+          title: this.translate.instant('iSCSI Global Configuration'),
+        });
         break;
       case ServiceName.Nfs:
-        this.slideIn.open(ServiceNfsComponent, { wide: true });
+        this.formPanel.open(ServiceNfsComponent, { title: serviceNames.get(ServiceName.Nfs), wide: true });
         break;
       case ServiceName.Cifs:
-        this.slideIn.open(ServiceSmbComponent);
+        this.formPanel.open(ServiceSmbComponent, { title: serviceNames.get(ServiceName.Cifs) });
         break;
       case ServiceName.WebShare:
-        this.slideIn.open(ServiceWebshareComponent);
+        this.formPanel.open(ServiceWebshareComponent, { title: serviceNames.get(ServiceName.WebShare) });
         break;
       default:
         break;

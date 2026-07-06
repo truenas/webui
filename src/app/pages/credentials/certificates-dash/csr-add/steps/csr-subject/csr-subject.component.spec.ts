@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnStepperComponent } from '@truenas/ui-components';
+import { TnInputHarness, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
@@ -31,20 +31,38 @@ describe('CsrSubjectComponent', () => {
     ],
   });
 
+  async function setText(values: Record<string, string>): Promise<void> {
+    for (const [name, value] of Object.entries(values)) {
+      if (value === '') {
+        (spectator.component.form.controls as Record<string, AbstractControl>)[name].setValue('');
+      } else {
+        await (await loader.getHarness(
+          TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+        )).setValue(value);
+      }
+    }
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
 
+    const countrySelect = await loader.getHarness(
+      TnSelectHarness.with({ selector: '[formControlName="country"]' }),
+    );
+    await countrySelect.selectOption('United States');
     await form.fillForm({
-      Country: 'United States',
-      State: 'Pennsylvania',
-      Locality: 'Racoon City',
-      Organization: 'Umbrella Corp',
-      'Organizational Unit': 'Virus Research Dept',
-      Email: 'no-reply@umbrella.com',
-      'Common Name': 'virus.umbrella.com',
       'Subject Alternative Name': ['jobs.umbrella.com', 'security.umbrella.com'],
+    });
+
+    await setText({
+      state: 'Pennsylvania',
+      city: 'Racoon City',
+      organization: 'Umbrella Corp',
+      organizational_unit: 'Virus Research Dept',
+      email: 'no-reply@umbrella.com',
+      common: 'virus.umbrella.com',
     });
   });
 
@@ -84,9 +102,9 @@ describe('CsrSubjectComponent', () => {
     });
 
     it('skips some of the fields when they are missing', async () => {
-      await form.fillForm({
-        'Organizational Unit': '',
-        'Common Name': '',
+      await setText({
+        organizational_unit: '',
+        common: '',
       });
 
       expect(spectator.component.getSummary()).toEqual([
