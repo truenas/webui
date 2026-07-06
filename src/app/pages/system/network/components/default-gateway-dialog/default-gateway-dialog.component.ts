@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { EMPTY } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -14,7 +14,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -29,7 +28,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     TnDialogShellComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     FormActionsComponent,
