@@ -105,7 +105,7 @@ export class StaticRoutesCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
@@ -113,20 +113,20 @@ export class StaticRoutesCardComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.formPanel.openForm(getStaticRouteFormConfig(this.api, this.translate, undefined), {
       title: this.translate.instant('Add Static Route'),
     }).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
   }
 
-  doEdit(route: StaticRoute): void {
+  private doEdit(route: StaticRoute): void {
     this.formPanel.openForm(getStaticRouteFormConfig(this.api, this.translate, route), {
       title: this.translate.instant('Edit Static Route'),
       editData: route,
     }).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
   }
 
-  doDelete(route: StaticRoute): void {
+  private doDelete(route: StaticRoute): void {
     this.tnDialog.open(StaticRouteDeleteDialog, {
       data: route,
     }).closed

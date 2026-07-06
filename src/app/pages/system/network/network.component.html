@@ -27,7 +27,7 @@
 
               @if (isCheckinTimeoutFieldInvalid()) {
                 <p class="checkin-error">
-                  {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
+                  {{ 'Invalid value. Must be greater than or equal to {min}.' | translate: { min: checkinTimeoutMinValue } }}
                 </p>
               }
             </div>

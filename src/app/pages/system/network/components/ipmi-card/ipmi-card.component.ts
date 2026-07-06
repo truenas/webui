@@ -86,7 +86,7 @@ export class IpmiCardComponent implements OnInit {
     return ipmi.ip_address !== '0.0.0.0';
   }
 
-  onEdit(ipmi: Ipmi): void {
+  private onEdit(ipmi: Ipmi): void {
     this.formPanel.open(IpmiFormComponent, {
       title: this.translate.instant('IPMI'),
       inputs: { editIpmiId: ipmi.id },
@@ -97,7 +97,7 @@ export class IpmiCardComponent implements OnInit {
     this.window.open(`https://${ipmi.ip_address}`);
   }
 
-  onOpenEvents(): void {
+  protected onOpenEvents(): void {
     this.tnDialog.open(IpmiEventsDialog);
   }
 
