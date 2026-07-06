@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnIn
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
 import { filter } from 'rxjs/operators';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-parts.service';
 
 // TODO: Bad. Redo.
@@ -15,13 +15,9 @@ const noLinksRoutes = ['/credentials', '/reportsdashboard', '/system'];
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // Deliberately still on the legacy TestDirective: many external specs render pages with
-  // MockComponent(PageHeaderComponent), and ng-mocks mocks a standalone component's import
-  // closure — importing TnTestIdDirective here neutralizes it TestBed-wide in those specs,
-  // dropping every library-composed data-test on the page under test.
   imports: [
     RouterLink,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })
