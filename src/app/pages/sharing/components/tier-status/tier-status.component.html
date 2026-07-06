@@ -11,7 +11,7 @@
       [name]="icon.name"
       [library]="icon.library"
       [color]="icon.color"
-      [matTooltip]="'Migration: {status}' | translate: { status: jobStatusLabel() }"
+      [tnTooltip]="'Migration: {status}' | translate: { status: jobStatusLabel() }"
       [attr.aria-label]="'Migration: {status}' | translate: { status: jobStatusLabel() }"
       (click)="onActivate($event)"
       (keydown.enter)="onActivate($event)"

@@ -4,15 +4,14 @@ import {
   input,
   output, computed,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnIconComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { App } from 'app/interfaces/app.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-installed-apps-list-bulk-actions',
@@ -20,14 +19,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./installed-apps-list-bulk-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem,
+    TnMenuTriggerDirective,
+    TnMenuComponent,
+    TnMenuItemComponent,
     RequiresRolesDirective,
+    TnButtonComponent,
     TnIconComponent,
-    MatButton,
     TranslateModule,
-    TestDirective,
   ],
 })
 

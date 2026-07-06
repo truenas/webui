@@ -28,8 +28,8 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/system/network/components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from 'app/pages/system/network/components/ipmi-card/ipmi-card.component';
@@ -86,7 +86,7 @@ describe('NetworkComponent', () => {
       TnTableColumnDirective,
       TnHeaderCellDefDirective,
       TnCellDefDirective,
-      ShareActionsCellComponent,
+      TableActionsCellComponent,
       IxIpInputWithNetmaskComponent,
     ],
     declarations: [

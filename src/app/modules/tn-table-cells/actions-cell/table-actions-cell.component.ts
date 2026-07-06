@@ -1,0 +1,124 @@
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal,
+} from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnIconButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
+} from '@truenas/ui-components';
+import { Subscription } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+
+/**
+ * tn-table replacement for the ix-table `actionsWithMenuColumn`/`actionsColumn`
+ * cell renderers. Built entirely on tn-* primitives (`tn-icon-button`,
+ * `tn-menu`) so dashboard card tables carry no Material in their action column.
+ * Shared across the sharing and data-protection card tables.
+ *
+ * - `mode = 'menu'` (default): one visible action renders as a single icon
+ *   button; more than one collapses behind a "⋮" trigger (parity with
+ *   `actionsWithMenuColumn`).
+ * - `mode = 'inline'`: every visible action renders as its own icon button
+ *   (parity with `actionsColumn`, used by the WebShare card).
+ *
+ * Test IDs are produced by each tn component's native `testId` input, which the
+ * library prefixes with its element type (`button-…`, `menu-item-…`) via
+ * `composeTestId` — matching the legacy `ixTest` output for icon buttons.
+ */
+@Component({
+  selector: 'ix-table-actions-cell',
+  templateUrl: './table-actions-cell.component.html',
+  styleUrls: ['./table-actions-cell.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    AsyncPipe,
+    TranslateModule,
+    RequiresRolesDirective,
+    TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
+  ],
+})
+export class TableActionsCellComponent<T = unknown> {
+  private destroyRef = inject(DestroyRef);
+
+  readonly actions = input.required<IconActionConfig<T>[]>();
+  readonly row = input.required<T>();
+  readonly uniqueRowTag = input.required<string>();
+  readonly ariaLabel = input.required<string>();
+  readonly mode = input<'menu' | 'inline'>('menu');
+
+  protected readonly visibleActions = signal<IconActionConfig<T>[]>([]);
+
+  /** Async `hidden()` subscriptions for the current effect run; torn down before each re-run. */
+  private hiddenSubscriptions = new Subscription();
+
+  constructor() {
+    this.destroyRef.onDestroy(() => this.hiddenSubscriptions.unsubscribe());
+
+    // Recompute visibility whenever the row or action list changes.
+    effect(() => {
+      const row = this.row();
+      const actions = this.actions();
+
+      // Drop the previous run's subscriptions so re-runs (row/actions changes)
+      // neither leak nor let a stale async emission push into the reset list.
+      this.hiddenSubscriptions.unsubscribe();
+      this.hiddenSubscriptions = new Subscription();
+
+      // Track visibility per index and project in declaration order, so an async
+      // hidden() resolving out of order cannot reorder the rendered buttons.
+      const visible = new Array<boolean>(actions.length).fill(false);
+      const publish = (): void => {
+        this.visibleActions.set(actions.filter((_, index) => visible[index]));
+      };
+
+      actions.forEach((action, index) => {
+        if (!action.hidden) {
+          visible[index] = true;
+          return;
+        }
+
+        // `hidden` always resolves through an Observable (parity with the
+        // `async` pipe in ix-cell-actions); an out-of-order emission re-publishes
+        // against the index, so it cannot reorder the rendered buttons.
+        this.hiddenSubscriptions.add(action.hidden(row).subscribe((shouldHide) => {
+          visible[index] = !shouldHide;
+          publish();
+        }));
+      });
+
+      publish();
+    });
+  }
+
+  protected getDisabledTooltip(action: IconActionConfig<T>): string {
+    if (!action.disabledTooltip) {
+      return '';
+    }
+    if (typeof action.disabledTooltip === 'function') {
+      return action.disabledTooltip(this.row());
+    }
+    return action.disabledTooltip;
+  }
+
+  protected onActionClick(event: MouseEvent | null, action: IconActionConfig<T>): void {
+    event?.stopPropagation();
+    action.onClick(this.row());
+  }
+
+  /**
+   * `tn-menu-item`'s `testId` input accepts a single string (unlike the array
+   * `testId` on `tn-icon-button`), so join the segments into the semantic base
+   * here. `tn-menu` composes the `button-` element-type prefix and kebab-
+   * normalizes the result, matching the legacy `button-…-row-action` id.
+   */
+  protected menuItemTestId(action: IconActionConfig<T>): string {
+    return [this.uniqueRowTag(), 'more-action', action.iconName, 'row-action'].join('-');
+  }
+}

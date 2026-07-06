@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -13,7 +15,6 @@ import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -27,13 +28,22 @@ describe('ServiceNfsComponent', () => {
   let spectator: Spectator<ServiceNfsComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  let form: IxFormHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn((): undefined => undefined),
   };
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const createComponent = createRoutingFactory({
     component: ServiceNfsComponent,
@@ -96,40 +106,37 @@ describe('ServiceNfsComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
-    form = await loader.getHarness(IxFormHarness);
+    await spectator.fixture.whenStable();
   });
-  it('shows current settings for NFS service when form is opened', async () => {
-    const values = await form.getValues();
 
+  it('shows current settings for NFS service when form is opened', async () => {
     expect(api.call).toHaveBeenCalledWith('nfs.config');
-    expect(values).toEqual({
-      'Bind IP Addresses': ['192.168.1.117', '192.168.1.118'],
-      'Calculate number of threads dynamically': false,
-      'Specify number of threads manually': '3',
-      'Enabled Protocols': ['NFSv3', 'NFSv4'],
-      'NFSv4 DNS Domain': 'nfs-domain.com',
-      'Require Kerberos for NFSv4': true,
-      'mountd(8) bind port': '123',
-      'rpc.lockd(8) bind port': '124',
-      'rpc.statd(8) bind port': '124',
-      'Enable NFS over RDMA': false,
-      'Allow non-root mount': false,
-      'Manage Groups Server-side': false,
-    });
+
+    expect(await (await getSelect('bindip')).getDisplayText()).toBe('192.168.1.117, 192.168.1.118');
+    expect(await (await getCheckbox('servers_auto')).isChecked()).toBe(false);
+    expect(await (await getInput('servers')).getValue()).toBe('3');
+    expect(await (await getSelect('protocols')).getDisplayText()).toBe('NFSv3, NFSv4');
+    expect(await (await getInput('v4_domain')).getValue()).toBe('nfs-domain.com');
+    expect(await (await getCheckbox('v4_krb')).isChecked()).toBe(true);
+    expect(await (await getInput('mountd_port')).getValue()).toBe('123');
+    expect(await (await getInput('rpcstatd_port')).getValue()).toBe('124');
+    expect(await (await getInput('rpclockd_port')).getValue()).toBe('124');
+    expect(await (await getCheckbox('allow_nonroot')).isChecked()).toBe(false);
+    expect(await (await getCheckbox('userd_manage_gids')).isChecked()).toBe(false);
   });
 
   it('sends an update payload to websocket when form is saved', async () => {
-    await form.fillForm({
-      'Bind IP Addresses': ['192.168.1.119'],
-      'Calculate number of threads dynamically': true,
-      'Enabled Protocols': ['NFSv4'],
-      'NFSv4 DNS Domain': 'new-nfs-domain.com',
-      'Allow non-root mount': true,
-      'Manage Groups Server-side': true,
-      'mountd(8) bind port': 554,
-      'rpc.statd(8) bind port': 562,
-      'rpc.lockd(8) bind port': 510,
-    });
+    await (await getSelect('bindip')).selectOption('192.168.1.117');
+    await (await getSelect('bindip')).selectOption('192.168.1.118');
+    await (await getSelect('bindip')).selectOption('192.168.1.119');
+    await (await getCheckbox('servers_auto')).check();
+    await (await getSelect('protocols')).selectOption('NFSv3');
+    await (await getInput('v4_domain')).setValue('new-nfs-domain.com');
+    await (await getCheckbox('allow_nonroot')).check();
+    await (await getCheckbox('userd_manage_gids')).check();
+    await (await getInput('mountd_port')).setValue('554');
+    await (await getInput('rpcstatd_port')).setValue('562');
+    await (await getInput('rpclockd_port')).setValue('510');
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -150,22 +157,13 @@ describe('ServiceNfsComponent', () => {
   });
 
   it('disables NFSv4 specific fields when NFSv4 is not enabled', async () => {
-    await form.fillForm({
-      'Enabled Protocols': ['NFSv3'],
-    });
+    await (await getSelect('protocols')).selectOption('NFSv4');
 
-    const disabledControls = await form.getDisabledState();
-    expect(disabledControls).toMatchObject({
-      'NFSv4 DNS Domain': true,
-      'Require Kerberos for NFSv4': true,
-    });
+    expect(await (await getInput('v4_domain')).isDisabled()).toBe(true);
+    expect(await (await getCheckbox('v4_krb')).isDisabled()).toBe(true);
   });
 
   it('should open dialog form when add SPN button is pressed', async () => {
-    await form.fillForm({
-      'Require Kerberos for NFSv4': true,
-    });
-
     const addSpnButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add SPN' }));
     await addSpnButton.click();
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -173,16 +171,12 @@ describe('ServiceNfsComponent', () => {
   });
 
   it('disables RDMA field unless it is an enterprise system with RDMA capable NIC', async () => {
-    expect(await form.getDisabledState()).toMatchObject({
-      'Enable NFS over RDMA': true,
-    });
+    expect(await (await getCheckbox('rdma')).isDisabled()).toBe(true);
 
     const mockStore$ = spectator.inject(MockStore);
     mockStore$.overrideSelector(selectIsEnterprise, true);
     spectator.detectChanges();
 
-    expect(await form.getDisabledState()).toMatchObject({
-      'Enable NFS over RDMA': true,
-    });
+    expect(await (await getCheckbox('rdma')).isDisabled()).toBe(true);
   });
 });

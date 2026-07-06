@@ -925,6 +925,25 @@
   {
     "hierarchy": [
       "System",
+      "Boot Environments"
+    ],
+    "synonyms": [
+      "Create boot environment"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "boot"
+    ],
+    "routerLink": null,
+    "anchor": "boot-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
       "Alert Settings",
       "Alert Services"
     ],
@@ -990,6 +1009,23 @@
     ],
     "routerLink": null,
     "anchor": "advanced-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Tunables"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "tunable"
+    ],
+    "routerLink": null,
+    "anchor": "tunable",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1094,35 +1130,6 @@
     ],
     "routerLink": null,
     "anchor": "system-security-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "System Security",
-      "System Security Settings"
-    ],
-    "synonyms": [
-      "FIPS",
-      "STIG",
-      "Password Policy",
-      "Security",
-      "Configure System Security"
-    ],
-    "requiredRoles": [
-      "SYSTEM_SECURITY_WRITE"
-    ],
-    "visibleTokens": [
-      "SYSTEM_SECURITY"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "system-security-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1312,6 +1319,35 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "System Security",
+      "System Security Settings"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security",
+      "Configure System Security"
+    ],
+    "requiredRoles": [
+      "SYSTEM_SECURITY_WRITE"
+    ],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "system-security-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Syslog"
     ],
     "synonyms": [],
@@ -1323,29 +1359,6 @@
     ],
     "routerLink": null,
     "anchor": "syslog-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Syslog",
-      "Configure Syslog"
-    ],
-    "synonyms": [
-      "Syslog Settings"
-    ],
-    "requiredRoles": [
-      "SYSTEM_ADVANCED_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "syslog-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1429,6 +1442,29 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "Syslog",
+      "Configure Syslog"
+    ],
+    "synonyms": [
+      "Syslog Settings"
+    ],
+    "requiredRoles": [
+      "SYSTEM_ADVANCED_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "syslog-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Storage"
     ],
     "synonyms": [
@@ -1443,30 +1479,6 @@
     ],
     "routerLink": null,
     "anchor": "storage-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Storage",
-      "Configure Storage"
-    ],
-    "synonyms": [
-      "Storage Settings"
-    ],
-    "requiredRoles": [
-      "DATASET_WRITE",
-      "POOL_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "storage-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1518,6 +1530,30 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "Storage",
+      "Configure Storage"
+    ],
+    "synonyms": [
+      "Storage Settings"
+    ],
+    "requiredRoles": [
+      "DATASET_WRITE",
+      "POOL_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "storage-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Self-Encrypting Drive"
     ],
     "synonyms": [],
@@ -1531,6 +1567,27 @@
     ],
     "routerLink": null,
     "anchor": "sed-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Self-Encrypting Drive",
+      "SED Password"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "SED"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "sed-password",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1563,27 +1620,6 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
-      "Self-Encrypting Drive",
-      "SED Password"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "SED"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "sed-password",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
       "Replication"
     ],
     "synonyms": [],
@@ -1595,6 +1631,25 @@
     ],
     "routerLink": null,
     "anchor": "replication-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Replication",
+      "Replication Tasks Limit"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "replication-tasks-limit",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1625,25 +1680,6 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
-      "Replication",
-      "Replication Tasks Limit"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "replication-tasks-limit",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
       "NVIDIA Drivers"
     ],
     "synonyms": [],
@@ -1655,6 +1691,25 @@
     ],
     "routerLink": null,
     "anchor": "nvidia-drivers",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "NVIDIA Drivers",
+      "Enable NVIDIA GPU Support"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "enable-nvidia-gpu-support",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1679,25 +1734,6 @@
     ],
     "routerLink": null,
     "anchor": "nvidia-drivers-settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "NVIDIA Drivers",
-      "Enable NVIDIA GPU Support"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "enable-nvidia-gpu-support",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1875,6 +1911,25 @@
       "System",
       "Advanced Settings",
       "Kernel",
+      "Enable Kernel Debug"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "enable-kernel-debug",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Kernel",
       "Configure Kernel"
     ],
     "synonyms": [
@@ -1890,25 +1945,6 @@
     ],
     "routerLink": null,
     "anchor": "kernel-settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Kernel",
-      "Enable Kernel Debug"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "enable-kernel-debug",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1935,6 +1971,25 @@
       "System",
       "Advanced Settings",
       "Isolated GPU Device(s)",
+      "GPUs"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "gpus",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Isolated GPU Device(s)",
       "Configure Isolated GPU Devices"
     ],
     "synonyms": [
@@ -1950,25 +2005,6 @@
     ],
     "routerLink": null,
     "anchor": "isolated-gpus-settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Isolated GPU Device(s)",
-      "GPUs"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "gpus",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2029,30 +2065,6 @@
     ],
     "routerLink": null,
     "anchor": "global-two-factor-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Global Two Factor Authentication",
-      "Configure Global Two Factor Authentication"
-    ],
-    "synonyms": [
-      "Global Two Factor Authentication Settings",
-      "2FA Settings"
-    ],
-    "requiredRoles": [
-      "SYSTEM_SECURITY_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "global-two-factor-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2125,6 +2137,53 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "Global Two Factor Authentication",
+      "Configure Global Two Factor Authentication"
+    ],
+    "synonyms": [
+      "Global Two Factor Authentication Settings",
+      "2FA Settings"
+    ],
+    "requiredRoles": [
+      "SYSTEM_SECURITY_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "global-two-factor-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Failover"
+    ],
+    "synonyms": [
+      "HA",
+      "High Availability"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "FAILOVER"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "failover-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Failover",
       "Failover Settings"
     ],
@@ -2152,23 +2211,17 @@
   {
     "hierarchy": [
       "System",
-      "Advanced Settings",
-      "Failover"
+      "Cron Jobs"
     ],
-    "synonyms": [
-      "HA",
-      "High Availability"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [
-      "FAILOVER"
-    ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
-      "advanced"
+      "cron"
     ],
     "routerLink": null,
-    "anchor": "failover-card",
+    "anchor": "cron",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2231,29 +2284,6 @@
     ],
     "routerLink": null,
     "anchor": "console-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Console",
-      "Configure Console"
-    ],
-    "synonyms": [
-      "Console Settings"
-    ],
-    "requiredRoles": [
-      "SYSTEM_ADVANCED_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "console-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2358,6 +2388,29 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "Console",
+      "Configure Console"
+    ],
+    "synonyms": [
+      "Console Settings"
+    ],
+    "requiredRoles": [
+      "SYSTEM_ADVANCED_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "console-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Audit"
     ],
     "synonyms": [],
@@ -2369,29 +2422,6 @@
     ],
     "routerLink": null,
     "anchor": "audit-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Audit",
-      "Configure Audit"
-    ],
-    "synonyms": [
-      "Audit Settings"
-    ],
-    "requiredRoles": [
-      "SYSTEM_AUDIT_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "audit-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2494,6 +2524,29 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "Audit",
+      "Configure Audit"
+    ],
+    "synonyms": [
+      "Audit Settings"
+    ],
+    "requiredRoles": [
+      "SYSTEM_AUDIT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "audit-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Allowed IP Addressed"
     ],
     "synonyms": [],
@@ -2556,6 +2609,27 @@
       "System",
       "Advanced Settings",
       "Access",
+      "Login Banner"
+    ],
+    "synonyms": [
+      "MOTD"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "login-banner",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Access",
       "Terminate Other Sessions"
     ],
     "synonyms": [
@@ -2594,27 +2668,6 @@
     ],
     "routerLink": null,
     "anchor": "access-settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Access",
-      "Login Banner"
-    ],
-    "synonyms": [
-      "MOTD"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "login-banner",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3876,22 +3929,6 @@
   {
     "hierarchy": [
       "Reporting",
-      "Select Reporting"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/reportsdashboard"
-    ],
-    "routerLink": null,
-    "anchor": "select-reporting",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Reporting",
       "CPU"
     ],
     "synonyms": [
@@ -4004,6 +4041,26 @@
   {
     "hierarchy": [
       "Reporting",
+      "Target"
+    ],
+    "synonyms": [
+      "Target Stats",
+      "Target Utilization"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "target"
+    ],
+    "routerLink": null,
+    "anchor": "target",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
       "UPS"
     ],
     "synonyms": [
@@ -4039,6 +4096,22 @@
     ],
     "routerLink": null,
     "anchor": "zfs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Select Reporting"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard"
+    ],
+    "routerLink": null,
+    "anchor": "select-reporting",
     "triggerAnchor": null,
     "section": "ui"
   },

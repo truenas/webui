@@ -1,0 +1,10 @@
+<tn-slide-toggle
+  *ixRequiresRoles="requiredRoles()"
+  color="primary"
+  [formControl]="control"
+  [testId]="testId()"
+  [tnTooltip]="tooltip()"
+  [ariaLabel]="(checked() ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + ariaLabel()"
+  (change)="toggled.emit($event)"
+  (click)="$event.stopPropagation()"
+></tn-slide-toggle>

@@ -1,13 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
-import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
-import { TnDialog } from '@truenas/ui-components';
-import { MockPipe } from 'ng-mocks';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -21,14 +19,10 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxCellScheduleComponent,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -47,7 +41,9 @@ import { selectSystemConfigState } from 'app/store/system-config/system-config.s
 describe('CloudSyncTaskCardComponent', () => {
   let spectator: Spectator<CloudSyncTaskCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+
+  const rowMenuTrigger = '[data-test="button-card-cloudsync-task-custom-cloudsync-more-action"]';
 
   beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
   afterEach(() => restoreDate());
@@ -103,14 +99,6 @@ describe('CloudSyncTaskCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: CloudSyncTaskCardComponent,
-    overrideComponents: [
-      [
-        IxCellScheduleComponent, {
-          remove: { imports: [ScheduleDescriptionPipe] },
-          add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'Every hour, every day'))] },
-        },
-      ],
-    ],
     providers: [
       mockAuth(),
       provideMockStore({
@@ -147,7 +135,7 @@ describe('CloudSyncTaskCardComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -163,57 +151,76 @@ describe('CloudSyncTaskCardComponent', () => {
     ],
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    spectator.click(rowMenuTrigger);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Description', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['custom-cloudsync', 'Every hour, every day', 'Disabled', '1 min. ago', '', 'Completed', ''],
-    ];
+    expect(await table.getHeaderTexts()).toEqual(['Description', 'State', 'Enabled', '']);
+    expect(await table.getAllRowTexts()).toEqual([
+      ['custom-cloudsync', 'Completed', '', ''],
+    ]);
+  });
 
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+  it('repaints the row through the data provider when the backing job changes in the background', () => {
+    const emissions: CloudSyncTaskUi[][] = [];
+    const subscription = spectator.component.dataProvider.currentPage$.subscribe((rows) => emissions.push(rows));
+    const emissionsBefore = emissions.length;
+
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectJobs, [{ id: 1, state: JobState.Failed } as Job]);
+    store$.refreshState();
+
+    // The status pill is presentational now, so a fresh array must be pushed through
+    // the provider (an in-place mutation would leave OnPush from repainting).
+    expect(emissions.length).toBeGreaterThan(emissionsBefore);
+    expect(emissions.at(-1)?.[0].state).toEqual({ state: JobState.Failed });
+    subscription.unsubscribe();
   });
 
   it('shows form to edit an existing CloudSync Task when Edit button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: /^Edit$/ });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       CloudSyncFormComponent,
       {
+        title: 'Edit Cloud Sync Task',
         wide: true,
-        data: expect.objectContaining({
-          id: 3,
-          description: 'custom-cloudsync',
-          enabled: false,
-          direction: 'PULL',
-          // The data will have additional transformed fields like frequency_sort_key, etc.
-        }),
+        inputs: {
+          taskToEdit: expect.objectContaining({
+            id: 3,
+            description: 'custom-cloudsync',
+            enabled: false,
+            direction: 'PULL',
+            // The data will have additional transformed fields like frequency_sort_key, etc.
+          }),
+        },
       },
     );
   });
 
   it('shows form to create new CloudSync Task when Add button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       CloudSyncWizardComponent,
-      { wide: true },
+      { title: 'Cloud Sync Task Wizard', wide: true, footerless: true },
     );
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
@@ -236,9 +243,8 @@ describe('CloudSyncTaskCardComponent', () => {
     jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of(successJob));
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     expect(snackbarSpy).toHaveBeenCalledWith(
       'Cloud Sync Task «custom-cloudsync» completed successfully.',
@@ -255,9 +261,8 @@ describe('CloudSyncTaskCardComponent', () => {
     jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of(finishedJob));
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     expect(snackbarSpy).toHaveBeenCalledWith(
       'Cloud Sync Task «custom-cloudsync» completed successfully.',
@@ -265,9 +270,8 @@ describe('CloudSyncTaskCardComponent', () => {
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Dry Run' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Dry Run' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Test Cloud Sync',
@@ -282,9 +286,8 @@ describe('CloudSyncTaskCardComponent', () => {
 
   it('shows dialog when Restore button is pressed', async () => {
     jest.spyOn(spectator.inject(TnDialog), 'open');
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Restore' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Restore' });
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialog, {
       data: 3,
@@ -293,9 +296,8 @@ describe('CloudSyncTaskCardComponent', () => {
   });
 
   it('deletes a CloudSync Task with confirmation when Delete button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
@@ -307,8 +309,8 @@ describe('CloudSyncTaskCardComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
   });
 
-  it('updates CloudSync Task Enabled status once mat-toggle is updated', async () => {
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 4);
+  it('updates CloudSync Task Enabled status once toggle is updated', async () => {
+    const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
 
     expect(await toggle.isChecked()).toBe(false);
 

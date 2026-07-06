@@ -1,104 +1,100 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="'Syslog' | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles"
+    [title]="'Syslog' | translate"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-checkbox
-          formControlName="fqdn_syslog"
-          [label]="'Use FQDN for Logging' | translate"
-          [tooltip]="tooltips.fqdn_syslog | translate"
-        ></ix-checkbox>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <tn-form-section>
+    <tn-form-field [tooltip]="tooltips.fqdn_syslog | translate">
+      <tn-checkbox
+        formControlName="fqdn_syslog"
+        [label]="'Use FQDN for Logging' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-        <ix-select
-          formControlName="sysloglevel"
-          [label]="'Syslog Level' | translate"
-          [tooltip]="tooltips.sysloglevel | translate"
-          [options]="levelOptions$"
-          [required]="true"
-        ></ix-select>
+    <tn-form-field
+      [label]="'Syslog Level' | translate"
+      [tooltip]="tooltips.sysloglevel | translate"
+      [required]="true"
+    >
+      <tn-select
+        formControlName="sysloglevel"
+        [options]="levelOptions"
+      ></tn-select>
+    </tn-form-field>
 
-        <div formArrayName="syslogservers" role="group" [attr.aria-label]="'Syslog Servers List' | translate">
-          @for (server of syslogServersArray.controls; track server; let i = $index) {
-            <div class="server-group" [formGroupName]="i" [attr.aria-label]="('Syslog Server' | translate) + ' ' + (i + 1)">
-              <h4 [id]="'server-heading-' + i">{{ 'Syslog Server' | translate }} {{ i + 1 }}</h4>
-              <ix-input
-                formControlName="host"
-                [label]="'Host' | translate"
-                [tooltip]="tooltips.syslogserver | translate"
-              ></ix-input>
+    <div formArrayName="syslogservers" role="group" [attr.aria-label]="'Syslog Servers List' | translate">
+      @for (server of syslogServersArray.controls; track server; let i = $index) {
+        <div class="server-group" [formGroupName]="i" [attr.aria-label]="('Syslog Server' | translate) + ' ' + (i + 1)">
+          <h4 [id]="'server-heading-' + i">{{ 'Syslog Server' | translate }} {{ i + 1 }}</h4>
+          <tn-form-field [label]="'Host' | translate" [tooltip]="tooltips.syslogserver | translate">
+            <tn-input formControlName="host"></tn-input>
+          </tn-form-field>
 
-              <ix-select
-                formControlName="transport"
-                [label]="'Transport' | translate"
-                [tooltip]="tooltips.syslog_transport | translate"
-                [options]="transportOptions$"
-              ></ix-select>
+          <tn-form-field [label]="'Transport' | translate" [tooltip]="tooltips.syslog_transport | translate">
+            <tn-select
+              formControlName="transport"
+              [options]="transportOptions"
+            ></tn-select>
+          </tn-form-field>
 
-              @if (server.value.transport === 'TLS') {
-                <ix-select
-                  formControlName="tls_certificate"
-                  [label]="'TLS Certificate' | translate"
-                  [tooltip]="tooltips.syslog_tls_certificate | translate"
-                  [options]="certificateOptions$"
-                ></ix-select>
-              }
+          @if (server.value.transport === 'TLS') {
+            <tn-form-field [label]="'TLS Certificate' | translate" [tooltip]="tooltips.syslog_tls_certificate | translate">
+              <tn-select
+                formControlName="tls_certificate"
+                [options]="(certificateOptions$ | async) ?? []"
+              ></tn-select>
+            </tn-form-field>
+          }
 
-              @if (canRemoveServer) {
-                <button
-                  mat-button
-                  type="button"
-                  color="warn"
-                  [attr.aria-label]="('Remove Syslog Server' | translate) + ' ' + (i + 1)"
-                  (click)="removeServer(i)"
-                >
-                  {{ 'Remove Server' | translate }}
-                </button>
-              }
-            </div>
+          @if (canRemoveServer) {
+            <tn-button
+              type="button"
+              color="warn"
+              [ariaLabel]="('Remove Syslog Server' | translate) + ' ' + (i + 1)"
+              [label]="'Remove Server' | translate"
+              (onClick)="removeServer(i)"
+            ></tn-button>
           }
         </div>
+      }
+    </div>
 
-        @if (canAddServer) {
-          <button
-            mat-button
-            type="button"
-            class="add-server-button"
-            [attr.aria-label]="'Add another syslog server' | translate"
-            (click)="addServer()"
-          >
-            {{ 'Add Syslog Server' | translate }}
-            <span class="server-limit-hint">({{ syslogServersArray.length }}/2)</span>
-          </button>
-        } @else {
-          <p class="server-limit-message" role="status" aria-live="polite">
-            {{ 'Maximum of 2 syslog servers allowed' | translate }}
-          </p>
-        }
+    @if (canAddServer) {
+      <tn-button
+        type="button"
+        class="add-server-button"
+        [ariaLabel]="'Add another syslog server' | translate"
+        [label]="('Add Syslog Server' | translate) + ' (' + syslogServersArray.length + '/2)'"
+        (onClick)="addServer()"
+      ></tn-button>
+    } @else {
+      <p class="server-limit-message" role="status" aria-live="polite">
+        {{ 'Maximum of 2 syslog servers allowed' | translate }}
+      </p>
+    }
 
-        <ix-checkbox
-          formControlName="syslog_audit"
-          [label]="'Include Audit Logs' | translate"
-          [tooltip]="tooltips.syslog_audit | translate"
-        ></ix-checkbox>
-      </ix-fieldset>
+    <tn-form-field [tooltip]="tooltips.syslog_audit | translate">
+      <tn-checkbox
+        formControlName="syslog_audit"
+        [label]="'Include Audit Logs' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <ix-form-actions>
+    @if (slideInRef) {
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        type="submit"
+        color="primary"
+        [testId]="'save'"
+        [disabled]="form.invalid || isFormLoading()"
+        [label]="'Save' | translate"
+      ></tn-button>
+    }
+  </ix-form-actions>
+</form>

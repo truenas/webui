@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/dot-notation */
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { TnRadioHarness } from '@truenas/ui-components';
 import { MockConfig, MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { MockConfigFormComponent } from './mock-config-form.component';
@@ -9,6 +12,7 @@ import { MockConfigFormComponent } from './mock-config-form.component';
 describe('MockConfigFormComponent', () => {
   let spectator: Spectator<MockConfigFormComponent>;
   let store$: MockStore;
+  let loader: HarnessLoader;
 
   const mockConfig: MockConfig = {
     id: 'test-123',
@@ -43,6 +47,7 @@ describe('MockConfigFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     store$ = spectator.inject(MockStore);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     jest.spyOn(store$, 'dispatch');
   });
 
@@ -461,6 +466,26 @@ describe('MockConfigFormComponent', () => {
     });
   });
 
+  describe('Response Type radio group', () => {
+    it('updates the shared responseType control when a radio is selected', async () => {
+      const errorRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Error' }));
+      await errorRadio.check();
+
+      expect(spectator.component['form'].controls.responseType.value).toBe('error');
+    });
+
+    it('reflects the control value as the checked radio', async () => {
+      spectator.component['form'].patchValue({ responseType: 'error' });
+      spectator.detectChanges();
+
+      const successRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Success' }));
+      const errorRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Error' }));
+
+      expect(await successRadio.isChecked()).toBe(false);
+      expect(await errorRadio.isChecked()).toBe(true);
+    });
+  });
+
   describe('JSON validation and handling', () => {
     it('should validate invalid JSON in responseResult field', () => {
       spectator.component['form'].patchValue({
@@ -710,19 +735,6 @@ describe('MockConfigFormComponent', () => {
 
       delayControl.setValue(1000);
       expect(delayControl.hasError('min')).toBe(false);
-    });
-  });
-
-  describe('ngOnDestroy', () => {
-    it('should complete destroy$ subject on component destroy', () => {
-      const destroySubject$ = spectator.component['destroy$'];
-      const nextSpy = jest.spyOn(destroySubject$, 'next');
-      const completeSpy = jest.spyOn(destroySubject$, 'complete');
-
-      spectator.component.ngOnDestroy();
-
-      expect(nextSpy).toHaveBeenCalled();
-      expect(completeSpy).toHaveBeenCalled();
     });
   });
 });

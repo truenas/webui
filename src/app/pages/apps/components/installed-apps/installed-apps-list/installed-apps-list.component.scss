@@ -1,4 +1,5 @@
 @import 'scss-imports/variables';
+@import 'mixins/text';
 
 .table-header {
   align-items: flex-end;
@@ -14,100 +15,125 @@
     margin-top: 20px;
     min-height: 36px;
   }
+}
 
-  .bulk {
-    align-items: center;
-    display: flex;
-    gap: 6px;
+.item-search {
+  margin-bottom: 8px;
+}
+
+.apps-table {
+  display: block;
+  font-size: 12px;
+
+  // TEMP: tn-table defaults the inner table to `table-layout: auto`, which sizes
+  // columns to content and overflows the master pane. Force fixed layout so the
+  // per-column [width] values are honoured and the table fits its container
+  // (no horizontal scroll), as the previous CSS-grid layout did. Remove if
+  // tn-table exposes a layout input.
+  ::ng-deep .tn-table__table {
+    table-layout: fixed;
   }
-}
 
-.app-wrapper {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  overflow: auto;
-}
+  // TEMP: tn-table has no cell-density/font-size input, so the compact spacing the
+  // apps table needs is applied by reaching into the private `.tn-table__cell` /
+  // `.tn-table__header-cell` classes. Remove once tn-table exposes cell padding /
+  // font-size inputs (tracked under the NAS-141021 library follow-up).
+  ::ng-deep .tn-table__cell,
+  ::ng-deep .tn-table__header-cell {
+    font-size: 13px;
+    padding-left: 3px;
+    padding-right: 3px;
+  }
 
-.app-inner {
-  background-color: var(--bg2);
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-width: fit-content;
+  // TEMP: tn-table sets nowrap/ellipsis on the cell-content wrapper with no opt-out,
+  // so body values are forced to wrap via the private `.tn-table__cell` /
+  // `.tn-table__cell-content` classes (long stats need to show in full on two lines).
+  // Remove once tn-table exposes a cell-wrap input (NAS-141021 library follow-up).
+  ::ng-deep .tn-table__cell,
+  ::ng-deep .tn-table__cell-content {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    word-break: break-word;
+  }
 
+  // TEMP: column titles stay on a single line — same private-class caveat and
+  // NAS-141021 library follow-up as the cell-wrap override above.
+  ::ng-deep .tn-table__header-cell {
+    white-space: nowrap;
+  }
+
+  // TEMP: tn-table has no selection-column width/padding input, so the checkbox
+  // column is sized via the private `.tn-table__select-cell` class to line the
+  // checkbox up with the search input's content rather than hugging the active-row
+  // indicator. Remove once tn-table exposes a select-column layout input
+  // (NAS-141021 library follow-up).
+  ::ng-deep .tn-table__select-cell {
+    padding-left: 14px;
+    padding-right: 0;
+    width: 30px;
+  }
+
+  // TEMP: on narrow/mobile screens fitting every column squashes the content into
+  // unreadable single characters. Instead let the table size to its content and
+  // scroll horizontally (tn-table's host already has overflow-x: auto), keeping
+  // each value on one readable line. Same private `.tn-table__*` caveat / NAS-141021
+  // library follow-up as the overrides above.
   @media (max-width: $breakpoint-tablet) {
-    min-height: fit-content;
-    min-width: unset;
-    overflow-x: auto;
+    ::ng-deep .tn-table__table {
+      min-width: 760px;
+      table-layout: auto;
+    }
+
+    ::ng-deep .tn-table__cell,
+    ::ng-deep .tn-table__cell-content {
+      white-space: nowrap;
+    }
   }
 }
 
-ix-app-row,
-.app-header-row {
-  grid-template-columns: 5% minmax(18%, auto) 10.5% 4% 7% 10.5% 11% 13% 10%;
-
-  @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: 45px auto 0 0 0 0 0 0;
-  }
-}
-
-.app-header-row {
+.name-cell {
   align-items: center;
-  background: var(--bg1);
-  border-bottom: 1px solid var(--lines);
-  color: var(--fg2);
-  display: grid;
-  grid-gap: 8px;
-  min-height: 48px;
-  min-width: fit-content;
+  display: flex;
+  gap: 6px;
+  min-width: 0;
 
-  position: sticky;
-  top: 0;
-  width: 100%;
-  z-index: 1;
+  .app-logo {
+    flex-shrink: 0;
+    max-height: 28px;
+    max-width: 28px;
+    min-width: 28px;
+    overflow: hidden;
 
-  > div {
-    align-items: center;
-    display: flex;
+    img {
+      display: block;
+      height: auto;
+      max-width: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .app-name {
+    @include line-clamp(2);
     font-weight: bold;
-    height: 100%;
-    justify-content: flex-start;
-    padding: 4px 0;
-
-    @media (max-width: $breakpoint-tablet) {
-      display: none !important;
-    }
-
-    &:first-child {
-      left: 0;
-      position: sticky;
-
-      @media (max-width: $breakpoint-tablet) {
-        display: block !important;
-      }
-    }
-
-    &:nth-child(2) {
-      @media (max-width: $breakpoint-tablet) {
-        display: flex !important;
-      }
-    }
-
-    &:last-child {
-      justify-content: center;
-    }
   }
+}
 
-  .app-update-header {
-    align-items: center;
-    display: flex;
-    gap: 4px;
+.updates-header {
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
 
-    tn-icon {
-      color: var(--yellow);
-      line-height: 1;
-      margin-left: 4px;
-    }
+  .has-updates-icon {
+    color: var(--yellow);
+    line-height: 1;
   }
+}
+
+.controls-cell {
+  align-items: center;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 2px;
+  justify-content: center;
 }

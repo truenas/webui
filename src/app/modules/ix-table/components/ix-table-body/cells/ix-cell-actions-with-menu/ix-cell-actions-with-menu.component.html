@@ -3,7 +3,7 @@
     @for (action of visibleActions(); track action) {
       @let isSingleActionDisabled = action.disabled ? (action.disabled(row()) | async) : false;
       @let singleActionTooltip = action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '';
-      <div [matTooltip]="isSingleActionDisabled ? getDisabledTooltip(action) : singleActionTooltip">
+      <div [tnTooltip]="isSingleActionDisabled ? getDisabledTooltip(action) : singleActionTooltip">
         <button
           *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
           mat-icon-button
@@ -23,7 +23,7 @@
       [ixTest]="[uniqueRowTag(row()), 'more-action']"
       [matMenuTriggerFor]="actionMenu"
       [attr.aria-label]="'Show Actions' | translate"
-      [matTooltip]="'Show Actions' | translate"
+      [tnTooltip]="'Show Actions' | translate"
       (click)="$event.stopPropagation();"
     >
       <tn-icon name="dots-vertical" library="mdi"></tn-icon>
@@ -31,7 +31,7 @@
     <mat-menu #actionMenu="matMenu">
       @for (action of visibleActions(); track action) {
         @let isActionDisabled = action.disabled ? (action.disabled(row()) | async) : false;
-        <div matTooltipPosition="left" [matTooltip]="isActionDisabled ? getDisabledTooltip(action) : ''">
+        <div tnTooltipPosition="left" [tnTooltip]="isActionDisabled ? getDisabledTooltip(action) : ''">
           <button
             *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
             mat-menu-item

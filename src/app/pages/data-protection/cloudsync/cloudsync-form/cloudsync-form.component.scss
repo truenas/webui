@@ -1,30 +1,17 @@
 @import 'scss-imports/variables';
+@import 'mixins/forms';
 
+@include tn-form-fieldsets-columns();
+
+// Anchor the absolutely-positioned "Manage Credentials" link to the two-column body so it sits at
+// the top-right (aligned with the Remote section heading) instead of escaping to the panel's
+// top-right corner. Without a positioned ancestor the link's containing block was the panel itself.
 .fieldsets {
-  display: flex;
-  flex-wrap: wrap;
-
-  .fieldset {
-    width: 50%;
-
-    @media (max-width: $breakpoint-tablet) {
-      padding-bottom: 0;
-      width: 100%;
-    }
-  }
+  position: relative;
 }
 
 .advanced-title {
   margin-top: 40px;
-}
-
-.form-actions {
-  border-top: 1px solid var(--lines);
-  padding: 16px 11px;
-
-  button {
-    margin-right: 8px;
-  }
 }
 
 a {
@@ -35,7 +22,7 @@ a {
   position: absolute;
   right: 4px;
   text-overflow: ellipsis;
-  top: 67px;
+  top: 0;
   white-space: nowrap;
   z-index: 1;
 }

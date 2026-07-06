@@ -26,37 +26,46 @@
   </div>
   <div class="cell cell-actions">
     @if (isDisk() || isMirror()) {
-      <button
-        mat-icon-button
-        [matTooltip]="'Actions' | translate"
-        [attr.aria-label]="'Actions' | translate"
-        [ixTest]="[ownName(), 'actions']"
-        [matMenuTriggerFor]="menu"
-      >
-        <tn-icon name="dots-vertical" library="mdi"></tn-icon>
-      </button>
+      <tn-icon-button
+        name="dots-vertical"
+        library="mdi"
+        [ariaLabel]="'Actions' | translate"
+        [tooltip]="'Actions' | translate"
+        [testId]="[ownName(), 'actions']"
+        [tnMenuTriggerFor]="actionsMenu"
+      ></tn-icon-button>
     }
-    <mat-menu #menu="matMenu">
-      <button *ixRequiresRoles="requiredRoles" mat-menu-item ixTest="replace" (click)="replace()">
-        <tn-icon name="file-replace" library="mdi"></tn-icon>
-        <span>{{ 'Replace' | translate }}</span>
-      </button>
+    <tn-menu #actionsMenu>
+      <tn-menu-item
+        *ixRequiresRoles="requiredRoles"
+        icon="file-replace"
+        iconLibrary="mdi"
+        [testId]="'replace'"
+        [label]="'Replace' | translate"
+        (itemClick)="replace()"
+      ></tn-menu-item>
       <ng-container *ixRequiresRoles="requiredRoles">
         @if (isDisk() && oneDisk()) {
-          <button mat-menu-item ixTest="attach" (click)="attach()">
-            <tn-icon name="attachment-plus" library="mdi"></tn-icon>
-            <span>{{ 'Attach' | translate }}</span>
-          </button>
+          <tn-menu-item
+            icon="attachment-plus"
+            iconLibrary="mdi"
+            [testId]="'attach'"
+            [label]="'Attach' | translate"
+            (itemClick)="attach()"
+          ></tn-menu-item>
         }
       </ng-container>
       <ng-container *ixRequiresRoles="requiredRoles">
         @if (isMirror()) {
-          <button mat-menu-item ixTest="detach" (click)="detach()">
-            <tn-icon name="attachment-minus" library="mdi"></tn-icon>
-            <span>{{ 'Detach' | translate }}</span>
-          </button>
+          <tn-menu-item
+            icon="attachment-minus"
+            iconLibrary="mdi"
+            [testId]="'detach'"
+            [label]="'Detach' | translate"
+            (itemClick)="detach()"
+          ></tn-menu-item>
         }
       </ng-container>
-    </mat-menu>
+    </tn-menu>
   </div>
 </div>

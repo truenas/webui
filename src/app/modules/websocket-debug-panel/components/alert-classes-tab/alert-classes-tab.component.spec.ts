@@ -1,4 +1,7 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertCategory } from 'app/interfaces/alert.interface';
@@ -8,6 +11,7 @@ import { AlertClassesTabComponent } from './alert-classes-tab.component';
 
 describe('AlertClassesTabComponent', () => {
   let spectator: Spectator<AlertClassesTabComponent>;
+  let loader: HarnessLoader;
   let isAuthenticated$: BehaviorSubject<boolean>;
 
   const mockCategories: AlertCategory[] = [
@@ -46,6 +50,7 @@ describe('AlertClassesTabComponent', () => {
         }),
       ],
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('should create', () => {
@@ -100,7 +105,7 @@ describe('AlertClassesTabComponent', () => {
     expect(staleSection.textContent).not.toContain(AlertClassName.AppUpdate);
   });
 
-  it('should display error message in UI when API fails', () => {
+  it('should display error message in UI when API fails', async () => {
     const api = spectator.inject(ApiService);
     (api.call as jest.Mock).mockReturnValue(throwError(() => new Error('Connection failed')));
 
@@ -109,14 +114,14 @@ describe('AlertClassesTabComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.query('.error-message')).toContainText('Connection failed');
-    expect(spectator.query('button[mat-button]')).not.toBeDisabled();
+    const button = await loader.getHarness(TnButtonHarness);
+    expect(await button.isDisabled()).toBe(false);
   });
 
-  it('should not auto-check when autoCheck checkbox is unchecked', () => {
+  it('should not auto-check when autoCheck checkbox is unchecked', async () => {
     spectator.detectChanges();
-    const checkboxInput = spectator.query('mat-checkbox input') as HTMLInputElement;
-    checkboxInput.click();
-    spectator.detectChanges();
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.uncheck();
 
     isAuthenticated$.next(true);
     spectator.detectChanges();
@@ -124,17 +129,16 @@ describe('AlertClassesTabComponent', () => {
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
   });
 
-  it('should run comparison when Check Now button is clicked', () => {
+  it('should run comparison when Check Now button is clicked', async () => {
     spectator.detectChanges();
-    const checkboxInput = spectator.query('mat-checkbox input') as HTMLInputElement;
-    checkboxInput.click();
-    spectator.detectChanges();
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.uncheck();
 
     isAuthenticated$.next(true);
     spectator.detectChanges();
 
-    spectator.click('button[mat-button]');
-    spectator.detectChanges();
+    const button = await loader.getHarness(TnButtonHarness);
+    await button.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alert.list_categories');
   });

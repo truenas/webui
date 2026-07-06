@@ -1,18 +1,29 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
-  EMPTY, catchError, filter, map, of, switchMap, tap,
+  ChangeDetectionStrategy, Component, Type, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnIconComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  TnDialog,
+} from '@truenas/ui-components';
+import {
+  EMPTY, Observable, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
-import { cloudSyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -22,35 +33,31 @@ import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import {
-  scheduleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
-import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { LoaderService } from 'app/modules/loader/loader.service';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { convertStringToId } from 'app/modules/ix-table/utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import {
+  TableToggleCellComponent,
+} from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CloudSyncDataTransformer } from 'app/pages/data-protection/cloudsync/utils/cloudsync-data-transformer';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
+import { JobTaskCardBase } from 'app/pages/data-protection/utils/job-task-card-base.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
-import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-cloudsync-task-card',
@@ -58,162 +65,106 @@ import { AppState } from 'app/store';
   styleUrls: ['./cloudsync-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
-    TestDirective,
+    TnButtonComponent,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnCardHeaderDirective,
+    RequiresRolesDirective,
+    TnTestIdDirective,
     RouterLink,
     TnIconComponent,
-    MatTooltip,
-    RequiresRolesDirective,
-    MatButton,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTooltipDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    IxTablePagerShowMoreComponent,
+    TableToggleCellComponent,
+    TableActionsCellComponent,
+    TaskStateCellComponent,
     TranslateModule,
     AsyncPipe,
-    EmptyComponent,
+    TnEmptyComponent,
     CardAlertBadgeComponent,
   ],
 })
-export class CloudSyncTaskCardComponent implements OnInit {
-  private translate = inject(TranslateService);
+export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi> {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
-  private cdr = inject(ChangeDetectorRef);
+  private formPanel = inject(FormSidePanelService);
   private taskService = inject(TaskService);
-  private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
   private tnDialog = inject(TnDialog);
   protected emptyService = inject(EmptyService);
-  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
-  protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
   protected readonly cardMenuPath = ['data-protection', 'cloudsync'];
+  protected readonly displayedColumns = ['description', 'state', 'enabled', 'actions'];
+  protected readonly defaultSortProperty = 'description';
+  protected readonly addTestId = 'cloudsync-task-add';
 
-  cloudSyncTasks: CloudSyncTaskUi[] = [];
-  dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
-  jobStates = new Map<number, JobState>();
-
-  columns = createTable<CloudSyncTaskUi>([
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'description',
-    }),
-    scheduleColumn({
-      title: this.translate.instant('Frequency'),
-      getValue: (row) => row.schedule,
-      propertyName: 'frequency_sort_key',
-    }),
-    textColumn({
-      title: this.translate.instant('Next Run'),
-      getValue: (row: CloudSyncTaskUi) => {
-        // For disabled tasks, show "Disabled" text
-        if (!row.enabled) {
-          return this.translate.instant('Disabled');
-        }
-        // For enabled tasks, show the pre-computed relative time string
-        return row.next_run;
-      },
-      propertyName: 'next_run_sort_key',
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Last Run'),
-      getValue: (row) => row.job?.time_finished?.$date,
-      propertyName: 'last_run_sort_key',
-    }),
-    toggleColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-      onRowToggle: (row: CloudSyncTaskUi) => this.onChangeEnabledState(row),
+  protected readonly actions: IconActionConfig<CloudSyncTaskUi>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.onEdit(row),
+    },
+    {
+      iconName: tnIconMarker('play-circle', 'mdi'),
+      tooltip: this.translate.instant('Run job'),
+      hidden: (row) => of(row.job?.state === JobState.Running),
+      onClick: (row) => this.runNow(row),
       requiredRoles: this.requiredRoles,
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      getValue: (row) => row.state.state,
-      getJob: (row) => row.job,
-      cssClass: 'state-button',
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.onEdit(row),
-        },
-        {
-          iconName: tnIconMarker('play-circle', 'mdi'),
-          tooltip: this.translate.instant('Run job'),
-          hidden: (row) => of(row.job?.state === JobState.Running),
-          onClick: (row) => this.runNow(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('stop-circle', 'mdi'),
-          tooltip: this.translate.instant('Stop'),
-          hidden: (row) => of(row.job?.state !== JobState.Running),
-          onClick: (row) => this.stopCloudSyncTask(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('sync', 'mdi'),
-          tooltip: this.translate.instant('Dry Run'),
-          onClick: (row) => this.dryRun(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('restore', 'mdi'),
-          tooltip: this.translate.instant('Restore'),
-          onClick: (row) => this.restore(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'card-cloudsync-task-' + row.description,
-    ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
-  });
+    },
+    {
+      iconName: tnIconMarker('stop-circle', 'mdi'),
+      tooltip: this.translate.instant('Stop'),
+      hidden: (row) => of(row.job?.state !== JobState.Running),
+      onClick: (row) => this.stopCloudSyncTask(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('sync', 'mdi'),
+      tooltip: this.translate.instant('Dry Run'),
+      onClick: (row) => this.dryRun(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('restore', 'mdi'),
+      tooltip: this.translate.instant('Restore'),
+      onClick: (row) => this.restore(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
 
-  ngOnInit(): void {
-    const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
+  protected uniqueRowTag(row: CloudSyncTaskUi): string {
+    return convertStringToId('card-cloudsync-task-' + row.description);
+  }
+
+  protected ariaLabel(row: CloudSyncTaskUi): string {
+    return [row.description, this.translate.instant('Cloud Sync Task')].join(' ');
+  }
+
+  protected queryTasks(): Observable<CloudSyncTaskUi[]> {
+    return this.api.call('cloudsync.query').pipe(
       map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
         cloudSyncTasks,
         this.taskService,
         this.translate,
       )),
-      tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
-      tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
-      takeUntilDestroyed(this.destroyRef),
     );
-    this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
-    this.getCloudSyncTasks();
   }
 
-  private setupJobSubscriptions(cloudSyncTasks: CloudSyncTaskUi[]): void {
-    cloudSyncTasks.forEach((transformed) => {
-      if (transformed.job) {
-        this.store$.select(selectJob(transformed.job.id)).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-          .subscribe((job: Job) => {
-            transformed.job = { ...job };
-            transformed.state = { state: job.state };
-            this.jobStates.set(job.id, job.state);
-          });
-      }
-    });
-  }
-
-  getCloudSyncTasks(): void {
-    this.dataProvider.load();
+  protected mergeJob(row: CloudSyncTaskUi, job: Job): CloudSyncTaskUi {
+    return { ...row, job, state: { state: job.state } };
   }
 
   protected doDelete(cloudsyncTask: CloudSyncTaskUi): void {
@@ -226,17 +177,29 @@ export class CloudSyncTaskCardComponent implements OnInit {
       successMessage: this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: cloudsyncTask.description }),
     }).pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getCloudSyncTasks());
+    ).subscribe(() => this.reload());
   }
 
   protected onAdd(): void {
-    this.slideIn.open(CloudSyncWizardComponent, { wide: true })
-      .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
+    this.formPanel.open(this.cloudSyncWizard, {
+      title: this.translate.instant('Cloud Sync Task Wizard'),
+      wide: true,
+      footerless: true,
+    }).onSuccess(() => this.reload(), this.destroyRef);
   }
 
+  // CloudSyncFormComponent / CloudSyncWizardComponent structurally provide the host surface the panel
+  // reads (closed / hasUnsavedChanges, and for the form canSubmit/submit); cast past the nominal base.
+  // The wizard is `footerless` — its mat-stepper owns its Next/Save buttons.
+  private readonly cloudSyncForm = CloudSyncFormComponent as unknown as Type<SidePanelForm>;
+  private readonly cloudSyncWizard = CloudSyncWizardComponent as unknown as Type<SidePanelForm>;
+
   protected onEdit(row?: CloudSyncTaskUi): void {
-    this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row })
-      .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
+    this.formPanel.open(this.cloudSyncForm, {
+      title: this.translate.instant('Edit Cloud Sync Task'),
+      wide: true,
+      inputs: { taskToEdit: row },
+    }).onSuccess(() => this.reload(), this.destroyRef);
   }
 
   protected runNow(row: CloudSyncTaskUi): void {
@@ -252,7 +215,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.translate.instant('Cloud Sync Task «{name}» has started.', { name: row.description }),
       )),
       catchError((error: unknown) => {
-        this.getCloudSyncTasks();
+        this.reload();
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
@@ -262,10 +225,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» completed successfully.', { name: row.description }));
       }
       this.updateRowStateAndJob(row, job.state, job);
-      if (this.jobStates.get(job.id) !== job.state) {
-        this.getCloudSyncTasks();
-      }
-      this.jobStates.set(job.id, job.state);
+      this.jobs.reconcile(job, () => this.reload());
     });
   }
 
@@ -288,7 +248,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }));
         this.updateRowStateAndJob(row, JobState.Aborted, null);
-        this.cdr.markForCheck();
       });
   }
 
@@ -313,10 +272,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» dry run completed successfully.', { name: row.description }));
       }
       this.updateRowStateAndJob(row, job.state, job);
-      if (this.jobStates.get(job.id) !== job.state) {
-        this.getCloudSyncTasks();
-      }
-      this.jobStates.set(job.id, job.state);
+      this.jobs.reconcile(job, () => this.reload());
     });
   }
 
@@ -329,35 +285,26 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.snackbar.success(
           this.translate.instant('Cloud Sync «{name}» has been restored.', { name: row.description }),
         );
-        this.getCloudSyncTasks();
+        this.reload();
       });
   }
 
-  private onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi): void {
+  protected onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi, toggle: TableToggleCellComponent): void {
     this.api
       .call('cloudsync.update', [cloudsyncTask.id, { enabled: !cloudsyncTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.getCloudSyncTasks();
+          this.reload();
         },
         error: (error: unknown) => {
-          this.getCloudSyncTasks();
+          toggle.revert();
           this.errorHandler.showErrorModal(error);
         },
       });
   }
 
   private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job | null): void {
-    this.dataProvider.setRows(this.cloudSyncTasks.map((task) => {
-      if (task.id === row.id) {
-        return {
-          ...task,
-          state: { state },
-          job,
-        };
-      }
-      return task;
-    }));
+    this.jobs.repaintRow(row.id, (task) => ({ ...task, state: { state }, job }));
   }
 }

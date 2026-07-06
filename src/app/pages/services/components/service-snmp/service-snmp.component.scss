@@ -1,13 +1,8 @@
 @import 'scss-imports/variables';
 
-.card {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 960px;
-}
-
 .columns {
   display: flex;
+  gap: 24px;
 
   @media (max-width: $breakpoint-tablet) {
     display: block;
@@ -15,7 +10,8 @@
 
   > * {
     display: block;
-    width: 50%;
+    flex: 1 1 0;
+    min-width: 0;
 
     @media (max-width: $breakpoint-tablet) {
       width: 100%;

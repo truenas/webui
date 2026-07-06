@@ -1,11 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperModule } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -30,7 +32,6 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { ExtentWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/extent-wizard-step/extent-wizard-step.component';
@@ -46,12 +47,6 @@ describe('IscsiWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let store$: Store<AppState>;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(() => true),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const createComponent = createComponentFactory({
     component: IscsiWizardComponent,
@@ -128,9 +123,18 @@ describe('IscsiWizardComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
+
+  const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnChipInput = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
+    TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   beforeEach(async () => {
     spectator = createComponent();
@@ -145,25 +149,32 @@ describe('IscsiWizardComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    await form.fillForm({
-      Name: 'test-name',
-      Device: 'Create New',
-      'Pool/Dataset': '/mnt/new_pool',
-      Size: 1024,
-      Portal: 'Create New',
-      Initiators: ['initiator1', 'initiator2'],
+    let createdTarget: IscsiTarget | undefined;
+    spectator.component.closed.subscribe((target) => {
+      createdTarget = target;
     });
+
+    await (await getTnInput('name')).setValue('test-name');
+    await (await getTnSelect('disk')).selectOption('Create New');
+    await form.fillForm({
+      'Pool/Dataset': '/mnt/new_pool',
+    });
+    await (await getTnInput('volsize')).setValue('1024 MiB');
+    await (await getTnSelect('portal')).selectOption('Create New');
+
+    const initiatorsInput = await getTnChipInput('initiators');
+    await initiatorsInput.addChip('initiator1');
+    await initiatorsInput.addChip('initiator2');
 
     const addIpAddressButton = await loader.getHarness(IxListHarness.with({ label: 'IP Address' }));
     await addIpAddressButton.pressAddButton();
 
-    await form.fillForm(
-      {
-        'IP Address': '::',
-      },
+    const listenIpSelect = await loader.getHarness(
+      TnSelectHarness.with({ ancestor: 'ix-list-item' }),
     );
+    await listenIpSelect.selectOption('::');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     // Wait for all async operations to complete
@@ -219,32 +230,39 @@ describe('IscsiWizardComponent', () => {
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(createdTarget).toEqual({ id: 15 } as IscsiTarget);
   });
 
   it('fibre channel: creates objects when wizard is submitted', async () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    await form.fillForm({
-      Name: 'test-name',
-      Device: 'Create New',
-      'Pool/Dataset': '/mnt/new_pool',
-      Size: 1024,
-      Portal: 'Create New',
-      Initiators: ['initiator1', 'initiator2'],
+    let createdTarget: IscsiTarget | undefined;
+    spectator.component.closed.subscribe((target) => {
+      createdTarget = target;
     });
+
+    await (await getTnInput('name')).setValue('test-name');
+    await (await getTnSelect('disk')).selectOption('Create New');
+    await form.fillForm({
+      'Pool/Dataset': '/mnt/new_pool',
+    });
+    await (await getTnInput('volsize')).setValue('1024 MiB');
+    await (await getTnSelect('portal')).selectOption('Create New');
+
+    const initiatorsInput = await getTnChipInput('initiators');
+    await initiatorsInput.addChip('initiator1');
+    await initiatorsInput.addChip('initiator2');
 
     const addIpAddressButton = await loader.getHarness(IxListHarness.with({ label: 'IP Address' }));
     await addIpAddressButton.pressAddButton();
 
-    await form.fillForm(
-      {
-        'IP Address': '::',
-      },
+    const listenIpSelect = await loader.getHarness(
+      TnSelectHarness.with({ ancestor: 'ix-list-item' }),
     );
+    await listenIpSelect.selectOption('::');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     // Wait for all async operations to complete
@@ -300,23 +318,23 @@ describe('IscsiWizardComponent', () => {
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(createdTarget).toEqual({ id: 15 } as IscsiTarget);
   });
 
   describe('FC MPIO validation', () => {
     beforeEach(async () => {
       // Fill target step with FC mode
+      await (await getTnInput('name')).setValue('test-fc-target');
       await form.fillForm({
-        Name: 'test-fc-target',
         Mode: 'Fibre Channel',
       });
 
       // Move to extent step
+      await (await getTnSelect('disk')).selectOption('Create New');
       await form.fillForm({
-        Device: 'Create New',
         'Pool/Dataset': '/mnt/new_pool',
-        Size: 1024,
       });
+      await (await getTnInput('volsize')).setValue('1024 MiB');
 
       spectator.detectChanges();
     });
@@ -342,7 +360,7 @@ describe('IscsiWizardComponent', () => {
       spectator.detectChanges();
 
       // Verify no FC port validation errors displayed
-      const errorElement = spectator.query('mat-error');
+      const errorElement = spectator.query('.fc-port-error');
       expect(errorElement).toBeFalsy();
 
       // Note: Button may still be disabled due to other form validation,
@@ -371,7 +389,7 @@ describe('IscsiWizardComponent', () => {
       spectator.detectChanges();
 
       // Verify submit button is disabled due to validation failure
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Note: Error detection for NPIV ports would require backend resolution
@@ -399,7 +417,7 @@ describe('IscsiWizardComponent', () => {
       spectator.detectChanges();
 
       // Verify no FC port validation error displayed
-      const errorElement = spectator.query('mat-error');
+      const errorElement = spectator.query('.fc-port-error');
       expect(errorElement).toBeFalsy();
 
       // Note: Mixed mode (physical + NPIV) should be valid as long as they're on different physical ports
@@ -411,7 +429,7 @@ describe('IscsiWizardComponent', () => {
       spectator.detectChanges();
 
       // No error message should be shown for empty ports
-      const errorElement = spectator.query('mat-error');
+      const errorElement = spectator.query('.fc-port-error');
       expect(errorElement).toBeFalsy();
 
       // Note: The form may still be invalid due to other required fields

@@ -1,70 +1,125 @@
-<mat-card>
-  <mat-toolbar-row>
-    <h3 class="card-title">
-      <a
-        [ixTest]="['snapshot-task', 'open-in-new']"
-        [routerLink]="['/data-protection', 'snapshot']"
-        [matTooltip]="'Open Periodic Snapshot Tasks list in full page' | translate"
-      >
-        {{ 'Periodic Snapshot Tasks' | translate }}
-        <tn-icon
-          name="open-in-new"
-          library="mdi"
-          class="title-icon"
-          [attr.aria-label]="'Open Periodic Snapshot Tasks list in full page' | translate"
-        ></tn-icon>
-      </a>
-      <ix-card-alert-badge [menuPath]="cardMenuPath" />
-    </h3>
-    <div class="actions">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['snapshot-task', 'add']"
-        [attr.aria-label]="'Add Snapshot Task' | translate"
-        (click)="openForm()"
-      >
-        {{ 'Add' | translate }}
-      </button>
-    </div>
-  </mat-toolbar-row>
-
-  @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
-  } @else {
-    <ix-table
-      class="table"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+<tn-card padding="small">
+  <h3 tnCardHeader class="tn-card__title card-title">
+    <a
+      tnTestIdType="link"
+      [tnTestId]="['snapshot-task', 'open-in-new']"
+      [routerLink]="['/data-protection', 'snapshot']"
+      [tnTooltip]="'Open Periodic Snapshot Tasks list in full page' | translate"
     >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      ></tbody>
-    </ix-table>
+      {{ 'Periodic Snapshot Tasks' | translate }}
+      <tn-icon
+        name="open-in-new"
+        library="mdi"
+        class="title-icon"
+        [attr.aria-label]="'Open Periodic Snapshot Tasks list in full page' | translate"
+      ></tn-icon>
+    </a>
+    <ix-card-alert-badge [menuPath]="cardMenuPath" />
+  </h3>
 
-    <div class="justify-end">
-      <div class="footer-actions">
-        <a
-          mat-button
-          [ixTest]="['snapshot-task', 'vmware-snapshots']"
+  @let isEmpty = !(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async);
+
+  @if (isEmpty) {
+    <tn-empty
+      icon="file-multiple-outline"
+      iconLibrary="mdi"
+      iconSize="56px"
+      [title]="'Automatically create point-in-time snapshots of selected datasets at regular intervals. These snapshots help preserve data states for recovery, backup, and versioning purposes, ensuring minimal data loss in case of accidental deletion or corruption.' | translate"
+    ></tn-empty>
+  } @else {
+    <tn-table
+      class="table"
+      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns"
+      [trackBy]="trackByTaskId"
+      [loading]="!!(dataProvider.isLoading$ | async)"
+      (sortChange)="onSortChange($event)"
+    >
+      <ng-container [tnColumnDef]="'dataset'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Pool/Dataset' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Pool/Dataset' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.dataset || ''"
+          >{{ row.dataset }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'state'" [width]="'120px'">
+        <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-task-state-cell
+            [state]="row.state.state"
+            [testId]="[('State' | translate), uniqueRowTag(row), 'row-state']"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-task-state-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'enabled'" [width]="'70px'">
+        <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-toggle-cell
+            #enabledToggle
+            [title]="'Enabled' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+            [checked]="!!row.enabled"
+            [requiredRoles]="requiredRoles"
+            (toggled)="onChangeEnabledState(row, enabledToggle)"
+          ></ix-table-toggle-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-actions-cell
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-table-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
+
+    <ix-table-pager-show-more
+      [pageSize]="4"
+      [dataProvider]="dataProvider"
+      [ixTestOverride]="['snapshot-task']"
+      [routerLink]="['/data-protection', 'snapshot']"
+    ></ix-table-pager-show-more>
+  }
+
+  <div class="card-footer">
+    <div class="card-footer__start">
+      @if (!isEmpty) {
+        <tn-button
+          variant="outline"
+          [testId]="['snapshot-task', 'vmware-snapshots']"
           [routerLink]="['/data-protection', 'vmware-snapshots']"
           [ixUiSearch]="uiSearchableElement.elements.vmwareSnapshots"
-        >{{ 'VMware Snapshot Integration' | translate }}</a>
+          [label]="'VMware Snapshot Integration' | translate"
+        ></tn-button>
 
-        <a
-          mat-button
-          [ixTest]="['snapshot-task', 'snapshots']"
+        <tn-button
+          variant="outline"
+          [testId]="['snapshot-task', 'snapshots']"
           [routerLink]="['/datasets', 'snapshots']"
-        >{{ 'Snapshots' | translate }}</a>
-      </div>
+          [label]="'Snapshots' | translate"
+        ></tn-button>
+      }
     </div>
-  }
-</mat-card>
+
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      variant="filled"
+      color="primary"
+      testId="snapshot-task-add"
+      [label]="'Add' | translate"
+      (onClick)="openForm()"
+    ></tn-button>
+  </div>
+</tn-card>

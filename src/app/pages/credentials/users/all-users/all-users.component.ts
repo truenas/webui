@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, viewChild, OnDestroy, Chang
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, startWith, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CollectionChangeType } from 'app/enums/api.enum';
@@ -13,6 +13,7 @@ import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provide
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllUsersHeaderComponent } from 'app/pages/credentials/users/all-users/all-users-header/all-users-header.component';
 import { allUsersElements } from 'app/pages/credentials/users/all-users/all-users.elements';
@@ -23,6 +24,7 @@ import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-d
 import { getDefaultUserTypeFilters } from 'app/pages/credentials/users/all-users/users-search/users-search-presets';
 import { setUsernameInUrl } from 'app/pages/credentials/users/router-utils';
 import { userPageEntered } from 'app/pages/credentials/users/store/user.actions';
+import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { AppState } from 'app/store';
 
 @Component({
@@ -49,8 +51,14 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   private destroyRef = inject(DestroyRef);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
 
   protected readonly dataProvider = new UsersDataProvider(this.api, [getDefaultUserTypeFilters(), {}]);
+
+  // Armed when Add is initiated so the next `user.query` "added" event auto-expands the new row.
+  // The form closes the panel with only a boolean, so the created record is read from the event.
+  private expandNextAddedUser = false;
 
   protected readonly searchableElements = allUsersElements;
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
@@ -104,9 +112,18 @@ export class AllUsersComponent implements OnInit, OnDestroy {
       startWith(null),
       tap((event) => {
         switch (event?.msg) {
+          case CollectionChangeType.Added:
+            // The Add panel only reports success as a boolean, so capture the created user here
+            // to restore the legacy "auto-expand the newly added row" behaviour.
+            if (this.expandNextAddedUser && event.fields) {
+              this.expandNextAddedUser = false;
+              this.dataProvider.expandedRow = event.fields;
+              setUsernameInUrl(this.location, event.fields.username);
+            }
+            this.dataProvider.load();
+            break;
           case CollectionChangeType.Changed:
           case CollectionChangeType.Removed:
-          case CollectionChangeType.Added:
             this.dataProvider.load();
             break;
           default:
@@ -128,8 +145,12 @@ export class AllUsersComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  protected loadNewUser(newUser: User): void {
-    this.dataProvider.expandedRow = newUser;
-    setUsernameInUrl(this.location, newUser?.username);
+  protected onAddUser(): void {
+    // Arm before opening so the new user's "added" event (which can arrive before the panel
+    // closes) is captured and its row auto-expanded once the list reloads.
+    this.expandNextAddedUser = true;
+    this.formPanel.open(UserFormComponent, {
+      title: this.translate.instant('Add User'),
+    });
   }
 }

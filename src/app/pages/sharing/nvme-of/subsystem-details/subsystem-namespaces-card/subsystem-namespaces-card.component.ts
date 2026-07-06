@@ -4,16 +4,15 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   NamespaceDescriptionComponent,
@@ -39,7 +38,7 @@ import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete
     MatCardContent,
     MatIconButton,
     NamespaceDescriptionComponent,
-    MatTooltip,
+    TnTooltipDirective,
     TestDirective,
     UiSearchDirective,
     MatButton,
@@ -47,7 +46,8 @@ import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete
   ],
 })
 export class SubsystemNamespacesCardComponent {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private nvmeOfStore = inject(NvmeOfStore);
   private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
@@ -61,8 +61,11 @@ export class SubsystemNamespacesCardComponent {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected onAddNamespace(): void {
-    this.slideIn.open(NamespaceFormComponent, {
-      data: { subsystemId: this.subsystem().id },
+    // Opened footerless — the base form owns Save.
+    this.formPanel.open(NamespaceFormComponent, {
+      title: this.translate.instant('Add Namespace'),
+      footerless: true,
+      inputs: { namespaceData: { subsystemId: this.subsystem().id } },
     }).onSuccess(() => this.nvmeOfStore.initialize(), this.destroyRef);
   }
 

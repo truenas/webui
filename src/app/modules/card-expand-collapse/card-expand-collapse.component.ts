@@ -13,10 +13,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { timer } from 'rxjs';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-card-expand-collapse',
@@ -25,8 +24,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
   ],
 })
 export class CardExpandCollapseComponent implements OnChanges, AfterViewInit {

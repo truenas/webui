@@ -1,11 +1,22 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardHeaderActionsDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -17,17 +28,14 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
@@ -38,29 +46,29 @@ import { alertServiceListElements } from 'app/pages/system/alert-service/alert-s
   styleUrls: ['./alert-service-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
     UiSearchDirective,
-    MatToolbarRow,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
+    TableActionsCellComponent,
     TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    YesNoPipe,
   ],
 })
 export class AlertServiceListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private loader = inject(LoaderService);
   private cdr = inject(ChangeDetectorRef);
@@ -69,57 +77,48 @@ export class AlertServiceListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AlertListWrite];
   protected readonly searchableElements = alertServiceListElements;
 
-  dataProvider: AsyncDataProvider<AlertService>;
-  searchQuery = signal('');
+  protected dataProvider: AsyncDataProvider<AlertService>;
+  protected searchQuery = signal('');
 
-  columns = createTable<AlertService>([
-    textColumn({
-      title: this.translate.instant('Service Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Type'),
-      getValue: (service) => {
-        return this.translate.instant(
-          alertServiceNames.find((alertService) => alertService.value === service.attributes.type)?.label || '',
-        );
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Level'),
-      propertyName: 'level',
-      getValue: (service) => {
-        if (service.level) {
-          return this.translate.instant(alertLevelLabels.get(service.level) || service.level);
-        }
+  protected readonly displayedColumns = ['name', 'type', 'level', 'enabled', 'actions'];
 
-        return this.translate.instant('Unknown');
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-      getValue: (service) => (service.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.editAlertService(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.confirmDeleteAlertService(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => `disk-${row.name}`,
-    ariaLabels: (row) => [row.name || '', this.translate.instant('Disk')],
-  });
+  protected readonly trackByServiceId = (_: number, row: AlertService): number => row.id;
+
+  protected readonly actions: IconActionConfig<AlertService>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.editAlertService(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.confirmDeleteAlertService(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected serviceTypeLabel(service: AlertService): string {
+    return this.translate.instant(
+      alertServiceNames.find((alertService) => alertService.value === service.attributes.type)?.label || '',
+    );
+  }
+
+  protected serviceLevelLabel(service: AlertService): string {
+    if (service.level) {
+      return this.translate.instant(alertLevelLabels.get(service.level) || service.level);
+    }
+
+    return this.translate.instant('Unknown');
+  }
+
+  protected uniqueRowTag(row: AlertService): string {
+    return convertStringToId('alert-service-' + row.name);
+  }
+
+  protected ariaLabel(row: AlertService): string {
+    return [row.name, this.translate.instant('Alert Service')].join(' ');
+  }
 
   private alertServices: AlertService[] = [];
 
@@ -129,29 +128,46 @@ export class AlertServiceListComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<AlertService>(alertServices$);
+    this.setDefaultSort();
     this.getAlertServices();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
 
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<AlertService>(event, this.displayedColumns));
+  }
+
+  private setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 0,
+      direction: SortDirection.Asc,
+      propertyName: 'name',
+    });
+  }
+
+  // AlertServiceComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles/footerActions) the panel reads; cast past the nominal base type,
+  // mirroring how FormSidePanelService.openForm casts the renderer.
+  private readonly alertServiceForm = AlertServiceComponent as unknown as Type<SidePanelForm>;
+
   protected addAlertService(): void {
-    this.slideIn.open(AlertServiceComponent).onSuccess(() => this.getAlertServices(), this.destroyRef);
+    this.formPanel.open(this.alertServiceForm, { title: this.translate.instant('Add Alert Service') })
+      .onSuccess(() => this.getAlertServices(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.alertServices, query, columnKeys: ['name', 'level'] });
-  }
-
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
     this.cdr.markForCheck();
   }
 
   private editAlertService(row: AlertService): void {
-    this.slideIn.open(AlertServiceComponent, { data: row }).onSuccess(() => this.getAlertServices(), this.destroyRef);
+    this.formPanel.open(this.alertServiceForm, {
+      title: this.translate.instant('Edit Alert Service'),
+      inputs: { alertServiceToEdit: row },
+    }).onSuccess(() => this.getAlertServices(), this.destroyRef);
   }
 
   private confirmDeleteAlertService(alertService: AlertService): void {

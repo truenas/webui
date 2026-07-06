@@ -7,97 +7,110 @@
 }
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset [title]="'General Options' | translate">
-    <ix-select
-      formControlName="bindip"
+  <tn-form-section [heading]="'General Options' | translate">
+    <tn-form-field
       [label]="'Bind IP Addresses' | translate"
-      [options]="ipChoices$"
-      [multiple]="true"
       [tooltip]="tooltips.bindip | translate"
-    ></ix-select>
+    >
+      <tn-select
+        formControlName="bindip"
+        [options]="(ipChoices$ | async) ?? []"
+        [multiple]="true"
+      ></tn-select>
+    </tn-form-field>
 
-    <ix-checkbox
-      formControlName="servers_auto"
-      [label]="'Calculate number of threads dynamically' | translate"
-      [tooltip]="tooltips.servers_auto | translate"
-    ></ix-checkbox>
+    <tn-form-field [tooltip]="tooltips.servers_auto | translate">
+      <tn-checkbox
+        formControlName="servers_auto"
+        [label]="'Calculate number of threads dynamically' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
     @if (!form.controls.servers_auto.value) {
-      <ix-input
-        formControlName="servers"
-        type="number"
+      <tn-form-field
         [label]="'Specify number of threads manually' | translate"
         [required]="true"
         [tooltip]="tooltips.servers | translate"
-      ></ix-input>
+      >
+        <tn-input formControlName="servers" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
     }
-  </ix-fieldset>
+  </tn-form-section>
 
   <div class="two-columns">
-    <ix-fieldset [title]="'NFSv4' | translate">
-      <ix-select
-        formControlName="protocols"
+    <tn-form-section [heading]="'NFSv4' | translate">
+      <tn-form-field
         [label]="'Enabled Protocols' | translate"
-        [options]="protocolOptions$"
-        [multiple]="true"
         [tooltip]="tooltips.protocols | translate"
         [required]="true"
-      ></ix-select>
+      >
+        <tn-select
+          formControlName="protocols"
+          [options]="(protocolOptions$ | async) ?? []"
+          [multiple]="true"
+        ></tn-select>
+      </tn-form-field>
 
-      <ix-input
-        formControlName="v4_domain"
+      <tn-form-field
         [label]="'NFSv4 DNS Domain' | translate"
         [tooltip]="tooltips.v4_domain | translate"
-      ></ix-input>
+      >
+        <tn-input formControlName="v4_domain"></tn-input>
+      </tn-form-field>
 
-      <ix-checkbox
-        formControlName="v4_krb"
-        [label]="'Require Kerberos for NFSv4' | translate"
-        [tooltip]="tooltips.v4_krb | translate"
-      ></ix-checkbox>
-    </ix-fieldset>
-    <ix-fieldset [title]="'Ports' | translate">
-      <ix-input
-        formControlName="mountd_port"
-        type="number"
+      <tn-form-field [tooltip]="tooltips.v4_krb | translate">
+        <tn-checkbox
+          formControlName="v4_krb"
+          [label]="'Require Kerberos for NFSv4' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    </tn-form-section>
+    <tn-form-section [heading]="'Ports' | translate">
+      <tn-form-field
         [label]="'mountd(8) bind port' | translate"
         [tooltip]="tooltips.mountd_port | translate"
-      ></ix-input>
+      >
+        <tn-input formControlName="mountd_port" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
 
-      <ix-input
-        formControlName="rpcstatd_port"
-        type="number"
+      <tn-form-field
         [label]="'rpc.statd(8) bind port' | translate"
         [tooltip]="tooltips.rpcstatd_port | translate"
-      ></ix-input>
+      >
+        <tn-input formControlName="rpcstatd_port" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
 
-      <ix-input
-        formControlName="rpclockd_port"
-        type="number"
+      <tn-form-field
         [label]="'rpc.lockd(8) bind port' | translate"
         [tooltip]="tooltips.rpclockd_port | translate"
-      ></ix-input>
-    </ix-fieldset>
+      >
+        <tn-input formControlName="rpclockd_port" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+      </tn-form-field>
+    </tn-form-section>
   </div>
 
-  <ix-fieldset [title]="'Other Options' | translate">
-    <ix-checkbox
-      formControlName="rdma"
-      [label]="'Enable NFS over RDMA' | translate"
-    ></ix-checkbox>
+  <tn-form-section [heading]="'Other Options' | translate">
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="rdma"
+        [label]="'Enable NFS over RDMA' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-    <ix-checkbox
-      formControlName="allow_nonroot"
-      [label]="'Allow non-root mount' | translate"
-      [tooltip]="tooltips.allow_nonroot | translate"
-    ></ix-checkbox>
+    <tn-form-field [tooltip]="tooltips.allow_nonroot | translate">
+      <tn-checkbox
+        formControlName="allow_nonroot"
+        [label]="'Allow non-root mount' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-    <ix-checkbox
-      formControlName="userd_manage_gids"
-      [label]="'Manage Groups Server-side' | translate"
-      [tooltip]="tooltips.userd_manage_gids | translate"
-    ></ix-checkbox>
-  </ix-fieldset>
+    <tn-form-field [tooltip]="tooltips.userd_manage_gids | translate">
+      <tn-checkbox
+        formControlName="userd_manage_gids"
+        [label]="'Manage Groups Server-side' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
 
   <ix-form-actions>
     @if (slideInRef) {
@@ -105,10 +118,10 @@
         <tn-button
           *ixRequiresRoles="requiredRoles"
           color="primary"
-          [ixTest]="'save'"
+          type="submit"
+          [testId]="'save'"
           [label]="'Save' | translate"
           [disabled]="form.invalid || isFormLoading()"
-          (onClick)="onSubmit()"
         ></tn-button>
       </div>
     }
@@ -123,7 +136,7 @@
         <ng-container *ixRequiresRoles="requiredRoles">
           <tn-button
             color="primary"
-            [ixTest]="'add-spn'"
+            [testId]="'add-spn'"
             [label]="'Add SPN' | translate"
             [disabled]="isAddSpnDisabled()"
             (onClick)="addSpn()"

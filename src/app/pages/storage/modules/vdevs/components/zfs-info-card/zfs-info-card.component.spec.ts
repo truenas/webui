@@ -1,10 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -91,6 +92,11 @@ describe('ZfsInfoCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
+  async function openCardMenu(): Promise<TnMenuHarness> {
+    spectator.click(spectator.query('[data-test="button-zfs-actions"]')!);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   describe('disks', () => {
     it('shows errors of the current disk', () => {
       const parent = spectator.query(byText('Parent:', { exact: true }))!;
@@ -112,7 +118,7 @@ describe('ZfsInfoCardComponent', () => {
         name: 'mirror-0',
         type: TopologyItemType.Spare,
       } as VDev);
-      const removeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Remove' }));
+      const removeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Remove' }));
       await removeButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -131,36 +137,45 @@ describe('ZfsInfoCardComponent', () => {
 
       spectator.detectChanges();
       expect(
-        await loader.getHarness(MatButtonHarness.with({ text: 'Remove' })),
+        await loader.getHarness(TnButtonHarness.with({ label: 'Remove' })),
       ).toBeTruthy();
 
       spectator.setInput('topologyCategory', VDevType.Spare);
       spectator.detectChanges();
       expect(
-        await loader.getHarness(MatButtonHarness.with({ text: 'Remove' })),
+        await loader.getHarness(TnButtonHarness.with({ label: 'Remove' })),
       ).toBeTruthy();
 
       spectator.setInput('topologyCategory', VDevType.Cache);
       spectator.detectChanges();
       expect(
-        await loader.getHarness(MatButtonHarness.with({ text: 'Remove' })),
+        await loader.getHarness(TnButtonHarness.with({ label: 'Remove' })),
       ).toBeTruthy();
     });
 
-    it('detaches a device with confirmation when Detach is pressed', async () => {
-      const detachButton = await loader.getHarness(MatButtonHarness.with({ text: 'Detach' }));
-      await detachButton.click();
+    it('detaches a device with confirmation when Detach is pressed from the card menu', async () => {
+      const menu = await openCardMenu();
+      await menu.clickItem({ label: 'Detach' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.detach', [1, { label: 'disk-guid' }]);
     });
 
-    it('offlines a device with confirmation when Offline is pressed', async () => {
-      const offlineButton = await loader.getHarness(MatButtonHarness.with({ text: 'Offline' }));
-      await offlineButton.click();
+    it('offlines a device with confirmation when Offline is pressed from the card menu', async () => {
+      const menu = await openCardMenu();
+      await menu.clickItem({ label: 'Offline' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.offline', [1, { label: 'disk-guid' }]);
+    });
+
+    // Guards the e2e contract: moving these actions into the kebab menu must preserve their
+    // legacy data-test ids (the menu renders them with the `button-` prefix, not `menu-item-`).
+    it('preserves button-prefixed data-test ids on the card menu items', async () => {
+      await openCardMenu();
+      const ids = Array.from(document.querySelectorAll('.tn-menu-item'))
+        .map((item) => item.getAttribute('data-test'));
+      expect(ids).toEqual(['button-detach', 'button-offline']);
     });
   });
 
@@ -195,7 +210,7 @@ describe('ZfsInfoCardComponent', () => {
     });
 
     it('opens an expand dialog when Extend is pressed on a Mirror', async () => {
-      const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+      const expandButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
       await expandButton.click();
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ExtendDialog, {

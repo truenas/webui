@@ -1,15 +1,19 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, filter, of, switchMap, tap,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  Observable, filter, of, switchMap,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
@@ -19,25 +23,19 @@ import { helptextSharingNfs } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -46,56 +44,55 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
+/** Edit/default data supplied either by the legacy SlideIn host (via `getData()`) or the panel host (input). */
+export interface NfsFormData {
+  existingNfsShare?: NfsShare;
+  defaultNfsShare?: NfsShare;
+}
+
 @Component({
   selector: 'ix-nfs-form',
   templateUrl: './nfs-form.component.html',
   styleUrls: ['./nfs-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TnButtonComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
-    IxSelectComponent,
     IxListComponent,
     IxListItemComponent,
     IxIpInputWithNetmaskComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
+    AsyncPipe,
   ],
 })
-export class NfsFormComponent implements OnInit {
+export class NfsFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
-  private formErrorHandler = inject(FormErrorHandlerService);
-  private snackbar = inject(SnackbarService);
   private datasetService = inject(DatasetService);
   private store$ = inject<Store<ServicesState>>(Store);
-  slideInRef = inject<SlideInRef<{
-    existingNfsShare?: NfsShare;
-    defaultNfsShare?: NfsShare;
-  } | undefined, boolean>>(SlideInRef);
 
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
 
+  /** Edit/default data supplied by the `<tn-side-panel>` host. */
+  readonly nfsShareData = input<NfsFormData | undefined>(undefined);
+
   existingNfsShare: NfsShare | undefined;
   defaultNfsShare: NfsShare | undefined;
 
-  protected isLoading = signal(false);
-  isAdvancedMode = false;
+  protected isAdvancedMode = signal(false);
   hasNfsSecurityField = false;
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
     share_type: DatasetPreset.Multiprotocol,
@@ -120,13 +117,7 @@ export class NfsFormComponent implements OnInit {
     return !this.existingNfsShare;
   }
 
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add NFS Share')
-      : this.translate.instant('Edit NFS Share');
-  }
-
-  protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   readonly helptext = helptextSharingNfs;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -150,18 +141,6 @@ export class NfsFormComponent implements OnInit {
     },
   ] as Option[]);
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.form.controls.path.addValidators(this.validatorsService.customValidator(
-      getRootDatasetsValidator(this.existingNfsShare ? [this.existingNfsShare.path] : []),
-      this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
-    ));
-    this.existingNfsShare = this.slideInRef.getData()?.existingNfsShare;
-    this.defaultNfsShare = this.slideInRef.getData()?.defaultNfsShare;
-  }
-
   private setNfsShareForEdit(share: NfsShare): void {
     share.networks.forEach(() => this.addNetworkControl());
     share.hosts.forEach(() => this.addHostControl());
@@ -169,6 +148,16 @@ export class NfsFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Edit/default data arrives via the `nfsShareData` input from the side-panel host.
+    const data = this.nfsShareData();
+    this.existingNfsShare = data?.existingNfsShare;
+    this.defaultNfsShare = data?.defaultNfsShare;
+
+    this.form.controls.path.addValidators(this.validatorsService.customValidator(
+      getRootDatasetsValidator(this.existingNfsShare ? [this.existingNfsShare.path] : []),
+      this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
+    ));
+
     this.checkForNfsSecurityField();
 
     if (this.defaultNfsShare) {
@@ -197,52 +186,41 @@ export class NfsFormComponent implements OnInit {
   }
 
   protected toggleAdvancedMode(): void {
-    this.isAdvancedMode = !this.isAdvancedMode;
+    this.isAdvancedMode.update((value) => !value);
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const nfsShare = { ...this.form.value };
 
     if (!this.isEnterprise()) {
       delete nfsShare.expose_snapshots;
     }
 
-    let request$: Observable<unknown>;
-    if (this.existingNfsShare) {
-      request$ = this.api.call('sharing.nfs.update', [this.existingNfsShare.id, nfsShare]);
-    } else {
-      request$ = this.api.call('sharing.nfs.create', [nfsShare]);
-    }
+    const apiCall$: Observable<unknown> = this.existingNfsShare
+      ? this.api.call('sharing.nfs.update', [this.existingNfsShare.id, nfsShare])
+      : this.api.call('sharing.nfs.create', [nfsShare]);
 
-    this.datasetService.rootLevelDatasetWarning(
+    // The root-level dataset warning prompts confirmation before the create/update fires;
+    // a cancel completes the chain without emitting, so the wrapper just resets its loading state.
+    const request$ = this.datasetService.rootLevelDatasetWarning(
       nfsShare.path,
       this.translate.instant(helptextSharingNfs.rootLevelWarning),
       !this.form.controls.path.dirty,
-    )
-      .pipe(
-        filter(Boolean),
-        tap(() => {
-          this.isLoading.set(true);
-        }),
-        switchMap(() => request$),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          if (this.isNew) {
-            this.snackbar.success(this.translate.instant('NFS share created'));
-          } else {
-            this.snackbar.success(this.translate.instant('NFS share updated'));
-          }
-          this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
-          this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    ).pipe(
+      filter(Boolean),
+      switchMap(() => apiCall$),
+    );
+
+    return {
+      request$,
+      successMessage: this.isNew
+        ? this.translate.instant('NFS share created')
+        : this.translate.instant('NFS share updated'),
+      onSuccess: () => {
+        this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
+      },
+    };
+  };
 
   private checkForNfsSecurityField(): void {
     this.api.call('nfs.config')

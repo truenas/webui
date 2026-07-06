@@ -2,3 +2,22 @@
   column-gap: 8px;
   display: flex;
 }
+
+.config-button {
+  align-items: center;
+  display: inline-flex;
+  position: relative;
+
+  .config-caret {
+    pointer-events: none;
+    position: absolute;
+    right: 12px;
+  }
+
+  // TEMP: tn-button (ui-components 0.2.4) has no icon slot, so the
+  // dropdown caret is overlaid and the inner button padded to make room.
+  // Remove once tn-button ships a trailing-icon input.
+  ::ng-deep tn-button button {
+    padding-right: 36px;
+  }
+}

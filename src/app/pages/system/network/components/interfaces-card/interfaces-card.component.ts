@@ -25,10 +25,10 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { convertStringToId, dataProviderRows } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { interfacesCardElements } from 'app/pages/system/network/components/interfaces-card/interfaces-card.elements';
 import {
@@ -54,7 +54,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    ShareActionsCellComponent,
+    TableActionsCellComponent,
     RequiresRolesDirective,
     UiSearchDirective,
     InterfaceStatusIconComponent,

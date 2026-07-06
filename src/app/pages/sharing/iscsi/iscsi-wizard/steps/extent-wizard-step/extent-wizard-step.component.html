@@ -1,25 +1,34 @@
 <ng-container [formGroup]="form()">
-  <ix-input
-    formControlName="name"
+  <tn-form-field
     [label]="helptextSharingIscsi.nameLabel | translate"
     [tooltip]="helptextSharingIscsi.nameTooltip | translate"
-    [required]="true"
-  ></ix-input>
-  <ix-select
-    formControlName="type"
+  >
+    <tn-input
+      formControlName="name"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
+  <tn-form-field
     [label]="helptextSharingIscsi.extent.typeLabel | translate"
     [tooltip]="helptextSharingIscsi.extent.typeTooltip | translate"
-    [options]="typeOptions$"
     [required]="true"
-  ></ix-select>
+  >
+    <tn-select
+      formControlName="type"
+      [options]="(typeOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
   @if (isDevice) {
-    <ix-select
-      formControlName="disk"
+    <tn-form-field
       [label]="helptextSharingIscsi.diskName | translate"
       [tooltip]="helptextSharingIscsi.diskTooltip | translate"
-      [options]="diskOptions$"
       [required]="true"
-    ></ix-select>
+    >
+      <tn-select
+        formControlName="disk"
+        [options]="(diskOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
     @if (isSnapshot) {
       <div class="snapshot-info-box" role="status">
@@ -44,14 +53,17 @@
       <ix-explorer-create-dataset></ix-explorer-create-dataset>
     </ix-explorer>
 
-    <ix-input
-      formControlName="volsize"
+    <tn-form-field
       [label]="helptextSharingIscsi.sizeLabel | translate"
       [tooltip]="helptextSharingIscsi.sizeTooltip | translate"
-      [format]="formatter.memorySizeFormatting"
-      [parse]="formatter.memorySizeParsing"
       [required]="true"
-    ></ix-input>
+    >
+      <tn-input
+        formControlName="volsize"
+        sizeDefaultUnit="MiB"
+        [inputType]="InputType.Size"
+      ></tn-input>
+    </tn-form-field>
   }
   @if (!isDevice) {
     <ix-explorer
@@ -61,25 +73,32 @@
       [nodeProvider]="fileNodeProvider"
     ></ix-explorer>
 
-    <ix-input
-      formControlName="filesize"
+    <tn-form-field
       [label]="helptextSharingIscsi.extent.filesizeLabel | translate"
       [tooltip]="helptextSharingIscsi.extent.filesizeTooltip | translate"
-      [format]="formatter.memorySizeFormatting"
-      [parse]="formatter.memorySizeParsing"
       [required]="true"
-    ></ix-input>
+    >
+      <tn-input
+        formControlName="filesize"
+        sizeDefaultUnit="MiB"
+        [inputType]="InputType.Size"
+      ></tn-input>
+    </tn-form-field>
   }
-  <ix-checkbox
-    formControlName="ro"
-    [label]="helptextSharingIscsi.extent.readOnlyLabel | translate"
-    [tooltip]="helptextSharingIscsi.extent.readOnlyTooltip | translate"
-  ></ix-checkbox>
-  <ix-select
-    formControlName="usefor"
+  <tn-form-field [tooltip]="helptextSharingIscsi.extent.readOnlyTooltip | translate">
+    <tn-checkbox
+      formControlName="ro"
+      [label]="helptextSharingIscsi.extent.readOnlyLabel | translate"
+    ></tn-checkbox>
+  </tn-form-field>
+  <tn-form-field
     [label]="helptextSharingIscsi.useforLabel | translate"
     [tooltip]="helptextSharingIscsi.useforTooltip | translate"
-    [options]="useforOptions$"
     [required]="true"
-  ></ix-select>
+  >
+    <tn-select
+      formControlName="usefor"
+      [options]="(useforOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 </ng-container>

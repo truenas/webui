@@ -18,16 +18,16 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import {
   convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
 } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
-import {
   StaticRouteDeleteDialog,
 } from 'app/pages/system/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
-import { StaticRouteFormComponent } from 'app/pages/system/network/components/static-route-form/static-route-form.component';
+import { getStaticRouteFormConfig } from 'app/pages/system/network/components/static-route-form/static-route.form-config';
 import { staticRoutesCardElements } from 'app/pages/system/network/components/static-routes-card/static-routes-card.elements';
 
 @Component({
@@ -43,7 +43,7 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    ShareActionsCellComponent,
+    TableActionsCellComponent,
     UiSearchDirective,
     RequiresRolesDirective,
     IxTablePagerShowMoreComponent,
@@ -54,7 +54,7 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
 export class StaticRoutesCardComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
@@ -114,12 +114,16 @@ export class StaticRoutesCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(StaticRouteFormComponent).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
+    this.formPanel.openForm(getStaticRouteFormConfig(this.api, this.translate, undefined), {
+      title: this.translate.instant('Add Static Route'),
+    }).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
   }
 
   doEdit(route: StaticRoute): void {
-    this.slideIn.open(StaticRouteFormComponent, { data: route })
-      .onSuccess(() => this.getStaticRoutes(), this.destroyRef);
+    this.formPanel.openForm(getStaticRouteFormConfig(this.api, this.translate, route), {
+      title: this.translate.instant('Edit Static Route'),
+      editData: route,
+    }).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
   }
 
   doDelete(route: StaticRoute): void {

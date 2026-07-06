@@ -1,7 +1,6 @@
 import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { AuditService } from 'app/enums/audit.enum';
@@ -9,9 +8,8 @@ import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -59,7 +57,7 @@ describe('ServiceActionsMenuService', () => {
       ]),
       mockProvider(SnackbarService),
       mockProvider(Router),
-      mockProvider(SlideIn),
+      mockProvider(FormSidePanelService),
       mockProvider(UrlOptionsService),
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => <T>(source$: T): T => source$),
@@ -67,7 +65,6 @@ describe('ServiceActionsMenuService', () => {
       mockProvider(ErrorHandlerService, {
         withErrorHandler: jest.fn(() => <T>(source$: T): T => source$),
       }),
-      mockProvider(UnsavedChangesService),
     ],
   });
 
@@ -148,41 +145,26 @@ describe('ServiceActionsMenuService', () => {
     });
   });
 
-  describe('buildServiceControl', () => {
-    it('returns undefined when there is no service', () => {
-      expect(spectator.service.buildServiceControl(undefined, true)).toBeUndefined();
-    });
-
-    it('returns undefined when the user lacks the control role', () => {
-      expect(
-        spectator.service.buildServiceControl(service({ service: ServiceName.Cifs }), false),
-      ).toBeUndefined();
-    });
-
-    it('reflects the running state with an empty label and stable test id', () => {
-      const control = spectator.service.buildServiceControl(
+  describe('service control helpers', () => {
+    it('reports whether the service is running', () => {
+      expect(spectator.service.isServiceRunning(
         service({ service: ServiceName.Cifs, state: ServiceStatus.Running }),
-        true,
-      );
-
-      expect(control).toMatchObject({ label: '', checked: true, testId: 'service-cifs' });
-    });
-
-    it('is unchecked when the service is stopped', () => {
-      const control = spectator.service.buildServiceControl(
+      )).toBe(true);
+      expect(spectator.service.isServiceRunning(
         service({ service: ServiceName.Cifs, state: ServiceStatus.Stopped }),
-        true,
-      );
-
-      expect(control?.checked).toBe(false);
+      )).toBe(false);
     });
 
-    it('stops a running service when toggled off', () => {
-      const control = spectator.service.buildServiceControl(
+    it('builds a stable control test id from the service name', () => {
+      expect(spectator.service.serviceControlTestId(
+        service({ service: ServiceName.Cifs }),
+      )).toBe('service-cifs');
+    });
+
+    it('stops a running service when toggled', () => {
+      spectator.service.toggleServiceState(
         service({ service: ServiceName.Cifs, state: ServiceStatus.Running }),
-        true,
       );
-      control?.handler(false);
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'service.control',
@@ -190,42 +172,15 @@ describe('ServiceActionsMenuService', () => {
       );
     });
 
-    it('starts a stopped service when toggled on', () => {
-      const control = spectator.service.buildServiceControl(
+    it('starts a stopped service when toggled', () => {
+      spectator.service.toggleServiceState(
         service({ service: ServiceName.Cifs, state: ServiceStatus.Stopped }),
-        true,
       );
-      control?.handler(true);
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'service.control',
         [ServiceOperation.Start, ServiceName.Cifs, { silent: false }],
       );
-    });
-  });
-
-  describe('buildUnsavedChangesGuard', () => {
-    it('allows the close immediately without prompting when the form is not dirty', () => {
-      let allowed: boolean | undefined;
-      spectator.service.buildUnsavedChangesGuard(() => false)().subscribe((value) => {
-        allowed = value;
-      });
-
-      expect(allowed).toBe(true);
-      expect(spectator.inject(UnsavedChangesService).showConfirmDialog).not.toHaveBeenCalled();
-    });
-
-    it('delegates to the unsaved-changes confirm dialog when the form is dirty', () => {
-      const unsavedChanges = spectator.inject(UnsavedChangesService);
-      jest.spyOn(unsavedChanges, 'showConfirmDialog').mockReturnValue(of(false));
-
-      let allowed: boolean | undefined;
-      spectator.service.buildUnsavedChangesGuard(() => true)().subscribe((value) => {
-        allowed = value;
-      });
-
-      expect(unsavedChanges.showConfirmDialog).toHaveBeenCalled();
-      expect(allowed).toBe(false);
     });
   });
 
@@ -268,11 +223,11 @@ describe('ServiceActionsMenuService', () => {
     ];
 
     cases.forEach(([serviceName, component]) => {
-      it(`opens the slide-in for ${serviceName}`, () => {
+      it(`opens the side panel for ${serviceName}`, () => {
         const config = spectator.service.buildConfigItem(service({ service: serviceName }));
         config.action?.();
 
-        const openSpy = spectator.inject(SlideIn).open;
+        const openSpy = spectator.inject(FormSidePanelService).open;
         expect(openSpy).toHaveBeenCalledTimes(1);
         expect(openSpy.mock.calls[0][0]).toBe(component);
       });

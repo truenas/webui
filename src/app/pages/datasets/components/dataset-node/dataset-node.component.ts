@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed,
   input,
 } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
@@ -17,7 +17,7 @@ import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DatasetIconComponent,
-    MatTooltip,
+    TnTooltipDirective,
     FileSizePipe,
     DatasetEncryptionCellComponent,
     DatasetRolesCellComponent,

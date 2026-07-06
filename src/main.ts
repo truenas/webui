@@ -8,6 +8,11 @@ import {
   provideNativeDateAdapter,
 } from '@angular/material/core';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+// Legacy animations engine required by @truenas/ui-components (tn-table's [@detailExpand]);
+// all provide*Animations* APIs are deprecated in Angular 20.2+. Revisit once the library
+// moves to animate.enter/leave.
+// eslint-disable-next-line sonarjs/deprecation
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import {
   withPreloading,
   provideRouter,
@@ -107,6 +112,11 @@ bootstrapApplication(AppComponent, {
       serializer: CustomRouterStateSerializer,
     }),
     provideNgxWebstorage(withLocalStorage()),
+    // Registers a no-op animation engine so synthetic animation bindings (e.g. tn-table's
+    // [@detailExpand] detail row) resolve without errors, while keeping the app's
+    // long-standing instant (non-animated) behavior unchanged.
+    // eslint-disable-next-line sonarjs/deprecation -- see import note above.
+    provideNoopAnimations(),
     provideNativeDateAdapter(),
     {
       provide: OVERLAY_DEFAULT_CONFIG,

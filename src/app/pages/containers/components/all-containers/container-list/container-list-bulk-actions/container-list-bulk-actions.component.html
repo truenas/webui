@@ -6,44 +6,14 @@
 
   <div class="bulk-button-wrapper">
     <label>{{ 'Bulk Actions' | translate }}</label>
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="bulk-actions-menu"
-      [matMenuTriggerFor]="menu"
-    >
-      {{ 'Select action' | translate }}
-      <tn-icon name="menu-down" library="mdi" class="menu-caret"></tn-icon>
-    </button>
+      iconPosition="right"
+      testId="bulk-actions-menu"
+      [icon]="menuDownIcon"
+      [label]="'Select action' | translate"
+      [tnMenuTriggerFor]="menu"
+    ></tn-button>
+    <tn-menu #menu [items]="menuItems()"></tn-menu>
   </div>
-
-  <mat-menu #menu="matMenu">
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-menu-item
-      ixTest="start-selected"
-      [disabled]="isBulkStartDisabled()"
-      (click)="onBulkStart()"
-    >
-      <span>{{ 'Start All Selected' | translate }}</span>
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-menu-item
-      ixTest="stop-selected"
-      [disabled]="isBulkStopDisabled()"
-      (click)="onBulkStop()"
-    >
-      <span>{{ 'Stop All Selected' | translate }}</span>
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-menu-item
-      ixTest="restart-selected"
-      [disabled]="isBulkStopDisabled()"
-      (click)="onBulkRestart()"
-    >
-      <span>{{ 'Restart All Selected' | translate }}</span>
-    </button>
-  </mat-menu>
 </div>

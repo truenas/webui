@@ -2,9 +2,11 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -20,6 +22,8 @@ describe('WebShareService', () => {
     { id: 1, name: 'documents', path: '/mnt/tank/documents' },
     { id: 2, name: 'media', path: '/mnt/tank/media' },
   ];
+
+  const configuredConfig = { status: TruenasConnectStatus.Configured } as unknown as TruenasConnectConfig;
 
   const mockWindow = {
     location: {
@@ -44,11 +48,12 @@ describe('WebShareService', () => {
       mockProvider(LicenseService, {
         hasTruenasConnect$: of(true),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TruenasConnectService, {
         openStatusModal: jest.fn(),
+        config: () => configuredConfig,
       }),
       {
         provide: WINDOW,
@@ -110,22 +115,23 @@ describe('WebShareService', () => {
 
   describe('openWebShareForm', () => {
     it('should open form when TrueNAS Connect is configured', () => {
-      const slideIn = spectator.inject(SlideIn);
+      const formPanel = spectator.inject(FormSidePanelService);
       const formData = { isNew: true, name: '', path: '' };
 
       spectator.service.openWebShareForm(formData).subscribe((result) => {
         expect(result).toBe(true);
       });
 
-      expect(slideIn.open).toHaveBeenCalledWith(WebShareSharesFormComponent, {
-        data: formData,
+      expect(formPanel.open).toHaveBeenCalledWith(WebShareSharesFormComponent, {
+        title: 'Add WebShare',
+        inputs: { webShareData: formData },
       });
     });
 
 
     it('should return false when form is cancelled', () => {
-      const slideIn = spectator.inject(SlideIn);
-      jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.cancel());
+      const formPanel = spectator.inject(FormSidePanelService);
+      jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.cancel());
 
       const formData = { isNew: true, name: '', path: '' };
 
@@ -135,7 +141,7 @@ describe('WebShareService', () => {
     });
 
     it('should pass edit data to form when editing', () => {
-      const slideIn = spectator.inject(SlideIn);
+      const formPanel = spectator.inject(FormSidePanelService);
       const formData = {
         isNew: false,
         id: 1,
@@ -145,8 +151,9 @@ describe('WebShareService', () => {
 
       spectator.service.openWebShareForm(formData).subscribe();
 
-      expect(slideIn.open).toHaveBeenCalledWith(WebShareSharesFormComponent, {
-        data: formData,
+      expect(formPanel.open).toHaveBeenCalledWith(WebShareSharesFormComponent, {
+        title: 'Edit WebShare',
+        inputs: { webShareData: formData },
       });
     });
   });
@@ -212,7 +219,7 @@ describe('WebShareService - non-TrueNAS Direct domain', () => {
       mockProvider(SnackbarService),
       mockProvider(TranslateService),
       mockProvider(LicenseService),
-      mockProvider(SlideIn),
+      mockProvider(FormSidePanelService),
       mockProvider(TruenasConnectService),
       {
         provide: WINDOW,
@@ -264,7 +271,7 @@ describe('WebShareService - hostname mapping', () => {
       mockProvider(LicenseService, {
         hasTruenasConnect$: of(true),
       }),
-      mockProvider(SlideIn),
+      mockProvider(FormSidePanelService),
       mockProvider(TruenasConnectService),
       {
         provide: WINDOW,
@@ -330,7 +337,7 @@ describe('WebShareService - no hostname mapping', () => {
       mockProvider(LicenseService, {
         hasTruenasConnect$: of(true),
       }),
-      mockProvider(SlideIn),
+      mockProvider(FormSidePanelService),
       mockProvider(TruenasConnectService),
       {
         provide: WINDOW,
@@ -382,11 +389,12 @@ describe('WebShareService - TrueNAS Connect not configured', () => {
       mockProvider(LicenseService, {
         hasTruenasConnect$: of(false),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TruenasConnectService, {
         openStatusModal: jest.fn(),
+        config: () => ({ status: TruenasConnectStatus.Disabled } as unknown as TruenasConnectConfig),
       }),
       {
         provide: WINDOW,
@@ -402,7 +410,7 @@ describe('WebShareService - TrueNAS Connect not configured', () => {
 
   it('should open TrueNAS Connect status modal when not configured', () => {
     const truenasConnectService = spectator.inject(TruenasConnectService);
-    const slideIn = spectator.inject(SlideIn);
+    const formPanel = spectator.inject(FormSidePanelService);
     const formData = { isNew: true, name: '', path: '' };
 
     spectator.service.openWebShareForm(formData).subscribe((result) => {
@@ -410,6 +418,6 @@ describe('WebShareService - TrueNAS Connect not configured', () => {
     });
 
     expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
-    expect(slideIn.open).not.toHaveBeenCalled();
+    expect(formPanel.open).not.toHaveBeenCalled();
   });
 });

@@ -1,15 +1,12 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent } from '@truenas/ui-components';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
 import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates-dash/utils/normalize-certificate.utils';
 
@@ -19,19 +16,19 @@ import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxTextareaComponent,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
-    MatStepperNext,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
 export class CsrImportComponent implements SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
+  private stepper = inject(CdkStepper);
+
+  protected readonly InputType = InputType;
 
   form = this.formBuilder.nonNullable.group({
     CSR: ['', Validators.required],
@@ -49,6 +46,14 @@ export class CsrImportComponent implements SummaryProvider {
   });
 
   readonly helptext = helptextSystemCertificates;
+
+  protected goBack(): void {
+    this.stepper.previous();
+  }
+
+  protected goNext(): void {
+    this.stepper.next();
+  }
 
   getSummary(): SummarySection {
     const values = this.form.getRawValue();

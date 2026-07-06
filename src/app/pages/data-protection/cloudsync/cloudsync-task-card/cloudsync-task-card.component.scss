@@ -1,21 +1,4 @@
-.card-title {
-  align-items: center;
-  display: flex;
+@import '../../card-title';
 
-  a {
-    align-items: center;
-    display: flex;
-    gap: 8px;
-  }
-
-  tn-icon {
-    margin-left: auto;
-  }
-}
-
-:host ::ng-deep {
-  .state-button {
-    text-overflow: inherit !important;
-    width: 78px;
-  }
-}
+@include card-title;
+@include card-table-scroll;

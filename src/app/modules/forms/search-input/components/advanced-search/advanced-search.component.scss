@@ -1,22 +1,40 @@
 @import 'scss-imports/variables';
 @import 'mixins/layout';
 
+.search-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
 .advanced-search {
-  align-items: flex-start;
-  background: rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--lines);
+  align-items: stretch;
+  background: var(--tn-bg1);
+  border: 1px solid var(--tn-lines);
+  border-radius: 4px;
   color: var(--fg1);
   display: flex;
+  flex: 1 1 auto;
   min-height: 37.5px;
-  padding: 2px 8px;
+  min-width: 0;
   position: relative;
 
-  .prefix-icon {
-    display: inline-flex;
-    margin-right: 4px;
-    margin-top: 5px;
+  &:focus-within {
+    border-color: var(--tn-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--tn-primary) 25%, transparent);
+  }
 
-    .mat-icon {
+  // Prefix status-icon cell — mirrors tn-input's prefix slot (the trailing
+  // divider is the .input-area border-left).
+  .prefix-icon {
+    align-items: center;
+    color: var(--fg2);
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 0 10px;
+
+    tn-icon {
       align-items: center;
       display: inline-flex;
       font-size: 18px;
@@ -26,28 +44,30 @@
     }
   }
 
-  &:focus-within {
-    outline: 1.5px solid var(--primary);
-  }
-
-  .reset-input {
+  // Suffix clear-icon cell — matches tn-input, which has no divider before the
+  // clear action.
+  .reset-icon {
     align-items: center;
-    bottom: 0;
+    color: var(--fg2);
     cursor: pointer;
     display: flex;
-    opacity: 0.5;
+    flex-shrink: 0;
+    opacity: 0.7;
+    padding: 0 10px;
     user-select: none;
 
-    tn-icon {
-      margin-left: 9px;
-      margin-right: 4px;
+    &:hover {
+      opacity: 1;
     }
 
-    .mat-icon {
-      align-items: center;
-      display: inline-flex;
+    &:focus-visible {
+      outline: 2px solid var(--tn-primary);
+      outline-offset: -2px;
+    }
+
+    tn-icon {
       font-size: 16px;
-      margin-top: 0;
+      width: 16px;
     }
   }
 }
@@ -56,45 +76,40 @@
   display: none !important;
 }
 
-.reset-icon {
-  margin-top: 4px;
-
-  tn-icon {
-    margin-left: 9px;
-    margin-right: 4px;
-    width: 16px;
-
-    &:focus {
-      box-shadow: 0 0 0 1.5px var(--focus-bg) inset;
-      outline-width: 0;
-    }
-  }
-}
-
 .switch-link {
   align-items: center;
+  background: transparent;
+  border: 1px solid var(--lines);
+  border-radius: 4px;
   color: var(--primary);
   cursor: pointer;
   display: inline-flex;
   flex-shrink: 0;
   font-size: 12px;
   gap: 4px;
-  margin-top: 5px;
+  padding: 7px 10px;
   user-select: none;
   white-space: nowrap;
 
-  &:focus {
-    box-shadow: 0 0 0 1.5px var(--focus-bg) inset;
-    outline-width: 0;
+  &:hover {
+    background: var(--hover-bg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
   }
 }
 
 .input-area {
+  align-items: center;
   background-color: transparent;
   border: 0;
+  border-left: 1px solid var(--tn-lines);
+  display: flex;
   flex-grow: 1;
   outline: none;
-  padding: 6.2px 8px;
+  padding: 0 10px;
   width: 100%;
 
   @media (min-width: $breakpoint-md) {
@@ -102,45 +117,28 @@
   }
 
   ::ng-deep {
+    .cm-editor {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
     .cm-content {
       caret-color: auto;
       color: var(--fg2);
-      font-family: var(--mdc-dialog-subhead-font);
+      font-family: var(--font-family-body);
       font-size: 1.1em;
       padding: 0;
     }
 
     .calendar {
-      background-color: var(--bg2);
       left: 0;
-      margin: 5px auto;
-      max-width: 300px;
+      margin: 5px 0;
       position: absolute;
       top: 100%;
-      width: 100%;
+      // tn-calendar has fixed-size cells (~352px wide) and won't shrink to fit,
+      // so let the popup size to the calendar's natural width instead of capping it.
+      width: max-content;
       z-index: 2;
-
-      ::ng-deep {
-        .mat-calendar-table {
-          width: 100%;
-        }
-
-        .mat-calendar-table tr {
-          display: table-row;
-        }
-
-        .mat-calendar-body-cell,
-        .mat-calendar-body-cell-content {
-          cursor: pointer;
-        }
-
-        .mat-calendar-content.cdk-mouse-focused,
-        .mat-calendar-content.cdk-keyboard-focused,
-        .mat-calendar-content.cdk-program-focused {
-          background-color: transparent !important;
-          box-shadow: none !important;
-        }
-      }
     }
 
     .cm-tooltip {

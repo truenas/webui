@@ -27,51 +27,15 @@
     gap: 12px;
     justify-content: space-between;
     
-    mat-checkbox {
+    tn-checkbox {
       font-size: 12px;
       margin-left: auto;
     }
 
-    ix-input.filter-field {
+    tn-input.filter-field {
       display: block;
       flex: 0 1 200px;
-      margin: 0 !important;
       min-width: 150px;
-      padding: 0 !important;
-
-      ::ng-deep {
-        // Override all possible margins and paddings
-        * {
-          margin-bottom: 0 !important;
-          margin-top: 0 !important;
-        }
-
-        // Hide label completely
-        ix-label {
-          display: none !important;
-        }
-
-        .input-container {
-          margin: 0 !important;
-          padding: 0 !important;
-        }
-
-        input {
-          font-size: 12px;
-          height: 28px;
-          margin: 0;
-          padding: 4px 8px;
-        }
-
-        // Remove any mat-form-field related spacing
-        .mat-mdc-form-field-wrapper,
-        .mat-mdc-text-field-wrapper,
-        .mat-mdc-form-field-flex,
-        .mat-mdc-form-field-infix {
-          margin: 0 !important;
-          padding: 0 !important;
-        }
-      }
     }
   }
 
@@ -204,17 +168,15 @@
   margin-top: 4px;
   padding-left: 26px;
 
-  pre {
-    background-color: var(--bg2);
+  ix-code-editor {
+    display: block;
     border: 1px solid var(--lines);
     border-radius: 4px;
-    color: var(--fg1);
-    font-family: monospace;
-    margin: 0;
-    overflow-x: auto;
-    padding: 8px;
-    white-space: pre-wrap;
-    word-break: break-word;
+    overflow: hidden;
+
+    ::ng-deep .cm-editor {
+      max-height: 400px;
+    }
   }
 }
 
@@ -234,12 +196,5 @@
   p {
     font-size: 14px;
     margin: 0;
-  }
-}
-
-// Material checkbox override
-.message-list-header {
-  .mat-mdc-checkbox-label {
-    font-size: 12px;
   }
 }

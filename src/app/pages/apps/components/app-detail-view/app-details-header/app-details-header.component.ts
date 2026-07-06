@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import createDOMPurify from 'dompurify';
 import type { DOMPurify as DOMPurifyType } from 'dompurify';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -8,7 +8,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { InstallAppButtonComponent } from 'app/pages/apps/components/install-app-button/install-app-button.component';
 import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-app-badge/installed-app-badge.component';
@@ -22,8 +21,8 @@ import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-
     TranslateModule,
     AppCardLogoComponent,
     CleanLinkPipe,
-    TestDirective,
-    MatTooltip,
+    TnTestIdDirective,
+    TnTooltipDirective,
     NgxSkeletonLoaderModule,
     InstalledAppBadgeComponent,
     OrNotAvailablePipe,

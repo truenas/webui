@@ -1,21 +1,18 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { KeyValuePipe } from '@angular/common';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ContainerGeneralInfoComponent,
@@ -42,13 +39,10 @@ describe('ContainerGeneralInfoComponent', () => {
 
   const createComponent = createComponentFactory({
     component: ContainerGeneralInfoComponent,
-    imports: [RequiresRolesDirective, YesNoPipe, MapValuePipe, KeyValuePipe],
+    imports: [YesNoPipe, MapValuePipe, KeyValuePipe],
     providers: [
       IxFormatterService,
       mockAuth(),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.success(true)),
-      }),
       mockProvider(ContainersStore, {
         selectedContainer: jest.fn(),
         containerUpdated: jest.fn(),
@@ -56,6 +50,15 @@ describe('ContainerGeneralInfoComponent', () => {
       }),
       mockApi([
         mockCall('container.delete'),
+        mockCall('container.get_instance', container),
+        mockCall('container.query', []),
+        mockCall('container.pool_choices', { pool1: 'pool1' }),
+        mockCall('lxc.config', {
+          bridge: 'lxdbr0',
+          v4_network: null,
+          v6_network: null,
+          preferred_pool: 'pool1',
+        }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -74,12 +77,11 @@ describe('ContainerGeneralInfoComponent', () => {
   });
 
   it('checks card title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('General Info');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('General Info');
   });
 
   it('renders details in card', () => {
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('Autostart: Yes');
     expect(cardContent).toContainText('CPU Set: 0-3');
   });
@@ -89,12 +91,12 @@ describe('ContainerGeneralInfoComponent', () => {
       cpuset: null,
     }));
 
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('CPU Set: All Host CPUs');
   });
 
   it('deletes container when "Delete" button is pressed and redirects to list root', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
@@ -106,11 +108,27 @@ describe('ContainerGeneralInfoComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers']);
   });
 
-  it('opens edit container form when Edit is pressed', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+  it('opens the edit container form side panel with the container when Edit is pressed', async () => {
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ContainerFormComponent, { data: container });
+    const form = spectator.query(ContainerFormComponent, { root: true });
+    expect(form).toBeInstanceOf(ContainerFormComponent);
+    expect(form!.editContainer()).toEqual(container);
+  });
+
+  it('reloads containers when the edit form reports a successful save', async () => {
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
+    await editButton.click();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    const form = spectator.query(ContainerFormComponent, { root: true });
+    form!.closed.emit(true);
+    spectator.detectChanges();
+
     expect(spectator.inject(ContainersStore).reload).toHaveBeenCalled();
   });
 
@@ -118,7 +136,7 @@ describe('ContainerGeneralInfoComponent', () => {
     const dialogService = spectator.inject(DialogService);
     (dialogService.confirmDelete as jest.Mock).mockReturnValue(EMPTY);
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.delete', expect.anything());
@@ -130,7 +148,7 @@ describe('ContainerGeneralInfoComponent', () => {
       capabilities_policy: ContainerCapabilitiesPolicy.Allow,
     }));
 
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('Capabilities Policy: Allow All');
   });
 
@@ -139,7 +157,7 @@ describe('ContainerGeneralInfoComponent', () => {
       idmap: { type: ContainerIdmapType.Default },
     }));
 
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('ID Map Type: Default');
   });
 
@@ -148,7 +166,7 @@ describe('ContainerGeneralInfoComponent', () => {
       idmap: { type: ContainerIdmapType.Isolated, slice: 5 },
     }));
 
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('ID Map Type: Isolated');
     expect(cardContent).toContainText('Slice: 5');
   });
@@ -158,7 +176,7 @@ describe('ContainerGeneralInfoComponent', () => {
       idmap: null,
     }));
 
-    const cardContent = spectator.query('mat-card-content');
+    const cardContent = spectator.query('tn-card');
     expect(cardContent).toContainText('ID Map Type: Privileged');
   });
 });

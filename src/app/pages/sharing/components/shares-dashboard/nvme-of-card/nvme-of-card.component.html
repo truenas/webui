@@ -1,10 +1,8 @@
 <tn-card
   padding="small"
   [headerStatus]="serviceStatus()"
-  [headerControl]="serviceControl()"
   [headerMenu]="serviceMenu()"
   [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
-  [primaryAction]="addAction()"
 >
   <a
     tnCardHeader
@@ -13,7 +11,7 @@
     [routerLink]="['/sharing', 'nvme-of']"
     [tnTooltip]="'Open NVMe-oF list in full page' | translate"
   >
-    <h3 class="card-title">
+    <h3 class="tn-card__title">
       {{ 'NVMe-oF Subsystems' | translate }}
       <tn-icon
         name="open-in-new"
@@ -25,10 +23,34 @@
     </h3>
   </a>
 
+  <ng-template tnCardHeaderActions>
+    @if (service(); as service) {
+      <tn-slide-toggle
+        *ixRequiresRoles="requiredRoles"
+        [checked]="actionsMenu.isServiceRunning(service)"
+        [testId]="actionsMenu.serviceControlTestId(service)"
+        [ariaLabel]="'Toggle service' | translate"
+        (change)="actionsMenu.toggleServiceState(service)"
+      ></tn-slide-toggle>
+    }
+  </ng-template>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="filled"
+      testId="nvme-of-share-add"
+      [label]="'Add' | translate"
+      (onClick)="openForm()"
+    ></tn-button>
+  </ng-template>
+
   @if (!(dataProvider().currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
     <tn-empty
       icon="nvme-share"
       iconLibrary="custom"
+      iconSize="56px"
       [title]="'Raw block storage using NVMe over Fabrics (e.g. NVMe/TCP), appearing as a local disk on the client. Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.' | translate"
     ></tn-empty>
   } @else {
@@ -71,12 +93,12 @@
       <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
         <ng-template tnHeaderCellDef></ng-template>
         <ng-template let-row tnCellDef>
-          <ix-share-actions-cell
+          <ix-table-actions-cell
             [actions]="actions"
             [row]="row"
             [uniqueRowTag]="uniqueRowTag(row)"
             [ariaLabel]="ariaLabel(row)"
-          ></ix-share-actions-cell>
+          ></ix-table-actions-cell>
         </ng-template>
       </ng-container>
     </tn-table>
@@ -89,23 +111,3 @@
     ></ix-table-pager-show-more>
   }
 </tn-card>
-
-<tn-side-panel
-  [title]="'NVMe-oF Global Configuration' | translate"
-  [closeGuard]="closeConfigGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-nvme-of-configuration (closed)="onConfigClosed()"></ix-nvme-of-configuration>
-  }
-  @if (configForm(); as form) {
-    <tn-button
-      tnSidePanelAction
-      color="primary"
-      [ixTest]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
-  }
-</tn-side-panel>

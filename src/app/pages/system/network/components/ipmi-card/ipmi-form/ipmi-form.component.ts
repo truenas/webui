@@ -4,7 +4,7 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDividerComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDividerComponent, tnIconMarker } from '@truenas/ui-components';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -66,6 +66,7 @@ export class IpmiFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.IpmiWrite];
+  protected readonly identifyLightIcon = tnIconMarker('lightbulb-on-outline', 'mdi');
 
   isManageButtonDisabled = false;
   remoteControllerOptions: Observable<RadioOption[]>;

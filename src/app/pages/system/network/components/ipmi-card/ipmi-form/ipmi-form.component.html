@@ -88,6 +88,7 @@
     <tn-button
       *ixRequiresRoles="requiredRoles"
       [testId]="'toggle-identify-light'"
+      [icon]="identifyLightIcon"
       [label]="(isFlashing() ? 'Stop Flashing' : 'Flash Identify Light') | translate"
       [disabled]="isFlashingLoading()"
       (onClick)="toggleFlashing()"

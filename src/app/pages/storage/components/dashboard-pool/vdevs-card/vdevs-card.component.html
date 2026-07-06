@@ -39,7 +39,7 @@
             @if (!!topologyWarningsState.data && !isPoolOffline()) {
               <span
                 class="warning"
-                [matTooltip]="topologyWarningsState.data"
+                [tnTooltip]="topologyWarningsState.data"
               >
                 <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
               </span>
@@ -67,7 +67,7 @@
             </b>
             <div class="vdev-stats">
               @if (!!topologyWarningsState[row.key]) {
-                <span class="warning" [matTooltip]="topologyWarningsState[row.key]">
+                <span class="warning" [tnTooltip]="topologyWarningsState[row.key]">
                   <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
                 </span>
               }
@@ -78,7 +78,7 @@
       }
 
       @if (noOtherVdevTypes()) {
-        <div class="vdev-line empty-vdev-state">
+        <div class="empty-vdev-state">
           <div class="empty-message">
             {{ 'Pool configuration complete.' | translate }}
           </div>

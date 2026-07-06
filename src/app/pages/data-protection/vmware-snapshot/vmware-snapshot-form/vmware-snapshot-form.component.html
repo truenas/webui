@@ -1,74 +1,67 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
+  [addTitle]="'Add VM Snapshot' | translate"
+  [editTitle]="'Edit VM Snapshot' | translate"
   [requiredRoles]="requiredRoles"
-  [title]="title"
-  [loading]="isLoading"
-></ix-modal-header>
+  [externalLoading]="isLoading"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section>
+    <tn-form-field [label]="labels.hostname | translate" [tooltip]="tooltips.hostname | translate" [required]="true">
+      <tn-input
+        name="hostname"
+        testId="hostname"
+        formControlName="hostname"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-input
-          formControlName="hostname"
-          [label]="labels.hostname | translate"
-          [tooltip]="tooltips.hostname | translate"
-          [required]="true"
-        ></ix-input>
+    <tn-form-field [label]="labels.username | translate" [tooltip]="tooltips.username | translate" [required]="true">
+      <tn-input
+        name="username"
+        testId="username"
+        formControlName="username"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
 
-        <ix-input
-          formControlName="username"
-          [label]="labels.username | translate"
-          [tooltip]="tooltips.username | translate"
-          [required]="true"
-        ></ix-input>
+    <tn-form-field [label]="labels.password | translate" [tooltip]="tooltips.password | translate" [required]="true">
+      <tn-input
+        name="password"
+        testId="password"
+        formControlName="password"
+        [inputType]="InputType.Password"
+        [showPasswordToggle]="true"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
 
-        <ix-input
-          type="password"
-          formControlName="password"
-          [label]="labels.password | translate"
-          [tooltip]="tooltips.password | translate"
-          [required]="true"
-        ></ix-input>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      testId="fetch-datastores"
+      [label]="'Fetch DataStores' | translate"
+      [disabled]="isLoading || disableFetchDatastores"
+      (onClick)="onFetchDataStores()"
+    ></tn-button>
 
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="button"
-          ixTest="fetch-datastores"
-          [disabled]="isLoading || disableFetchDatastores"
-          (click)="onFetchDataStores()"
-        >
-          {{ 'Fetch DataStores' | translate }}
-        </button>
-        <ix-select
-          formControlName="datastore"
-          [label]="labels.datastore | translate"
-          [tooltip]="tooltips.datastore | translate"
-          [required]="true"
-          [options]="datastoreOptions$"
-        ></ix-select>
+    <tn-form-field [label]="labels.datastore | translate" [tooltip]="tooltips.datastore | translate" [required]="true">
+      <tn-select
+        name="datastore"
+        testId="datastore"
+        formControlName="datastore"
+        [options]="(datastoreOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-        <ix-select
-          formControlName="filesystem"
-          [label]="labels.filesystem | translate"
-          [tooltip]="tooltips.filesystem | translate"
-          [required]="true"
-          [options]="filesystemOptions$"
-        ></ix-select>
-      </ix-fieldset>
-
-      <div class="form-actions">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <tn-form-field [label]="labels.filesystem | translate" [tooltip]="tooltips.filesystem | translate" [required]="true">
+      <tn-select
+        name="filesystem"
+        testId="filesystem"
+        formControlName="filesystem"
+        [options]="(filesystemOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+  </tn-form-section>
+</ix-form>

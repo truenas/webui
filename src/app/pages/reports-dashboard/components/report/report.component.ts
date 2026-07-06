@@ -1,13 +1,17 @@
 import { KeyValuePipe } from '@angular/common';
 import { Component, OnChanges, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, input, viewChild, DOCUMENT, inject, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardHeaderDirective,
+  TnEmptyComponent,
+  TnIconButtonComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import {
   add, Duration, isToday, sub,
 } from 'date-fns';
@@ -29,10 +33,8 @@ import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
@@ -54,17 +56,15 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   styleUrls: ['./report.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
-    MatCardTitle,
-    MatButton,
-    MatTooltip,
-    TestDirective,
-    TnIconComponent,
-    MatCardContent,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnButtonComponent,
+    TnIconButtonComponent,
+    TnTooltipDirective,
+    TnTestIdDirective,
+    TnEmptyComponent,
     LineChartComponent,
     IxDateComponent,
-    EmptyComponent,
     TranslateModule,
     MapValuePipe,
     KeyValuePipe,

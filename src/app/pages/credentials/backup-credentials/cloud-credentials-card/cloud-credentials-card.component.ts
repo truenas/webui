@@ -1,11 +1,19 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  tnIconMarker,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import {
   tap, Observable,
 } from 'rxjs';
@@ -17,17 +25,11 @@ import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
 import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
@@ -41,27 +43,28 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnButtonComponent,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnTestIdDirective,
+    TnTooltipDirective,
+    TableActionsCellComponent,
     IxTablePagerShowMoreComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class CloudCredentialsCardComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private emptyService = inject(EmptyService);
   private dialog = inject(DialogService);
   private cloudCredentialService = inject(CloudCredentialService);
   private errorHandler = inject(ErrorHandlerService);
@@ -70,48 +73,63 @@ export class CloudCredentialsCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly searchableElements = cloudCredentialsCardElements;
 
-  dataProvider: AsyncDataProvider<CloudSyncCredential>;
-  providers = new Map<string, string>();
-  credentials: CloudSyncCredential[] = [];
-  columns = createTable<CloudSyncCredential>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Provider'),
-      propertyName: 'provider',
-      getValue: (row) => {
-        const provider = row.provider.type;
-        return this.providers.get(provider) || provider;
-      },
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'cloud-cred-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('Cloud Credential')],
+  protected readonly dataProvider = new AsyncDataProvider<CloudSyncCredential>(
+    this.api.call('cloudsync.credentials.query').pipe(takeUntilDestroyed(this.destroyRef)),
+  );
+
+  protected readonly currentPage = toSignal(this.dataProvider.currentPage$, {
+    initialValue: [] as CloudSyncCredential[],
   });
 
+  protected readonly isLoading = toSignal(this.dataProvider.isLoading$, { initialValue: false });
+
+  protected readonly isEmpty = computed(() => !this.currentPage().length && !this.isLoading());
+
+  private emptyType = toSignal(this.dataProvider.emptyType$);
+
+  // Reflects the data-provider's state (error / no data / no search results) so the empty state
+  // shows the correct title/message — not a static "no records" message when the query failed.
+  protected readonly emptyConfig = computed(() => this.emptyService.defaultEmptyConfig(this.emptyType()));
+
+  // State icon for error / no-search states, falling back to the card's own icon for no-data.
+  protected readonly emptyIcon = computed(
+    () => this.emptyService.iconForTypeOrDefault(this.emptyType(), tnIconMarker('cloud-outline', 'mdi')),
+  );
+
+  private providers = new Map<string, string>();
+
+  protected readonly displayedColumns = ['name', 'provider', 'actions'];
+
+  protected readonly trackById = (_index: number, row: CloudSyncCredential): number => row.id;
+
+  protected readonly actions: IconActionConfig<CloudSyncCredential>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+    },
+  ];
+
+  protected uniqueRowTag(row: CloudSyncCredential): string {
+    return 'cloud-cred-' + row.name;
+  }
+
+  protected ariaLabel(row: CloudSyncCredential): string {
+    return [row.name, this.translate.instant('Cloud Credential')].join(' ');
+  }
+
+  protected getProviderName(row: CloudSyncCredential): string {
+    const provider = row.provider.type;
+    return this.providers.get(provider) || provider;
+  }
+
   ngOnInit(): void {
-    const credentials$ = this.api.call('cloudsync.credentials.query').pipe(
-      tap((credentials) => this.credentials = credentials),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<CloudSyncCredential>(credentials$);
     this.setDefaultSort();
 
     this.getProviders()
@@ -121,7 +139,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       });
   }
 
-  getCredentials(): void {
+  private getCredentials(): void {
     this.dataProvider.load();
   }
 
@@ -136,28 +154,27 @@ export class CloudCredentialsCardComponent implements OnInit {
       );
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 1,
+      active: null,
       direction: SortDirection.Asc,
       propertyName: 'id',
     });
   }
 
   protected doAdd(): void {
-    this.slideIn.open(CloudCredentialsFormComponent)
-      .onSuccess(() => this.getCredentials(), this.destroyRef);
+    this.formPanel.open(CloudCredentialsFormComponent, {
+      title: this.translate.instant('Add Cloud Credential'),
+    }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doEdit(credential: CloudSyncCredential): void {
-    this.slideIn.open(
-      CloudCredentialsFormComponent,
-      {
-        data: {
-          existingCredential: credential,
-        } as CloudCredentialFormInput,
+    this.formPanel.open(CloudCredentialsFormComponent, {
+      title: this.translate.instant('Edit Cloud Credential'),
+      inputs: {
+        editInput: { existingCredential: credential } as CloudCredentialFormInput,
       },
-    ).onSuccess(() => this.getCredentials(), this.destroyRef);
+    }).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doDelete(credential: CloudSyncCredential): void {

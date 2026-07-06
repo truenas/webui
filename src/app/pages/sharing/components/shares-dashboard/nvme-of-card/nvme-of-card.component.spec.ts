@@ -4,7 +4,14 @@ import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnDialog, TnMenuHarness, TnMenuTesting, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness,
+  TnDialog,
+  TnMenuHarness,
+  TnMenuTesting,
+  TnSlideToggleHarness,
+  TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -13,10 +20,14 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfHost, NvmeOfNamespace, NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
+import {
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -49,7 +60,7 @@ describe('NvmeOfCardComponent', () => {
     component: NvmeOfCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(NvmeOfStore, mockNvmeOfStore),
@@ -113,6 +124,27 @@ describe('NvmeOfCardComponent', () => {
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SubsystemDeleteDialogComponent, expect.anything());
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [1, { force: true }]);
+  });
+
+  it('opens the NVMe-oF form when the projected Add button is clicked', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      AddSubsystemComponent,
+      expect.objectContaining({ footerless: true }),
+    );
+  });
+
+  it('toggles the NVMe-oF service when the projected header toggle is changed', async () => {
+    const toggleState = jest.spyOn(spectator.inject(ServiceActionsMenuService), 'toggleServiceState')
+      .mockImplementation(() => {});
+    const toggle = await loader.getHarness(
+      TnSlideToggleHarness.with({ ancestor: '.tn-card__header-right' }),
+    );
+    await toggle.toggle();
+
+    expect(toggleState).toHaveBeenCalledWith(expect.objectContaining({ service: ServiceName.NvmeOf }));
   });
 
   it('navigates to shares list when view is clicked', async () => {

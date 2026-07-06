@@ -10,10 +10,10 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  ShareActionsCellComponent,
-} from 'app/pages/sharing/components/shares-dashboard/cells/share-actions-cell/share-actions-cell.component';
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ipmiCardElements } from 'app/pages/system/network/components/ipmi-card/ipmi-card.elements';
 import {
   IpmiEventsDialog,
@@ -33,7 +33,7 @@ import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    ShareActionsCellComponent,
+    TableActionsCellComponent,
     UiSearchDirective,
     TranslateModule,
   ],
