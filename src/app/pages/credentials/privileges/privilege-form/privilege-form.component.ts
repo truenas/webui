@@ -130,24 +130,24 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
    */
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
     const trimmedQuery = query?.trim() || '';
-    // The server-side `^` (prefix) filter is case-sensitive, so pass the query verbatim
-    // (matching UserService.smbGroupQueryDsCache) — lowercasing it would drop groups with
-    // uppercase names. The client-side contains-match below is what's intentionally lax.
     const lowerCaseQuery = trimmedQuery.toLowerCase();
 
     const filters: (['local', '=', true] | ['group', '^', string])[] = [['local', '=', true]];
     if (trimmedQuery) {
+      // The server-side `^` (prefix) filter is case-sensitive, so pass the query verbatim
+      // (matching UserService.smbGroupQueryDsCache) — lowercasing it would drop groups with
+      // uppercase names. The client-side contains-match below is what's intentionally lax.
       filters.push(['group', '^', trimmedQuery]);
     }
 
     return this.api.call('group.query', [filters, { limit: this.GROUP_QUERY_LIMIT, order_by: ['group'] }]).pipe(
       map((groups) => {
         const groupNames = groups.map((group) => group.group);
-        // Client-side filtering for contains match (better UX)
         if (!trimmedQuery) {
           return groupNames;
         }
 
+        // Client-side contains match (case-insensitive) for better UX.
         return groupNames.filter((name) => name.toLowerCase().includes(lowerCaseQuery));
       }),
     );
