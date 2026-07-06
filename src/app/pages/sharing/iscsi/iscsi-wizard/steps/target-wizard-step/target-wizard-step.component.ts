@@ -7,6 +7,7 @@ import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components'
 import { Observable, of, switchMap } from 'rxjs';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
@@ -35,6 +36,9 @@ export class TargetWizardStepComponent {
   formatter = inject(IxFormatterService);
 
   form = input.required<IscsiWizardComponent['form']['controls']['target']>();
+
+  // Drives the stepper's "finished step" indicator.
+  readonly completed = stepCompletedSignal(this.form);
 
   readonly helptextSharingIscsi = helptextIscsi;
 

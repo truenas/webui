@@ -1,11 +1,10 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnDialog, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnStepperComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -49,7 +48,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       SshCredentialsSelectComponent,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockAuth(),
       mockApi([
         mockCall('replication.query', [
@@ -188,7 +187,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
   });
 
   it('when an existing name is entered, the "Next" button is disabled', async () => {
-    const nextButton = await loader.getHarness(MatButtonHarness.with({ text: 'Next' }));
+    const nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
 
     await (await getInput('name')).setValue('task1');
     expect(await nextButton.isDisabled()).toBe(true);
@@ -225,7 +224,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
   });
 
   it('opens an advanced dialog when Advanced Replication Creation is pressed', async () => {
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
+    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Replication Creation' }));
     await advancedButton.click();
     expect(
       spectator.inject(FormSidePanelService).swap,

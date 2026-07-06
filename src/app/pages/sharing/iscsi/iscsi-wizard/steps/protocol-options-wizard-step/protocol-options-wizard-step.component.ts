@@ -5,8 +5,11 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnChipInputComponent, TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
-import { map, of, switchMap } from 'rxjs';
+import {
+  map, of, switchMap,
+} from 'rxjs';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -50,6 +53,9 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
   deleteFcPort = input.required<(index: number) => void>();
   getUsedPhysicalPorts = input.required<(excludeIndex: number) => string[]>();
   availablePorts = input.required<string[]>();
+
+  // Drives the stepper's "finished step" indicator.
+  readonly completed = stepCompletedSignal(this.form);
 
   readonly helptextSharingIscsi = helptextIscsi;
 

@@ -12,6 +12,7 @@ import { of, switchMap } from 'rxjs';
 import { IscsiExtentType, iscsiExtentUseforMap } from 'app/enums/iscsi.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
 import {
@@ -47,6 +48,9 @@ export class ExtentWizardStepComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   readonly form = input.required<IscsiWizardComponent['form']['controls']['extent']>();
+
+  // Drives the stepper's "finished step" indicator.
+  readonly completed = stepCompletedSignal(this.form);
 
   protected readonly InputType = InputType;
   readonly helptextSharingIscsi = helptextIscsi;

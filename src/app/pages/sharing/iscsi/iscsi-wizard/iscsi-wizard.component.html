@@ -1,47 +1,35 @@
-<!--
-  NAS-141552: mat-card + mat-vertical-stepper intentionally held on Material for this wizard.
-  The inner step controls/buttons are already migrated to tn-*; the stepper shell migration to
-  tn-stepper is tracked as follow-up under Epic NAS-141021.
--->
-<mat-card class="card">
+<tn-card class="card">
   <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
-    <mat-vertical-stepper #stepper>
-      <ix-use-ix-icons-in-stepper></ix-use-ix-icons-in-stepper>
-
-      <mat-step #matStepInstance>
-        <ng-template matStepLabel>{{ 'Target' | translate }}</ng-template>
+    <tn-stepper #stepper orientation="vertical">
+      <tn-step [label]="'Target' | translate" [completed]="targetStep().completed()">
         <ix-target-wizard-step [form]="form.controls.target"></ix-target-wizard-step>
         <div class="step-buttons">
           <tn-button
+            tnStepperNext
             color="primary"
-            type="button"
             [testId]="'next'"
             [label]="'Next' | translate"
             [disabled]="form.controls.target.invalid"
-            (onClick)="nextStep()"
           ></tn-button>
         </div>
-      </mat-step>
+      </tn-step>
 
-      <mat-step #matStepInstance>
-        <ng-template matStepLabel>{{ 'Extent' | translate }}</ng-template>
+      <tn-step [label]="'Extent' | translate" [completed]="extentStep().completed()">
         <ix-extent-wizard-step [form]="form.controls.extent"></ix-extent-wizard-step>
         <div class="step-buttons">
           <tn-button
+            tnStepperPrevious
             color="secondary"
-            type="button"
             [testId]="'back'"
             [label]="'Back' | translate"
-            (onClick)="previousStep()"
           ></tn-button>
           @if (isNewTarget) {
             <tn-button
+              tnStepperNext
               color="primary"
-              type="button"
               [testId]="'next'"
               [label]="'Next' | translate"
               [disabled]="form.controls.extent.invalid"
-              (onClick)="nextStep()"
             ></tn-button>
           } @else {
             <tn-button
@@ -53,11 +41,10 @@
             ></tn-button>
           }
         </div>
-      </mat-step>
+      </tn-step>
 
       @if (isNewTarget) {
-        <mat-step #matStepInstance>
-          <ng-template matStepLabel>{{ 'Protocol Options' | translate }}</ng-template>
+        <tn-step [label]="'Protocol Options' | translate" [completed]="protocolOptionsStep()?.completed()">
           <ix-protocol-options-wizard-step
             [form]="form.controls.options"
             [isFibreChannelMode]="isFibreChannelMode"
@@ -75,11 +62,10 @@
 
           <div class="step-buttons">
             <tn-button
+              tnStepperPrevious
               color="secondary"
-              type="button"
               [testId]="'back'"
               [label]="'Back' | translate"
-              (onClick)="previousStep()"
             ></tn-button>
             <tn-button
               *ixRequiresRoles="requiredRoles"
@@ -90,8 +76,8 @@
               [disabled]="form.invalid || (isFibreChannelMode && !areFcPortsValid()) || isLoading()"
             ></tn-button>
           </div>
-        </mat-step>
+        </tn-step>
       }
-    </mat-vertical-stepper>
+    </tn-stepper>
   </form>
-</mat-card>
+</tn-card>

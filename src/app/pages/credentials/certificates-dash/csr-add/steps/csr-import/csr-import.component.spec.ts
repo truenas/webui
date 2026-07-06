@@ -1,9 +1,8 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnInputHarness } from '@truenas/ui-components';
+import { TnInputHarness, TnStepperComponent } from '@truenas/ui-components';
 import {
   CsrImportComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-import/csr-import.component';
@@ -36,7 +35,7 @@ describe('CsrImportComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
     ],
   });
 

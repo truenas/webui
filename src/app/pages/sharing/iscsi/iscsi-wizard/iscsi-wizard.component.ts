@@ -1,16 +1,15 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, output, signal, inject, viewChild,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, output, signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatCard } from '@angular/material/card';
-import {
-  MatStepper, MatStep, MatStepLabel,
-} from '@angular/material/stepper';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnStepComponent, TnStepperComponent, TnStepperNextDirective,
+  TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import {
   lastValueFrom, forkJoin,
   of,
@@ -47,9 +46,6 @@ import {
 import { newOption } from 'app/interfaces/option.interface';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import {
-  UseIconsInStepperComponent,
-} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -68,18 +64,18 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
     ReactiveFormsModule,
-    MatStepper,
-    MatStep,
-    MatStepLabel,
+    TnStepperComponent,
+    TnStepComponent,
     TnButtonComponent,
+    TnStepperNextDirective,
+    TnStepperPreviousDirective,
     TargetWizardStepComponent,
     ExtentWizardStepComponent,
     ProtocolOptionsWizardStepComponent,
     RequiresRolesDirective,
     TranslateModule,
-    UseIconsInStepperComponent,
   ],
 })
 export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<IscsiTarget> {
@@ -96,9 +92,9 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
   /** Emitted to the `tn-side-panel` host with the created target on save. */
   readonly closed = output<IscsiTarget>();
 
-  // Stepper navigation is driven imperatively from tn-button clicks (tn-button can't
-  // bind matStepperNext/matStepperPrevious directives the way mat-button could).
-  private readonly stepper = viewChild(MatStepper);
+  protected readonly targetStep = viewChild.required(TargetWizardStepComponent);
+  protected readonly extentStep = viewChild.required(ExtentWizardStepComponent);
+  protected readonly protocolOptionsStep = viewChild(ProtocolOptionsWizardStepComponent);
 
   isLoading = signal<boolean>(false);
   toStop = signal<boolean>(false);
@@ -280,14 +276,6 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
     this.iscsiService.getTargets().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((targets) => {
       this.namesInUse.set(targets.map((target) => target.name));
     });
-  }
-
-  protected nextStep(): void {
-    this.stepper()?.next();
-  }
-
-  protected previousStep(): void {
-    this.stepper()?.previous();
   }
 
   protected addFcPort(): void {

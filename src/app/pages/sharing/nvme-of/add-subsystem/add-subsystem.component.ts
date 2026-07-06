@@ -1,14 +1,11 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatCard } from '@angular/material/card';
-import {
-  MatStep, MatStepLabel, MatStepper,
-} from '@angular/material/stepper';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
+  TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
+  TnStepComponent, TnStepperComponent, TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import {
   catchError,
@@ -18,6 +15,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import {
   CreateNvmeOfNamespace, NvmeOfHost, NvmeOfPort, NvmeOfSubsystem,
@@ -26,9 +24,6 @@ import { DetailsItemComponent } from 'app/modules/details-table/details-item/det
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import {
-  UseIconsInStepperComponent,
-} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -55,16 +50,16 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    MatCard,
+    TnCardComponent,
     ReactiveFormsModule,
-    MatStep,
-    MatStepLabel,
-    MatStepper,
-    UseIconsInStepperComponent,
+    TnStepperComponent,
+    TnStepComponent,
+    TnButtonComponent,
+    TnStepperNextDirective,
+    TnStepperPreviousDirective,
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
-    TnButtonComponent,
     AddSubsystemHostsComponent,
     AddSubsystemNamespacesComponent,
     RequiresRolesDirective,
@@ -108,6 +103,9 @@ export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsy
   });
 
   protected readonly helptext = helptextNvmeOf;
+
+  // Drives the stepper's "finished step" pencil icon (replaces mat's [stepControl]).
+  protected readonly whatToShareCompleted = stepCompletedSignal(this.form.controls.name);
 
   protected onSubmit(): void {
     this.isLoading.set(true);

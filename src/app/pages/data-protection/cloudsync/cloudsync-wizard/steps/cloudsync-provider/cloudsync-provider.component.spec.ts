@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatStepper } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog, TnSelectHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -49,7 +48,7 @@ describe('CloudSyncProviderComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-      mockProvider(MatStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('cloudsync.providers', [storjProvider, googlePhotosProvider]),

@@ -1,10 +1,10 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnInputHarness, TnSelectHarness, TnStepperComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -36,7 +36,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(FormSidePanelService),
       mockAuth(),
@@ -104,7 +104,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
   });
 
   it('when an required field is empty, the "Save" button is disabled', async () => {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
 
     spectator.component.form.controls.description.setValue('');
     spectator.detectChanges();
@@ -119,13 +119,13 @@ describe('CloudSyncWhatAndWhenComponent', () => {
 
   it('emits (save) when Save is selected', async () => {
     jest.spyOn(spectator.component.save, 'emit');
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
     expect(spectator.component.save.emit).toHaveBeenCalled();
   });
 
   it('opens an advanced form when Advanced Options is pressed', async () => {
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
     await advancedButton.click();
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       buttonText: 'Continue',

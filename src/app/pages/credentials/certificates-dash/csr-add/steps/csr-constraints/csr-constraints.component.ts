@@ -1,14 +1,15 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { omit } from 'lodash-es';
 import { of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { findLabelsByValue } from 'app/helpers/options.helper';
@@ -47,6 +48,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
+    TnStepperPreviousDirective,
+    TnStepperNextDirective,
     TranslateModule,
     TranslateOptionsPipe,
   ],
@@ -58,7 +61,6 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
-  private stepper = inject(CdkStepper);
 
   form = this.formBuilder.nonNullable.group({
     BasicConstraints: this.formBuilder.nonNullable.group({
@@ -77,6 +79,12 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
     }),
   });
 
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
+
   readonly helptext = helptextSystemCertificates;
 
   protected readonly InputType = InputType;
@@ -94,14 +102,6 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
 
   hasExtension(extension: CertificateExtension): boolean {
     return this.form.getRawValue()[extension].enabled;
-  }
-
-  protected goBack(): void {
-    this.stepper.previous();
-  }
-
-  protected goNext(): void {
-    this.stepper.next();
   }
 
   getSummary(): SummarySection {

@@ -1,16 +1,7 @@
-<!--
-  NAS-141552: mat-card + mat-vertical-stepper intentionally held on Material for this wizard.
-  The inner step controls/buttons are already migrated to tn-*; the stepper shell migration to
-  tn-stepper is tracked as follow-up under Epic NAS-141021.
--->
-<mat-card class="card">
-  <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
-    <mat-vertical-stepper #stepper>
-      <ix-use-ix-icons-in-stepper></ix-use-ix-icons-in-stepper>
-
-      <mat-step>
-        <ng-template matStepLabel>{{ 'What To Share' | translate }}</ng-template>
-
+<tn-card class="card">
+  <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+    <tn-stepper #stepper orientation="vertical">
+      <tn-step [label]="'What To Share' | translate" [completed]="whatToShareCompleted()">
         <tn-form-field
           class="name-input"
           [label]="'Subsystem Name' | translate"
@@ -47,18 +38,16 @@
 
         <div class="step-buttons">
           <tn-button
-            type="button"
+            tnStepperNext
+            color="primary"
             [testId]="'next'"
             [label]="'Next' | translate"
             [disabled]="form.controls.name.invalid"
-            (onClick)="stepper.next()"
           ></tn-button>
         </div>
-      </mat-step>
+      </tn-step>
 
-      <mat-step>
-        <ng-template matStepLabel>{{ 'Access' | translate }}</ng-template>
-
+      <tn-step [label]="'Access' | translate">
         <tn-form-field>
           <tn-checkbox
             formControlName="allowAnyHost"
@@ -80,22 +69,20 @@
 
         <div class="step-buttons last-step-buttons">
           <tn-button
-            type="button"
+            tnStepperPrevious
             [testId]="'back'"
             [label]="'Back' | translate"
-            (onClick)="stepper.previous()"
           ></tn-button>
           <tn-button
             *ixRequiresRoles="requiredRoles"
-            type="submit"
-            variant="filled"
-            [primary]="true"
+            color="primary"
             [testId]="'save'"
             [label]="'Save' | translate"
             [disabled]="form.invalid || isLoading()"
+            (onClick)="onSubmit()"
           ></tn-button>
         </div>
-      </mat-step>
-    </mat-vertical-stepper>
+      </tn-step>
+    </tn-stepper>
   </form>
-</mat-card>
+</tn-card>

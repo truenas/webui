@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  MatStepper, MatStep, MatStepLabel,
-} from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnStepComponent, TnStepperComponent, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { merge } from 'lodash-es';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -12,9 +11,6 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import {
-  UseIconsInStepperComponent,
-} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -46,9 +42,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     ModalHeaderComponent,
     TnCardComponent,
-    MatStepper,
-    MatStep,
-    MatStepLabel,
+    TnStepperComponent,
+    TnStepComponent,
     CsrIdentifierAndTypeComponent,
     CsrImportComponent,
     CsrOptionsComponent,
@@ -57,9 +52,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     SummaryComponent,
     FormActionsComponent,
     TnButtonComponent,
+    TnStepperPreviousDirective,
     RequiresRolesDirective,
     TranslateModule,
-    UseIconsInStepperComponent,
   ],
 })
 export class CsrAddComponent {
@@ -73,9 +68,10 @@ export class CsrAddComponent {
   protected readonly identifierAndType = viewChild.required(CsrIdentifierAndTypeComponent);
 
   // Adding new
-  protected readonly options = viewChild(CsrOptionsComponent);
-  protected readonly subject = viewChild(CsrSubjectComponent);
-  protected readonly constraints = viewChild(CsrConstraintsComponent);
+  // TODO: Should be protected, but used in the test.
+  readonly options = viewChild(CsrOptionsComponent);
+  readonly subject = viewChild(CsrSubjectComponent);
+  readonly constraints = viewChild(CsrConstraintsComponent);
 
   // Importing
   protected readonly import = viewChild(CsrImportComponent);
