@@ -177,6 +177,29 @@ describe('PrivilegeFormComponent', () => {
       }]);
       expect(closed).toHaveBeenCalledWith(true);
     });
+
+    it('selects every role when the select-all row is toggled', async () => {
+      const name = await loader.getHarness(TnInputHarness);
+      await name.setValue('new privilege');
+
+      const roles = await loader.getHarness(TnSelectHarness);
+      await roles.toggleSelectAll();
+      await roles.close();
+
+      spectator.component.submit();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const createCall = (api.call as jest.Mock).mock.calls.find((call) => call[0] === 'privilege.create');
+      expect(createCall[1][0].roles).toEqual(expect.arrayContaining([
+        Role.FullAdmin,
+        Role.SharingAdmin,
+        Role.ReadonlyAdmin,
+        Role.SharingSmbRead,
+        Role.SharingSmbWrite,
+      ]));
+      expect(createCall[1][0].roles).toHaveLength(5);
+    });
   });
 
   describe('editing a privilege', () => {
