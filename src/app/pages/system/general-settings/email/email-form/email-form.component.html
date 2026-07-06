@@ -19,14 +19,14 @@
       [required]="isFromEmailRequired"
       [tooltip]="helptext.fromemail.tooltip | translate"
     >
-      <tn-input formControlName="fromemail"></tn-input>
+      <tn-input testId="fromemail" formControlName="fromemail"></tn-input>
     </tn-form-field>
 
     <tn-form-field
       [label]="'From Name' | translate"
       [tooltip]="helptext.fromname.tooltip | translate"
     >
-      <tn-input formControlName="fromname"></tn-input>
+      <tn-input testId="fromname" formControlName="fromname"></tn-input>
     </tn-form-field>
 
     @if (isSmtp()) {
@@ -34,7 +34,7 @@
         [label]="'Outgoing Mail Server' | translate"
         [tooltip]="helptext.outgoingserver.tooltip | translate"
       >
-        <tn-input formControlName="outgoingserver"></tn-input>
+        <tn-input testId="outgoingserver" formControlName="outgoingserver"></tn-input>
       </tn-form-field>
 
       <tn-form-field
@@ -43,6 +43,7 @@
         [tooltip]="helptext.port.tooltip | translate"
       >
         <tn-input
+          testId="port"
           formControlName="port"
           [inputType]="InputType.Number"
         ></tn-input>
@@ -53,6 +54,7 @@
         [tooltip]="helptext.security.tooltip | translate"
       >
         <tn-select
+          testId="security"
           formControlName="security"
           [options]="(securityOptions$ | async) ?? []"
         ></tn-select>
@@ -60,6 +62,7 @@
 
       <tn-form-field [tooltip]="helptext.auth.smtp.tooltip | translate">
         <tn-checkbox
+          testId="smtp"
           formControlName="smtp"
           [label]="'SMTP Authentication' | translate"
         ></tn-checkbox>
@@ -71,7 +74,7 @@
           [required]="true"
           [tooltip]="helptext.user.tooltip | translate"
         >
-          <tn-input formControlName="user"></tn-input>
+          <tn-input testId="user" formControlName="user"></tn-input>
         </tn-form-field>
 
         <tn-form-field
@@ -79,6 +82,7 @@
           [tooltip]="helptext.pass.tooltip | translate"
         >
           <tn-input
+            testId="pass"
             formControlName="pass"
             [inputType]="InputType.Password"
             [showPasswordToggle]="true"

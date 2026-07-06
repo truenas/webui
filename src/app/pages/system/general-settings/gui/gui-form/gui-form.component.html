@@ -12,6 +12,7 @@
         [required]="true"
       >
         <tn-select
+          testId="ui_certificate"
           formControlName="ui_certificate"
           [options]="(options.ui_certificate | async) ?? []"
         ></tn-select>
@@ -24,6 +25,7 @@
       [required]="true"
     >
       <tn-select
+        testId="ui_address"
         formControlName="ui_address"
         [options]="(options.ui_address | async) ?? []"
         [multiple]="true"
@@ -36,6 +38,7 @@
       [required]="true"
     >
       <tn-select
+        testId="ui_v6address"
         formControlName="ui_v6address"
         [options]="(options.ui_v6address | async) ?? []"
         [multiple]="true"
@@ -47,6 +50,7 @@
       [tooltip]="helptext.uiPort.tooltip | translate"
     >
       <tn-input
+        testId="ui_port"
         formControlName="ui_port"
         [inputType]="InputType.Number"
       ></tn-input>
@@ -57,6 +61,7 @@
       [tooltip]="helptext.uiHttpsPort.tooltip | translate"
     >
       <tn-input
+        testId="ui_httpsport"
         formControlName="ui_httpsport"
         [inputType]="InputType.Number"
       ></tn-input>
@@ -68,6 +73,7 @@
       [required]="true"
     >
       <tn-select
+        testId="ui_httpsprotocols"
         formControlName="ui_httpsprotocols"
         [options]="(options.ui_httpsprotocols | async) ?? []"
         [multiple]="true"
@@ -76,6 +82,7 @@
 
     <tn-form-field [tooltip]="helptext.uiHttpsRedirect.tooltip | translate">
       <tn-checkbox
+        testId="ui_httpsredirect"
         formControlName="ui_httpsredirect"
         [label]="helptext.uiHttpsRedirect.label | translate"
       ></tn-checkbox>
@@ -85,6 +92,7 @@
   <tn-form-section [heading]="helptext.otherTitle | translate">
     <tn-form-field [tooltip]="usageCollectionTooltip()">
       <tn-checkbox
+        testId="usage_collection"
         formControlName="usage_collection"
         [label]="helptext.usageCollection.label | translate"
       ></tn-checkbox>
@@ -92,6 +100,7 @@
 
     <tn-form-field [tooltip]="helptext.uiConsoleMessage.tooltip | translate">
       <tn-checkbox
+        testId="ui_consolemsg"
         formControlName="ui_consolemsg"
         [label]="helptext.uiConsoleMessage.label | translate"
       ></tn-checkbox>

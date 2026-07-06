@@ -15,23 +15,24 @@
       [tooltip]="helptext.proactive.instructions | translate"
     >
       <tn-form-field [label]="'Name' | translate" [required]="true">
-        <tn-input formControlName="name"></tn-input>
+        <tn-input testId="name" formControlName="name"></tn-input>
       </tn-form-field>
 
       <tn-form-field [label]="'Title' | translate" [required]="true">
-        <tn-input formControlName="title"></tn-input>
+        <tn-input testId="title" formControlName="title"></tn-input>
       </tn-form-field>
 
       <tn-form-field [label]="'Email' | translate" [required]="true">
-        <tn-input formControlName="email"></tn-input>
+        <tn-input testId="email" formControlName="email"></tn-input>
       </tn-form-field>
 
       <tn-form-field [label]="'Phone Number' | translate" [required]="true">
-        <tn-input formControlName="phone"></tn-input>
+        <tn-input testId="phone" formControlName="phone"></tn-input>
       </tn-form-field>
 
       <tn-form-field>
         <tn-checkbox
+          testId="enabled"
           formControlName="enabled"
           [label]="'Enable TrueNAS Proactive Support' | translate"
         ></tn-checkbox>
@@ -43,19 +44,19 @@
       [tooltip]="helptext.proactive.instructions | translate"
     >
       <tn-form-field [label]="'Secondary Name' | translate" [required]="true">
-        <tn-input formControlName="secondary_name"></tn-input>
+        <tn-input testId="secondary_name" formControlName="secondary_name"></tn-input>
       </tn-form-field>
 
       <tn-form-field [label]="'Secondary Title' | translate" [required]="true">
-        <tn-input formControlName="secondary_title"></tn-input>
+        <tn-input testId="secondary_title" formControlName="secondary_title"></tn-input>
       </tn-form-field>
 
       <tn-form-field [label]="'Secondary Email' | translate" [required]="true">
-        <tn-input formControlName="secondary_email"></tn-input>
+        <tn-input testId="secondary_email" formControlName="secondary_email"></tn-input>
       </tn-form-field>
 
       <tn-form-field [label]="'Secondary Phone Number' | translate" [required]="true">
-        <tn-input formControlName="secondary_phone"></tn-input>
+        <tn-input testId="secondary_phone" formControlName="secondary_phone"></tn-input>
       </tn-form-field>
     </tn-form-section>
   </div>
