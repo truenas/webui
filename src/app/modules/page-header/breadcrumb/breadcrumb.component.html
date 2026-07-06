@@ -3,7 +3,7 @@
     @for (breadcrumb of breadcrumbs; track breadcrumb) {
       <li>
         @if (breadcrumb.url) {
-          <a tnTestIdType="link" [routerLink]="breadcrumb.url" [tnTestId]="['breadcrumb', breadcrumb.breadcrumb]">
+          <a [routerLink]="breadcrumb.url" [ixTest]="['breadcrumb', breadcrumb.breadcrumb]">
             {{ breadcrumb.breadcrumb | translate }}
           </a>
         } @else {
