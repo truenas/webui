@@ -125,7 +125,6 @@ export class VmWizardComponent implements OnInit {
         || this.diskStep()?.form?.dirty
         || this.networkInterfaceStep()?.form?.dirty
         || this.installationMediaStep()?.form?.dirty
-        || this.installationMediaStep()?.form?.dirty
         || this.gpuStep()?.form?.dirty,
       ));
     });

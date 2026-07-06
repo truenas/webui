@@ -272,7 +272,7 @@ describe('ReviewWizardStepComponent', () => {
 
     it('disables pool creation button once there are errors', async () => {
       const createPool = await loader.getHarness(TnButtonHarness.with({ label: 'Create Pool' }));
-      expect(createPool.isDisabled).toBeTruthy();
+      expect(await createPool.isDisabled()).toBe(true);
     });
   });
 });
