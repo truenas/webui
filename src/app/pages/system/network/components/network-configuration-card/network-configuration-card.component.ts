@@ -18,7 +18,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
 import {
@@ -48,7 +48,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 export class NetworkConfigurationCardComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private searchDirectives = inject(UiSearchDirectivesService);
   private actions$ = inject(Actions);
   private errorHandler = inject(ErrorHandlerService);
@@ -181,7 +181,10 @@ export class NetworkConfigurationCardComponent implements OnInit {
   });
 
   onSettingsClicked(): void {
-    this.slideIn.open(NetworkConfigurationComponent, { wide: true })
+    this.formPanel.open(NetworkConfigurationComponent, {
+      title: this.translate.instant('Edit Global Configuration'),
+      wide: true,
+    })
       .onSuccess(() => this.loadNetworkConfigAndSummary(), this.destroyRef);
   }
 

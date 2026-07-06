@@ -23,7 +23,7 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -65,7 +65,7 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
     TranslateModule,
   ],
 })
-export class NetworkConfigurationComponent implements OnInit {
+export class NetworkConfigurationComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -73,7 +73,6 @@ export class NetworkConfigurationComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
@@ -100,6 +99,8 @@ export class NetworkConfigurationComponent implements OnInit {
     httpproxy: [''],
     hosts: [[] as string[]],
   });
+
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   readonly helptext = helptextNetworkConfiguration;
 
@@ -233,12 +234,6 @@ export class NetworkConfigurationComponent implements OnInit {
     tooltip: helptextNetworkConfiguration.hostsTooltip,
   };
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
-
   ngOnInit(): void {
     this.isFormLoading.set(true);
     this.loadConfig();
@@ -366,7 +361,7 @@ export class NetworkConfigurationComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.store$.dispatch(systemInfoUpdated());
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

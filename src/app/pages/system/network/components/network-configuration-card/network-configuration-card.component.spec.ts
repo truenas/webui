@@ -10,7 +10,7 @@ import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
@@ -52,7 +52,7 @@ describe('NetworkConfigurationCardComponent', () => {
           nameservers: ['8.8.8.8', '8.8.4.4', '8.8.1.1'],
         } as NetworkSummary),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -147,11 +147,14 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('opens settings form when Settings button is clicked', async () => {
-    const slideInRef = spectator.inject(SlideIn);
+    const formPanel = spectator.inject(FormSidePanelService);
 
     const settingsButton = await loader.getHarness(TnButtonHarness.with({ label: 'Settings' }));
     await settingsButton.click();
 
-    expect(slideInRef.open).toHaveBeenCalledWith(NetworkConfigurationComponent, { wide: true });
+    expect(formPanel.open).toHaveBeenCalledWith(NetworkConfigurationComponent, {
+      title: 'Edit Global Configuration',
+      wide: true,
+    });
   });
 });

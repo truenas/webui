@@ -1,8 +1,10 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="helptext.title | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles"
+    [title]="helptext.title | translate"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
 
 <form class="card ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div class="two-columns">
@@ -141,14 +143,16 @@
     </tn-form-section>
   </div>
 
-  <div class="form-actions">
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      color="primary"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="form.invalid || isFormLoading()"
-      (onClick)="onSubmit()"
-    ></tn-button>
-  </div>
+  @if (slideInRef) {
+    <div class="form-actions">
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="form.invalid || isFormLoading()"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    </div>
+  }
 </form>
