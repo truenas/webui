@@ -348,6 +348,18 @@ describe('ContainersStore', () => {
       expect(spectator.service.containers().map((container) => container.name)).toEqual(['bravo', 'alpha']);
     });
 
+    it('keeps the name tie-break ascending when the primary sort is descending', () => {
+      const charlieRunning = fakeContainer({
+        id: 3, name: 'charlie', autostart: false, status: { state: ContainerStatus.Running },
+      } as Partial<Container>);
+      spectator.service.patchState({ containers: [bravoRunning, alphaStopped, charlieRunning] });
+      spectator.service.setSort({ active: ContainerSortField.Status, direction: SortDirection.Desc });
+
+      // Stopped sorts first (descending), then the two Running containers stay A→Z (bravo, charlie)
+      // rather than being reversed by the primary direction.
+      expect(spectator.service.containers().map((container) => container.name)).toEqual(['alpha', 'bravo', 'charlie']);
+    });
+
     it('sorts client-side without sending order_by to the backend', () => {
       spectator.service.setSort({ active: ContainerSortField.Name, direction: SortDirection.Desc });
 

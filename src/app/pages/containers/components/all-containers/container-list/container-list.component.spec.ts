@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnIconButtonHarness, TnDialog, TnTableHarness, TnSortEvent,
+  TnIconButtonHarness, TnDialog, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -198,11 +198,16 @@ describe('ContainerListComponent', () => {
     });
   });
 
-  it('keeps the clicked column ascending when tn-table cycles to the unsorted state', () => {
-    const component = spectator.component as unknown as { onSortChange: (event: TnSortEvent) => void };
-    component.onSortChange({ column: ContainerSortField.Status, direction: '' });
+  it('keeps the clicked column ascending when tn-table cycles to the unsorted state', async () => {
+    const table = await loader.getHarness(TnTableHarness);
 
-    expect(spectator.inject(ContainersStore).setSort).toHaveBeenCalledWith({
+    // tn-table cycles asc → desc → unsorted; the third click reaches the unsorted step,
+    // which the component treats as ascending on the same column.
+    await table.clickSortHeader('status');
+    await table.clickSortHeader('status');
+    await table.clickSortHeader('status');
+
+    expect(spectator.inject(ContainersStore).setSort).toHaveBeenLastCalledWith({
       active: ContainerSortField.Status,
       direction: SortDirection.Asc,
     });

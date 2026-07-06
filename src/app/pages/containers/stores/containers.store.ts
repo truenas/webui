@@ -59,12 +59,17 @@ function compareContainers(a: Container, b: Container, sort: ContainerSort, tran
       break;
   }
 
+  // Apply the direction to the primary comparison only. The name tie-break below stays
+  // ascending regardless of primary direction, so equal-status rows keep a stable A→Z
+  // secondary order instead of getting reversed when sorting Status/Autostart descending.
+  result *= modifier;
+
   // Stable, predictable ordering: break ties on name.
   if (result === 0 && sort.active !== ContainerSortField.Name) {
     result = compareContainerNames(a, b);
   }
 
-  return result * modifier;
+  return result;
 }
 
 export interface ContainersState {
