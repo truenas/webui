@@ -167,6 +167,8 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.R60]: r60,
   [EnclosureModel.V140]: vSeries,
   [EnclosureModel.V160]: vSeries,
+  [EnclosureModel.V260]: vSeries,
+  [EnclosureModel.V280]: vSeries,
   [EnclosureModel.X10]: xSeries,
   [EnclosureModel.X20]: xSeries,
 };
