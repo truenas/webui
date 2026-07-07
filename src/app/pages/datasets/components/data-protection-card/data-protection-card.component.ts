@@ -2,14 +2,13 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCardComponent, type TnCardAction } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective, type TnCardAction } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 
@@ -20,7 +19,7 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    TestDirective,
+    TnTestIdDirective,
     UiSearchDirective,
     TranslateModule,
     RouterLink,
@@ -51,7 +50,7 @@ export class DataProtectionCardComponent {
     };
   });
 
-  get backupTasksLabel(): string {
+  protected readonly backupTasksLabel = computed<string>(() => {
     const replicationCount = this.dataset()?.replication_tasks_count || 0;
     const cloudSyncCount = this.dataset()?.cloudsync_tasks_count || 0;
     const rsyncCount = this.dataset()?.rsync_tasks_count || 0;
@@ -79,9 +78,9 @@ export class DataProtectionCardComponent {
     }
 
     return parts.join(', ');
-  }
+  });
 
-  addSnapshot(): void {
+  private addSnapshot(): void {
     this.slideIn.open(SnapshotAddFormComponent, { data: this.dataset().id })
       .onSuccess(() => {
         this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));

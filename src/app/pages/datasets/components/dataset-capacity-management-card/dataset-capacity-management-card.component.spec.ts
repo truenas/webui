@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
 import { MockComponents, MockModule } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
@@ -118,7 +118,8 @@ describe('DatasetCapacityManagementCardComponent', () => {
     });
 
     it('shows header', async () => {
-      expect(spectator.query('.tn-card__title')).toHaveText('Space Management');
+      // white-box: no TnCardHarness yet — read the public title() input
+      expect(spectator.query(TnCardComponent)!.title()).toBe('Space Management');
       const editButton = await TestbedHarnessEnvironment.loader(spectator.fixture)
         .getHarnessOrNull(TnButtonHarness.with({ label: 'Edit' }));
       expect(editButton).not.toBeNull();
@@ -169,7 +170,8 @@ describe('DatasetCapacityManagementCardComponent', () => {
     });
 
     it('shows header', async () => {
-      expect(spectator.query('.tn-card__title')).toHaveText('Zvol Space Management');
+      // white-box: no TnCardHarness yet — read the public title() input
+      expect(spectator.query(TnCardComponent)!.title()).toBe('Zvol Space Management');
       const editButton = await TestbedHarnessEnvironment.loader(spectator.fixture)
         .getHarnessOrNull(TnButtonHarness.with({ label: 'Edit' }));
       expect(editButton).toBeNull();

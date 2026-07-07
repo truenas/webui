@@ -61,7 +61,7 @@
         <ix-tier-status [tier]="dataset().tier" />
       </div>
       @if (!dataset().locked) {
-        <button type="button" class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
+        <button type="button" class="change-tier-link" tnTestIdType="button" [tnTestId]="'change-tier'" (click)="changeTier()">
           {{ 'Change' | translate }}
         </button>
       }

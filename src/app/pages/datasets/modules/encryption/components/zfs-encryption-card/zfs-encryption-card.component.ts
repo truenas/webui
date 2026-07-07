@@ -4,13 +4,12 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
-  TnCardHeaderActionsDirective, TnDialog, TnTooltipDirective,
+  TnCardHeaderActionsDirective, TnDialog, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import {
   EncryptionOptionsDialogData,
@@ -42,7 +41,7 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
     TnButtonComponent,
     TnTooltipDirective,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     RequiresRolesDirective,
     RouterLink,
     TooltipComponent,
@@ -93,7 +92,7 @@ export class ZfsEncryptionCardComponent {
     return this.isEncryptionRoot() && this.dataset().locked && !this.parentDataset()?.locked;
   });
 
-  onEditPressed(): void {
+  protected onEditPressed(): void {
     const dialog = this.tnDialog.open(EncryptionOptionsDialog, {
       data: {
         dataset: this.dataset(),
@@ -106,7 +105,7 @@ export class ZfsEncryptionCardComponent {
       .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
-  onLock(): void {
+  protected onLock(): void {
     this.tnDialog.open(LockDatasetDialog, {
       data: this.dataset(),
     })
@@ -115,13 +114,13 @@ export class ZfsEncryptionCardComponent {
       .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
-  onExportKey(): void {
+  protected onExportKey(): void {
     this.tnDialog.open(ExportDatasetKeyDialog, {
       data: this.dataset(),
     });
   }
 
-  onExportAllKeys(): void {
+  protected onExportAllKeys(): void {
     this.tnDialog.open(ExportAllKeysDialog, {
       data: this.dataset(),
     });

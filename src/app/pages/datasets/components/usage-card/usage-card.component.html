@@ -15,7 +15,7 @@
             {{ 'This dataset is used by: {apps}' | translate: { apps: appNames() } }}
           </div>
         }
-        <a class="action" ixTest="manage-apps-settings" [routerLink]="['/apps']">
+        <a class="action" tnTestIdType="link" [tnTestId]="'manage-apps-settings'" [routerLink]="['/apps']">
           {{ 'Manage Apps Settings' | translate }}
         </a>
       </div>
@@ -27,7 +27,7 @@
         <div class="system-dataset value">
           {{ 'This dataset is used by the system' | translate }}
         </div>
-        <a class="action" ixTest="manage-advanced-settings" [routerLink]="['/system', 'advanced']">
+        <a class="action" tnTestIdType="link" [tnTestId]="'manage-advanced-settings'" [routerLink]="['/system', 'advanced']">
           {{ 'Manage Advanced Settings' | translate }}
         </a>
       </div>
@@ -48,7 +48,7 @@
         <div class="vms value">
           {{ 'This dataset is used by: {vms}' | translate: { vms: vmNames() } }}
         </div>
-        <a class="action" ixTest="manage-vm-settings" [routerLink]="['/vm']">
+        <a class="action" tnTestIdType="link" [tnTestId]="'manage-vm-settings'" [routerLink]="['/vm']">
           {{ 'Manage VM Settings' | translate }}
         </a>
       </div>
@@ -60,7 +60,7 @@
         <div class="containers value">
           {{ 'This dataset is used by: {containers}' | translate: { containers: containerNames() } }}
         </div>
-        <a class="action" ixTest="manage-containers" [routerLink]="['/containers']">
+        <a class="action" tnTestIdType="link" [tnTestId]="'manage-containers'" [routerLink]="['/containers']">
           {{ 'Manage Containers' | translate }}
         </a>
       </div>
@@ -72,7 +72,7 @@
         <div class="smb-shares value">
           {{ 'Dataset is shared via SMB as {shares}' | translate: { shares: smbShareNames() } }}
         </div>
-        <a class="action" ixTest="manage-smb-shares" [routerLink]="['/sharing/smb']">
+        <a class="action" tnTestIdType="link" [tnTestId]="'manage-smb-shares'" [routerLink]="['/sharing/smb']">
           {{ 'Manage SMB Shares' | translate }}
         </a>
       </div>
@@ -86,7 +86,8 @@
         </div>
         <a
           class="action"
-          ixTest="manage-nfs-shares"
+          tnTestIdType="link"
+          [tnTestId]="'manage-nfs-shares'"
           [routerLink]="['/sharing/nfs']"
           >
           {{ 'Manage NFS Shares' | translate }}
@@ -100,7 +101,7 @@
         <div class="iscsi-shares value">
           {{ 'Dataset is shared via iSCSI' | translate }}
         </div>
-        <a class="action" ixTest="manage-iscsi-shares" [routerLink]="['/sharing/iscsi']">
+        <a class="action" tnTestIdType="link" [tnTestId]="'manage-iscsi-shares'" [routerLink]="['/sharing/iscsi']">
           {{ 'Manage iSCSI Shares' | translate }}
         </a>
       </div>
@@ -112,7 +113,7 @@
         <div class="webshares value">
           {{ 'Dataset is shared via WebShare as {shares}' | translate: { shares: combinedWebShareDisplay() } }}
         </div>
-        <a class="action" ixTest="manage-webshares" [routerLink]="['/sharing/webshare']">
+        <a class="action" tnTestIdType="link" [tnTestId]="'manage-webshares'" [routerLink]="['/sharing/webshare']">
           {{ 'Manage WebShares' | translate }}
         </a>
       </div>
@@ -125,7 +126,8 @@
           *ixRequiresRoles="smbRequiredRoles"
           class="action"
           tabindex="0"
-          ixTest="create-smb-share"
+          tnTestIdType="link"
+          [tnTestId]="'create-smb-share'"
           (click)="createSmbShare()"
           (keydown.enter)="createSmbShare()"
         >
@@ -137,7 +139,8 @@
           *ixRequiresRoles="nfsRequiredRoles"
           class="action"
           tabindex="0"
-          ixTest="create-nfs-share"
+          tnTestIdType="link"
+          [tnTestId]="'create-nfs-share'"
           (click)="createNfsShare()"
           (keydown.enter)="createNfsShare()"
         >
@@ -150,7 +153,8 @@
             *ixRequiresRoles="webShareRequiredRoles"
             class="action"
             tabindex="0"
-            ixTest="create-webshare"
+            tnTestIdType="link"
+            [tnTestId]="'create-webshare'"
             (click)="createWebshare()"
             (keydown.enter)="createWebshare()"
           >

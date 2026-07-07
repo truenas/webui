@@ -91,6 +91,7 @@
                   tabindex="0"
                   (click)="viewDetails(dataset); $event.stopPropagation()"
                   (keydown.enter)="viewDetails(dataset)"
+                  (keydown.space)="viewDetails(dataset); $event.preventDefault()"
                 >
                   <ix-dataset-node
                     [dataset]="dataset"

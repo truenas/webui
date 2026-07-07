@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnTooltipDirective, TnDialog, TnCardComponent, TnButtonComponent, TnCardFooterActionsDirective,
-  type TnCardAction, type TnMenuItem,
+  TnTestIdDirective, type TnCardAction, type TnMenuItem,
 } from '@truenas/ui-components';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
@@ -18,7 +18,6 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -40,7 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnButtonComponent,
     TnCardFooterActionsDirective,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     OrNotAvailablePipe,
     TnTooltipDirective,
     CopyButtonComponent,
@@ -124,11 +123,11 @@ export class DatasetDetailsCardComponent {
     }];
   });
 
-  get isRootDataset(): boolean {
+  protected get isRootDataset(): boolean {
     return !!this.dataset() && isRootDataset(this.dataset());
   }
 
-  deleteDataset(): void {
+  private deleteDataset(): void {
     this.tnDialog.open(DeleteDatasetDialog, { data: this.dataset() })
       .closed
       .pipe(
@@ -144,7 +143,7 @@ export class DatasetDetailsCardComponent {
       });
   }
 
-  promoteDataset(): void {
+  private promoteDataset(): void {
     this.api.call('pool.dataset.promote', [this.dataset().id])
       .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
@@ -153,7 +152,7 @@ export class DatasetDetailsCardComponent {
       });
   }
 
-  changeTier(): void {
+  protected changeTier(): void {
     const currentTier = this.dataset().tier?.tier_type;
     if (!currentTier) {
       this.errorHandler.showErrorModal(
@@ -171,13 +170,13 @@ export class DatasetDetailsCardComponent {
     ).subscribe(() => this.datasetStore.datasetUpdated());
   }
 
-  editDataset(): void {
+  private editDataset(): void {
     this.slideIn.open(DatasetFormComponent, {
       wide: true, data: { datasetId: this.dataset().id, isNew: false },
     }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 
-  editZvol(): void {
+  private editZvol(): void {
     this.slideIn.open(ZvolFormComponent, {
       data: { isNew: false, parentOrZvolId: this.dataset().id },
     }).onSuccess((response) => {

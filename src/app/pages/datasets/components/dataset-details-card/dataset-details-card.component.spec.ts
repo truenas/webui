@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnDialog, TnButtonHarness, TnMenuHarness, TnMenuTesting,
+  TnDialog, TnButtonHarness, TnCardComponent, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -121,7 +121,8 @@ describe('DatasetDetailsCardComponent', () => {
   it('shows header', async () => {
     setupTest({ dataset });
 
-    expect(spectator.query('.tn-card__title')).toHaveText('Details');
+    // white-box: no TnCardHarness yet — read the public title() input
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Details');
     const editButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Edit' }));
     expect(editButton).not.toBeNull();
   });

@@ -5,7 +5,7 @@ import {
 } from '@angular/cdk/layout';
 import { CdkTreeNodePadding, CdkTreeNodeDef } from '@angular/cdk/tree';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, OnInit, AfterViewInit, TrackByFunction, HostBinding, computed, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, OnInit, AfterViewInit, TrackByFunction, computed, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   ActivatedRoute, NavigationSkipped, NavigationStart, Router,
@@ -55,6 +55,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './dataset-management.component.html',
   styleUrls: ['./dataset-management.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.details-overlay]': 'showMobileDetails' },
   imports: [
     TnEmptyComponent,
     FakeProgressBarComponent,
@@ -107,7 +108,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
-  @HostBinding('class.details-overlay') showMobileDetails = false;
+  showMobileDetails = false;
   isMobileView = false;
   systemDataset = toSignal(this.api.call('systemdataset.config').pipe(map((config) => config.pool)));
   isLoading = true;
@@ -132,11 +133,17 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     }
 
     if (this.searchQuery()?.length && !this.dataSource.filteredData.length) {
-      return noSearchResultsConfig;
+      return {
+        ...noSearchResultsConfig,
+        title: this.translate.instant(noSearchResultsConfig.title),
+        message: noSearchResultsConfig.message && this.translate.instant(noSearchResultsConfig.message),
+      };
     }
 
     return {
       ...datasetEmptyConfig,
+      title: this.translate.instant(datasetEmptyConfig.title),
+      message: datasetEmptyConfig.message && this.translate.instant(datasetEmptyConfig.message),
       button: {
         label: this.translate.instant('Create Pool'),
         action: () => this.createPool(),
