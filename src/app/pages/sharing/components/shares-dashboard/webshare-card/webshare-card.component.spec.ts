@@ -136,7 +136,6 @@ describe('WebShareCardComponent', () => {
         // the form without a websocket round-trip, so the mock must expose it as a callable signal.
         config: signal(mockTnConnectConfig),
         config$: of(mockTnConnectConfig),
-        config: signal(mockTnConnectConfig),
         openStatusModal: jest.fn(),
       }),
       provideRouter([]),
@@ -531,6 +530,7 @@ describe('WebShareCardComponent - TrueNAS Connect not configured but service run
       }),
       mockProvider(TruenasConnectService, {
         config$: of(mockTnConnectConfigDisabled),
+        config: signal(mockTnConnectConfigDisabled),
         openStatusModal: jest.fn(),
       }),
       provideRouter([]),
