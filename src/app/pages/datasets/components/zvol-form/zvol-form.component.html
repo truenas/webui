@@ -54,7 +54,9 @@
     <!--
       Inline-editable selects below keep their Validators.required enforcement but intentionally omit the
       required (*) indicator: the ix-details-item label row has no slot for it, unlike the tn-form-field
-      counterparts in other-options-section. See NAS-141021 migration review §4.
+      counterparts in other-options-section. tn-select also exposes no aria-required input, so the a11y
+      "required" cue is likewise absent here — acceptable since every field is pre-populated with an
+      inherited default and can never be submitted empty. See NAS-141021 migration review §4.
     -->
     <ix-details-table class="main-details">
       <ix-details-item [label]="helptext.commentsLabel | translate">

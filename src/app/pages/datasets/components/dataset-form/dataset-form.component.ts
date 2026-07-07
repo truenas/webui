@@ -4,6 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
@@ -110,9 +111,9 @@ export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnIn
    * change detection, so the label flips with {@link isAdvancedMode}.
    */
   get footerActions(): SidePanelFooterAction[] {
-    // Labels are untranslated markers — the panel container pipes them through `translate`.
+    // Labels are extraction markers — the panel container pipes them through `translate`.
     return [{
-      label: this.isAdvancedMode() ? 'Basic Options' : 'Advanced Options',
+      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
       testId: 'toggle-advanced',
       onClick: () => this.toggleAdvancedMode(),
     }];
@@ -248,6 +249,8 @@ export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnIn
 
     const payload = this.preparePayload();
     const existingDataset = this.existingDataset();
+    // `!existingDataset` is redundant with `isNew` (which is `!existingDataset()`) but narrows the
+    // type so `existingDataset.id` on the update branch is non-null — keep both.
     const request$ = this.isNew || !existingDataset
       ? this.api.call('pool.dataset.create', [payload as DatasetCreate])
       : this.api.call('pool.dataset.update', [existingDataset.id, payload as DatasetUpdate]);
