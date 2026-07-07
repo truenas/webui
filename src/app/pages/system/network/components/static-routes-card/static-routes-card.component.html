@@ -1,14 +1,14 @@
 <tn-card padding="small" [ixUiSearch]="searchableElements.staticRoutes">
-  <div tnCardHeader class="card-header">
-    <div class="title-group">
-      <h3 class="tn-card__title">{{ 'Static Routes' | translate }}</h3>
+  <div tnCardHeader class="title-group">
+    <h3 class="tn-card__title">{{ 'Static Routes' | translate }}</h3>
 
-      <ix-tooltip
-        [header]="'Static Routes' | translate"
-        [message]="'Used for advanced routing, e.g., sending traffic to a specific network via a non-default gateway.' | translate"
-      ></ix-tooltip>
-    </div>
+    <ix-tooltip
+      [header]="'Static Routes' | translate"
+      [message]="'Used for advanced routing, e.g., sending traffic to a specific network via a non-default gateway.' | translate"
+    ></ix-tooltip>
+  </div>
 
+  <ng-template tnCardFooterActions>
     <tn-button
       *ixRequiresRoles="requiredRoles"
       variant="outline"
@@ -18,7 +18,7 @@
       [ixUiSearch]="searchableElements.add"
       (onClick)="doAdd()"
     ></tn-button>
-  </div>
+  </ng-template>
 
   <tn-table
     class="table"

@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardHeaderDirective, TnIconComponent,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnIconComponent,
   TnListComponent, TnListIconDirective, TnListItemComponent,
 } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
@@ -35,6 +35,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   imports: [
     TnCardComponent,
     TnCardHeaderDirective,
+    TnCardFooterActionsDirective,
     TnButtonComponent,
     UiSearchDirective,
     TnListComponent,

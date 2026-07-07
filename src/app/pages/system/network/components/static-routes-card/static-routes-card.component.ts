@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, injec
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardHeaderDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
   TnCellDefDirective, TnDialog, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
   tnIconMarker, type TnSortEvent,
 } from '@truenas/ui-components';
@@ -40,6 +40,7 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
   imports: [
     TnCardComponent,
     TnCardHeaderDirective,
+    TnCardFooterActionsDirective,
     TnButtonComponent,
     TnTableComponent,
     TnTableColumnDirective,

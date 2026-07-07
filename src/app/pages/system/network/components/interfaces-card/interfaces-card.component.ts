@@ -3,7 +3,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardHeaderDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
   TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
   TnTooltipDirective, tnIconMarker, type TnSortEvent,
 } from '@truenas/ui-components';
@@ -48,6 +48,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   imports: [
     TnCardComponent,
     TnCardHeaderDirective,
+    TnCardFooterActionsDirective,
     TnButtonComponent,
     TnTooltipDirective,
     TnTableComponent,

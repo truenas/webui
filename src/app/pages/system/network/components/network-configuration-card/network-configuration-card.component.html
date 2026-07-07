@@ -1,6 +1,7 @@
 <tn-card class="card" padding="small">
-  <div tnCardHeader class="card-header">
-    <h3 class="tn-card__title">{{ 'Network Configuration' | translate }}</h3>
+  <h3 tnCardHeader class="tn-card__title">{{ 'Network Configuration' | translate }}</h3>
+
+  <ng-template tnCardFooterActions>
     <tn-button
       variant="outline"
       color="default"
@@ -9,7 +10,7 @@
       [ixUiSearch]="networkConfigurationCardElements.elements.settings"
       (onClick)="onSettingsClicked()"
     ></tn-button>
-  </div>
+  </ng-template>
 
   <div class="columns" [ixUiSearch]="networkConfigurationCardElements.elements.configuration">
     @if (!isLoading()) {
