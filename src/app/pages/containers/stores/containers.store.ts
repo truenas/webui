@@ -43,13 +43,20 @@ function statusLabel(container: Container, translate: TranslateService): string 
 
 // Sorting is done client-side, mirroring the Installed Apps list (which sorts its
 // in-memory list rather than relying on the backend to order the query response).
-function compareContainers(a: Container, b: Container, sort: ContainerSort, translate: TranslateService): number {
+// `getStatusLabel` is a memoized resolver so each container's translated status is computed
+// once per sort rather than twice on every O(n log n) comparison.
+function compareContainers(
+  a: Container,
+  b: Container,
+  sort: ContainerSort,
+  getStatusLabel: (container: Container) => string,
+): number {
   const modifier = sort.direction === SortDirection.Desc ? -1 : 1;
   let result: number;
 
   switch (sort.active) {
     case ContainerSortField.Status:
-      result = statusLabel(a, translate).localeCompare(statusLabel(b, translate));
+      result = getStatusLabel(a).localeCompare(getStatusLabel(b));
       break;
     case ContainerSortField.Autostart:
       result = Number(a.autostart) - Number(b.autostart);
@@ -108,8 +115,19 @@ export class ContainersStore extends ComponentStore<ContainersState> {
   private readonly rawContainers = computed(() => this.state().containers);
   readonly containers = computed(() => {
     const sort = this.sort();
+    // Cache each container's translated status label so it is resolved once per sort
+    // instead of on every comparison.
+    const labelCache = new Map<Container, string>();
+    const getStatusLabel = (container: Container): string => {
+      let label = labelCache.get(container);
+      if (label === undefined) {
+        label = statusLabel(container, this.translate);
+        labelCache.set(container, label);
+      }
+      return label;
+    };
     return (this.rawContainers()?.filter((container) => !!container) ?? [])
-      .sort((a, b) => compareContainers(a, b, sort, this.translate));
+      .sort((a, b) => compareContainers(a, b, sort, getStatusLabel));
   });
 
   /**
