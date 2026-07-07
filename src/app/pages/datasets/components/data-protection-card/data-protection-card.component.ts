@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Type, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
@@ -7,8 +7,8 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
@@ -32,15 +32,18 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
   ],
 })
 export class DataProtectionCardComponent {
-  private slideIn = inject(SlideIn);
-  private snackbarService = inject(SnackbarService);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
 
   readonly dataset = input.required<DatasetDetails>();
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
   protected readonly searchableElements = dataProtectionCardElements;
+
+  // FormSidePanelService.open() expects Type<SidePanelForm>, but SnapshotAddFormComponent
+  // structurally provides the host surface (canSubmit/submit/closed) without extending it —
+  // mirroring how FormSidePanelService.openForm casts the renderer.
+  private readonly snapshotAddForm = SnapshotAddFormComponent as unknown as Type<SidePanelForm>;
 
   get backupTasksLabel(): string {
     const replicationCount = this.dataset()?.replication_tasks_count || 0;
@@ -73,9 +76,9 @@ export class DataProtectionCardComponent {
   }
 
   addSnapshot(): void {
-    this.slideIn.open(SnapshotAddFormComponent, { data: this.dataset().id })
-      .onSuccess(() => {
-        this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
-      }, this.destroyRef);
+    this.formPanel.open(this.snapshotAddForm, {
+      title: this.translate.instant('Add Snapshot'),
+      inputs: { datasetPreset: this.dataset().id },
+    });
   }
 }

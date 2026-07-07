@@ -44,16 +44,20 @@
           ></p>
         }
 
-        <ix-fieldset>
-          <ix-radio-group
-            id="recursive"
-            class="mt-field"
-            [formControlName]="recursive.fcName"
-            [label]="recursive.label | translate"
-            [tooltip]="recursive.tooltip | translate"
-            [options]="recursive.options"
-          ></ix-radio-group>
-        </ix-fieldset>
+        <tn-form-field
+          class="mt-field"
+          [label]="recursive.label | translate"
+          [tooltip]="recursive.tooltip | translate"
+        >
+          @for (option of recursive.options; track option.value) {
+            <tn-radio
+              name="recursive"
+              [formControlName]="recursive.fcName"
+              [value]="option.value"
+              [label]="option.label | translate"
+            ></tn-radio>
+          }
+        </tn-form-field>
 
         <tn-banner
           type="warning"

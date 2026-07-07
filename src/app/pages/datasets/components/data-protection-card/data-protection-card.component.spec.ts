@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { DataProtectionCardComponent } from './data-protection-card.component';
@@ -17,7 +17,7 @@ describe('DataProtectionComponent', () => {
     component: DataProtectionCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -46,12 +46,15 @@ describe('DataProtectionComponent', () => {
     expect(spectator.query('.backup-tasks.value')).toHaveText('');
   });
 
-  it('opens the snapshot add from when button clicked', async () => {
-    const slideInRef = spectator.inject(SlideIn);
+  it('opens the snapshot add form when button clicked', async () => {
+    const formPanel = spectator.inject(FormSidePanelService);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Take Snapshot' }));
     await editButton.click();
 
-    expect(slideInRef.open).toHaveBeenCalledWith(SnapshotAddFormComponent, { data: '/mnt/pool/ds' });
+    expect(formPanel.open).toHaveBeenCalledWith(SnapshotAddFormComponent, {
+      title: 'Add Snapshot',
+      inputs: { datasetPreset: '/mnt/pool/ds' },
+    });
   });
 });

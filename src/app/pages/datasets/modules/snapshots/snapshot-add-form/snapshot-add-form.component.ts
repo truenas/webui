@@ -1,35 +1,34 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input, output, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
   combineLatest, merge, Observable, of,
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { Option } from 'app/interfaces/option.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/forms/ix-forms/validators/required-empty-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { StorageService } from 'app/services/storage.service';
@@ -39,19 +38,15 @@ import { StorageService } from 'app/services/storage.service';
   templateUrl: './snapshot-add-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    RequiresRolesDirective,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
-    FormActionsComponent,
-    MatButton,
-    TestDirective,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     TranslateModule,
+    AsyncPipe,
   ],
 })
 export class SnapshotAddFormComponent implements OnInit {
@@ -63,10 +58,22 @@ export class SnapshotAddFormComponent implements OnInit {
   private validatorsService = inject(IxValidatorsService);
   private datasetStore = inject(DatasetTreeStore);
   private storageService = inject(StorageService);
-  slideInRef = inject<SlideInRef<string | undefined, boolean>>(SlideInRef);
+  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
+  // `<tn-side-panel>` form panel, where the preset dataset arrives via {@link datasetPreset}
+  // and close happens through {@link closed}.
+  private slideInRef = inject<SlideInRef<string | undefined, boolean>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.SnapshotWrite];
+  /** Preset dataset id supplied by the `<tn-side-panel>` host (undefined = none). */
+  readonly datasetPreset = input<string | undefined>(undefined);
+
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
+  readonly closed = output<boolean>();
+
+  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  readonly requiredRoles = [Role.SnapshotWrite];
 
   protected isFormLoading = signal(true);
   protected datasetId: string | undefined;
@@ -95,15 +102,29 @@ export class SnapshotAddFormComponent implements OnInit {
   readonly helptext = helptextSnapshots;
 
   constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
+    this.slideInRef?.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
-    this.datasetId = slideInRef.getData();
+  }
+
+  /** Whether the form may be submitted right now. Read by the `<tn-side-panel>` host footer Save. */
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) — the form is dirty. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   ngOnInit(): void {
+    this.datasetId = this.slideInRef?.getData() ?? this.datasetPreset();
+
     combineLatest([
       this.getDatasetOptions(),
       this.getNamingSchemaOptions(),
@@ -133,7 +154,7 @@ export class SnapshotAddFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const values = this.form.getRawValue();
     const params: CreateZfsSnapshot = {
       dataset: values.dataset,
@@ -149,21 +170,12 @@ export class SnapshotAddFormComponent implements OnInit {
       params.vmware_sync = values.vmware_sync;
     }
 
-    this.isFormLoading.set(true);
-    this.api.call('pool.snapshot.create', [params]).pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
-        this.datasetStore.datasetUpdated();
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$: this.api.call('pool.snapshot.create', [params]),
+      successMessage: this.translate.instant('Snapshot added successfully.'),
+      onSuccess: () => this.datasetStore.datasetUpdated(),
+    };
+  };
 
   private getDefaultSnapshotName(): string {
     const datetime = format(new Date(), 'yyyy-MM-dd_HH-mm');

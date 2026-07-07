@@ -1,58 +1,56 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [addTitle]="'Add Snapshot' | translate"
   [requiredRoles]="requiredRoles"
-  [title]="'Add Snapshot' | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-select
-          formControlName="dataset"
-          [label]="helptext.datasetLabel | translate"
-          [options]="datasetOptions$"
-          [required]="true"
-        ></ix-select>
+  [externalLoading]="isFormLoading()"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section>
+    <tn-form-field
+      [label]="helptext.datasetLabel | translate"
+      [required]="true"
+    >
+      <tn-select
+        formControlName="dataset"
+        [options]="(datasetOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-        <ix-input
-          formControlName="name"
-          [label]="helptext.nameLabel | translate"
-          [tooltip]="helptext.nameTooltip | translate"
-        ></ix-input>
+    <tn-form-field
+      [label]="helptext.nameLabel | translate"
+      [tooltip]="helptext.nameTooltip | translate"
+    >
+      <tn-input formControlName="name"></tn-input>
+    </tn-form-field>
 
-        <ix-select
-          formControlName="naming_schema"
-          [label]="helptext.namingSchemaLabel | translate"
-          [tooltip]="helptext.namingSchemaTooltip | translate"
-          [options]="namingSchemaOptions$"
-        ></ix-select>
+    <tn-form-field
+      [label]="helptext.namingSchemaLabel | translate"
+      [tooltip]="helptext.namingSchemaTooltip | translate"
+    >
+      <tn-select
+        formControlName="naming_schema"
+        [options]="(namingSchemaOptions$ | async) ?? []"
+        [allowEmpty]="true"
+      ></tn-select>
+    </tn-form-field>
 
-        <ix-checkbox
-          formControlName="recursive"
-          [label]="helptext.recursiveLabel | translate"
-          [tooltip]="helptext.recursiveTooltip | translate"
-        ></ix-checkbox>
+    <tn-form-field
+      [tooltip]="helptext.recursiveTooltip | translate"
+    >
+      <tn-checkbox
+        formControlName="recursive"
+        [label]="helptext.recursiveLabel | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-        @if (hasVmsInDataset) {
-          <ix-checkbox
-            formControlName="vmware_sync"
-            [label]="'VMWare Sync' | translate"
-          ></ix-checkbox>
-        }
-      </ix-fieldset>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    @if (hasVmsInDataset) {
+      <tn-form-field>
+        <tn-checkbox
+          formControlName="vmware_sync"
+          [label]="'VMWare Sync' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    }
+  </tn-form-section>
+</ix-form>
