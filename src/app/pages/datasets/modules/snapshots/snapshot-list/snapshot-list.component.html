@@ -1,5 +1,5 @@
 <ix-page-header [pageTitle]="pageTitle">
-  @if (loadingExtraColumns$ | async) {
+  @if (loadingExtraColumns()) {
     <tn-spinner
       mode="indeterminate"
       [diameter]="30"
@@ -7,6 +7,7 @@
   } @else {
     <tn-slide-toggle
       [checked]="showExtraColumns()"
+      [testId]="'show-extra-columns'"
       [label]="'Show extra columns' | translate"
       (change)="onToggleExtraColumns($event)"
     ></tn-slide-toggle>
@@ -52,6 +53,7 @@
   @let emptyConfig = emptyService.defaultEmptyConfig(emptyType());
   <tn-empty
     [ixUiSearch]="searchableElements.elements.list"
+    [icon]="emptyService.iconForType(emptyType())"
     [title]="emptyConfig.title | translate"
     [description]="emptyConfig.message ? (emptyConfig.message | translate) : undefined"
   ></tn-empty>

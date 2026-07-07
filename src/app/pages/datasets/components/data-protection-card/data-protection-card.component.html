@@ -1,50 +1,49 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>{{ 'Data Protection' | translate }}</h3>
-    <button
+<tn-card
+  padding="small"
+  [title]="'Data Protection' | translate"
+>
+  <ng-template tnCardHeaderActions>
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="create-snapshot"
+      testId="create-snapshot"
+      [label]="'Take Snapshot' | translate"
       [ixUiSearch]="searchableElements.elements.createSnapshot"
-      (click)="addSnapshot()"
+      (onClick)="addSnapshot()"
+    ></tn-button>
+  </ng-template>
+
+  <div class="details-item">
+    <div class="label">{{ 'Snapshots' | translate }}:</div>
+    <div class="total-snapshots value">{{ dataset().snapshot_count }}</div>
+    <a
+      class="action"
+      ixTest="manage-snapshots"
+      [routerLink]="['/datasets/snapshots', dataset().id]"
+      [ixUiSearch]="searchableElements.elements.manageSnapshots"
     >
-      {{ 'Take Snapshot' | translate }}
-    </button>
-  </mat-card-header>
-  <mat-card-content>
-    <div class="details-item">
-      <div class="label">{{ 'Snapshots' | translate }}:</div>
-      <div class="total-snapshots value">{{ dataset().snapshot_count }}</div>
-      <a
-        class="action"
-        ixTest="manage-snapshots"
-        [routerLink]="['/datasets/snapshots', dataset().id]"
-        [ixUiSearch]="searchableElements.elements.manageSnapshots"
-      >
-        {{ 'View Snapshots' | translate }}
-      </a>
-    </div>
-    <div class="details-item">
-      <div class="label">{{ 'Snapshot Tasks' | translate }}:</div>
-      <div class="snapshot-tasks value">{{ dataset().snapshot_tasks_count }}</div>
-      <a
-        class="action"
-        ixTest="manage-snapshot-tasks"
-        [routerLink]="['/data-protection/snapshot', dataset().id]"
-        [ixUiSearch]="searchableElements.elements.manageSnapshotTasks"
-      >
-        {{ 'View Snapshot Tasks' | translate }}
-      </a>
-    </div>
-    <div class="details-item">
-      <div class="label backup-tasks">{{ backupTasksLabel }}</div>
-      <a
-        class="action"
-        ixTest="manage-backups"
-        [routerLink]="['/data-protection']"
-      >
-        {{ 'Go to Backups' | translate }}
-      </a>
-    </div>
-  </mat-card-content>
-</mat-card>
+      {{ 'View Snapshots' | translate }}
+    </a>
+  </div>
+  <div class="details-item">
+    <div class="label">{{ 'Snapshot Tasks' | translate }}:</div>
+    <div class="snapshot-tasks value">{{ dataset().snapshot_tasks_count }}</div>
+    <a
+      class="action"
+      ixTest="manage-snapshot-tasks"
+      [routerLink]="['/data-protection/snapshot', dataset().id]"
+      [ixUiSearch]="searchableElements.elements.manageSnapshotTasks"
+    >
+      {{ 'View Snapshot Tasks' | translate }}
+    </a>
+  </div>
+  <div class="details-item">
+    <div class="label backup-tasks">{{ backupTasksLabel }}</div>
+    <a
+      class="action"
+      ixTest="manage-backups"
+      [routerLink]="['/data-protection']"
+    >
+      {{ 'Go to Backups' | translate }}
+    </a>
+  </div>
+</tn-card>

@@ -95,6 +95,7 @@ describe('SnapshotAddFormComponent', () => {
 
   it('checks when form is submitted with naming schema', async () => {
     await (await getSelect('dataset')).selectOption('APPS');
+    // TnInputHarness.setValue('') throws on empty input; clear the name via the control directly.
     spectator.component.form.controls.name.setValue('');
     await (await getCheckbox('recursive')).check();
     await (await getSelect('naming_schema')).selectOption('%Y %H %d %M %m');

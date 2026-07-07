@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, Type, input, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -19,16 +18,14 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
   styleUrls: ['./data-protection-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatButton,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
+    TnButtonComponent,
     RequiresRolesDirective,
     TestDirective,
     UiSearchDirective,
     TranslateModule,
-    MatCardContent,
     RouterLink,
-
   ],
 })
 export class DataProtectionCardComponent {

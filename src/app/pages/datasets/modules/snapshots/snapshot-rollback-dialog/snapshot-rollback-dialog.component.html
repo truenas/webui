@@ -49,14 +49,17 @@
           [label]="recursive.label | translate"
           [tooltip]="recursive.tooltip | translate"
         >
-          @for (option of recursive.options; track option.value) {
-            <tn-radio
-              name="recursive"
-              [formControlName]="recursive.fcName"
-              [value]="option.value"
-              [label]="option.label | translate"
-            ></tn-radio>
-          }
+          <div role="radiogroup" [attr.aria-label]="recursive.label | translate">
+            @for (option of recursive.options; track option.value) {
+              <tn-radio
+                name="recursive"
+                [testId]="['recursive', option.label]"
+                [formControlName]="recursive.fcName"
+                [value]="option.value"
+                [label]="option.label | translate"
+              ></tn-radio>
+            }
+          </div>
         </tn-form-field>
 
         <tn-banner
@@ -70,7 +73,7 @@
         <tn-checkbox
           testId="force"
           [formControlName]="force.fcName"
-          [label]="force.label"
+          [label]="force.label | translate"
           [required]="force.required"
         ></tn-checkbox>
       </tn-form-field>

@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, Type,
   computed, effect, inject, signal, viewChild,
@@ -66,7 +65,6 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
     BasicSearchComponent,
     TnButtonComponent,
     RequiresRolesDirective,
-    AsyncPipe,
     TnTooltipDirective,
     TnEmptyComponent,
     TnTableComponent,
@@ -99,6 +97,7 @@ export class SnapshotListComponent implements OnInit {
   snapshots: ZfsSnapshotUi[] = [];
   protected readonly showExtraColumns = signal(false);
   loadingExtraColumns$ = new BehaviorSubject(true);
+  protected readonly loadingExtraColumns = toSignal(this.loadingExtraColumns$, { initialValue: true });
   isLoading$ = combineLatest([
     this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading)),
     this.loadingExtraColumns$,
