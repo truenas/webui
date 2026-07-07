@@ -36,11 +36,11 @@ export class IpmiEventsDialog implements OnInit {
   protected readonly isLoading = signal(false);
   protected events: IpmiEvent[] = [];
 
-  get canClear(): boolean {
+  protected get canClear(): boolean {
     return this.events.length > 0 && !this.isLoading();
   }
 
-  onClear(): void {
+  protected onClear(): void {
     this.isLoading.set(true);
     this.api.job('ipmi.sel.clear').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (job) => {
@@ -59,7 +59,7 @@ export class IpmiEventsDialog implements OnInit {
     });
   }
 
-  getEventDate(event: IpmiEvent): Date {
+  protected getEventDate(event: IpmiEvent): Date {
     return parse(`${event.date} ${event.time}`, 'MMM-dd-yyyy HH:mm:ss', new Date());
   }
 

@@ -181,7 +181,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
     return summary.default_routes.filter((item) => ipRegex.v6().test(item));
   });
 
-  onSettingsClicked(): void {
+  protected onSettingsClicked(): void {
     this.formPanel.open(NetworkConfigurationComponent, {
       title: this.translate.instant('Edit Global Configuration'),
       wide: true,

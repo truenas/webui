@@ -313,22 +313,28 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
       ? this.api.call('interface.update', [this.existingInterface.id, params])
       : this.api.call('interface.create', [params]);
 
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
+    const isNew = this.isNew;
+
+    request$.pipe(
+      switchMap(() => {
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
+        return this.api.call('interface.network_config_to_be_removed');
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (configToRemove) => {
+        if (configToRemove && Object.keys(configToRemove).length > 0) {
+          this.tnDialog.open(DefaultGatewayDialog, {
+            width: '600px',
+            data: configToRemove,
+          });
+        }
 
-        this.api.call('interface.network_config_to_be_removed').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((configToRemove) => {
-          if (configToRemove && Object.keys(configToRemove).length > 0) {
-            this.tnDialog.open(DefaultGatewayDialog, {
-              width: '600px',
-              data: configToRemove,
-            });
-          }
-
-          this.close(true);
-          this.isLoading.set(false);
-          this.snackbar.success(this.translate.instant('Network interface updated'));
-        });
+        this.close(true);
+        this.isLoading.set(false);
+        this.snackbar.success(
+          this.translate.instant(isNew ? 'Network interface created' : 'Network interface updated'),
+        );
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
