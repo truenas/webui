@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
 import {
   createComponentFactory,
   mockProvider, Spectator,
@@ -79,7 +78,6 @@ describe('NetworkComponent', () => {
     imports: [
       ReactiveFormsModule,
       FormsModule,
-      MatInputModule,
       TnButtonComponent,
       TnCardComponent,
       TnInputComponent,
@@ -127,7 +125,6 @@ describe('NetworkComponent', () => {
         mockCall('interface.query', () => [existingInterface]),
         mockCall('interface.xmit_hash_policy_choices'),
         mockCall('interface.lacpdu_rate_choices'),
-        mockCall('interface.default_route_will_be_removed'),
       ]),
       mockProvider(NetworkService, {
         subscribeToInOutUpdates: jest.fn(() => of(undefined)),

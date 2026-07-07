@@ -40,7 +40,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class DefaultGatewayDialog implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
-  cdr = inject(ChangeDetectorRef);
+  private cdr = inject(ChangeDetectorRef);
   protected dialogRef = inject<DialogRef<unknown, DefaultGatewayDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
