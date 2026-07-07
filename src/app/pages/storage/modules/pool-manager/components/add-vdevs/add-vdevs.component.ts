@@ -1,4 +1,3 @@
-import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
@@ -39,10 +38,6 @@ import { poolTopologyToStoreTopology } from 'app/pages/storage/modules/pool-mana
     AddVdevsStore,
     GenerateVdevsService,
     PoolManagerValidationService,
-    {
-      provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: { showError: true },
-    },
   ],
 })
 export class AddVdevsComponent implements OnInit {

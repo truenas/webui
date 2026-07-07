@@ -1,9 +1,9 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnStepperComponent } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
@@ -35,7 +35,7 @@ describe('GeneralWizardStepComponent', () => {
       PoolWarningsComponent,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockApi([
         mockCall('pool.query', []),
         mockCall('pool.validate_name', true),
@@ -240,7 +240,7 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
     component: GeneralWizardStepComponent,
     imports: [ReactiveFormsModule, PoolWarningsComponent],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockApi([
         mockCall('pool.query', []),
         mockCall('pool.validate_name', true),

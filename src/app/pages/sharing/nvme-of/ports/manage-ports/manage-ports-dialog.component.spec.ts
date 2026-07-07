@@ -9,7 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
@@ -71,7 +71,7 @@ describe('ManagePortsDialog', () => {
         }),
         reloadPorts: jest.fn(),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success({})),
       }),
       mockAuth(),
@@ -96,9 +96,9 @@ describe('ManagePortsDialog', () => {
     const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'TCP');
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       PortFormComponent,
-      { data: expect.objectContaining(ports[0]) },
+      { title: 'Edit Port', inputs: { port: expect.objectContaining(ports[0]) } },
     );
     expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
   });
@@ -129,7 +129,7 @@ describe('ManagePortsDialog', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add New' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PortFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(PortFormComponent, { title: 'Add Port' });
     expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
   });
 });

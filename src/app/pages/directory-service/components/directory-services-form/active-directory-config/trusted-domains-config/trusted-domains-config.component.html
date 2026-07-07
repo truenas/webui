@@ -1,10 +1,12 @@
 <form class="ix-form-container" [formGroup]="form">
-  <ix-fieldset [title]="'Trusted Domains Configuration' | translate">
-    <ix-checkbox
-      formControlName="enable_trusted_domains"
-      [label]="'Enable Trusted Domains' | translate"
-      [tooltip]="helptextAd.enableTrustedDomainsTooltip | translate"
-    ></ix-checkbox>
+  <tn-form-section [heading]="'Trusted Domains Configuration' | translate">
+    <tn-form-field [tooltip]="helptextAd.enableTrustedDomainsTooltip | translate">
+      <tn-checkbox
+        formControlName="enable_trusted_domains"
+        testId="enable_trusted_domains"
+        [label]="'Enable Trusted Domains' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
     @if (form.controls.enable_trusted_domains.value) {
       <ix-list
         formArrayName="trustedDomains"
@@ -159,6 +161,6 @@
       }
       </ix-list>
     }
-    
-  </ix-fieldset>
+
+  </tn-form-section>
 </form>

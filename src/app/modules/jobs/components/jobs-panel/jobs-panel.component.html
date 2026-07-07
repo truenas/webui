@@ -60,7 +60,7 @@
       </div>
     }
     <tn-divider class="list-divider"></tn-divider>
-    <div mat-subheader class="recent-header">{{'Recently Completed Jobs' | translate}}</div>
+    <div class="recent-header">{{'Recently Completed Jobs' | translate}}</div>
     <div class="finished-jobs-list">
       @let finishedJobs = finishedJobs$ | async;
       @for (job of finishedJobs; track job.id) {

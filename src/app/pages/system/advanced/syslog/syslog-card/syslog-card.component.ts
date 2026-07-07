@@ -1,16 +1,15 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
-  TnSidePanelActionDirective, TnSidePanelComponent,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
-  Observable, Subject, distinctUntilChanged, map, of, shareReplay, startWith, switchMap, take,
+  Subject, distinctUntilChanged, map, shareReplay, startWith, switchMap, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -21,7 +20,7 @@ import { SyslogServer } from 'app/interfaces/advanced-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { syslogCardElements } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.elements';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -43,13 +42,10 @@ export interface SyslogConfig {
   imports: [
     TnCardComponent,
     TnCardFooterActionsDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     UiSearchDirective,
     RequiresRolesDirective,
     TnButtonComponent,
     WithLoadingStateDirective,
-    SyslogFormComponent,
     TranslateModule,
     MapValuePipe,
     YesNoPipe,
@@ -59,15 +55,12 @@ export class SyslogCardComponent {
   private store$ = inject<Store<AppState>>(Store);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private translate = inject(TranslateService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
   protected readonly searchableElements = syslogCardElements;
-
-  protected configOpen = signal(false);
-  protected configForm = viewChild(SyslogFormComponent);
 
   protected formatSyslogServers(config: { syslogservers?: SyslogServer[] }): string {
     if (!config.syslogservers || config.syslogservers.length === 0) {
@@ -124,23 +117,13 @@ export class SyslogCardComponent {
 
   readonly syslogLevelLabels = syslogLevelLabels;
 
-  protected readonly closeGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
-
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.configOpen.set(true));
-  }
-
-  protected onConfigClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    if (saved) {
-      this.reloadConfig$.next();
-    }
+    ).subscribe(() => {
+      this.formPanel.open(SyslogFormComponent, { title: this.translate.instant('Syslog') })
+        .onSuccess(() => this.reloadConfig$.next(), this.destroyRef);
+    });
   }
 }

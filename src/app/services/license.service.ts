@@ -21,6 +21,7 @@ import {
 const selectHasAppsFeature = selectHasLicenseFeature(LicenseFeature.Apps);
 const selectHasVmsFeature = selectHasLicenseFeature(LicenseFeature.Vms);
 const selectHasSedFeature = selectHasLicenseFeature(LicenseFeature.Sed);
+const selectHasDedupFeature = selectHasLicenseFeature(LicenseFeature.Dedup);
 const selectHasFibreChannelFeature = selectHasLicenseFeature(LicenseFeature.FibreChannel);
 
 @Injectable({
@@ -54,6 +55,13 @@ export class LicenseService {
     this.store$.select(selectIsEnterprise),
   ]).pipe(
     map(([hasApps, isEnterprise]) => !isEnterprise || hasApps),
+  );
+
+  hasDedup$ = combineLatest([
+    this.store$.select(selectHasDedupFeature),
+    this.store$.select(selectIsEnterprise),
+  ]).pipe(
+    map(([hasDedup, isEnterprise]) => !isEnterprise || hasDedup),
   );
 
   readonly hasKmip$ = this.store$.select(selectIsEnterprise);

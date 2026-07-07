@@ -33,23 +33,3 @@
     (onClick)="onCreateContainer()"
   ></tn-button>
 }
-
-<tn-side-panel
-  [title]="'Global Configuration' | translate"
-  [closeGuard]="closeGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-global-config-form (closed)="onConfigClosed($event)"></ix-global-config-form>
-  }
-  @if (configForm(); as form) {
-    <tn-button
-      tnSidePanelAction
-      color="primary"
-      testId="save"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
-  }
-</tn-side-panel>

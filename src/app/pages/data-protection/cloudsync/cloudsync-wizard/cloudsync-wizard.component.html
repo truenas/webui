@@ -6,25 +6,19 @@
   ></ix-modal-header>
 }
 
-<!-- TEMP (NAS-141021): the stepper stays on mat-vertical-stepper for now; its tn-stepper/tn-step
-  migration (incl. the step-nav buttons in the step children) is a deliberate later step of the Epic. -->
-<mat-vertical-stepper [linear]="true">
-  <ix-use-ix-icons-in-stepper></ix-use-ix-icons-in-stepper>
-
-  <mat-step [completed]="!!existingCredential">
-    <ng-template matStepLabel>{{ 'Provider' | translate }}</ng-template>
+<tn-stepper orientation="vertical" [linear]="true">
+  <tn-step [label]="'Provider' | translate" [completed]="!!existingCredential">
     <ix-cloudsync-provider
       (save)="onProviderSaved($event)"
       (loading)="onProviderLoading($event)"
     ></ix-cloudsync-provider>
-  </mat-step>
+  </tn-step>
 
-  <mat-step [stepControl]="whatAndWhen()?.form">
-    <ng-template matStepLabel>{{ 'What and When' | translate }}</ng-template>
+  <tn-step [label]="'What and When' | translate" [completed]="whatAndWhen()?.completed()">
     <ix-cloudsync-what-and-when
       [credentialId]="existingCredential?.id"
       [loading]="!!(mergedLoading$ | async)"
       (save)="onSubmit()"
     ></ix-cloudsync-what-and-when>
-  </mat-step>
-</mat-vertical-stepper>
+  </tn-step>
+</tn-stepper>

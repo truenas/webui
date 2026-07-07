@@ -38,25 +38,3 @@
     ></tn-button>
   </ng-template>
 </tn-card>
-
-<tn-side-panel
-  [title]="'Storage' | translate"
-  [closeGuard]="closeGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-storage-settings-form (closed)="onConfigClosed($event)"></ix-storage-settings-form>
-  }
-  @if (configForm(); as form) {
-    <div tnSidePanelAction>
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        color="primary"
-        [testId]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="!form.canSubmit()"
-        (onClick)="form.submit()"
-      ></tn-button>
-    </div>
-  }
-</tn-side-panel>

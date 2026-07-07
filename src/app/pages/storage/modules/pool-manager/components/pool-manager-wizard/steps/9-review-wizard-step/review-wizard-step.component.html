@@ -78,48 +78,40 @@
 </div>
 
 <ix-form-actions>
-  <button
-    mat-button
-    matStepperPrevious
-    color="accent"
+  <tn-button
+    tnStepperPrevious
+    color="secondary"
     type="button"
-    ixTest="back-review"
-  >
-    {{ 'Back' | translate }}
-  </button>
+    [testId]="'back-review'"
+    [label]="'Back' | translate"
+  ></tn-button>
 
   @if (hasVdevs) {
-    <button
-      mat-button
+    <tn-button
       type="button"
-      ixTest="inspect-vdevs"
-      (click)="onInspectVdevsPressed()"
-    >{{ 'Inspect VDEVs' | translate }}</button>
+      [testId]="'inspect-vdevs'"
+      [label]="'Inspect VDEVs' | translate"
+      (onClick)="onInspectVdevsPressed()"
+    ></tn-button>
   }
 
   @if (showStartOver) {
-    <button
-      mat-button
-      matStepperNext
-      color="error"
+    <tn-button
+      color="warn"
       type="button"
-      ixTest="start-over"
-      (click)="startOver()"
-    >
-      {{ 'Start Over' | translate }}
-    </button>
+      [testId]="'start-over'"
+      [label]="'Start Over' | translate"
+      (onClick)="startOver()"
+    ></tn-button>
   }
 
-  <button
+  <tn-button
     *ixRequiresRoles="[Role.PoolWrite]"
-    mat-button
-    matStepperNext
     color="primary"
     type="button"
-    ixTest="create-pool"
+    [testId]="'create-pool'"
+    [label]="isAddingVdevs() ? ('Update Pool' | translate) : ('Create Pool' | translate)"
     [disabled]="isCreateDisabled"
-    (click)="createPool.emit()"
-  >
-    {{ isAddingVdevs() ? ('Update Pool' | translate) : ('Create Pool' | translate) }}
-  </button>
+    (onClick)="createPool.emit()"
+  ></tn-button>
 </ix-form-actions>

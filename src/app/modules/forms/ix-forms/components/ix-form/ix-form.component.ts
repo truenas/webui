@@ -81,8 +81,12 @@ export interface SubmitResult {
  * ```
  *
  * For self-managed async setup use `initialFormSnapshot` + `externalLoading` +
- * `isEditMode` instead of `editData` (snapshot wins if both are set). Must
- * render inside a slide-in (injects SlideInRef; tests use ixFormTestingProviders()).
+ * `isEditMode` instead of `editData` (snapshot wins if both are set).
+ *
+ * Hosts either way: inside a legacy slide-in (injects `SlideInRef`, closed directly
+ * through it) or host-less inside a `<tn-side-panel>` (`SlideInRef` is `{ optional: true }`
+ * and absent — the {@link closed} output drives the panel to close and reload). Tests use
+ * `ixFormTestingProviders()`.
  *
  * Input surface is FROZEN: no new top-level inputs without team review — keep
  * outlier forms bespoke rather than grow this API.
@@ -191,9 +195,17 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    */
   private readonly formStatus = signal<FormControlStatus>('INVALID');
 
-  /** True while the form may be submitted; drives a host-owned Save button. */
+  /**
+   * True while the form may be submitted; drives a host-owned Save button (the `<tn-side-panel>`
+   * footer). Mirrors {@link isSaveDisabled} — which gates the in-body SlideIn Save — so both hosts
+   * enable Save under the same condition. Blocks only on `INVALID`, not `PENDING`: an edit form
+   * runs its async validators (e.g. name/path uniqueness) against unchanged, already-valid data on
+   * open, and gating on `=== 'VALID'` would leave Save disabled through that pending window (the
+   * "Save disabled until I change something" on WebShare Edit). `form.invalid` is false while
+   * PENDING, so the SlideIn Save stayed enabled there — match it.
+   */
   readonly canSubmit = computed(
-    () => this.formStatus() === 'VALID' && !this.isLoading() && !this.extraDisabled(),
+    () => this.formStatus() !== 'INVALID' && !this.isLoading() && !this.extraDisabled(),
   );
 
   private readonly internalSnapshot = signal<Partial<T> | null>(null);

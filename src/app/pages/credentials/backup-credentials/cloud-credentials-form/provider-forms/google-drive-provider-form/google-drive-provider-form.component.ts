@@ -2,12 +2,10 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, D
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { InputType, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -20,15 +18,14 @@ import {
   templateUrl: './google-drive-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
+    TnFormSectionComponent,
+    TnInputComponent,
     ReactiveFormsModule,
-    IxInputComponent,
     DetailsTableComponent,
     DetailsItemComponent,
     EditableComponent,
     TranslateModule,
     OauthProviderComponent,
-    IxTextareaComponent,
   ],
 })
 export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
@@ -37,6 +34,8 @@ export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent 
   private destroyRef = inject(DestroyRef);
 
   private readonly oauthComponent = viewChild.required(OauthProviderComponent);
+
+  protected readonly InputType = InputType;
 
   form = this.formBuilder.group({
     token: ['', Validators.required],

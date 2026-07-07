@@ -1,10 +1,8 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnRadioHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnRadioHarness, TnStepperComponent } from '@truenas/ui-components';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
@@ -22,7 +20,7 @@ describe('ReplicationWhenComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockAuth(),
       mockApi(),
     ],
@@ -77,7 +75,7 @@ describe('ReplicationWhenComponent', () => {
 
   it('emits (save) when Save is selected', async () => {
     jest.spyOn(spectator.component.save, 'emit');
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
     expect(spectator.component.save.emit).toHaveBeenCalled();
   });

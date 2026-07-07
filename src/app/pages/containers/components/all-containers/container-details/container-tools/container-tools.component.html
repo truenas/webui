@@ -5,18 +5,22 @@
     [padContent]="false"
   >
     <tn-list>
-      <div [tnTooltip]="isContainerStopped() ? ('Container is not running' | translate) : ''">
+      <div [tnTooltip]="shellTooltip() | translate">
         <tn-list-item
           tnTestIdType="link"
           [tnTestId]="'open-shell'"
-          [class.is-clickable]="!isContainerStopped()"
-          [clickable]="!isContainerStopped()"
-          [disabled]="isContainerStopped()"
+          [class.is-clickable]="canOpenShell()"
+          [clickable]="canOpenShell()"
+          [disabled]="!canOpenShell()"
           (itemClick)="openShell(container.id)"
         >
           <div class="shell-row">
             <span>{{ 'Shell' | translate }}</span>
-            <tn-icon name="console-line" library="mdi"></tn-icon>
+            <tn-icon
+              library="mdi"
+              [name]="hasWebShellAccess() ? 'console-line' : 'lock'"
+              [ariaLabel]="shellTooltip() | translate"
+            ></tn-icon>
           </div>
         </tn-list-item>
       </div>

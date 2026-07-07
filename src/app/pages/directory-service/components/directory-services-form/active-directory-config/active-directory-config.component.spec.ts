@@ -2,14 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ActiveDirectoryConfigComponent } from 'app/pages/directory-service/components/directory-services-form/active-directory-config/active-directory-config.component';
 
 describe('ActiveDirectoryConfigComponent', () => {
   let spectator: Spectator<ActiveDirectoryConfigComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const mockActiveDirectoryConfig: ActiveDirectoryConfig = {
     hostname: 'test-host',
@@ -29,14 +28,28 @@ describe('ActiveDirectoryConfigComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(TnInputHarness.with({ name }));
+  const getCheckbox = (label: string): Promise<TnCheckboxHarness> => (
+    loader.getHarness(TnCheckboxHarness.with({ label }))
+  );
+
+  // TnInputHarness.setValue('') throws, so clear by mutating the native input directly.
+  const clearInput = (name: string): void => {
+    const input = spectator.query(`input[name="${name}"]`) as HTMLInputElement;
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('blur'));
+    spectator.detectChanges();
+  };
+
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         activeDirectoryConfig: mockActiveDirectoryConfig,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   it('should create', () => {
@@ -44,26 +57,21 @@ describe('ActiveDirectoryConfigComponent', () => {
   });
 
   it('should initialize form with existing config values', async () => {
-    const values = await form.getValues();
-    expect(values).toEqual(expect.objectContaining({
-      'TrueNAS Hostname': 'test-host',
-      'Domain Name': 'test-domain.com',
-      'Site Name': 'test-site',
-      'Computer Account OU': 'OU=Computers,DC=test,DC=com',
-      'Use Default Domain': true,
-    }));
+    expect(await (await getInput('hostname')).getValue()).toBe('test-host');
+    expect(await (await getInput('domain')).getValue()).toBe('test-domain.com');
+    expect(await (await getInput('site')).getValue()).toBe('test-site');
+    expect(await (await getInput('computer_account_ou')).getValue()).toBe('OU=Computers,DC=test,DC=com');
+    expect(await (await getCheckbox('Use Default Domain')).isChecked()).toBe(true);
   });
 
-  it('should emit isValid false when form is invalid', async () => {
+  it('should emit isValid false when form is invalid', () => {
     let emittedValue: boolean | undefined;
     spectator.component.isValid.subscribe((value) => {
       emittedValue = value;
     });
 
-    await form.fillForm({
-      'TrueNAS Hostname': '',
-      'Domain Name': '',
-    });
+    clearInput('hostname');
+    clearInput('domain');
 
     expect(emittedValue).toBe(false);
   });
@@ -74,10 +82,8 @@ describe('ActiveDirectoryConfigComponent', () => {
       emittedValue = value;
     });
 
-    await form.fillForm({
-      'TrueNAS Hostname': 'valid-host',
-      'Domain Name': 'valid-domain.com',
-    });
+    await (await getInput('hostname')).setValue('valid-host');
+    await (await getInput('domain')).setValue('valid-domain.com');
 
     expect(emittedValue).toBe(true);
   });
@@ -88,11 +94,9 @@ describe('ActiveDirectoryConfigComponent', () => {
       emittedConfig = config as ActiveDirectoryConfig;
     });
 
-    await form.fillForm({
-      'TrueNAS Hostname': 'new-host',
-      'Domain Name': 'new-domain2.com',
-      'Site Name': 'new-site',
-    });
+    await (await getInput('hostname')).setValue('new-host');
+    await (await getInput('domain')).setValue('new-domain2.com');
+    await (await getInput('site')).setValue('new-site');
 
     expect(emittedConfig).toEqual(expect.objectContaining({
       hostname: 'new-host',
@@ -111,11 +115,9 @@ describe('ActiveDirectoryConfigComponent', () => {
       emittedConfig = config as ActiveDirectoryConfig;
     });
 
-    await form.fillForm({
-      'TrueNAS Hostname': 'test-host2',
-      'Domain Name': 'test-domain.com',
-      'Use Default Domain': false,
-    });
+    await (await getInput('hostname')).setValue('test-host2');
+    await (await getInput('domain')).setValue('test-domain.com');
+    await (await getCheckbox('Use Default Domain')).uncheck();
 
     expect(emittedConfig).toEqual(expect.objectContaining({
       hostname: 'test-host2',
@@ -134,13 +136,11 @@ describe('ActiveDirectoryConfigComponent', () => {
       emittedConfig = config as ActiveDirectoryConfig;
     });
 
-    await form.fillForm({
-      'TrueNAS Hostname': 'build-test-host',
-      'Domain Name': 'build-test-domain.com',
-      'Site Name': 'build-test-site',
-      'Computer Account OU': 'OU=TestComputers,DC=build,DC=test,DC=com',
-      'Use Default Domain': false,
-    });
+    await (await getInput('hostname')).setValue('build-test-host');
+    await (await getInput('domain')).setValue('build-test-domain.com');
+    await (await getInput('site')).setValue('build-test-site');
+    await (await getInput('computer_account_ou')).setValue('OU=TestComputers,DC=build,DC=test,DC=com');
+    await (await getCheckbox('Use Default Domain')).uncheck();
 
     expect(emittedConfig).toEqual(expect.objectContaining({
       hostname: 'build-test-host',
@@ -151,30 +151,25 @@ describe('ActiveDirectoryConfigComponent', () => {
     }));
   });
 
-  it('should return null configuration when hostname or domain is missing', async () => {
+  it('should return null configuration when hostname or domain is missing', () => {
     let emittedConfig: ActiveDirectoryConfig | null = null;
     spectator.component.configurationChanged.subscribe((config) => {
       emittedConfig = config as ActiveDirectoryConfig;
     });
 
-    await form.fillForm({
-      'TrueNAS Hostname': '',
-      'Domain Name': 'test-domain.com',
-    });
+    clearInput('hostname');
 
     expect(emittedConfig).toBeNull();
   });
 
-  it('should handle empty site and computer_account_ou values', async () => {
+  it('should handle empty site and computer_account_ou values', () => {
     let emittedConfig: ActiveDirectoryConfig | null = null;
     spectator.component.configurationChanged.subscribe((config) => {
       emittedConfig = config as ActiveDirectoryConfig;
     });
 
-    await form.fillForm({
-      'Site Name': '',
-      'Computer Account OU': '',
-    });
+    clearInput('site');
+    clearInput('computer_account_ou');
 
     expect(emittedConfig).toEqual(expect.objectContaining({
       computer_account_ou: null,
@@ -190,17 +185,13 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     // Test with only hostname filled
-    await form.fillForm({
-      'TrueNAS Hostname': 'test-host',
-      'Domain Name': '',
-    });
+    await (await getInput('hostname')).setValue('test-host');
+    clearInput('domain');
     expect(isValidEmitted).toBe(false);
 
     // Test with both required fields filled
-    await form.fillForm({
-      'TrueNAS Hostname': 'valid-host',
-      'Domain Name': 'valid-domain.com',
-    });
+    await (await getInput('hostname')).setValue('valid-host');
+    await (await getInput('domain')).setValue('valid-domain.com');
     expect(isValidEmitted).toBe(true);
   });
 });

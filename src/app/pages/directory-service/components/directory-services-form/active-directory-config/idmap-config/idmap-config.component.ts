@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, output, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -5,26 +6,28 @@ import {
 } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  InputType,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of, tap } from 'rxjs';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { DomainIdmap, domainIdmapTypeOptions, PrimaryDomainIdmap } from 'app/interfaces/active-directory-config.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 
 @Component({
   selector: 'ix-idmap-config',
   templateUrl: './idmap-config.component.html',
   standalone: true,
   imports: [
-    IxFieldsetComponent,
+    AsyncPipe,
     TranslateModule,
-    IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
+    TnFormFieldComponent,
+    TnFormSectionComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     ReactiveFormsModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,6 +73,7 @@ export class IdmapConfigComponent implements OnInit {
 
   protected readonly idmapType = toSignal(this.form.controls.idmap_domain.controls.idmap_backend.value$);
   protected IdmapBackend = IdmapBackend;
+  protected readonly InputType = InputType;
 
   protected readonly domainIdmapTypeOptions$ = of(domainIdmapTypeOptions);
   protected readonly schemaModeOptions$ = of([

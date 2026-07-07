@@ -11,7 +11,8 @@ import {
 } from 'rxjs/operators';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -29,7 +30,7 @@ export class WebShareService {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private licenseService = inject(LicenseService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private truenasConnectService = inject(TruenasConnectService);
 
   /**
@@ -168,19 +169,40 @@ export class WebShareService {
    * @returns Observable that emits true if the form was submitted successfully, false otherwise
    */
   openWebShareForm(data: WebShareFormData): Observable<boolean> {
+    // The TrueNAS Connect config is already resolved app-wide — `TruenasConnectService` keeps a
+    // live subscription through its `config` signal, and the WebShare pages subscribe to `config$`.
+    // Read that cached value synchronously so the panel opens instantly: re-subscribing to
+    // `hasTruenasConnect$` re-runs `tn_connect.config`, and that websocket round-trip is the lag
+    // before the form appears. Only wait on the observable if the config hasn't loaded yet (cold
+    // navigation straight to a WebShare action).
+    const config = this.truenasConnectService.config();
+    if (config !== undefined) {
+      return this.openFormForAccess(config.status === TruenasConnectStatus.Configured, data);
+    }
+
     return this.licenseService.hasTruenasConnect$.pipe(
       take(1),
-      switchMap((hasAccess) => {
-        if (!hasAccess) {
-          this.truenasConnectService.openStatusModal();
-          return of(false);
-        }
+      switchMap((hasAccess) => this.openFormForAccess(hasAccess, data)),
+    );
+  }
 
-        return this.slideIn.open(WebShareSharesFormComponent, { data }).success$.pipe(
-          map(() => true),
-          defaultIfEmpty(false),
-        );
-      }),
+  private openFormForAccess(hasAccess: boolean, data: WebShareFormData): Observable<boolean> {
+    if (!hasAccess) {
+      this.truenasConnectService.openStatusModal();
+      return of(false);
+    }
+
+    return this.formPanel.open(
+      WebShareSharesFormComponent,
+      {
+        title: data.isNew
+          ? this.translate.instant(helptextSharingWebshare.webshare_form_title_add)
+          : this.translate.instant(helptextSharingWebshare.webshare_form_title_edit),
+        inputs: { webShareData: data },
+      },
+    ).success$.pipe(
+      map(() => true),
+      defaultIfEmpty(false),
     );
   }
 

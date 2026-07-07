@@ -11,6 +11,8 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
@@ -20,6 +22,7 @@ import { selectAdvancedConfig } from 'app/store/system-config/system-config.sele
 describe('SyslogCardComponent', () => {
   let spectator: Spectator<SyslogCardComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
 
   const createComponent = createComponentFactory({
     component: SyslogCardComponent,
@@ -40,6 +43,9 @@ describe('SyslogCardComponent', () => {
         }),
         mockCall('system.advanced.update'),
       ]),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
       mockProvider(SnackbarService),
       mockProvider(FormErrorHandlerService),
       provideMockStore({
@@ -69,6 +75,7 @@ describe('SyslogCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('shows syslog related settings', () => {
@@ -84,26 +91,11 @@ describe('SyslogCardComponent', () => {
   });
 
   it('opens the Syslog form in a side panel when Configure is pressed', async () => {
-    expect(spectator.query('ix-syslog-form')).toBeNull();
-
     const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
-    spectator.detectChanges();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.query('ix-syslog-form')).not.toBeNull();
-  });
-
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
-    await configureButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-syslog-form')).not.toBeNull();
-
-    spectator.query(SyslogFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-syslog-form')).toBeNull();
+    expect(formPanel.open).toHaveBeenCalledWith(SyslogFormComponent, { title: 'Syslog' });
   });
 
   it('displays multiple syslog servers correctly', () => {

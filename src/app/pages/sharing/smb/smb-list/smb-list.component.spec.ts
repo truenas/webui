@@ -23,7 +23,7 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -74,7 +74,7 @@ const commonProviders = [
     confirm: jest.fn(() => of(true)),
     confirmDelete: jest.fn(() => of(undefined)),
   }),
-  mockProvider(SlideIn, {
+  mockProvider(FormSidePanelService, {
     open: jest.fn(() => SlideInResult.empty()),
   }),
   provideMockStore({
@@ -142,7 +142,10 @@ describe('SmbListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
+      title: 'Add SMB Share',
+      inputs: { smbShareData: { existingSmbShare: undefined } },
+    });
   });
 
   it('opens smb edit form when "Edit" button is pressed', async () => {
@@ -150,8 +153,9 @@ describe('SmbListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbFormComponent, {
-      data: { existingSmbShare: shares[0] },
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
+      title: 'Edit SMB Share',
+      inputs: { smbShareData: { existingSmbShare: shares[0] } },
     });
   });
 
@@ -160,8 +164,9 @@ describe('SmbListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Edit Share ACL' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbAclComponent, {
-      data: 'acl_share_name',
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbAclComponent, {
+      title: 'Share ACL for acl_share_name',
+      inputs: { shareName: 'acl_share_name' },
     });
   });
 
