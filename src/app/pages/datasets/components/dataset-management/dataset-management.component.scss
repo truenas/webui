@@ -53,13 +53,16 @@ ix-dataset-details-panel {
 }
 
 .tree-header {
-  // Mirrors the row grid (.tree-node-grid). Its width is synced (in TS) to the tree's
-  // full content width so it can scroll horizontally in step with the rows. Below
-  // $breakpoint-hidden a trailing column reserves space for the row's mobile chevron.
-  grid-template-columns: auto 125px 125px 125px 125px;
+  // Mirrors the row grid (.tree-node-grid) — the fixed value-column widths must match so
+  // the header labels stay aligned over the columns. Kept narrow (100px) so the row fits
+  // the tree column without forcing a horizontal scrollbar when the details panel is open.
+  // Its width is synced (in TS) to the tree's full content width so it still scrolls in
+  // step with the rows when the content genuinely can't fit. Below $breakpoint-hidden a
+  // trailing column reserves space for the row's mobile chevron.
+  grid-template-columns: auto 100px 100px 100px 100px;
 
   @media (max-width: $breakpoint-hidden) {
-    grid-template-columns: auto 125px 125px 125px 125px 40px;
+    grid-template-columns: auto 100px 100px 100px 100px 40px;
   }
 
   @media (max-width: $breakpoint-tablet) {
