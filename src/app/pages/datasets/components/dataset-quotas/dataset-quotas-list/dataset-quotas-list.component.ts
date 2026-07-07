@@ -1,11 +1,21 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnSlideToggleComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import { EMPTY, Observable, of } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
@@ -24,18 +34,13 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DatasetQuotaAddFormComponent,
@@ -59,17 +64,19 @@ interface QuotaData {
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    MatSlideToggle,
-    TestDirective,
+    FormsModule,
+    TnSlideToggleComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
-    IxTableComponent,
-    AsyncPipe,
-    IxTableHeadComponent,
-    IxTableEmptyDirective,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
+    TableActionsCellComponent,
     TnTablePagerComponent,
+    AsyncPipe,
   ],
 })
 export class DatasetQuotasListComponent implements OnInit {
@@ -80,9 +87,9 @@ export class DatasetQuotasListComponent implements OnInit {
   protected loader = inject(LoaderService);
   protected route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
-  private emptyService = inject(EmptyService);
+  protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
@@ -90,91 +97,27 @@ export class DatasetQuotasListComponent implements OnInit {
   readonly helpText = helptextQuotas;
 
   dataProvider = new ArrayDataProvider<DatasetQuota>();
-  columns = createTable<DatasetQuota>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-      getValue: (row) => {
-        if (row.name) {
-          return row.name;
-        }
-        return this.emptyValue;
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('ID'),
-      propertyName: 'id',
-    }),
-    textColumn({
-      title: this.translate.instant('Data Quota'),
-      propertyName: 'quota',
-      getValue: (row) => {
-        if (row.quota >= 0) {
-          return this.formatter.convertBytesToHumanReadable(row.quota, 0);
-        }
-        return this.emptyValue;
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('DQ Used'),
-      propertyName: 'used_bytes',
-      getValue: (row) => {
-        if (row.used_bytes >= 0) {
-          return this.formatter.convertBytesToHumanReadable(row.used_bytes, 2);
-        }
-        return this.emptyValue;
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('DQ % Used'),
-      propertyName: 'used_percent',
-      getValue: (row) => {
-        if (row.used_percent >= 0) {
-          return `${Math.round(row.used_percent * 100) / 100}%`;
-        }
-        return this.emptyValue;
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Object Quota'),
-      propertyName: 'obj_quota',
-      getValue: (row) => row.obj_quota || this.emptyValue,
-    }),
-    textColumn({
-      title: this.translate.instant('OQ Used'),
-      propertyName: 'obj_used',
-      getValue: (row) => row.obj_used || this.emptyValue,
-    }),
-    textColumn({
-      title: this.translate.instant('OQ % Used'),
-      propertyName: 'obj_used',
-      getValue: (row: DatasetQuota) => {
-        if (row.obj_used && row.obj_quota) {
-          return `${Math.round(row.obj_used / row.obj_quota * 100) / 100}%`;
-        }
-        return this.emptyValue;
-      },
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row: DatasetQuota) => this.doEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row: DatasetQuota) => this.doDelete(row),
-          hidden: (row: DatasetQuota) => of(!(row.quota > 0 || row.obj_quota > 0)),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row: DatasetQuota) => `${this.helpTextKey}-quota-${row.name}${this.emptyValue}${row.obj_quota}`,
-    ariaLabels: (row) => [row.name, this.translate.instant('Dataset Quota')],
-  });
+
+  protected readonly displayedColumns = [
+    'name', 'id', 'quota', 'used_bytes', 'used_percent', 'obj_quota', 'obj_used', 'obj_used_percent', 'actions',
+  ];
+
+  protected readonly trackByQuotaId = (_: number, row: DatasetQuota): number => row.id;
+
+  protected readonly actions: IconActionConfig<DatasetQuota>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      hidden: (row) => of(!(row.quota > 0 || row.obj_quota > 0)),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
 
   quotas: DatasetQuota[] = [];
   datasetId: string;
@@ -192,15 +135,54 @@ export class DatasetQuotasListComponent implements OnInit {
     ['name', '=', null] as QueryFilter<DatasetQuota>,
   ] as QueryParams<DatasetQuota>;
 
-  get emptyConfigService(): EmptyService {
-    return this.emptyService;
-  }
-
   ngOnInit(): void {
     const paramMap = this.route.snapshot.params;
     this.datasetId = paramMap.datasetId as string;
     this.getQuotaType();
     this.setDefaultSort();
+  }
+
+  protected nameValue(row: DatasetQuota): string {
+    return row.name || this.emptyValue;
+  }
+
+  protected quotaValue(row: DatasetQuota): string {
+    return row.quota >= 0 ? this.formatter.convertBytesToHumanReadable(row.quota, 0) : this.emptyValue;
+  }
+
+  protected usedBytesValue(row: DatasetQuota): string {
+    return row.used_bytes >= 0 ? this.formatter.convertBytesToHumanReadable(row.used_bytes, 2) : this.emptyValue;
+  }
+
+  protected usedPercentValue(row: DatasetQuota): string {
+    return row.used_percent >= 0 ? `${Math.round(row.used_percent * 100) / 100}%` : this.emptyValue;
+  }
+
+  protected objQuotaValue(row: DatasetQuota): string | number {
+    return row.obj_quota || this.emptyValue;
+  }
+
+  protected objUsedValue(row: DatasetQuota): string | number {
+    return row.obj_used || this.emptyValue;
+  }
+
+  protected objUsedPercentValue(row: DatasetQuota): string {
+    if (row.obj_used && row.obj_quota) {
+      return `${Math.round(row.obj_used / row.obj_quota * 100) / 100}%`;
+    }
+    return this.emptyValue;
+  }
+
+  protected uniqueRowTag(row: DatasetQuota): string {
+    return convertStringToId(`${this.helpTextKey}-quota-${row.name}${this.emptyValue}${row.obj_quota}`);
+  }
+
+  protected ariaLabel(row: DatasetQuota): string {
+    return [row.name, this.translate.instant('Dataset Quota')].join(' ');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<DatasetQuota>(event, this.displayedColumns));
   }
 
   private getRemoveQuotaPayload(quotas: DatasetQuota[]): SetDatasetQuota[] {
@@ -262,8 +244,8 @@ export class DatasetQuotasListComponent implements OnInit {
     });
   }
 
-  toggleDisplay(): void {
-    this.showAllQuotas = !this.showAllQuotas;
+  toggleDisplay(newValue: boolean): void {
+    this.showAllQuotas = newValue;
     const confirm$ = !this.showAllQuotas ? this.confirmFilterQuotas() : this.confirmShowAllQuotas();
 
     confirm$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
@@ -271,6 +253,7 @@ export class DatasetQuotasListComponent implements OnInit {
         this.getQuotas();
       } else {
         this.showAllQuotas = !this.showAllQuotas;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -307,8 +290,11 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(DatasetQuotaAddFormComponent, {
-      data: { quotaType: this.quotaType, datasetId: this.datasetId },
+    this.formPanel.open(DatasetQuotaAddFormComponent, {
+      title: this.quotaType === DatasetQuotaType.User
+        ? this.translate.instant('Add User Quotas')
+        : this.translate.instant('Add Group Quotas'),
+      inputs: { datasetId: this.datasetId, quotaType: this.quotaType },
     }).onSuccess(() => this.getQuotas(), this.destroyRef);
   }
 
@@ -341,8 +327,11 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   private doEdit(row: DatasetQuota): void {
-    this.slideIn.open(DatasetQuotaEditFormComponent, {
-      data: { quotaType: this.quotaType, datasetId: this.datasetId, id: row.id },
+    this.formPanel.open(DatasetQuotaEditFormComponent, {
+      title: this.quotaType === DatasetQuotaType.User
+        ? this.translate.instant('Edit User Quota')
+        : this.translate.instant('Edit Group Quota'),
+      inputs: { datasetId: this.datasetId, quotaType: this.quotaType, quotaId: row.id },
     }).onSuccess(() => this.getQuotas(), this.destroyRef);
   }
 

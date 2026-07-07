@@ -1,66 +1,49 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
   [requiredRoles]="requiredRoles"
-  [title]="title"
-  [loading]="isLoading()"
-></ix-modal-header>
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section [heading]="'Set Quotas' | translate">
+    <tn-form-field
+      [label]="dataQuotaLabel | translate"
+      [tooltip]="dataQuotaTooltip | translate"
+    >
+      <tn-input
+        formControlName="data_quota"
+        [inputType]="InputType.Size"
+      ></tn-input>
+    </tn-form-field>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="'Set Quotas' | translate">
-        <ix-input
-          formControlName="data_quota"
-          [label]="dataQuotaLabel | translate"
-          [tooltip]="dataQuotaTooltip | translate"
-          [format]="formatter.memorySizeFormatting"
-          [parse]="formatter.memorySizeParsing"
-        ></ix-input>
+    <tn-form-field
+      [label]="objectQuotaLabel | translate"
+      [tooltip]="objectQuotaTooltip | translate"
+    >
+      <tn-input
+        formControlName="obj_quota"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
 
-        <ix-input
-          formControlName="obj_quota"
-          type="number"
-          [label]="objectQuotaLabel | translate"
-          [tooltip]="objectQuotaTooltip | translate"
-        ></ix-input>
-      </ix-fieldset>
+  @if (quotaType() === DatasetQuotaType.User) {
+    <tn-form-section [heading]="'Apply Quotas to Selected Users' | translate">
+      <ix-user-chips
+        formControlName="users"
+        [label]="'Apply To Users' | translate"
+        [tooltip]="tooltips.users | translate"
+      ></ix-user-chips>
+    </tn-form-section>
+  }
 
-      @if (quotaType === DatasetQuotaType.User) {
-        <ix-fieldset
-          [title]="'Apply Quotas to Selected Users' | translate"
-        >
-          <ix-user-chips
-            formControlName="users"
-            [label]="'Apply To Users' | translate"
-            [tooltip]="tooltips.users | translate"
-          ></ix-user-chips>
-        </ix-fieldset>
-      }
-
-      @if (quotaType === DatasetQuotaType.Group) {
-        <ix-fieldset
-          [title]="'Apply Quotas to Selected Groups' | translate"
-        >
-          <ix-group-chips
-            formControlName="groups"
-            [label]="'Apply To Groups' | translate"
-            [tooltip]="tooltips.groups | translate"
-            [required]="true"
-          ></ix-group-chips>
-        </ix-fieldset>
-      }
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          type="submit"
-          mat-button
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  @if (quotaType() === DatasetQuotaType.Group) {
+    <tn-form-section [heading]="'Apply Quotas to Selected Groups' | translate">
+      <ix-group-chips
+        formControlName="groups"
+        [label]="'Apply To Groups' | translate"
+        [tooltip]="tooltips.groups | translate"
+        [required]="true"
+      ></ix-group-chips>
+    </tn-form-section>
+  }
+</ix-form>

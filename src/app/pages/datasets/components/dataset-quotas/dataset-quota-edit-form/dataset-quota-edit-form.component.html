@@ -1,47 +1,37 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="true"
   [requiredRoles]="requiredRoles"
-  [title]="title"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+  [externalLoading]="isFormLoading()"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section>
+    <tn-form-field [label]="nameLabel | translate">
+      <tn-input
+        formControlName="name"
+        [readonly]="true"
+      ></tn-input>
+    </tn-form-field>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-input
-          formControlName="name"
-          [label]="nameLabel | translate"
-          [readonly]="true"
-        ></ix-input>
+    <tn-form-field
+      [label]="dataQuotaLabel | translate"
+      [tooltip]="dataQuotaTooltip | translate"
+    >
+      <tn-input
+        formControlName="data_quota"
+        [inputType]="InputType.Size"
+      ></tn-input>
+    </tn-form-field>
 
-        <ix-input
-          formControlName="data_quota"
-          [label]="dataQuotaLabel | translate"
-          [tooltip]="dataQuotaTooltip | translate"
-          [format]="formatter.memorySizeFormatting"
-          [parse]="formatter.memorySizeParsing"
-        ></ix-input>
-
-        <ix-input
-          formControlName="obj_quota"
-          type="number"
-          [label]="objectQuotaLabel | translate"
-          [tooltip]="objectQuotaTooltip | translate"
-        ></ix-input>
-      </ix-fieldset>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          type="submit"
-          mat-button
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <tn-form-field
+      [label]="objectQuotaLabel | translate"
+      [tooltip]="objectQuotaTooltip | translate"
+    >
+      <tn-input
+        formControlName="obj_quota"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
+</ix-form>
