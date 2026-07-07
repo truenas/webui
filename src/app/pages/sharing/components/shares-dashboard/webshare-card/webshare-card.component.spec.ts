@@ -341,6 +341,7 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
       }),
       mockProvider(TruenasConnectService, {
         config$: of(mockTnConnectConfigDisabled),
+        config: signal(mockTnConnectConfigDisabled),
         openStatusModal: jest.fn(),
       }),
       provideRouter([]),
@@ -444,6 +445,7 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
       }),
       mockProvider(TruenasConnectService, {
         config$: of(mockTnConnectConfig),
+        config: signal(mockTnConnectConfig),
         openStatusModal: jest.fn(),
       }),
       provideRouter([]),
@@ -528,6 +530,7 @@ describe('WebShareCardComponent - TrueNAS Connect not configured but service run
       }),
       mockProvider(TruenasConnectService, {
         config$: of(mockTnConnectConfigDisabled),
+        config: signal(mockTnConnectConfigDisabled),
         openStatusModal: jest.fn(),
       }),
       provideRouter([]),
