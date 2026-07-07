@@ -1067,3 +1067,16 @@ tn-radio + tn-radio {
 .tn-side-panel__overlay .tn-side-panel__panel .tn-side-panel__content {
   padding-top: 36px;
 }
+
+// The library's indeterminate progress bar animates its segment from `translateX(-100%)` (fully off
+// the left edge) to `translateX(100%)`, so on a freshly-mounted bar the segment stays off-screen for
+// the first ~0.75s of its 2s cycle — the panel's Save loader looks like it appears "after a delay",
+// and a fast save can finish before the segment ever slides into view. Start the animation ~1s into
+// the cycle (negative delay) so a visible segment is present the instant the bar mounts; the phase
+// shift is purely cosmetic and preserves the library keyframes. Scoped to the side-panel Save loader
+// (`.panel-progress`); the 5-class chain (0,5,0) beats the library rule's `:host(...) … (0,4,0)`
+// longhand without `!important`. Tracked under NAS-141021.
+.tn-side-panel__content .panel-progress.tn-progress-bar-indeterminate
+.tn-progress-bar-primary-bar .tn-progress-bar-bar-inner {
+  animation-delay: -1s;
+}
