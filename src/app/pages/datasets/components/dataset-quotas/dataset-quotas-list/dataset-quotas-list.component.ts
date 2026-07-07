@@ -80,12 +80,12 @@ interface QuotaData {
   ],
 })
 export class DatasetQuotasListComponent implements OnInit {
-  protected api = inject(ApiService);
-  protected formatter = inject(IxFormatterService);
-  protected dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private formatter = inject(IxFormatterService);
+  private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  protected loader = inject(LoaderService);
-  protected route = inject(ActivatedRoute);
+  private loader = inject(LoaderService);
+  private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
@@ -93,10 +93,10 @@ export class DatasetQuotasListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
-  readonly emptyValue = '—';
-  readonly helpText = helptextQuotas;
+  private readonly emptyValue = '—';
+  protected readonly helpText = helptextQuotas;
 
-  dataProvider = new ArrayDataProvider<DatasetQuota>();
+  protected dataProvider = new ArrayDataProvider<DatasetQuota>();
 
   protected readonly displayedColumns = [
     'name', 'id', 'quota', 'used_bytes', 'used_percent', 'obj_quota', 'obj_used', 'obj_used_percent', 'actions',
@@ -119,17 +119,17 @@ export class DatasetQuotasListComponent implements OnInit {
     },
   ];
 
-  quotas: DatasetQuota[] = [];
-  datasetId: string;
-  invalidQuotas: DatasetQuota[] = [];
-  searchQuery = signal('');
-  emptyType: EmptyType = EmptyType.NoPageData;
-  isLoading = false;
-  showAllQuotas = false;
+  private quotas: DatasetQuota[] = [];
+  private datasetId: string;
+  protected invalidQuotas: DatasetQuota[] = [];
+  protected searchQuery = signal('');
+  protected emptyType: EmptyType = EmptyType.NoPageData;
+  protected isLoading = false;
+  protected showAllQuotas = false;
 
-  quotaType: QuotaData['quotaType'];
-  quotaObjType: QuotaData['quotaObjType'];
-  helpTextKey: QuotaData['helpTextKey'];
+  private quotaType: QuotaData['quotaType'];
+  private quotaObjType: QuotaData['quotaObjType'];
+  protected helpTextKey: QuotaData['helpTextKey'];
 
   protected invalidFilter: QueryParams<DatasetQuota> = [
     ['name', '=', null] as QueryFilter<DatasetQuota>,
@@ -202,7 +202,7 @@ export class DatasetQuotasListComponent implements OnInit {
     return payload;
   }
 
-  getQuotas(): void {
+  private getQuotas(): void {
     this.isLoading = true;
     this.api.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, []])
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -224,7 +224,7 @@ export class DatasetQuotasListComponent implements OnInit {
       });
   }
 
-  handleError = (error: unknown): void => {
+  private handleError = (error: unknown): void => {
     this.isLoading = false;
     this.errorHandler.showErrorModal(error);
     this.cdr.markForCheck();
@@ -244,7 +244,7 @@ export class DatasetQuotasListComponent implements OnInit {
     });
   }
 
-  toggleDisplay(newValue: boolean): void {
+  protected toggleDisplay(newValue: boolean): void {
     this.showAllQuotas = newValue;
     const confirm$ = !this.showAllQuotas ? this.confirmFilterQuotas() : this.confirmShowAllQuotas();
 
@@ -258,7 +258,7 @@ export class DatasetQuotasListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.quotas, query, columnKeys: ['name', 'id', 'quota', 'obj_quota'] });
 
@@ -267,7 +267,7 @@ export class DatasetQuotasListComponent implements OnInit {
     }
   }
 
-  removeInvalidQuotas(): void {
+  protected removeInvalidQuotas(): void {
     this.getRemovalConfirmation().pipe(
       filter(Boolean),
       switchMap(() => {
@@ -289,7 +289,7 @@ export class DatasetQuotasListComponent implements OnInit {
     return this.api.call('pool.dataset.set_quota', [this.datasetId, quotas]);
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.formPanel.open(DatasetQuotaAddFormComponent, {
       title: this.quotaType === DatasetQuotaType.User
         ? this.translate.instant('Add User Quotas')

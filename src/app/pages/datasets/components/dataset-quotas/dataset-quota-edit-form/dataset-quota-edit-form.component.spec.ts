@@ -73,7 +73,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       expect(await (await getTnInput('obj_quota')).getValue()).toBe('0');
     });
 
-    it('sends an update payload to websocket and closes slide when save is pressed', async () => {
+    it('sends an update payload to websocket when save is pressed', async () => {
       await (await getTnInput('data_quota')).setValue('1000 KiB');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -118,7 +118,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       expect(await (await getTnInput('obj_quota')).getValue()).toBe('0');
     });
 
-    it('sends an update payload to websocket and closes slide when save is pressed', async () => {
+    it('sends an update payload to websocket when save is pressed', async () => {
       await (await getTnInput('obj_quota')).setValue('1');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
