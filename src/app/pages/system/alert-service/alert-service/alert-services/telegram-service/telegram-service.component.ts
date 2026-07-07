@@ -3,19 +3,20 @@ import {
   AbstractControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { TnChipInputComponent, TnFormFieldComponent, TnInputComponent } from '@truenas/ui-components';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-service/alert-services/base-alert-service-form';
 
 @Component({
   selector: 'ix-telegram-service',
   templateUrl: './telegram-service.component.html',
+  styleUrls: ['../alert-service-form.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxInputComponent,
-    IxChipsComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnChipInputComponent,
     TranslateModule,
   ],
 })

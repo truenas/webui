@@ -27,26 +27,22 @@
 }
 
 <ix-form-actions>
-  <button
-    mat-button
-    matStepperPrevious
-    color="accent"
+  <tn-button
+    tnStepperPrevious
+    color="secondary"
     type="button"
-    ixTest="back-enclosure"
+    [testId]="'back-enclosure'"
+    [label]="'Back' | translate"
     [disabled]="form.invalid"
-  >
-    {{ 'Back' | translate }}
-  </button>
+  ></tn-button>
   <div class="step-buttons">
-    <button
-      mat-button
-      matStepperNext
+    <tn-button
+      tnStepperNext
       color="primary"
       type="button"
-      ixTest="next-enclosure"
+      [testId]="'next-enclosure'"
+      [label]="'Next' | translate"
       [disabled]="form.invalid"
-    >
-      {{ 'Next' | translate }}
-    </button>
+    ></tn-button>
   </div>
 </ix-form-actions>

@@ -5,6 +5,10 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
+  TnIconButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
   TnProgressBarComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
@@ -13,7 +17,7 @@ import {
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SidePanelHostCloseable, SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
 /**
@@ -34,15 +38,42 @@ export interface SidePanelFooterAction {
   onClick: () => void;
 }
 
+/** A single action inside a {@link SidePanelFooterMenu}. */
+export interface SidePanelFooterMenuItem {
+  /** Untranslated marker; the container pipes it through `translate`. */
+  label: string;
+  testId: TnTestIdValue;
+  icon?: string;
+  iconLibrary?: 'material' | 'mdi' | 'custom' | 'lucide';
+  /** Roles required to show the item (omit / empty = always shown). */
+  requiredRoles?: Role[];
+  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
+  disabled?: () => boolean;
+  onClick: () => void;
+}
+
 /**
- * A {@link SidePanelForm} that may expose `requiredRoles` to gate its Save action, and optional
- * {@link SidePanelFooterAction}s rendered before Save. Forms declare these independently (not on the
- * base), so the host reads them through this structural augmentation rather than forcing every form
- * to `override` a base member.
+ * A dropdown of secondary actions rendered in the footer before Save. Use instead of a flat
+ * {@link SidePanelFooterAction}[] when several actions would crowd the footer — the container
+ * renders one `dots-vertical` icon-button trigger opening a `tn-menu` of the {@link items}.
  */
-export type HostedSidePanelForm = SidePanelForm & {
+export interface SidePanelFooterMenu {
+  /** Trigger button accessible name / tooltip (untranslated marker). */
+  label: string;
+  testId: TnTestIdValue;
+  items: SidePanelFooterMenuItem[];
+}
+
+/**
+ * A {@link SidePanelHostForm} that may expose `requiredRoles` to gate its Save action, plus optional
+ * {@link SidePanelFooterAction}s and/or a {@link SidePanelFooterMenu} rendered before Save. Forms
+ * declare these independently (not on the base), so the host reads them through this structural
+ * augmentation rather than forcing every form to `override` a base member.
+ */
+export type HostedSidePanelForm = SidePanelHostForm & {
   readonly requiredRoles?: Role[];
   readonly footerActions?: SidePanelFooterAction[];
+  readonly footerMenu?: SidePanelFooterMenu;
   /**
    * Whether the form is currently busy. The host shows an indeterminate progress bar at the top of
    * the panel while true and keeps Save disabled. Optional — forms that don't expose it simply never
@@ -58,7 +89,7 @@ export type HostedSidePanelForm = SidePanelForm & {
 
 /**
  * Internal chrome for {@link FormSidePanelService}. Not used directly in templates — the
- * service instantiates it dynamically, portals a {@link SidePanelForm} into it, and reads
+ * service instantiates it dynamically, portals a {@link SidePanelHostForm} into it, and reads
  * back the attached instance to wire the Save action and the unsaved-changes close guard.
  *
  * Keeping this declarative (rather than composing `tn-side-panel` by hand in the service)
@@ -73,6 +104,10 @@ export type HostedSidePanelForm = SidePanelForm & {
     TnSidePanelComponent,
     TnSidePanelActionDirective,
     TnButtonComponent,
+    TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     TnProgressBarComponent,
     RequiresRolesDirective,
     CdkPortalOutlet,
@@ -91,7 +126,7 @@ export class FormSidePanelContainerComponent {
    * actions inline — e.g. a `mat-stepper` wizard whose Next/Back/Save buttons live inside the steps.
    */
   readonly footerless = input<boolean>(false);
-  readonly portal = input<ComponentPortal<SidePanelForm> | null>(null);
+  readonly portal = input<ComponentPortal<SidePanelHostCloseable> | null>(null);
   /** Inputs applied to the hosted form before its first change detection (before `ngOnInit`). */
   readonly formInputs = input<Record<string, unknown>>({});
   readonly open = model<boolean>(false);
@@ -100,7 +135,7 @@ export class FormSidePanelContainerComponent {
   protected readonly form = signal<HostedSidePanelForm | null>(null);
 
   /** Emitted with the form instance once the portal has attached it. */
-  readonly formAttached = output<SidePanelForm>();
+  readonly formAttached = output<SidePanelHostCloseable>();
   /** Emitted after the panel has fully transitioned closed (user dismiss or programmatic). */
   readonly panelClosed = output();
 
@@ -111,7 +146,7 @@ export class FormSidePanelContainerComponent {
   };
 
   protected onPortalAttached(ref: unknown): void {
-    const componentRef = ref as ComponentRef<SidePanelForm> | null;
+    const componentRef = ref as ComponentRef<SidePanelHostCloseable> | null;
     if (!componentRef?.instance) {
       return;
     }
@@ -121,7 +156,10 @@ export class FormSidePanelContainerComponent {
     for (const key of Object.keys(inputs)) {
       componentRef.setInput(key, inputs[key]);
     }
-    this.form.set(componentRef.instance);
+    // The container is the one place that knows the footer surface (canSubmit/submit) is optional:
+    // it reads those only behind `!footerless()`. Widen to the footer-aware view here so the
+    // template can, while footerless wizards (which expose only the closeable surface) stay safe.
+    this.form.set(componentRef.instance as HostedSidePanelForm);
     this.formAttached.emit(componentRef.instance);
   }
 }

@@ -19,6 +19,7 @@ import { IxFormComponent } from 'app/modules/forms/ix-forms/components/ix-form/i
 import {
   FormDefinition, FormFieldDefinition, FormFieldType, FormSectionDefinition, InputFieldDefinition,
 } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
+import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -101,7 +102,8 @@ interface RenderSection {
     TranslateModule,
   ],
 })
-export class IxFormRendererComponent<T extends object = Record<string, unknown>> implements OnInit {
+export class IxFormRendererComponent<T extends object = Record<string, unknown>>
+implements OnInit, SidePanelHostForm {
   /** The declarative form description. Read once on init. */
   readonly definition = input.required<FormDefinition<T>>();
 

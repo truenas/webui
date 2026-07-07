@@ -1,15 +1,17 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import {
   S3ProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
 
 describe('S3ProviderFormComponent', () => {
   let spectator: Spectator<S3ProviderFormComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   let details: DetailsTableHarness;
   const createComponent = createComponentFactory({
     component: S3ProviderFormComponent,
@@ -18,15 +20,27 @@ describe('S3ProviderFormComponent', () => {
     ],
   });
 
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  async function setEditable(label: string, controlName: string, value: string): Promise<void> {
+    const editable = await details.getHarnessForItem(label, EditableHarness);
+    await editable.open();
+    await (await getInput(controlName)).setValue(value);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     details = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, DetailsTableHarness);
   });
 
   it('defaults sign_accept_encoding to true', async () => {
-    const values = await form.getValues();
-    expect(values['Sign Accept-Encoding']).toBe(true);
+    expect(await (await getCheckbox('sign_accept_encoding')).isChecked()).toBe(true);
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
@@ -41,14 +55,11 @@ describe('S3ProviderFormComponent', () => {
       sign_accept_encoding: false,
     });
 
-    const formValues = await form.getValues();
-    expect(formValues).toEqual({
-      'Access Key ID': '12345678',
-      'Secret Access Key': 'key',
-      'Use Signature Version 2': true,
-      'Disable Endpoint Region': false,
-      'Sign Accept-Encoding': false,
-    });
+    expect(await (await getInput('access_key_id')).getValue()).toBe('12345678');
+    expect(await (await getInput('secret_access_key')).getValue()).toBe('key');
+    expect(await (await getCheckbox('signatures_v2')).isChecked()).toBe(true);
+    expect(await (await getCheckbox('skip_region')).isChecked()).toBe(false);
+    expect(await (await getCheckbox('sign_accept_encoding')).isChecked()).toBe(false);
 
     const detailValues = await details.getValues();
     expect(detailValues).toEqual({
@@ -59,19 +70,15 @@ describe('S3ProviderFormComponent', () => {
   });
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
-    await form.fillForm({
-      'Access Key ID': '87654321',
-      'Secret Access Key': 'secret',
-      'Use Signature Version 2': false,
-      'Disable Endpoint Region': true,
-      'Sign Accept-Encoding': false,
-    });
+    await (await getInput('access_key_id')).setValue('87654321');
+    await (await getInput('secret_access_key')).setValue('secret');
+    await (await getCheckbox('signatures_v2')).uncheck();
+    await (await getCheckbox('skip_region')).check();
+    await (await getCheckbox('sign_accept_encoding')).uncheck();
 
-    await details.setValues({
-      'Maximum Upload Parts': 9000,
-      Region: 'us-east-1',
-      'Endpoint URL': 'https://new.us-west-2.amazonaws.com',
-    });
+    await setEditable('Maximum Upload Parts', 'max_upload_parts', '9000');
+    await setEditable('Region', 'region', 'us-east-1');
+    await setEditable('Endpoint URL', 'endpoint', 'https://new.us-west-2.amazonaws.com');
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({

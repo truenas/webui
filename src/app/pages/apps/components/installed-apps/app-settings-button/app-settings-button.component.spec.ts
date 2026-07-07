@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnSidePanelHarness,
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -16,7 +16,10 @@ import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -25,6 +28,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 describe('AppSettingsButtonComponent', () => {
   let spectator: Spectator<AppSettingsButtonComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
   const viewContainerRef: ViewContainerRef | null = null;
 
   async function openMenu(): Promise<TnMenuHarness> {
@@ -67,6 +71,9 @@ describe('AppSettingsButtonComponent', () => {
       mockProvider(AppsStore, {
         loadCatalog: jest.fn(() => of({})),
       }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
       mockProvider(Router, {
         navigate: jest.fn(),
       }),
@@ -80,6 +87,7 @@ describe('AppSettingsButtonComponent', () => {
       value: viewContainerRef,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('shows Choose Pool modal once Settings button -> Choose Pool clicked', async () => {
@@ -111,10 +119,10 @@ describe('AppSettingsButtonComponent', () => {
   it('opens the Settings form in a side panel when the Settings menu item is clicked', async () => {
     const menu = await openMenu();
     await menu.clickItem({ label: 'Settings' });
-    spectator.detectChanges();
 
-    const panel = await loader.getHarness(TnSidePanelHarness);
-    expect(await panel.isOpen()).toBe(true);
-    expect(spectator.query('ix-apps-settings')).toBeTruthy();
+    expect(formPanel.open).toHaveBeenCalledWith(AppsSettingsComponent, {
+      title: 'Settings',
+      testId: 'apps-settings',
+    });
   });
 });

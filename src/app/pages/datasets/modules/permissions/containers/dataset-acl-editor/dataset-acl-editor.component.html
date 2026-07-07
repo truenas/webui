@@ -1,9 +1,10 @@
 <mat-card class="card card-square">
   @if (isLoading) {
-    <mat-spinner
+    <tn-spinner
       class="spinner"
+      mode="indeterminate"
       [diameter]="40"
-    ></mat-spinner>
+    ></tn-spinner>
   } @else {
     <mat-card-header class="header">
       <div class="title-row">

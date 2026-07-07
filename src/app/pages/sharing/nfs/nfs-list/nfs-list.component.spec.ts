@@ -20,7 +20,7 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
@@ -60,7 +60,7 @@ const commonProviders = [
     confirm: jest.fn(() => of(true)),
     confirmDelete: jest.fn(() => of(undefined)),
   }),
-  mockProvider(SlideIn, {
+  mockProvider(FormSidePanelService, {
     open: jest.fn(() => SlideInResult.empty()),
   }),
   provideMockStore({
@@ -112,7 +112,10 @@ describe('NfsListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(NfsFormComponent, {
+      title: 'Add NFS Share',
+      inputs: { nfsShareData: { existingNfsShare: undefined } },
+    });
   });
 
   it('opens nfs share form when "Edit" button is pressed', async () => {
@@ -120,8 +123,9 @@ describe('NfsListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent, {
-      data: { existingNfsShare: shares[0] },
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(NfsFormComponent, {
+      title: 'Edit NFS Share',
+      inputs: { nfsShareData: { existingNfsShare: shares[0] } },
     });
   });
 

@@ -247,8 +247,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     });
 
     // Review step
-    const stepper = await wizard.getStepper();
-    await stepper.selectStep({ label: 'Review' });
+    await wizard.goToStep('Review');
 
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Review');
 

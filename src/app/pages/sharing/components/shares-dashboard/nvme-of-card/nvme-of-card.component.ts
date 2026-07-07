@@ -38,7 +38,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TableActionsCellComponent,
@@ -89,7 +88,6 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
@@ -192,7 +190,12 @@ export class NvmeOfCardComponent implements OnInit {
   }
 
   openForm(): void {
-    this.slideIn.open(AddSubsystemComponent)
+    // Opened footerless — the add-subsystem stepper owns its own Next/Back/Save buttons. Uses the
+    // side-panel host (not legacy SlideIn) so a nested panel it opens (e.g. Add Host) stacks on top.
+    this.formPanel.open(AddSubsystemComponent, {
+      title: this.translate.instant('Add Subsystem'),
+      footerless: true,
+    })
       .onSuccess(() => this.nvmeOfStore.initialize(), this.destroyRef);
   }
 

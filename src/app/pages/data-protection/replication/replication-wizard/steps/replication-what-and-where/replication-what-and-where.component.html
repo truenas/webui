@@ -275,18 +275,17 @@
     ></tn-input>
   </tn-form-field>
   <ix-form-actions>
-    <button
-      mat-button
-      matStepperNext
+    <tn-button
+      tnStepperNext
       color="primary"
-      ixTest="next"
+      [testId]="'next'"
+      [label]="'Next' | translate"
       [disabled]="form.invalid"
-    >{{ 'Next' | translate }}</button>
-    <button
-      mat-button
-      type="button"
-      ixTest="advanced"
-      (click)="openAdvanced()"
-    >{{ 'Advanced Replication Creation' | translate }}</button>
+    ></tn-button>
+    <tn-button
+      [testId]="'advanced'"
+      [label]="'Advanced Replication Creation' | translate"
+      (onClick)="openAdvanced()"
+    ></tn-button>
   </ix-form-actions>
 </form>

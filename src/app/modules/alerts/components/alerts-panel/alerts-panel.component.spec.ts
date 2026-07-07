@@ -1,6 +1,11 @@
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
+import { TnIconButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -17,7 +22,9 @@ import { alertsLoaded } from 'app/modules/alerts/store/alert.actions';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
@@ -105,8 +112,24 @@ describe('AlertsPanelComponent', () => {
         mockCall('alert.restore'),
       ]),
       mockProvider(SystemGeneralService),
+      mockProvider(SlideIn),
+    ],
+    componentProviders: [
+      // The component provides AlertPanelOverlayContainer as a second OverlayContainer for
+      // z-index stacking in production. In CDK's test environment, containers are mutually
+      // exclusive (each _createContainer() removes other platform="test" containers), so the
+      // menu overlay would end up in a detached element. Reuse the root container instead.
+      { provide: OverlayContainer, useFactory: () => inject(OverlayContainer, { skipSelf: true }) },
     ],
   });
+
+  async function openSettingsMenu(): Promise<TnMenuHarness> {
+    const settingsButton = await TestbedHarnessEnvironment.loader(spectator.fixture)
+      .getHarness(TnIconButtonHarness.with({ name: 'cog' }));
+    await settingsButton.click();
+
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
 
   beforeEach(() => {
     spectator = createComponent();
@@ -303,5 +326,24 @@ describe('AlertsPanelComponent', () => {
   it('calls alert.list when alerts panel is open', () => {
     spectator.inject(Store).dispatch(alertIndicatorPressed());
     expect(api.call).toHaveBeenCalledWith('alert.list');
+  });
+
+  it('navigates to alert settings when Alert Settings menu item is selected', async () => {
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    const menu = await openSettingsMenu();
+    expect(await menu.getItemLabels()).toEqual(['Alert Settings', 'Email']);
+
+    await menu.clickItem({ label: 'Alert Settings' });
+
+    expect(router.navigate).toHaveBeenCalledWith(['/system', 'alert-settings'], undefined);
+  });
+
+  it('opens email form when Email menu item is selected', async () => {
+    const menu = await openSettingsMenu();
+    await menu.clickItem({ label: 'Email' });
+
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(EmailFormComponent, { data: undefined });
   });
 });

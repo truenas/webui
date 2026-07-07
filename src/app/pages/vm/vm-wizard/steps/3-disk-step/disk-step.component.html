@@ -64,17 +64,17 @@
   }
 
   <ix-form-actions>
-    <button
-      mat-button
-      matStepperPrevious
-      ixTest="back"
-    >{{ 'Back' | translate }}</button>
-    <button
-      mat-button
-      matStepperNext
+    <tn-button
+      tnStepperPrevious
+      [testId]="'back'"
+      [label]="'Back' | translate"
+    ></tn-button>
+    <tn-button
+      tnStepperNext
       color="primary"
-      ixTest="next"
+      [testId]="'next'"
+      [label]="'Next' | translate"
       [disabled]="form.invalid"
-    >{{ 'Next' | translate }}</button>
+    ></tn-button>
   </ix-form-actions>
 </form>

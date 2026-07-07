@@ -46,7 +46,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -97,7 +97,7 @@ export class SmbListComponent implements OnInit {
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
   private router = inject(Router);
@@ -161,8 +161,10 @@ export class SmbListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (smbShare) => {
-            this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: smbShare } })
-              .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+            this.formPanel.open(SmbFormComponent, {
+              title: this.translate.instant('Edit SMB Share'),
+              inputs: { smbShareData: { existingSmbShare: smbShare } },
+            }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
           },
         },
         {
@@ -180,8 +182,10 @@ export class SmbListComponent implements OnInit {
               .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe((shareAcl) => {
                 this.loader.close();
-                this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name })
-                  .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+                this.formPanel.open(SmbAclComponent, {
+                  title: this.translate.instant('Share ACL for {share}', { share: shareAcl.share_name }),
+                  inputs: { shareName: shareAcl.share_name },
+                }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
               });
           },
         },
@@ -263,8 +267,10 @@ export class SmbListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(SmbFormComponent)
-      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+    this.formPanel.open(SmbFormComponent, {
+      title: this.translate.instant('Add SMB Share'),
+      inputs: { smbShareData: { existingSmbShare: undefined } },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {
