@@ -434,6 +434,7 @@ describe('WebShareListComponent - No WebShare users configured', () => {
         hostnameMapping$: of({ ipsWithHostnames: {}, localIp: '', hostname: undefined }),
         isTruenasDirectDomain: true,
         canOpenWebShare$: of(true),
+        webShareUnavailableReason$: of(null),
       }),
       provideMockStore({
         initialState: {
