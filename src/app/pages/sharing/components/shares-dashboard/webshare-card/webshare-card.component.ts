@@ -152,10 +152,8 @@ export class WebShareCardComponent implements OnInit {
           tooltip: this.translate.instant('Open'),
           onClick: (row) => this.openWebShareByName(row),
           disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
-          dynamicTooltip: () => this.webShareService.canOpenWebShare$.pipe(
-            map((canOpen) => (canOpen
-              ? this.translate.instant('Open')
-              : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'))),
+          dynamicTooltip: () => this.webShareService.webShareUnavailableReason$.pipe(
+            map((reason) => reason ?? this.translate.instant('Open')),
           ),
         },
         {
@@ -175,7 +173,6 @@ export class WebShareCardComponent implements OnInit {
     uniqueRowTag: (row) => 'card-webshare-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('WebShare')],
   });
-
 
   ngOnInit(): void {
     const webshares$ = this.webShares$.pipe(
