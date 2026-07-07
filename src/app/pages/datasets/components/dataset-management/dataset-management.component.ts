@@ -248,6 +248,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   // scroll right. The tree scrolls VERTICALLY with the page (.rightside-content-hold); its
   // own `.tree-wrapper` (overflow: auto) owns only the HORIZONTAL scroll, so the header is
   // synced to the wrapper's scrollLeft.
+  //
+  // TEMP (NAS-141021): this reads the tn-tree's internal CDK viewport
+  // (`cdk-virtual-scroll-viewport`) to measure the scrollable content width — a coupling
+  // to library-internal DOM. Remove/replace once tn-tree-virtual-scroll-view owns the
+  // sticky-header + horizontal-scroll sync (or exposes a content-width output).
   private syncHeaderWidth(): void {
     const viewport = this.ixTree()?.nativeElement?.querySelector<HTMLElement>('cdk-virtual-scroll-viewport');
     if (viewport) {

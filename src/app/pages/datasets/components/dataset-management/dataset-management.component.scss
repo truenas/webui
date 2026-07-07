@@ -87,6 +87,13 @@ ix-dataset-details-panel {
 // with ViewEncapsulation.None, so its internals are reachable via ::ng-deep here.
 // Hidden while the no-search-results empty state is shown. Kept in the DOM (not
 // destroyed) so its CdkTree data source stays connected and the search keeps working.
+//
+// TEMP (NAS-141021): the per-selector rules below reach @truenas/ui-components
+// library-private classes (`.tn-tree-virtual-scroll-view__viewport`,
+// `.tn-tree-node__content`, `.tn-tree-node__text`, `.tn-tree-node`). These are not
+// part of the component's public contract, so a library restyle could silently break
+// the dashboard. Remove each once the library exposes the corresponding hooks
+// (row height, viewport scrollbar suppression, hover-transition control).
 :host ::ng-deep .dataset-tree.tree-hidden {
   display: none;
 }
@@ -116,6 +123,8 @@ ix-dataset-details-panel {
   // The viewport virtualizes against the page scroll container (.rightside-content-hold,
   // via ixContentVirtualScrollable) instead of scrolling itself, so it owns no scrollbar;
   // hide any residual one so it can never shift the columns out of step with the header.
+  // TEMP (NAS-141021): reaches a library-private class; remove once tn-tree exposes a
+  // viewport scrollbar-suppression hook.
   .tn-tree-virtual-scroll-view__viewport {
     scrollbar-width: none;
 
@@ -124,6 +133,8 @@ ix-dataset-details-panel {
     }
   }
 
+  // TEMP (NAS-141021): reaches a library-private class to pin the row to itemSize (52px);
+  // remove once tn-tree exposes a row-height input.
   .tn-tree-node__content {
     height: 52px;
     min-height: 52px;
@@ -139,6 +150,8 @@ ix-dataset-details-panel {
   // The library projects our content into a block-level __text; force a single flex
   // row so the row body and the mobile chevron stay on one line (block would stack
   // them vertically and inflate the row past itemSize).
+  // TEMP (NAS-141021): reaches a library-private class; remove once tn-tree lets the
+  // projected content control its own layout container.
   .tn-tree-node__text {
     display: flex;
     align-items: center;
@@ -158,6 +171,8 @@ ix-dataset-details-panel {
   // Remove the library node's background transition so hover / hover-off matches the
   // (instant) row-host and grid-cell backgrounds — otherwise the inner content fades
   // out of step and the hover looks delayed and only partially full-width.
+  // TEMP (NAS-141021): reaches a library-private class; remove once tn-tree exposes a
+  // hover-transition control.
   .tn-tree-node {
     transition: none;
   }

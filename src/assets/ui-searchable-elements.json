@@ -4652,6 +4652,28 @@
   {
     "hierarchy": [
       "Datasets",
+      "Take Snapshot"
+    ],
+    "synonyms": [
+      "View Datasets",
+      "Create Snapshot"
+    ],
+    "requiredRoles": [
+      "SNAPSHOT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/datasets",
+      "*"
+    ],
+    "routerLink": null,
+    "anchor": "take-snapshot",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
       "Manage Snapshots"
     ],
     "synonyms": [

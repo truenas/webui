@@ -1,8 +1,25 @@
 <tn-card
   padding="small"
   [title]="'Data Protection' | translate"
-  [primaryAction]="addSnapshotAction()"
 >
+  <ng-template tnCardHeaderActions>
+    <!--
+      Rendered as a projected header button (not [primaryAction]) so it can host
+      [ixUiSearch]: TnCardAction has no global-search hook, and the search index
+      is built from [ixUiSearch] template references. variant/color match what
+      tn-card renders for a primaryAction.
+    -->
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      variant="filled"
+      color="primary"
+      testId="create-snapshot"
+      [label]="'Take Snapshot' | translate"
+      [ixUiSearch]="searchableElements.elements.createSnapshot"
+      (onClick)="addSnapshot()"
+    ></tn-button>
+  </ng-template>
+
   <div class="details-item">
       <div class="label">{{ 'Snapshots' | translate }}:</div>
       <div class="total-snapshots value">{{ dataset().snapshot_count }}</div>

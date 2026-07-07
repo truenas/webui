@@ -125,11 +125,13 @@
         <a
           *ixRequiresRoles="smbRequiredRoles"
           class="action"
+          role="button"
           tabindex="0"
           tnTestIdType="link"
           [tnTestId]="'create-smb-share'"
           (click)="createSmbShare()"
           (keydown.enter)="createSmbShare()"
+          (keydown.space)="createSmbShare(); $event.preventDefault()"
         >
           {{ 'Create SMB Share' | translate }}
         </a>
@@ -138,11 +140,13 @@
         <a
           *ixRequiresRoles="nfsRequiredRoles"
           class="action"
+          role="button"
           tabindex="0"
           tnTestIdType="link"
           [tnTestId]="'create-nfs-share'"
           (click)="createNfsShare()"
           (keydown.enter)="createNfsShare()"
+          (keydown.space)="createNfsShare(); $event.preventDefault()"
         >
           {{ 'Create NFS Share' | translate }}
         </a>
@@ -152,11 +156,13 @@
           <a
             *ixRequiresRoles="webShareRequiredRoles"
             class="action"
+            role="button"
             tabindex="0"
             tnTestIdType="link"
             [tnTestId]="'create-webshare'"
             (click)="createWebshare()"
             (keydown.enter)="createWebshare()"
+            (keydown.space)="createWebshare(); $event.preventDefault()"
           >
             {{ 'Create WebShare' | translate }}
           </a>
