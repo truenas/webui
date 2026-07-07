@@ -12,12 +12,6 @@
           [label]="'Enable Automatic Failover' | translate"
         ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="master"
-          [label]="'Default TrueNAS controller' | translate"
-          [tooltip]="helptext.masterTooltip | translate"
-        ></ix-checkbox>
-
         <ix-input
           formControlName="timeout"
           type="number"
@@ -34,7 +28,7 @@
           ixTest="save"
           [disabled]="form.invalid || isLoading()"
         >
-          {{ submitButtonText$ | async }}
+          {{ 'Save' | translate }}
         </button>
 
         <button

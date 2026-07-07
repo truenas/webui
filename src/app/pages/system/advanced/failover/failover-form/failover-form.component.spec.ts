@@ -59,7 +59,6 @@ describe('FailoverFormComponent', () => {
   it('shows current failover settings', async () => {
     expect(await form.getValues()).toEqual({
       'Enable Automatic Failover': true,
-      'Default TrueNAS controller': true,
       'Network Timeout Before Initiating Failover': '0',
     });
   });
@@ -107,22 +106,5 @@ describe('FailoverFormComponent', () => {
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextSystemFailover.confirmDialogs.syncFromMessage,
     );
-  });
-
-  it('warns when Default TrueNAS controller checkbox is ticked off and changes Save button to Save And Failover', async () => {
-    await form.fillForm({
-      'Enable Automatic Failover': false,
-      'Default TrueNAS controller': false,
-    });
-
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: helptextSystemFailover.masterDialogTitle,
-        message: helptextSystemFailover.masterDialogWarning,
-      }),
-    );
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save And Failover' }));
-    expect(saveButton).toExist();
   });
 });
