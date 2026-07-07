@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, input, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, input, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -87,20 +87,18 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
 
   /**
    * Secondary actions rendered as a dropdown in the `<tn-side-panel>` footer next to Save (read by
-   * the host container).
-   *
-   * Built once in `ngOnInit` (the host reads it every change-detection cycle) — `certificate` is
-   * set at init and never reassigned, so the menu is stable.
+   * the host container every change-detection cycle). Derived from the editing certificate; resolves
+   * to `undefined` on the create path so the host renders no menu.
    */
-  footerMenu: SidePanelFooterMenu | undefined;
-
-  private buildFooterMenu(): SidePanelFooterMenu | undefined {
-    if (!this.certificate) {
+  readonly footerMenu = computed<SidePanelFooterMenu | undefined>(() => {
+    const certificate = this.editingCertificate();
+    if (!certificate) {
       return undefined;
     }
+    const isCsr = !!certificate.cert_type_CSR;
     const items: SidePanelFooterMenuItem[] = [
       {
-        label: this.isCsr ? T('View/Download CSR') : T('View/Download Certificate'),
+        label: isCsr ? T('View/Download CSR') : T('View/Download Certificate'),
         testId: 'view-certificate-or-csr',
         onClick: () => this.onViewCertificatePressed(),
       },
@@ -110,7 +108,7 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
         onClick: () => this.onViewKeyPressed(),
       },
     ];
-    if (this.isCsr) {
+    if (isCsr) {
       items.push({
         label: T('Create ACME Certificate'),
         testId: 'create-acme-certificate',
@@ -119,13 +117,12 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
       });
     }
     return { label: T('Actions'), testId: 'certificate-actions', items };
-  }
+  });
 
   ngOnInit(): void {
     this.certificate = this.editingCertificate();
     this.setCertificate();
     this.setRenewDaysForEditIfAvailable();
-    this.footerMenu = this.buildFooterMenu();
   }
 
   private setCertificate(): void {

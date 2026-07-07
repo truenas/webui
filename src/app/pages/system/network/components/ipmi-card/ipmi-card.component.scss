@@ -1,3 +1,7 @@
+// The IPMI card renders a single-column list-style table with no meaningful column
+// heading. tn-table exposes no `hideHeader`/`headerless` input, so piercing into its
+// internal `.tn-table__header` is currently the only way to suppress it. Revisit if the
+// library adds a headerless option.
 :host ::ng-deep .tn-table__header {
   display: none;
 }
