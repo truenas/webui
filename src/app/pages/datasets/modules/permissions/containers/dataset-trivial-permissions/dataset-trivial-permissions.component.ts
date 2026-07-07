@@ -1,13 +1,12 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCheckboxComponent,
-  TnFormFieldComponent, TnFormSectionComponent, TnTooltipDirective,
+  TnFormFieldComponent, TnFormSectionComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
@@ -38,6 +37,7 @@ import { StorageService } from 'app/services/storage.service';
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
+    TnTestIdDirective,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
     TnCheckboxComponent,
@@ -45,7 +45,6 @@ import { StorageService } from 'app/services/storage.service';
     TnButtonComponent,
     RouterLink,
     TranslateModule,
-    AsyncPipe,
     FakeProgressBarComponent,
   ],
 })
@@ -92,16 +91,18 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     traverse: [false],
   });
 
+  // `prefix`/`suffix` build the form control name; `testId` keeps the resolved
+  // data-test stable (owner→user, Exec→execute) regardless of the control name.
   protected readonly accessModeRows = [
-    { label: 'User', prefix: 'owner' },
-    { label: 'Group', prefix: 'group' },
-    { label: 'Other', prefix: 'other' },
+    { label: 'User', prefix: 'owner', testId: 'user' },
+    { label: 'Group', prefix: 'group', testId: 'group' },
+    { label: 'Other', prefix: 'other', testId: 'other' },
   ];
 
   protected readonly accessModeColumns = [
-    { label: 'Read', suffix: 'Read' },
-    { label: 'Write', suffix: 'Write' },
-    { label: 'Execute', suffix: 'Exec' },
+    { label: 'Read', suffix: 'Read', testId: 'read' },
+    { label: 'Write', suffix: 'Write', testId: 'write' },
+    { label: 'Execute', suffix: 'Exec', testId: 'execute' },
   ];
 
   protected readonly isLoading = signal(false);
@@ -120,7 +121,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     traverse: helptextPermissions.traverseTooltip,
   };
 
-  readonly isRecursive$ = this.form.select((values) => values.recursive);
+  protected readonly isRecursive = toSignal(this.form.select((values) => values.recursive));
 
   get canSetAcl(): boolean {
     return this.aclType !== AclType.Off;

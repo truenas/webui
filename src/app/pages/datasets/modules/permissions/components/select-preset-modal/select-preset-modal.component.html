@@ -27,7 +27,7 @@
         <tn-select
           testId="preset-name"
           formControlName="presetName"
-          [options]="(presetOptions$ | async) ?? []"
+          [options]="presetOptions()"
         ></tn-select>
       </tn-form-field>
     }

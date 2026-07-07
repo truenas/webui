@@ -44,8 +44,9 @@
   padding: 5px 10px;
 }
 
-// Give the fields more breathing room than the tn-form-section default (1.25rem).
-// High specificity so it wins over the library's own body-gap rule.
+// TEMP: pierce tn-form-section's private __body to widen the field gap beyond the
+// library default (1.25rem). Remove once @truenas/ui-components exposes a
+// gap/density input on tn-form-section.
 :host ::ng-deep fieldset.tn-form-section > .tn-form-section__body {
   gap: 1.75rem;
 }
@@ -81,7 +82,9 @@
     text-align: center;
   }
 
-  // Visually hide each checkbox's text label (kept in the DOM as its accessible name).
+  // TEMP: pierce tn-checkbox's private __text to visually hide the per-cell label
+  // (kept in the DOM as the checkbox's accessible name). Remove once
+  // @truenas/ui-components ships a label-hidden / aria-label-only checkbox mode.
   &__checkbox ::ng-deep .tn-checkbox__text {
     border: 0;
     clip: rect(0 0 0 0);

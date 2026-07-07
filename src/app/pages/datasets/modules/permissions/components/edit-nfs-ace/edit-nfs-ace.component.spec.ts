@@ -164,8 +164,10 @@ describe('EditNfsAceComponent', () => {
   it('shows basic permissions select when permission type is basic', async () => {
     await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-basic' }))).check();
 
-    const selects = await loader.getAllHarnesses(TnSelectHarness);
-    expect(selects).toHaveLength(2);
+    const basicPermSelect = await loader.getHarnessOrNull(
+      TnSelectHarness.with({ selector: '[formControlName="basicPermission"]' }),
+    );
+    expect(basicPermSelect).not.toBeNull();
     const advancedPermCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Read Data' }));
     expect(advancedPermCheckbox).toBeNull();
   });

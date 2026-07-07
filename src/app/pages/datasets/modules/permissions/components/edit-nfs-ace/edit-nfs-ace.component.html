@@ -44,7 +44,7 @@
             formControlName="type"
             [value]="option.value"
             [label]="option.label"
-            [testId]="['type', option.value]"
+            [testId]="['type', option.label]"
           ></tn-radio>
         }
       </div>
@@ -65,7 +65,7 @@
               formControlName="permissionType"
               [value]="option.value"
               [label]="option.label"
-              [testId]="['permissionType', option.value]"
+              [testId]="['permissionType', option.label]"
             ></tn-radio>
           }
         </div>
@@ -87,12 +87,17 @@
           [label]="'Permissions' | translate"
           [tooltip]="tooltips.advancedPermissions | translate"
         >
-          <div class="checkbox-list" formGroupName="advancedPermissions">
+          <div
+            class="checkbox-list"
+            role="group"
+            formGroupName="advancedPermissions"
+            [attr.aria-label]="'Permissions' | translate"
+          >
             @for (option of advancedPermissionOptions; track option.value) {
               <tn-checkbox
                 [formControlName]="option.value"
                 [label]="option.label"
-                [testId]="['advanced-permissions', option.value]"
+                [testId]="['advanced-permissions', option.label]"
               ></tn-checkbox>
             }
           </div>
@@ -112,7 +117,7 @@
               formControlName="flagsType"
               [value]="option.value"
               [label]="option.label"
-              [testId]="['flagsType', option.value]"
+              [testId]="['flagsType', option.label]"
             ></tn-radio>
           }
         </div>
@@ -130,7 +135,7 @@
                 formControlName="basicFlag"
                 [value]="option.value"
                 [label]="option.label"
-                [testId]="['basicFlag', option.value]"
+                [testId]="['basicFlag', option.label]"
               ></tn-radio>
             }
           </div>
@@ -141,12 +146,17 @@
           [label]="'Flags' | translate"
           [tooltip]="tooltips.advancedFlags | translate"
         >
-          <div class="checkbox-list" formGroupName="advancedFlags">
+          <div
+            class="checkbox-list"
+            role="group"
+            formGroupName="advancedFlags"
+            [attr.aria-label]="'Flags' | translate"
+          >
             @for (option of advancedFlagOptions; track option.value) {
               <tn-checkbox
                 [formControlName]="option.value"
                 [label]="option.label"
-                [testId]="['advanced-flags', option.value]"
+                [testId]="['advanced-flags', option.label]"
               ></tn-checkbox>
             }
           </div>

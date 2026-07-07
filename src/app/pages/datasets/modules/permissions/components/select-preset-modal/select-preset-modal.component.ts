@@ -1,6 +1,5 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, Validators, ReactiveFormsModule,
@@ -10,7 +9,6 @@ import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnRadioComponent,
   TnSelectComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -30,7 +28,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    AsyncPipe,
     ReactiveFormsModule,
     TnRadioComponent,
     TnTooltipDirective,
@@ -60,7 +57,7 @@ export class SelectPresetModalComponent implements OnInit {
     usePreset: new FormControl(true),
   });
 
-  presetOptions$ = of<Option[]>([]);
+  protected readonly presetOptions = signal<Option[]>([]);
   presets: AclTemplateByPath[] = [];
 
   readonly usePresetOptions: { label: string; value: boolean; tooltip?: string }[] = [
@@ -102,7 +99,7 @@ export class SelectPresetModalComponent implements OnInit {
       )
       .subscribe((presets) => {
         this.presets = presets;
-        this.presetOptions$ = of(presets.map((preset) => ({
+        this.presetOptions.set(presets.map((preset) => ({
           label: preset.name,
           value: preset.name,
         })));

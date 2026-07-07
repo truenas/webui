@@ -29,12 +29,17 @@
     }
 
     <tn-form-field [label]="'Permissions' | translate">
-      <div class="checkbox-list checkbox-list--thirds" formGroupName="permissions">
+      <div
+        class="checkbox-list checkbox-list--thirds"
+        role="group"
+        formGroupName="permissions"
+        [attr.aria-label]="'Permissions' | translate"
+      >
         @for (option of permissionOptions; track option.value) {
           <tn-checkbox
             [formControlName]="option.value"
             [label]="option.label"
-            [testId]="['permissions', option.value]"
+            [testId]="['permissions', option.label]"
           ></tn-checkbox>
         }
       </div>

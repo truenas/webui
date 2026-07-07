@@ -8,13 +8,11 @@ import {
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { ViewNfsPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-nfs-permissions/view-nfs-permissions.component';
@@ -64,26 +62,6 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   protected readonly stat = signal<FileSystemStat | null>(null);
   protected readonly acl = signal<Acl | null>(null);
 
-  defaultEmptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No Data'),
-  };
-
-  missionMountpointEmptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('Dataset has no mountpoint'),
-  };
-
-  notMountedEmptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('Dataset is not mounted'),
-  };
-
-  lockedEmptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('Dataset is locked'),
-  };
-
   readonly AclType = AclType;
 
   redirectToEditPermissions(): void {
@@ -94,18 +72,18 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     }
   }
 
-  readonly emptyConfig = computed(() => {
+  protected readonly emptyTitle = computed(() => {
     if (this.isMissingMountpoint()) {
-      return this.missionMountpointEmptyConfig;
+      return this.translate.instant('Dataset has no mountpoint');
     }
     if (this.isNotMounted()) {
-      return this.notMountedEmptyConfig;
+      return this.translate.instant('Dataset is not mounted');
     }
     if (this.isLocked()) {
-      return this.lockedEmptyConfig;
+      return this.translate.instant('Dataset is locked');
     }
 
-    return this.defaultEmptyConfig;
+    return this.translate.instant('No Data');
   });
 
   readonly canEditPermissions = computed(() => {

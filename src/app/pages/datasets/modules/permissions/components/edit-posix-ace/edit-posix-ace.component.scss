@@ -4,8 +4,9 @@
   padding: 16px 5px;
 }
 
-// Give the fields more breathing room than the tn-form-section default (1.25rem).
-// High specificity so it wins over the library's own body-gap rule.
+// TEMP: pierce tn-form-section's private __body to widen the field gap beyond the
+// library default (1.25rem). Remove once @truenas/ui-components exposes a
+// gap/density input on tn-form-section.
 :host ::ng-deep fieldset.tn-form-section > .tn-form-section__body {
   gap: 1.75rem;
 }

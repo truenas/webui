@@ -48,7 +48,12 @@
           [label]="'Access Mode' | translate"
           [tooltip]="tooltips.mode | translate"
         >
-          <table class="access-mode" formGroupName="accessMode">
+          <table
+            class="access-mode"
+            formGroupName="accessMode"
+            tnTestIdType="table"
+            [tnTestId]="'permissions-table'"
+          >
             <tr>
               <td></td>
               @for (column of accessModeColumns; track column.suffix) {
@@ -64,7 +69,7 @@
                       class="access-mode__checkbox"
                       [formControlName]="row.prefix + column.suffix"
                       [label]="(row.label | translate) + ' ' + (column.label | translate)"
-                      [testId]="[row.prefix, column.suffix]"
+                      [testId]="[row.testId, column.testId]"
                     ></tn-checkbox>
                   </td>
                 }
@@ -83,7 +88,7 @@
           ></tn-checkbox>
         </tn-form-field>
 
-        @if (isRecursive$ | async) {
+        @if (isRecursive()) {
           <tn-form-field [tooltip]="tooltips.traverse | translate">
             <tn-checkbox
               formControlName="traverse"
