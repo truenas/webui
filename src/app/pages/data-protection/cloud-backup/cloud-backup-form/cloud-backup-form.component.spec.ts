@@ -18,6 +18,7 @@ import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -362,6 +363,8 @@ describe('CloudBackupFormComponent', () => {
       spectator = createComponent({
         providers: [
           { provide: SlideInRef, useValue: null },
+          // Skip the min submit-feedback hold so the synchronous-close assertions below hold.
+          { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
         ],
         props: {
           backupToEdit: existingTask,
