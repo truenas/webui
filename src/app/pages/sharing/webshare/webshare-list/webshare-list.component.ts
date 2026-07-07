@@ -35,7 +35,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -82,7 +82,7 @@ export class WebShareListComponent implements OnInit {
   protected readonly searchableElements = webshareListElements;
 
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   protected emptyService = inject(EmptyService);
@@ -208,13 +208,16 @@ export class WebShareListComponent implements OnInit {
   }
 
   doEdit(row: WebShareTableRow): void {
-    this.slideIn.open(WebShareSharesFormComponent, {
-      data: {
-        id: row.id,
-        isNew: false,
-        name: row.name,
-        path: row.path,
-        isHomeBase: row.isHomeBase,
+    this.formPanel.open(WebShareSharesFormComponent, {
+      title: this.translate.instant(this.helptext.webshare_form_title_edit),
+      inputs: {
+        webShareData: {
+          id: row.id,
+          isNew: false,
+          name: row.name,
+          path: row.path,
+          isHomeBase: row.isHomeBase,
+        },
       },
     }).onSuccess(() => this.loadWebShareConfig(), this.destroyRef);
   }

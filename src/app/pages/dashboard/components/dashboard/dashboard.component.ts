@@ -2,24 +2,23 @@ import {
   CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, computed, signal, inject, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, computed, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnEmptyComponent, TnSidePanelActionDirective, TnSidePanelComponent, TnTooltipDirective,
+  TnButtonComponent, TnEmptyComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { Observable, of } from 'rxjs';
 import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
 import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
@@ -41,10 +40,7 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
     PageHeaderComponent,
     TnButtonComponent,
     TnEmptyComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     TnTooltipDirective,
-    WidgetGroupFormComponent,
     UiSearchDirective,
     NgxSkeletonLoaderModule,
     WidgetGroupControlsComponent,
@@ -63,7 +59,7 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
 export class DashboardComponent implements OnInit {
   private dashboardStore = inject(DashboardStore);
   private errorHandler = inject(ErrorHandlerService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
@@ -83,14 +79,8 @@ export class DashboardComponent implements OnInit {
     return !isEqual(this.renderedGroups(), getDefaultWidgets(this.isHaLicensed()));
   });
 
+  /** Tracks whether the card-editor side panel is open so the page-level Escape handler yields to it. */
   protected editorOpen = signal(false);
-  protected editedGroup = signal<WidgetGroup | undefined>(undefined);
-  private editedGroupIndex = signal<number | null>(null);
-  protected editorForm = viewChild(WidgetGroupFormComponent);
-
-  protected editorCloseGuard = (): Observable<boolean> => {
-    return this.editorForm()?.hasUnsavedChanges() ? this.unsavedChanges.showConfirmDialog() : of(true);
-  };
 
   ngOnInit(): void {
     performance.mark('Dashboard Start');
@@ -114,36 +104,35 @@ export class DashboardComponent implements OnInit {
   }
 
   protected onAddGroup(): void {
-    this.editedGroup.set(undefined);
-    this.editedGroupIndex.set(null);
-    this.editorOpen.set(true);
+    this.openEditor(undefined, null);
   }
 
   protected onEditGroup(i: number): void {
-    this.editedGroup.set(this.renderedGroups()[i]);
-    this.editedGroupIndex.set(i);
+    this.openEditor(this.renderedGroups()[i], i);
+  }
+
+  /**
+   * Opens the card editor in a shared side panel via {@link FormSidePanelService} (rather than a
+   * per-page `<tn-side-panel>`). On save the editor hands back the edited group, which we merge
+   * into the in-memory layout at `index` (or append when adding a new group).
+   */
+  private openEditor(group: WidgetGroup | undefined, index: number | null): void {
     this.editorOpen.set(true);
-  }
-
-  protected onEditorSaved(updatedGroup: WidgetGroup): void {
-    const editedIndex = this.editedGroupIndex();
-    this.renderedGroups.update((groups) => {
-      if (editedIndex === null) {
-        return [...groups, updatedGroup];
-      }
-      return groups.map((group, index) => (index === editedIndex ? updatedGroup : group));
+    const editor$ = this.formPanel.open<WidgetGroup>(WidgetGroupFormComponent, {
+      title: this.translate.instant('Card Editor'),
+      wide: true,
+      testId: 'widget-group-editor',
+      inputs: { initialGroup: group },
     });
-    this.editorOpen.set(false);
-  }
-
-  protected onEditorCancel(): void {
-    this.editorCloseGuard()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((canClose) => {
-        if (canClose) {
-          this.editorOpen.set(false);
+    editor$.onSuccess((updatedGroup) => {
+      this.renderedGroups.update((groups) => {
+        if (index === null) {
+          return [...groups, updatedGroup];
         }
+        return groups.map((existing, i) => (i === index ? updatedGroup : existing));
       });
+    }, this.destroyRef);
+    editor$.onClose(() => this.editorOpen.set(false), this.destroyRef);
   }
 
   protected onMoveGroup(index: number, direction: 1 | -1): void {

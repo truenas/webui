@@ -3,13 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerFilesystemDevice } from 'app/interfaces/container.interface';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import {
   ContainerFilesystemDeviceFormComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component';
@@ -27,6 +27,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 describe('ContainerFilesystemDevicesComponent', () => {
   let spectator: Spectator<ContainerFilesystemDevicesComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
   const disks = [
     {
       id: 1,
@@ -56,8 +57,8 @@ describe('ContainerFilesystemDevicesComponent', () => {
       ]),
       mockProvider(SnackbarService),
       mockProvider(FilesystemService),
-      mockProvider(UnsavedChangesService, {
-        showConfirmDialog: () => of(true),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
       }),
       mockProvider(ContainersStore, {
         selectedContainer: () => fakeContainer({
@@ -82,6 +83,7 @@ describe('ContainerFilesystemDevicesComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('shows a list of disks that have source set', () => {
@@ -98,53 +100,46 @@ describe('ContainerFilesystemDevicesComponent', () => {
   });
 
   describe('side panel', () => {
-    it('opens the side panel with the form to add a disk', async () => {
-      expect(spectator.query(ContainerFilesystemDeviceFormComponent)).not.toExist();
-
+    it('opens the form side panel to add a disk', async () => {
       const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
-      spectator.detectChanges();
 
-      const form = spectator.query(ContainerFilesystemDeviceFormComponent);
-      expect(form).toExist();
-      expect(form.disk()).toBeUndefined();
-      expect(form.container()).toEqual(fakeContainer({ id: 1 }));
+      expect(formPanel.open).toHaveBeenCalledWith(ContainerFilesystemDeviceFormComponent, {
+        title: 'Add Disk',
+        inputs: {
+          disk: undefined,
+          container: fakeContainer({ id: 1 }),
+        },
+      });
     });
 
-    it('opens the side panel with the disk being edited', () => {
+    it('opens the form side panel with the disk being edited', () => {
       const component = spectator.component as unknown as { editDisk: (disk: ContainerFilesystemDevice) => void };
       component.editDisk(disks[0]);
-      spectator.detectChanges();
 
-      const form = spectator.query(ContainerFilesystemDeviceFormComponent);
-      expect(form).toExist();
-      expect(form.disk()).toBe(disks[0]);
+      expect(formPanel.open).toHaveBeenCalledWith(ContainerFilesystemDeviceFormComponent, {
+        title: 'Edit Disk',
+        inputs: {
+          disk: disks[0],
+          container: fakeContainer({ id: 1 }),
+        },
+      });
     });
 
-    it('reloads devices and closes the panel when the form reports a successful save', async () => {
+    it('reloads devices when the form reports a successful save', async () => {
+      jest.spyOn(formPanel, 'open').mockReturnValueOnce(SlideInResult.success(true));
+
       const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
-      spectator.detectChanges();
-
-      const form = spectator.query(ContainerFilesystemDeviceFormComponent);
-      form.closed.emit(true);
-      spectator.detectChanges();
 
       expect(spectator.inject(ContainerDevicesStore).reload).toHaveBeenCalled();
-      expect(spectator.query(ContainerFilesystemDeviceFormComponent)).not.toExist();
     });
 
-    it('closes the panel without reloading when the form is cancelled', async () => {
+    it('does not reload devices when the form is cancelled', async () => {
       const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
-      spectator.detectChanges();
-
-      const form = spectator.query(ContainerFilesystemDeviceFormComponent);
-      form.closed.emit(false);
-      spectator.detectChanges();
 
       expect(spectator.inject(ContainerDevicesStore).reload).not.toHaveBeenCalled();
-      expect(spectator.query(ContainerFilesystemDeviceFormComponent)).not.toExist();
     });
   });
 });

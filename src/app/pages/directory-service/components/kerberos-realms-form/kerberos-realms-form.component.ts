@@ -1,22 +1,16 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
+import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -24,44 +18,37 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './kerberos-realms-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxChipsComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnChipInputComponent,
     TranslateModule,
   ],
 })
-export class KerberosRealmsFormComponent implements OnInit {
+export class KerberosRealmsFormComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private fb = inject(FormBuilder);
-  private translate = inject(TranslateService);
-  slideInRef = inject<SlideInRef<KerberosRealm | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
+  /** Realm being edited; absent when adding. Supplied by the `<tn-side-panel>` host. */
+  readonly editingRow = input<KerberosRealm | undefined>(undefined);
+
+  readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected editingRealm: KerberosRealm | undefined;
 
-  get isNew(): boolean {
-    return !this.editingRealm;
-  }
+  protected readonly isFormLoading = signal(false);
 
-  protected isFormLoading = signal(false);
-
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     realm: ['', Validators.required],
     kdc: [[] as string[]],
     primary_kdc: [null as string],
     admin_server: [[] as string[]],
     kpasswd_server: [[] as string[]],
   });
+
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   readonly tooltips = {
     realm: helptextKerberosRealms.realmTooltip,
@@ -71,22 +58,9 @@ export class KerberosRealmsFormComponent implements OnInit {
     primary_kdc: helptextKerberosRealms.primaryKdcTooltip,
   };
 
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Kerberos Realm')
-      : this.translate.instant('Edit Kerberos Realm');
-  }
-
-  constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingRealm = slideInRef.getData();
-  }
-
   ngOnInit(): void {
+    this.editingRealm = (this.slideInRef?.getData() as KerberosRealm | undefined) ?? this.editingRow();
+
     if (this.editingRealm) {
       this.form.patchValue(this.editingRealm);
     }
@@ -109,7 +83,7 @@ export class KerberosRealmsFormComponent implements OnInit {
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

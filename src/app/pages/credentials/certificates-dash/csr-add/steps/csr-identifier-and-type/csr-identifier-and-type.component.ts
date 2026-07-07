@@ -1,12 +1,14 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent, TnStepperNextDirective,
+} from '@truenas/ui-components';
 import { pick } from 'lodash-es';
 import { Observable, of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
@@ -30,6 +32,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
+    TnStepperNextDirective,
     TranslateModule,
   ],
 })
@@ -41,7 +44,6 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   private cdr = inject(ChangeDetectorRef);
   private validators = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
-  private stepper = inject(CdkStepper);
 
   readonly profileSelected = output<CertificateProfile>();
 
@@ -56,6 +58,12 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     create_type: [CertificateCreateType.CreateCsr],
     profile: [''],
   });
+
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
 
   profiles: CertificateProfiles;
   profileOptions$: Observable<Option[]>;
@@ -76,10 +84,6 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   ngOnInit(): void {
     this.loadProfiles();
     this.emitEventOnProfileChange();
-  }
-
-  protected goNext(): void {
-    this.stepper.next();
   }
 
   getSummary(): SummarySection {

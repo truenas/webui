@@ -49,3 +49,14 @@ export const mockV160 = makeEnclosure({
   ...vSeriesConfig,
   model: EnclosureModel.V160,
 });
+
+// the V260 and V280 share their enclosure layouts with the V140/160
+export const mockV260 = makeEnclosure({
+  ...vSeriesConfig,
+  model: EnclosureModel.V260,
+});
+
+export const mockV280 = makeEnclosure({
+  ...vSeriesConfig,
+  model: EnclosureModel.V280,
+});

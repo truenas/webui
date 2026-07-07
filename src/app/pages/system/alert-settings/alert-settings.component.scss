@@ -1,0 +1,17 @@
+// Stack the Alert Services and Alert Settings cards as non-growing flex items
+// so each sizes to its own content instead of being stretched by the
+// full-height content area.
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+// TEMP (NAS-141021): tn-card hard-codes `height: 100%` (intended for
+// grid/dashboard cards) and exposes no input to opt out. On this stacked page
+// that stretches each card to the full content-area height, leaving large empty
+// gaps under short content. `!important` is required to beat the library's
+// encapsulated `.tn-card[_ngcontent-…]` rule (equal specificity, source-order
+// dependent). Remove once tn-card ships a content-height/fill API.
+:host ::ng-deep .tn-card {
+  height: auto !important;
+}

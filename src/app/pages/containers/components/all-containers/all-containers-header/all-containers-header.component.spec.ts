@@ -7,12 +7,15 @@ import {
 } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/containers/components/all-containers/all-containers-header/global-config-form/global-config-form.component';
 import {
   MapUserGroupIdsDialogComponent,
 } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
+import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { AllContainersHeaderComponent } from './all-containers-header.component';
@@ -20,6 +23,7 @@ import { AllContainersHeaderComponent } from './all-containers-header.component'
 describe('AllContainersHeaderComponent', () => {
   let spectator: Spectator<AllContainersHeaderComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
   const storeMock = {
     isLoading: signal(false),
     config: signal({ dataset: 'pool1/dataset1' }),
@@ -39,7 +43,6 @@ describe('AllContainersHeaderComponent', () => {
         }),
         mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', bridge1: 'bridge1' }),
         mockCall('container.pool_choices', { tank: 'tank' }),
-        mockCall('container.query', []),
         mockCall('lxc.update'),
       ]),
       mockProvider(ContainersStore, {
@@ -47,6 +50,9 @@ describe('AllContainersHeaderComponent', () => {
         containers: signal([]),
       }),
       mockProvider(ContainerConfigStore, storeMock),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
       mockProvider(TnDialog, {
         open: jest.fn(),
       }),
@@ -56,6 +62,7 @@ describe('AllContainersHeaderComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   describe('elements visibility', () => {
@@ -67,13 +74,14 @@ describe('AllContainersHeaderComponent', () => {
       expect(await createNewButton.isDisabled()).toBe(false);
     });
 
-    it('opens the container form side panel when Create New Container is pressed', async () => {
+    it('opens ContainerFormComponent in a side panel when Create New Container is pressed', async () => {
       const createNewButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create New Container' }));
       await createNewButton.click();
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
 
-      expect(spectator.query('ix-container-form', { root: true })).toBeTruthy();
+      expect(formPanel.open).toHaveBeenCalledWith(
+        ContainerFormComponent,
+        expect.objectContaining({ title: 'Add Container' }),
+      );
     });
 
     it('shows Settings and Map User/Group IDs menu items', async () => {
@@ -86,30 +94,26 @@ describe('AllContainersHeaderComponent', () => {
   });
 
   describe('actions', () => {
-    it('opens the global config side panel when Settings menu item is pressed', async () => {
+    it('opens the global config form in a side panel when Settings menu item is pressed', async () => {
       const configButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configuration' }));
       await configButton.click();
 
       const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
       await menu.clickItem({ label: 'Settings' });
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
 
-      expect(spectator.query('ix-global-config-form', { root: true })).toBeTruthy();
+      expect(formPanel.open).toHaveBeenCalledWith(GlobalConfigFormComponent, {
+        title: 'Global Configuration',
+      });
     });
 
     it('reinitializes stores when the config form reports a successful save', async () => {
+      jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(true));
+
       const configButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configuration' }));
       await configButton.click();
 
       const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
       await menu.clickItem({ label: 'Settings' });
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      const configForm = spectator.query(GlobalConfigFormComponent, { root: true });
-      configForm!.closed.emit(true);
-      spectator.detectChanges();
 
       expect(spectator.inject(ContainerConfigStore).initialize).toHaveBeenCalled();
       expect(spectator.inject(ContainersStore).initialize).toHaveBeenCalled();
@@ -129,26 +133,6 @@ describe('AllContainersHeaderComponent', () => {
           panelClass: 'map-user-group-dialog',
         },
       );
-    });
-
-    it('submits the config form via the side panel Save action', async () => {
-      const configButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configuration' }));
-      await configButton.click();
-
-      const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
-      await menu.clickItem({ label: 'Settings' });
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      const configForm = spectator.query(GlobalConfigFormComponent, { root: true });
-      expect(configForm).toBeInstanceOf(GlobalConfigFormComponent);
-
-      const submitSpy = jest.spyOn(configForm!, 'submit');
-      const saveButton = await TnMenuTesting.rootLoader(spectator.fixture)
-        .getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
-
-      expect(submitSpy).toHaveBeenCalled();
     });
   });
 });

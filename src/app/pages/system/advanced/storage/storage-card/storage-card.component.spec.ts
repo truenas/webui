@@ -10,14 +10,20 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
+import {
+  StorageSettingsFormComponent,
+} from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
 describe('StorageCardComponent', () => {
   let spectator: Spectator<StorageCardComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
   const createComponent = createComponentFactory({
     component: StorageCardComponent,
     providers: [
@@ -41,6 +47,9 @@ describe('StorageCardComponent', () => {
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
       provideMockStore({
         selectors: [
           {
@@ -55,6 +64,7 @@ describe('StorageCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('shows Storage related settings', () => {
@@ -68,13 +78,10 @@ describe('StorageCardComponent', () => {
   });
 
   it('opens the Storage form in a side panel when Configure is pressed', async () => {
-    expect(spectator.query('ix-storage-settings-form')).toBeNull();
-
     const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
-    spectator.detectChanges();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.query('ix-storage-settings-form')).not.toBeNull();
+    expect(formPanel.open).toHaveBeenCalledWith(StorageSettingsFormComponent, { title: 'Storage' });
   });
 });

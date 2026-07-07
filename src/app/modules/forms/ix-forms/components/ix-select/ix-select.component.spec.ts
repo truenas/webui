@@ -105,11 +105,11 @@ describe('IxSelectComponent', () => {
       const opt$ = options$.pipe(delay(100));
       spectator.setHostInput({ options: opt$ });
 
-      expect(spectator.query('mat-progress-spinner')).toBeVisible();
+      expect(spectator.query('tn-spinner')).toBeVisible();
       tick(100);
       spectator.detectChanges();
 
-      expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
+      expect(spectator.query('tn-spinner')).not.toBeVisible();
     }));
 
     it('shows a list of options', async () => {

@@ -2,12 +2,11 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -223,7 +222,7 @@ describe('UpdateComponent', () => {
     });
 
     it('offers to save config when Install Update is pressed', async () => {
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install Update' }));
       await installButton.click();
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
@@ -234,7 +233,7 @@ describe('UpdateComponent', () => {
     });
 
     it('asks for confirmation before installing updates', async () => {
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install Update' }));
       await installButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -243,7 +242,7 @@ describe('UpdateComponent', () => {
     });
 
     it('runs the update', async () => {
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install Update' }));
       await installButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
@@ -259,7 +258,7 @@ describe('UpdateComponent', () => {
         closed: of(false),
       } as DialogRef<unknown, SaveConfigDialog>);
 
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install Update' }));
       await installButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -277,7 +276,7 @@ describe('UpdateComponent', () => {
         closed: of(undefined),
       } as DialogRef<unknown, SaveConfigDialog>);
 
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install Update' }));
       await installButton.click();
 
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
@@ -294,7 +293,7 @@ describe('UpdateComponent', () => {
       mockStore$.overrideSelector(selectIsHaLicensed, true);
       mockStore$.refreshState();
 
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install Update' }));
       await installButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('failover.upgrade');
@@ -340,7 +339,7 @@ describe('UpdateComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const installManualButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install', ancestor: '.manual-update' }));
+      const installManualButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
       await installManualButton.click();
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
@@ -361,7 +360,7 @@ describe('UpdateComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const installManualButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install', ancestor: '.manual-update' }));
+      const installManualButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
       await installManualButton.click();
 
       expect(router.navigate).toHaveBeenCalledWith(['/system/update/manualupdate']);
@@ -381,7 +380,7 @@ describe('UpdateComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const installManualButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install', ancestor: '.manual-update' }));
+      const installManualButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
       await installManualButton.click();
 
       expect(router.navigate).not.toHaveBeenCalled();

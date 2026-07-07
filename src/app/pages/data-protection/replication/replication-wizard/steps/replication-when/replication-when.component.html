@@ -97,19 +97,18 @@
   </tn-form-section>
 
   <ix-form-actions>
-    <button
-      mat-button
-      matStepperPrevious
-      ixTest="back"
-    >{{ 'Back' | translate }}</button>
-    <button
+    <tn-button
+      tnStepperPrevious
+      [testId]="'back'"
+      [label]="'Back' | translate"
+    ></tn-button>
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="button"
       color="primary"
-      ixTest="save"
+      [testId]="'save'"
+      [label]="'Save' | translate"
       [disabled]="form.invalid || isLoading()"
-      (click)="onSave()"
-    >{{ 'Save' | translate }}</button>
+      (onClick)="onSave()"
+    ></tn-button>
   </ix-form-actions>
 </form>

@@ -1,10 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -43,7 +41,7 @@ describe('VmWizardComponent', () => {
   let spectator: Spectator<VmWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let nextButton: MatStepperNextHarness;
+  let nextButton: TnButtonHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -55,7 +53,6 @@ describe('VmWizardComponent', () => {
     component: VmWizardComponent,
     imports: [
       ReactiveFormsModule,
-      MatStepperModule,
     ],
     declarations: [
       OsStepComponent,
@@ -158,11 +155,10 @@ describe('VmWizardComponent', () => {
   });
 
   async function updateStepHarnesses(): Promise<void> {
-    const stepper = await loader.getHarness(MatStepperHarness);
-    const activeStep = (await stepper.getSteps({ selected: true }))[0];
-
-    form = await activeStep.getHarness(IxFormHarness);
-    nextButton = await activeStep.getHarness(MatStepperNextHarness.with({ text: 'Next' }));
+    // tn-stepper renders only the active step's content, so the single visible
+    // form and Next button resolve straight from the document-root loader.
+    form = await loader.getHarness(IxFormHarness);
+    nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
   }
 
   async function fillWizard(): Promise<void> {
@@ -288,7 +284,7 @@ describe('VmWizardComponent', () => {
     await fillWizard();
 
     jest.clearAllMocks();
-    const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await submit.click();
 
     const api = spectator.inject(ApiService);

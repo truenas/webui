@@ -3,11 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UpdateProfileCard } from './update-profile-card.component';
@@ -73,14 +73,14 @@ describe('UpdateProfileCard', () => {
   });
 
   it('loads profile options into select', async () => {
-    const select = await loader.getHarness(IxSelectHarness.with({ label: 'Select an update profile' }));
-    const options = await select.getOptionLabels();
+    const select = await loader.getHarness(TnSelectHarness);
+    const options = await select.getOptions();
     expect(options).toEqual(['Conservative', 'Developer']);
   });
 
   it('sets the form control to current config profile on init', async () => {
-    const select = await loader.getHarness(IxSelectHarness.with({ label: 'Select an update profile' }));
-    const value = await select.getValue();
+    const select = await loader.getHarness(TnSelectHarness);
+    const value = await select.getDisplayText();
     expect(value).toBe('Conservative');
   });
 
@@ -89,11 +89,11 @@ describe('UpdateProfileCard', () => {
     const api = spectator.inject(ApiService);
     const snackbar = spectator.inject(SnackbarService);
 
-    const select = await loader.getHarness(IxSelectHarness.with({ label: 'Select an update profile' }));
-    await select.setValue('Developer');
+    const select = await loader.getHarness(TnSelectHarness);
+    await select.selectOption('Developer');
 
-    const button = spectator.query('button[ixTest="apply-profile"]') as HTMLButtonElement;
-    spectator.click(button);
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Apply' }));
+    await button.click();
 
     expect(dialog.confirm).toHaveBeenCalled();
     expect(api.call).toHaveBeenCalledWith('update.update', [{ profile: 'DEVELOPER' }]);
@@ -104,11 +104,11 @@ describe('UpdateProfileCard', () => {
   it('emits profileSwitched event when profile is successfully applied', async () => {
     jest.spyOn(spectator.component.profileSwitched, 'emit');
 
-    const select = await loader.getHarness(IxSelectHarness.with({ label: 'Select an update profile' }));
-    await select.setValue('Developer');
+    const select = await loader.getHarness(TnSelectHarness);
+    await select.selectOption('Developer');
 
-    const button = spectator.query('button[ixTest="apply-profile"]') as HTMLButtonElement;
-    spectator.click(button);
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Apply' }));
+    await button.click();
 
     expect(spectator.component.profileSwitched.emit).toHaveBeenCalled();
   });

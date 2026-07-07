@@ -1,15 +1,17 @@
 <ng-container [formGroup]="form">
-  <ix-input
-    formControlName="bot_token"
+  <tn-form-field
     [label]="'Bot API Token' | translate"
-    [required]="true"
     [tooltip]="helptext.telegram.botTokenTooltip | translate"
-  ></ix-input>
-
-  <ix-chips
-    formControlName="chat_ids"
-    [label]="'List of chat IDs' | translate"
     [required]="true"
+  >
+    <tn-input formControlName="bot_token" [testId]="'bot_token'"></tn-input>
+  </tn-form-field>
+
+  <tn-form-field
+    [label]="'List of chat IDs' | translate"
     [tooltip]="helptext.telegram.chatIdsTooltip | translate"
-  ></ix-chips>
+    [required]="true"
+  >
+    <tn-chip-input formControlName="chat_ids" [testId]="'chat_ids'" [allowCustomValue]="true" [addOnBlur]="true"></tn-chip-input>
+  </tn-form-field>
 </ng-container>

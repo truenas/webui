@@ -1,14 +1,10 @@
 import {
-  ChangeDetectionStrategy, Component, input, inject, DestroyRef, signal, viewChild,
+  ChangeDetectionStrategy, Component, input, inject, DestroyRef,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
-  TnSidePanelActionDirective, TnSidePanelComponent,
-} from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
+import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective } from '@truenas/ui-components';
 import { containerCapabilitiesPolicyLabels, containerIdmapTypeLabels, containerTimeLabels } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container } from 'app/interfaces/container.interface';
@@ -17,7 +13,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -31,9 +27,6 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     TnButtonComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
-    ContainerFormComponent,
     TranslateModule,
     YesNoPipe,
     MapValuePipe,
@@ -46,21 +39,11 @@ export class ContainerGeneralInfoComponent {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private router = inject(Router);
-  private unsavedChangesService = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   private containersStore = inject(ContainersStore);
   private authService = inject(AuthService);
 
   container = input.required<Container>();
-
-  protected readonly editOpen = signal(false);
-  protected readonly editForm = viewChild(ContainerFormComponent);
-
-  protected readonly editCloseGuard = (): Observable<boolean> => {
-    if (!this.editForm()?.hasUnsavedChanges()) {
-      return of(true);
-    }
-    return this.unsavedChangesService.showConfirmDialog();
-  };
 
   protected readonly Role = Role;
   protected readonly containerCapabilitiesPolicyLabels = containerCapabilitiesPolicyLabels;
@@ -73,15 +56,11 @@ export class ContainerGeneralInfoComponent {
   );
 
   protected editContainer(): void {
-    this.editOpen.set(true);
-  }
-
-  protected onEditClosed(saved: boolean): void {
-    this.editOpen.set(false);
-
-    if (saved) {
-      this.containersStore.reload();
-    }
+    this.formPanel.open(ContainerFormComponent, {
+      title: this.translate.instant('Edit Container: {name}', { name: this.container().name }),
+      wide: true,
+      inputs: { editContainer: this.container() },
+    }).onSuccess(() => this.containersStore.reload(), this.destroyRef);
   }
 
   protected deleteContainer(): void {

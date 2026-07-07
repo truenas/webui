@@ -6,10 +6,9 @@ import {
 } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnSpinnerComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { catchError, debounceTime, shareReplay, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
@@ -39,7 +38,7 @@ export type IxSelectValue = SelectOptionValueType;
     MatOption,
     TnTooltipDirective,
     TooltipComponent,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     IxErrorsComponent,
     MatHint,
     AsyncPipe,

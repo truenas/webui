@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, DestroyRef,
+} from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -40,7 +42,6 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TableActionsCellComponent,
@@ -92,7 +93,6 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class IscsiCardComponent implements OnInit {
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -202,11 +202,18 @@ export class IscsiCardComponent implements OnInit {
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
     if (openWizard) {
-      this.slideIn.open(IscsiWizardComponent, { data: row, wide: true })
-        .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+      // Opened footerless — the wizard's stepper owns its own Next/Back/Save buttons.
+      this.formPanel.open(IscsiWizardComponent, {
+        title: this.translate.instant('iSCSI Wizard'),
+        wide: true,
+        footerless: true,
+      }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
     } else {
-      this.slideIn.open(TargetFormComponent, { data: row, wide: true })
-        .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+      this.formPanel.open(TargetFormComponent, {
+        wide: true,
+        title: this.translate.instant('Edit ISCSI Target'),
+        inputs: { targetData: row },
+      }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
     }
   }
 

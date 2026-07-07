@@ -21,7 +21,7 @@ import {
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -59,7 +59,7 @@ export class DeviceActionsMenuComponent {
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
   private loader = inject(LoaderService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
 
   readonly device = input.required<ContainerDevice>();
   readonly showEdit = input(true);
@@ -120,8 +120,9 @@ export class DeviceActionsMenuComponent {
         return;
       }
 
-      this.slideIn.open(ContainerFilesystemDeviceFormComponent, {
-        data: {
+      this.formPanel.open(ContainerFilesystemDeviceFormComponent, {
+        title: this.translate.instant('Edit Disk'),
+        inputs: {
           container,
           disk: device as ContainerFilesystemDevice,
         },
