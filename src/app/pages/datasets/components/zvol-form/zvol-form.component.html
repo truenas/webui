@@ -7,41 +7,48 @@
   [externalLoading]="setupLoading()"
   [initialFormSnapshot]="formSnapshot()"
   [submitHandler]="handleSubmit"
+  (closed)="onFormClosed()"
 >
-  <ix-fieldset>
-    <ix-input
-      formControlName="name"
+  <tn-form-section>
+    <tn-form-field
       [label]="helptext.nameLabel | translate"
       [tooltip]="helptext.nameTooltip | translate"
       [required]="true"
-    ></ix-input>
-    <ix-input
-      formControlName="volsize"
+    >
+      <tn-input formControlName="name" [required]="true"></tn-input>
+    </tn-form-field>
+    <tn-form-field
       class="size-control"
       [label]="helptext.sizeLabel | translate"
       [tooltip]="helptext.sizeTooltip | translate"
-      [format]="formatter.memorySizeFormatting"
-      [parse]="formatter.memorySizeParsing"
       [required]="true"
-    ></ix-input>
+    >
+      <tn-input
+        formControlName="volsize"
+        [inputType]="InputType.Size"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
     @if (volsizeReadonlyWarning) {
       <p class="volsize-warning">{{ volsizeReadonlyWarning }}</p>
     }
-  </ix-fieldset>
+  </tn-form-section>
 
-  <ix-fieldset [title]="'Additional Options' | translate">
-    <ix-checkbox
-      formControlName="force_size"
-      [label]="helptext.forceSizeLabel | translate"
-      [tooltip]="helptext.forceSizeTooltip | translate"
-    ></ix-checkbox>
+  <tn-form-section [heading]="'Additional Options' | translate">
+    <tn-form-field [tooltip]="helptext.forceSizeTooltip | translate">
+      <tn-checkbox
+        formControlName="force_size"
+        [label]="helptext.forceSizeLabel | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
     @if (form.controls.sparse.enabled) {
-      <ix-checkbox
-        formControlName="sparse"
-        [label]="helptext.sparseLabel | translate"
-        [tooltip]="helptext.sparseTooltip | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="helptext.sparseTooltip | translate">
+        <tn-checkbox
+          formControlName="sparse"
+          [label]="helptext.sparseLabel | translate"
+        ></tn-checkbox>
+      </tn-form-field>
     }
 
     <ix-details-table class="main-details">
@@ -49,10 +56,11 @@
         <ix-editable>
           <div view>{{ form.value.comments }}</div>
           <div edit>
-            <ix-textarea
+            <tn-input
               formControlName="comments"
-              [attr.aria-label]="helptext.commentsLabel | translate"
-            ></ix-textarea>
+              [multiline]="true"
+              [ariaLabel]="helptext.commentsLabel | translate"
+            ></tn-input>
           </div>
         </ix-editable>
       </ix-details-item>
@@ -63,12 +71,11 @@
         <ix-editable>
           <div view>{{ getOptionLabel(syncOptions, form.controls.sync.value) }}</div>
           <div edit>
-            <ix-select
+            <tn-select
               formControlName="sync"
-              [options]="syncOptions$"
-              [attr.aria-label]="helptext.syncLabel | translate"
-              [required]="true"
-            ></ix-select>
+              [options]="syncOptions"
+              [ariaLabel]="helptext.syncLabel | translate"
+            ></tn-select>
           </div>
         </ix-editable>
       </ix-details-item>
@@ -79,12 +86,11 @@
         <ix-editable>
           <div view>{{ getOptionLabel(compressionOptions, form.controls.compression.value) }}</div>
           <div edit>
-            <ix-select
+            <tn-select
               formControlName="compression"
-              [options]="compressionOptions$"
-              [attr.aria-label]="helptext.compressionLabel | translate"
-              [required]="true"
-            ></ix-select>
+              [options]="compressionOptions"
+              [ariaLabel]="helptext.compressionLabel | translate"
+            ></tn-select>
           </div>
         </ix-editable>
       </ix-details-item>
@@ -96,12 +102,11 @@
           <ix-editable>
             <div view>{{ getOptionLabel(deduplicationOptions, form.controls.deduplication.value) }}</div>
             <div edit>
-              <ix-select
+              <tn-select
                 formControlName="deduplication"
-                [options]="deduplicationOptions$"
-                [attr.aria-label]="helptext.deduplicationLabel | translate"
-                [required]="true"
-              ></ix-select>
+                [options]="deduplicationOptions"
+                [ariaLabel]="helptext.deduplicationLabel | translate"
+              ></tn-select>
             </div>
           </ix-editable>
         </ix-details-item>
@@ -113,12 +118,11 @@
         <ix-editable>
           <div view>{{ getOptionLabel(readonlyOptions, form.controls.readonly.value) }}</div>
           <div edit>
-            <ix-select
+            <tn-select
               formControlName="readonly"
-              [options]="readonlyOptions$"
-              [attr.aria-label]="helptext.readonlyLabel | translate"
-              [required]="true"
-            ></ix-select>
+              [options]="readonlyOptions"
+              [ariaLabel]="helptext.readonlyLabel | translate"
+            ></tn-select>
           </div>
         </ix-editable>
       </ix-details-item>
@@ -130,12 +134,11 @@
           <ix-editable>
             <div view>{{ getOptionLabel(volblocksizeOptions, form.controls.volblocksize.value) }}</div>
             <div edit>
-              <ix-select
+              <tn-select
                 formControlName="volblocksize"
-                [options]="volblocksizeOptions$"
-                [attr.aria-label]="helptext.volblocksizeLabel | translate"
-                [required]="true"
-              ></ix-select>
+                [options]="volblocksizeOptions"
+                [ariaLabel]="helptext.volblocksizeLabel | translate"
+              ></tn-select>
             </div>
           </ix-editable>
         </ix-details-item>
@@ -147,12 +150,11 @@
         <ix-editable>
           <div view>{{ getOptionLabel(snapdevOptions, form.controls.snapdev.value) }}</div>
           <div edit>
-            <ix-select
+            <tn-select
               formControlName="snapdev"
-              [options]="snapdevOptions$"
-              [attr.aria-label]="'Snapdev' | translate"
-              [required]="true"
-            ></ix-select>
+              [options]="snapdevOptions"
+              [ariaLabel]="'Snapdev' | translate"
+            ></tn-select>
           </div>
         </ix-editable>
       </ix-details-item>
@@ -169,83 +171,111 @@
             }
           </div>
           <div edit>
-            <ix-select
+            <tn-select
               formControlName="special_small_block_size"
-              [attr.aria-label]="'Use Metadata (Special) VDEVs' | translate"
-              [options]="specialSmallBlockSizeOptions$"
-              [required]="true"
-            ></ix-select>
+              [options]="specialSmallBlockSizeOptions"
+              [ariaLabel]="'Use Metadata (Special) VDEVs' | translate"
+            ></tn-select>
 
             @if (form.value.special_small_block_size === OnOff.On) {
-              <ix-input
-                formControlName="special_small_block_size_custom"
+              <tn-form-field
                 [label]="'Threshold' | translate"
                 [tooltip]="helptext.specialSmallBlocksCustomTooltip | translate"
                 [required]="true"
-                [parse]="formatter.memorySizeParsing"
-                [format]="formatter.memorySizeFormatting"
-              ></ix-input>
+              >
+                <tn-input
+                  formControlName="special_small_block_size_custom"
+                  [inputType]="InputType.Size"
+                  [required]="true"
+                ></tn-input>
+              </tn-form-field>
             }
           </div>
         </ix-editable>
       </ix-details-item>
     </ix-details-table>
-  </ix-fieldset>
+  </tn-form-section>
 
   @if (isNew) {
-    <ix-fieldset [title]="helptext.encryption.title | translate">
-      <ix-checkbox
-        formControlName="inherit_encryption"
-        [label]="inheritEncryptPlaceholder | translate"
-        [tooltip]="helptext.encryption.inheritTooltip | translate"
-      ></ix-checkbox>
+    <tn-form-section [heading]="helptext.encryption.title | translate">
+      <tn-form-field [tooltip]="helptext.encryption.inheritTooltip | translate">
+        <tn-checkbox
+          formControlName="inherit_encryption"
+          [label]="inheritEncryptPlaceholder | translate"
+        ></tn-checkbox>
+      </tn-form-field>
       @if (!form.controls.inherit_encryption.value) {
-        <ix-checkbox
-          formControlName="encryption"
-          [label]="helptext.encryption.encryptionLabel | translate"
-          [tooltip]="helptext.encryption.encryptionTooltip | translate"
-        ></ix-checkbox>
+        <tn-form-field [tooltip]="helptext.encryption.encryptionTooltip | translate">
+          <tn-checkbox
+            formControlName="encryption"
+            [label]="helptext.encryption.encryptionLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
       }
       @if (form.controls.encryption_type.enabled) {
-        <ix-button-group
-          formControlName="encryption_type"
+        <tn-form-field
           [label]="helptext.encryption.encryptionTypeLabel | translate"
           [tooltip]="helptext.encryption.encryptionTypeTooltip | translate"
-          [options]="encryptionTypeOptions$"
           [required]="true"
-        ></ix-button-group>
+        >
+          <tn-button-toggle-group
+            formControlName="encryption_type"
+            [ariaLabel]="helptext.encryption.encryptionTypeLabel | translate"
+          >
+            @for (option of encryptionTypeOptions; track option.value) {
+              <tn-button-toggle
+                [value]="option.value"
+                [testId]="['encryption-type', option.label]"
+              >{{ option.label }}</tn-button-toggle>
+            }
+          </tn-button-toggle-group>
+        </tn-form-field>
       }
       @if (form.controls.generate_key.enabled) {
-        <ix-checkbox
-          formControlName="generate_key"
-          [label]="helptext.encryption.generateKeyLabel | translate"
-          [tooltip]="helptext.encryption.generateKeyTooltip | translate"
-        ></ix-checkbox>
+        <tn-form-field [tooltip]="helptext.encryption.generateKeyTooltip | translate">
+          <tn-checkbox
+            formControlName="generate_key"
+            [label]="helptext.encryption.generateKeyLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
       }
       @if (form.controls.key.enabled) {
-        <ix-textarea
-          formControlName="key"
+        <tn-form-field
           [label]="helptext.encryption.keyLabel | translate"
           [tooltip]="helptext.encryption.keyTooltip | translate"
           [required]="true"
-        ></ix-textarea>
+        >
+          <tn-input
+            formControlName="key"
+            [multiline]="true"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
       }
       @if (form.controls.passphrase.enabled) {
-        <ix-input
-          formControlName="passphrase"
-          type="password"
+        <tn-form-field
           [label]="helptext.encryption.passphraseLabel | translate"
           [tooltip]="helptext.encryption.passphraseTooltip | translate"
           [required]="true"
-        ></ix-input>
+        >
+          <tn-input
+            formControlName="passphrase"
+            [inputType]="InputType.Password"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
       }
       @if (form.controls.confirm_passphrase.enabled) {
-        <ix-input
-          formControlName="confirm_passphrase"
-          type="password"
+        <tn-form-field
           [label]="helptext.encryption.confirmPassphraseLabel | translate"
           [required]="true"
-        ></ix-input>
+        >
+          <tn-input
+            formControlName="confirm_passphrase"
+            [inputType]="InputType.Password"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
       }
 
       <ix-details-table class="encryption-details">
@@ -257,12 +287,12 @@
             <ix-editable>
               <div view>{{ form.value.pbkdf2iters }}</div>
               <div edit>
-                <ix-input
+                <tn-input
                   formControlName="pbkdf2iters"
-                  type="number"
-                  [attr.aria-label]="helptext.encryption.pbkdf2itersLabel | translate"
+                  [inputType]="InputType.Number"
+                  [ariaLabel]="helptext.encryption.pbkdf2itersLabel | translate"
                   [required]="true"
-                ></ix-input>
+                ></tn-input>
               </div>
             </ix-editable>
           </ix-details-item>
@@ -279,17 +309,16 @@
                 {{ algorithmOptions ? getOptionLabel(algorithmOptions, form.value.algorithm): form.value.algorithm }}
               </div>
               <div edit>
-                <ix-select
+                <tn-select
                   formControlName="algorithm"
-                  [attr.aria-label]="helptext.encryption.algorithmLabel | translate"
-                  [options]="algorithmOptions$"
-                  [required]="true"
-                ></ix-select>
+                  [options]="(algorithmOptions$ | async) ?? []"
+                  [ariaLabel]="helptext.encryption.algorithmLabel | translate"
+                ></tn-select>
               </div>
             </ix-editable>
           </ix-details-item>
         }
       </ix-details-table>
-    </ix-fieldset>
+    </tn-form-section>
   }
 </ix-form>

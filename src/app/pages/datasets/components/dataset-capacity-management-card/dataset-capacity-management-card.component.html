@@ -1,23 +1,7 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      @if (isFilesystem()) {
-        {{ 'Space Management' | translate }}
-      }
-      @if (isZvol()) {
-        {{ 'Zvol Space Management' | translate }}
-      }
-    </h3>
-    @if (!isZvol()) {
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="edit-quotas"
-        (click)="editDataset()"
-      >{{ 'Edit' | translate }}</button>
-    }
-  </mat-card-header>
-  <mat-card-content>
+<tn-card
+  class="card"
+  [title]="(isZvol() ? 'Zvol Space Management' : 'Space Management') | translate"
+>
     <ix-space-management-chart [dataset]="dataset()"></ix-space-management-chart>
 
     <div class="chart-extra">
@@ -194,7 +178,18 @@
       </div>
     </div>
   }
-  </mat-card-content>
-</mat-card>
+
+  @if (!isZvol()) {
+    <ng-template tnCardFooterActions>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        variant="outline"
+        [testId]="'edit-quotas'"
+        [label]="'Edit' | translate"
+        (onClick)="editDataset()"
+      ></tn-button>
+    </ng-template>
+  }
+</tn-card>
 
 

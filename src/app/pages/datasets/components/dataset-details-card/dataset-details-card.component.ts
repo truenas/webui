@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnTooltipDirective, TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnTooltipDirective, TnDialog,
+} from '@truenas/ui-components';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
@@ -14,10 +13,10 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { datasetDetailsHelptext } from 'app/helptext/storage/volumes/datasets/dataset-details';
-import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -37,18 +36,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./dataset-details-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     TranslateModule,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
     TestDirective,
-    MatCardContent,
     OrNotAvailablePipe,
     TnTooltipDirective,
     CopyButtonComponent,
-    MatCardActions,
     TooltipComponent,
     TierStatusComponent,
   ],
@@ -57,7 +53,7 @@ export class DatasetDetailsCardComponent {
   private translate = inject(TranslateService);
   private tnDialog = inject(TnDialog);
   private datasetStore = inject(DatasetTreeStore);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private api = inject(ApiService);
@@ -145,14 +141,17 @@ export class DatasetDetailsCardComponent {
   }
 
   editDataset(): void {
-    this.slideIn.open(DatasetFormComponent, {
-      wide: true, data: { datasetId: this.dataset().id, isNew: false },
+    this.formPanel.open<Dataset>(DatasetFormComponent, {
+      wide: true,
+      title: this.translate.instant('Edit Dataset'),
+      inputs: { params: { datasetId: this.dataset().id, isNew: false } },
     }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 
   editZvol(): void {
-    this.slideIn.open(ZvolFormComponent, {
-      data: { isNew: false, parentOrZvolId: this.dataset().id },
+    this.formPanel.open<Dataset>(ZvolFormComponent, {
+      title: this.translate.instant('Edit Zvol'),
+      inputs: { params: { isNew: false, parentOrZvolId: this.dataset().id } },
     }).onSuccess((response) => {
       this.snackbar.success(
         this.translate.instant('Zvol «{name}» updated.', { name: getDatasetLabel(response) }),

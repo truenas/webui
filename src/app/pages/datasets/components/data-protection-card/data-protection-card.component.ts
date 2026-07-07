@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
@@ -19,20 +18,18 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
   styleUrls: ['./data-protection-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatButton,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnButtonComponent,
     RequiresRolesDirective,
     TestDirective,
     UiSearchDirective,
     TranslateModule,
-    MatCardContent,
     RouterLink,
-
   ],
 })
 export class DataProtectionCardComponent {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private snackbarService = inject(SnackbarService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -73,7 +70,10 @@ export class DataProtectionCardComponent {
   }
 
   addSnapshot(): void {
-    this.slideIn.open(SnapshotAddFormComponent, { data: this.dataset().id })
+    this.formPanel.open(SnapshotAddFormComponent, {
+      title: this.translate.instant('Add Snapshot'),
+      inputs: { presetDatasetId: this.dataset().id },
+    })
       .onSuccess(() => {
         this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
       }, this.destroyRef);

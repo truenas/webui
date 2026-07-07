@@ -86,19 +86,15 @@
                 (click)="viewDetails(dataset)"
                 (keydown.enter)="viewDetails(dataset)"
               >
-                <button
-                  mat-icon-button
+                <tn-icon-button
                   treeNodeToggle
-                  [ixTest]="['toggle-row', dataset.name]"
-                  [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
+                  library="mdi"
+                  iconClass="mat-icon-rtl-mirror"
+                  [name]="treeControl.isExpanded(dataset) ? 'chevron-down' : 'chevron-right'"
+                  [testId]="['toggle-row', dataset.name]"
+                  [ariaLabel]="'Toggle {row}' | translate: { row: dataset.name }"
                   (keydown.enter)="$event.stopPropagation()"
-                >
-                  <tn-icon
-                    class="mat-icon-rtl-mirror"
-                    library="mdi"
-                    [name]="treeControl.isExpanded(dataset) ? 'chevron-down' : 'chevron-right'"
-                  ></tn-icon>
-                </button>
+                ></tn-icon-button>
 
                 <ix-dataset-node
                   [dataset]="dataset"
@@ -139,8 +135,13 @@
 }
 
 <ng-template #empty>
-  <ix-empty
-    [conf]="emptyConfig()"
-    [requiredRoles]="requiredRoles"
-  ></ix-empty>
+  @let cfg = emptyConfig();
+  <tn-empty
+    iconSize="56px"
+    [icon]="emptyService.iconForTypeOrDefault(cfg.type, cfg.icon || '')"
+    [title]="cfg.title | translate"
+    [description]="cfg.message ? (cfg.message | translate) : undefined"
+    [actionText]="cfg.button && hasRequiredRole() ? (cfg.button.label | translate) : undefined"
+    (onAction)="onEmptyAction()"
+  ></tn-empty>
 </ng-template>
