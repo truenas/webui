@@ -140,10 +140,8 @@ export class WebShareListComponent implements OnInit {
           tooltip: this.translate.instant('Open'),
           onClick: (row) => this.openWebShare(row),
           disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
-          dynamicTooltip: () => this.webShareService.canOpenWebShare$.pipe(
-            map((canOpen) => (canOpen
-              ? this.translate.instant('Open')
-              : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'))),
+          dynamicTooltip: () => this.webShareService.webShareUnavailableReason$.pipe(
+            map((reason) => reason ?? this.translate.instant('Open')),
           ),
         },
         {
