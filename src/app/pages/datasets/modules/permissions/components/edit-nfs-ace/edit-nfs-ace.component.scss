@@ -6,16 +6,39 @@
 .general-fields {
   border-bottom: 1px solid var(--lines);
   display: block;
-  padding-left: 5px;
-  padding-right: 25px;
+  padding: 24px;
 }
 
 .permissions-and-flags {
+  align-items: flex-start;
   display: flex;
-  padding-left: 5px;
-  padding-right: 25px;
+  gap: 40px;
+  padding: 24px 25px;
 
   > * {
     flex: 1;
+  }
+}
+
+.radio-group {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+
+  // tn-radio ships a default margin-bottom; drop it so the flex gap controls spacing
+  // and the options line up evenly.
+  ::ng-deep tn-radio {
+    margin-bottom: 0;
+  }
+}
+
+.checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 8px;
+
+  > tn-checkbox {
+    flex: 0 0 50%;
   }
 }

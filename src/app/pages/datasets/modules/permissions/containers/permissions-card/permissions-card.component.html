@@ -1,65 +1,61 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>{{ 'Permissions' | translate }}</h3>
+<tn-card class="card" [title]="'Permissions' | translate">
+  <ng-template tnCardHeaderActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      variant="outline"
+      testId="edit-permissions"
+      [label]="'Edit' | translate"
+      [disabled]="!canEditPermissions()"
+      [tnTooltip]="reasonEditIsDisabled()"
+      (onClick)="redirectToEditPermissions()"
+    ></tn-button>
+  </ng-template>
 
-    <ng-container *ixRequiresRoles="requiredRoles">
-      <button
-        mat-button
-        ixTest="edit-permissions"
-        [disabled]="!canEditPermissions()"
-        [tnTooltip]="reasonEditIsDisabled()"
-        (click)="redirectToEditPermissions()"
-      >
-        {{ 'Edit' | translate }}
-      </button>
-    </ng-container>
-  </mat-card-header>
-
-  <mat-card-content>
-    @if (stat()?.user || isLoading()) {
-      <div class="file-information">
-        <div class="details-item">
-          <div class="label">{{ 'Owner:' | translate }}</div>
-          @if (!isLoading()) {
-            <div class="value">
-              {{ stat()?.user }}<span class="separator">:</span>{{ stat()?.group }}
-            </div>
-          } @else {
-            <ngx-skeleton-loader></ngx-skeleton-loader>
-          }
-        </div>
-      </div>
-    }
-
-    @let loadedAcl = acl();
-    @if (loadedAcl) {
-      <div class="permissions">
-        @if (loadedAcl.trivial) {
-          <ix-view-trivial-permissions [stat]="stat()"></ix-view-trivial-permissions>
+  @if (stat()?.user || isLoading()) {
+    <div class="file-information">
+      <div class="details-item">
+        <div class="label">{{ 'Owner:' | translate }}</div>
+        @if (!isLoading()) {
+          <div class="value">
+            {{ stat()?.user }}<span class="separator">:</span>{{ stat()?.group }}
+          </div>
         } @else {
-          @switch (loadedAcl.acltype) {
-            @case (AclType.Posix1e) {
-              <ix-view-posix-permissions
-                [acl]="acl() | cast"
-              ></ix-view-posix-permissions>
-            }
-            @case (AclType.Nfs4) {
-              <ix-view-nfs-permissions
-                [acl]="acl() | cast"
-              ></ix-view-nfs-permissions>
-            }
-          }
+          <ngx-skeleton-loader></ngx-skeleton-loader>
         }
       </div>
-    }
+    </div>
+  }
 
-    @if (!isLoading() && !acl()) {
-      <ix-empty
-        [conf]="emptyConfig()"
-      ></ix-empty>
-    }
-  </mat-card-content>
-</mat-card>
+  @let loadedAcl = acl();
+  @if (loadedAcl) {
+    <div class="permissions">
+      @if (loadedAcl.trivial) {
+        <ix-view-trivial-permissions [stat]="stat()"></ix-view-trivial-permissions>
+      } @else {
+        @switch (loadedAcl.acltype) {
+          @case (AclType.Posix1e) {
+            <ix-view-posix-permissions
+              [acl]="acl() | cast"
+            ></ix-view-posix-permissions>
+          }
+          @case (AclType.Nfs4) {
+            <ix-view-nfs-permissions
+              [acl]="acl() | cast"
+            ></ix-view-nfs-permissions>
+          }
+        }
+      }
+    </div>
+  }
+
+  @if (!isLoading() && !acl()) {
+    <tn-empty
+      icon="format-list-text"
+      iconLibrary="mdi"
+      [title]="emptyConfig().title"
+    ></tn-empty>
+  }
+</tn-card>
 
 
 @if (isLoading()) {
@@ -69,4 +65,3 @@
     ></ngx-skeleton-loader>
   </div>
 }
-

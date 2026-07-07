@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, input, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnEmptyComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -18,9 +16,7 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ViewNfsPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-nfs-permissions/view-nfs-permissions.component';
 import { ViewPosixPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-posix-permissions/view-posix-permissions.component';
 import { ViewTrivialPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-trivial-permissions/view-trivial-permissions.component';
@@ -34,18 +30,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./permissions-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
+    TnButtonComponent,
     NgxSkeletonLoaderModule,
     ViewTrivialPermissionsComponent,
     ViewPosixPermissionsComponent,
     ViewNfsPermissionsComponent,
-    EmptyComponent,
+    TnEmptyComponent,
     TranslateModule,
     CastPipe,
     TnTooltipDirective,

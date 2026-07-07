@@ -1,8 +1,17 @@
 .checkboxes {
+  margin-bottom: 16px;
   padding: 0 5px;
 }
 
 .save-button {
+  display: block;
   margin-bottom: 10px;
   width: 100%;
+
+  // TEMP: tn-button's inner button is fit-content; force full width so the save
+  // action matches the sibling control buttons. Remove once tn-button ships a
+  // full-width input.
+  ::ng-deep button {
+    width: 100%;
+  }
 }

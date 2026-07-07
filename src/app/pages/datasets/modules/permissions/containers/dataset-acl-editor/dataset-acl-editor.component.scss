@@ -1,6 +1,8 @@
 .header {
   align-items: baseline;
+  border-bottom: 1px solid var(--lines);
   flex-wrap: wrap;
+  padding: 8px 10px;
 
   .title-row {
     display: flex;
@@ -9,6 +11,7 @@
   }
 
   .header-title {
+    font-size: 1.4rem;
     margin-bottom: 0;
   }
 
@@ -27,17 +30,23 @@
   }
 
   .ownership-row {
+    column-gap: 40px;
     display: flex;
-    padding-left: 25px;
     width: 100%;
 
-    label {
-      margin-top: 15px;
+    .control {
+      align-items: flex-start;
+      display: flex;
+      flex-direction: column;
     }
 
-    ix-checkbox {
+    label {
+      margin-bottom: 4px;
+    }
+
+    tn-form-field {
       margin-bottom: 8px;
-      margin-top: 0;
+      margin-top: -8px;
     }
   }
 
@@ -49,7 +58,14 @@
 }
 
 .card {
+  height: auto;
   margin: 0 auto;
+
+  // TEMP: tn-card's inner element is height:100% and stretches to fill the routed
+  // page height, leaving empty space below short content. Size it to content.
+  ::ng-deep .tn-card {
+    height: auto;
+  }
 }
 
 .content {
@@ -57,7 +73,9 @@
 }
 
 .spinner {
+  display: block;
   margin: 30px auto;
+  width: fit-content;
 }
 
 .columns {
@@ -108,16 +126,21 @@
   justify-content: space-between;
   margin-bottom: 10px;
 
-  ::ng-deep > * {
+  // TEMP: tn-button hosts as inline-block/fit-content; make each host a full-width
+  // flex cell (uniform height, no label wrap) so the row matches the old mat-buttons.
+  // Remove once @truenas/ui-components ships a full-width input on tn-button.
+  ::ng-deep tn-button {
+    display: block;
     flex-grow: 1;
     margin-right: 6px;
 
-    button {
-      width: 100%;
-    }
-
     &:last-child {
       margin-right: 0;
+    }
+
+    button {
+      white-space: nowrap;
+      width: 100%;
     }
   }
 }

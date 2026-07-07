@@ -1,11 +1,14 @@
 <form [formGroup]="form">
-  <ix-fieldset [title]="'Access Control Entry' | translate">
-    <ix-select
-      formControlName="tag"
+  <tn-form-section [heading]="'Access Control Entry' | translate">
+    <tn-form-field
       [label]="'Who' | translate"
-      [options]="tags$"
       [required]="true"
-    ></ix-select>
+    >
+      <tn-select
+        formControlName="tag"
+        [options]="tags"
+      ></tn-select>
+    </tn-form-field>
 
     @if (isUserTag) {
       <ix-user-combobox
@@ -25,19 +28,23 @@
       ></ix-group-combobox>
     }
 
-    <ix-checkbox-list
-      formControlName="permissions"
-      inlineFieldFlex="33%"
-      [label]="'Permissions' | translate"
-      [options]="permissions$"
-      [inlineFields]="true"
-    ></ix-checkbox-list>
+    <tn-form-field [label]="'Permissions' | translate">
+      <div class="checkbox-list checkbox-list--thirds" formGroupName="permissions">
+        @for (option of permissionOptions; track option.value) {
+          <tn-checkbox
+            [formControlName]="option.value"
+            [label]="option.label"
+            [testId]="['permissions', option.value]"
+          ></tn-checkbox>
+        }
+      </div>
+    </tn-form-field>
 
-    <div class="label">{{ 'Flags' }}</div>
-    <ix-checkbox
+    <div class="label">{{ 'Flags' | translate }}</div>
+    <tn-checkbox
       class="default-checkbox"
       formControlName="default"
       [label]="'Default' | translate"
-    ></ix-checkbox>
-  </ix-fieldset>
+    ></tn-checkbox>
+  </tn-form-section>
 </form>

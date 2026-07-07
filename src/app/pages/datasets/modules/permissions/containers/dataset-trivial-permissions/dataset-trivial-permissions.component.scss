@@ -1,10 +1,25 @@
 .header {
   align-items: baseline;
+  border-bottom: 1px solid var(--lines);
+  display: flex;
+  padding: 8px 10px;
+
+  .header-title {
+    font-size: 1.4rem;
+    margin: 0;
+  }
 }
 
 .card {
+  height: auto;
   margin: 0 auto;
   max-width: 850px;
+
+  // TEMP: tn-card's inner element is height:100% and stretches to fill the routed
+  // page height, leaving empty space below short content. Size it to content.
+  ::ng-deep .tn-card {
+    height: auto;
+  }
 }
 
 .dataset-path {
@@ -29,20 +44,55 @@
   padding: 5px 10px;
 }
 
+// Give the fields more breathing room than the tn-form-section default (1.25rem).
+// High specificity so it wins over the library's own body-gap rule.
+:host ::ng-deep fieldset.tn-form-section > .tn-form-section__body {
+  gap: 1.75rem;
+}
+
 .owner-and-access {
   border-bottom: 1px solid var(--lines);
+  column-gap: 40px;
   display: flex;
+  padding: 16px 15px 24px;
 
   .owner-fields,
   .access-fields {
     flex: 1;
-    margin: 4px 0 0 15px;
   }
 }
 
 .advanced-fields {
   border-bottom: 1px solid var(--lines);
-  padding-left: 15px;
+  padding: 16px 15px 20px;
+}
+
+.access-mode {
+  border-collapse: collapse;
+
+  &__header {
+    font-size: x-small;
+    font-weight: 500;
+    padding: 5px 10px;
+  }
+
+  &__cell {
+    padding: 5px 10px;
+    text-align: center;
+  }
+
+  // Visually hide each checkbox's text label (kept in the DOM as its accessible name).
+  &__checkbox ::ng-deep .tn-checkbox__text {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
 }
 
 .set-acl-button {
@@ -53,7 +103,7 @@
   display: flex;
   padding: 25px;
 
-  button {
+  tn-button {
     margin-right: 10px;
   }
 }

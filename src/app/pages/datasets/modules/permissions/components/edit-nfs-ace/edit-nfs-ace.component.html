@@ -1,15 +1,18 @@
 <form [formGroup]="form">
-  <ix-fieldset
+  <tn-form-section
     class="general-fields"
-    [title]="'Access Control Entry' | translate"
+    [heading]="'Access Control Entry' | translate"
   >
-    <ix-select
-      formControlName="tag"
+    <tn-form-field
       [label]="'Who' | translate"
       [tooltip]="tooltips.tag | translate"
-      [options]="tags$"
       [required]="true"
-    ></ix-select>
+    >
+      <tn-select
+        formControlName="tag"
+        [options]="tags"
+      ></tn-select>
+    </tn-form-field>
 
     @if (isUserTag) {
       <ix-user-combobox
@@ -29,74 +32,126 @@
       ></ix-group-combobox>
     }
 
-    <ix-radio-group
-      formControlName="type"
-      inlineFieldFlex="25%"
+    <tn-form-field
       [label]="'ACL Type' | translate"
       [tooltip]="tooltips.type | translate"
       [required]="true"
-      [options]="aclTypes$"
-      [inlineFields]="true"
-    ></ix-radio-group>
-  </ix-fieldset>
+    >
+      <div class="radio-group" role="radiogroup" [attr.aria-label]="'ACL Type' | translate">
+        @for (option of aclTypes; track option.value) {
+          <tn-radio
+            name="type"
+            formControlName="type"
+            [value]="option.value"
+            [label]="option.label"
+            [testId]="['type', option.value]"
+          ></tn-radio>
+        }
+      </div>
+    </tn-form-field>
+  </tn-form-section>
 
   <div class="permissions-and-flags">
-    <ix-fieldset [title]="'Permissions' | translate">
-      <ix-radio-group
-        formControlName="permissionType"
+    <tn-form-section [heading]="'Permissions' | translate">
+      <tn-form-field
         [label]="'Permissions Type' | translate"
         [tooltip]="tooltips.permissionType | translate"
         [required]="true"
-        [options]="permissionTypes$"
-        [inlineFields]="true"
-      ></ix-radio-group>
+      >
+        <div class="radio-group" role="radiogroup" [attr.aria-label]="'Permissions Type' | translate">
+          @for (option of permissionTypes; track option.value) {
+            <tn-radio
+              name="permissionType"
+              formControlName="permissionType"
+              [value]="option.value"
+              [label]="option.label"
+              [testId]="['permissionType', option.value]"
+            ></tn-radio>
+          }
+        </div>
+      </tn-form-field>
       @if (arePermissionsBasic) {
-        <ix-select
-          formControlName="basicPermission"
+        <tn-form-field
           [label]="'Permissions' | translate"
           [tooltip]="tooltips.basicPermission | translate"
           [required]="true"
-          [options]="basicPermissions$"
-        ></ix-select>
+        >
+          <tn-select
+            formControlName="basicPermission"
+            [options]="basicPermissions"
+          ></tn-select>
+        </tn-form-field>
       }
       @if (!arePermissionsBasic) {
-        <ix-checkbox-list
-          formControlName="advancedPermissions"
+        <tn-form-field
           [label]="'Permissions' | translate"
           [tooltip]="tooltips.advancedPermissions | translate"
-          [options]="advancedPermissions$"
-          [inlineFields]="true"
-        ></ix-checkbox-list>
+        >
+          <div class="checkbox-list" formGroupName="advancedPermissions">
+            @for (option of advancedPermissionOptions; track option.value) {
+              <tn-checkbox
+                [formControlName]="option.value"
+                [label]="option.label"
+                [testId]="['advanced-permissions', option.value]"
+              ></tn-checkbox>
+            }
+          </div>
+        </tn-form-field>
       }
-    </ix-fieldset>
-    <ix-fieldset [title]="'Flags' | translate">
-      <ix-radio-group
-        formControlName="flagsType"
+    </tn-form-section>
+    <tn-form-section [heading]="'Flags' | translate">
+      <tn-form-field
         [label]="'Flags Type' | translate"
         [tooltip]="tooltips.flagsType | translate"
         [required]="true"
-        [options]="flagTypes$"
-        [inlineFields]="true"
-      ></ix-radio-group>
+      >
+        <div class="radio-group" role="radiogroup" [attr.aria-label]="'Flags Type' | translate">
+          @for (option of flagTypes; track option.value) {
+            <tn-radio
+              name="flagsType"
+              formControlName="flagsType"
+              [value]="option.value"
+              [label]="option.label"
+              [testId]="['flagsType', option.value]"
+            ></tn-radio>
+          }
+        </div>
+      </tn-form-field>
       @if (areFlagsBasic) {
-        <ix-radio-group
-          formControlName="basicFlag"
+        <tn-form-field
           [label]="'Flags' | translate"
           [tooltip]="tooltips.basicFlag | translate"
           [required]="true"
-          [options]="basicFlags$"
-          [inlineFields]="true"
-        ></ix-radio-group>
+        >
+          <div class="radio-group" role="radiogroup" [attr.aria-label]="'Flags' | translate">
+            @for (option of basicFlags; track option.value) {
+              <tn-radio
+                name="basicFlag"
+                formControlName="basicFlag"
+                [value]="option.value"
+                [label]="option.label"
+                [testId]="['basicFlag', option.value]"
+              ></tn-radio>
+            }
+          </div>
+        </tn-form-field>
       }
       @if (!areFlagsBasic) {
-        <ix-checkbox-list
-          formControlName="advancedFlags"
+        <tn-form-field
           [label]="'Flags' | translate"
           [tooltip]="tooltips.advancedFlags | translate"
-          [options]="advancedFlags$"
-          [inlineFields]="true"
-        ></ix-checkbox-list>
+        >
+          <div class="checkbox-list" formGroupName="advancedFlags">
+            @for (option of advancedFlagOptions; track option.value) {
+              <tn-checkbox
+                [formControlName]="option.value"
+                [label]="option.label"
+                [testId]="['advanced-flags', option.value]"
+              ></tn-checkbox>
+            }
+          </div>
+        </tn-form-field>
       }
-    </ix-fieldset>
+    </tn-form-section>
   </div>
 </form>

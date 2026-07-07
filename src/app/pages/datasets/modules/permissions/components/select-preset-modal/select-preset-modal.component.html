@@ -8,10 +8,18 @@
 
   <form [formGroup]="form">
     @if (data.allowCustom) {
-      <ix-radio-group
-        formControlName="usePreset"
-        [options]="usePresetOptions$"
-      ></ix-radio-group>
+      <div role="radiogroup" [attr.aria-label]="helptext.selectPreset | translate">
+      @for (option of usePresetOptions; track option.value) {
+        <tn-radio
+          name="usePreset"
+          formControlName="usePreset"
+          [value]="option.value"
+          [label]="option.label"
+          [tnTooltip]="option.tooltip ?? ''"
+          [testId]="['use-preset', option.value ? 'true' : 'false']"
+        ></tn-radio>
+      }
+      </div>
     }
     <!-- TODO: Add [required]="true" once FormsModule is removed -->
     @if (form.value.usePreset) {

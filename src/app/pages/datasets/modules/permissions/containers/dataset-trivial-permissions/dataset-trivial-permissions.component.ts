@@ -2,14 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCheckboxComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -18,16 +17,12 @@ import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
@@ -38,20 +33,16 @@ import { StorageService } from 'app/services/storage.service';
   styleUrls: ['./dataset-trivial-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
     TnTooltipDirective,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
-    IxCheckboxComponent,
-    IxPermissionsComponent,
+    TnCheckboxComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     RouterLink,
     TranslateModule,
     AsyncPipe,
@@ -84,12 +75,34 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       () => this.isToApplyGroup,
       Validators.required,
     )]),
-    mode: ['000'],
+    accessMode: this.formBuilder.group({
+      ownerRead: [false],
+      ownerWrite: [false],
+      ownerExec: [false],
+      groupRead: [false],
+      groupWrite: [false],
+      groupExec: [false],
+      otherRead: [false],
+      otherWrite: [false],
+      otherExec: [false],
+    }),
     applyGroup: [false],
     permission: [''],
     recursive: [false],
     traverse: [false],
   });
+
+  protected readonly accessModeRows = [
+    { label: 'User', prefix: 'owner' },
+    { label: 'Group', prefix: 'group' },
+    { label: 'Other', prefix: 'other' },
+  ];
+
+  protected readonly accessModeColumns = [
+    { label: 'Read', suffix: 'Read' },
+    { label: 'Write', suffix: 'Write' },
+    { label: 'Execute', suffix: 'Exec' },
+  ];
 
   protected readonly isLoading = signal(false);
 
@@ -171,7 +184,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
           this.aclType = datasets[0].acltype.value as unknown as AclType;
           const mode = stat.mode.toString(8).substring(2, 5);
           this.form.patchValue({
-            mode,
+            accessMode: this.modeToAccessMode(mode),
             owner: stat.user,
             ownerGroup: stat.group,
           });
@@ -183,12 +196,36 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       });
   }
 
+  private modeToAccessMode(mode: string): Record<string, boolean> {
+    const toBits = (digit: string): [boolean, boolean, boolean] => {
+      const value = parseInt(digit, 10) || 0;
+      return [!!(value & 4), !!(value & 2), !!(value & 1)];
+    };
+    const [ownerRead, ownerWrite, ownerExec] = toBits(mode[0]);
+    const [groupRead, groupWrite, groupExec] = toBits(mode[1]);
+    const [otherRead, otherWrite, otherExec] = toBits(mode[2]);
+    return {
+      ownerRead, ownerWrite, ownerExec, groupRead, groupWrite, groupExec, otherRead, otherWrite, otherExec,
+    };
+  }
+
+  private accessModeToMode(access: Record<string, boolean>): string {
+    const toDigit = (read: boolean, write: boolean, exec: boolean): number => {
+      return (read ? 4 : 0) + (write ? 2 : 0) + (exec ? 1 : 0);
+    };
+    return [
+      toDigit(access.ownerRead, access.ownerWrite, access.ownerExec),
+      toDigit(access.groupRead, access.groupWrite, access.groupExec),
+      toDigit(access.otherRead, access.otherWrite, access.otherExec),
+    ].join('');
+  }
+
   private preparePayload(): FilesystemSetPermParams {
     const values = this.form.value;
 
     const update = {
       path: this.datasetPath,
-      mode: values.mode,
+      mode: this.accessModeToMode(this.form.controls.accessMode.getRawValue()),
       options: {
         stripacl: values.recursive,
         recursive: values.recursive,

@@ -1,29 +1,31 @@
 <div class="checkboxes" [formGroup]="saveParameters">
-  <ix-checkbox
-    formControlName="recursive"
+  <tn-form-field
     class="recursive-checkbox"
-    [label]="helptext.applyRecursivelyLabel | translate"
     [tooltip]="helptext.applyRecursivelyTooltip | translate"
-  ></ix-checkbox>
+  >
+    <tn-checkbox
+      formControlName="recursive"
+      [label]="helptext.applyRecursivelyLabel | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
   @if (saveParameters.value.recursive) {
-    <ix-checkbox
-      formControlName="traverse"
-      [label]="helptext.traverseLabel | translate"
-      [tooltip]="helptext.traverseTooltip | translate"
-    ></ix-checkbox>
+    <tn-form-field [tooltip]="helptext.traverseTooltip | translate">
+      <tn-checkbox
+        formControlName="traverse"
+        [label]="helptext.traverseLabel | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
 
 </div>
 
-<button
+<tn-button
   *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
-  mat-button
   color="primary"
   class="save-button"
-  ixTest="save-acl"
+  testId="save-acl"
+  [label]="'Save Access Control List' | translate"
   [disabled]="!canBeSaved()"
-  (click)="onSavePressed()"
->
-  {{ 'Save Access Control List' | translate }}
-</button>
+  (onClick)="onSavePressed()"
+></tn-button>

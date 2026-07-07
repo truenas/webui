@@ -1,13 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import {
   AclEditorSaveControlsComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/acl-editor-save-controls/acl-editor-save-controls.component';
@@ -51,13 +50,13 @@ describe('AclEditorSaveControlsComponent', () => {
   it('marks save button as disabled when [canBeSaved] is false', async () => {
     spectator.setInput('canBeSaved', false);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Access Control List' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save Access Control List' }));
     expect(await saveButton.isDisabled()).toBe(true);
   });
 
   it('shows a warning when Recursive is selected', async () => {
-    const recursiveCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Apply permissions recursively' }));
-    await recursiveCheckbox.setValue(true);
+    const recursiveCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Apply permissions recursively' }));
+    await recursiveCheckbox.check();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: helptextAcl.recursiveDialogTitle,
@@ -66,19 +65,19 @@ describe('AclEditorSaveControlsComponent', () => {
   });
 
   it('shows Traverse checkbox when Recursive is selected', async () => {
-    const recursiveCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Apply permissions recursively' }));
-    await recursiveCheckbox.setValue(true);
+    const recursiveCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Apply permissions recursively' }));
+    await recursiveCheckbox.check();
 
-    const traverseCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Apply permissions to child datasets' }));
+    const traverseCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Apply permissions to child datasets' }));
     expect(traverseCheckbox).toBeTruthy();
   });
 
 
   it('saves current ACL settings with validation always enabled when save button is pressed', async () => {
-    const recursiveCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Apply permissions recursively' }));
-    await recursiveCheckbox.setValue(true);
+    const recursiveCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Apply permissions recursively' }));
+    await recursiveCheckbox.check();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Access Control List' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save Access Control List' }));
     await saveButton.click();
 
     expect(spectator.inject(DatasetAclEditorStore).saveAcl).toHaveBeenCalledWith({

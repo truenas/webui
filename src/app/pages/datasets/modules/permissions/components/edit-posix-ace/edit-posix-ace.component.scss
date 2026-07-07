@@ -1,8 +1,13 @@
 :host {
   display: block;
   max-width: 800px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding: 16px 5px;
+}
+
+// Give the fields more breathing room than the tn-form-section default (1.25rem).
+// High specificity so it wins over the library's own body-gap rule.
+:host ::ng-deep fieldset.tn-form-section > .tn-form-section__body {
+  gap: 1.75rem;
 }
 
 .label {
@@ -12,4 +17,18 @@
 
 .default-checkbox {
   margin-top: 2px;
+}
+
+.checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 8px;
+
+  > tn-checkbox {
+    flex: 0 0 50%;
+  }
+
+  &.checkbox-list--thirds > tn-checkbox {
+    flex: 0 0 33.3%;
+  }
 }
