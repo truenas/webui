@@ -51,13 +51,16 @@
         >
           <div role="radiogroup" [attr.aria-label]="recursive.label | translate">
             @for (option of recursive.options; track option.value) {
-              <tn-radio
-                name="recursive"
-                [testId]="['recursive', option.label]"
-                [formControlName]="recursive.fcName"
-                [value]="option.value"
-                [label]="option.label | translate"
-              ></tn-radio>
+              <div class="radio-option">
+                <tn-radio
+                  name="recursive"
+                  [testId]="['recursive', option.label]"
+                  [formControlName]="recursive.fcName"
+                  [value]="option.value"
+                  [label]="option.label | translate"
+                ></tn-radio>
+                <p class="radio-option-hint">{{ option.hint | translate }}</p>
+              </div>
             }
           </div>
         </tn-form-field>

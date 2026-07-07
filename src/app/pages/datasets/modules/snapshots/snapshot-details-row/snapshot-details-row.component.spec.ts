@@ -53,7 +53,7 @@ describe('SnapshotDetailsRowComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        snapshot: { ...fakeZfsSnapshot, selected: false },
+        snapshot: fakeZfsSnapshot,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

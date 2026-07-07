@@ -72,20 +72,24 @@ export class SnapshotRollbackDialog implements OnInit {
     fcName: 'recursive',
     tooltip: helptextSnapshots.stopRollbackTooltip,
     label: helptextSnapshots.stopRollbackLabel,
-    // tn-radio has no per-option tooltip; the group tooltip (above) is preserved
-    // on the wrapping tn-form-field.
+    // tn-radio has no per-option tooltip, so the per-option safety guidance is
+    // surfaced as a hint line under each radio (see template) — dropping it would
+    // remove exactly the guidance users need before a destructive rollback.
     options: [
       {
         value: '',
         label: helptextSnapshots.rollbackDatasetLabel,
+        hint: helptextSnapshots.rollbackDatasetTooltip,
       },
       {
         value: RollbackRecursiveType.Recursive,
         label: helptextSnapshots.rollbackRecursiveLabel,
+        hint: helptextSnapshots.rollbackRecursiveTooltip,
       },
       {
         value: RollbackRecursiveType.RecursiveClones,
         label: helptextSnapshots.rollbackRecursiveClonesLabel,
+        hint: helptextSnapshots.rollbackRecursiveClonesTooltip,
       },
     ],
   };

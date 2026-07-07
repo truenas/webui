@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
@@ -130,6 +130,21 @@ describe('SnapshotListComponent', () => {
     expect(await table.getCellText(0, 'referenced')).toBe('1.49 TiB');
   });
 
+  it('clears the current selection when the snapshot list reloads', async () => {
+    const store$ = spectator.inject(MockStore);
+
+    await table.toggleRowSelection(0);
+    expect(await table.getSelectedRowCount()).toBe(1);
+
+    // A store re-emission hands back fresh row objects; the prior selection now
+    // points at stale references that no longer map to visible rows, so it is cleared.
+    store$.overrideSelector(selectSnapshots, [...fakeZfsSnapshotDataSource]);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(await table.getSelectedRowCount()).toBe(0);
+  });
+
   it('should open form when Add button is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
@@ -163,7 +178,7 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots.map((snapshot) => ({ ...snapshot, selected: false }));
+    component.snapshots = testSnapshots;
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
@@ -197,7 +212,7 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots.map((snapshot) => ({ ...snapshot, selected: false }));
+    component.snapshots = testSnapshots;
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
@@ -244,7 +259,7 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots.map((snapshot) => ({ ...snapshot, selected: false }));
+    component.snapshots = testSnapshots;
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 

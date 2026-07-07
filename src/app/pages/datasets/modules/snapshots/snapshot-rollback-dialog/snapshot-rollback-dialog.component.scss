@@ -9,6 +9,16 @@
   }
 }
 
+.radio-option {
+  margin-bottom: 8px;
+
+  .radio-option-hint {
+    color: var(--fg2);
+    font-size: 12px;
+    margin: 0 0 0 32px;
+  }
+}
+
 .form-buttons {
   display: flex;
   gap: 8px;

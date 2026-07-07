@@ -47,11 +47,6 @@ import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
-// TODO: Exclude AnythingUi when NAS-127632 is done
-export interface ZfsSnapshotUi extends ZfsSnapshot {
-  selected: boolean;
-}
-
 @Component({
   selector: 'ix-snapshot-list',
   templateUrl: './snapshot-list.component.html',
@@ -93,8 +88,8 @@ export class SnapshotListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.SnapshotDelete];
   searchQuery = signal('');
-  dataProvider = new ArrayDataProvider<ZfsSnapshotUi>();
-  snapshots: ZfsSnapshotUi[] = [];
+  dataProvider = new ArrayDataProvider<ZfsSnapshot>();
+  snapshots: ZfsSnapshot[] = [];
   protected readonly showExtraColumns = signal(false);
   loadingExtraColumns$ = new BehaviorSubject(true);
   protected readonly loadingExtraColumns = toSignal(this.loadingExtraColumns$, { initialValue: true });
@@ -106,11 +101,11 @@ export class SnapshotListComponent implements OnInit {
   protected readonly isLoading = toSignal(this.isLoading$, { initialValue: true });
   protected readonly searchableElements = snapshotListElements;
 
-  private readonly table = viewChild(TnTableComponent<ZfsSnapshotUi>);
-  protected readonly currentPage = toSignal(this.dataProvider.currentPage$, { initialValue: [] as ZfsSnapshotUi[] });
+  private readonly table = viewChild(TnTableComponent<ZfsSnapshot>);
+  protected readonly currentPage = toSignal(this.dataProvider.currentPage$, { initialValue: [] as ZfsSnapshot[] });
   protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$, { initialValue: 0 });
 
-  protected readonly selectedSnapshots = signal<ZfsSnapshotUi[]>([]);
+  protected readonly selectedSnapshots = signal<ZfsSnapshot[]>([]);
   protected readonly selectionHasItems = computed(() => this.selectedSnapshots().length > 0);
 
   protected readonly displayedColumns = computed(() => {
@@ -118,7 +113,7 @@ export class SnapshotListComponent implements OnInit {
     return this.showExtraColumns() ? [...base, 'used', 'created', 'referenced'] : base;
   });
 
-  protected readonly trackBySnapshotId = (_: number, row: ZfsSnapshotUi): string => row.name;
+  protected readonly trackBySnapshotId = (_: number, row: ZfsSnapshot): string => row.name;
 
   // tn-table allows multiple rows expanded at once and exposes no single-expand input, so we
   // restore the previous ix-table single-expand behavior: whenever a second row opens we collapse
@@ -126,7 +121,7 @@ export class SnapshotListComponent implements OnInit {
   // reference) so a data reload swapping in fresh row objects can't leave a stale reference behind.
   private previousExpandedRows = new Set<unknown>();
 
-  private readonly sortByMap: Record<string, (row: ZfsSnapshotUi) => number> = {
+  private readonly sortByMap: Record<string, (row: ZfsSnapshot) => number> = {
     used: (row) => getFiniteNumber(row?.properties?.used?.parsed) ?? 0,
     created: (row) => getSnapshotCreationMs(row) ?? 0,
     referenced: (row) => getFiniteNumber(row?.properties?.referenced?.parsed) ?? 0,
@@ -191,29 +186,29 @@ export class SnapshotListComponent implements OnInit {
     this.setDefaultSort();
   }
 
-  protected getUsed(row: ZfsSnapshotUi): number | undefined {
+  protected getUsed(row: ZfsSnapshot): number | undefined {
     return getFiniteNumber(row?.properties?.used?.parsed);
   }
 
-  protected getReferenced(row: ZfsSnapshotUi): number | undefined {
+  protected getReferenced(row: ZfsSnapshot): number | undefined {
     return getFiniteNumber(row?.properties?.referenced?.parsed);
   }
 
-  protected getCreated(row: ZfsSnapshotUi): number | undefined {
+  protected getCreated(row: ZfsSnapshot): number | undefined {
     return getSnapshotCreationMs(row);
   }
 
   getSnapshots(): void {
     this.store$.select(selectSnapshots).pipe(
-      map((snapshots) => {
-        this.snapshots = snapshots.map((snapshot) => ({
-          ...snapshot,
-          selected: false,
-        }));
-        return this.snapshots;
-      }),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
+    ).subscribe((snapshots) => {
+      // The store hands back fresh row objects on every emission, so any prior
+      // selection now points at stale references that no longer map to visible
+      // rows. Clear it before swapping in the new set so the batch-operations
+      // toolbar can't act on a phantom selection.
+      this.table()?.selection.clear();
+      this.selectedSnapshots.set([]);
+      this.snapshots = [...snapshots];
       this.onListFiltered(this.searchQuery());
       this.cdr.markForCheck();
     });
@@ -280,7 +275,7 @@ export class SnapshotListComponent implements OnInit {
     });
   }
 
-  doBatchDelete(data: ZfsSnapshotUi[]): void {
+  doBatchDelete(data: ZfsSnapshot[]): void {
     this.tnDialog.open(SnapshotBatchDeleteDialog, { data })
       .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
@@ -291,18 +286,18 @@ export class SnapshotListComponent implements OnInit {
       });
   }
 
-  protected onSelectionChange(snapshots: ZfsSnapshotUi[]): void {
+  protected onSelectionChange(snapshots: ZfsSnapshot[]): void {
     this.selectedSnapshots.set(snapshots);
   }
 
-  protected onRowClick(row: ZfsSnapshotUi): void {
+  protected onRowClick(row: ZfsSnapshot): void {
     this.table()?.toggleRowExpansion(row);
   }
 
   protected onSortChange(event: TnSortEvent): void {
     const direction = event.direction === '' ? null : (event.direction as SortDirection);
-    const sorting: TableSort<ZfsSnapshotUi> = {
-      propertyName: direction ? (event.column as keyof ZfsSnapshotUi) : null,
+    const sorting: TableSort<ZfsSnapshot> = {
+      propertyName: direction ? (event.column as keyof ZfsSnapshot) : null,
       direction,
       active: null,
     };

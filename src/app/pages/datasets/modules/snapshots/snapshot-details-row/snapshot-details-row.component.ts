@@ -20,7 +20,6 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
-import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -54,10 +53,10 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
-  readonly snapshot = input.required<ZfsSnapshotUi>();
+  readonly snapshot = input.required<ZfsSnapshot>();
 
   isLoading = true;
-  snapshotInfo: ZfsSnapshotUi | undefined;
+  snapshotInfo: ZfsSnapshot | undefined;
   holdControl = new FormControl(false);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
@@ -103,7 +102,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       ],
     )
       .pipe(
-        map((snapshots) => ({ ...snapshots[0], selected: this.snapshot().selected })),
+        map((snapshots) => snapshots[0]),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
