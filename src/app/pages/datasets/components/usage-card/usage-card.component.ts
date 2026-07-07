@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -10,7 +10,6 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -34,7 +33,7 @@ export interface InheritedWebShare {
     TranslateModule,
     TnIconComponent,
     RouterLink,
-    TestDirective,
+    TnTestIdDirective,
     RequiresRolesDirective,
   ],
 })

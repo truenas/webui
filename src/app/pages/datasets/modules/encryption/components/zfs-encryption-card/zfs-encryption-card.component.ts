@@ -4,13 +4,12 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnTooltipDirective, TnDialog, TnButtonComponent, TnCardComponent,
-  TnCardFooterActionsDirective,
+  TnCardFooterActionsDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import {
   EncryptionOptionsDialogData,
@@ -41,7 +40,7 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
     TnButtonComponent,
     TnTooltipDirective,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     RequiresRolesDirective,
     RouterLink,
     TooltipComponent,

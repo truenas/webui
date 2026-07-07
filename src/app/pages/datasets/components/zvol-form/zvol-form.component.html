@@ -51,6 +51,11 @@
       </tn-form-field>
     }
 
+    <!--
+      Inline-editable selects below keep their Validators.required enforcement but intentionally omit the
+      required (*) indicator: the ix-details-item label row has no slot for it, unlike the tn-form-field
+      counterparts in other-options-section. See NAS-141021 migration review §4.
+    -->
     <ix-details-table class="main-details">
       <ix-details-item [label]="helptext.commentsLabel | translate">
         <ix-editable>
@@ -220,6 +225,7 @@
         >
           <tn-button-toggle-group
             formControlName="encryption_type"
+            [testId]="'encryption-type'"
             [ariaLabel]="helptext.encryption.encryptionTypeLabel | translate"
           >
             @for (option of encryptionTypeOptions; track option.value) {

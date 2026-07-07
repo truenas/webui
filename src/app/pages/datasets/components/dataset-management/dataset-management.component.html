@@ -88,8 +88,8 @@
               >
                 <tn-icon-button
                   treeNodeToggle
+                  class="rtl-mirror"
                   library="mdi"
-                  iconClass="mat-icon-rtl-mirror"
                   [name]="treeControl.isExpanded(dataset) ? 'chevron-down' : 'chevron-right'"
                   [testId]="['toggle-row', dataset.name]"
                   [ariaLabel]="'Toggle {row}' | translate: { row: dataset.name }"

@@ -113,6 +113,7 @@
     flex-grow: 1;
     margin-right: 6px;
 
+    // TEMP (NAS-141021): until @truenas/ui-components ships a full-width input on tn-button.
     button {
       width: 100%;
     }

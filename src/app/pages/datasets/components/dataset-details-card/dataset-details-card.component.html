@@ -3,7 +3,7 @@
   [title]="isFilesystem() ? ('Details' | translate) : ('Zvol Details' | translate)"
 >
   <div class="card-content">
-    @if (isRootDataset) {
+    @if (isRootDataset()) {
       <div class="details-item">
         <div class="label root-dataset">
           {{ 'Root Dataset' | translate }}
@@ -60,7 +60,7 @@
           <ix-tier-status [tier]="dataset().tier" />
         </div>
         @if (!dataset().locked) {
-          <button type="button" class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
+          <button type="button" class="change-tier-link" tnTestIdType="button" [tnTestId]="'change-tier'" (click)="changeTier()">
             {{ 'Change' | translate }}
           </button>
         }

@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 
@@ -22,7 +23,7 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
     TnCardFooterActionsDirective,
     TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
+    TnTestIdDirective,
     UiSearchDirective,
     TranslateModule,
     RouterLink,
@@ -39,7 +40,7 @@ export class DataProtectionCardComponent {
   protected readonly requiredRoles = [Role.SnapshotWrite];
   protected readonly searchableElements = dataProtectionCardElements;
 
-  get backupTasksLabel(): string {
+  protected readonly backupTasksLabel = computed<string>(() => {
     const replicationCount = this.dataset()?.replication_tasks_count || 0;
     const cloudSyncCount = this.dataset()?.cloudsync_tasks_count || 0;
     const rsyncCount = this.dataset()?.rsync_tasks_count || 0;
@@ -67,7 +68,7 @@ export class DataProtectionCardComponent {
     }
 
     return parts.join(', ');
-  }
+  });
 
   addSnapshot(): void {
     this.formPanel.open(SnapshotAddFormComponent, {

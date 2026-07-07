@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
 import { MockComponents, MockModule } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
@@ -118,7 +118,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
     });
 
     it('shows header', () => {
-      expect(spectator.query('.tn-card__title')).toHaveText('Space Management');
+      expect(spectator.query(TnCardComponent)!.title()).toBe('Space Management');
     });
 
     it('shows Edit button in footer', async () => {
@@ -172,7 +172,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
     });
 
     it('shows header', () => {
-      expect(spectator.query('.tn-card__title')).toHaveText('Zvol Space Management');
+      expect(spectator.query(TnCardComponent)!.title()).toBe('Zvol Space Management');
     });
 
     it('does not show Edit button for zvol', async () => {

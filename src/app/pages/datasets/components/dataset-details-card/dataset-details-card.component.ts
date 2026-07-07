@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
-  TnTooltipDirective, TnDialog,
+  TnTooltipDirective, TnDialog, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -18,7 +18,6 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -41,7 +40,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
+    TnTestIdDirective,
     OrNotAvailablePipe,
     TnTooltipDirective,
     CopyButtonComponent,
@@ -93,9 +92,7 @@ export class DatasetDetailsCardComponent {
 
   protected readonly canBePromoted = computed(() => Boolean(this.dataset().origin?.parsed));
 
-  get isRootDataset(): boolean {
-    return !!this.dataset() && isRootDataset(this.dataset());
-  }
+  protected readonly isRootDataset = computed(() => !!this.dataset() && isRootDataset(this.dataset()));
 
   deleteDataset(): void {
     this.tnDialog.open(DeleteDatasetDialog, { data: this.dataset() })

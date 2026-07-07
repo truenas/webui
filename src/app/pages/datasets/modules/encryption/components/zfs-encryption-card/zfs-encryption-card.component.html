@@ -19,7 +19,8 @@
         <div class="value">
           <a
             class="action"
-            ixTest="go-to-encryption-root"
+            tnTestIdType="link"
+            [tnTestId]="'go-to-encryption-root'"
             [routerLink]="['/datasets', dataset().encryption_root]"
           >
             /{{ dataset().encryption_root }}

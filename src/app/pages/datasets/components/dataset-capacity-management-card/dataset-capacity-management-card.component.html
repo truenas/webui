@@ -111,7 +111,8 @@
             }}
           </div>
           <a
-            [ixTest]="[inheritedQuotasDataset.id, 'go-to-dataset']"
+            tnTestIdType="link"
+            [tnTestId]="[inheritedQuotasDataset.id, 'go-to-dataset']"
             [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]"
           >
             {{ 'Go To Dataset' }}
@@ -141,7 +142,8 @@
           }
           @if (checkQuotas()) {
             <a
-              [ixTest]="[dataset().id, 'manage-user-quotas']"
+              tnTestIdType="link"
+              [tnTestId]="[dataset().id, 'manage-user-quotas']"
               [routerLink]="['/', 'datasets', dataset().id, 'user-quotas']"
               [ixUiSearch]="searchableElements.elements.manageUserQuotas"
             >
@@ -168,7 +170,8 @@
         }
         @if (checkQuotas()) {
           <a
-            [ixTest]="[dataset().id, 'manage-group-quotas']"
+            tnTestIdType="link"
+            [tnTestId]="[dataset().id, 'manage-group-quotas']"
             [routerLink]="['/', 'datasets', dataset().id, 'group-quotas']"
             [ixUiSearch]="searchableElements.elements.manageGroupQuotas"
           >
