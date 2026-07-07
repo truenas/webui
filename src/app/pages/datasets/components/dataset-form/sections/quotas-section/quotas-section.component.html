@@ -11,7 +11,7 @@
       <tn-form-field [label]="'Quota warning alert at, %' | translate">
         <tn-input formControlName="refquota_warning" [inputType]="InputType.Number"></tn-input>
       </tn-form-field>
-      <tn-form-field [tooltip]="helptext.refquotaWarningTooltip | translate">
+      <tn-form-field class="inherit-field" [tooltip]="helptext.refquotaWarningTooltip | translate">
         <tn-checkbox
           formControlName="refquota_warning_inherit"
           [label]="'Inherit' | translate"
@@ -23,7 +23,7 @@
       <tn-form-field [label]="'Quota critical alert at, %' | translate">
         <tn-input formControlName="refquota_critical" [inputType]="InputType.Number"></tn-input>
       </tn-form-field>
-      <tn-form-field [tooltip]="helptext.refquotaCriticalTooltip | translate">
+      <tn-form-field class="inherit-field" [tooltip]="helptext.refquotaCriticalTooltip | translate">
         <tn-checkbox
           formControlName="refquota_critical_inherit"
           [label]="'Inherit' | translate"
@@ -51,7 +51,7 @@
       <tn-form-field [label]="'Quota warning alert at, %' | translate">
         <tn-input formControlName="quota_warning" [inputType]="InputType.Number"></tn-input>
       </tn-form-field>
-      <tn-form-field [tooltip]="helptext.quotaWarningTooltip | translate">
+      <tn-form-field class="inherit-field" [tooltip]="helptext.quotaWarningTooltip | translate">
         <tn-checkbox
           formControlName="quota_warning_inherit"
           [label]="'Inherit' | translate"
@@ -63,7 +63,7 @@
       <tn-form-field [label]="'Quota critical alert at, %' | translate">
         <tn-input formControlName="quota_critical" [inputType]="InputType.Number"></tn-input>
       </tn-form-field>
-      <tn-form-field [tooltip]="helptext.quotaCriticalTooltip | translate">
+      <tn-form-field class="inherit-field" [tooltip]="helptext.quotaCriticalTooltip | translate">
         <tn-checkbox
           formControlName="quota_critical_inherit"
           [label]="'Inherit' | translate"
