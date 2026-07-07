@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, signal, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -114,29 +116,27 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   /** Secondary actions rendered in the side-panel footer's overflow (three-dots) menu. */
-  get footerMenu(): SidePanelFooterMenu {
-    return {
-      label: T('IPMI Actions'),
-      testId: 'ipmi-actions',
-      items: [
-        {
-          label: T('Manage'),
-          testId: 'manage-ipmi',
-          disabled: () => this.isManageButtonDisabled || this.isLoading(),
-          onClick: () => this.openManageWindow(),
-        },
-        {
-          label: this.isFlashing() ? T('Stop Flashing') : T('Flash Identify Light'),
-          testId: 'toggle-identify-light',
-          requiredRoles: this.requiredRoles,
-          icon: 'lightbulb-on-outline',
-          iconLibrary: 'mdi',
-          disabled: () => this.isFlashingLoading(),
-          onClick: () => this.toggleFlashing(),
-        },
-      ],
-    };
-  }
+  protected readonly footerMenu = computed<SidePanelFooterMenu>(() => ({
+    label: T('IPMI Actions'),
+    testId: 'ipmi-actions',
+    items: [
+      {
+        label: T('Manage'),
+        testId: 'manage-ipmi',
+        disabled: () => this.isManageButtonDisabled || this.isLoading(),
+        onClick: () => this.openManageWindow(),
+      },
+      {
+        label: this.isFlashing() ? T('Stop Flashing') : T('Flash Identify Light'),
+        testId: 'toggle-identify-light',
+        requiredRoles: this.requiredRoles,
+        icon: 'lightbulb-on-outline',
+        iconLibrary: 'mdi',
+        disabled: () => this.isFlashingLoading(),
+        onClick: () => this.toggleFlashing(),
+      },
+    ],
+  }));
 
   ngOnInit(): void {
     this.ipmiId = this.slideInRef
