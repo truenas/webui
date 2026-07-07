@@ -7,7 +7,7 @@ import {
   TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
   TnTooltipDirective, tnIconMarker, type TnSortEvent,
 } from '@truenas/ui-components';
-import { BehaviorSubject, combineLatest, of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import {
   filter, map, throttleTime,
 } from 'rxjs/operators';
@@ -102,21 +102,14 @@ export class InterfacesCardComponent implements OnInit {
     {
       iconName: tnIconMarker('refresh', 'mdi'),
       requiredRoles: this.requiredRoles,
-      hidden: (row) => combineLatest([
-        of(!this.isPhysical(row)),
-        this.isHaEnabled$,
-      ]).pipe(
-        map(([isNotPhysical, isHaEnabled]) => isHaEnabled || isNotPhysical),
+      hidden: (row) => of(!this.isPhysical(row)),
+      dynamicTooltip: () => this.isHaEnabled$.pipe(
+        map((isHaEnabled) => (isHaEnabled
+          ? this.translate.instant(helptextInterfaces.haEnabledResetMessage)
+          : this.translate.instant('Reset configuration'))),
       ),
-      tooltip: this.translate.instant('Reset configuration'),
       onClick: (row) => this.onReset(row),
-    },
-    {
-      iconName: tnIconMarker('', 'mdi'),
-      hidden: () => this.isHaEnabled$.pipe(map((isHaEnabled) => !isHaEnabled)),
-      disabled: () => of(true),
-      tooltip: this.translate.instant(helptextInterfaces.haEnabledResetMessage),
-      onClick: (): void => {},
+      disabled: () => this.isHaEnabled$,
     },
     {
       iconName: tnIconMarker('delete', 'mdi'),

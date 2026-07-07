@@ -204,6 +204,14 @@ describe('InterfacesCardComponent', () => {
     expect(await menu.isItemDisabled({ label: helptextInterfaces.haEnabledDeleteMessage })).toBe(true);
   });
 
+  it('keeps Reset visible but disabled with an explanatory tooltip on HA systems', async () => {
+    failoverConfig$.next({ disabled: false });
+    spectator.detectChanges();
+
+    const menu = await openRowMenu('interface-eno1');
+    expect(await menu.isItemDisabled({ label: helptextInterfaces.haEnabledResetMessage })).toBe(true);
+  });
+
   it('subscribes to updates and shows interface status in first column', () => {
     const someUpdate = {} as NetworkInterfaceReport;
 
