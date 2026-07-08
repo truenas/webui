@@ -9,7 +9,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
@@ -24,7 +24,7 @@ describe('ServiceActionsCellComponent', () => {
     component: ServiceActionsCellComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
@@ -105,26 +105,32 @@ describe('ServiceActionsCellComponent', () => {
   });
 
   describe('edit', () => {
-    it('should open NVMe-oF global configuration form via SlideIn', async () => {
+    it('should open NVMe-oF global configuration form in the side panel', async () => {
       setup({ service: ServiceName.NvmeOf, state: ServiceStatus.Stopped });
 
       const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+        NvmeOfConfigurationComponent,
+        { title: 'NVMe-oF Global Configuration' },
+      );
     });
 
-    it('should open iSCSI global configuration form via SlideIn', async () => {
+    it('should open iSCSI global configuration form in the side panel', async () => {
       setup({ service: ServiceName.Iscsi, state: ServiceStatus.Stopped });
 
       const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+        GlobalTargetConfigurationComponent,
+        { title: 'iSCSI Global Configuration' },
+      );
     });
 
     // The remaining service forms are hosted in the page-level side panel, so the
-    // cell emits `configure` instead of opening a SlideIn.
+    // cell emits `configure` instead of opening the form itself.
     const panelServices = [
       ServiceName.Ftp,
       ServiceName.Nfs,
@@ -136,7 +142,7 @@ describe('ServiceActionsCellComponent', () => {
     ];
 
     panelServices.forEach((service) => {
-      it(`emits configure (and does not open a SlideIn) for ${service}`, async () => {
+      it(`emits configure (and does not open a form directly) for ${service}`, async () => {
         setup({ service, state: ServiceStatus.Stopped });
 
         const emitted: Service[] = [];
@@ -146,7 +152,7 @@ describe('ServiceActionsCellComponent', () => {
         await editIcon.click();
 
         expect(emitted).toEqual([expect.objectContaining({ service })]);
-        expect(spectator.inject(SlideIn).open).not.toHaveBeenCalled();
+        expect(spectator.inject(FormSidePanelService).open).not.toHaveBeenCalled();
       });
     });
   });

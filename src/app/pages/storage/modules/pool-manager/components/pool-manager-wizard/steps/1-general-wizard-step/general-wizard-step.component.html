@@ -81,16 +81,14 @@
 
   <ix-form-actions>
     <div class="step-buttons">
-      <button
-        mat-button
-        matStepperNext
+      <tn-button
+        tnStepperNext
         color="primary"
         type="button"
-        ixTest="next-general"
+        [testId]="'next-general'"
+        [label]="'Next' | translate"
         [disabled]="form.invalid"
-      >
-        {{ 'Next' | translate }}
-      </button>
+      ></tn-button>
     </div>
   </ix-form-actions>
 </ng-container>

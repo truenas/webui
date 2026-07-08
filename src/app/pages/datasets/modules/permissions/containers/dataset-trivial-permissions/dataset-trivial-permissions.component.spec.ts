@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
   mockCall, mockJob, mockApi,
@@ -24,7 +24,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let api: ApiService;
-  let saveButton: MatButtonHarness;
+  let saveButton: TnButtonHarness;
   const createComponent = createRoutingFactory({
     component: DatasetTrivialPermissionsComponent,
     imports: [
@@ -79,7 +79,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
     api = spectator.inject(ApiService);
-    saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
   });
 
   it('shows path of the dataset being edited', () => {
@@ -180,7 +180,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockImplementation();
 
-    const setAclButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set ACL' }));
+    const setAclButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set ACL' }));
     await setAclButton.click();
 
     expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/pool/trivial' } });

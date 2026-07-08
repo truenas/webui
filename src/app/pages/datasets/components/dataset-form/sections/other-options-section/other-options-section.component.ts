@@ -1,7 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  InputType,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   combineLatest, Observable, of, take,
 } from 'rxjs';
@@ -37,9 +45,6 @@ import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.in
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -56,12 +61,14 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './other-options-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
-    IxInputComponent,
     TranslateModule,
     ReactiveFormsModule,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     WarningComponent,
+    AsyncPipe,
   ],
 })
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
@@ -71,7 +78,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private cdr = inject(ChangeDetectorRef);
   private systemGeneralService = inject(SystemGeneralService);
   private dialogService = inject(DialogService);
-  protected formatter = inject(IxFormatterService);
+  private formatter = inject(IxFormatterService);
   private api = inject(ApiService);
   private datasetFormService = inject(DatasetFormService);
   private tierService = inject(SharingTierService);
@@ -163,6 +170,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
 
   readonly helptext = helptextDatasetForm;
   readonly OnOff = OnOff;
+  protected readonly InputType = InputType;
 
   get hasChecksumWarning(): boolean {
     return this.form.value.checksum === DatasetChecksum.Sha256

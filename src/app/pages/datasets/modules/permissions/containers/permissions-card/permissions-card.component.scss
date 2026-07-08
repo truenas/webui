@@ -1,5 +1,7 @@
 @import 'mixins/cards';
 
+@include tn-detail-card();
+
 :host ::ng-deep {
   ix-permissions-item {
     padding: 4px 0;
@@ -7,41 +9,39 @@
 }
 
 .card {
-  @include details-card();
+  height: 100%;
 
-  mat-card-content {
-    padding: 0;
+  @include tn-details-item();
 
-    .file-information {
-      border-bottom: 1px solid var(--lines);
-      display: flex;
-      flex-wrap: wrap;
-      padding: 0 0 10px;
+  .file-information {
+    border-bottom: 1px solid var(--lines);
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 0 10px;
 
-      .details-item:not(:last-child) {
-        width: 50%;
+    .details-item:not(:last-child) {
+      width: 50%;
+    }
+
+    .details-item {
+      max-width: 100%;
+      width: 100%;
+
+      .value.dataset-path {
+        display: flow-root;
+        max-width: calc(100% - 85px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
-      .details-item {
-        max-width: 100%;
-        width: 100%;
+      .separator {
+        margin-left: 1px;
+        margin-right: 1px;
+      }
 
-        .value.dataset-path {
-          display: flow-root;
-          max-width: calc(100% - 85px);
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .separator {
-          margin-left: 1px;
-          margin-right: 1px;
-        }
-
-        ix-copy-button {
-          margin-top: -4px;
-        }
+      ix-copy-button {
+        margin-top: -4px;
       }
     }
   }

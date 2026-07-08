@@ -1,12 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -26,6 +28,7 @@ const fakeSystemSecurityConfig: SystemSecurityConfig = {
 describe('SystemSecurityCardComponent', () => {
   let spectator: Spectator<SystemSecurityCardComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
 
   const createComponent = createComponentFactory({
     component: SystemSecurityCardComponent,
@@ -39,12 +42,16 @@ describe('SystemSecurityCardComponent', () => {
       mockApi([
         mockCall('system.security.config', fakeSystemSecurityConfig),
       ]),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('shows all System Security settings in card', () => {
@@ -62,24 +69,9 @@ describe('SystemSecurityCardComponent', () => {
   });
 
   it('opens System Security form when Configure button is clicked', async () => {
-    expect(spectator.query('ix-system-security-form')).toBeNull();
-
     const button = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await button.click();
-    spectator.detectChanges();
 
-    expect(spectator.query('ix-system-security-form')).not.toBeNull();
-  });
-
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
-    await button.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-system-security-form')).not.toBeNull();
-
-    spectator.query(SystemSecurityFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-system-security-form')).toBeNull();
+    expect(formPanel.open).toHaveBeenCalledWith(SystemSecurityFormComponent, { title: 'System Security' });
   });
 });

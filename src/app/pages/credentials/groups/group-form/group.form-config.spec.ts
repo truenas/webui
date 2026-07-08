@@ -151,5 +151,30 @@ describe('group form config', () => {
       }]);
       expect(store$.dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: groupChanged.type }));
     });
+
+    it('drops null builtin_name privileges from the derived roles, keeping only real role names', () => {
+      const privileges = [
+        { ...fakePrivileges[0], id: 1, builtin_name: Role.FullAdmin },
+        { ...fakePrivileges[1], id: 2, builtin_name: null },
+      ] as unknown as Privilege[];
+      const api = {
+        call: jest.fn((method: ApiCallMethod) => {
+          switch (method) {
+            case 'privilege.query': return of(privileges);
+            case 'group.query': return of([{ id: 7, gid: 1234 }] as Group[]);
+            case 'privilege.update': return of(privileges[0]);
+            default: return of(undefined);
+          }
+        }),
+      } as unknown as ApiService;
+      const definition = getGroupFormConfig(api, translate, store$, undefined);
+
+      const submitEvent = { ...event, isEdit: false, allValues: { ...allValues, privileges: [1, 2] } };
+      definition.submit(submitEvent).request$.subscribe();
+
+      expect(store$.dispatch).toHaveBeenCalledWith(
+        groupAdded({ group: expect.objectContaining({ roles: [Role.FullAdmin] }) as Group }),
+      );
+    });
   });
 });

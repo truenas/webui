@@ -3,22 +3,21 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type,
   input, OnChanges, OnInit, output, inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, FormBuilder, FormControl, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperPrevious } from '@angular/material/stepper';
 import { NavigationExtras, Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnDialog, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnButtonComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
   BehaviorSubject,
   EMPTY,
-  Observable, catchError, combineLatest, filter, map, merge, of, tap,
+  Observable, catchError, combineLatest, filter, map, merge, of, startWith, tap,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -49,7 +48,6 @@ import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -77,9 +75,8 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
     IxExplorerComponent,
     SchedulerComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
+    TnButtonComponent,
+    TnStepperPreviousDirective,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -144,6 +141,12 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
     transfers: [4],
     bwlimit: [[] as string[]],
   });
+
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
 
   isCredentialInvalid$ = new BehaviorSubject(false);
   credentials: CloudSyncCredential[] = [];

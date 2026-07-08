@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, forwardRef, OnInit,
-  Signal, signal, viewChild, inject, input, output,
+  Signal, signal, viewChild, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -12,6 +12,7 @@ import {
 } from '@truenas/ui-components';
 import { startWith, tap } from 'rxjs';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
 import {
@@ -41,15 +42,12 @@ import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-gr
     TranslateModule,
   ],
 })
-export class WidgetGroupFormComponent implements OnInit {
+export class WidgetGroupFormComponent extends SidePanelForm<WidgetGroup> implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
   /** Group to edit; leave unset to create a new group. */
   initialGroup = input<WidgetGroup | undefined>();
-
-  /** Emits the resulting group when the form is submitted. The host owns closing the panel. */
-  readonly saved = output<WidgetGroup>();
 
   protected group = signal<WidgetGroup>(
     { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
@@ -77,6 +75,9 @@ export class WidgetGroupFormComponent implements OnInit {
     { nonNullable: true, validators: [Validators.required] },
   );
 
+  /** Satisfies {@link SidePanelForm}'s abstract `form`; validity/dirtiness flow through it. */
+  protected readonly form = this.layoutControl;
+
   protected readonly layoutOptions = widgetGroupIcons;
 
   protected settingsHasErrors = computed<boolean>(() => {
@@ -92,6 +93,7 @@ export class WidgetGroupFormComponent implements OnInit {
   readonly canSubmit = computed(() => this.layoutStatus() === 'VALID' && !this.settingsHasErrors());
 
   constructor() {
+    super();
     this.setupLayoutUpdates();
   }
 
@@ -99,7 +101,7 @@ export class WidgetGroupFormComponent implements OnInit {
     this.setInitialFormValues();
   }
 
-  hasUnsavedChanges(): boolean {
+  override hasUnsavedChanges(): boolean {
     return Boolean(this.layoutControl.dirty || this.widgetGroupSlotForm()?.form?.dirty);
   }
 
@@ -163,12 +165,12 @@ export class WidgetGroupFormComponent implements OnInit {
     });
   }
 
-  submit(): void {
+  protected onSubmit(): void {
     this.cleanWidgetGroup();
     if (this.settingsHasErrors()) {
       return;
     }
-    this.saved.emit(this.group());
+    this.closeWith(this.group());
   }
 
   private cleanWidgetGroup(): void {

@@ -2,13 +2,14 @@ import { Overlay, OverlayContainer } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
 import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, Type, computed, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { NavigationExtras, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker, TnIconButtonComponent, TnIconComponent, TnMenuComponent, TnMenuItemComponent,
+  TnMenuTriggerDirective, TnProgressBarComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -31,7 +32,6 @@ import {
 } from 'app/modules/alerts/store/alert.selectors';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -50,11 +50,11 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   imports: [
     TnIconButtonComponent,
     TnIconComponent,
-    TestDirective,
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem,
-    MatProgressBar,
+    TnTestIdDirective,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
+    TnProgressBarComponent,
     AlertComponent,
     TranslateModule,
     AsyncPipe,

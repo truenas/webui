@@ -61,7 +61,7 @@
 @if (isLoading()) {
   <td [attr.colspan]="displayedColumns.length">
     <div class="spinner-container">
-      <mat-spinner [diameter]="40"></mat-spinner>
+      <tn-spinner mode="indeterminate" [diameter]="40"></tn-spinner>
     </div>
   </td>
 }

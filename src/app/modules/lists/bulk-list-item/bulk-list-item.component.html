@@ -10,11 +10,12 @@
         ></tn-icon>
       }
       @case (State.Running) {
-        <mat-spinner
+        <tn-spinner
           class="running"
+          mode="indeterminate"
           [diameter]="20"
           [tnTooltip]="item().message || 'Running' | translate"
-        ></mat-spinner>
+        ></tn-spinner>
       }
       @case (State.Success) {
         <tn-icon

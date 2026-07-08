@@ -10,6 +10,8 @@ export const reportingGlobalControlsElements = {
       hierarchy: [T('Select Reporting')],
       anchor: 'select-reporting',
     },
+  },
+  manualRenderElements: {
     [ReportType.Cpu]: {
       hierarchy: [T('CPU')],
       synonyms: [T('Processor'), T('CPU Stats'), T('CPU Utilization')],

@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -11,8 +11,6 @@ import {
   TnDialog,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
   TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
@@ -20,7 +18,7 @@ import {
 } from '@truenas/ui-components';
 import { isValid } from 'date-fns';
 import {
-  filter, map, switchMap, tap, Observable, of,
+  filter, map, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -35,7 +33,7 @@ import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -61,10 +59,7 @@ import { TaskService } from 'app/services/task.service';
     TnCellDefDirective,
     TnDetailRowDefDirective,
     TnEmptyComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     TnTablePagerComponent,
-    CronFormComponent,
     TranslateModule,
     AsyncPipe,
     YesNoPipe,
@@ -78,7 +73,7 @@ export class CronListComponent implements OnInit {
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private tnDialog = inject(TnDialog);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
@@ -89,25 +84,9 @@ export class CronListComponent implements OnInit {
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<CronjobRow>;
 
-  protected configOpen = signal(false);
-  protected editingCronjob = signal<CronjobRow | undefined>(undefined);
-  protected configForm = viewChild(CronFormComponent);
-
-  protected readonly panelTitle = computed(() => (
-    this.editingCronjob()
-      ? this.translate.instant('Edit Cron Job')
-      : this.translate.instant('Add Cron Job')
-  ));
-
   protected readonly displayedColumns = ['user', 'command', 'description', 'schedule', 'enabled', 'next_run'];
 
   protected readonly trackBy = (_: number, row: CronjobRow): number => row.id;
-
-  protected readonly closeGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
 
   protected getNextRun(row: CronjobRow): string {
     if (!row.enabled) {
@@ -140,13 +119,15 @@ export class CronListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.editingCronjob.set(undefined);
-    this.configOpen.set(true);
+    this.formPanel.open(CronFormComponent, { title: this.translate.instant('Add Cron Job') })
+      .onSuccess(() => this.getCronJobs(), this.destroyRef);
   }
 
   protected doEdit(row: CronjobRow): void {
-    this.editingCronjob.set(row);
-    this.configOpen.set(true);
+    this.formPanel.open(CronFormComponent, {
+      title: this.translate.instant('Edit Cron Job'),
+      inputs: { editCronjob: row },
+    }).onSuccess(() => this.getCronJobs(), this.destroyRef);
   }
 
   protected runNow(row: CronjobRow): void {
@@ -188,13 +169,5 @@ export class CronListComponent implements OnInit {
 
   protected onSortChange(event: TnSortEvent): void {
     this.dataProvider.setSorting(mapTnSortToTableSort<CronjobRow>(event, this.displayedColumns));
-  }
-
-  protected onConfigClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    this.editingCronjob.set(undefined);
-    if (saved) {
-      this.getCronJobs();
-    }
   }
 }

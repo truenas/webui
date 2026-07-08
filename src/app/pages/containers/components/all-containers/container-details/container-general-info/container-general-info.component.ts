@@ -13,7 +13,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -39,7 +39,7 @@ export class ContainerGeneralInfoComponent {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private router = inject(Router);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private containersStore = inject(ContainersStore);
   private authService = inject(AuthService);
 
@@ -56,9 +56,11 @@ export class ContainerGeneralInfoComponent {
   );
 
   protected editContainer(): void {
-    this.slideIn
-      .open(ContainerFormComponent, { data: this.container() })
-      .onSuccess(() => this.containersStore.reload(), this.destroyRef);
+    this.formPanel.open(ContainerFormComponent, {
+      title: this.translate.instant('Edit Container: {name}', { name: this.container().name }),
+      wide: true,
+      inputs: { editContainer: this.container() },
+    }).onSuccess(() => this.containersStore.reload(), this.destroyRef);
   }
 
   protected deleteContainer(): void {
