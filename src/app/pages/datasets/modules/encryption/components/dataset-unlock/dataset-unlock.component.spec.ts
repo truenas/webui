@@ -2,10 +2,9 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -69,8 +68,8 @@ describe('DatasetUnlockComponent', () => {
     const fileInput = await loader.getHarness(IxFileInputHarness.with({ label: 'Upload Key file' }));
     await fileInput.setValue([file]);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
+    await unlockButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith({
@@ -92,8 +91,8 @@ describe('DatasetUnlockComponent', () => {
       },
     );
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
+    await unlockButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'pool.dataset.encryption_summary',

@@ -4,9 +4,8 @@ import {
 import { AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, contentChildren, contentChild, DestroyRef, TemplateRef, output, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnSpinnerComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IxTableBodyCellDirective } from 'app/modules/ix-table/directives/ix-body-cell.directive';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
@@ -29,7 +28,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatIconButton,
     TnTooltipDirective,
     TnIconComponent,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     TranslateModule,
     AsyncPipe,
     TestDirective,

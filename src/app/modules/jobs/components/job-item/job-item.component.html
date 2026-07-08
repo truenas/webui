@@ -18,11 +18,11 @@
     </div>
 
     @if (job().state === JobState.Running) {
-      <mat-progress-bar
+      <tn-progress-bar
         class="job-progress"
         [value]="job().progress.percent"
         [mode]="job().progress.percent ? 'determinate' : 'indeterminate'"
-      ></mat-progress-bar>
+      ></tn-progress-bar>
     }
 
     <div>

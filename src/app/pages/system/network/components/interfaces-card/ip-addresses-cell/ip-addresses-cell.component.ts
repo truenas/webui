@@ -1,11 +1,9 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  inject,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { uniq } from 'lodash-es';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @Component({
   selector: 'ix-ip-addresses-cell',
@@ -13,15 +11,10 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
   styleUrls: ['./ip-addresses-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IpAddressesCellComponent<T> extends ColumnComponent<T> {
-  protected addresses: string[] = [];
-  private readonly cdr = inject(ChangeDetectorRef);
+export class IpAddressesCellComponent {
+  readonly row = input.required<NetworkInterface>();
 
-  override setRow = (row: T): void => {
-    this.row.set(row);
-    this.addresses = this.extractAddresses(row as NetworkInterface);
-    this.cdr.markForCheck();
-  };
+  protected readonly addresses = computed(() => this.extractAddresses(this.row()));
 
   private extractAddresses(row: NetworkInterface): string[] {
     const addresses = this.aliasesToAddress(row.aliases);
@@ -47,10 +40,4 @@ export class IpAddressesCellComponent<T> extends ColumnComponent<T> {
       .filter((alias) => alias.type?.startsWith(NetworkInterfaceAliasType.Inet))
       .map((alias) => `${alias.address}/${alias.netmask}`);
   }
-}
-
-export function ipAddressesColumn<T>(
-  options: Partial<IpAddressesCellComponent<T>>,
-): Column<T, IpAddressesCellComponent<T>> {
-  return { type: IpAddressesCellComponent, ...options };
 }

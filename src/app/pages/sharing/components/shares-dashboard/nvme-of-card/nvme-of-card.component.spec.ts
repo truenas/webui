@@ -20,7 +20,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfHost, NvmeOfNamespace, NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
@@ -60,7 +60,7 @@ describe('NvmeOfCardComponent', () => {
     component: NvmeOfCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(NvmeOfStore, mockNvmeOfStore),
@@ -130,7 +130,10 @@ describe('NvmeOfCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AddSubsystemComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      AddSubsystemComponent,
+      expect.objectContaining({ footerless: true }),
+    );
   });
 
   it('toggles the NVMe-oF service when the projected header toggle is changed', async () => {

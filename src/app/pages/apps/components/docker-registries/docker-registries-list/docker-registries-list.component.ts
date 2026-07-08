@@ -1,12 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal, viewChild,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
-  TnSidePanelActionDirective, TnSidePanelComponent,
   TnSortEvent, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent,
 } from '@truenas/ui-components';
 import { tap } from 'rxjs/operators';
@@ -22,8 +21,7 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { createTable, mapTnSortToProviderSorting } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.elements';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
@@ -44,9 +42,6 @@ import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-re
     TnCellDefDirective,
     TnIconButtonComponent,
     TnTablePagerComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
-    DockerRegistryFormComponent,
     BasicSearchComponent,
     TranslateModule,
     AsyncPipe,
@@ -56,7 +51,7 @@ export class DockerRegistriesListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
 
@@ -66,15 +61,6 @@ export class DockerRegistriesListComponent implements OnInit {
   dataProvider: AsyncDataProvider<DockerRegistry>;
   searchQuery = signal('');
   protected isLoggedIntoDockerHub = signal(false);
-
-  protected readonly registryFormOpen = signal(false);
-  protected readonly editingRegistry = signal<DockerRegistry | undefined>(undefined);
-  protected readonly registryForm = viewChild(DockerRegistryFormComponent);
-  protected readonly registryFormTitle = computed(() => (this.editingRegistry()
-    ? this.translate.instant('Edit Docker Registry')
-    : this.translate.instant('Create Docker Registry')));
-
-  protected readonly registryCloseGuard = sidePanelFormCloseGuard(this.unsavedChanges, this.registryForm);
 
   // Column-config model consumed by ix-table-columns-selector. The tn-table body
   // renders its own column templates; we derive its displayedColumns from the
@@ -122,20 +108,19 @@ export class DockerRegistriesListComponent implements OnInit {
   }
 
   protected onAdd(): void {
-    this.editingRegistry.set(undefined);
-    this.registryFormOpen.set(true);
+    this.formPanel.open(DockerRegistryFormComponent, {
+      title: this.translate.instant('Create Docker Registry'),
+      testId: 'docker-registry',
+      inputs: { isLoggedInToDockerHub: this.isLoggedIntoDockerHub() },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected onEdit(row: DockerRegistry): void {
-    this.editingRegistry.set(row);
-    this.registryFormOpen.set(true);
-  }
-
-  protected onRegistryFormClosed(saved: boolean): void {
-    this.registryFormOpen.set(false);
-    if (saved) {
-      this.dataProvider.load();
-    }
+    this.formPanel.open(DockerRegistryFormComponent, {
+      title: this.translate.instant('Edit Docker Registry'),
+      testId: 'docker-registry',
+      inputs: { registry: row, isLoggedInToDockerHub: this.isLoggedIntoDockerHub() },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected onDelete(row: DockerRegistry): void {

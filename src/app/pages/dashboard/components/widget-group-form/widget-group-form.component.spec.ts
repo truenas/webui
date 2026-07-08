@@ -85,10 +85,10 @@ describe('WidgetGroupFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       savedSpy = jest.fn();
-      spectator.component.saved.subscribe(savedSpy);
+      spectator.component.closed.subscribe(savedSpy);
     });
 
-    it('emits saved with the group object when the form is submitted', () => {
+    it('emits closed with the group object when the form is submitted', () => {
       spectator.component.submit();
 
       expect(savedSpy).toHaveBeenCalledWith({

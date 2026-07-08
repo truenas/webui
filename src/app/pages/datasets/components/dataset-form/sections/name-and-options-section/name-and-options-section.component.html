@@ -1,5 +1,5 @@
-<ix-fieldset
-  [title]="'Name and Options' | translate"
+<tn-form-section
+  [heading]="'Name and Options' | translate"
   [formGroup]="form"
 >
   @if (parent() && !existing()) {
@@ -10,25 +10,29 @@
     </ix-details-table>
   }
 
-  <ix-input
-    formControlName="name"
-    [required]="true"
+  <tn-form-field
     [label]="'Name' | translate"
     [tooltip]="helptext.nameTooltip | translate"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input formControlName="name"></tn-input>
+  </tn-form-field>
 
   @if (!existing()) {
-    <ix-select
-      formControlName="share_type"
+    <tn-form-field
       [label]="'Dataset Preset' | translate"
-      [options]="datasetPresetOptions$"
       [required]="true"
-    ></ix-select>
+    >
+      <tn-select
+        formControlName="share_type"
+        [options]="(datasetPresetOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
   }
-</ix-fieldset>
+</tn-form-section>
 
 @if (!existing()) {
-  <ix-fieldset [formGroup]="datasetPresetForm">
+  <tn-form-section [formGroup]="datasetPresetForm">
     <div class="preset-container">
       @if (form.value.share_type) {
         <div class="comments">
@@ -53,25 +57,28 @@
       @if (canCreateNfs || canCreateSmb) {
         <div class="controls">
           @if (canCreateNfs) {
-            <ix-checkbox
-              formControlName="create_nfs"
-              [label]="'Create NFS Share' | translate"
-            ></ix-checkbox>
+            <tn-form-field>
+              <tn-checkbox
+                formControlName="create_nfs"
+                [label]="'Create NFS Share' | translate"
+              ></tn-checkbox>
+            </tn-form-field>
           }
           @if (canCreateSmb) {
-            <ix-checkbox
-              formControlName="create_smb"
-              [label]="'Create SMB Share' | translate"
-            ></ix-checkbox>
+            <tn-form-field>
+              <tn-checkbox
+                formControlName="create_smb"
+                [label]="'Create SMB Share' | translate"
+              ></tn-checkbox>
+            </tn-form-field>
           }
           @if (canCreateSmb && datasetPresetForm.value.create_smb) {
-            <ix-input
-              formControlName="smb_name"
-              [label]="'SMB Name' | translate"
-            ></ix-input>
+            <tn-form-field [label]="'SMB Name' | translate">
+              <tn-input formControlName="smb_name"></tn-input>
+            </tn-form-field>
           }
         </div>
       }
     </div>
-  </ix-fieldset>
+  </tn-form-section>
 }

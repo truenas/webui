@@ -1,4 +1,4 @@
-<ix-fieldset [title]="'Add New Mapping' | translate">
+<tn-form-section [heading]="'Add New Mapping' | translate">
   <form class="form" [formGroup]="form" (submit)="submit()">
     @if (isUserType()) {
       <ix-user-combobox
@@ -51,4 +51,4 @@
       [disabled]="form.invalid || form.pending"
     ></tn-button>
   </form>
-</ix-fieldset>
+</tn-form-section>

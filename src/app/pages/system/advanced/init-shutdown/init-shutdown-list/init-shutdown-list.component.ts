@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -10,14 +10,11 @@ import {
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
@@ -31,10 +28,10 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownFormComponent,
@@ -55,11 +52,8 @@ import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnEmptyComponent,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
     TnTablePagerComponent,
     TableActionsCellComponent,
-    InitShutdownFormComponent,
     TranslateModule,
     AsyncPipe,
     YesNoPipe,
@@ -69,22 +63,12 @@ export class InitShutdownListComponent implements OnInit {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
-  private unsavedChanges = inject(UnsavedChangesService);
+  private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = initShudownListElements;
-
-  protected configOpen = signal(false);
-  protected editingScript = signal<InitShutdownScript | undefined>(undefined);
-  protected configForm = viewChild(InitShutdownFormComponent);
-
-  protected readonly panelTitle = computed(() => (
-    this.editingScript()
-      ? this.translate.instant('Edit Init/Shutdown Script')
-      : this.translate.instant('Add Init/Shutdown Script')
-  ));
 
   dataProvider: AsyncDataProvider<InitShutdownScript>;
 
@@ -128,12 +112,6 @@ export class InitShutdownListComponent implements OnInit {
     return this.translate.instant(whenLabel);
   }
 
-  protected readonly closeGuard = (): Observable<boolean> => {
-    return this.configForm()?.hasUnsavedChanges()
-      ? this.unsavedChanges.showConfirmDialog()
-      : of(true);
-  };
-
   protected onSortChange(event: TnSortEvent): void {
     this.dataProvider.setSorting(mapTnSortToTableSort<InitShutdownScript>(event, this.displayedColumns));
   }
@@ -144,21 +122,16 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   protected addScript(): void {
-    this.editingScript.set(undefined);
-    this.configOpen.set(true);
+    this.formPanel.open(InitShutdownFormComponent, {
+      title: this.translate.instant('Add Init/Shutdown Script'),
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private editScript(script: InitShutdownScript): void {
-    this.editingScript.set(script);
-    this.configOpen.set(true);
-  }
-
-  protected onConfigClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    this.editingScript.set(undefined);
-    if (saved) {
-      this.dataProvider.load();
-    }
+    this.formPanel.open(InitShutdownFormComponent, {
+      title: this.translate.instant('Edit Init/Shutdown Script'),
+      inputs: { editScript: script },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private deleteScript(script: InitShutdownScript): void {

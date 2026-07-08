@@ -1,20 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxTablePagerShowMoreComponent,
-} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -47,14 +44,12 @@ const csrs = Array.from({ length: 10 }).map((_, index) => ({
 describe('CertificateSigningRequestsListComponent', () => {
   let spectator: Spectator<CertificateSigningRequestsListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+  let slideIn: SlideIn;
+  let formPanel: FormSidePanelService;
 
   const createComponent = createComponentFactory({
     component: CertificateSigningRequestsListComponent,
-    imports: [
-      IxTableCellDirective,
-      IxTablePagerShowMoreComponent,
-    ],
     providers: [
       mockApi([
         mockJob('certificate.delete', fakeSuccessfulJob(true)),
@@ -68,11 +63,20 @@ describe('CertificateSigningRequestsListComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.empty()),
+      }),
       mockProvider(SlideInRef),
       mockProvider(StorageService),
       mockAuth(),
     ],
   });
+
+  async function openFirstRowMenu(): Promise<TnMenuHarness> {
+    const [trigger] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
 
   beforeEach(async () => {
     spectator = createComponent({
@@ -82,38 +86,64 @@ describe('CertificateSigningRequestsListComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
+    slideIn = spectator.inject(SlideIn);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('checks page title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Certificate Signing Requests');
+    expect(spectator.query('h3')).toHaveText('Certificate Signing Requests');
+  });
+
+  it('makes the data columns sortable and the actions column not', async () => {
+    expect(await table.isSortable('name')).toBe(true);
+    expect(await table.isSortable('common')).toBe(true);
+    expect(await table.isSortable('actions')).toBe(false);
+  });
+
+  it('sorts when a column header is clicked', async () => {
+    await table.clickSortHeader('name');
+    expect(await table.getSortDirection('name')).toBe('ascending');
+  });
+
+  it('should show table rows', async () => {
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'CN', '']);
+    expect(await table.getAllRowTexts()).toEqual(
+      csrs.slice(0, 4).map((csr) => [csr.name, 'CN:localhostSAN:DNS:localhost', '']),
+    );
   });
 
   it('opens csr add form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CsrAddComponent);
+    expect(slideIn.open).toHaveBeenCalledWith(CsrAddComponent);
   });
 
-  it('opens certificate edit form when "Edit" button is pressed', async () => {
-    const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
-    await menuButton.click();
-    const menu = await loader.getHarness(MatMenuHarness);
-    await menu.clickItem({ text: /Edit/ });
+  it('opens certificate edit form when "Edit" is pressed', async () => {
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CertificateEditComponent, {
-      data: csrs[0],
+    expect(formPanel.open).toHaveBeenCalledWith(CertificateEditComponent, {
       wide: true,
+      title: 'Edit CSR',
+      inputs: { editingCertificate: csrs[0] },
+    });
+  });
+
+  it('opens ACME certificate form when "Create ACME Certificate" is pressed', async () => {
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Create ACME Certificate' });
+
+    expect(formPanel.open).toHaveBeenCalledWith(CertificateAcmeAddComponent, {
+      title: 'Create ACME Certificate',
+      inputs: { csr: csrs[0] },
     });
   });
 
   it('deletes the CSR when Delete is pressed', async () => {
-    const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
-    await menuButton.click();
-    const menu = await loader.getHarness(MatMenuHarness);
-    await menu.clickItem({ text: /Delete/ });
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete Certificate',
@@ -128,26 +158,13 @@ describe('CertificateSigningRequestsListComponent', () => {
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.delete', [csrs[0].id, false]);
   });
 
-  it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'CN', ''],
-      ['cert_default_0', 'CN:localhostSAN:DNS:localhost', ''],
-      ['cert_default_1', 'CN:localhostSAN:DNS:localhost', ''],
-      ['cert_default_2', 'CN:localhostSAN:DNS:localhost', ''],
-      ['cert_default_3', 'CN:localhostSAN:DNS:localhost', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
-  });
-
   it('emits csrsUpdated when add succeeds', async () => {
     const csrsUpdatedSpy = jest.fn();
     spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
 
-    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(SlideInResult.success(true));
+    jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(csrsUpdatedSpy).toHaveBeenCalled();
@@ -157,12 +174,10 @@ describe('CertificateSigningRequestsListComponent', () => {
     const csrsUpdatedSpy = jest.fn();
     spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
 
-    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(SlideInResult.success(true));
+    jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(true));
 
-    const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
-    await menuButton.click();
-    const menu = await loader.getHarness(MatMenuHarness);
-    await menu.clickItem({ text: /Edit/ });
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Edit' });
 
     expect(csrsUpdatedSpy).toHaveBeenCalled();
   });
@@ -171,10 +186,8 @@ describe('CertificateSigningRequestsListComponent', () => {
     const csrsUpdatedSpy = jest.fn();
     spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
 
-    const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
-    await menuButton.click();
-    const menu = await loader.getHarness(MatMenuHarness);
-    await menu.clickItem({ text: /Delete/ });
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(csrsUpdatedSpy).toHaveBeenCalled();
   });
@@ -183,14 +196,15 @@ describe('CertificateSigningRequestsListComponent', () => {
     const csrsUpdatedSpy = jest.fn();
     spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
 
-    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(SlideInResult.success(true));
+    jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(true));
 
-    const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
-    await menuButton.click();
-    const menu = await loader.getHarness(MatMenuHarness);
-    await menu.clickItem({ text: /Create ACME Certificate/ });
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Create ACME Certificate' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CertificateAcmeAddComponent, { data: csrs[0] });
+    expect(formPanel.open).toHaveBeenCalledWith(CertificateAcmeAddComponent, {
+      title: 'Create ACME Certificate',
+      inputs: { csr: csrs[0] },
+    });
     expect(csrsUpdatedSpy).toHaveBeenCalled();
   });
 });

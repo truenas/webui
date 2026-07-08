@@ -3,28 +3,26 @@ import {
   BreakpointState,
   BreakpointObserver,
 } from '@angular/cdk/layout';
-import { CdkTreeNodePadding } from '@angular/cdk/tree';
+import { CdkTreeNodePadding, CdkTreeNodeDef } from '@angular/cdk/tree';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, AfterViewInit, OnDestroy, ElementRef, TrackByFunction, HostBinding, computed, viewChild, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, OnInit, AfterViewInit, TrackByFunction, computed, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, NavigationSkipped, NavigationStart, Router,
   RouterLink, RouterLinkActive,
 } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { ResizedEvent } from 'angular-resize-event';
-import { uniqBy } from 'lodash-es';
-import { Subject, Subscription } from 'rxjs';
 import {
-  debounceTime,
-  distinctUntilChanged,
+  TnIconComponent, TnTreeVirtualScrollViewComponent, TnTreeNodeComponent, TnEmptyComponent, type IconLibraryType,
+} from '@truenas/ui-components';
+import { uniqBy } from 'lodash-es';
+import {
   filter,
   map,
   switchMap,
 } from 'rxjs/operators';
 import { datasetEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
+import { ContentVirtualScrollableDirective } from 'app/directives/content-virtual-scrollable/content-virtual-scrollable.directive';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -32,23 +30,16 @@ import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
-import {
-  TreeVirtualScrollViewComponent,
-} from 'app/modules/ix-tree/components/tree-virtual-scroll-view/tree-virtual-scroll-view.component';
-import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
-import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { createFlatTreeControl } from 'app/modules/ix-tree/tree-control.factory';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { datasetManagementElements } from 'app/pages/datasets/components/dataset-management/dataset-management.elements';
@@ -63,29 +54,28 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './dataset-management.component.html',
   styleUrls: ['./dataset-management.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.details-overlay]': 'showMobileDetails' },
   imports: [
-    EmptyComponent,
+    TnEmptyComponent,
     FakeProgressBarComponent,
+    ContentVirtualScrollableDirective,
     BasicSearchComponent,
     DatasetNodeComponent,
     TnIconComponent,
     RouterLink,
-    MatIconButton,
     CdkTreeNodePadding,
-    TestDirective,
     DetailsHeightDirective,
     DatasetDetailsPanelComponent,
     AsyncPipe,
     TranslateModule,
-    TreeVirtualScrollViewComponent,
-    TreeNodeComponent,
-    TreeNodeDefDirective,
+    TnTreeVirtualScrollViewComponent,
+    TnTreeNodeComponent,
+    CdkTreeNodeDef,
     RouterLinkActive,
-    TreeNodeToggleDirective,
     NgTemplateOutlet,
   ],
 })
-export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private activatedRoute = inject(ActivatedRoute);
@@ -99,11 +89,17 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
   private sharingTierService = inject(SharingTierService);
+  private authService = inject(AuthService);
 
   protected tierEnabled = this.sharingTierService.tierEnabled;
+  private hasDatasetWrite = toSignal(this.authService.hasRole([Role.DatasetWrite]), { initialValue: false });
 
-  readonly ixTreeHeader = viewChild<ElementRef<HTMLElement>>('ixTreeHeader');
-  readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
+  private readonly ixTreeHeader = viewChild<ElementRef<HTMLElement>>('ixTreeHeader');
+  private readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
+  // Width the sticky header is stretched to (the tree's full horizontally-scrollable
+  // content width) so its columns line up with the rows and scroll along with them.
+  protected ixTreeHeaderWidth: number | null = null;
+  private treeHeaderEl: HTMLElement | null = null;
 
   protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetManagementElements;
@@ -111,13 +107,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
-  @HostBinding('class.details-overlay') showMobileDetails = false;
+  showMobileDetails = false;
   isMobileView = false;
   systemDataset = toSignal(this.api.call('systemdataset.config').pipe(map((config) => config.pool)));
   isLoading = true;
-  subscription = new Subscription();
-  ixTreeHeaderWidth: number | null = null;
-  treeWidthChange$ = new Subject<ResizedEvent>();
 
   error = toSignal(this.datasetStore.error$);
 
@@ -139,11 +132,17 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     }
 
     if (this.searchQuery()?.length && !this.dataSource.filteredData.length) {
-      return noSearchResultsConfig;
+      return {
+        ...noSearchResultsConfig,
+        title: this.translate.instant(noSearchResultsConfig.title),
+        message: noSearchResultsConfig.message && this.translate.instant(noSearchResultsConfig.message),
+      };
     }
 
     return {
       ...datasetEmptyConfig,
+      title: this.translate.instant(datasetEmptyConfig.title),
+      message: datasetEmptyConfig.message && this.translate.instant(datasetEmptyConfig.message),
       button: {
         label: this.translate.instant('Create Pool'),
         action: () => this.createPool(),
@@ -151,7 +150,29 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     };
   });
 
-  private readonly scrollSubject = new Subject<number>();
+  protected readonly emptyIcon = computed<{ name: string; library: IconLibraryType }>(() => {
+    switch (this.emptyConfig().type) {
+      case EmptyType.Errors:
+        return { name: 'alert-octagon', library: 'mdi' };
+      case EmptyType.NoSearchResults:
+        return { name: 'magnify-scan', library: 'mdi' };
+      default:
+        return { name: 'dataset-root', library: 'custom' };
+    }
+  });
+
+  // The empty-state action (Retry / Create Pool) is gated on DatasetWrite, mirroring
+  // the role gating the previous `ix-empty [requiredRoles]` applied to its button.
+  protected readonly emptyActionText = computed<string | undefined>(() => {
+    if (!this.hasDatasetWrite()) {
+      return undefined;
+    }
+    return this.emptyConfig().button?.label;
+  });
+
+  protected onEmptyAction(): void {
+    this.emptyConfig().button?.action?.();
+  }
 
   // Flat API
   getLevel = (dataset: DatasetDetails): number => (dataset?.name?.split('/')?.length || 0) - 1;
@@ -171,7 +192,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);
   trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
-  readonly hasChild = (_: number, dataset: DatasetDetails): boolean => Number(dataset?.children?.length) > 0;
 
   constructor() {
     this.router.events
@@ -187,8 +207,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.setupTree();
     this.listenForRouteChanges();
     this.listenForLoading();
-    this.listenForDatasetScrolling();
-    this.listenForTreeResizing();
     this.sharingTierService.getTierConfig()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.cdr.markForCheck());
@@ -209,12 +227,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       });
   }
 
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   private listenForLoading(): void {
     this.isLoading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isLoading) => {
       this.isLoading = isLoading;
@@ -230,16 +242,42 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     return dataset.name.split('/').length === 1 && this.systemDataset() === dataset.name;
   }
 
-  protected treeHeaderScrolled(): void {
-    this.scrollSubject.next(this.ixTreeHeader()?.nativeElement?.scrollLeft || 0);
+  // Keep the sticky column header the same width as the tree's scrollable content and
+  // scrolled to the same horizontal offset, so the header labels track the columns as you
+  // scroll right. The tree scrolls VERTICALLY with the page (.rightside-content-hold); its
+  // own `.tree-wrapper` (overflow: auto) owns only the HORIZONTAL scroll, so the header is
+  // synced to the wrapper's scrollLeft.
+  //
+  // TEMP (NAS-141021): this reads the tn-tree's internal CDK viewport
+  // (`cdk-virtual-scroll-viewport`) to measure the scrollable content width — a coupling
+  // to library-internal DOM. Remove/replace once tn-tree-virtual-scroll-view owns the
+  // sticky-header + horizontal-scroll sync (or exposes a content-width output).
+  private syncHeaderWidth(): void {
+    const viewport = this.ixTree()?.nativeElement?.querySelector<HTMLElement>('cdk-virtual-scroll-viewport');
+    if (viewport) {
+      this.ixTreeHeaderWidth = viewport.scrollWidth;
+    }
   }
 
-  protected datasetTreeScrolled(scrollLeft: number): void {
-    this.scrollSubject.next(scrollLeft);
+  protected datasetTreeWrapperScrolled(): void {
+    const tree = this.ixTree()?.nativeElement;
+    // Cache the header element to avoid a DOM query on every scroll event; re-query only
+    // if the cached node was detached (e.g. the tree re-rendered).
+    if (!this.treeHeaderEl?.isConnected) {
+      this.treeHeaderEl = this.ixTreeHeader()?.nativeElement?.querySelector<HTMLElement>('.tree-header') ?? null;
+    }
+    const treeHeader = this.treeHeaderEl;
+    if (tree && treeHeader) {
+      // Shift the header via transform (not scrollLeft): the sticky header keeps the
+      // mixin's `overflow: visible` so it isn't collapsed, and translateX tracks the
+      // wrapper's horizontal scroll to keep the column labels above their rows.
+      treeHeader.style.transform = `translateX(${-tree.scrollLeft}px)`;
+    }
   }
 
-  protected datasetTreeWidthChanged(event: ResizedEvent): void {
-    this.treeWidthChange$.next(event);
+  protected datasetTreeWidthChanged(): void {
+    this.syncHeaderWidth();
+    this.cdr.markForCheck();
   }
 
   protected onListFiltered(query: string): void {
@@ -296,27 +334,33 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   private createDataSource(datasets: DatasetDetails[]): void {
-    this.dataSource = new TreeDataSource(this.treeControl, this.treeFlattener, datasets);
-    this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
-      const result: DatasetDetails[] = [];
+    // Reuse the SAME data-source instance across dataset reloads and only update its
+    // data. Replacing the instance makes CdkTree switch/disconnect the previous source,
+    // which permanently tears down its debounced filter subscription
+    // (takeUntil(disconnect$)) and silently breaks the search box. The tree itself is
+    // also kept mounted (see the template) for the same reason.
+    if (!this.dataSource.filterPredicate) {
+      this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
+        const result: DatasetDetails[] = [];
 
-      const datasetsMatched = datasetsToFilter
-        .filter((dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()));
+        const datasetsMatched = datasetsToFilter
+          .filter((dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()));
 
-      datasetsMatched.forEach((dataset) => {
-        const paths = dataset.id.split('/');
+        datasetsMatched.forEach((dataset) => {
+          const paths = dataset.id.split('/');
 
-        for (let i = 1; i <= paths.length; i++) {
-          const matched = datasetsToFilter.find((parent) => parent.id === paths.slice(0, i).join('/'));
-          if (matched) {
-            result.push(matched);
+          for (let i = 1; i <= paths.length; i++) {
+            const matched = datasetsToFilter.find((parent) => parent.id === paths.slice(0, i).join('/'));
+            if (matched) {
+              result.push(matched);
+            }
           }
-        }
-      });
+        });
 
-      return uniqBy(result, 'id');
-    };
-    this.dataSource.sortComparer = datasetNameSortComparer;
+        return uniqBy(result, 'id');
+      };
+      this.dataSource.sortComparer = datasetNameSortComparer;
+    }
     this.dataSource.data = datasets;
   }
 
@@ -352,39 +396,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       .subscribe((datasetId) => {
         this.datasetStore.selectDatasetById(datasetId);
       });
-  }
-
-  private listenForDatasetScrolling(): void {
-    this.subscription.add(
-      this.scrollSubject
-        .pipe(debounceTime(5), takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (scrollLeft: number) => {
-            this.window.dispatchEvent(new Event('resize'));
-            const treeHeader = this.ixTreeHeader();
-            const tree = this.ixTree();
-
-            if (!treeHeader || !tree) {
-              return;
-            }
-
-            treeHeader.nativeElement.scrollLeft = scrollLeft;
-            tree.nativeElement.scrollLeft = scrollLeft;
-          },
-        }),
-    );
-  }
-
-  private listenForTreeResizing(): void {
-    this.subscription.add(
-      this.treeWidthChange$
-        .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (event: ResizedEvent) => {
-            this.ixTreeHeaderWidth = Math.round(event.newRect.width);
-          },
-        }),
-    );
   }
 
   private handlePendingGlobalSearchElement(): void {

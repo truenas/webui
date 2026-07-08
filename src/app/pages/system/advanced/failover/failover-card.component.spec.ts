@@ -8,6 +8,8 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverCardComponent } from 'app/pages/system/advanced/failover/failover-card.component';
 import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
@@ -17,6 +19,7 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 describe('FailoverCardComponent', () => {
   let spectator: Spectator<FailoverCardComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
   const fakeConfig = {
     disabled: false,
     master: true,
@@ -37,6 +40,9 @@ describe('FailoverCardComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
       mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
       }),
@@ -48,6 +54,7 @@ describe('FailoverCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('displays failover configuration', () => {
@@ -62,25 +69,10 @@ describe('FailoverCardComponent', () => {
   });
 
   it('opens the Failover form in a side panel when Configure is pressed', async () => {
-    expect(spectator.query('ix-failover-form')).toBeNull();
-
     const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
-    spectator.detectChanges();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.query('ix-failover-form')).not.toBeNull();
-  });
-
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
-    await configureButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-failover-form')).not.toBeNull();
-
-    spectator.query(FailoverFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-failover-form')).toBeNull();
+    expect(formPanel.open).toHaveBeenCalledWith(FailoverFormComponent, { title: 'Failover' });
   });
 });

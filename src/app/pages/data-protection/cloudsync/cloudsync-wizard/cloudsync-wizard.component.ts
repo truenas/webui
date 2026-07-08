@@ -3,8 +3,8 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, forwardRef, output, Signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatStepperModule } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnStepComponent, TnStepperComponent } from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, merge,
   of,
@@ -13,9 +13,6 @@ import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { Role } from 'app/enums/role.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import {
-  UseIconsInStepperComponent,
-} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -33,10 +30,10 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
     CloudSyncProviderComponent,
     CloudSyncWhatAndWhenComponent,
     ModalHeaderComponent,
-    MatStepperModule,
+    TnStepperComponent,
+    TnStepComponent,
     TranslateModule,
     AsyncPipe,
-    UseIconsInStepperComponent,
   ],
 })
 export class CloudSyncWizardComponent {

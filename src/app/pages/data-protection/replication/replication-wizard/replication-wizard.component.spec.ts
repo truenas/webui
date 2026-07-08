@@ -1,12 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -67,7 +64,7 @@ const existingTask: ReplicationTask = {
 describe('ReplicationWizardComponent', () => {
   let spectator: Spectator<ReplicationWizardComponent>;
   let loader: HarnessLoader;
-  let nextButton: MatStepperNextHarness | null;
+  let nextButton: TnButtonHarness | null;
   const slideInRef: SlideInRef<ReplicationTask, unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
@@ -79,7 +76,6 @@ describe('ReplicationWizardComponent', () => {
     component: ReplicationWizardComponent,
     imports: [
       ReactiveFormsModule,
-      MatStepperModule,
     ],
     declarations: [
       ReplicationWhatAndWhereComponent,
@@ -111,10 +107,10 @@ describe('ReplicationWizardComponent', () => {
   });
 
   async function updateStepHarnesses(): Promise<void> {
-    const stepper = await loader.getHarness(MatStepperHarness);
-    const activeStep = (await stepper.getSteps({ selected: true }))[0];
-
-    nextButton = await activeStep.getHarnessOrNull(MatStepperNextHarness.with({ text: 'Next' }));
+    // tn-stepper renders only the active step's content, so the single visible
+    // Next button resolves straight from the document-root loader. The last step
+    // has no Next button, so tolerate its absence.
+    nextButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Next' }));
   }
 
   async function goToNextStep(): Promise<void> {
@@ -154,7 +150,7 @@ describe('ReplicationWizardComponent', () => {
 
     await (await loader.getHarness(TnRadioHarness.with({ label: 'Custom' }))).check();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
@@ -232,7 +228,7 @@ describe('ReplicationWizardComponent', () => {
 
     await (await loader.getHarness(TnRadioHarness.with({ label: 'Custom' }))).check();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{

@@ -2,16 +2,19 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
 import { PrimaryDomainIdmap } from 'app/interfaces/active-directory-config.interface';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
 import { IdmapConfigComponent } from 'app/pages/directory-service/components/directory-services-form/active-directory-config/idmap-config/idmap-config.component';
 
 describe('IdmapConfigComponent', () => {
   let spectator: Spectator<IdmapConfigComponent>;
   let loader: HarnessLoader;
-  let form: IxFieldsetHarness;
+
+  const adBackendOption = 'AD (RFC2307/SFU attributes from Active Directory)';
+  const ridBackendOption = 'RID (Default - algorithmic mapping based on RID values)';
 
   const mockIdmapConfig: PrimaryDomainIdmap = {
     builtin: {
@@ -37,14 +40,27 @@ describe('IdmapConfigComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  /** The idmap_backend select is always the first select rendered. */
+  async function getBackendSelect(): Promise<TnSelectHarness> {
+    return (await loader.getAllHarnesses(TnSelectHarness))[0];
+  }
+
+  /** idmap_domain inputs use bare control names; the builtin section's are prefixed `builtin_`. */
+  function getIdmapDomainInput(name: string): Promise<TnInputHarness> {
+    return loader.getHarness(TnInputHarness.with({ name }));
+  }
+
+  function getUseDefaultCheckbox(): Promise<TnCheckboxHarness> {
+    return loader.getHarness(TnCheckboxHarness.with({ label: 'Use TrueNAS Server IDMAP Defaults' }));
+  }
+
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         idmap: mockIdmapConfig,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFieldsetHarness);
   });
 
   it('should create', () => {
@@ -52,24 +68,21 @@ describe('IdmapConfigComponent', () => {
   });
 
   it('should initialize form with existing IDMAP config', async () => {
-    const values = await form.getValues();
-    expect(values).toEqual(expect.objectContaining({
-      'Use TrueNAS Server IDMAP Defaults': false,
-      'IDMAP Backend': 'AD (RFC2307/SFU attributes from Active Directory)',
-      Name: 'test_domain',
-      'Range Low': '100000001',
-      'Range High': '200000000',
-    }));
+    expect(await (await getUseDefaultCheckbox()).isChecked()).toBe(false);
+
+    const backend = await getBackendSelect();
+    expect(await backend.getDisplayText()).toBe(adBackendOption);
+
+    expect(await (await getIdmapDomainInput('name')).getValue()).toBe('test_domain');
+    expect(await (await getIdmapDomainInput('range_low')).getValue()).toBe('100000001');
+    expect(await (await getIdmapDomainInput('range_high')).getValue()).toBe('200000000');
   });
 
   it('should initialize with default IDMAP when null is passed', async () => {
     spectator.setInput('idmap', null);
     spectator.component.ngOnInit();
 
-    const values = await form.getValues();
-    expect(values).toEqual(expect.objectContaining({
-      'Use TrueNAS Server IDMAP Defaults': true,
-    }));
+    expect(await (await getUseDefaultCheckbox()).isChecked()).toBe(true);
   });
 
   it('should emit idmapUpdated when form values change', async () => {
@@ -78,13 +91,11 @@ describe('IdmapConfigComponent', () => {
       emittedValue = value;
     });
 
-    await form.fillForm({
-      'Use TrueNAS Server IDMAP Defaults': false,
-      'IDMAP Backend': 'RID (Default - algorithmic mapping based on RID values)',
-      Name: 'new-domain',
-      'Range Low': 150000001,
-      'Range High': 250000000,
-    });
+    await (await getUseDefaultCheckbox()).uncheck();
+    await (await getBackendSelect()).selectOption(ridBackendOption);
+    await (await getIdmapDomainInput('name')).setValue('new-domain');
+    await (await getIdmapDomainInput('range_low')).setValue('150000001');
+    await (await getIdmapDomainInput('range_high')).setValue('250000000');
 
     expect(emittedValue).toBeDefined();
     expect(emittedValue[0]).toBe(false);
@@ -104,120 +115,78 @@ describe('IdmapConfigComponent', () => {
       emittedValid = valid;
     });
 
-    const builtinFiledset = await loader.getHarness(IxFieldsetHarness.with({ title: 'Builtin' }));
-    await builtinFiledset.fillForm({
-      Name: 'valid_domain',
-      'Range Low': 150000001,
-      'Range High': 250000000,
-    });
+    await (await getBackendSelect()).selectOption(adBackendOption);
 
-    const idmapFieldset = await loader.getHarness(IxFieldsetHarness.with({ title: 'IDMAP Domain' }));
-    await idmapFieldset.fillForm({
-      'IDMAP Backend': 'AD (RFC2307/SFU attributes from Active Directory)',
-    });
-    await idmapFieldset.fillForm({
-      Name: 'idmap_domain',
-      'Range Low': 100000002,
-      'Range High': 100000054,
-      'Schema Mode': ActiveDirectorySchemaMode.Rfc2307,
-      'Unix Primary Group': true,
-      'Unix NSS Info': true,
-    });
+    await (await getIdmapDomainInput('name')).setValue('idmap_domain');
+    await (await getIdmapDomainInput('range_low')).setValue('100000002');
+    await (await getIdmapDomainInput('range_high')).setValue('100000054');
+
+    const schemaModeSelect = (await loader.getAllHarnesses(TnSelectHarness))[1];
+    await schemaModeSelect.selectOption(ActiveDirectorySchemaMode.Rfc2307);
+
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Unix Primary Group' }))).check();
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Unix NSS Info' }))).check();
 
     expect(emittedValid).toBe(true);
   });
 
   describe('idmap backend types', () => {
     it('should show AD specific fields when AD backend is selected', async () => {
-      await form.fillForm({
-        'Use TrueNAS Server IDMAP Defaults': false,
-        'IDMAP Backend': 'AD (RFC2307/SFU attributes from Active Directory)',
-      });
+      await (await getUseDefaultCheckbox()).uncheck();
+      await (await getBackendSelect()).selectOption(adBackendOption);
 
-      const values = await form.getValues();
-      expect(values).toEqual(expect.objectContaining({
-        'Schema Mode': expect.any(String),
-        'Unix Primary Group': expect.any(Boolean),
-        'Unix NSS Info': expect.any(Boolean),
-      }));
+      expect(await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Unix Primary Group' }))).not.toBeNull();
+      expect(await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Unix NSS Info' }))).not.toBeNull();
+      // idmap_backend + schema_mode selects
+      expect(await loader.getAllHarnesses(TnSelectHarness)).toHaveLength(2);
     });
 
     it('should show LDAP specific fields when LDAP backend is selected', async () => {
-      await form.fillForm({
-        'Use TrueNAS Server IDMAP Defaults': false,
-        'IDMAP Backend': 'LDAP',
-      });
+      await (await getUseDefaultCheckbox()).uncheck();
+      await (await getBackendSelect()).selectOption('LDAP');
 
-      const values = await form.getValues();
-      expect(values).toEqual(expect.objectContaining({
-        'LDAP Url': expect.any(String),
-        'LDAP User DN': expect.any(String),
-        'LDAP User DN Password': expect.any(String),
-        'Validate Certificates': expect.any(Boolean),
-        'LDAP Base DN': expect.any(String),
-        Readonly: expect.any(Boolean),
-        'Use TrueNAS Server IDMAP Defaults': false,
-        Name: 'test_domain',
-        'Range High': '200000000',
-        'Range Low': '100000001',
-      }));
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'ldap_url' }))).not.toBeNull();
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'ldap_base_dn' }))).not.toBeNull();
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'ldap_user_dn' }))).not.toBeNull();
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'ldap_user_dn_password' }))).not.toBeNull();
+      expect(await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Validate Certificates' }))).not.toBeNull();
+      expect(await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Readonly' }))).not.toBeNull();
     });
 
     it('should show RID specific fields when RID backend is selected', async () => {
-      await form.fillForm({
-        'Use TrueNAS Server IDMAP Defaults': false,
-        'IDMAP Backend': 'RID (Default - algorithmic mapping based on RID values)',
-      });
+      await (await getUseDefaultCheckbox()).uncheck();
+      await (await getBackendSelect()).selectOption(ridBackendOption);
 
-      const values = await form.getValues();
-      expect(values).toEqual(expect.objectContaining({
-        'Use TrueNAS Server IDMAP Defaults': false,
-        'SSSD Compat': expect.any(Boolean),
-        Name: 'test_domain',
-        'Range High': '200000000',
-        'Range Low': '100000001',
-      }));
+      expect(await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'SSSD Compat' }))).not.toBeNull();
     });
   });
 
   describe('dynamic form controls', () => {
     it('should add and remove controls based on idmap backend type', async () => {
-      await form.fillForm({
-        'Use TrueNAS Server IDMAP Defaults': false,
-        'IDMAP Backend': 'AD (RFC2307/SFU attributes from Active Directory)',
-      });
+      await (await getUseDefaultCheckbox()).uncheck();
+      await (await getBackendSelect()).selectOption(adBackendOption);
 
-      let values = await form.getValues();
-      expect(values).toHaveProperty('Schema Mode');
+      expect(await loader.getAllHarnesses(TnSelectHarness)).toHaveLength(2);
 
-      await form.fillForm({
-        'IDMAP Backend': 'RID (Default - algorithmic mapping based on RID values)',
-      });
+      await (await getBackendSelect()).selectOption(ridBackendOption);
 
-      values = await form.getValues();
-      expect(values).not.toHaveProperty('Schema Mode');
-      expect(values).toHaveProperty('SSSD Compat');
+      expect(await loader.getAllHarnesses(TnSelectHarness)).toHaveLength(1);
+      expect(await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'SSSD Compat' }))).not.toBeNull();
     });
 
     it('should preserve core controls when switching backends', async () => {
-      await form.fillForm({
-        'Use TrueNAS Server IDMAP Defaults': false,
-        'IDMAP Backend': 'AD (RFC2307/SFU attributes from Active Directory)',
-        Name: 'test-domain',
-        'Range Low': 100000001,
-        'Range High': 200000000,
-      });
+      await (await getUseDefaultCheckbox()).uncheck();
+      await (await getBackendSelect()).selectOption(adBackendOption);
 
-      await form.fillForm({
-        'IDMAP Backend': 'RID (Default - algorithmic mapping based on RID values)',
-      });
+      await (await getIdmapDomainInput('name')).setValue('test-domain');
+      await (await getIdmapDomainInput('range_low')).setValue('100000001');
+      await (await getIdmapDomainInput('range_high')).setValue('200000000');
 
-      const values = await form.getValues();
-      expect(values).toEqual(expect.objectContaining({
-        Name: 'test-domain',
-        'Range Low': '100000001',
-        'Range High': '200000000',
-      }));
+      await (await getBackendSelect()).selectOption(ridBackendOption);
+
+      expect(await (await getIdmapDomainInput('name')).getValue()).toBe('test-domain');
+      expect(await (await getIdmapDomainInput('range_low')).getValue()).toBe('100000001');
+      expect(await (await getIdmapDomainInput('range_high')).getValue()).toBe('200000000');
     });
   });
 
@@ -226,8 +195,7 @@ describe('IdmapConfigComponent', () => {
       spectator.setInput('idmap', null);
       spectator.component.ngOnInit();
 
-      const useDefaultCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use TrueNAS Server IDMAP Defaults' }));
-      expect(await useDefaultCheckbox.getValue()).toBe(true);
+      expect(await (await getUseDefaultCheckbox()).isChecked()).toBe(true);
     });
 
     it('should emit correct values when switching between default and custom', async () => {
@@ -236,16 +204,10 @@ describe('IdmapConfigComponent', () => {
         emittedValues = value;
       });
 
-      await form.fillForm({
-        'Use TrueNAS Server IDMAP Defaults': true,
-      });
-
+      await (await getUseDefaultCheckbox()).check();
       expect(emittedValues[0]).toBe(true);
 
-      await form.fillForm({
-        'Use TrueNAS Server IDMAP Defaults': false,
-      });
-
+      await (await getUseDefaultCheckbox()).uncheck();
       expect(emittedValues[0]).toBe(false);
     });
 
@@ -268,8 +230,8 @@ describe('IdmapConfigComponent', () => {
       spectator.setInput('idmap', ridConfig);
       spectator.component.ngOnInit();
 
-      const sssdCompatCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'SSSD Compat' }));
-      expect(await sssdCompatCheckbox.getValue()).toBe(true);
+      const sssdCompatCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'SSSD Compat' }));
+      expect(await sssdCompatCheckbox.isChecked()).toBe(true);
     });
   });
 });

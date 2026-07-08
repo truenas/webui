@@ -1,8 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCardComponent, TnDialog, TnIconButtonHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,11 +12,10 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
@@ -25,7 +25,7 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
 describe('CloudCredentialsCardComponent', () => {
   let spectator: Spectator<CloudCredentialsCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const credentials = [
     {
@@ -72,7 +72,7 @@ describe('CloudCredentialsCardComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -90,33 +90,35 @@ describe('CloudCredentialsCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('checks page title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Cloud Credentials');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Cloud Credentials');
   });
 
   it('opens form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(
-      spectator.inject(SlideIn).open,
-    ).toHaveBeenCalledWith(CloudCredentialsFormComponent);
+      spectator.inject(FormSidePanelService).open,
+    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, { title: 'Add Cloud Credential' });
   });
 
   it('opens form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 2);
+    const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
     await editButton.click();
     expect(
-      spectator.inject(SlideIn).open,
-    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, { data: { existingCredential: credentials[0] } });
+      spectator.inject(FormSidePanelService).open,
+    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, {
+      title: 'Edit Cloud Credential',
+      inputs: { editInput: { existingCredential: credentials[0] } },
+    });
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 2);
+    const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
@@ -129,13 +131,10 @@ describe('CloudCredentialsCardComponent', () => {
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Provider', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Provider', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['GDrive', 'Google Drive', ''],
       ['BB2', 'Backblaze B2', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 });

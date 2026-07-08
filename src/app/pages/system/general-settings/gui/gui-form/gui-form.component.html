@@ -1,99 +1,109 @@
-<ix-modal-header
-  [title]="'GUI Settings' | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+<ix-form
+  [formGroup]="formGroup"
+  [externalLoading]="isFormLoading()"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section [heading]="helptext.guiTitle | translate">
+    <ix-with-manage-certificates-link>
+      <tn-form-field
+        [label]="helptext.uiCertificate.label | translate"
+        [tooltip]="helptext.uiCertificate.tooltip | translate"
+        [required]="true"
+      >
+        <tn-select
+          testId="ui_certificate"
+          formControlName="ui_certificate"
+          [options]="(options.ui_certificate | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
+    </ix-with-manage-certificates-link>
 
-<mat-card>
-  <mat-card-content>
-    <form
-      class="ix-form-container"
-      [formGroup]="formGroup"
-      (submit)="onSubmit()"
+    <tn-form-field
+      [label]="helptext.uiAddress.label | translate"
+      [tooltip]="helptext.uiAddress.tooltip | translate"
+      [required]="true"
     >
-      <ix-fieldset [title]="helptext.guiTitle | translate">
-        <ix-with-manage-certificates-link>
-          <ix-select
-            formControlName="ui_certificate"
-            [label]="helptext.uiCertificate.label | translate"
-            [tooltip]="helptext.uiCertificate.tooltip | translate"
-            [options]="options.ui_certificate"
-            [required]="true"
-          ></ix-select>
-        </ix-with-manage-certificates-link>
+      <tn-select
+        testId="ui_address"
+        formControlName="ui_address"
+        [options]="(options.ui_address | async) ?? []"
+        [multiple]="true"
+      ></tn-select>
+    </tn-form-field>
 
-        <ix-select
-          formControlName="ui_address"
-          [label]="helptext.uiAddress.label | translate"
-          [tooltip]="helptext.uiAddress.tooltip | translate"
-          [options]="options.ui_address"
-          [required]="true"
-          [multiple]="true"
-        ></ix-select>
+    <tn-form-field
+      [label]="helptext.uiV6address.label | translate"
+      [tooltip]="helptext.uiV6address.tooltip | translate"
+      [required]="true"
+    >
+      <tn-select
+        testId="ui_v6address"
+        formControlName="ui_v6address"
+        [options]="(options.ui_v6address | async) ?? []"
+        [multiple]="true"
+      ></tn-select>
+    </tn-form-field>
 
-        <ix-select
-          formControlName="ui_v6address"
-          [label]="helptext.uiV6address.label | translate"
-          [tooltip]="helptext.uiV6address.tooltip | translate"
-          [options]="options.ui_v6address"
-          [required]="true"
-          [multiple]="true"
-        ></ix-select>
+    <tn-form-field
+      [label]="helptext.uiPort.label | translate"
+      [tooltip]="helptext.uiPort.tooltip | translate"
+    >
+      <tn-input
+        testId="ui_port"
+        formControlName="ui_port"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
 
-        <ix-input
-          type="number"
-          formControlName="ui_port"
-          [label]="helptext.uiPort.label | translate"
-          [tooltip]="helptext.uiPort.tooltip | translate"
-        ></ix-input>
+    <tn-form-field
+      [label]="helptext.uiHttpsPort.label | translate"
+      [tooltip]="helptext.uiHttpsPort.tooltip | translate"
+    >
+      <tn-input
+        testId="ui_httpsport"
+        formControlName="ui_httpsport"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
 
-        <ix-input
-          type="number"
-          formControlName="ui_httpsport"
-          [label]="helptext.uiHttpsPort.label | translate"
-          [tooltip]="helptext.uiHttpsPort.tooltip | translate"
-        ></ix-input>
+    <tn-form-field
+      [label]="helptext.uiHttpsProtocols.label | translate"
+      [tooltip]="helptext.uiHttpsProtocols.tooltip | translate"
+      [required]="true"
+    >
+      <tn-select
+        testId="ui_httpsprotocols"
+        formControlName="ui_httpsprotocols"
+        [options]="(options.ui_httpsprotocols | async) ?? []"
+        [multiple]="true"
+      ></tn-select>
+    </tn-form-field>
 
-        <ix-select
-          formControlName="ui_httpsprotocols"
-          [label]="helptext.uiHttpsProtocols.label | translate"
-          [tooltip]="helptext.uiHttpsProtocols.tooltip | translate"
-          [options]="options.ui_httpsprotocols"
-          [required]="true"
-          [multiple]="true"
-        ></ix-select>
+    <tn-form-field [tooltip]="helptext.uiHttpsRedirect.tooltip | translate">
+      <tn-checkbox
+        testId="ui_httpsredirect"
+        formControlName="ui_httpsredirect"
+        [label]="helptext.uiHttpsRedirect.label | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
 
-        <ix-checkbox
-          formControlName="ui_httpsredirect"
-          [label]="helptext.uiHttpsRedirect.label | translate"
-          [tooltip]="helptext.uiHttpsRedirect.tooltip | translate"
-        ></ix-checkbox>
-      </ix-fieldset>
+  <tn-form-section [heading]="helptext.otherTitle | translate">
+    <tn-form-field [tooltip]="usageCollectionTooltip()">
+      <tn-checkbox
+        testId="usage_collection"
+        formControlName="usage_collection"
+        [label]="helptext.usageCollection.label | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-      <ix-fieldset [title]="helptext.otherTitle | translate">
-        <ix-checkbox
-          formControlName="usage_collection"
-          [label]="helptext.usageCollection.label | translate"
-          [tooltip]="usageCollectionTooltip()"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="ui_consolemsg"
-          [label]="helptext.uiConsoleMessage.label | translate"
-          [tooltip]="helptext.uiConsoleMessage.tooltip | translate"
-        ></ix-checkbox>
-      </ix-fieldset>
-
-      <ix-form-actions>
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="formGroup.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <tn-form-field [tooltip]="helptext.uiConsoleMessage.tooltip | translate">
+      <tn-checkbox
+        testId="ui_consolemsg"
+        formControlName="ui_consolemsg"
+        [label]="helptext.uiConsoleMessage.label | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
+</ix-form>

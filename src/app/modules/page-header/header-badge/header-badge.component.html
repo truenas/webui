@@ -4,11 +4,11 @@
   } @else {
     <span>{{ 'NEW' | translate }}</span>
 
-    <button
+    <tn-button
       *ixIfNightly
-      mat-button
-      ixTest="new-page-feedback"
-      (click)="leaveFeedbackPressed()"
-    >{{ 'Leave Feedback' | translate }}</button>
+      testId="new-page-feedback"
+      [label]="'Leave Feedback' | translate"
+      (onClick)="leaveFeedbackPressed()"
+    ></tn-button>
   }
 </div>

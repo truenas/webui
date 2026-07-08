@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnRadioHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -24,9 +24,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import {
+  IxIpInputWithNetmaskHarness,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -50,9 +51,39 @@ describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  let form: IxFormHarness;
   let aliasesList: IxListHarness | null;
   const productType = ProductType.CommunityEdition;
+
+  async function setSelectValue(fcName: string, ...labels: string[]): Promise<void> {
+    const select = await loader.getHarness(TnSelectHarness.with({ selector: `[formControlName="${fcName}"]` }));
+    for (const label of labels) {
+      await select.selectOption(label);
+    }
+  }
+
+  async function setInputValue(name: string, value: string | number): Promise<void> {
+    const input = await loader.getHarness(TnInputHarness.with({ name }));
+    await input.setValue(String(value));
+  }
+
+  async function getInputValue(name: string): Promise<string> {
+    const input = await loader.getHarness(TnInputHarness.with({ name }));
+    return input.getValue();
+  }
+
+  async function setCheckbox(label: string, value: boolean): Promise<void> {
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label }));
+    if (value) {
+      await checkbox.check();
+    } else {
+      await checkbox.uncheck();
+    }
+  }
+
+  async function setRadioValue(label: string): Promise<void> {
+    const radio = await loader.getHarness(TnRadioHarness.with({ label }));
+    await radio.check();
+  }
 
   const existingInterface = {
     id: 'enp0s6',
@@ -136,8 +167,8 @@ describe('InterfaceFormComponent', () => {
           enp0s4: 'enp0s4',
         })),
         getLaggProtocolChoices: () => of([
-          LinkAggregationProtocol.None,
           LinkAggregationProtocol.Lacp,
+          LinkAggregationProtocol.Failover,
           LinkAggregationProtocol.LoadBalance,
         ]),
         getLaggPortsChoices: jest.fn(() => of({
@@ -185,32 +216,19 @@ describe('InterfaceFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
     it('auto-generates name when type is changed', async () => {
-      await form.fillForm({
-        Type: 'Bridge',
-      });
+      await setSelectValue('type', 'Bridge');
+      expect(await getInputValue('name')).toMatch('br1');
 
-      const values = await form.getValues();
-      expect(values.Name).toMatch('br1');
+      await setSelectValue('type', 'Link Aggregation');
+      expect(await getInputValue('name')).toMatch('bond1');
 
-      await form.fillForm({
-        Type: 'Link Aggregation',
-      });
-
-      const updatedValues = await form.getValues();
-      expect(updatedValues.Name).toMatch('bond1');
-
-      await form.fillForm({
-        Type: 'VLAN',
-      });
-
-      const vlanValues = await form.getValues();
-      expect(vlanValues.Name).toMatch('vlan2');
+      await setSelectValue('type', 'VLAN');
+      expect(await getInputValue('name')).toMatch('vlan2');
     });
 
     it('saves a new bridge interface when form is submitted for bridge interface', async () => {
@@ -219,20 +237,17 @@ describe('InterfaceFormComponent', () => {
       const store$ = spectator.inject(Store);
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
-      await form.fillForm({
-        Type: 'Bridge',
-      });
+      await setSelectValue('type', 'Bridge');
       await aliasesList!.pressAddButton();
 
-      await form.fillForm({
-        Name: 'br0',
-        Description: 'Bridge interface',
-        'Bridge Members': ['enp0s3', 'enp0s4'],
-        'IP Address': '10.0.1.2/24',
-        'Enable Learning': true,
-      });
+      await setInputValue('name', 'br0');
+      await setInputValue('description', 'Bridge interface');
+      await setSelectValue('bridge_members', 'enp0s3', 'enp0s4');
+      const ipAddress = await loader.getHarness(IxIpInputWithNetmaskHarness.with({ label: 'IP Address' }));
+      await ipAddress.setValue('10.0.1.2/24');
+      await setCheckbox('Enable Learning', true);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
@@ -270,21 +285,17 @@ describe('InterfaceFormComponent', () => {
       const store$ = spectator.inject(Store);
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
-      await form.fillForm(
-        {
-          Type: 'Link Aggregation',
-          Name: 'bond0',
-          Description: 'LAG',
-          DHCP: 'Get IP Address Automatically from DHCP',
-          'Link Aggregation Protocol': 'LACP',
-          MTU: 1024,
-          'Transmit Hash Policy': 'LAYER2+3',
-          'LACPDU Rate': 'SLOW',
-          'Link Aggregation Interfaces': ['enp0s3'],
-        },
-      );
+      await setSelectValue('type', 'Link Aggregation');
+      await setInputValue('name', 'bond0');
+      await setInputValue('description', 'LAG');
+      await setRadioValue('Get IP Address Automatically from DHCP');
+      await setSelectValue('lag_protocol', 'LACP');
+      await setInputValue('mtu', 1024);
+      await setSelectValue('xmit_hash_policy', 'LAYER2+3');
+      await setSelectValue('lacpdu_rate', 'SLOW');
+      await setSelectValue('lag_ports', 'enp0s3');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
@@ -315,21 +326,32 @@ describe('InterfaceFormComponent', () => {
       );
     });
 
+    it('keeps the Save button disabled for a LAG until the required Interfaces field is filled', async () => {
+      await setSelectValue('type', 'Link Aggregation');
+      await setInputValue('name', 'bond0');
+      await setSelectValue('lag_protocol', 'LACP');
+      await setSelectValue('xmit_hash_policy', 'LAYER2+3');
+      await setSelectValue('lacpdu_rate', 'SLOW');
+
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      await setSelectValue('lag_ports', 'enp0s3');
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
     it('saves a new VLAN interface when form is submitted for a VLAN', async () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
-      await form.fillForm(
-        {
-          Type: 'VLAN',
-          Name: 'vlan1',
-          Description: 'New VLAN',
-          'Autoconfigure IPv6': true,
-          'Parent Interface': 'enp0s3',
-          'VLAN Tag': 2,
-          'Priority Code Point': 'Excellent effort',
-        },
-      );
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await setSelectValue('type', 'VLAN');
+      await setInputValue('name', 'vlan1');
+      await setInputValue('description', 'New VLAN');
+      await setCheckbox('Autoconfigure IPv6', true);
+      await setSelectValue('vlan_parent_interface', 'enp0s3');
+      await setInputValue('vlan_tag', 2);
+      await setSelectValue('vlan_pcp', 'Excellent effort');
+
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
@@ -359,17 +381,13 @@ describe('InterfaceFormComponent', () => {
       aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeTruthy();
 
-      await form.fillForm({
-        DHCP: 'Get IP Address Automatically from DHCP',
-      });
+      await setRadioValue('Get IP Address Automatically from DHCP');
 
       aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeNull();
 
-      await form.fillForm({
-        DHCP: 'Define Static IP Addresses',
-        'Autoconfigure IPv6': true,
-      });
+      await setRadioValue('Define Static IP Addresses');
+      await setCheckbox('Autoconfigure IPv6', true);
 
       aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeTruthy();
@@ -377,11 +395,9 @@ describe('InterfaceFormComponent', () => {
 
     it('disables save button when HA is enabled', async () => {
       // Fill form with valid data first
-      await form.fillForm({
-        Type: 'Bridge',
-        Name: 'br0',
-        Description: 'Test Bridge',
-      });
+      await setSelectValue('type', 'Bridge');
+      await setInputValue('name', 'br0');
+      await setInputValue('description', 'Test Bridge');
 
       const networkService = spectator.inject(NetworkService);
       jest.spyOn(networkService, 'getIsHaEnabled').mockReturnValue(of(true));
@@ -389,7 +405,7 @@ describe('InterfaceFormComponent', () => {
       spectator.component.ngOnInit();
       spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Reset to HA disabled
@@ -409,21 +425,23 @@ describe('InterfaceFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
     it('shows values for a network interface when it is opened for edit', async () => {
-      const values = await form.getValues();
-      expect(values).toEqual({
-        Name: 'enp0s6',
-        DHCP: 'Define Static IP Addresses',
-        'Autoconfigure IPv6': false,
-        Description: 'Main NIC',
-        MTU: '1500',
-        'IP Address': '10.2.3.4/24',
-      });
+      expect(await getInputValue('name')).toBe('enp0s6');
+      expect(await getInputValue('description')).toBe('Main NIC');
+      expect(await getInputValue('mtu')).toBe('1500');
+
+      const dhcpRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Define Static IP Addresses' }));
+      expect(await dhcpRadio.isChecked()).toBe(true);
+
+      const ipv6Auto = await loader.getHarness(TnCheckboxHarness.with({ label: 'Autoconfigure IPv6' }));
+      expect(await ipv6Auto.isChecked()).toBe(false);
+
+      const ipAddress = await loader.getHarness(IxIpInputWithNetmaskHarness.with({ label: 'IP Address' }));
+      expect(await ipAddress.getValue()).toBe('10.2.3.4/24');
     });
   });
 
@@ -444,13 +462,14 @@ describe('InterfaceFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
     it('disables parent interface fields when VLAN is opened for edit', async () => {
-      const parentInterfaceField = await loader.getHarness(IxSelectHarness.with({ label: 'Parent Interface' }));
+      const parentInterfaceField = await loader.getHarness(
+        TnSelectHarness.with({ selector: '[formControlName="vlan_parent_interface"]' }),
+      );
       expect(await parentInterfaceField.isDisabled()).toBe(true);
     });
   });
@@ -473,7 +492,6 @@ describe('InterfaceFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
@@ -483,7 +501,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('renders Enable Learning for edit', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Enable Learning' }));
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable Learning' }));
       expect(await checkbox.isChecked()).toBe(false);
     });
   });
@@ -505,7 +523,6 @@ describe('InterfaceFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
@@ -533,7 +550,6 @@ describe('InterfaceFormComponent', () => {
       spectator.detectChanges();
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
@@ -543,7 +559,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('disables Autoconfigure IPv6 when failover is licensed', async () => {
-      const ipv6AutoCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Autoconfigure IPv6' }));
+      const ipv6AutoCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Autoconfigure IPv6' }));
       expect(await ipv6AutoCheckbox.isDisabled()).toBe(true);
       expect(await ipv6AutoCheckbox.isChecked()).toBe(false);
     });
@@ -551,14 +567,12 @@ describe('InterfaceFormComponent', () => {
     it('shows and saves additional fields in Aliases when failover is licensed', async () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
 
-      await form.fillForm({
-        Type: 'Bridge',
-        Name: 'br0',
-        Critical: true,
-        'Failover Group': '1',
-      });
+      await setSelectValue('type', 'Bridge');
+      await setInputValue('name', 'br0');
+      await setCheckbox('Critical', true);
+      await setSelectValue('failover_group', '1');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [
@@ -584,15 +598,17 @@ describe('InterfaceFormComponent', () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
 
       await aliasesList!.pressAddButton();
-      await form.fillForm({
-        Type: 'Bridge',
-        Name: 'br0',
-        'IP Address (This Controller)': '10.2.3.4/24',
-        'IP Address (TrueNAS Controller 2)': '192.168.1.2',
-        'Virtual IP Address (Failover Address)': '192.168.1.3',
-      });
+      await setSelectValue('type', 'Bridge');
+      await setInputValue('name', 'br0');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const ipAddress = await loader.getHarness(
+        IxIpInputWithNetmaskHarness.with({ label: 'IP Address (This Controller)' }),
+      );
+      await ipAddress.setValue('10.2.3.4/24');
+      await setInputValue('failover_address', '192.168.1.2');
+      await setInputValue('failover_virtual_address', '192.168.1.3');
+
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [
@@ -645,7 +661,6 @@ describe('InterfaceFormComponent', () => {
       await spectator.fixture.whenStable();
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
     });
 
@@ -654,20 +669,20 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('shows FEC Mode dropdown when interface supports FEC on enterprise', async () => {
-      const fecModeSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'FEC Mode' }));
+      const fecModeSelect = await loader.getHarnessOrNull(
+        TnSelectHarness.with({ selector: '[formControlName="fec_mode"]' }),
+      );
       expect(fecModeSelect).toBeTruthy();
     });
 
     it('sends fec_mode when saving on enterprise with FEC support', async () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
 
-      await form.fillForm({
-        'FEC Mode': 'rs',
-      });
+      await setSelectValue('fec_mode', 'rs');
 
       spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
       await saveButton.click();
 
@@ -697,7 +712,9 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('does not show FEC Mode dropdown on non-enterprise systems', async () => {
-      const fecModeSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'FEC Mode' }));
+      const fecModeSelect = await loader.getHarnessOrNull(
+        TnSelectHarness.with({ selector: '[formControlName="fec_mode"]' }),
+      );
       expect(fecModeSelect).toBeNull();
     });
   });
@@ -729,7 +746,9 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('does not show FEC Mode when available_fec_modes returns empty array', async () => {
-      const fecModeSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'FEC Mode' }));
+      const fecModeSelect = await loader.getHarnessOrNull(
+        TnSelectHarness.with({ selector: '[formControlName="fec_mode"]' }),
+      );
       expect(fecModeSelect).toBeNull();
     });
   });
