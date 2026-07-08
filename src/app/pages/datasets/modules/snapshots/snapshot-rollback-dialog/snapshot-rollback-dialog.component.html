@@ -50,7 +50,7 @@
           [tooltip]="recursive.tooltip | translate"
         >
           <div role="radiogroup" [attr.aria-label]="recursive.label | translate">
-            @for (option of recursive.options; track option.value) {
+            @for (option of recursive.options; track option.value; let index = $index) {
               <div class="radio-option">
                 <tn-radio
                   name="recursive"
@@ -58,8 +58,9 @@
                   [formControlName]="recursive.fcName"
                   [value]="option.value"
                   [label]="option.label | translate"
+                  [attr.aria-describedby]="'recursive-hint-' + index"
                 ></tn-radio>
-                <p class="radio-option-hint">{{ option.hint | translate }}</p>
+                <p class="radio-option-hint" [id]="'recursive-hint-' + index">{{ option.hint | translate }}</p>
               </div>
             }
           </div>

@@ -8,7 +8,7 @@ import {
   TnButtonHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -128,6 +128,26 @@ describe('SnapshotListComponent', () => {
     );
     expect(await table.getCellText(0, 'used')).toBe('1.49 TiB');
     expect(await table.getCellText(0, 'referenced')).toBe('1.49 TiB');
+  });
+
+  it('snaps the extra-columns toggle back when the confirmation is cancelled', async () => {
+    // Model the real async confirm dialog: the toggle flips on optimistically, then
+    // the user cancels. tn-slide-toggle latches its visual state internally, so this
+    // proves the control value is written back (not merely that the signal stayed
+    // false) — with the old markForCheck-only revert the switch stays stuck on.
+    const confirmResult$ = new Subject<boolean>();
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(confirmResult$);
+    const slideToggle = await loader.getHarness(TnSlideToggleHarness.with({ label: 'Show extra columns' }));
+
+    await slideToggle.toggle();
+    spectator.detectChanges();
+    expect(await slideToggle.isChecked()).toBe(true);
+
+    confirmResult$.next(false);
+    spectator.detectChanges();
+
+    expect(await slideToggle.isChecked()).toBe(false);
+    expect(await table.getHeaderTexts()).not.toContain('Used');
   });
 
   it('clears the current selection when the snapshot list reloads', async () => {

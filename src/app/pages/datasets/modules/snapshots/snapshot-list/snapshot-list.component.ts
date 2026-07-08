@@ -3,6 +3,7 @@ import {
   computed, effect, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -56,6 +57,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     TnSpinnerComponent,
     TnSlideToggleComponent,
     TranslateModule,
+    ReactiveFormsModule,
     BasicSearchComponent,
     TnButtonComponent,
     RequiresRolesDirective,
@@ -90,6 +92,11 @@ export class SnapshotListComponent implements OnInit {
   dataProvider = new ArrayDataProvider<ZfsSnapshot>();
   snapshots: ZfsSnapshot[] = [];
   protected readonly showExtraColumns = signal(false);
+  // Drives the slide toggle through a ControlValueAccessor rather than a plain
+  // `[checked]` binding: tn-slide-toggle latches its own visual state internally,
+  // so only writing the control value back (`writeValue`) can snap the switch to a
+  // prior position when the user cancels the confirmation. See onToggleExtraColumns.
+  protected readonly showExtraColumnsControl = new FormControl(false, { nonNullable: true });
   loadingExtraColumns$ = new BehaviorSubject(true);
   protected readonly loadingExtraColumns = toSignal(this.loadingExtraColumns$, { initialValue: true });
   isLoading$ = combineLatest([
@@ -171,6 +178,10 @@ export class SnapshotListComponent implements OnInit {
       this.previousExpandedRows = collapsed;
       table.expandedRows.set(collapsed);
     });
+
+    this.showExtraColumnsControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((willShow) => this.onToggleExtraColumns(willShow));
   }
 
   ngOnInit(): void {
@@ -199,6 +210,12 @@ export class SnapshotListComponent implements OnInit {
       // selection now points at stale references that no longer map to visible
       // rows. Clear it before swapping in the new set so the batch-operations
       // toolbar can't act on a phantom selection.
+      //
+      // Reconciling the prior selection by `name` (to preserve an in-progress
+      // batch across a background reload) isn't achievable here: tn-table clears
+      // its own selection whenever the `dataSource` reference changes, so any rows
+      // we re-selected would be wiped by that internal effect on the next tick.
+      // Preserving intent would need key-based selection support in tn-table.
       this.table()?.selection.clear();
       this.selectedSnapshots.set([]);
       this.snapshots = [...snapshots];
@@ -214,6 +231,8 @@ export class SnapshotListComponent implements OnInit {
       take(1),
     ).subscribe((showExtraColumns) => {
       this.showExtraColumns.set(showExtraColumns);
+      // Sync the toggle without re-entering the confirm flow.
+      this.showExtraColumnsControl.setValue(showExtraColumns, { emitEvent: false });
       this.store$.dispatch(snapshotPageEntered());
       this.loadingExtraColumns$.next(false);
     });
@@ -255,9 +274,10 @@ export class SnapshotListComponent implements OnInit {
             this.loadingExtraColumns$.next(false);
           });
         } else {
-          // Revert the toggle: [checked] is bound to the unchanged signal, so a
-          // change-detection tick snaps the switch back to its previous position.
-          this.cdr.markForCheck();
+          // Revert the toggle. tn-slide-toggle latches its visual state internally,
+          // so leaving the signal unchanged isn't enough — write the prior value back
+          // through the control (emitEvent: false to avoid re-triggering the confirm).
+          this.showExtraColumnsControl.setValue(!willShow, { emitEvent: false });
         }
       });
   }
@@ -289,6 +309,10 @@ export class SnapshotListComponent implements OnInit {
 
   protected onSortChange(event: TnSortEvent): void {
     const direction = event.direction === '' ? null : (event.direction as SortDirection);
+    // `dataset`/`snapshot_name` are real ZfsSnapshot keys the data provider can sort on
+    // directly. `used`/`created`/`referenced` are display-only columns whose values live
+    // under `properties`, so the cast is nominal for those — the sortByMap override below
+    // supplies the actual accessor and `propertyName` is never read for them.
     const sorting: TableSort<ZfsSnapshot> = {
       propertyName: direction ? (event.column as keyof ZfsSnapshot) : null,
       direction,

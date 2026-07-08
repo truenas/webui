@@ -6,10 +6,9 @@
     ></tn-spinner>
   } @else {
     <tn-slide-toggle
-      [checked]="showExtraColumns()"
+      [formControl]="showExtraColumnsControl"
       [testId]="'show-extra-columns'"
       [label]="'Show extra columns' | translate"
-      (change)="onToggleExtraColumns($event)"
     ></tn-slide-toggle>
   }
 
