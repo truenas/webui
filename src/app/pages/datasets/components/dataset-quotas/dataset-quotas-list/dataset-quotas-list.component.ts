@@ -178,7 +178,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   protected ariaLabel(row: DatasetQuota): string {
-    return [row.name, this.translate.instant('Dataset Quota')].join(' ');
+    return [this.nameValue(row), this.translate.instant('Dataset Quota')].join(' ');
   }
 
   protected onSortChange(event: TnSortEvent): void {

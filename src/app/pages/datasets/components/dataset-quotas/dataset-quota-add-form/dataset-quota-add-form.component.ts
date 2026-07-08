@@ -61,8 +61,8 @@ export class DatasetQuotaAddFormComponent extends IxFormHostForm {
 
   protected get objectQuotaLabel(): string {
     return this.quotaType() === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.label
-      : helptextQuotas.groups.objectQuota.label;
+      ? this.translate.instant(helptextQuotas.users.objQuota.label)
+      : this.translate.instant(helptextQuotas.groups.objectQuota.label);
   }
 
   protected get dataQuotaTooltip(): string {
@@ -75,8 +75,8 @@ export class DatasetQuotaAddFormComponent extends IxFormHostForm {
 
   protected get objectQuotaTooltip(): string {
     return this.quotaType() === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.tooltip
-      : helptextQuotas.groups.objectQuota.tooltip;
+      ? this.translate.instant(helptextQuotas.users.objQuota.tooltip)
+      : this.translate.instant(helptextQuotas.groups.objectQuota.tooltip);
   }
 
   protected form = this.formBuilder.nonNullable.group({

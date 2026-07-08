@@ -4,7 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
@@ -36,7 +36,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TranslateModule,
   ],
 })
 export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnInit {
@@ -60,8 +59,8 @@ export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnI
 
   protected get nameLabel(): string {
     return this.quotaType() === DatasetQuotaType.User
-      ? helptextQuotas.users.nameLabel
-      : helptextQuotas.groups.nameLabel;
+      ? this.translate.instant(helptextQuotas.users.nameLabel)
+      : this.translate.instant(helptextQuotas.groups.nameLabel);
   }
 
   protected get dataQuotaLabel(): string {
@@ -82,8 +81,8 @@ export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnI
 
   protected get objectQuotaLabel(): string {
     return this.quotaType() === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.label
-      : helptextQuotas.groups.objectQuota.label;
+      ? this.translate.instant(helptextQuotas.users.objQuota.label)
+      : this.translate.instant(helptextQuotas.groups.objectQuota.label);
   }
 
   protected get dataQuotaTooltip(): string {
@@ -106,8 +105,8 @@ export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnI
 
   protected get objectQuotaTooltip(): string {
     return this.quotaType() === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.tooltip
-      : helptextQuotas.groups.objectQuota.tooltip;
+      ? this.translate.instant(helptextQuotas.users.objQuota.tooltip)
+      : this.translate.instant(helptextQuotas.groups.objectQuota.tooltip);
   }
 
   protected form = this.formBuilder.group({

@@ -7,7 +7,7 @@
   (closed)="closed.emit($event)"
 >
   <tn-form-section>
-    <tn-form-field [label]="nameLabel | translate">
+    <tn-form-field [label]="nameLabel">
       <tn-input
         formControlName="name"
         [readonly]="true"
@@ -25,8 +25,8 @@
     </tn-form-field>
 
     <tn-form-field
-      [label]="objectQuotaLabel | translate"
-      [tooltip]="objectQuotaTooltip | translate"
+      [label]="objectQuotaLabel"
+      [tooltip]="objectQuotaTooltip"
     >
       <tn-input
         formControlName="obj_quota"
