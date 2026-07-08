@@ -1,8 +1,10 @@
 .header {
   align-items: baseline;
   border-bottom: 1px solid var(--lines);
+  column-gap: 8px;
   display: flex;
-  padding: 8px 10px;
+  // Match the horizontal padding of the sections below so the title lines up with the content.
+  padding: 12px 24px;
 
   .header-title {
     font-size: 1.4rem;
@@ -40,22 +42,16 @@
 }
 
 .form {
+  // Let each section own its horizontal padding so the title, section content and footer
+  // buttons all share one left edge.
   display: block;
-  padding: 5px 10px;
-}
-
-// TEMP: pierce tn-form-section's private __body to widen the field gap beyond the
-// library default (1.25rem). Remove once @truenas/ui-components exposes a
-// gap/density input on tn-form-section.
-:host ::ng-deep fieldset.tn-form-section > .tn-form-section__body {
-  gap: 1.75rem;
 }
 
 .owner-and-access {
   border-bottom: 1px solid var(--lines);
-  column-gap: 40px;
+  column-gap: 64px;
   display: flex;
-  padding: 16px 15px 24px;
+  padding: 16px 24px 24px;
 
   .owner-fields,
   .access-fields {
@@ -65,7 +61,7 @@
 
 .advanced-fields {
   border-bottom: 1px solid var(--lines);
-  padding: 16px 15px 20px;
+  padding: 16px 24px 20px;
 }
 
 .access-mode {
@@ -82,19 +78,26 @@
     text-align: center;
   }
 
-  // TEMP: pierce tn-checkbox's private __text to visually hide the per-cell label
-  // (kept in the DOM as the checkbox's accessible name). Remove once
-  // @truenas/ui-components ships a label-hidden / aria-label-only checkbox mode.
-  &__checkbox ::ng-deep .tn-checkbox__text {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
+  &__checkbox {
+    // The checkbox host is inline and wraps a block-level control, so `text-align: center`
+    // on the cell can't centre it. Centre it here so it lines up under its column header.
+    display: flex;
+    justify-content: center;
+
+    // TEMP: pierce tn-checkbox's private __text to visually hide the per-cell label
+    // (kept in the DOM as the checkbox's accessible name). Remove once
+    // @truenas/ui-components ships a label-hidden / aria-label-only checkbox mode.
+    ::ng-deep .tn-checkbox__text {
+      border: 0;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
   }
 }
 
@@ -104,7 +107,7 @@
 
 .form-actions {
   display: flex;
-  padding: 25px;
+  padding: 24px;
 
   tn-button {
     margin-right: 10px;

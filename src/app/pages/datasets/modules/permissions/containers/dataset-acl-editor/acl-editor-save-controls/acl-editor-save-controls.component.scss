@@ -1,6 +1,13 @@
 .checkboxes {
   margin-bottom: 16px;
   padding: 0 5px;
+
+  // Space the recursive checkbox from the traverse checkbox that appears below it. (The
+  // parent's `.recursive-checkbox` rule can't reach here — it's a separate component.)
+  .recursive-checkbox {
+    display: block;
+    margin-bottom: 8px;
+  }
 }
 
 .save-button {

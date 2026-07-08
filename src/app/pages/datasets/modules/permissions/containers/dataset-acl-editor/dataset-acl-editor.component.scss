@@ -109,11 +109,6 @@
   min-width: 240px;
   padding-bottom: 40px;
 
-  .recursive-checkbox {
-    margin-bottom: 5px;
-    margin-top: 1px;
-  }
-
   .presets-label {
     font-size: 14px;
     margin-bottom: 5px;
@@ -138,7 +133,12 @@
       margin-right: 0;
     }
 
-    button {
+    // `a` covers routerLink buttons (e.g. Permissions Editor), which tn-button renders as an
+    // anchor rather than a <button>. border-box keeps width:100% from adding the anchor's own
+    // padding on top (which made it overflow the button row).
+    button,
+    a {
+      box-sizing: border-box;
       white-space: nowrap;
       width: 100%;
     }

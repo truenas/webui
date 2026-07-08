@@ -73,6 +73,19 @@ describe('AclEditorSaveControlsComponent', () => {
   });
 
 
+  it('hides the Traverse checkbox again when the recursive warning is cancelled', async () => {
+    (spectator.inject(DialogService).confirm as jest.Mock).mockReturnValueOnce(of(false));
+
+    const recursiveCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Apply permissions recursively' }));
+    await recursiveCheckbox.check();
+    spectator.detectChanges();
+
+    const traverseCheckbox = await loader.getHarnessOrNull(
+      TnCheckboxHarness.with({ label: 'Apply permissions to child datasets' }),
+    );
+    expect(traverseCheckbox).toBeNull();
+  });
+
   it('saves current ACL settings with validation always enabled when save button is pressed', async () => {
     const recursiveCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Apply permissions recursively' }));
     await recursiveCheckbox.check();

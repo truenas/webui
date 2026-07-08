@@ -1,18 +1,11 @@
 :host {
   display: block;
   max-width: 800px;
-  padding: 16px 5px;
-}
-
-// TEMP: pierce tn-form-section's private __body to widen the field gap beyond the
-// library default (1.25rem). Remove once @truenas/ui-components exposes a
-// gap/density input on tn-form-section.
-:host ::ng-deep fieldset.tn-form-section > .tn-form-section__body {
-  gap: 1.75rem;
+  // Give the entry form breathing room from the ACL list column on its left.
+  padding: 16px 24px;
 }
 
 .label {
-  // TODO: Replace with ix-label
   margin-top: 10px;
 }
 
@@ -21,15 +14,18 @@
 }
 
 .checkbox-list {
+  column-gap: 24px;
   display: flex;
   flex-wrap: wrap;
   row-gap: 8px;
 
+  // Columns with a gap between them: subtract the shared gap from each track so the row
+  // still fits (2 cols share one 24px gap, 3 cols share two).
   > tn-checkbox {
-    flex: 0 0 50%;
+    flex: 0 0 calc(50% - 12px);
   }
 
   &.checkbox-list--thirds > tn-checkbox {
-    flex: 0 0 33.3%;
+    flex: 0 0 calc(33.333% - 16px);
   }
 }

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -32,6 +34,7 @@ export class AclEditorSaveControlsComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   readonly canBeSaved = input(false);
   readonly ownerValues = input.required<{
@@ -83,6 +86,9 @@ export class AclEditorSaveControlsComponent implements OnInit {
       }
 
       this.saveParameters.patchValue({ recursive: false });
+      // OnPush: the dialog-cancel path patches the form outside a template event, so mark for
+      // check to re-run the `@if (recursive)` that hides the traverse checkbox.
+      this.cdr.markForCheck();
     });
   }
 }
