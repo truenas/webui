@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, signal,
 } from '@angular/core';
@@ -7,10 +8,11 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnAutocompleteComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, filter, switchMap, tap,
+  BehaviorSubject, Observable, debounceTime, filter, map, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
@@ -23,16 +25,15 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
+import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -41,6 +42,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -58,15 +60,14 @@ export interface NfsFormData {
   imports: [
     ModalHeaderComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
+    TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    IxUserComboboxComponent,
-    IxGroupComboboxComponent,
+    TnAutocompleteComponent,
     IxListComponent,
     IxListItemComponent,
     IxIpInputWithNetmaskComponent,
@@ -75,6 +76,7 @@ export interface NfsFormData {
     RequiresRolesDirective,
     TnButtonComponent,
     TranslateModule,
+    AsyncPipe,
   ],
 })
 export class NfsFormComponent extends SidePanelForm implements OnInit {
@@ -85,6 +87,8 @@ export class NfsFormComponent extends SidePanelForm implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private datasetService = inject(DatasetService);
+  private userService = inject(UserService);
+  private existenceValidation = inject(UserGroupExistenceValidationService);
   private store$ = inject<Store<ServicesState>>(Store);
 
   /** Form data when hosted in a `<tn-side-panel>` (the legacy SlideIn host provides it via `slideInRef`). */
@@ -146,6 +150,22 @@ export class NfsFormComponent extends SidePanelForm implements OnInit {
     { label: 'KRB5P', value: NfsSecurityProvider.Krb5p },
   ]);
 
+  // Server-searched option streams for the user/group autocompletes. Both user fields
+  // (maproot/mapall) share one stream — options only matter while that dropdown is open.
+  protected readonly userSearch$ = new BehaviorSubject('');
+  protected readonly userOptions$ = this.userSearch$.pipe(
+    debounceTime(defaultDebounceTimeMs),
+    switchMap((query) => this.userService.userQueryDsCache(query)),
+    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
+  );
+
+  protected readonly groupSearch$ = new BehaviorSubject('');
+  protected readonly groupOptions$ = this.groupSearch$.pipe(
+    debounceTime(defaultDebounceTimeMs),
+    switchMap((query) => this.userService.groupQueryDsCache(query)),
+    map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
+  );
+
   private setNfsShareForEdit(share: NfsShare): void {
     share.networks.forEach(() => this.addNetworkControl());
     share.hosts.forEach(() => this.addHostControl());
@@ -160,6 +180,13 @@ export class NfsFormComponent extends SidePanelForm implements OnInit {
       getRootDatasetsValidator(this.existingNfsShare ? [this.existingNfsShare.path] : []),
       this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
     ));
+
+    // Parity with the former ix-user/group-combobox controls: custom-typed values
+    // must exist on the system (empty values pass).
+    this.form.controls.maproot_user.addAsyncValidators(this.existenceValidation.validateUserExists());
+    this.form.controls.mapall_user.addAsyncValidators(this.existenceValidation.validateUserExists());
+    this.form.controls.maproot_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
+    this.form.controls.mapall_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
 
     if (this.defaultNfsShare) {
       this.form.patchValue(this.defaultNfsShare);

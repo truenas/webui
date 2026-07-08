@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
+  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -72,6 +72,20 @@ describe('NfsFormComponent', () => {
   const setDescription = async (value: string): Promise<void> => {
     const description = await loader.getHarness(TnInputHarness.with({ name: 'comment' }));
     await description.setValue(value);
+  };
+
+  // The four user/group autocompletes in Access-fieldset DOM order.
+  const getAutocomplete = async (
+    field: 'maproot_user' | 'maproot_group' | 'mapall_user' | 'mapall_group',
+  ): Promise<TnAutocompleteHarness> => {
+    const index = ['maproot_user', 'maproot_group', 'mapall_user', 'mapall_group'].indexOf(field);
+    const autocompletes = await loader.getAllHarnesses(TnAutocompleteHarness);
+    return autocompletes[index];
+  };
+
+  const typeCustomValue = async (harness: TnAutocompleteHarness, value: string): Promise<void> => {
+    await harness.setInputValue(value);
+    await harness.blur();
   };
 
   const createComponent = createComponentFactory({
@@ -145,11 +159,11 @@ describe('NfsFormComponent', () => {
     it('shows Access fields when Advanced Options button is pressed', async () => {
       await clickButton('Advanced Options');
 
-      const fields = Object.keys(await form.getControlHarnessesDict());
-      expect(fields).toContain('Maproot User');
-      expect(fields).toContain('Maproot Group');
-      expect(fields).toContain('Mapall User');
-      expect(fields).toContain('Mapall Group');
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Maproot User' }))).toBe(true);
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Maproot Group' }))).toBe(true);
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Mapall User' }))).toBe(true);
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Mapall Group' }))).toBe(true);
+      expect(await loader.getAllHarnesses(TnAutocompleteHarness)).toHaveLength(4);
       expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Read Only' }))).toBe(true);
     });
 
@@ -169,9 +183,9 @@ describe('NfsFormComponent', () => {
 
       await form.fillForm({
         Path: '/mnt/new/ds',
-        'Maproot User': 'news',
-        'Maproot Group': 'sys',
       });
+      await typeCustomValue(await getAutocomplete('maproot_user'), 'news');
+      await typeCustomValue(await getAutocomplete('maproot_group'), 'sys');
       await setDescription('New share');
       const readOnly = await loader.getHarness(TnCheckboxHarness.with({ label: 'Read Only' }));
       await readOnly.check();
@@ -245,9 +259,9 @@ describe('NfsFormComponent', () => {
       const values = await form.getValues();
       expect(values).toMatchObject({
         Path: '/mnt/nfs/ds',
-        'Maproot User': 'news',
-        'Maproot Group': 'operator',
       });
+      expect(await (await getAutocomplete('maproot_user')).getInputValue()).toBe('news');
+      expect(await (await getAutocomplete('maproot_group')).getInputValue()).toBe('operator');
 
       const networks = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness.with({ label: 'Network' }));
       const hosts = await loader.getAllHarnesses(IxInputHarness.with({ label: 'Authorized Hosts and IP addresses' }));
