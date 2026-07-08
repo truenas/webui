@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, input, computed,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -148,7 +148,9 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
     enable_learning: [true],
 
     // Lag fields
-    lag_protocol: [LinkAggregationProtocol.None],
+    // The backend's `lag_supported_protocols` never returns NONE, so start unselected (placeholder)
+    // and force an explicit choice rather than showing a phantom NONE that isn't in the options.
+    lag_protocol: new FormControl(null as LinkAggregationProtocol | null),
     xmit_hash_policy: [XmitHashPolicy.Layer2Plus3],
     lacpdu_rate: [LacpduRate.Slow],
     lag_ports: [[] as string[]],
@@ -253,6 +255,7 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
 
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();
+    this.updateRequiredValidatorsOnTypeChange();
     this.checkFailoverDisabled();
 
     if (this.existingInterface) {
@@ -403,6 +406,35 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
       });
   }
 
+  /**
+   * The type-specific selects are marked required in the template, but that only draws the asterisk —
+   * it attaches no validator, so `form.invalid` (and thus the Save button) ignored them. Attach
+   * `Validators.required` to the active type's fields and clear it from the others on every change.
+   */
+  private updateRequiredValidatorsOnTypeChange(): void {
+    this.form.controls.type.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((type) => this.applyTypeRequiredValidators(type));
+  }
+
+  private applyTypeRequiredValidators(type: NetworkInterfaceType | null): void {
+    const controls = this.form.controls;
+    const requiredControlsByType = new Map<NetworkInterfaceType, AbstractControl[]>([
+      [NetworkInterfaceType.LinkAggregation, [controls.lag_protocol, controls.lag_ports]],
+      [NetworkInterfaceType.Vlan, [controls.vlan_parent_interface, controls.vlan_tag]],
+    ]);
+
+    const activeControls = (type && requiredControlsByType.get(type)) || [];
+    [...requiredControlsByType.values()].flat().forEach((control) => {
+      if (activeControls.includes(control)) {
+        control.addValidators(Validators.required);
+      } else {
+        control.removeValidators(Validators.required);
+      }
+      control.updateValueAndValidity({ emitEvent: false });
+    });
+  }
+
   private setOptionsForEdit(nic: NetworkInterface): void {
     if (this.isBridge) {
       this.bridgeMembers$ = this.networkService
@@ -502,7 +534,7 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
     } else if (this.isLag) {
       params = {
         ...params,
-        lag_protocol: formValues.lag_protocol,
+        lag_protocol: formValues.lag_protocol as LinkAggregationProtocol,
         xmit_hash_policy: formValues.xmit_hash_policy,
         lacpdu_rate: formValues.lacpdu_rate,
         lag_ports: formValues.lag_ports,

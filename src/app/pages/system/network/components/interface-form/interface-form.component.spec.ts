@@ -167,8 +167,8 @@ describe('InterfaceFormComponent', () => {
           enp0s4: 'enp0s4',
         })),
         getLaggProtocolChoices: () => of([
-          LinkAggregationProtocol.None,
           LinkAggregationProtocol.Lacp,
+          LinkAggregationProtocol.Failover,
           LinkAggregationProtocol.LoadBalance,
         ]),
         getLaggPortsChoices: jest.fn(() => of({
@@ -324,6 +324,20 @@ describe('InterfaceFormComponent', () => {
           data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
         },
       );
+    });
+
+    it('keeps the Save button disabled for a LAG until the required Interfaces field is filled', async () => {
+      await setSelectValue('type', 'Link Aggregation');
+      await setInputValue('name', 'bond0');
+      await setSelectValue('lag_protocol', 'LACP');
+      await setSelectValue('xmit_hash_policy', 'LAYER2+3');
+      await setSelectValue('lacpdu_rate', 'SLOW');
+
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      await setSelectValue('lag_ports', 'enp0s3');
+      expect(await saveButton.isDisabled()).toBe(false);
     });
 
     it('saves a new VLAN interface when form is submitted for a VLAN', async () => {
