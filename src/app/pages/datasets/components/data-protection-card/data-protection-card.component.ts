@@ -25,7 +25,6 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
     RequiresRolesDirective,
     TnTestIdDirective,
     UiSearchDirective,
-    RequiresRolesDirective,
     TranslateModule,
     RouterLink,
   ],

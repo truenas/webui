@@ -4,43 +4,11 @@
 @include tn-detail-card;
 
 :host {
-  .details-item {
-    @include fade-in();
+  @include tn-details-item();
 
+  .details-item .value {
     align-items: center;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-bottom: 4px;
-
-    &:first-child {
-      margin-top: 0;
-    }
-
-    .label {
-      font-weight: bold;
-      margin-right: 5px;
-      white-space: normal;
-    }
-
-    .value {
-      align-items: center;
-      display: flex;
-      font-weight: normal;
-      gap: 5px;
-      margin-right: 5px;
-      white-space: normal;
-    }
-
-    a {
-      color: var(--primary);
-      cursor: pointer;
-      margin-left: auto;
-      max-width: 100%;
-      overflow: hidden;
-      text-decoration: underline;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+    gap: 5px;
   }
 }

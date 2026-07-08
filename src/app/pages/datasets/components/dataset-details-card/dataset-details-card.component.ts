@@ -123,9 +123,7 @@ export class DatasetDetailsCardComponent {
     }];
   });
 
-  protected get isRootDataset(): boolean {
-    return !!this.dataset() && isRootDataset(this.dataset());
-  }
+  protected readonly isRootDataset = computed(() => !!this.dataset() && isRootDataset(this.dataset()));
 
   private deleteDataset(): void {
     this.tnDialog.open(DeleteDatasetDialog, { data: this.dataset() })

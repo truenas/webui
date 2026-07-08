@@ -9,30 +9,11 @@
     width: 24px;
   }
 
+  @include tn-details-item();
+
   .details-item {
-    @include fade-in();
-
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-bottom: 4px;
+    // Detail rows here top-align (multi-line values wrap); the shared mixin centres.
     align-items: flex-start;
-
-    &:first-child {
-      margin-top: 0;
-    }
-
-    .label {
-      font-weight: bold;
-      margin-right: 5px;
-      white-space: normal;
-    }
-
-    .value {
-      font-weight: normal;
-      margin-right: 5px;
-      white-space: normal;
-    }
 
     .root-dataset {
       align-items: center;

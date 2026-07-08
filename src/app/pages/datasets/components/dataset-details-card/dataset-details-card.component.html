@@ -4,7 +4,7 @@
   [headerMenu]="actionsMenu()"
   [headerMenuTriggerTestId]="'dataset-actions'"
 >
-  @if (isRootDataset) {
+  @if (isRootDataset()) {
     <div class="details-item">
       <div class="label root-dataset">
         {{ 'Root Dataset' | translate }}

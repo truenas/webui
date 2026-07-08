@@ -174,7 +174,6 @@ describe('ZfsEncryptionCardComponent', () => {
     });
 
     const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
-    const unlockHref = await unlockButton.getHref();
 
     expect(await unlockButton.getHref()).toBe('/datasets/pool%2Fdataset/unlock');
   });

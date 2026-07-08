@@ -31,7 +31,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
@@ -90,7 +89,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
   private sharingTierService = inject(SharingTierService);
-  private emptyService = inject(EmptyService);
   private authService = inject(AuthService);
 
   protected tierEnabled = this.sharingTierService.tierEnabled;
@@ -101,6 +99,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   // Width the sticky header is stretched to (the tree's full horizontally-scrollable
   // content width) so its columns line up with the rows and scroll along with them.
   protected ixTreeHeaderWidth: number | null = null;
+  private treeHeaderEl: HTMLElement | null = null;
 
   protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetManagementElements;
@@ -262,7 +261,12 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
 
   protected datasetTreeWrapperScrolled(): void {
     const tree = this.ixTree()?.nativeElement;
-    const treeHeader = this.ixTreeHeader()?.nativeElement?.querySelector<HTMLElement>('.tree-header');
+    // Cache the header element to avoid a DOM query on every scroll event; re-query only
+    // if the cached node was detached (e.g. the tree re-rendered).
+    if (!this.treeHeaderEl?.isConnected) {
+      this.treeHeaderEl = this.ixTreeHeader()?.nativeElement?.querySelector<HTMLElement>('.tree-header') ?? null;
+    }
+    const treeHeader = this.treeHeaderEl;
     if (tree && treeHeader) {
       // Shift the header via transform (not scrollLeft): the sticky header keeps the
       // mixin's `overflow: visible` so it isn't collapsed, and translateX tracks the
