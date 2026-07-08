@@ -103,6 +103,9 @@ describe('DatasetQuotasListComponent', () => {
       ['Test', DatasetQuotaType.User, [['name', '=', null]]],
     );
 
+    expect(await table.getHeaderTexts()).toEqual(
+      ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
+    );
     expect(await table.getRowCount()).toBe(2);
     expect(await table.getRowTexts(0)).toEqual(
       ['daemon', '1', '500 KiB', '—', '25%', '5', '55', '11%', ''],

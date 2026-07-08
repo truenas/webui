@@ -59,7 +59,6 @@ interface QuotaData {
 @Component({
   selector: 'ix-dataset-quotas-list',
   templateUrl: './dataset-quotas-list.component.html',
-  styleUrls: ['./dataset-quotas-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
@@ -178,7 +177,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   protected ariaLabel(row: DatasetQuota): string {
-    return [this.nameValue(row), this.translate.instant('Dataset Quota')].join(' ');
+    return [row.name, this.translate.instant('Dataset Quota')].join(' ');
   }
 
   protected onSortChange(event: TnSortEvent): void {
