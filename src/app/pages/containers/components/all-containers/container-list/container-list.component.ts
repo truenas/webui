@@ -10,6 +10,7 @@ import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-i
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { distinctUntilChanged, map, tap } from 'rxjs';
 import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -18,12 +19,13 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
 import { ContainerRowComponent } from 'app/pages/containers/components/all-containers/container-list/container-row/container-row.component';
-import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 @Component({
   selector: 'ix-container-list',
@@ -39,6 +41,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     EmptyComponent,
     TestDirective,
     ContainerListBulkActionsComponent,
+    TnIconComponent,
   ],
 })
 
@@ -63,6 +66,8 @@ export class ContainerListComponent {
   protected readonly metrics = this.containersStore.metrics;
 
   protected readonly selectedContainer = this.containersStore.selectedContainer;
+  protected readonly sort = this.containersStore.sort;
+  protected readonly sortField = ContainerSortField;
   get isAllSelected(): boolean {
     return this.selection.selected.length === this.filteredContainers().length;
   }
@@ -108,6 +113,22 @@ export class ContainerListComponent {
     setTimeout(() => {
       this.handlePendingGlobalSearchElement();
     });
+  }
+
+  protected sortBy(field: ContainerSortField): void {
+    const current = this.sort();
+    const direction = current.active === field && current.direction === SortDirection.Asc
+      ? SortDirection.Desc
+      : SortDirection.Asc;
+    this.containersStore.setSort({ active: field, direction });
+  }
+
+  protected sortIcon(field: ContainerSortField): 'arrow-up' | 'arrow-down' | null {
+    const current = this.sort();
+    if (current.active !== field) {
+      return null;
+    }
+    return current.direction === SortDirection.Asc ? 'arrow-up' : 'arrow-down';
   }
 
   toggleAllChecked(checked: boolean): void {

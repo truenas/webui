@@ -98,6 +98,24 @@
       justify-content: flex-end;
       padding-right: 12px;
     }
+
+    .cell.sortable {
+      cursor: pointer;
+      gap: 4px;
+      user-select: none;
+
+      &:hover {
+        color: var(--fg1);
+      }
+
+      .sort-icon {
+        --icon-size: 16px;
+
+        font-size: 16px;
+        height: 16px;
+        width: 16px;
+      }
+    }
   }
 
   .containers-header-row,
