@@ -59,6 +59,9 @@
           [testId]="'maproot-user'"
           [options]="(userOptions$ | async) ?? []"
           [allowCustomValue]="true"
+          [loading]="usersLoading()"
+          [loadingText]="'Loading...' | translate"
+          [noResultsText]="'No results found' | translate"
           (searchChange)="userSearch$.next($event)"
         ></tn-autocomplete>
       </tn-form-field>
@@ -72,6 +75,9 @@
           [testId]="'maproot-group'"
           [options]="(groupOptions$ | async) ?? []"
           [allowCustomValue]="true"
+          [loading]="groupsLoading()"
+          [loadingText]="'Loading...' | translate"
+          [noResultsText]="'No results found' | translate"
           (searchChange)="groupSearch$.next($event)"
         ></tn-autocomplete>
       </tn-form-field>
@@ -85,6 +91,9 @@
           [testId]="'mapall-user'"
           [options]="(userOptions$ | async) ?? []"
           [allowCustomValue]="true"
+          [loading]="usersLoading()"
+          [loadingText]="'Loading...' | translate"
+          [noResultsText]="'No results found' | translate"
           (searchChange)="userSearch$.next($event)"
         ></tn-autocomplete>
       </tn-form-field>
@@ -98,6 +107,9 @@
           [testId]="'mapall-group'"
           [options]="(groupOptions$ | async) ?? []"
           [allowCustomValue]="true"
+          [loading]="groupsLoading()"
+          [loadingText]="'Loading...' | translate"
+          [noResultsText]="'No results found' | translate"
           (searchChange)="groupSearch$.next($event)"
         ></tn-autocomplete>
       </tn-form-field>

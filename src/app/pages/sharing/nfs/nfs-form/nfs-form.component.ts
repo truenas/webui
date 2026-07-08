@@ -12,7 +12,8 @@ import {
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  BehaviorSubject, Observable, debounceTime, filter, map, switchMap, tap,
+  BehaviorSubject, Observable, catchError, debounceTime, distinctUntilChanged, filter, map, of, shareReplay,
+  switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
@@ -151,19 +152,43 @@ export class NfsFormComponent extends SidePanelForm implements OnInit {
   ]);
 
   // Server-searched option streams for the user/group autocompletes. Both user fields
-  // (maproot/mapall) share one stream — options only matter while that dropdown is open.
+  // (maproot/mapall) share one stream — options only matter while that dropdown is open —
+  // and shareReplay collapses their two `async` subscribers into a single query per search
+  // (directory-service queries can be slow; never duplicate them). switchMap cancels
+  // in-flight queries on new input; catchError keeps one failed DS query from killing the
+  // stream for the rest of the form's life.
+  protected readonly usersLoading = signal(false);
   protected readonly userSearch$ = new BehaviorSubject('');
   protected readonly userOptions$ = this.userSearch$.pipe(
     debounceTime(defaultDebounceTimeMs),
-    switchMap((query) => this.userService.userQueryDsCache(query)),
+    distinctUntilChanged(),
+    tap(() => this.usersLoading.set(true)),
+    switchMap((query) => this.userService.userQueryDsCache(query).pipe(
+      catchError((error: unknown) => {
+        console.error('User autocomplete fetch failed:', error);
+        return of([]);
+      }),
+    )),
     map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
+    tap(() => this.usersLoading.set(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  protected readonly groupsLoading = signal(false);
   protected readonly groupSearch$ = new BehaviorSubject('');
   protected readonly groupOptions$ = this.groupSearch$.pipe(
     debounceTime(defaultDebounceTimeMs),
-    switchMap((query) => this.userService.groupQueryDsCache(query)),
+    distinctUntilChanged(),
+    tap(() => this.groupsLoading.set(true)),
+    switchMap((query) => this.userService.groupQueryDsCache(query).pipe(
+      catchError((error: unknown) => {
+        console.error('Group autocomplete fetch failed:', error);
+        return of([]);
+      }),
+    )),
     map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
+    tap(() => this.groupsLoading.set(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   private setNfsShareForEdit(share: NfsShare): void {
