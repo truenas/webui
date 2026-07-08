@@ -79,7 +79,7 @@ describe('EditNfsAceComponent', () => {
     const userCombobox = await form.getControl('User') as IxComboboxHarness;
     expect(await userCombobox.getValue()).toBe('trunk');
 
-    const allowRadio = await loader.getHarness(TnRadioHarness.with({ testId: 'radio-type-allow' }));
+    const allowRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Allow' }));
     expect(await allowRadio.isChecked()).toBe(true);
 
     const advancedPermsRadio = await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-advanced' }));
@@ -100,7 +100,7 @@ describe('EditNfsAceComponent', () => {
   });
 
   it('updates value in store when form is updated', async () => {
-    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-type-deny' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Deny' }))).check();
     await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-basic' }))).check();
     await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-flags-type-basic' }))).check();
 
@@ -109,7 +109,7 @@ describe('EditNfsAceComponent', () => {
     );
     await basicPermissionSelect.selectOption('Full Control');
 
-    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-basic-flag-inherit' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Inherit' }))).check();
 
     expect(spectator.inject(DatasetAclEditorStore).updateSelectedAce).toHaveBeenLastCalledWith({
       tag: NfsAclTag.User,
@@ -184,7 +184,7 @@ describe('EditNfsAceComponent', () => {
   it('shows basic flags when flag type is basic', async () => {
     await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-flags-type-basic' }))).check();
 
-    const basicFlagRadio = await loader.getHarness(TnRadioHarness.with({ testId: 'radio-basic-flag-inherit' }));
+    const basicFlagRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Inherit' }));
     expect(basicFlagRadio).toExist();
     const advancedFlagCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'File Inherit' }));
     expect(advancedFlagCheckbox).toBeNull();

@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnRadioComponent,
   TnSelectComponent, TnTooltipDirective,
@@ -45,7 +45,6 @@ export class SelectPresetModalComponent implements OnInit {
   private loader = inject(LoaderService);
   private aclEditorStore = inject(DatasetAclEditorStore);
   private validatorsService = inject(IxValidatorsService);
-  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   data = inject<SelectPresetModalConfig>(DIALOG_DATA);
 
@@ -60,14 +59,15 @@ export class SelectPresetModalComponent implements OnInit {
   protected readonly presetOptions = signal<Option[]>([]);
   presets: AclTemplateByPath[] = [];
 
+  // Hold raw i18n keys and translate in the template so labels stay reactive to language changes.
   readonly usePresetOptions: { label: string; value: boolean; tooltip?: string }[] = [
     {
-      label: this.translate.instant(helptextAcl.typeDialog.selectPreset),
-      tooltip: this.translate.instant(helptextAcl.typeDialog.selectPresetTooltip),
+      label: helptextAcl.typeDialog.selectPreset,
+      tooltip: helptextAcl.typeDialog.selectPresetTooltip,
       value: true,
     },
     {
-      label: this.translate.instant(helptextAcl.typeDialog.createCustom),
+      label: helptextAcl.typeDialog.createCustom,
       value: false,
     },
   ];

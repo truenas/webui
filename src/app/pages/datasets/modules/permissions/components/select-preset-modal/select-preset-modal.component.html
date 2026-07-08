@@ -14,8 +14,8 @@
           name="usePreset"
           formControlName="usePreset"
           [value]="option.value"
-          [label]="option.label"
-          [tnTooltip]="option.tooltip ?? ''"
+          [label]="option.label | translate"
+          [tnTooltip]="option.tooltip ? (option.tooltip | translate) : ''"
           [testId]="['use-preset', option.value ? 'true' : 'false']"
         ></tn-radio>
       }
