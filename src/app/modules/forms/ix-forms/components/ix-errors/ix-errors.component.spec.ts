@@ -95,6 +95,18 @@ describe('IxErrorsComponent', () => {
     expect(spectator.inject(LiveAnnouncer).announce).not.toHaveBeenCalled();
   });
 
+  it('does not display errors for unchecked required checkboxes on init', () => {
+    jest.clearAllMocks();
+
+    const uncheckedRequiredControl = new FormControl(false, [Validators.requiredTrue]);
+
+    spectator.setHostInput('control', uncheckedRequiredControl);
+    spectator.detectComponentChanges();
+
+    expect(spectator.query('.form-error')).not.toExist();
+    expect(spectator.inject(LiveAnnouncer).announce).not.toHaveBeenCalled();
+  });
+
   it('does not mark control as touched when displaying initial errors', () => {
     const invalidControl = new FormControl(5, [Validators.min(10)]);
 

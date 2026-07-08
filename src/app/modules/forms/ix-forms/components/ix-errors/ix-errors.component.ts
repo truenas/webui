@@ -145,9 +145,13 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     if (shouldHandleImmediately) {
       // Only show errors for untouched controls if the control has a value.
       // This handles edit forms with invalid data from API, while not showing
-      // errors for empty required fields in new forms.
+      // errors for empty required fields in new forms. `false` is treated as
+      // empty so that unchecked required checkboxes are not flagged on init.
       const controlValue = this.control().value;
-      const hasValue = controlValue !== null && controlValue !== undefined && controlValue !== '';
+      const hasValue = controlValue !== null
+        && controlValue !== undefined
+        && controlValue !== ''
+        && controlValue !== false;
 
       if (this.control().errors && hasValue) {
         this.showErrorsForUntouched = true;
