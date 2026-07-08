@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, input, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnEmptyComponent, TnTooltipDirective,
@@ -72,18 +73,20 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     }
   }
 
+  // Returns a translation key (not an instant translation) so the `| translate` pipe in the
+  // template re-translates it on a runtime language switch while the card stays mounted.
   protected readonly emptyTitle = computed(() => {
     if (this.isMissingMountpoint()) {
-      return this.translate.instant('Dataset has no mountpoint');
+      return T('Dataset has no mountpoint');
     }
     if (this.isNotMounted()) {
-      return this.translate.instant('Dataset is not mounted');
+      return T('Dataset is not mounted');
     }
     if (this.isLocked()) {
-      return this.translate.instant('Dataset is locked');
+      return T('Dataset is locked');
     }
 
-    return this.translate.instant('No Data');
+    return T('No Data');
   });
 
   readonly canEditPermissions = computed(() => {

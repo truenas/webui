@@ -26,6 +26,18 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 
+interface AccessMode {
+  ownerRead: boolean;
+  ownerWrite: boolean;
+  ownerExec: boolean;
+  groupRead: boolean;
+  groupWrite: boolean;
+  groupExec: boolean;
+  otherRead: boolean;
+  otherWrite: boolean;
+  otherExec: boolean;
+}
+
 @Component({
   selector: 'ix-dataset-trivial-permissions',
   templateUrl: './dataset-trivial-permissions.component.html',
@@ -86,7 +98,6 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       otherExec: [false],
     }),
     applyGroup: [false],
-    permission: [''],
     recursive: [false],
     traverse: [false],
   });
@@ -197,7 +208,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       });
   }
 
-  private modeToAccessMode(mode: string): Record<string, boolean> {
+  private modeToAccessMode(mode: string): AccessMode {
     const toBits = (digit: string): [boolean, boolean, boolean] => {
       const value = parseInt(digit, 10) || 0;
       return [!!(value & 4), !!(value & 2), !!(value & 1)];
@@ -210,7 +221,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     };
   }
 
-  private accessModeToMode(access: Record<string, boolean>): string {
+  private accessModeToMode(access: AccessMode): string {
     const toDigit = (read: boolean, write: boolean, exec: boolean): number => {
       return (read ? 4 : 0) + (write ? 2 : 0) + (exec ? 1 : 0);
     };
