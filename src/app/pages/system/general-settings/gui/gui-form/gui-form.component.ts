@@ -79,12 +79,12 @@ export class GuiFormComponent implements OnInit {
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[]],
     ui_v6address: [[] as string[]],
-    ui_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
-    ui_httpsport: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_port: [null as number | null, [Validators.min(1), Validators.max(65535)]],
+    ui_httpsport: [null as number | null, [Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
     usage_collection: [false],
-    ui_consolemsg: [false, [Validators.required]],
+    ui_consolemsg: [false],
   });
 
   options = {
