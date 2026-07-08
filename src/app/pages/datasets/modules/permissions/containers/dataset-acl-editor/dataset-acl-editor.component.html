@@ -1,4 +1,4 @@
-<mat-card class="card card-square">
+<tn-card class="card card-square" [padContent]="false">
   @if (isLoading) {
     <tn-spinner
       class="spinner"
@@ -6,23 +6,21 @@
       [diameter]="40"
     ></tn-spinner>
   } @else {
-    <mat-card-header class="header">
+    <div class="header">
       <div class="title-row">
-        <mat-card-title class="header-title">
+        <h3 class="header-title">
           {{ 'ACL Editor' | translate }}
-        </mat-card-title>
+        </h3>
         <div class="dataset-path">
           <label class="header-label">{{ 'Path' | translate }}:</label>
           <div>{{ datasetPath }}</div>
         </div>
-        <button
-          mat-button
+        <tn-button
           class="cancel-button"
-          ixTest="cancel"
-          (click)="onCancel()"
-        >
-          {{ 'Cancel' | translate }}
-        </button>
+          [testId]="'cancel'"
+          [label]="'Cancel' | translate"
+          (onClick)="onCancel()"
+        ></tn-button>
       </div>
 
       <div class="ownership-row" [formGroup]="ownerFormGroup">
@@ -52,7 +50,7 @@
           ></ix-checkbox>
         </div>
       </div>
-    </mat-card-header>
+    </div>
 
     <div class="content">
       <div class="columns">
@@ -66,15 +64,13 @@
           ></ix-acl-editor-list>
 
           <div class="add-item">
-            <button
-              mat-button
+            <tn-button
               class="action"
-              ixTest="add-acl-item"
-              (click)="onAddItemPressed()"
-            >
-              <tn-icon name="plus" library="mdi"></tn-icon>
-              {{ 'Add Item' | translate }}
-            </button>
+              icon="mdi-plus"
+              [testId]="'add-acl-item'"
+              [label]="'Add Item' | translate"
+              (onClick)="onAddItemPressed()"
+            ></tn-button>
           </div>
 
           <div class="controls-container">
@@ -85,47 +81,39 @@
               ></ix-acl-editor-save-controls>
               <div class="control-buttons">
                 @if (acl?.trivial) {
-                  <a
-                    mat-button
+                  <tn-button
                     class="action"
-                    ixTest="edit-permissions"
+                    [testId]="'edit-permissions'"
                     [routerLink]="['/datasets', getDatasetPath(), 'permissions', 'edit']"
-                  >
-                    {{ 'Permissions Editor' | translate }}
-                  </a>
+                    [label]="'Permissions Editor' | translate"
+                  ></tn-button>
                 } @else {
-                  <button
+                  <tn-button
                     *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
-                    mat-button
                     color="warn"
                     class="action"
-                    ixTest="strip-acl"
-                    (click)="onStripAclPressed()"
-                  >
-                    {{ 'Strip ACL' | translate }}
-                  </button>
+                    [testId]="'strip-acl'"
+                    [label]="'Strip ACL' | translate"
+                    (onClick)="onStripAclPressed()"
+                  ></tn-button>
                 }
               </div>
 
               <h4 class="presets-label">{{ 'Presets' | translate }}</h4>
               <div class="control-buttons">
-                <button
-                  mat-button
+                <tn-button
                   class="action"
-                  ixTest="use-preset"
-                  (click)="onUsePresetPressed()"
-                >
-                  {{ 'Use Preset' | translate }}
-                </button>
-                <button
+                  [testId]="'use-preset'"
+                  [label]="'Use Preset' | translate"
+                  (onClick)="onUsePresetPressed()"
+                ></tn-button>
+                <tn-button
                   *ixRequiresRoles="[Role.FilesystemAttrsWrite]"
-                  mat-button
                   class="action"
-                  ixTest="save-as-preset"
-                  (click)="onSavePreset()"
-                >
-                  {{ 'Save As Preset' | translate }}
-                </button>
+                  [testId]="'save-as-preset'"
+                  [label]="'Save As Preset' | translate"
+                  (onClick)="onSavePreset()"
+                ></tn-button>
               </div>
             </div>
           </div>
@@ -145,4 +133,4 @@
     </div>
   }
 
-</mat-card>
+</tn-card>

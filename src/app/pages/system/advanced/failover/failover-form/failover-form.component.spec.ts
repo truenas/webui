@@ -64,7 +64,6 @@ describe('FailoverFormComponent', () => {
 
   it('shows current failover settings', async () => {
     expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
-    expect(await (await getCheckbox('master')).isChecked()).toBe(true);
     expect(await (await getInput('timeout')).getValue()).toBe('0');
   });
 
@@ -109,20 +108,5 @@ describe('FailoverFormComponent', () => {
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextSystemFailover.confirmDialogs.syncFromMessage,
     );
-  });
-
-  it('warns when Default TrueNAS controller checkbox is ticked off and changes Save button to Save And Failover', async () => {
-    await (await getCheckbox('enabled')).uncheck();
-    await (await getCheckbox('master')).uncheck();
-
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: helptextSystemFailover.masterDialogTitle,
-        message: helptextSystemFailover.masterDialogWarning,
-      }),
-    );
-
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save And Failover' }));
-    expect(saveButton).toExist();
   });
 });

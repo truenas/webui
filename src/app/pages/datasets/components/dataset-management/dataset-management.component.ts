@@ -7,13 +7,12 @@ import { CdkTreeNodePadding } from '@angular/cdk/tree';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, AfterViewInit, OnDestroy, ElementRef, TrackByFunction, HostBinding, computed, viewChild, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, NavigationSkipped, NavigationStart, Router,
   RouterLink, RouterLinkActive,
 } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnEmptyComponent, TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { ResizedEvent } from 'angular-resize-event';
 import { uniqBy } from 'lodash-es';
 import { Subject, Subscription } from 'rxjs';
@@ -32,7 +31,8 @@ import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
@@ -48,7 +48,6 @@ import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { datasetManagementElements } from 'app/pages/datasets/components/dataset-management/dataset-management.elements';
@@ -64,15 +63,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./dataset-management.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    EmptyComponent,
+    TnEmptyComponent,
     FakeProgressBarComponent,
     BasicSearchComponent,
     DatasetNodeComponent,
     TnIconComponent,
     RouterLink,
-    MatIconButton,
+    TnIconButtonComponent,
     CdkTreeNodePadding,
-    TestDirective,
     DetailsHeightDirective,
     DatasetDetailsPanelComponent,
     AsyncPipe,
@@ -99,6 +97,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
   private sharingTierService = inject(SharingTierService);
+  private authService = inject(AuthService);
+  protected emptyService = inject(EmptyService);
 
   protected tierEnabled = this.sharingTierService.tierEnabled;
 
@@ -106,6 +106,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
 
   protected readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly hasRequiredRole = toSignal(
+    this.authService.hasRole(this.requiredRoles),
+    { initialValue: false },
+  );
+
   protected readonly searchableElements = datasetManagementElements;
   protected readonly searchQuery = signal('');
 
@@ -255,6 +260,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   protected createPool(): void {
     this.router.navigate(['/storage', 'create']);
+  }
+
+  protected onEmptyAction(): void {
+    this.emptyConfig().button?.action();
   }
 
   protected viewDetails(dataset: DatasetDetails): void {

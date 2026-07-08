@@ -1,20 +1,14 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
-import { startWith } from 'rxjs';
-import {
-  filter, map, switchMap, take,
-} from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -22,7 +16,6 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
@@ -39,7 +32,6 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
     TnCheckboxComponent,
     TnInputComponent,
     FormActionsComponent,
-    AsyncPipe,
     TnButtonComponent,
   ],
 })
@@ -52,14 +44,10 @@ export class FailoverFormComponent extends SidePanelForm {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private store$ = inject(Store);
-  private authService = inject(AuthService);
-  private wsHandler = inject(WebSocketHandlerService);
-  private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({
     enabled: [false],
-    master: [true],
     timeout: [null as number | null],
   });
 
@@ -69,35 +57,22 @@ export class FailoverFormComponent extends SidePanelForm {
 
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
-  submitButtonText$ = this.form.controls.master.valueChanges.pipe(
-    startWith(true),
-    map((isMaster) => {
-      return isMaster
-        ? this.translate.instant('Save')
-        : this.translate.instant('Save And Failover');
-    }),
-  );
-
   constructor() {
     super();
 
     this.api.call('failover.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.form.patchValue({
         enabled: !config.disabled,
-        master: config.master,
         timeout: config.timeout,
       });
     });
-
-    this.setFormRelations();
-    this.warnOnMasterChange();
   }
 
   protected onSubmit(): void {
     this.isLoading.set(true);
     const values = this.form.getRawValue();
     const payload = {
-      master: values.master,
+      master: true,
       timeout: values.timeout,
       disabled: !values.enabled,
     };
@@ -108,12 +83,6 @@ export class FailoverFormComponent extends SidePanelForm {
           this.store$.dispatch(haSettingsUpdated());
           this.snackbar.success(this.translate.instant('Settings saved.'));
           this.isLoading.set(false);
-
-          const shouldReLogin = payload.disabled && !values.master;
-          if (shouldReLogin) {
-            this.redirectToLoginPage();
-            return;
-          }
 
           this.close(true);
         },
@@ -180,51 +149,5 @@ export class FailoverFormComponent extends SidePanelForm {
           this.errorHandler.showErrorModal(error);
         },
       });
-  }
-
-  private warnOnMasterChange(): void {
-    this.form.controls.master.valueChanges
-      .pipe(
-        filter((isMaster) => !isMaster),
-        switchMap(() => {
-          return this.dialogService.confirm({
-            title: this.translate.instant(helptextSystemFailover.masterDialogTitle),
-            message: this.translate.instant(helptextSystemFailover.masterDialogWarning),
-            buttonText: this.translate.instant('Continue'),
-            cancelText: this.translate.instant('Cancel'),
-            disableClose: true,
-          });
-        }),
-        take(1),
-        filter((wasConfirmed) => !wasConfirmed),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.form.patchValue({ master: true });
-      });
-  }
-
-  private setFormRelations(): void {
-    this.form.controls.enabled.valueChanges
-      .pipe(
-        startWith(this.form.value.enabled),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((enabled) => {
-        if (enabled) {
-          this.form.controls.master.disable({ emitEvent: false });
-        } else {
-          this.form.controls.master.enable({ emitEvent: false });
-        }
-      });
-  }
-
-  private redirectToLoginPage(): void {
-    this.authService.logout().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.wsHandler.reconnect();
-        this.router.navigate(['/signin']);
-      },
-    });
   }
 }

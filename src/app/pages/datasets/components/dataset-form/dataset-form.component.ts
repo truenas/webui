@@ -1,11 +1,13 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, viewChild, inject } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, viewChild, inject, input, computed,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
   catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
@@ -20,9 +22,9 @@ import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   EncryptionSectionComponent,
@@ -49,20 +51,17 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   imports: [
     ModalHeaderComponent,
     RequiresRolesDirective,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     NameAndOptionsSectionComponent,
     QuotasSectionComponent,
     EncryptionSectionComponent,
     OtherOptionsSectionComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class DatasetFormComponent implements OnInit, AfterViewInit {
+export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnInit, AfterViewInit {
   private api = inject(ApiService);
   private dialog = inject(DialogService);
   private datasetFormService = inject(DatasetFormService);
@@ -71,12 +70,14 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<{
-    datasetId: string;
-    isNew?: boolean;
-  }, Dataset>>(SlideInRef);
 
   private destroyRef = inject(DestroyRef);
+
+  /**
+   * Edit parameters when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to carry
+   * data). Unused in the legacy SlideIn host (which supplies them via `slideInRef.getData()`).
+   */
+  readonly params = input<{ datasetId: string; isNew?: boolean }>();
 
   private nameAndOptionsSection = viewChild.required(NameAndOptionsSectionComponent);
   private encryptionSection = viewChild(EncryptionSectionComponent);
@@ -86,26 +87,43 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
   protected slideInData: { datasetId: string; isNew?: boolean };
 
-  isNameAndOptionsValid = true;
-  isQuotaValid = true;
-  isEncryptionValid = true;
-  isOtherOptionsValid = true;
+  protected readonly isNameAndOptionsValid = signal(true);
+  protected readonly isQuotaValid = signal(true);
+  protected readonly isEncryptionValid = signal(true);
+  protected readonly isOtherOptionsValid = signal(true);
 
   protected isLoading = signal(false);
-  isAdvancedMode = false;
-  datasetPreset = DatasetPreset.Generic;
+  protected readonly isAdvancedMode = signal(false);
+  protected readonly datasetPreset = signal(DatasetPreset.Generic);
 
   form = new FormGroup({});
 
-  parentDataset: Dataset;
-  existingDataset: Dataset;
+  protected readonly areSubFormsValid = computed(() => {
+    return this.isNameAndOptionsValid() && this.isQuotaValid()
+      && this.isEncryptionValid() && this.isOtherOptionsValid();
+  });
 
-  get areSubFormsValid(): boolean {
-    return this.isNameAndOptionsValid && this.isQuotaValid && this.isEncryptionValid && this.isNameAndOptionsValid;
+  private readonly baseCanSubmit = this.trackCanSubmit(this.isLoading);
+  readonly canSubmit = computed(() => this.baseCanSubmit() && this.areSubFormsValid());
+
+  /**
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
+   * change detection, so the label flips with {@link isAdvancedMode}.
+   */
+  get footerActions(): SidePanelFooterAction[] {
+    // Labels are extraction markers — the panel container pipes them through `translate`.
+    return [{
+      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
+      testId: 'toggle-advanced',
+      onClick: () => this.toggleAdvancedMode(),
+    }];
   }
 
+  protected readonly parentDataset = signal<Dataset | undefined>(undefined);
+  protected readonly existingDataset = signal<Dataset | undefined>(undefined);
+
   get isNew(): boolean {
-    return !this.existingDataset;
+    return !this.existingDataset();
   }
 
   get createSections(): [
@@ -125,7 +143,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       this.otherOptionsSection(),
     ];
 
-    if (this.isAdvancedMode) {
+    if (this.isAdvancedMode()) {
       sections.push(this.quotasSection());
     }
 
@@ -139,23 +157,21 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     ];
   }
 
-  constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(Boolean(
-        this.form.dirty
-        || this.nameAndOptionsSection()?.form?.dirty
-        || this.encryptionSection()?.form?.dirty
-        || this.otherOptionsSection()?.form?.dirty
-        || this.quotasSection()?.form.dirty,
-      ));
-    });
-
-    this.slideInData = slideInRef.getData();
+  override hasUnsavedChanges(): boolean {
+    return Boolean(
+      this.form.dirty
+      || this.nameAndOptionsSection()?.form?.dirty
+      || this.encryptionSection()?.form?.dirty
+      || this.otherOptionsSection()?.form?.dirty
+      || this.quotasSection()?.form.dirty,
+    );
   }
 
   ngOnInit(): void {
+    this.slideInData = this.slideInRef
+      ? this.slideInRef.getData() as { datasetId: string; isNew?: boolean }
+      : (this.params() ?? { datasetId: '' });
+
     if (this.slideInData.datasetId && !this.slideInData.isNew) {
       this.setForEdit();
     }
@@ -167,7 +183,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.nameAndOptionsSection().form.controls.share_type.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((datasetPreset) => {
-        this.datasetPreset = datasetPreset;
+        this.datasetPreset.set(datasetPreset);
       });
   }
 
@@ -177,7 +193,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     this.datasetFormService.checkAndWarnForLengthAndDepth(this.slideInData.datasetId).pipe(
       filter((isValidLengthAndDepth) => {
         if (!isValidLengthAndDepth) {
-          this.slideInRef.close({ response: undefined });
+          this.close(false);
         }
         return isValidLengthAndDepth;
       }),
@@ -185,7 +201,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (dataset) => {
-        this.parentDataset = dataset;
+        this.parentDataset.set(dataset);
         this.isLoading.set(false);
       },
       error: (error: unknown) => {
@@ -209,8 +225,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
     forkJoin(requests).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ([existingDataset, parent]) => {
-        this.existingDataset = existingDataset;
-        this.parentDataset = parent;
+        this.existingDataset.set(existingDataset);
+        this.parentDataset.set(parent);
         this.isLoading.set(false);
       },
       error: (error: unknown) => {
@@ -221,20 +237,23 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   protected toggleAdvancedMode(): void {
-    this.isAdvancedMode = !this.isAdvancedMode;
+    this.isAdvancedMode.update((advanced) => !advanced);
   }
 
   protected onSwitchToAdvanced(): void {
-    this.isAdvancedMode = true;
+    this.isAdvancedMode.set(true);
   }
 
   protected onSubmit(): void {
     this.isLoading.set(true);
 
     const payload = this.preparePayload();
-    const request$ = this.isNew
+    const existingDataset = this.existingDataset();
+    // `!existingDataset` is redundant with `isNew` (which is `!existingDataset()`) but narrows the
+    // type so `existingDataset.id` on the update branch is non-null — keep both.
+    const request$ = this.isNew || !existingDataset
       ? this.api.call('pool.dataset.create', [payload as DatasetCreate])
-      : this.api.call('pool.dataset.update', [this.existingDataset.id, payload as DatasetUpdate]);
+      : this.api.call('pool.dataset.update', [existingDataset.id, payload as DatasetUpdate]);
 
     request$.pipe(
       switchMap((dataset) => this.createSmb(dataset)),
@@ -255,7 +274,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response: createdDataset });
+        this.closeWith(createdDataset);
         if (shouldGoToEditor) {
           this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
             queryParams: { path: createdDataset.mountpoint },
@@ -286,11 +305,12 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   private checkForAclOnParent(): Observable<boolean> {
-    if (!this.parentDataset) {
+    const parentDataset = this.parentDataset();
+    if (!parentDataset) {
       return of(false);
     }
 
-    const parentPath = `/mnt/${this.parentDataset.id}`;
+    const parentPath = `/mnt/${parentDataset.id}`;
     return this.api.call('filesystem.stat', [parentPath]).pipe(map((stat) => stat.acl));
   }
 

@@ -1,13 +1,12 @@
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { TnEmptyComponent } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { TreeVirtualScrollViewComponent } from 'app/modules/ix-tree/components/tree-virtual-scroll-view/tree-virtual-scroll-view.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -32,7 +31,6 @@ describe('DatasetsManagementComponent', () => {
     component: DatasetsManagementComponent,
     imports: [
       BasicSearchComponent,
-      MockComponent(EmptyComponent),
       FakeProgressBarComponent,
     ],
     providers: [
@@ -94,17 +92,11 @@ describe('DatasetsManagementComponent', () => {
 
     spectator.detectChanges();
 
-    expect(spectator.query(EmptyComponent)!.conf).toEqual(
-      expect.objectContaining({
-        large: true,
-        type: 'errors',
-        title: 'Failed to load datasets',
-        message: 'Network Error',
-        button: expect.objectContaining({
-          label: 'Retry',
-        }),
-      }),
-    );
+    const empty = spectator.query(TnEmptyComponent)!;
+    expect(empty.title()).toBe('Failed to load datasets');
+    expect(empty.description()).toBe('Network Error');
+    expect(empty.icon()).toBe('mdi-alert-octagon');
+    expect(empty.actionText()).toBe('Retry');
   });
 
   it('should display empty state when no datasets', () => {
@@ -112,16 +104,9 @@ describe('DatasetsManagementComponent', () => {
     datasets$.next([]);
     spectator.detectChanges();
 
-    expect(spectator.query(EmptyComponent)!.conf).toEqual(
-      expect.objectContaining({
-        type: 'no_page_data',
-        icon: 'app-dataset-root',
-        title: 'No Datasets',
-        large: true,
-        button: expect.objectContaining({
-          label: 'Create Pool',
-        }),
-      }),
-    );
+    const empty = spectator.query(TnEmptyComponent)!;
+    expect(empty.title()).toBe('No Datasets');
+    expect(empty.icon()).toBe('app-dataset-root');
+    expect(empty.actionText()).toBe('Create Pool');
   });
 });

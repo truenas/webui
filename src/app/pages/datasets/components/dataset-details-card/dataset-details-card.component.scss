@@ -1,7 +1,11 @@
 @import 'mixins/cards';
 
+@include tn-detail-card();
+
 .card {
-  @include details-card();
+  height: 100%;
+
+  @include tn-details-item();
 
   ix-copy-button {
     height: 24px;
@@ -112,10 +116,4 @@
 // outside this component's host, so the class must be global rather than :host-scoped.
 ::ng-deep .dataset-path-tooltip {
   word-break: break-all;
-}
-
-:host ::ng-deep {
-  .mat-mdc-card-header-text {
-    width: 100%;
-  }
 }

@@ -1,8 +1,10 @@
 @import 'mixins/cards';
 @import 'scss-imports/variables';
 
+@include tn-detail-card();
+
 .card {
-  @include details-card();
+  @include tn-details-item();
 
   .chart-extra {
     align-items: center;
