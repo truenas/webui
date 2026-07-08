@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness } from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
@@ -136,6 +137,48 @@ describe('DatasetQuotaEditFormComponent', () => {
           quota_value: 1,
         },
       ]]);
+    });
+  });
+
+  describe('unsetting both quotas', () => {
+    let dialogService: DialogService;
+
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          quotaType: DatasetQuotaType.User,
+          datasetId: 'Test',
+          quotaId: 1,
+        },
+      });
+      api = spectator.inject(ApiService);
+      dialogService = spectator.inject(DialogService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('asks for confirmation when both quotas are cleared', async () => {
+      const confirmSpy = jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true));
+      await (await getTnInput('data_quota')).setValue('0');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(confirmSpy).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Delete User Quota',
+      }));
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', expect.anything());
+    });
+
+    it('does not update the quota when the confirmation is declined', async () => {
+      jest.spyOn(dialogService, 'confirm').mockReturnValue(of(false));
+      await (await getTnInput('data_quota')).setValue('0');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(dialogService.confirm).toHaveBeenCalled();
+      expect(api.call).not.toHaveBeenCalledWith('pool.dataset.set_quota', expect.anything());
+      expect(slideInRef.close).not.toHaveBeenCalled();
     });
   });
 });
