@@ -1,6 +1,6 @@
 import { ComponentPortal } from '@angular/cdk/portal';
 import {
-  ChangeDetectionStrategy, Component, signal,
+  ChangeDetectionStrategy, Component, computed, signal,
 } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
@@ -33,7 +33,7 @@ class MenuTestFormComponent extends SidePanelForm {
   // signal-driven `disabled` predicate so we can assert reactive enabling.
   readonly privateKeyReady = signal(false);
 
-  readonly footerMenu: SidePanelFooterMenu = {
+  readonly footerMenu = computed<SidePanelFooterMenu>(() => ({
     label: 'Download',
     testId: 'download-actions',
     items: [
@@ -49,7 +49,7 @@ class MenuTestFormComponent extends SidePanelForm {
         onClick: () => publicKeyClick(),
       },
     ],
-  };
+  }));
 
   protected onSubmit(): void {
     this.close(true);

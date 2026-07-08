@@ -1,21 +1,21 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LinkState, NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { AllNetworkInterfacesUpdate, NetworkInterfaceReport } from 'app/interfaces/reporting.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   InterfaceStatusIconComponent,
 } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
@@ -29,7 +29,6 @@ import { NetworkService } from 'app/services/network.service';
 describe('InterfacesCardComponent', () => {
   let spectator: Spectator<InterfacesCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
   const interfaces = [
     {
       id: 'eno1',
@@ -72,7 +71,6 @@ describe('InterfacesCardComponent', () => {
     declarations: [
       IpAddressesCellComponent,
       MockComponent(InterfaceStatusIconComponent),
-      IxTableCellDirective,
     ],
     providers: [
       mockProvider(InterfacesStore, {
@@ -94,7 +92,7 @@ describe('InterfacesCardComponent', () => {
         subscribeToInOutUpdates: jest.fn(() => updateSubject$),
         getIsHaEnabled: jest.fn(() => failoverConfig$.pipe(map((config) => !config.disabled))),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success(true)),
       }),
       mockProvider(DialogService, {
@@ -105,11 +103,15 @@ describe('InterfacesCardComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  async function openRowMenu(rowTag: string): Promise<TnMenuHarness> {
+    spectator.click(`[data-test="button-${rowTag}-more-action"]`);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
+  beforeEach(() => {
     spectator = createComponent();
     jest.spyOn(spectator.component.interfacesUpdated, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
   });
 
   it('loads network interfaces on init', () => {
@@ -117,41 +119,56 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('shows table with network interfaces', async () => {
-    expect(await table.getCellTexts()).toEqual([
-      ['', 'Name', 'IP Addresses', 'MAC Address', ''],
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.getHeaderTexts()).toEqual(['', 'Name', 'IP Addresses', 'MAC Address', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['', 'eno1', '84.23.23.1/24', '', ''],
       ['', 'eno2 (Main NIC)', '', 'ac:1f:6b:ca:32:24', ''],
       ['', 'vlan1', '', '', ''],
     ]);
   });
 
+  it('sorts interfaces by name when the Name header is clicked', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.isSortable('name')).toBe(true);
+
+    await table.clickSortHeader('name'); // ascending
+    await table.clickSortHeader('name'); // descending
+
+    expect(await table.getAllRowTexts()).toEqual([
+      ['', 'vlan1', '', '', ''],
+      ['', 'eno2 (Main NIC)', '', 'ac:1f:6b:ca:32:24', ''],
+      ['', 'eno1', '84.23.23.1/24', '', ''],
+    ]);
+  });
+
   it('shows form to add new interface when Add button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent, {
-      data: { interfaces },
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(InterfaceFormComponent, {
+      title: 'Add Interface',
+      inputs: { interfacesList: interfaces },
     });
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
   });
 
   it('shows form to edit an existing interface when Edit icon is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu('interface-eno1');
+    await menu.clickItem({ label: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent, {
-      data: { interface: interfaces[0] },
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(InterfaceFormComponent, {
+      title: 'Edit Interface',
+      inputs: { editInterface: interfaces[0] },
     });
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {
-    const [, , menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu('interface-vlan1');
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete Interface',
@@ -165,9 +182,8 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('resets a network interface when Reset icon is pressed on a physical interface', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Reset configuration' });
+    const menu = await openRowMenu('interface-eno1');
+    await menu.clickItem({ label: 'Reset configuration' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Reset Configuration',
@@ -179,15 +195,21 @@ describe('InterfacesCardComponent', () => {
 
   it('disables Add and Delete buttons on HA systems', async () => {
     failoverConfig$.next({ disabled: false });
+    spectator.detectChanges();
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);
 
-    const [, , menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    const menuItems = await menu.getItems();
+    const menu = await openRowMenu('interface-vlan1');
+    expect(await menu.isItemDisabled({ label: helptextInterfaces.haEnabledDeleteMessage })).toBe(true);
+  });
 
-    expect(await menuItems[1].isDisabled()).toBe(true);
+  it('keeps Reset visible but disabled with an explanatory tooltip on HA systems', async () => {
+    failoverConfig$.next({ disabled: false });
+    spectator.detectChanges();
+
+    const menu = await openRowMenu('interface-eno1');
+    expect(await menu.isItemDisabled({ label: helptextInterfaces.haEnabledResetMessage })).toBe(true);
   });
 
   it('subscribes to updates and shows interface status in first column', () => {

@@ -54,7 +54,7 @@ describe('CertificateEditComponent', () => {
 
   /** Invokes a footer-menu action the way the tn-side-panel host would. */
   const clickFooterMenuItem = (testId: string): void => {
-    spectator.component.footerMenu?.items.find((item) => item.testId === testId)?.onClick();
+    spectator.component.footerMenu()?.items.find((item) => item.testId === testId)?.onClick();
   };
 
   const createComponent = createComponentFactory({
@@ -237,7 +237,7 @@ describe('CertificateEditComponent', () => {
     });
 
     it('exposes the View/Download and Create ACME actions as a footer menu for the tn-side-panel host', () => {
-      const menu = spectator.component.footerMenu;
+      const menu = spectator.component.footerMenu();
       expect(menu?.label).toBe('Actions');
       expect(menu?.items.map((item) => item.label)).toEqual([
         'View/Download CSR',

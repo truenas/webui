@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -89,7 +89,7 @@ export class SshKeypairFormComponent extends SidePanelForm implements OnInit {
    * A "Download" dropdown rendered as a 3-dots icon-button in the `<tn-side-panel>` footer beside
    * Save. Each item is enabled only once the keypair has a name and the corresponding key is present.
    */
-  readonly footerMenu: SidePanelFooterMenu = {
+  readonly footerMenu = computed<SidePanelFooterMenu>(() => ({
     label: T('Download'),
     testId: 'download-actions',
     items: [
@@ -106,7 +106,7 @@ export class SshKeypairFormComponent extends SidePanelForm implements OnInit {
         onClick: () => this.onDownloadKey('public_key'),
       },
     ],
-  };
+  }));
 
   ngOnInit(): void {
     this.editingKeypair = this.editKeypair();
