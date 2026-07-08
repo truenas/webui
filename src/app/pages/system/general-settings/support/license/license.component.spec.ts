@@ -13,6 +13,7 @@ import {
   DialogWithSecondaryCheckboxResult,
 } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LicenseComponent } from './license.component';
@@ -41,6 +42,7 @@ describe('LicenseComponent', () => {
         },
       }),
       ...ixFormTestingProviders(),
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
     ],
   });
 

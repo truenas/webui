@@ -22,7 +22,7 @@ import { alertsLoaded } from 'app/modules/alerts/store/alert.actions';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -112,7 +112,7 @@ describe('AlertsPanelComponent', () => {
         mockCall('alert.restore'),
       ]),
       mockProvider(SystemGeneralService),
-      mockProvider(SlideIn),
+      mockProvider(FormSidePanelService),
     ],
     componentProviders: [
       // The component provides AlertPanelOverlayContainer as a second OverlayContainer for
@@ -344,6 +344,8 @@ describe('AlertsPanelComponent', () => {
     const menu = await openSettingsMenu();
     await menu.clickItem({ label: 'Email' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(EmailFormComponent, { data: undefined });
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(EmailFormComponent, {
+      title: 'Email Options',
+    });
   });
 });
