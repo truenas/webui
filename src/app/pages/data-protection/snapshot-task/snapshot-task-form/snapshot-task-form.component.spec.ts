@@ -13,6 +13,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
@@ -292,6 +293,8 @@ describe('SnapshotTaskComponent', () => {
       providers: [
         ...baseProviders(),
         { provide: SlideInRef, useValue: null },
+        // Skip the min submit-feedback hold so the synchronous-close assertions below hold.
+        { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       ],
     });
 

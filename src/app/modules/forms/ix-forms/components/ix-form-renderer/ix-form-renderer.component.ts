@@ -131,6 +131,23 @@ implements OnInit, SidePanelHostForm {
   readonly canSubmit = computed(() => this.ixForm()?.canSubmit() ?? false);
 
   /**
+   * Whether the form is busy — a `<tn-side-panel>` host reads this to show its progress bar and
+   * keep Save disabled. Delegates to the inner `<ix-form>` (whose `isLoading` covers both submit
+   * and `loadData`); falls back to the renderer's own `externalLoading` for the brief window
+   * before the child view initializes. The "Saving…" label is driven by {@link isSubmitting}, not
+   * this, so a `loadData` in flight never mislabels Save as saving.
+   */
+  readonly isBusy = computed(() => this.ixForm()?.isLoading() ?? this.externalLoading());
+
+  /**
+   * Whether a save is actually in flight — distinct from {@link isBusy}, which also covers
+   * `loadData`. A `<tn-side-panel>` host reads this (not `isBusy`) to switch Save to "Saving…", so
+   * a form merely loading its initial data doesn't show a misleading "Saving…". Delegates to the
+   * inner `<ix-form>`'s submit-only signal; false until the child view initializes.
+   */
+  readonly isSubmitting = computed(() => this.ixForm()?.isSubmitting() ?? false);
+
+  /**
    * Reactive mirror of {@link canSubmit} for hosts that can't read a child signal
    * directly (a `<tn-side-panel>` wrapper whose ref to this component is a
    * non-signal `@ViewChild`, e.g. because it gets ng-mocks-mocked elsewhere).
