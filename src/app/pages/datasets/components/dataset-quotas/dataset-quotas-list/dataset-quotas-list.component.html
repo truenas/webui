@@ -1,38 +1,34 @@
 <ix-page-header>
   <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
-  <mat-slide-toggle
+  <tn-slide-toggle
     color="primary"
-    [ixTest]="'show-all-' + helpTextKey"
+    [testId]="'show-all-' + helpTextKey"
+    [label]="helpText[helpTextKey].title | translate"
+    [ariaLabel]="helpText[helpTextKey].title | translate"
     [checked]="showAllQuotas"
     [disabled]="isLoading"
     (change)="toggleDisplay()"
-    >
-    <label>{{ helpText[helpTextKey].title | translate }}</label>
-  </mat-slide-toggle>
+  ></tn-slide-toggle>
   <ng-container *ixRequiresRoles="requiredRoles">
     @if (invalidQuotas.length > 0) {
-      <button
+      <tn-button
         color="primary"
-        mat-button
-        ixTest="remove-invalid-quotas"
+        [testId]="'remove-invalid-quotas'"
+        [label]="'Remove Invalid Quotas' | translate"
         [disabled]="isLoading"
-        (click)="removeInvalidQuotas()"
-      >
-        {{ 'Remove Invalid Quotas' | translate }}
-      </button>
+        (onClick)="removeInvalidQuotas()"
+      ></tn-button>
     }
   </ng-container>
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
     color="primary"
     class="add-button"
-    mat-button
-    ixTest="add-quota"
+    [testId]="'add-quota'"
+    [label]="'Add' | translate"
     [disabled]="isLoading"
-    (click)="doAdd()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    (onClick)="doAdd()"
+  ></tn-button>
 </ix-page-header>
 
 <div class="table-container">

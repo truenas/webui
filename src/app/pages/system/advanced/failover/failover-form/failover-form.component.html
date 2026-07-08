@@ -14,13 +14,6 @@
       ></tn-checkbox>
     </tn-form-field>
 
-    <tn-form-field [tooltip]="helptext.masterTooltip | translate">
-      <tn-checkbox
-        formControlName="master"
-        [label]="'Default TrueNAS controller' | translate"
-      ></tn-checkbox>
-    </tn-form-field>
-
     <tn-form-field
       [label]="'Network Timeout Before Initiating Failover' | translate"
       [tooltip]="helptext.timeoutTooltip | translate"
@@ -36,7 +29,7 @@
         color="primary"
         [testId]="'save'"
         [disabled]="form.invalid || isLoading()"
-        [label]="(submitButtonText$ | async) ?? ''"
+        [label]="'Save' | translate"
       ></tn-button>
     }
 
