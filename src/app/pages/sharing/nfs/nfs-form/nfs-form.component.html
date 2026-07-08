@@ -23,7 +23,14 @@
 
   <ix-fieldset [title]="'General Options' | translate">
     <tn-form-field [label]="'Description' | translate">
-      <tn-input testId="comment" formControlName="comment"></tn-input>
+      <!-- TODO: [ariaLabel] duplicates the tn-form-field label — remove once the
+        library associates its label with the projected control (for/aria-labelledby). -->
+      <tn-input
+        testId="comment"
+        name="comment"
+        formControlName="comment"
+        [ariaLabel]="'Description' | translate"
+      ></tn-input>
     </tn-form-field>
 
     <tn-checkbox testId="enabled" formControlName="enabled" [label]="'Enabled' | translate"></tn-checkbox>
@@ -39,7 +46,7 @@
     }
   </ix-fieldset>
 
-  @if (isAdvancedMode) {
+  @if (isAdvancedMode()) {
     <ix-fieldset [title]="'Access' | translate">
       <tn-checkbox testId="ro" formControlName="ro" [label]="'Read Only' | translate"></tn-checkbox>
 
@@ -76,6 +83,7 @@
           formControlName="security"
           [multiple]="true"
           [options]="securityOptions"
+          [ariaLabel]="'Security' | translate"
         ></tn-select>
       </tn-form-field>
     </ix-fieldset>
@@ -143,7 +151,7 @@
     <tn-button
       type="button"
       [testId]="'toggle-advanced-options'"
-      [label]="isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate)"
+      [label]="isAdvancedMode() ? ('Basic Options' | translate) : ('Advanced Options' | translate)"
       (onClick)="toggleAdvancedMode()"
     ></tn-button>
   </ix-form-actions>

@@ -3,10 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnTableHarness } from '@truenas/ui-components';
+import { TnButtonToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
+import { Nfs3Session, Nfs4Session } from 'app/interfaces/nfs-share.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { NfsSessionListComponent } from './nfs-session-list.component';
@@ -80,9 +80,12 @@ describe('NfsSessionListComponent', () => {
   describe('NFS 4', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      spectator.component.nfsTypeChanged(NfsType.Nfs4);
-      spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      // Switch versions through the toggle so the [ngModel] wiring is exercised.
+      const nfs4Toggle = await loader.getHarness(TnButtonToggleHarness.with({ label: 'NFS 4' }));
+      await nfs4Toggle.check();
+      spectator.detectChanges();
       table = await loader.getHarness(TnTableHarness);
     });
 

@@ -1,16 +1,19 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnCardHeaderDirective,
+  tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
   TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective, TnSidePanelActionDirective, TnSidePanelComponent,
-  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTooltipDirective, type TnSortEvent,
+  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
+  type TnSortEvent,
 } from '@truenas/ui-components';
-import { of, tap } from 'rxjs';
+import { kebabCase } from 'lodash-es';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -30,7 +33,7 @@ import { TableColumnPickerComponent } from 'app/modules/ix-table/components/tabl
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
@@ -52,13 +55,13 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    TnCardHeaderDirective,
     TnCardHeaderActionsDirective,
     BasicSearchComponent,
     TableColumnPickerComponent,
     RequiresRolesDirective,
     TnButtonComponent,
-    TestDirective,
+    TnTestIdDirective,
+    RouterLink,
     UiSearchDirective,
     TnEmptyComponent,
     TnTableComponent,
@@ -83,7 +86,6 @@ export class NfsListComponent implements OnInit {
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
@@ -91,15 +93,15 @@ export class NfsListComponent implements OnInit {
   private tierService = inject(SharingTierService);
   private unsavedChanges = inject(UnsavedChangesService);
 
-  requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
   protected readonly EmptyType = EmptyType;
 
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<NfsShare>;
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly searchQuery = signal('');
+  protected dataProvider: AsyncDataProvider<NfsShare>;
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
-  nfsShares: NfsShare[] = [];
+  private nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
 
@@ -112,9 +114,7 @@ export class NfsListComponent implements OnInit {
     ? this.translate.instant('Edit NFS Share')
     : this.translate.instant('Add NFS Share')));
 
-  protected readonly closeFormGuard = (): ReturnType<UnsavedChangesService['showConfirmDialog']> => (
-    this.configForm()?.hasUnsavedChanges() ? this.unsavedChanges.showConfirmDialog() : of(true)
-  );
+  protected readonly closeFormGuard = sidePanelFormCloseGuard(this.unsavedChanges, this.configForm);
 
   private tierAction: IconActionConfig<NfsShare> = this.tierService.createChangeTierAction<NfsShare>({
     destroyRef: this.destroyRef,
@@ -192,7 +192,11 @@ export class NfsListComponent implements OnInit {
   protected readonly trackByNfsId = (_index: number, row: NfsShare): number => row.id;
 
   protected uniqueRowTag(row: NfsShare): string {
-    return convertStringToId('nfs-share-' + row.path + '-' + row.comment);
+    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('pool1' → 'pool-1')
+    // while the library's kebab does not, so the pre-split tag resolves identically through
+    // the legacy [ixTest] directive, the library [tnTestId] directive, and the tn cell
+    // components — byte-matching the pre-migration data-test values.
+    return kebabCase(convertStringToId('nfs-share-' + row.path + '-' + row.comment));
   }
 
   protected ariaLabel(row: NfsShare): string {
@@ -280,7 +284,6 @@ export class NfsListComponent implements OnInit {
       query,
       columnKeys: !this.nfsShares.length ? [] : Object.keys(this.nfsShares[0]) as (keyof NfsShare)[],
     });
-    this.cdr.markForCheck();
   }
 
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {

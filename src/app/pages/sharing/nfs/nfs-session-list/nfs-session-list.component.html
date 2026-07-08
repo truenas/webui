@@ -40,6 +40,7 @@
   @let emptyConf = emptyService.defaultEmptyConfig(nfs3DataProvider.emptyType$ | async);
   <tn-table
     class="table"
+    [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.nfsSessions"
     [dataSource]="(nfs3DataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="nfs3DisplayedColumns()"
@@ -52,14 +53,20 @@
     <ng-container [tnColumnDef]="'ip'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'IP' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('IP' | translate), uniqueRowTag3(row), 'row-text']">{{ row.ip }}</span>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('IP' | translate), uniqueRowTag3(row), 'row-text']"
+        >{{ row.ip }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'export'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Export' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Export' | translate), uniqueRowTag3(row), 'row-text']">{{ row.export }}</span>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Export' | translate), uniqueRowTag3(row), 'row-text']"
+        >{{ row.export }}</span>
       </ng-template>
     </ng-container>
   </tn-table>
@@ -68,6 +75,7 @@
   @let emptyConf = emptyService.defaultEmptyConfig(nfs4DataProvider.emptyType$ | async);
   <tn-table
     class="table"
+    [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.nfsSessions"
     [dataSource]="(nfs4DataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="nfs4DisplayedColumns()"
@@ -80,35 +88,50 @@
     <ng-container [tnColumnDef]="'name'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Name' | translate), uniqueRowTag4(row), 'row-text']">{{ row.name }}</span>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Name' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ row.name }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'clientid'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Client ID' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Client ID' | translate), uniqueRowTag4(row), 'row-text']">{{ row.clientid }}</span>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Client ID' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ row.clientid }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'address'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Address' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Address' | translate), uniqueRowTag4(row), 'row-text']">{{ row.address }}</span>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Address' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ row.address }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'status'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Status' | translate), uniqueRowTag4(row), 'row-text']">{{ formatStatus(row.status) }}</span>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Status' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ formatStatus(row.status) }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'seconds from last renew'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Seconds From Last Renew' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Seconds From Last Renew' | translate), uniqueRowTag4(row), 'row-text']">
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Seconds From Last Renew' | translate), uniqueRowTag4(row), 'row-text']"
+        >
           {{ row['seconds from last renew'] }}
         </span>
       </ng-template>
@@ -117,14 +140,20 @@
     <ng-container [tnColumnDef]="'minor version'">
       <ng-template tnHeaderCellDef>{{ 'Minor Version' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Minor Version' | translate), uniqueRowTag4(row), 'row-text']">{{ row['minor version'] }}</span>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Minor Version' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ row['minor version'] }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'Implementation domain'">
       <ng-template tnHeaderCellDef>{{ 'Implementation Domain' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Implementation Domain' | translate), uniqueRowTag4(row), 'row-text']">
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Implementation Domain' | translate), uniqueRowTag4(row), 'row-text']"
+        >
           {{ row['Implementation domain'] }}
         </span>
       </ng-template>
@@ -133,7 +162,10 @@
     <ng-container [tnColumnDef]="'Implementation name'">
       <ng-template tnHeaderCellDef>{{ 'Implementation Name' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Implementation Name' | translate), uniqueRowTag4(row), 'row-text']">
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Implementation Name' | translate), uniqueRowTag4(row), 'row-text']"
+        >
           {{ row['Implementation name'] }}
         </span>
       </ng-template>
@@ -142,14 +174,20 @@
     <ng-container [tnColumnDef]="'callback state'">
       <ng-template tnHeaderCellDef>{{ 'Callback State' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Callback State' | translate), uniqueRowTag4(row), 'row-text']">{{ row['callback state'] }}</span>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Callback State' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ row['callback state'] }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'callback address'">
       <ng-template tnHeaderCellDef>{{ 'Callback Address' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Callback Address' | translate), uniqueRowTag4(row), 'row-text']">
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Callback Address' | translate), uniqueRowTag4(row), 'row-text']"
+        >
           {{ row['callback address'] }}
         </span>
       </ng-template>

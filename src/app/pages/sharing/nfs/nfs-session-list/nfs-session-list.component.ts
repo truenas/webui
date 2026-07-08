@@ -1,14 +1,16 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnCellDefDirective,
-  TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, type TnSortEvent,
+  TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
+  type TnSortEvent,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { combineLatest, map, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
@@ -20,7 +22,6 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 
@@ -29,6 +30,7 @@ let nextLabelId = 0;
 @Component({
   selector: 'ix-nfs-session-list',
   templateUrl: './nfs-session-list.component.html',
+  styleUrls: ['./nfs-session-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
@@ -37,7 +39,7 @@ let nextLabelId = 0;
     TnButtonToggleComponent,
     BasicSearchComponent,
     TnButtonComponent,
-    TestDirective,
+    TnTestIdDirective,
     TableColumnPickerComponent,
     TnTableComponent,
     TnTableColumnDirective,
@@ -52,7 +54,6 @@ let nextLabelId = 0;
 export class NfsSessionListComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
@@ -60,9 +61,9 @@ export class NfsSessionListComponent implements OnInit {
   protected readonly searchableElements = nfsSessionListElements;
   protected readonly nfsTypeToggleLabelId = `nfs-type-toggle-label-${nextLabelId++}`;
 
-  searchQuery = signal('');
-  sessions: Nfs3Session[] | Nfs4Session['info'][] = [];
-  readonly NfsType = NfsType;
+  protected readonly searchQuery = signal('');
+  private sessions: Nfs3Session[] | Nfs4Session['info'][] = [];
+  protected readonly NfsType = NfsType;
 
   protected readonly nfs3Columns = signal(createTable<Nfs3Session>([
     textColumn({
@@ -136,7 +137,7 @@ export class NfsSessionListComponent implements OnInit {
   protected readonly trackByNfs3 = (_index: number, row: Nfs3Session): string => `${row.export}-${row.ip}`;
   protected readonly trackByNfs4 = (_index: number, row: Nfs4Session['info']): string => `${row.address}-${row.clientid}`;
 
-  nfs3ProviderRequest$ = this.api.call('nfs.get_nfs3_clients', []).pipe(
+  private readonly nfs3ProviderRequest$ = this.api.call('nfs.get_nfs3_clients', []).pipe(
     tap((sessions) => {
       this.sessions = sessions;
       if (this.searchQuery()) {
@@ -146,9 +147,9 @@ export class NfsSessionListComponent implements OnInit {
     takeUntilDestroyed(this.destroyRef),
   );
 
-  nfs3DataProvider = new AsyncDataProvider<Nfs3Session>(this.nfs3ProviderRequest$);
+  protected readonly nfs3DataProvider = new AsyncDataProvider<Nfs3Session>(this.nfs3ProviderRequest$);
 
-  nfs4ProviderRequest$ = this.api.call('nfs.get_nfs4_clients', []).pipe(
+  private readonly nfs4ProviderRequest$ = this.api.call('nfs.get_nfs4_clients', []).pipe(
     map((sessions) => sessions.map((session) => session.info)),
     tap((sessions) => {
       this.sessions = sessions;
@@ -159,18 +160,21 @@ export class NfsSessionListComponent implements OnInit {
     takeUntilDestroyed(this.destroyRef),
   );
 
-  nfs4DataProvider = new AsyncDataProvider<Nfs4Session['info']>(this.nfs4ProviderRequest$);
+  protected readonly nfs4DataProvider = new AsyncDataProvider<Nfs4Session['info']>(this.nfs4ProviderRequest$);
 
   protected formatStatus(status: string): string {
     return stringToTitleCase(status);
   }
 
+  // Pre-split with lodash kebabCase ('nfs3' → 'nfs-3'): the library's [tnTestId] kebab does
+  // not break letter–digit boundaries, so pre-splitting keeps the resolved data-test values
+  // byte-identical to the legacy [ixTest] directive's lodash normalization.
   protected uniqueRowTag3(row: Nfs3Session): string {
-    return convertStringToId('nfs3-session-' + row.export + '-' + row.ip);
+    return kebabCase(convertStringToId('nfs3-session-' + row.export + '-' + row.ip));
   }
 
   protected uniqueRowTag4(row: Nfs4Session['info']): string {
-    return convertStringToId(`nfs4-session-${row.address}-${row.clientid}`);
+    return kebabCase(convertStringToId(`nfs4-session-${row.address}-${row.clientid}`));
   }
 
   ngOnInit(): void {
@@ -182,7 +186,7 @@ export class NfsSessionListComponent implements OnInit {
       });
   }
 
-  nfsTypeChanged(value: NfsType): void {
+  protected nfsTypeChanged(value: NfsType): void {
     if (this.activeNfsType() === value) {
       return;
     }
@@ -191,7 +195,7 @@ export class NfsSessionListComponent implements OnInit {
     this.loadData();
   }
 
-  loadData(): void {
+  protected loadData(): void {
     if (this.activeNfsType() === NfsType.Nfs3) {
       this.nfs3DataProvider.load();
     } else {
@@ -199,7 +203,7 @@ export class NfsSessionListComponent implements OnInit {
     }
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.searchQuery.set(query?.toString()?.toLowerCase());
 
     if (this.activeNfsType() === NfsType.Nfs3) {
@@ -215,7 +219,6 @@ export class NfsSessionListComponent implements OnInit {
     } else {
       this.nfs4Columns.set([...columns as ReturnType<typeof this.nfs4Columns>]);
     }
-    this.cdr.markForCheck();
   }
 
   protected onNfs3SortChange(event: TnSortEvent): void {

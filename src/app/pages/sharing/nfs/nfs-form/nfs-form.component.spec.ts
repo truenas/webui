@@ -4,14 +4,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -70,6 +69,11 @@ describe('NfsFormComponent', () => {
     await button.click();
   };
 
+  const setDescription = async (value: string): Promise<void> => {
+    const description = await loader.getHarness(TnInputHarness.with({ name: 'comment' }));
+    await description.setValue(value);
+  };
+
   const createComponent = createComponentFactory({
     component: NfsFormComponent,
     imports: [
@@ -80,9 +84,6 @@ describe('NfsFormComponent', () => {
       mockApi([
         mockCall('sharing.nfs.create'),
         mockCall('sharing.nfs.update'),
-        mockCall('nfs.config', {
-          protocols: [NfsProtocol.V3],
-        } as NfsConfig),
       ]),
       mockAuth(),
       mockProvider(SlideIn),
@@ -136,6 +137,11 @@ describe('NfsFormComponent', () => {
       jest.spyOn(store$, 'dispatch');
     });
 
+    it('gives the Description input an accessible name matching its field label', async () => {
+      const description = await loader.getHarness(TnInputHarness.with({ name: 'comment' }));
+      expect(await description.getAriaLabel()).toBe('Description');
+    });
+
     it('shows Access fields when Advanced Options button is pressed', async () => {
       await clickButton('Advanced Options');
 
@@ -144,20 +150,16 @@ describe('NfsFormComponent', () => {
       expect(fields).toContain('Maproot Group');
       expect(fields).toContain('Mapall User');
       expect(fields).toContain('Mapall Group');
-      // Read Only is now a tn-checkbox, no longer an ix-* control.
-      expect(spectator.query('[data-test="checkbox-ro"]')).toBeTruthy();
+      expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Read Only' }))).toBe(true);
     });
 
-    it('loads NFS config and shows Security select in Access fieldset when NFS is version 4', async () => {
-      const websocketMock = spectator.inject(MockApiService);
-      websocketMock.mockCallOnce('nfs.config', {
-        protocols: [NfsProtocol.V4],
-      } as NfsConfig);
-      spectator.component.ngOnInit();
-
+    it('shows a Security select with an accessible name in the Access fieldset', async () => {
       await clickButton('Advanced Options');
 
-      expect(spectator.query('[data-test="select-security"]')).toBeTruthy();
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Security' }))).toBe(true);
+      // Accessible-name guard: the tn-form-field label is visual-only, so the combobox
+      // relies on [ariaLabel] for its name.
+      expect(spectator.query('tn-select [aria-label="Security"]')).toBeTruthy();
     });
 
     it('creates a new NFS share when form is submitted', async () => {
@@ -170,7 +172,11 @@ describe('NfsFormComponent', () => {
         'Maproot User': 'news',
         'Maproot Group': 'sys',
       });
-      spectator.component.form.patchValue({ comment: 'New share', enabled: true, ro: true });
+      await setDescription('New share');
+      const readOnly = await loader.getHarness(TnCheckboxHarness.with({ label: 'Read Only' }));
+      await readOnly.check();
+      const enabled = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }));
+      expect(await enabled.isChecked()).toBe(true);
 
       const networkList = await loader.getHarness(IxListHarness.with({ label: 'Networks' }));
       await networkList.pressAddButton();
@@ -182,12 +188,13 @@ describe('NfsFormComponent', () => {
       });
 
       // Not rendered for non-enterprise systems.
-      expect(spectator.query('[data-test="checkbox-expose-snapshots"]')).toBeFalsy();
+      expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Expose Snapshots' }))).toBe(false);
 
       mockStore$.overrideSelector(selectIsEnterprise, true);
       mockStore$.refreshState();
       spectator.detectChanges();
-      spectator.component.form.patchValue({ expose_snapshots: true });
+      const exposeSnapshots = await loader.getHarness(TnCheckboxHarness.with({ label: 'Expose Snapshots' }));
+      await exposeSnapshots.check();
 
       await clickButton('Save');
 
@@ -228,18 +235,22 @@ describe('NfsFormComponent', () => {
     it('shows values for an existing NFS share when it is open for edit', async () => {
       await clickButton('Advanced Options');
 
+      const description = await loader.getHarness(TnInputHarness.with({ name: 'comment' }));
+      expect(await description.getValue()).toBe('My share');
+      const enabled = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }));
+      expect(await enabled.isChecked()).toBe(true);
+      const readOnly = await loader.getHarness(TnCheckboxHarness.with({ label: 'Read Only' }));
+      expect(await readOnly.isChecked()).toBe(false);
+
+      const values = await form.getValues();
+      expect(values).toMatchObject({
+        Path: '/mnt/nfs/ds',
+        'Maproot User': 'news',
+        'Maproot Group': 'operator',
+      });
+
       const networks = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness.with({ label: 'Network' }));
       const hosts = await loader.getAllHarnesses(IxInputHarness.with({ label: 'Authorized Hosts and IP addresses' }));
-      expect(spectator.component.form.value).toMatchObject({
-        path: '/mnt/nfs/ds',
-        comment: 'My share',
-        enabled: true,
-        ro: false,
-        mapall_user: '',
-        mapall_group: '',
-        maproot_group: 'operator',
-        maproot_user: 'news',
-      });
       expect(networks).toHaveLength(1);
       expect(hosts).toHaveLength(2);
       expect(await networks[0].getValue()).toBe('192.168.1.78/21');
@@ -250,7 +261,9 @@ describe('NfsFormComponent', () => {
     it('updates an existing NFS share when an edit form is submitted', async () => {
       mockStore$.overrideSelector(selectServices, [{ service: ServiceName.Nfs, enable: true } as Service]);
 
-      spectator.component.form.patchValue({ comment: 'Updated share', enabled: false });
+      await setDescription('Updated share');
+      const enabled = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }));
+      await enabled.uncheck();
 
       const networkList = await loader.getHarness(IxListHarness.with({ label: 'Networks' }));
       await networkList.pressAddButton();
@@ -283,11 +296,47 @@ describe('NfsFormComponent', () => {
     it('checks if NFS service is not enabled and enables it after confirmation', async () => {
       mockStore$.overrideSelector(selectServices, [{ id: 1, service: ServiceName.Nfs, enable: false } as Service]);
 
-      spectator.component.form.patchValue({ comment: 'Updated share' });
+      await setDescription('Updated share');
 
       await clickButton('Save');
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
+    });
+  });
+
+  describe('side panel host (no SlideInRef)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+        ],
+        props: {
+          data: { existingNfsShare: existingShare },
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+    });
+
+    it('does not render the modal header or the in-form Save button', async () => {
+      expect(spectator.query('ix-modal-header')).toBeNull();
+      expect(await loader.hasHarness(TnButtonHarness.with({ label: 'Save' }))).toBe(false);
+    });
+
+    it('resolves incoming data from the data input and emits closed when saved', async () => {
+      const closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
+
+      await setDescription('Panel edit');
+      expect(spectator.component.canSubmit()).toBe(true);
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.nfs.update', [
+        1,
+        expect.objectContaining({ comment: 'Panel edit', path: '/mnt/nfs/ds' }),
+      ]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
+      expect(slideInRef.close).not.toHaveBeenCalled();
     });
   });
 });

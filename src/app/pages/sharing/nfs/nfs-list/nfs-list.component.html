@@ -1,6 +1,4 @@
-<tn-card [padContent]="false">
-  <h3 tnCardHeader class="tn-card__title">{{ 'NFS' | translate }}</h3>
-
+<tn-card [padContent]="false" [title]="'NFS' | translate">
   <ng-template tnCardHeaderActions>
     <div class="actions">
       <ix-basic-search
@@ -8,11 +6,14 @@
         (queryChange)="onListFiltered($event)"
       ></ix-basic-search>
 
-      <tn-button
-        [testId]="'nfs-sessions'"
+      <!-- Kept as a real anchor (not tn-button): preserves link semantics
+        (middle-click/new-tab, SR role) and the legacy `link-nfs-sessions` test id. -->
+      <a
+        class="sessions-link"
+        tnTestIdType="link"
+        [tnTestId]="'nfs-sessions'"
         [routerLink]="['/sharing', 'nfs', 'sessions']"
-        [label]="'NFS Sessions' | translate"
-      ></tn-button>
+      >{{ 'NFS Sessions' | translate }}</a>
 
       <ix-table-column-picker
         [columns]="columns()"
@@ -42,6 +43,7 @@
     @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
     <tn-table
       class="table"
+      [testId]="'table-table'"
       [ixUiSearch]="searchableElements.elements.nfs"
       [dataSource]="(dataProvider.currentPage$ | async) ?? []"
       [displayedColumns]="displayedColumns()"
@@ -55,8 +57,9 @@
         <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
-            [tnTooltip]="row.path ? (row.path | translate) : ''"
+            tnTestIdType="text"
+            [tnTestId]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.path || ''"
           >{{ row.path }}</span>
         </ng-template>
       </ng-container>
@@ -65,8 +68,9 @@
         <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
-            [tnTooltip]="row.comment ? (row.comment | translate) : ''"
+            tnTestIdType="text"
+            [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.comment || ''"
           >{{ row.comment }}</span>
         </ng-template>
       </ng-container>
@@ -74,14 +78,20 @@
       <ng-container [tnColumnDef]="'networks'">
         <ng-template tnHeaderCellDef>{{ 'Networks' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span [ixTest]="[('Networks' | translate), uniqueRowTag(row), 'row-text']">{{ formatList(row.networks) }}</span>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Networks' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ formatList(row.networks) }}</span>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'hosts'">
         <ng-template tnHeaderCellDef>{{ 'Hosts' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span [ixTest]="[('Hosts' | translate), uniqueRowTag(row), 'row-text']">{{ formatList(row.hosts) }}</span>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Hosts' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ formatList(row.hosts) }}</span>
         </ng-template>
       </ng-container>
 
@@ -105,7 +115,8 @@
         <ng-template tnHeaderCellDef>{{ 'Expose Snapshots' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Expose Snapshots' | translate), uniqueRowTag(row), 'row-yesno']"
+            tnTestIdType="text"
+            [tnTestId]="[('Expose Snapshots' | translate), uniqueRowTag(row), 'row-yesno']"
           >{{ !!row.expose_snapshots | yesNo | translate }}</span>
         </ng-template>
       </ng-container>

@@ -14,14 +14,12 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
-import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -38,6 +36,7 @@ import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-v
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -98,8 +97,7 @@ export class NfsFormComponent extends SidePanelForm implements OnInit {
   defaultNfsShare: NfsShare | undefined;
 
   readonly isLoading = signal(false);
-  isAdvancedMode = false;
-  hasNfsSecurityField = false;
+  protected readonly isAdvancedMode = signal(false);
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
     share_type: DatasetPreset.Multiprotocol,
   };
@@ -141,12 +139,12 @@ export class NfsFormComponent extends SidePanelForm implements OnInit {
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
-  readonly securityOptions: Option[] = [
+  readonly securityOptions = translateOptions(this.translate, [
     { label: 'SYS', value: NfsSecurityProvider.Sys },
     { label: 'KRB5', value: NfsSecurityProvider.Krb5 },
     { label: 'KRB5I', value: NfsSecurityProvider.Krb5i },
     { label: 'KRB5P', value: NfsSecurityProvider.Krb5p },
-  ];
+  ]);
 
   private setNfsShareForEdit(share: NfsShare): void {
     share.networks.forEach(() => this.addNetworkControl());
@@ -162,8 +160,6 @@ export class NfsFormComponent extends SidePanelForm implements OnInit {
       getRootDatasetsValidator(this.existingNfsShare ? [this.existingNfsShare.path] : []),
       this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
     ));
-
-    this.checkForNfsSecurityField();
 
     if (this.defaultNfsShare) {
       this.form.patchValue(this.defaultNfsShare);
@@ -191,7 +187,7 @@ export class NfsFormComponent extends SidePanelForm implements OnInit {
   }
 
   protected toggleAdvancedMode(): void {
-    this.isAdvancedMode = !this.isAdvancedMode;
+    this.isAdvancedMode.update((isAdvanced) => !isAdvanced);
   }
 
   protected onSubmit(): void {
@@ -235,14 +231,6 @@ export class NfsFormComponent extends SidePanelForm implements OnInit {
           this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
-      });
-  }
-
-  private checkForNfsSecurityField(): void {
-    this.api.call('nfs.config')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((nfsConfig) => {
-        this.hasNfsSecurityField = nfsConfig.protocols?.includes(NfsProtocol.V4);
       });
   }
 }
