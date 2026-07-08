@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
-  TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective, TnSidePanelActionDirective, TnSidePanelComponent,
+  TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective,
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
@@ -33,14 +33,13 @@ import { TableColumnPickerComponent } from 'app/modules/ix-table/components/tabl
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { sidePanelFormCloseGuard } from 'app/modules/slide-ins/side-panel-form.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
-import { NfsFormComponent, NfsFormData } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -73,9 +72,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TierStatusComponent,
     TnTablePagerComponent,
     TnTooltipDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
-    NfsFormComponent,
     TranslateModule,
     AsyncPipe,
     YesNoPipe,
@@ -86,12 +82,12 @@ export class NfsListComponent implements OnInit {
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private formPanel = inject(FormSidePanelService);
   private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
   private tierService = inject(SharingTierService);
-  private unsavedChanges = inject(UnsavedChangesService);
 
   protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
@@ -104,17 +100,6 @@ export class NfsListComponent implements OnInit {
   private nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
-
-  // Side-panel host for the add/edit form (the form is dual-host: it also opens
-  // via legacy SlideIn from the shares-dashboard card).
-  protected readonly configOpen = signal(false);
-  protected readonly formData = signal<NfsFormData | undefined>(undefined);
-  protected readonly configForm = viewChild(NfsFormComponent);
-  protected readonly sidePanelTitle = computed(() => (this.formData()?.existingNfsShare
-    ? this.translate.instant('Edit NFS Share')
-    : this.translate.instant('Add NFS Share')));
-
-  protected readonly closeFormGuard = sidePanelFormCloseGuard(this.unsavedChanges, this.configForm);
 
   private tierAction: IconActionConfig<NfsShare> = this.tierService.createChangeTierAction<NfsShare>({
     destroyRef: this.destroyRef,
@@ -258,20 +243,17 @@ export class NfsListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.formData.set(undefined);
-    this.configOpen.set(true);
+    this.formPanel.open(NfsFormComponent, {
+      title: this.translate.instant('Add NFS Share'),
+      inputs: { nfsShareData: { existingNfsShare: undefined } },
+    }).onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected doEdit(row: NfsShare): void {
-    this.formData.set({ existingNfsShare: row });
-    this.configOpen.set(true);
-  }
-
-  protected onFormClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    if (saved) {
-      this.refresh();
-    }
+    this.formPanel.open(NfsFormComponent, {
+      title: this.translate.instant('Edit NFS Share'),
+      inputs: { nfsShareData: { existingNfsShare: row } },
+    }).onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected onSortChange(event: TnSortEvent): void {

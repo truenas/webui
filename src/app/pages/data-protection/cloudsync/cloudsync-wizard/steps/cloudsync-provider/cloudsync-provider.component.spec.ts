@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatStepper } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog, TnSelectHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -49,7 +48,7 @@ describe('CloudSyncProviderComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-      mockProvider(MatStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('cloudsync.providers', [storjProvider, googlePhotosProvider]),
@@ -77,8 +76,17 @@ describe('CloudSyncProviderComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
+  // Created per-test (not in a shared beforeEach) so individual tests can override the credentials
+  // mock — overrideProvider must run before TestBed is instantiated.
+  function setup(getCloudSyncCredentials: jest.Mock = jest.fn(() => of([googlePhotosCreds]))): void {
+    spectator = createComponent({
+      providers: [
+        mockProvider(CloudCredentialService, {
+          getCloudSyncCredentials,
+          getProviders: jest.fn(() => of([storjProvider, googlePhotosProvider])),
+        }),
+      ],
+    });
     Object.defineProperty(spectator.component, 'loading', {
       value: loading,
     });
@@ -86,9 +94,10 @@ describe('CloudSyncProviderComponent', () => {
       value: save,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  });
+  }
 
   it('emits the value of credentials when credentials value changes', async () => {
+    setup();
     await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="exist_credential"]' })))
       .selectOption('Google Photos (Google Photos)');
 
@@ -99,6 +108,7 @@ describe('CloudSyncProviderComponent', () => {
   });
 
   it('verifies entered values when user presses Verify', async () => {
+    setup();
     await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="exist_credential"]' })))
       .selectOption('Google Photos (Google Photos)');
 
@@ -114,5 +124,29 @@ describe('CloudSyncProviderComponent', () => {
       client_secret: 'test-client-secret',
       token: 'test-token',
     }]);
+  });
+
+  it('re-fetches and emits the credential when the chosen one is not cached yet', async () => {
+    // Reproduces the dashboard race: this step's own credentials query is still cold when the user
+    // picks an option (the select loads its options independently), so the first lookup misses.
+    setup(
+      jest.fn()
+        .mockReturnValueOnce(of([])) // cold cache when the step initializes
+        .mockReturnValue(of([googlePhotosCreds])), // populated by the time it re-fetches
+    );
+
+    await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="exist_credential"]' })))
+      .selectOption('Google Photos (Google Photos)');
+
+    expect(save.emit).toHaveBeenCalledWith(googlePhotosCreds);
+  });
+
+  it('does nothing on Verify when no credential is selected', () => {
+    setup();
+    spectator.component.onVerify();
+
+    expect(loading.emit).not.toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call)
+      .not.toHaveBeenCalledWith('cloudsync.credentials.verify', expect.anything());
   });
 });

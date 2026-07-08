@@ -13,7 +13,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -45,7 +45,7 @@ describe('ContainerGeneralInfoComponent', () => {
     providers: [
       IxFormatterService,
       mockAuth(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success(true)),
       }),
       mockProvider(ContainersStore, {
@@ -104,11 +104,14 @@ describe('ContainerGeneralInfoComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers']);
   });
 
-  it('opens edit container form when Edit is pressed', async () => {
+  it('opens edit container form in a side panel when Edit is pressed', async () => {
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ContainerFormComponent, { data: container });
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      ContainerFormComponent,
+      expect.objectContaining({ inputs: { editContainer: container } }),
+    );
     expect(spectator.inject(ContainersStore).reload).toHaveBeenCalled();
   });
 

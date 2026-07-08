@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, OnDestroy, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDivider } from '@angular/material/divider';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnTooltipDirective, TnDialog } from '@truenas/ui-components';
+import {
+  TnTooltipDirective, TnDialog, TnButtonComponent, TnDividerComponent,
+} from '@truenas/ui-components';
 import { isEmpty } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -19,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
@@ -40,10 +39,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxDateComponent,
     ReactiveFormsModule,
     IxCheckboxComponent,
-    MatDivider,
-    MatButton,
+    TnDividerComponent,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
     TnTooltipDirective,
   ],
 })

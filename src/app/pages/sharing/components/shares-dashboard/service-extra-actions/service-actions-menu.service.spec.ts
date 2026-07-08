@@ -8,7 +8,7 @@ import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -57,7 +57,7 @@ describe('ServiceActionsMenuService', () => {
       ]),
       mockProvider(SnackbarService),
       mockProvider(Router),
-      mockProvider(SlideIn),
+      mockProvider(FormSidePanelService),
       mockProvider(UrlOptionsService),
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => <T>(source$: T): T => source$),
@@ -223,11 +223,11 @@ describe('ServiceActionsMenuService', () => {
     ];
 
     cases.forEach(([serviceName, component]) => {
-      it(`opens the slide-in for ${serviceName}`, () => {
+      it(`opens the side panel for ${serviceName}`, () => {
         const config = spectator.service.buildConfigItem(service({ service: serviceName }));
         config.action?.();
 
-        const openSpy = spectator.inject(SlideIn).open;
+        const openSpy = spectator.inject(FormSidePanelService).open;
         expect(openSpy).toHaveBeenCalledTimes(1);
         expect(openSpy.mock.calls[0][0]).toBe(component);
       });

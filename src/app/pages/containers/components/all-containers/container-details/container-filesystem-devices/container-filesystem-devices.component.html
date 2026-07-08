@@ -22,29 +22,3 @@
     }
   }
 </tn-card>
-
-<tn-side-panel
-  [title]="panelTitle()"
-  [closeGuard]="closeGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-container-filesystem-device-form
-      [disk]="editingDisk()"
-      [container]="container()"
-      (closed)="onConfigClosed($event)"
-    ></ix-container-filesystem-device-form>
-  }
-  @if (configForm(); as form) {
-    <div tnSidePanelAction>
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        color="primary"
-        [testId]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="!form.canSubmit()"
-        (onClick)="form.submit()"
-      ></tn-button>
-    </div>
-  }
-</tn-side-panel>

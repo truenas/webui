@@ -11,7 +11,7 @@
     [routerLink]="['/sharing', 'smb']"
     [tnTooltip]="'Open SMB list in full page' | translate"
   >
-    <h3 class="card-title">
+    <h3 class="tn-card__title">
       {{ 'Windows (SMB) Shares' | translate }}
       <tn-icon
         name="open-in-new"
@@ -62,7 +62,7 @@
       [loading]="!!(dataProvider.isLoading$ | async)"
       (sortChange)="onSortChange($event)"
     >
-      <ng-container [tnColumnDef]="'name'" [sortable]="true">
+      <ng-container [tnColumnDef]="'name'" [sortable]="true" [width]="'20%'">
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
@@ -72,7 +72,7 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'path'" [sortable]="true">
+      <ng-container [tnColumnDef]="'path'" [sortable]="true" [width]="'25%'">
         <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           @let path = getPathValue(row);
@@ -83,13 +83,15 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'comment'" [sortable]="true">
+      <ng-container [tnColumnDef]="'comment'" [sortable]="true" [width]="'22%'">
         <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
+            [class.empty-value]="!row.comment"
             [ixTest]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.comment ? (row.comment | translate) : ''"
-          >{{ row.comment }}</span>
+            [attr.aria-label]="row.comment ? null : ('No description' | translate)"
+          >{{ row.comment || '—' }}</span>
         </ng-template>
       </ng-container>
 
@@ -110,7 +112,7 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'audit'">
+      <ng-container [tnColumnDef]="'audit'" [width]="'120px'">
         <ng-template tnHeaderCellDef>{{ 'Audit Logging' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span

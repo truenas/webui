@@ -1,13 +1,17 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, input, computed,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  InputType,
+  TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnRadioComponent, TnSelectComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import {
   BehaviorSubject, EMPTY, forkJoin, of, Observable,
@@ -30,24 +34,18 @@ import {
   NetworkInterfaceUpdate,
 } from 'app/interfaces/network-interface.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -63,7 +61,6 @@ import {
 } from 'app/pages/system/network/components/interface-form/network-interface-alias-control.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -76,13 +73,13 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   providers: [InterfaceNameValidatorService],
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnRadioComponent,
     OrderedListboxComponent,
     IxListComponent,
     IxListItemComponent,
@@ -90,15 +87,13 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxErrorsComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
-    IxRadioGroupComponent,
     TnTooltipDirective,
   ],
 })
-export class InterfaceFormComponent implements OnInit {
+export class InterfaceFormComponent extends SidePanelForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
@@ -110,16 +105,21 @@ export class InterfaceFormComponent implements OnInit {
   private validatorsService = inject(IxValidatorsService);
   private interfaceFormValidator = inject(InterfaceNameValidatorService);
   private tnDialog = inject(TnDialog);
-  private systemGeneralService = inject(SystemGeneralService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<{
-    interfaces?: NetworkInterface[];
-    interface?: NetworkInterface;
-  }, boolean>>(SlideInRef);
+
+  /**
+   * Interface to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to carry
+   * data). Unused in the legacy SlideIn host, which supplies it via `slideInRef.getData()`.
+   */
+  readonly editInterface = input<NetworkInterface | undefined>(undefined);
+  /** Existing interfaces (for auto-naming), when hosted in a `<tn-side-panel>`. */
+  readonly interfacesList = input<NetworkInterface[]>([]);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
+  protected readonly InputType = InputType;
   protected existingInterface: NetworkInterface | undefined;
+  private interfaceList: NetworkInterface[] = [];
 
   readonly defaultMtu = 1500;
   protected readonly isHaEnabled$ = new BehaviorSubject(false);
@@ -148,7 +148,9 @@ export class InterfaceFormComponent implements OnInit {
     enable_learning: [true],
 
     // Lag fields
-    lag_protocol: [LinkAggregationProtocol.None],
+    // The backend's `lag_supported_protocols` never returns NONE, so start unselected (placeholder)
+    // and force an explicit choice rather than showing a phantom NONE that isn't in the options.
+    lag_protocol: new FormControl(null as LinkAggregationProtocol | null),
     xmit_hash_policy: [XmitHashPolicy.Layer2Plus3],
     lacpdu_rate: [LacpduRate.Slow],
     lag_ports: [[] as string[]],
@@ -168,6 +170,11 @@ export class InterfaceFormComponent implements OnInit {
     // Aliases
     aliases: this.formBuilder.array<NetworkInterfaceFormAlias>([]),
   });
+
+  private readonly baseCanSubmit = this.trackCanSubmit(this.isLoading);
+  private readonly isHaEnabled = toSignal(this.isHaEnabled$, { initialValue: false });
+  // Editing interfaces is disallowed while HA is enabled, so a side-panel host's Save must be gated on it too.
+  readonly canSubmit = computed(() => this.baseCanSubmit() && !this.isHaEnabled());
 
   interfaceTypes$ = of([
     { label: this.translate.instant('Bridge'), value: NetworkInterfaceType.Bridge },
@@ -204,15 +211,6 @@ export class InterfaceFormComponent implements OnInit {
 
   readonly helptext = helptextInterfacesForm;
 
-  constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.existingInterface = slideInRef.getData()?.interface;
-  }
-
   get isNew(): boolean {
     return !this.existingInterface;
   }
@@ -246,8 +244,18 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Edit record and the existing-interfaces list arrive via `slideInRef.getData()` in the legacy
+    // SlideIn host, or via the `editInterface` / `interfacesList` inputs in a `<tn-side-panel>` host.
+    const slideInData = this.slideInRef?.getData() as {
+      interfaces?: NetworkInterface[];
+      interface?: NetworkInterface;
+    } | undefined;
+    this.existingInterface = this.slideInRef ? slideInData?.interface : this.editInterface();
+    this.interfaceList = this.slideInRef ? (slideInData?.interfaces ?? []) : this.interfacesList();
+
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();
+    this.updateRequiredValidatorsOnTypeChange();
     this.checkFailoverDisabled();
 
     if (this.existingInterface) {
@@ -308,22 +316,28 @@ export class InterfaceFormComponent implements OnInit {
       ? this.api.call('interface.update', [this.existingInterface.id, params])
       : this.api.call('interface.create', [params]);
 
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
+    const isNew = this.isNew;
+
+    request$.pipe(
+      switchMap(() => {
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
+        return this.api.call('interface.network_config_to_be_removed');
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (configToRemove) => {
+        if (configToRemove && Object.keys(configToRemove).length > 0) {
+          this.tnDialog.open(DefaultGatewayDialog, {
+            width: '600px',
+            data: configToRemove,
+          });
+        }
 
-        this.api.call('interface.network_config_to_be_removed').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((configToRemove) => {
-          if (configToRemove && Object.keys(configToRemove).length > 0) {
-            this.tnDialog.open(DefaultGatewayDialog, {
-              width: '600px',
-              data: configToRemove,
-            });
-          }
-
-          this.slideInRef.close({ response: true });
-          this.isLoading.set(false);
-          this.snackbar.success(this.translate.instant('Network interface updated'));
-        });
+        this.close(true);
+        this.isLoading.set(false);
+        this.snackbar.success(
+          this.translate.instant(isNew ? 'Network interface created' : 'Network interface updated'),
+        );
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
@@ -333,7 +347,7 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   private generateNextAvailableNameByType(type: NetworkInterfaceType): string | null {
-    const interfaces = this.slideInRef.getData()?.interfaces ?? [];
+    const interfaces = this.interfaceList;
     const prefix = this.getPrefixByType(type);
     if (!prefix) return null;
 
@@ -390,6 +404,35 @@ export class InterfaceFormComponent implements OnInit {
           this.form.controls.name.updateValueAndValidity();
         });
       });
+  }
+
+  /**
+   * The type-specific selects are marked required in the template, but that only draws the asterisk —
+   * it attaches no validator, so `form.invalid` (and thus the Save button) ignored them. Attach
+   * `Validators.required` to the active type's fields and clear it from the others on every change.
+   */
+  private updateRequiredValidatorsOnTypeChange(): void {
+    this.form.controls.type.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((type) => this.applyTypeRequiredValidators(type));
+  }
+
+  private applyTypeRequiredValidators(type: NetworkInterfaceType | null): void {
+    const controls = this.form.controls;
+    const requiredControlsByType = new Map<NetworkInterfaceType, AbstractControl[]>([
+      [NetworkInterfaceType.LinkAggregation, [controls.lag_protocol, controls.lag_ports]],
+      [NetworkInterfaceType.Vlan, [controls.vlan_parent_interface, controls.vlan_tag]],
+    ]);
+
+    const activeControls = (type && requiredControlsByType.get(type)) || [];
+    [...requiredControlsByType.values()].flat().forEach((control) => {
+      if (activeControls.includes(control)) {
+        control.addValidators(Validators.required);
+      } else {
+        control.removeValidators(Validators.required);
+      }
+      control.updateValueAndValidity({ emitEvent: false });
+    });
   }
 
   private setOptionsForEdit(nic: NetworkInterface): void {
@@ -491,7 +534,7 @@ export class InterfaceFormComponent implements OnInit {
     } else if (this.isLag) {
       params = {
         ...params,
-        lag_protocol: formValues.lag_protocol,
+        lag_protocol: formValues.lag_protocol as LinkAggregationProtocol,
         xmit_hash_policy: formValues.xmit_hash_policy,
         lacpdu_rate: formValues.lacpdu_rate,
         lag_ports: formValues.lag_ports,

@@ -1,15 +1,12 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent, TnEmptyComponent } from '@truenas/ui-components';
 import { parse } from 'date-fns';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -23,7 +20,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     TnDialogShellComponent,
     FakeProgressBarComponent,
-    EmptyComponent,
+    TnEmptyComponent,
     FormActionsComponent,
     TnButtonComponent,
     TranslateModule,
@@ -34,22 +31,16 @@ export class IpmiEventsDialog implements OnInit {
   protected dialogRef = inject<DialogRef<unknown, IpmiEventsDialog>>(DialogRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly isLoading = signal(false);
   protected events: IpmiEvent[] = [];
 
-  protected emptyConfig: EmptyConfig = {
-    title: this.translate.instant('No events to display.'),
-    type: EmptyType.NoPageData,
-  };
-
-  get canClear(): boolean {
+  protected get canClear(): boolean {
     return this.events.length > 0 && !this.isLoading();
   }
 
-  onClear(): void {
+  protected onClear(): void {
     this.isLoading.set(true);
     this.api.job('ipmi.sel.clear').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (job) => {
@@ -68,7 +59,7 @@ export class IpmiEventsDialog implements OnInit {
     });
   }
 
-  getEventDate(event: IpmiEvent): Date {
+  protected getEventDate(event: IpmiEvent): Date {
     return parse(`${event.date} ${event.time}`, 'MMM-dd-yyyy HH:mm:ss', new Date());
   }
 

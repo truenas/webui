@@ -2,9 +2,8 @@ import { DecimalPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input, output,
 } from '@angular/core';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnProgressBarComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
@@ -21,7 +20,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnTooltipDirective,
-    MatProgressBar,
+    TnProgressBarComponent,
     TnIconButtonComponent,
     TranslateModule,
     FormatDateTimePipe,

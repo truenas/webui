@@ -1,8 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  InputType,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   combineLatest, Observable, of, take,
 } from 'rxjs';
@@ -28,7 +35,6 @@ import {
   datasetSyncLabels,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting, deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -39,9 +45,6 @@ import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.in
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -49,9 +52,8 @@ import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/u
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { LicenseService } from 'app/services/license.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { AppState } from 'app/store';
-import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-other-options-section',
@@ -59,22 +61,24 @@ import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/sys
   templateUrl: './other-options-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
-    IxInputComponent,
     TranslateModule,
     ReactiveFormsModule,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     WarningComponent,
+    AsyncPipe,
   ],
 })
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private store$ = inject<Store<AppState>>(Store);
+  private licenseService = inject(LicenseService);
   private cdr = inject(ChangeDetectorRef);
   private systemGeneralService = inject(SystemGeneralService);
   private dialogService = inject(DialogService);
-  protected formatter = inject(IxFormatterService);
+  private formatter = inject(IxFormatterService);
   private api = inject(ApiService);
   private datasetFormService = inject(DatasetFormService);
   private tierService = inject(SharingTierService);
@@ -90,7 +94,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   readonly advancedModeChange = output();
   readonly formValidityChange = output<boolean>();
 
-  hasDeduplication = false;
+  protected readonly hasDeduplication = toSignal(this.licenseService.hasDedup$, { initialValue: false });
   hasRecordsizeWarning = false;
   wasDedupChecksumWarningShown = false;
   minimumRecommendedRecordsize = '128K' as DatasetRecordSize;
@@ -166,6 +170,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
 
   readonly helptext = helptextDatasetForm;
   readonly OnOff = OnOff;
+  protected readonly InputType = InputType;
 
   get hasChecksumWarning(): boolean {
     return this.form.value.checksum === DatasetChecksum.Sha256
@@ -195,8 +200,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.checkIfDedupIsSupported();
-
     this.tierService.getTierConfig().pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
@@ -262,27 +265,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;
-  }
-
-  private checkIfDedupIsSupported(): void {
-    this.hasDeduplication = false;
-    this.cdr.markForCheck();
-
-    combineLatest([
-      this.store$.select(selectIsEnterprise),
-      this.store$.pipe(waitForSystemInfo),
-    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([isEnterprise, systemInfo]) => {
-      if (!isEnterprise) {
-        this.hasDeduplication = true;
-        this.cdr.markForCheck();
-        return;
-      }
-
-      if (systemInfo.license?.features.some((feature) => feature.name === LicenseFeature.Dedup)) {
-        this.hasDeduplication = true;
-        this.cdr.markForCheck();
-      }
-    });
   }
 
   private getCopiesValue(dataset: Dataset): number | typeof inherit {

@@ -1,19 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnIconButtonHarness, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
@@ -35,32 +32,22 @@ const exporters: ReportingExporter[] = [
 describe('ReportingExportersListComponent', () => {
   let spectator: Spectator<ReportingExporterListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: ReportingExporterListComponent,
-    imports: [
-      BasicSearchComponent,
-      FakeProgressBarComponent,
-    ],
+    imports: [],
     providers: [
       mockApi([
         mockCall('reporting.exporters.query', exporters),
         mockCall('reporting.exporters.delete'),
         mockCall('reporting.exporters.update'),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockAuth(),
@@ -70,7 +57,7 @@ describe('ReportingExportersListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('shows accurate page title', () => {
@@ -79,23 +66,26 @@ describe('ReportingExportersListComponent', () => {
   });
 
   it('opens exporter form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ReportingExportersFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ReportingExportersFormComponent, {
+      title: 'Add Reporting Exporter',
+    });
   });
 
   it('opens reporting exporters form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 3);
+    const editButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ReportingExportersFormComponent, {
-      data: exporters[0],
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ReportingExportersFormComponent, {
+      title: 'Edit Reporting Exporter',
+      inputs: { exporter: exporters[0] },
     });
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 3);
+    const deleteButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
@@ -107,8 +97,8 @@ describe('ReportingExportersListComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.delete', [1]);
   });
 
-  it('updates a reporting exporter when Enabled checkbox is toggled', async () => {
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 2);
+  it('updates a reporting exporter when Enabled toggle is toggled', async () => {
+    const toggle = await loader.getHarness(TnSlideToggleHarness);
     await toggle.toggle();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.update', [
@@ -118,12 +108,18 @@ describe('ReportingExportersListComponent', () => {
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Type', 'Enabled', ''],
-      ['test', ReportingExporterKey.Graphite, '', ''],
-    ];
+    const headerTexts = await table.getHeaderTexts();
+    const rowTexts = await table.getAllRowTexts();
 
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    expect(headerTexts).toEqual(['Name', 'Type', 'Enabled', '']);
+    expect(rowTexts).toEqual([['test', ReportingExporterKey.Graphite, '', '']]);
+  });
+
+  it('synthesizes per-row test IDs from the exporter name', () => {
+    expect(spectator.query('[data-test="text-name-reporting-exporter-test-row-text"]')).toExist();
+    expect(spectator.query('[data-test="text-type-reporting-exporter-test-row-text"]')).toExist();
+    expect(spectator.query('[data-test="toggle-enabled-reporting-exporter-test-row-toggle"]')).toExist();
+    expect(spectator.query('[data-test="button-edit-reporting-exporter-test-row-action"]')).toExist();
+    expect(spectator.query('[data-test="button-delete-reporting-exporter-test-row-action"]')).toExist();
   });
 });

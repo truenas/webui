@@ -1,11 +1,17 @@
 // cspell:ignore zvol zvols volsize volblocksize snapdev Snapdev Vdev helptext ngneat rawvalue pbkdf
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, input, output, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, forkJoin, map, Observable, of, switchMap, tap, throwError,
+  InputType, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnCheckboxComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  finalize, forkJoin, map, Observable, switchMap, tap, throwError,
 } from 'rxjs';
 import {
   minimumPbkdf2Iterations,
@@ -36,15 +42,7 @@ import { DetailsItemComponent } from 'app/modules/details-table/details-item/det
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import {
-  IxButtonGroupComponent,
-} from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   forbiddenValues,
@@ -52,12 +50,14 @@ import {
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { LicenseService } from 'app/services/license.service';
 
 // volsize values round-trip through the file-size formatter, so a re-saved
 // edit can drift by a few bytes. Treat anything within 0.1% of the original
@@ -71,37 +71,51 @@ const volsizeUnchangedRelativeTolerance = 0.001;
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxFormComponent,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
-    IxTextareaComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TnButtonToggleGroupComponent,
+    TnButtonToggleComponent,
     ReactiveFormsModule,
     TranslateModule,
     EditableComponent,
     DetailsTableComponent,
     DetailsItemComponent,
     AsyncPipe,
-    IxButtonGroupComponent,
     FileSizePipe,
   ],
 })
-export class ZvolFormComponent implements OnInit {
-  formatter = inject(IxFormatterService);
+export class ZvolFormComponent implements OnInit, SidePanelHostForm<Dataset> {
+  private formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
+  private licenseService = inject(LicenseService);
   slideInRef = inject<SlideInRef<{
     isNew: boolean;
     parentOrZvolId: string;
-  }, Dataset>>(SlideInRef);
+  }, Dataset>>(SlideInRef, { optional: true });
 
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
+
+  /**
+   * Edit/create parameters when hosted in a `<tn-side-panel>` (no `SlideInRef` to carry
+   * data). Unused in the legacy SlideIn host (which supplies them via `slideInRef.getData()`).
+   */
+  readonly params = input<{ isNew: boolean; parentOrZvolId: string }>();
+
+  /** Emits the created/updated zvol when hosted in a `<tn-side-panel>`. */
+  readonly closed = output<Dataset>();
+
+  private ixForm = viewChild.required(IxFormComponent);
+  private savedDataset: Dataset | undefined;
 
   protected readonly addTitle = this.translate.instant(helptextZvol.addTitle);
   protected readonly editTitle = this.translate.instant(helptextZvol.editTitle);
@@ -111,6 +125,7 @@ export class ZvolFormComponent implements OnInit {
 
   readonly helptext = helptextZvol;
   readonly OnOff = OnOff;
+  protected readonly InputType = InputType;
   inheritEncryptPlaceholder: string = helptextZvol.encryption.inheritLabel;
   volBlockSizeWarning: string | null;
 
@@ -128,6 +143,7 @@ export class ZvolFormComponent implements OnInit {
   private inheritedReadonlyValue: string;
   protected volsizeReadonlyWarning: string | null = null;
   private originalVolsize: number | null = null;
+  protected hasDeduplication = false;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -164,7 +180,6 @@ export class ZvolFormComponent implements OnInit {
 
   syncOptions: Option[] = mapToOptions(datasetSyncLabels, this.translate);
   protected compressionOptions: Option[] = [];
-  protected compressionOptions$: Observable<Option[]> = of([]);
   protected deduplicationOptions: Option[] = mapToOptions(deduplicationSettingLabels, this.translate);
   protected snapdevOptions: Option[] = mapToOptions(datasetSnapdevLabels, this.translate);
   protected readonlyOptions: Option[] = mapToOptions(onOffLabels, this.translate);
@@ -182,18 +197,10 @@ export class ZvolFormComponent implements OnInit {
     { label: '128 KiB', value: '128K' },
   ];
 
-  private encryptionTypeOptions: Option[] = [
+  protected encryptionTypeOptions: Option[] = [
     { label: this.translate.instant('Key'), value: 'key' },
     { label: this.translate.instant('Passphrase'), value: 'passphrase' },
   ];
-
-  readonly syncOptions$ = of(this.syncOptions);
-  readonly deduplicationOptions$ = of(this.deduplicationOptions);
-  readonly readonlyOptions$ = of(this.readonlyOptions);
-  readonly volblocksizeOptions$ = of(this.volblocksizeOptions);
-  readonly snapdevOptions$ = of(this.snapdevOptions);
-  readonly specialSmallBlockSizeOptions$ = of(this.specialSmallBlockSizeOptions);
-  readonly encryptionTypeOptions$ = of(this.encryptionTypeOptions);
 
   readonly algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(
     map((algorithms) => Object.keys(algorithms).map((algorithm) => ({ label: algorithm, value: algorithm }))),
@@ -208,8 +215,11 @@ export class ZvolFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isNew = this.slideInRef.getData().isNew;
-    this.parentOrZvolId = this.slideInRef.getData().parentOrZvolId;
+    const data = this.slideInRef ? this.slideInRef.getData() : this.params();
+    this.isNew = data?.isNew ?? true;
+    this.parentOrZvolId = data?.parentOrZvolId ?? '';
+
+    this.checkIfDedupIsSupported();
 
     // Set up conditional validation for special_small_block_size_custom
     this.form.controls.special_small_block_size.valueChanges.pipe(
@@ -243,8 +253,55 @@ export class ZvolFormComponent implements OnInit {
     return this.buildEditResult(event);
   };
 
+  /** Public entry point for a `<tn-side-panel>` footer Save. */
+  submit(): void {
+    this.ixForm().submit();
+  }
+
+  canSubmit(): boolean {
+    return this.ixForm().canSubmit();
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.ixForm().hasUnsavedChanges();
+  }
+
+  /**
+   * `<ix-form>` closes host-agnostically: in a SlideIn host it hands the saved zvol back
+   * through the SlideInRef; in a `<tn-side-panel>` it only signals success via `closed`, so
+   * re-emit the zvol captured in the submit `onSuccess` hook to the panel host.
+   */
+  protected onFormClosed(): void {
+    if (this.savedDataset) {
+      this.closed.emit(this.savedDataset);
+    }
+  }
+
   protected getOptionLabel(options: Option[], value: unknown): string {
     return options.find((option) => option.value === value)?.label ?? String(value ?? '');
+  }
+
+  private checkIfDedupIsSupported(): void {
+    this.licenseService.hasDedup$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((hasDedup) => {
+      this.hasDeduplication = hasDedup;
+      this.updateDeduplicationControl();
+      this.cdr.markForCheck();
+    });
+  }
+
+  // When deduplication is hidden (Enterprise without a dedup license), the
+  // control still carries `Validators.required`, which would silently block
+  // submission. Drop the validator while hidden; the value is left untouched
+  // and the payload builders omit `deduplication` entirely based on
+  // `hasDeduplication`.
+  private updateDeduplicationControl(): void {
+    const control = this.form.controls.deduplication;
+    if (this.hasDeduplication) {
+      control.setValidators([Validators.required]);
+    } else {
+      control.clearValidators();
+    }
+    control.updateValueAndValidity({ emitEvent: false });
   }
 
   private buildCreateResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult {
@@ -252,6 +309,9 @@ export class ZvolFormComponent implements OnInit {
     return {
       request$: this.api.call('pool.dataset.create', [data as DatasetCreate]),
       successMessage: this.translate.instant('Zvol created'),
+      onSuccess: (result) => {
+        this.savedDataset = result as Dataset;
+      },
     };
   }
 
@@ -267,6 +327,9 @@ export class ZvolFormComponent implements OnInit {
         }),
       ),
       successMessage: this.translate.instant('Zvol updated'),
+      onSuccess: (result) => {
+        this.savedDataset = result as Dataset;
+      },
       onError: (error: unknown) => {
         if (error instanceof Error && error.message === 'VOLSIZE_VALIDATION') {
           this.dialogService.error({
@@ -303,7 +366,7 @@ export class ZvolFormComponent implements OnInit {
     if (data.compression === inherit) {
       delete data.compression;
     }
-    if (data.deduplication === inherit) {
+    if (data.deduplication === inherit || !this.hasDeduplication) {
       delete data.deduplication;
     }
     if (data.readonly === inherit) {
@@ -381,6 +444,12 @@ export class ZvolFormComponent implements OnInit {
     delete data.confirm_passphrase;
     delete data.pbkdf2iters;
     delete data.algorithm;
+
+    // Never send deduplication when the field is hidden (Enterprise without a
+    // dedup license) — it isn't user-editable in that state.
+    if (!this.hasDeduplication) {
+      delete data.deduplication;
+    }
 
     // Handle readonly/volsize interaction
     const readonlyValue = this.form.controls.readonly.value;
@@ -473,7 +542,6 @@ export class ZvolFormComponent implements OnInit {
       ).subscribe({
         next: ([parents, , compressionOptions]) => {
           this.compressionOptions = compressionOptions;
-          this.compressionOptions$ = of(compressionOptions);
           const parentOrZvol = parents[0];
           if (parentOrZvol.encrypted) {
             this.form.controls.encryption.setValue(true);
@@ -619,7 +687,6 @@ export class ZvolFormComponent implements OnInit {
     const inheritLabel = this.translate.instant('Inherit');
     this.syncOptions.unshift({ label: `${inheritLabel} (${parent.sync.rawvalue})`, value: inherit });
     this.compressionOptions.unshift({ label: `${inheritLabel} (${parent.compression.rawvalue})`, value: inherit });
-    this.compressionOptions$ = of(this.compressionOptions);
     this.deduplicationOptions.unshift({ label: `${inheritLabel} (${parent.deduplication.rawvalue})`, value: inherit });
     this.volblocksizeOptions.unshift({ label: inheritLabel, value: inherit });
     this.snapdevOptions.unshift({ label: `${inheritLabel} (${parent.snapdev.rawvalue})`, value: inherit });
@@ -656,7 +723,6 @@ export class ZvolFormComponent implements OnInit {
     } else {
       this.compressionOptions.unshift({ label: `${inheritLabel} (${parentDataset[0].compression.rawvalue})`, value: inherit });
     }
-    this.compressionOptions$ = of(this.compressionOptions);
 
     if (parent.compression.source === ZfsPropertySource.Inherited) {
       this.form.controls.compression.setValue(inherit);

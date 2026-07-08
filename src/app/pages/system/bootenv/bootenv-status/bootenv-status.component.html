@@ -6,33 +6,26 @@
 <div class="tree-wrapper" [ixUiSearch]="searchableElements.elements.bootStatus">
   <div class="tree-inner">
     @if (poolInstance && poolInstance.scan) {
-      <mat-accordion>
-        <mat-expansion-panel class="mat-elevation-z0">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <strong>{{ poolInstance.scan.function }}</strong>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <mat-list>
-            <mat-list-item>
-              {{ 'Status' | translate }}:
-              {{ poolInstance.scan.pause !== null ? 'PAUSED' : poolInstance.scan.state ? poolInstance.scan.state : ('None requested' | translate) }}
-            </mat-list-item>
-            @if (poolInstance.scan.errors !== null) {
-              <mat-list-item>
-                {{ 'Errors' | translate }}:
-                {{ poolInstance.scan.errors }}
-              </mat-list-item>
-            }
-            @if (poolInstance.scan.start_time?.$date) {
-              <mat-list-item>
-                {{ 'Date' | translate }}:
-                {{ poolInstance.scan.start_time.$date | formatDateTime }}
-              </mat-list-item>
-            }
-          </mat-list>
-        </mat-expansion-panel>
-      </mat-accordion>
+      <tn-expansion-panel [title]="poolInstance.scan.function">
+        <tn-list>
+          <tn-list-item>
+            {{ 'Status' | translate }}:
+            {{ poolInstance.scan.pause !== null ? 'PAUSED' : poolInstance.scan.state ? poolInstance.scan.state : ('None requested' | translate) }}
+          </tn-list-item>
+          @if (poolInstance.scan.errors !== null) {
+            <tn-list-item>
+              {{ 'Errors' | translate }}:
+              {{ poolInstance.scan.errors }}
+            </tn-list-item>
+          }
+          @if (poolInstance.scan.start_time?.$date) {
+            <tn-list-item>
+              {{ 'Date' | translate }}:
+              {{ poolInstance.scan.start_time.$date | formatDateTime }}
+            </tn-list-item>
+          }
+        </tn-list>
+      </tn-expansion-panel>
     }
 
     @if (dataSource) {
@@ -70,20 +63,14 @@
         [treeNodeDefDataSource]="dataSource"
       >
         <div class="nested-tree-root-node">
-          <button
-            mat-icon-button
+          <tn-icon-button
             treeNodeToggle
-            [ixTest]="['toggle-row', topologyItem.guid]"
-            [attr.aria-label]="'Toggle {row}' | translate: { row: topologyItem.guid }"
+            library="mdi"
+            [name]="treeControl.isExpanded(topologyItem) ? 'chevron-down' : 'chevron-right'"
+            [testId]="['toggle-row', topologyItem.guid]"
+            [ariaLabel]="'Toggle {row}' | translate: { row: topologyItem.guid }"
             (click)="$event.preventDefault()"
-          >
-            @if (treeControl.isExpanded(topologyItem)) {
-              <tn-icon name="chevron-down" library="mdi"></tn-icon>
-            }
-            @if (!treeControl.isExpanded(topologyItem)) {
-              <tn-icon name="chevron-right" library="mdi"></tn-icon>
-            }
-          </button>
+          ></tn-icon-button>
           <ix-bootenv-node-item
             [node]="topologyItem"
             [poolInstance]="poolInstance"

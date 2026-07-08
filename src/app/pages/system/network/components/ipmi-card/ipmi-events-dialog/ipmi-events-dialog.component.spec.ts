@@ -2,13 +2,12 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnEmptyHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -22,7 +21,6 @@ describe('IpmiEventsDialogComponent', () => {
     component: IpmiEventsDialog,
     declarations: [
       FakeFormatDateTimePipe,
-      EmptyComponent,
       FakeProgressBarComponent,
     ],
     providers: [
@@ -86,8 +84,9 @@ describe('IpmiEventsDialogComponent', () => {
       expect(clearButton).toBeNull();
     });
 
-    it('shows empty state', () => {
-      expect(spectator.query('.events-container')).toHaveText('No events to display.');
+    it('shows empty state', async () => {
+      const empty = await loader.getHarness(TnEmptyHarness);
+      expect(await empty.getTitle()).toBe('No events to display.');
     });
   });
 });

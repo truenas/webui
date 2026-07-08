@@ -1,8 +1,9 @@
 <ix-page-header [pageTitle]="pageTitle">
   @if (loadingExtraColumns$ | async) {
-    <mat-spinner
+    <tn-spinner
+      mode="indeterminate"
       [diameter]="30"
-    ></mat-spinner>
+    ></tn-spinner>
   } @else {
     <ix-slide-toggle
       [formControl]="showExtraColumnsControl"
@@ -15,16 +16,14 @@
     (queryChange)="onListFiltered($event)"
   ></ix-basic-search>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="primary"
-    ixTest="add-snapshot"
+    [testId]="'add-snapshot'"
+    [label]="'Add' | translate"
     [ixUiSearch]="searchableElements.elements.add"
-    (click)="doAdd()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    (onClick)="doAdd()"
+  ></tn-button>
 </ix-page-header>
 
 @if (selectedSnapshots.length) {
@@ -34,18 +33,16 @@
     </div>
 
     <div class="actions">
-      <button
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
+        icon="mdi-delete"
         tnTooltipPosition="below"
-        ixTest="delete-selected"
+        [testId]="'delete-selected'"
+        [label]="'Delete' | translate"
         [tnTooltip]="'Delete selections' | translate"
         [disabled]="!selectionHasItems"
-        (click)="doBatchDelete(selectedSnapshots)"
-      >
-        <tn-icon name="delete" library="mdi"></tn-icon>
-        {{ 'Delete' | translate }}
-      </button>
+        (onClick)="doBatchDelete(selectedSnapshots)"
+      ></tn-button>
     </div>
   </div>
 }

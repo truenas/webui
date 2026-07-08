@@ -925,6 +925,25 @@
   {
     "hierarchy": [
       "System",
+      "Boot Environments"
+    ],
+    "synonyms": [
+      "Create boot environment"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "boot"
+    ],
+    "routerLink": null,
+    "anchor": "boot-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
       "Alert Settings",
       "Alert Services"
     ],
@@ -3929,22 +3948,6 @@
   {
     "hierarchy": [
       "Reporting",
-      "Select Reporting"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/reportsdashboard"
-    ],
-    "routerLink": null,
-    "anchor": "select-reporting",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Reporting",
       "CPU"
     ],
     "synonyms": [
@@ -4057,6 +4060,26 @@
   {
     "hierarchy": [
       "Reporting",
+      "Target"
+    ],
+    "synonyms": [
+      "Target Stats",
+      "Target Utilization"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "target"
+    ],
+    "routerLink": null,
+    "anchor": "target",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
       "UPS"
     ],
     "synonyms": [
@@ -4092,6 +4115,22 @@
     ],
     "routerLink": null,
     "anchor": "zfs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Select Reporting"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/reportsdashboard"
+    ],
+    "routerLink": null,
+    "anchor": "select-reporting",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4268,6 +4307,23 @@
   {
     "hierarchy": [
       "Directory Services",
+      "Kerberos Realms"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/directoryservice",
+      "kerberosrealms"
+    ],
+    "routerLink": null,
+    "anchor": "kerberosrealms",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Directory Services",
       "Kerberos Keytabs",
       "Sync Kerberos Keytab"
     ],
@@ -4309,6 +4365,23 @@
     ],
     "routerLink": null,
     "anchor": "add-kerberos-keytab",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Directory Services",
+      "Kerberos Keytabs"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/directoryservice",
+      "kerberoskeytabs"
+    ],
+    "routerLink": null,
+    "anchor": "kerberoskeytabs",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4598,28 +4671,6 @@
   {
     "hierarchy": [
       "Datasets",
-      "Take Snapshot"
-    ],
-    "synonyms": [
-      "View Datasets",
-      "Create Snapshot"
-    ],
-    "requiredRoles": [
-      "SNAPSHOT_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/datasets",
-      "*"
-    ],
-    "routerLink": null,
-    "anchor": "take-snapshot",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
       "Manage Snapshots"
     ],
     "synonyms": [
@@ -4660,6 +4711,28 @@
       "dataset().id"
     ],
     "anchor": "manage-snapshots-tasks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Take Snapshot"
+    ],
+    "synonyms": [
+      "View Datasets",
+      "Create Snapshot"
+    ],
+    "requiredRoles": [
+      "SNAPSHOT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/datasets",
+      "*"
+    ],
+    "routerLink": null,
+    "anchor": "take-snapshot",
     "triggerAnchor": null,
     "section": "ui"
   },

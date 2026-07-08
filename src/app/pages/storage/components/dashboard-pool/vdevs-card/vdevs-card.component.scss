@@ -38,6 +38,16 @@ tn-icon.pool-icon {
     display: flex;
     place-content: center;
   }
+
+  .empty-vdev-state {
+    display: flex;
+    flex-direction: column;
+    margin: 8px 0;
+
+    .empty-description {
+      opacity: 0.7;
+    }
+  }
 }
 
 .tier-label {

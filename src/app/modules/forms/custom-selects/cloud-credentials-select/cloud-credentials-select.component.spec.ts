@@ -9,7 +9,7 @@ import { TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
@@ -55,7 +55,7 @@ describe('CloudCredentialsSelectComponent', () => {
     ],
     providers: [
       mockProvider(CloudCredentialService, mockCloudCredentialService),
-      mockProvider(SlideIn, { open: jest.fn(() => SlideInResult.empty()) }),
+      mockProvider(FormSidePanelService, { open: jest.fn(() => SlideInResult.empty()) }),
     ],
   });
 
@@ -133,12 +133,12 @@ describe('CloudCredentialsSelectComponent', () => {
   describe('slide-in interactions', () => {
     it('should set form value and refetch options on successful slide-in', async () => {
       const newCredential = { id: '3', name: 'New Cred', provider: { type: CloudSyncProviderName.AmazonS3 } };
-      const slideIn = { open: jest.fn(() => SlideInResult.success(newCredential)) };
+      const formPanel = { open: jest.fn(() => SlideInResult.success(newCredential)) };
 
       spectator = createHost(host, {
         hostProps: defaultHostProps,
         providers: [
-          mockProvider(SlideIn, slideIn),
+          mockProvider(FormSidePanelService, formPanel),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -146,18 +146,18 @@ describe('CloudCredentialsSelectComponent', () => {
       const select = await loader.getHarness(TnSelectHarness);
       await select.selectOption('Add New');
 
-      expect(slideIn.open).toHaveBeenCalled();
+      expect(formPanel.open).toHaveBeenCalled();
       const form = defaultHostProps.form;
       expect(form.value).toEqual({ credentials: '3' });
     });
 
     it('should restore previous value when slide-in is cancelled', async () => {
-      const slideIn = { open: jest.fn(() => SlideInResult.cancel()) };
+      const formPanel = { open: jest.fn(() => SlideInResult.cancel()) };
 
       spectator = createHost(host, {
         hostProps: defaultHostProps,
         providers: [
-          mockProvider(SlideIn, slideIn),
+          mockProvider(FormSidePanelService, formPanel),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -167,7 +167,7 @@ describe('CloudCredentialsSelectComponent', () => {
       const select = await loader.getHarness(TnSelectHarness);
       await select.selectOption('Add New');
 
-      expect(slideIn.open).toHaveBeenCalled();
+      expect(formPanel.open).toHaveBeenCalled();
       expect(defaultHostProps.form.value).toEqual({ credentials: '1' });
     });
   });

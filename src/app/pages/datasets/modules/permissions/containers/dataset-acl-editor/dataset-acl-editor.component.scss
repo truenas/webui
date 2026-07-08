@@ -1,6 +1,7 @@
 .header {
   align-items: baseline;
   flex-wrap: wrap;
+  padding: 16px 16px 0;
 
   .title-row {
     display: flex;
@@ -112,6 +113,7 @@
     flex-grow: 1;
     margin-right: 6px;
 
+    // TEMP (NAS-141021): until @truenas/ui-components ships a full-width input on tn-button.
     button {
       width: 100%;
     }

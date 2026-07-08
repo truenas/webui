@@ -1,11 +1,24 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent, TnTablePagerComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnIconComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -16,18 +29,15 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { kerberosKeytabsListElements } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.elements';
@@ -41,20 +51,24 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     BasicSearchComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnCardHeaderDirective,
     UiSearchDirective,
-    MatToolbarRow,
     TnTooltipDirective,
+    TnTestIdDirective,
     RouterLink,
     TnIconComponent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TableActionsCellComponent,
     TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    NgTemplateOutlet,
     PageHeaderComponent,
   ],
 })
@@ -64,7 +78,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   protected dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
@@ -78,40 +92,35 @@ export class KerberosKeytabsListComponent implements OnInit {
   protected readonly isActiveDirectoryEnabled = signal(false);
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<KerberosKeytab>;
-  columns = createTable<KerberosKeytab>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => {
-            this.slideIn.open(KerberosKeytabsFormComponent, { data: row })
-              .onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
-          },
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => {
-            this.dialogService.confirmDelete({
-              message: this.translate.instant('Are you sure you want to delete this item?'),
-              call: () => this.api.call('kerberos.keytab.delete', [row.id]),
-            }).pipe(
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.getKerberosKeytabs());
-          },
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'kerberos-keytab-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('Kerberos Keytab')],
-  });
+
+  protected readonly displayedColumns = ['name', 'actions'];
+  protected readonly trackByKeytabId = (_index: number, row: KerberosKeytab): number => row.id;
+
+  protected readonly actions: IconActionConfig<KerberosKeytab>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => {
+        this.formPanel.open(KerberosKeytabsFormComponent, {
+          title: this.translate.instant('Edit Kerberos Keytab'),
+          inputs: { editingRow: row },
+        }).onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
+      },
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => {
+        this.dialogService.confirmDelete({
+          message: this.translate.instant('Are you sure you want to delete this item?'),
+          call: () => this.api.call('kerberos.keytab.delete', [row.id]),
+        }).pipe(
+          takeUntilDestroyed(this.destroyRef),
+        ).subscribe(() => this.getKerberosKeytabs());
+      },
+    },
+  ];
 
   ngOnInit(): void {
     const keytabsRows$ = this.api.call('kerberos.keytab.query');
@@ -140,6 +149,18 @@ export class KerberosKeytabsListComponent implements OnInit {
     });
   }
 
+  protected uniqueRowTag(row: KerberosKeytab): string {
+    return convertStringToId('kerberos-keytab-' + row.name);
+  }
+
+  protected ariaLabel(row: KerberosKeytab): string {
+    return [row.name, this.translate.instant('Kerberos Keytab')].join(' ');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<KerberosKeytab>(event, this.displayedColumns));
+  }
+
   getKerberosKeytabs(): void {
     this.dataProvider.load();
   }
@@ -153,8 +174,9 @@ export class KerberosKeytabsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(KerberosKeytabsFormComponent)
-      .onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
+    this.formPanel.open(KerberosKeytabsFormComponent, {
+      title: this.translate.instant('Add Kerberos Keytab'),
+    }).onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {

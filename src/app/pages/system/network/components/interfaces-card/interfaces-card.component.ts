@@ -1,13 +1,13 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTooltipDirective } from '@truenas/ui-components';
-import { BehaviorSubject, combineLatest, of } from 'rxjs';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
+  TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
+  TnTooltipDirective, tnIconMarker, type TnSortEvent,
+} from '@truenas/ui-components';
+import { BehaviorSubject, of } from 'rxjs';
 import {
   filter, map, throttleTime,
 } from 'rxjs/operators';
@@ -21,21 +21,18 @@ import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { convertStringToId, dataProviderRows, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { interfacesCardElements } from 'app/pages/system/network/components/interfaces-card/interfaces-card.elements';
 import {
-  ipAddressesColumn,
+  IpAddressesCellComponent,
 } from 'app/pages/system/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/system/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -49,28 +46,28 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   styleUrls: ['./interfaces-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnCardFooterActionsDirective,
+    TnButtonComponent,
     TnTooltipDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TableActionsCellComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableHeadComponent,
-    AsyncPipe,
-    IxTableBodyComponent,
-    IxTableCellDirective,
     InterfaceStatusIconComponent,
+    IpAddressesCellComponent,
     TranslateModule,
   ],
 })
 export class InterfacesCardComponent implements OnInit {
   private interfacesStore$ = inject(InterfacesStore);
   private store$ = inject<Store<AppState>>(Store);
-  private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
@@ -83,86 +80,86 @@ export class InterfacesCardComponent implements OnInit {
   readonly interfacesUpdated = output();
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
-  protected interfaces: NetworkInterface[] = [];
+  protected readonly interfaces = signal<NetworkInterface[]>([]);
 
+  // Kept as a subject because IconActionConfig hidden/disabled/dynamicTooltip callbacks expect Observables.
   protected readonly isHaEnabled$ = new BehaviorSubject<boolean>(false);
-  private readonly isHaEnabled = toSignal(this.isHaEnabled$);
+  protected readonly isHaEnabled = toSignal(this.isHaEnabled$, { initialValue: false });
 
-  isLoading = false;
+  protected readonly isLoading = signal(false);
   dataProvider = new ArrayDataProvider<NetworkInterface>();
+  protected readonly rows = dataProviderRows(this.dataProvider);
   inOutUpdates = signal<AllNetworkInterfacesUpdate>({});
 
-  columns = createTable<NetworkInterface>([
-    textColumn({
-      propertyName: 'state',
-    }),
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-      getValue: (row) => {
-        const value = row.name;
+  protected readonly displayedColumns = ['state', 'name', 'ip_addresses', 'mac', 'actions'];
 
-        if (row.description) {
-          return `${value} (${row.description})`;
-        }
+  protected readonly actions: IconActionConfig<NetworkInterface>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.onEdit(row),
+    },
+    {
+      iconName: tnIconMarker('refresh', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      hidden: (row) => of(!this.isPhysical(row)),
+      dynamicTooltip: () => this.isHaEnabled$.pipe(
+        map((isHaEnabled) => (isHaEnabled
+          ? this.translate.instant(helptextInterfaces.haEnabledResetMessage)
+          : this.translate.instant('Reset configuration'))),
+      ),
+      onClick: (row) => this.onReset(row),
+      disabled: () => this.isHaEnabled$,
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      dynamicTooltip: () => this.isHaEnabled$.pipe(
+        map((isHaEnabled) => (isHaEnabled
+          ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
+          : this.translate.instant('Delete'))),
+      ),
+      hidden: (row) => of(this.isPhysical(row)),
+      onClick: (row) => this.onDelete(row),
+      disabled: () => this.isHaEnabled$,
+    },
+  ];
 
-        return value;
-      },
-    }),
-    ipAddressesColumn({
-      title: this.translate.instant('IP Addresses'),
-      sortBy: (row) => row.aliases.map((alias) => alias.address).join(', '),
-      cssClass: 'wider-column',
-    }),
-    textColumn({
-      title: this.translate.instant('MAC Address'),
-      cssClass: 'wider-column',
-      getValue: (row) => row.state.permanent_link_address,
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.onEdit(row),
-        },
-        {
-          iconName: tnIconMarker('refresh', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          hidden: (row) => combineLatest([
-            of(!this.isPhysical(row)),
-            this.isHaEnabled$,
-          ]).pipe(
-            map(([isNotPhysical, isHaEnabled]) => isHaEnabled || isNotPhysical),
-          ),
-          tooltip: this.translate.instant('Reset configuration'),
-          onClick: (row) => this.onReset(row),
-        },
-        {
-          iconName: tnIconMarker('', 'mdi'),
-          hidden: () => this.isHaEnabled$.pipe(map((isHaEnabled) => !isHaEnabled)),
-          disabled: () => of(true),
-          tooltip: this.translate.instant(helptextInterfaces.haEnabledResetMessage),
-          onClick: (): void => {},
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          dynamicTooltip: () => this.isHaEnabled$.pipe(
-            map((isHaEnabled) => (isHaEnabled
-              ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
-              : this.translate.instant('Delete'))),
-          ),
-          hidden: (row) => of(this.isPhysical(row)),
-          onClick: (row) => this.onDelete(row),
-          disabled: () => this.isHaEnabled$,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'interface-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('Interface')],
-  });
+  protected nameWithDescription(row: NetworkInterface): string {
+    return row.description ? `${row.name} (${row.description})` : row.name;
+  }
+
+  protected uniqueRowTag(row: NetworkInterface): string {
+    return convertStringToId('interface-' + row.name);
+  }
+
+  protected ariaLabel(row: NetworkInterface): string {
+    return [row.name, this.translate.instant('Interface')].join(' ');
+  }
+
+  // Restores the header-click sorting the ix-table version had. Each sortable column needs a
+  // custom key because none map to a plain NetworkInterface property (name folds in the
+  // description, ip_addresses/mac live on nested structures).
+  protected onSortChange(event: TnSortEvent): void {
+    const base = mapTnSortToTableSort<NetworkInterface>(event, this.displayedColumns);
+    this.dataProvider.setSorting({
+      ...base,
+      sortBy: base.direction ? this.sortByForColumn(event.column) : undefined,
+    });
+  }
+
+  private sortByForColumn(column: string): ((row: NetworkInterface) => string) | undefined {
+    switch (column) {
+      case 'name':
+        return (row) => this.nameWithDescription(row);
+      case 'ip_addresses':
+        return (row) => row.aliases.map((alias) => alias.address).join(', ');
+      case 'mac':
+        return (row) => row.state.permanent_link_address;
+      default:
+        return undefined;
+    }
+  }
 
   readonly helptext = helptextInterfaces;
 
@@ -173,24 +170,20 @@ export class InterfacesCardComponent implements OnInit {
   ngOnInit(): void {
     this.interfacesStore$.loadInterfaces();
     this.interfacesStore$.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
-      this.isLoading = state.isLoading;
-      this.interfaces = state.interfaces;
+      this.isLoading.set(state.isLoading);
+      this.interfaces.set(state.interfaces);
       this.dataProvider.setRows(state.interfaces);
-      this.inOutUpdates.set({});
+      const inOutUpdates: AllNetworkInterfacesUpdate = {};
       for (const nic of state.interfaces) {
-        this.inOutUpdates.update((value) => {
-          value[nic.name] = {
-            link_state: nic.state?.link_state,
-            received_bytes_rate: 0,
-            sent_bytes_rate: 0,
-            speed: 0,
-          };
-          return value;
-        });
+        inOutUpdates[nic.name] = {
+          link_state: nic.state?.link_state,
+          received_bytes_rate: 0,
+          sent_bytes_rate: 0,
+          speed: 0,
+        };
       }
+      this.inOutUpdates.set(inOutUpdates);
       this.subscribeToUpdates();
-
-      this.cdr.markForCheck();
     });
     this.checkFailoverDisabled();
   }
@@ -200,14 +193,14 @@ export class InterfacesCardComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((isHaEnabled) => {
       this.isHaEnabled$.next(isHaEnabled);
-      this.cdr.markForCheck();
     });
   }
 
   protected onAddNew(): void {
-    this.slideIn.open(InterfaceFormComponent, {
-      data: {
-        interfaces: this.interfaces,
+    this.formPanel.open(InterfaceFormComponent, {
+      title: this.translate.instant('Add Interface'),
+      inputs: {
+        interfacesList: this.interfaces(),
       },
     }).onSuccess(() => {
       this.interfacesUpdated.emit();
@@ -216,9 +209,10 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   protected onEdit(row: NetworkInterface): void {
-    this.slideIn.open(InterfaceFormComponent, {
-      data: {
-        interface: row,
+    this.formPanel.open(InterfaceFormComponent, {
+      title: this.translate.instant('Edit Interface'),
+      inputs: {
+        editInterface: row,
       },
     }).onSuccess(() => {
       this.interfacesUpdated.emit();
@@ -274,12 +268,12 @@ export class InterfacesCardComponent implements OnInit {
       .subscribe((updates) => {
         const updatedInterfaces = Object.keys(updates);
         this.inOutUpdates.update((value) => {
+          const next = { ...value };
           for (const nic of updatedInterfaces) {
-            value[nic] = { ...updates[nic] };
+            next[nic] = { ...updates[nic] };
           }
-          return value;
+          return next;
         });
-        this.cdr.markForCheck();
       });
   }
 }

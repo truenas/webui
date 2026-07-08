@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -63,6 +64,17 @@ describe('SmbAclComponent', () => {
     getData: jest.fn((): undefined => undefined),
   };
 
+  /** All `tn-select`s bound to a given control, in DOM (list-item) order. */
+  const getSelects = (controlName: string): Promise<TnSelectHarness[]> => loader.getAllHarnesses(
+    TnSelectHarness.with({ selector: `[formControlName="${controlName}"]` }),
+  );
+
+  /** The `tn-select` for `controlName` belonging to the list item at `index`. */
+  const getSelect = async (controlName: string, index: number): Promise<TnSelectHarness> => {
+    const selects = await getSelects(controlName);
+    return selects[index];
+  };
+
   const createComponent = createComponentFactory({
     component: SmbAclComponent,
     imports: [
@@ -78,7 +90,9 @@ describe('SmbAclComponent', () => {
           group: 'wheel', id: 1, gid: 1, smb: true,
         }] as Group[]),
       ]),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
+      }),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(UserService, {
@@ -110,9 +124,7 @@ describe('SmbAclComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent({
-      providers: [
-        mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => 'myshare') }),
-      ],
+      props: { shareName: 'myshare' },
     });
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -126,10 +138,9 @@ describe('SmbAclComponent', () => {
   describe('user ace', () => {
     it('shows user combobox when Who is user', async () => {
       await entriesList.pressAddButton();
-      const newListItem = await entriesList.getLastListItem();
-      await newListItem.fillForm({
-        Who: 'User',
-      });
+      const lastIndex = (await getSelects('ae_who')).length - 1;
+      const whoSelect = await getSelect('ae_who', lastIndex);
+      await whoSelect.selectOption('User');
 
       const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
       expect(userSelect).toExist();
@@ -141,14 +152,11 @@ describe('SmbAclComponent', () => {
     });
 
     it('allows custom values in User combobox', async () => {
-      const newListItem = await entriesList.getLastListItem();
-      await newListItem.fillForm({
-        Who: 'User',
-      });
+      const lastIndex = (await getSelects('ae_who')).length - 1;
+      const whoSelect = await getSelect('ae_who', lastIndex);
+      await whoSelect.selectOption('User');
 
-      const fields = await newListItem.getControlHarnessesDict();
-
-      const userCombobox = fields['User'] as IxComboboxHarness;
+      const userCombobox = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
       await userCombobox.writeCustomValue('root');
 
       // Wait for debounced value update and autocomplete resolution
@@ -170,10 +178,9 @@ describe('SmbAclComponent', () => {
   describe('group ace', () => {
     it('shows group combobox when Who is group', async () => {
       await entriesList.pressAddButton();
-      const newListItem = await entriesList.getLastListItem();
-      await newListItem.fillForm({
-        Who: 'Group',
-      });
+      const lastIndex = (await getSelects('ae_who')).length - 1;
+      const whoSelect = await getSelect('ae_who', lastIndex);
+      await whoSelect.selectOption('Group');
 
       const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
       expect(groupSelect).toExist();
@@ -185,14 +192,11 @@ describe('SmbAclComponent', () => {
     });
 
     it('allows custom values in Group combobox', async () => {
-      const newListItem = await entriesList.getLastListItem();
-      await newListItem.fillForm({
-        Who: 'Group',
-      });
+      const lastIndex = (await getSelects('ae_who')).length - 1;
+      const whoSelect = await getSelect('ae_who', lastIndex);
+      await whoSelect.selectOption('Group');
 
-      const fields = await newListItem.getControlHarnessesDict();
-
-      const groupCombobox = fields['Group'] as IxComboboxHarness;
+      const groupCombobox = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
       await groupCombobox.writeCustomValue('wheel');
 
       // Wait for debounced value update and autocomplete resolution
@@ -212,37 +216,40 @@ describe('SmbAclComponent', () => {
   });
 
   it('loads and shows current acl for a share', async () => {
-    const listValues = await entriesList.getFormValues();
-
     expect(spectator.inject(ApiService).call)
       .toHaveBeenCalledWith('sharing.smb.getacl', [{ share_name: 'myshare' }]);
 
-    expect(listValues).toEqual([
-      {
-        Permission: 'READ',
-        Type: 'ALLOWED',
-        Who: 'everyone@',
-      },
-      {
-        Who: 'User',
-        User: '3001',
-        Permission: 'FULL',
-        Type: 'DENIED',
-      },
-    ]);
+    const whoSelects = await getSelects('ae_who');
+    const permSelects = await getSelects('ae_perm');
+    const typeSelects = await getSelects('ae_type');
+
+    expect(await whoSelects[0].getDisplayText()).toBe('everyone@');
+    expect(await permSelects[0].getDisplayText()).toBe('READ');
+    expect(await typeSelects[0].getDisplayText()).toBe('ALLOWED');
+
+    expect(await whoSelects[1].getDisplayText()).toBe('User');
+    expect(await permSelects[1].getDisplayText()).toBe('FULL');
+    expect(await typeSelects[1].getDisplayText()).toBe('DENIED');
+
+    const userCombobox = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
+    expect(await userCombobox.getValue()).toBe('3001');
   });
 
   it('saves updated acl when form is submitted', async () => {
+    // The <ix-form> wrapper emits a dev-mode advisory warning when the form has a nested
+    // FormArray (entries); the payload here is built from form.value, so it's benign.
+    jest.spyOn(console, 'warn').mockImplementation();
+
     await entriesList.pressAddButton();
-    const newListItem = await entriesList.getLastListItem();
-    await newListItem.fillForm(
-      {
-        Who: 'Group',
-        Permission: 'FULL',
-        Type: 'ALLOWED',
-        Group: 'wheel',
-      },
-    );
+    const lastIndex = (await getSelects('ae_who')).length - 1;
+
+    await (await getSelect('ae_who', lastIndex)).selectOption('Group');
+
+    const groupCombobox = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
+    await groupCombobox.setValue('wheel');
+
+    await (await getSelect('ae_perm', lastIndex)).selectOption('FULL');
+    await (await getSelect('ae_type', lastIndex)).selectOption('ALLOWED');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

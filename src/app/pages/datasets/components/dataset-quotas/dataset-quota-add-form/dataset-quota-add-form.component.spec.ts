@@ -1,15 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -76,6 +75,14 @@ describe('DatasetQuotaAddFormComponent', () => {
     ],
   });
 
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const clickSave = async (): Promise<void> => {
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+  };
+
   describe('adding user quotas', () => {
     beforeEach(() => {
       spectator = createComponent({
@@ -88,18 +95,13 @@ describe('DatasetQuotaAddFormComponent', () => {
     });
 
     it('adds user quotas when form is submitted', async () => {
-      const form = await loader.getHarness(IxFormHarness);
+      await (await getInput('data_quota')).setValue('500M');
+      await (await getInput('obj_quota')).setValue('2000');
 
-      await form.fillForm({
-        'User Data Quota (Examples: 500 KiB, 500M, 2 TB)': '500M',
-        'User Object Quota': 2000,
-      });
-
-      const usersInput = await form.getControl('Apply To Users') as IxChipsHarness;
+      const usersInput = await loader.getHarness(IxChipsHarness.with({ label: 'Apply To Users' }));
       await usersInput.selectSuggestionValue('john');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await clickSave();
 
       expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',
@@ -124,15 +126,13 @@ describe('DatasetQuotaAddFormComponent', () => {
     });
 
     it('adds group quotas when form is submitted', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Group Data Quota (Examples: 500 KiB, 500M, 2 TB)': '500M',
-        'Group Object Quota': 2000,
-        'Apply To Groups': ['sys', 'bin'],
-      });
+      await (await getInput('data_quota')).setValue('500M');
+      await (await getInput('obj_quota')).setValue('2000');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const groupsInput = await loader.getHarness(IxChipsHarness.with({ label: 'Apply To Groups' }));
+      await groupsInput.setValue(['sys', 'bin']);
+
+      await clickSave();
 
       expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',

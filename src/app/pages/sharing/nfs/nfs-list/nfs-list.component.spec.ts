@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCardComponent, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSidePanelHarness,
+  TnButtonHarness, TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting,
   TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
@@ -15,11 +15,11 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
-import { FilesystemService } from 'app/services/filesystem.service';
-import { UserService } from 'app/services/user.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -34,8 +34,8 @@ const shares: Partial<NfsShare>[] = [
   },
 ];
 
-// No SlideInRef/SlideIn providers: the add/edit form is hosted in <tn-side-panel>,
-// and the absence of SlideInRef is what switches NfsFormComponent into panel mode.
+// The add/edit form is opened through FormSidePanelService, which hosts it in
+// its own side-panel container — the list only asserts the open() contract.
 const commonProviders = [
   mockAuth(),
   mockProvider(EmptyService),
@@ -43,10 +43,9 @@ const commonProviders = [
     confirm: jest.fn(() => of(true)),
     confirmDelete: jest.fn(() => of(undefined)),
   }),
-  // Providers for the real NfsFormComponent rendered inside the side panel.
-  mockProvider(FilesystemService),
-  mockProvider(UserService),
-  mockProvider(TnDialog),
+  mockProvider(FormSidePanelService, {
+    open: jest.fn(() => SlideInResult.empty()),
+  }),
   provideMockStore({
     selectors: [
       {
@@ -97,57 +96,36 @@ describe('NfsListComponent', () => {
     expect(spectator.query(TnCardComponent)!.title()).toBe('NFS');
   });
 
-  it('opens the side panel hosting the form when "Add" is pressed', async () => {
+  it('opens the form in a side panel when "Add" is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
     spectator.detectChanges();
 
-    const panel = await loader.getHarness(TnSidePanelHarness);
-    expect(await panel.isOpen()).toBe(true);
-    expect(await panel.getTitle()).toBe('Add NFS Share');
-
-    const form = spectator.query(NfsFormComponent);
-    expect(form).toBeTruthy();
-    expect(form?.data()).toBeUndefined();
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(NfsFormComponent, {
+      title: 'Add NFS Share',
+      inputs: { nfsShareData: { existingNfsShare: undefined } },
+    });
   });
 
-  it('opens the side panel with the row data when "Edit" is pressed', async () => {
+  it('opens the form with the row data when "Edit" is pressed', async () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: 'Edit' });
     spectator.detectChanges();
 
-    const panel = await loader.getHarness(TnSidePanelHarness);
-    expect(await panel.isOpen()).toBe(true);
-    expect(await panel.getTitle()).toBe('Edit NFS Share');
-
-    const form = spectator.query(NfsFormComponent);
-    expect(form?.data()).toEqual({ existingNfsShare: shares[0] });
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(NfsFormComponent, {
+      title: 'Edit NFS Share',
+      inputs: { nfsShareData: { existingNfsShare: shares[0] } },
+    });
   });
 
-  it('disables the panel Save action until the hosted form can submit', async () => {
-    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    await addButton.click();
-    spectator.detectChanges();
-
-    // The panel footer is portaled to document.body, so use the document-root loader.
-    // The freshly opened form is invalid (Path is required), so the footer Save is disabled.
-    const rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
-    const saveButton = await rootLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    expect(await saveButton.isDisabled()).toBe(true);
-  });
-
-  it('closes the panel and reloads the list when the hosted form reports it saved', async () => {
-    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    await addButton.click();
-    spectator.detectChanges();
-
+  it('reloads the list after a successful form submission', async () => {
+    jest.spyOn(spectator.inject(FormSidePanelService), 'open').mockReturnValue(SlideInResult.success(true));
     const loadSpy = jest.spyOn(spectator.component.dataProvider, 'load');
-    const form = spectator.query(NfsFormComponent);
-    form.closed.emit(true);
+
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
     spectator.detectChanges();
 
-    const panel = await loader.getHarness(TnSidePanelHarness);
-    expect(await panel.isOpen()).toBe(false);
     expect(loadSpy).toHaveBeenCalled();
   });
 

@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -25,7 +27,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import {
@@ -60,7 +62,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 })
 export class ExtentListComponent implements OnInit {
   emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private tnDialog = inject(TnDialog);
   private cdr = inject(ChangeDetectorRef);
@@ -119,8 +121,7 @@ export class ExtentListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (extent) => {
-            this.slideIn.open(ExtentFormComponent, { wide: true, data: extent })
-              .onSuccess(() => this.refresh(), this.destroyRef);
+            this.openForm(extent);
           },
         },
         {
@@ -154,8 +155,17 @@ export class ExtentListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(ExtentFormComponent, { wide: true })
-      .onSuccess(() => this.refresh(), this.destroyRef);
+    this.openForm();
+  }
+
+  protected openForm(extent?: IscsiExtent): void {
+    this.formPanel.open(ExtentFormComponent, {
+      title: extent
+        ? this.translate.instant('Edit Extent')
+        : this.translate.instant('Add Extent'),
+      wide: true,
+      inputs: { extentData: extent },
+    }).onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   private showDeleteDialog(extent: IscsiExtent): void {

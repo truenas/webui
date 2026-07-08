@@ -144,28 +144,3 @@
     <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
   }
 </tn-card>
-
-<tn-side-panel
-  [title]="sidePanelTitle()"
-  [closeButtonTestId]="'close-slide-in'"
-  [closeGuard]="closeFormGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-nfs-form
-      [data]="formData()"
-      (closed)="onFormClosed($event)"
-    ></ix-nfs-form>
-  }
-  @if (configForm(); as form) {
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      tnSidePanelAction
-      color="primary"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
-  }
-</tn-side-panel>

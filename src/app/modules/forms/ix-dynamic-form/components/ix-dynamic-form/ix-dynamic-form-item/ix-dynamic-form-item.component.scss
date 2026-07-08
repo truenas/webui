@@ -16,9 +16,12 @@
 
 tn-form-field {
   display: block;
-  margin-top: 12px;
-  margin-bottom: 12px;
-  padding: 8px 0;
+
+  :host-context(ix-dynamic-wizard) & {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    padding: 8px 0;
+  }
 }
 
 .label {

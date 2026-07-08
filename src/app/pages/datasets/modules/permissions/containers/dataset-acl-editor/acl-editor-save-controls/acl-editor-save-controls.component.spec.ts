@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
@@ -51,7 +51,7 @@ describe('AclEditorSaveControlsComponent', () => {
   it('marks save button as disabled when [canBeSaved] is false', async () => {
     spectator.setInput('canBeSaved', false);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Access Control List' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save Access Control List' }));
     expect(await saveButton.isDisabled()).toBe(true);
   });
 
@@ -78,7 +78,7 @@ describe('AclEditorSaveControlsComponent', () => {
     const recursiveCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Apply permissions recursively' }));
     await recursiveCheckbox.setValue(true);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Access Control List' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save Access Control List' }));
     await saveButton.click();
 
     expect(spectator.inject(DatasetAclEditorStore).saveAcl).toHaveBeenCalledWith({

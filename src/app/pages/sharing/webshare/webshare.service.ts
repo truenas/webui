@@ -1,15 +1,20 @@
-import { Injectable, inject, signal } from '@angular/core';
+import {
+  Injectable, computed, inject, signal,
+} from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, of, forkJoin,
 } from 'rxjs';
 import {
-  defaultIfEmpty, switchMap, take, map, catchError, shareReplay,
+  defaultIfEmpty, switchMap, take, map, catchError, shareReplay, tap,
 } from 'rxjs/operators';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
@@ -25,7 +30,7 @@ export class WebShareService {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private licenseService = inject(LicenseService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private truenasConnectService = inject(TruenasConnectService);
 
   /**
@@ -41,17 +46,60 @@ export class WebShareService {
   readonly isTruenasDirectDomain = this.window.location.hostname.includes('.truenas.direct');
 
   /**
+   * Whether TrueNAS Connect is currently configured (fully operational).
+   * Backed by `tn_connect.config` events, so disabling TrueNAS Connect immediately
+   * flips this to `false` without requiring a page refresh.
+   */
+  private isTruenasConnectConfigured = computed(
+    () => this.truenasConnectService.config()?.status === TruenasConnectStatus.Configured,
+  );
+
+  /**
    * Hostname resolved from TrueNAS Connect IP mappings.
    * When not on a truenas.direct domain, we check if the local IP has a matching hostname.
    */
-  private truenasConnectHostname = signal<string | null>(null);
+  private resolvedHostname = signal<string | null>(null);
+
+  /**
+   * Hostname to use when opening WebShare. Only available while TrueNAS Connect is
+   * configured. When TrueNAS Connect is disabled this resolves to `null` so we never
+   * generate a stale `.truenas.direct` URL that would produce SSL errors.
+   */
+  private truenasConnectHostname = computed<string | null>(
+    () => (this.isTruenasConnectConfigured() ? this.resolvedHostname() : null),
+  );
+
   readonly truenasConnectHostname$ = toObservable(this.truenasConnectHostname);
 
   /**
-   * Whether WebShare can be opened (either on truenas.direct domain or with a resolved hostname).
+   * Whether WebShare can be opened. Requires both an accessible hostname
+   * (either the current `.truenas.direct` domain or a resolved hostname) AND that
+   * TrueNAS Connect is currently configured. This reacts to TrueNAS Connect being
+   * disabled so the UI immediately blocks WebShare access without a page refresh.
    */
-  readonly canOpenWebShare = signal<boolean>(this.isTruenasDirectDomain);
+  readonly canOpenWebShare = computed<boolean>(() => !this.webShareUnavailableReason());
+
   readonly canOpenWebShare$ = toObservable(this.canOpenWebShare);
+
+  /**
+   * Human-readable explanation of why WebShare cannot be opened, or `null` when it
+   * can. Used both for the disabled-button tooltip and the `openWebShare()` snackbar
+   * so the user always sees the actual reason (TrueNAS Connect disabled vs. wrong
+   * domain) rather than a tooltip that only ever blames the domain.
+   */
+  readonly webShareUnavailableReason = computed<TranslatedString | null>(() => {
+    if (!this.isTruenasConnectConfigured()) {
+      return this.translate.instant('WebShare is unavailable because TrueNAS Connect is disabled.');
+    }
+
+    if (!this.isTruenasDirectDomain && !this.resolvedHostname()) {
+      return this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain');
+    }
+
+    return null;
+  });
+
+  readonly webShareUnavailableReason$ = toObservable(this.webShareUnavailableReason);
 
   /**
    * Observable that fetches and caches the IP to hostname mapping.
@@ -64,11 +112,10 @@ export class WebShareService {
   ]).pipe(
     map(([ipsWithHostnames, localIp]) => {
       const hostname = ipsWithHostnames[localIp];
-      if (hostname) {
-        this.truenasConnectHostname.set(hostname);
-        this.canOpenWebShare.set(true);
-      }
       return { ipsWithHostnames, localIp, hostname };
+    }),
+    tap(({ hostname }) => {
+      this.resolvedHostname.set(hostname ?? null);
     }),
     catchError((error: unknown) => {
       console.error('Failed to fetch hostname mapping for WebShare:', error);
@@ -93,6 +140,12 @@ export class WebShareService {
    * @param shareName - Optional name of the specific share to open. If omitted, opens the root WebShare listing.
    */
   openWebShare(shareName?: string): void {
+    const unavailableReason = this.webShareUnavailableReason();
+    if (unavailableReason) {
+      this.snackbar.error(unavailableReason);
+      return;
+    }
+
     const hostname = this.isTruenasDirectDomain
       ? this.window.location.hostname
       : this.truenasConnectHostname();
@@ -116,19 +169,40 @@ export class WebShareService {
    * @returns Observable that emits true if the form was submitted successfully, false otherwise
    */
   openWebShareForm(data: WebShareFormData): Observable<boolean> {
+    // The TrueNAS Connect config is already resolved app-wide — `TruenasConnectService` keeps a
+    // live subscription through its `config` signal, and the WebShare pages subscribe to `config$`.
+    // Read that cached value synchronously so the panel opens instantly: re-subscribing to
+    // `hasTruenasConnect$` re-runs `tn_connect.config`, and that websocket round-trip is the lag
+    // before the form appears. Only wait on the observable if the config hasn't loaded yet (cold
+    // navigation straight to a WebShare action).
+    const config = this.truenasConnectService.config();
+    if (config !== undefined) {
+      return this.openFormForAccess(config.status === TruenasConnectStatus.Configured, data);
+    }
+
     return this.licenseService.hasTruenasConnect$.pipe(
       take(1),
-      switchMap((hasAccess) => {
-        if (!hasAccess) {
-          this.truenasConnectService.openStatusModal();
-          return of(false);
-        }
+      switchMap((hasAccess) => this.openFormForAccess(hasAccess, data)),
+    );
+  }
 
-        return this.slideIn.open(WebShareSharesFormComponent, { data }).success$.pipe(
-          map(() => true),
-          defaultIfEmpty(false),
-        );
-      }),
+  private openFormForAccess(hasAccess: boolean, data: WebShareFormData): Observable<boolean> {
+    if (!hasAccess) {
+      this.truenasConnectService.openStatusModal();
+      return of(false);
+    }
+
+    return this.formPanel.open(
+      WebShareSharesFormComponent,
+      {
+        title: data.isNew
+          ? this.translate.instant(helptextSharingWebshare.webshare_form_title_add)
+          : this.translate.instant(helptextSharingWebshare.webshare_form_title_edit),
+        inputs: { webShareData: data },
+      },
+    ).success$.pipe(
+      map(() => true),
+      defaultIfEmpty(false),
     );
   }
 

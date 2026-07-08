@@ -1,12 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import {
   createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -149,7 +148,7 @@ describe('DatasetAclEditorComponent', () => {
 
     describe('preset modal', () => {
       it('shows select preset modal if user presses "Use Preset"', async () => {
-        const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use Preset' }));
+        const usePresetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Use Preset' }));
         await usePresetButton.click();
 
         expect(tnDialog.open).toHaveBeenCalledWith(
@@ -159,7 +158,7 @@ describe('DatasetAclEditorComponent', () => {
       });
 
       it('shows save as preset modal if user presses "Save As Preset"', async () => {
-        const saveAsPresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save As Preset' }));
+        const saveAsPresetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save As Preset' }));
         await saveAsPresetButton.click();
 
         expect(tnDialog.open).toHaveBeenCalledWith(
@@ -197,7 +196,7 @@ describe('DatasetAclEditorComponent', () => {
 
     describe('editing', () => {
       it('opens Strip ACL dialog when Strip Acl is pressed', async () => {
-        const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACL' }));
+        const stripButton = await loader.getHarness(TnButtonHarness.with({ label: 'Strip ACL' }));
         await stripButton.click();
 
         expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(StripAclModalComponent, {
@@ -213,7 +212,7 @@ describe('DatasetAclEditorComponent', () => {
       });
 
       it('navigates to dataset page when Cancel is pressed without returnUrl', async () => {
-        const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+        const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
         await cancelButton.click();
 
         expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pool/dataset']);
@@ -223,7 +222,7 @@ describe('DatasetAclEditorComponent', () => {
         spectator.component.onAddItemPressed();
         spectator.detectChanges();
 
-        const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+        const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
         await cancelButton.click();
 
         const result = await firstValueFrom(spectator.component.canDeactivate());
@@ -246,7 +245,7 @@ describe('DatasetAclEditorComponent', () => {
       });
 
       it('adds another ace when Add item is pressed', async () => {
-        const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
+        const addAceButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Item' }));
         await addAceButton.click();
 
         const items = spectator.queryAll('ix-permissions-item');
@@ -347,7 +346,7 @@ describe('DatasetAclEditorComponent', () => {
     it('navigates to returnUrl when Cancel is pressed', async () => {
       jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+      const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
       await cancelButton.click();
 
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing']);

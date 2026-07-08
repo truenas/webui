@@ -1,9 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import { afterNextRender, AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges, signal, ViewChild, inject } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  tnIconMarker, TnIconButtonComponent, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { Role } from 'app/enums/role.enum';
@@ -12,7 +13,6 @@ import { AlertWithDuplicates, EnhancedAlert } from 'app/interfaces/smart-alert.i
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -39,10 +39,9 @@ enum AlertLevelColor {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
+    TnIconButtonComponent,
     TnTooltipDirective,
-    MatButton,
-    MatIconButton,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
     FormatDateTimePipe,
     AsyncPipe,

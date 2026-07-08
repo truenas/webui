@@ -44,4 +44,8 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption<Keychai
   getFormComponentType(): ComponentType<SshConnectionFormComponent> {
     return SshConnectionFormComponent;
   }
+
+  getFormTitle(): string {
+    return this.translateService.instant('New SSH Connection');
+  }
 }

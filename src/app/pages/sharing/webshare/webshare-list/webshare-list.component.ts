@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, viewChild, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -9,10 +9,9 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker, TnBannerComponent, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
   TnCardHeaderDirective, TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective, TnIconComponent,
-  TnSidePanelActionDirective, TnSidePanelComponent, TnTableColumnDirective, TnTableComponent,
-  TnTablePagerComponent, TnTooltipDirective, type TnSortEvent,
+  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTooltipDirective, type TnSortEvent,
 } from '@truenas/ui-components';
-import { map, Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { combineLatestWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -31,15 +30,15 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { webShareNameColumn, WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
 import { webshareListElements } from 'app/pages/sharing/webshare/webshare-list/webshare-list.elements';
-import { WebShareFormData, WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
+import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
@@ -71,9 +70,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnTablePagerComponent,
     TnIconComponent,
     TnTooltipDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
-    WebShareSharesFormComponent,
     TranslateModule,
     AsyncPipe,
   ],
@@ -84,6 +80,7 @@ export class WebShareListComponent implements OnInit {
   protected readonly searchableElements = webshareListElements;
 
   private api = inject(ApiService);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   protected emptyService = inject(EmptyService);
@@ -91,25 +88,11 @@ export class WebShareListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
-  private unsavedChanges = inject(UnsavedChangesService);
   private router = inject(Router);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
   searchQuery = '';
   dataProvider: AsyncDataProvider<WebShareTableRow>;
-
-  // Side-panel host for the add/edit share form (the form is dual-host: it also
-  // still opens via legacy SlideIn from the shares-dashboard card).
-  protected readonly configOpen = signal(false);
-  protected readonly formData = signal<WebShareFormData | undefined>(undefined);
-  protected readonly configForm = viewChild(WebShareSharesFormComponent);
-  protected readonly sidePanelTitle = computed(() => (this.formData()?.isNew
-    ? this.helptext.webshare_form_title_add
-    : this.helptext.webshare_form_title_edit));
-
-  protected readonly closeFormGuard = (): Observable<boolean> => (this.configForm()?.hasUnsavedChanges()
-    ? this.unsavedChanges.showConfirmDialog()
-    : of(true));
 
   hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
     map((config) => config?.status === TruenasConnectStatus.Configured),
@@ -128,10 +111,8 @@ export class WebShareListComponent implements OnInit {
       tooltip: this.translate.instant('Open'),
       onClick: (row) => this.openWebShare(row),
       disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
-      dynamicTooltip: () => this.webShareService.canOpenWebShare$.pipe(
-        map((canOpen) => (canOpen
-          ? this.translate.instant('Open')
-          : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'))),
+      dynamicTooltip: () => this.webShareService.webShareUnavailableReason$.pipe(
+        map((reason) => reason ?? this.translate.instant('Open')),
       ),
     },
     {
@@ -147,7 +128,7 @@ export class WebShareListComponent implements OnInit {
     },
   ];
 
-  // ix-table column model retained purely to drive <ix-table-columns-selector>
+  // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs); tn-table renders cells from the template and
   // derives its `displayedColumns` from these via `toDisplayedColumns`.
   protected readonly columns = signal(createTable<WebShareTableRow>([
@@ -216,26 +197,31 @@ export class WebShareListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.formData.set({ isNew: true, name: '', path: '' });
-    this.configOpen.set(true);
+    this.webShareService.openWebShareForm({
+      isNew: true,
+      name: '',
+      path: '',
+    }).pipe(
+      filter((success) => success),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.loadWebShareConfig();
+    });
   }
 
   doEdit(row: WebShareTableRow): void {
-    this.formData.set({
-      id: row.id,
-      isNew: false,
-      name: row.name,
-      path: row.path,
-      isHomeBase: row.isHomeBase,
-    });
-    this.configOpen.set(true);
-  }
-
-  onFormClosed(saved: boolean): void {
-    this.configOpen.set(false);
-    if (saved) {
-      this.loadWebShareConfig();
-    }
+    this.formPanel.open(WebShareSharesFormComponent, {
+      title: this.translate.instant(this.helptext.webshare_form_title_edit),
+      inputs: {
+        webShareData: {
+          id: row.id,
+          isNew: false,
+          name: row.name,
+          path: row.path,
+          isHomeBase: row.isHomeBase,
+        },
+      },
+    }).onSuccess(() => this.loadWebShareConfig(), this.destroyRef);
   }
 
   doDelete(row: WebShareTableRow): void {

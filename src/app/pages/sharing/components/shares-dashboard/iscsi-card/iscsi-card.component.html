@@ -12,7 +12,7 @@
     [routerLink]="['/sharing', 'iscsi', 'targets']"
     [tnTooltip]="'Open iSCSI list in full page' | translate"
   >
-    <h3 class="card-title">
+    <h3 class="tn-card__title">
       @if (hasFibreChannel()) {
         {{ 'Block (iSCSI/FC) Shares Targets' | translate }}
       } @else {

@@ -19,6 +19,7 @@ import { IxFormComponent } from 'app/modules/forms/ix-forms/components/ix-form/i
 import {
   FormDefinition, FormFieldDefinition, FormFieldType, FormSectionDefinition, InputFieldDefinition,
 } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
+import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -101,7 +102,8 @@ interface RenderSection {
     TranslateModule,
   ],
 })
-export class IxFormRendererComponent<T extends object = Record<string, unknown>> implements OnInit {
+export class IxFormRendererComponent<T extends object = Record<string, unknown>>
+implements OnInit, SidePanelHostForm {
   /** The declarative form description. Read once on init. */
   readonly definition = input.required<FormDefinition<T>>();
 
@@ -127,6 +129,23 @@ export class IxFormRendererComponent<T extends object = Record<string, unknown>>
    * false until the view (and thus the child) initializes.
    */
   readonly canSubmit = computed(() => this.ixForm()?.canSubmit() ?? false);
+
+  /**
+   * Whether the form is busy — a `<tn-side-panel>` host reads this to show its progress bar and
+   * keep Save disabled. Delegates to the inner `<ix-form>` (whose `isLoading` covers both submit
+   * and `loadData`); falls back to the renderer's own `externalLoading` for the brief window
+   * before the child view initializes. The "Saving…" label is driven by {@link isSubmitting}, not
+   * this, so a `loadData` in flight never mislabels Save as saving.
+   */
+  readonly isBusy = computed(() => this.ixForm()?.isLoading() ?? this.externalLoading());
+
+  /**
+   * Whether a save is actually in flight — distinct from {@link isBusy}, which also covers
+   * `loadData`. A `<tn-side-panel>` host reads this (not `isBusy`) to switch Save to "Saving…", so
+   * a form merely loading its initial data doesn't show a misleading "Saving…". Delegates to the
+   * inner `<ix-form>`'s submit-only signal; false until the child view initializes.
+   */
+  readonly isSubmitting = computed(() => this.ixForm()?.isSubmitting() ?? false);
 
   /**
    * Reactive mirror of {@link canSubmit} for hosts that can't read a child signal

@@ -1,20 +1,25 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
+  TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -23,7 +28,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -64,11 +68,16 @@ describe('NfsFormComponent', () => {
     getData: jest.fn((): undefined => undefined),
   };
 
-  const clickButton = async (label: string): Promise<void> => {
-    const button = await loader.getHarness(TnButtonHarness.with({ label }));
+  const getTnCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const clickAdvancedOptions = async (): Promise<void> => {
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
     await button.click();
   };
-
   const setDescription = async (value: string): Promise<void> => {
     const description = await loader.getHarness(TnInputHarness.with({ name: 'comment' }));
     await description.setValue(value);
@@ -88,6 +97,22 @@ describe('NfsFormComponent', () => {
     await harness.blur();
   };
 
+  /**
+   * The `<ix-form>` wrapper emits a dev-mode advisory when the form has nested FormArrays
+   * (networks/hosts); the payload here is built from `form.value`, so it's benign. Swallow only
+   * that specific message and forward anything else, so genuine warnings still surface.
+   */
+  const muteNestedFormArrayAdvisory = (): void => {
+    const original = console.warn.bind(console) as (...args: unknown[]) => void;
+    jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+      const [first] = args;
+      if (typeof first === 'string' && first.startsWith('[ix-form] changedValues')) {
+        return;
+      }
+      original(...args);
+    });
+  };
+
   const createComponent = createComponentFactory({
     component: NfsFormComponent,
     imports: [
@@ -98,9 +123,11 @@ describe('NfsFormComponent', () => {
       mockApi([
         mockCall('sharing.nfs.create'),
         mockCall('sharing.nfs.update'),
+        mockCall('nfs.config', {
+          protocols: [NfsProtocol.V3],
+        } as NfsConfig),
       ]),
       mockAuth(),
-      mockProvider(SlideIn),
       mockProvider(FilesystemService),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
@@ -149,6 +176,7 @@ describe('NfsFormComponent', () => {
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
+      muteNestedFormArrayAdvisory();
     });
 
     it('gives the Description input an accessible name matching its field label', async () => {
@@ -157,7 +185,7 @@ describe('NfsFormComponent', () => {
     });
 
     it('shows Access fields when Advanced Options button is pressed', async () => {
-      await clickButton('Advanced Options');
+      await clickAdvancedOptions();
 
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Maproot User' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Maproot Group' }))).toBe(true);
@@ -167,10 +195,17 @@ describe('NfsFormComponent', () => {
       expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Read Only' }))).toBe(true);
     });
 
-    it('shows a Security select with an accessible name in the Access fieldset', async () => {
-      await clickButton('Advanced Options');
+    it('loads NFS config and shows Security select in Access fieldset when NFS is version 4', async () => {
+      const websocketMock = spectator.inject(MockApiService);
+      websocketMock.mockCallOnce('nfs.config', {
+        protocols: [NfsProtocol.V4],
+      } as NfsConfig);
+      spectator.component.ngOnInit();
 
-      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Security' }))).toBe(true);
+      await clickAdvancedOptions();
+
+      const security = await getTnSelect('security');
+      expect(security).toBeTruthy();
       // Accessible-name guard: the tn-form-field label is visual-only, so the combobox
       // relies on [ariaLabel] for its name.
       expect(spectator.query('tn-select [aria-label="Security"]')).toBeTruthy();
@@ -179,7 +214,7 @@ describe('NfsFormComponent', () => {
     it('creates a new NFS share when form is submitted', async () => {
       mockStore$.overrideSelector(selectServices, [{ id: 1, service: ServiceName.Nfs, enable: false } as Service]);
 
-      await clickButton('Advanced Options');
+      await clickAdvancedOptions();
 
       await form.fillForm({
         Path: '/mnt/new/ds',
@@ -187,10 +222,7 @@ describe('NfsFormComponent', () => {
       await typeCustomValue(await getAutocomplete('maproot_user'), 'news');
       await typeCustomValue(await getAutocomplete('maproot_group'), 'sys');
       await setDescription('New share');
-      const readOnly = await loader.getHarness(TnCheckboxHarness.with({ label: 'Read Only' }));
-      await readOnly.check();
-      const enabled = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }));
-      expect(await enabled.isChecked()).toBe(true);
+      await (await getTnCheckbox('ro')).check();
 
       const networkList = await loader.getHarness(IxListHarness.with({ label: 'Networks' }));
       await networkList.pressAddButton();
@@ -198,19 +230,21 @@ describe('NfsFormComponent', () => {
       await hostsList.pressAddButton();
       await form.fillForm({
         Network: '192.168.1.189/24',
-        'Authorized Hosts and IP addresses': 'truenas.com',
       });
+      const hostInput = await loader.getHarness(TnInputHarness.with({ ancestor: 'ix-list-item' }));
+      await hostInput.setValue('truenas.com');
 
-      // Not rendered for non-enterprise systems.
-      expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Expose Snapshots' }))).toBe(false);
+      expect(await loader.getHarnessOrNull(
+        TnCheckboxHarness.with({ selector: '[formControlName="expose_snapshots"]' }),
+      )).toBeNull();
 
       mockStore$.overrideSelector(selectIsEnterprise, true);
       mockStore$.refreshState();
-      spectator.detectChanges();
-      const exposeSnapshots = await loader.getHarness(TnCheckboxHarness.with({ label: 'Expose Snapshots' }));
-      await exposeSnapshots.check();
 
-      await clickButton('Save');
+      await (await getTnCheckbox('expose_snapshots')).check();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/new/ds',
@@ -234,9 +268,7 @@ describe('NfsFormComponent', () => {
   describe('updates NFS share', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ existingNfsShare: existingShare }) }),
-        ],
+        props: { nfsShareData: { existingNfsShare: existingShare } },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
@@ -244,17 +276,16 @@ describe('NfsFormComponent', () => {
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
+      muteNestedFormArrayAdvisory();
     });
 
     it('shows values for an existing NFS share when it is open for edit', async () => {
-      await clickButton('Advanced Options');
+      await clickAdvancedOptions();
 
       const description = await loader.getHarness(TnInputHarness.with({ name: 'comment' }));
       expect(await description.getValue()).toBe('My share');
-      const enabled = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }));
-      expect(await enabled.isChecked()).toBe(true);
-      const readOnly = await loader.getHarness(TnCheckboxHarness.with({ label: 'Read Only' }));
-      expect(await readOnly.isChecked()).toBe(false);
+      expect(await (await getTnCheckbox('enabled')).isChecked()).toBe(true);
+      expect(await (await getTnCheckbox('ro')).isChecked()).toBe(false);
 
       const values = await form.getValues();
       expect(values).toMatchObject({
@@ -264,7 +295,7 @@ describe('NfsFormComponent', () => {
       expect(await (await getAutocomplete('maproot_group')).getInputValue()).toBe('operator');
 
       const networks = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness.with({ label: 'Network' }));
-      const hosts = await loader.getAllHarnesses(IxInputHarness.with({ label: 'Authorized Hosts and IP addresses' }));
+      const hosts = await loader.getAllHarnesses(TnInputHarness.with({ ancestor: 'ix-list-item' }));
       expect(networks).toHaveLength(1);
       expect(hosts).toHaveLength(2);
       expect(await networks[0].getValue()).toBe('192.168.1.78/21');
@@ -276,8 +307,7 @@ describe('NfsFormComponent', () => {
       mockStore$.overrideSelector(selectServices, [{ service: ServiceName.Nfs, enable: true } as Service]);
 
       await setDescription('Updated share');
-      const enabled = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }));
-      await enabled.uncheck();
+      await (await getTnCheckbox('enabled')).uncheck();
 
       const networkList = await loader.getHarness(IxListHarness.with({ label: 'Networks' }));
       await networkList.pressAddButton();
@@ -285,7 +315,8 @@ describe('NfsFormComponent', () => {
       const networks = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness.with({ label: 'Network' }));
       await networks[1].setValue('10.56.1.1/20');
 
-      await clickButton('Save');
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('sharing.nfs.update', [
         1,
@@ -312,7 +343,8 @@ describe('NfsFormComponent', () => {
 
       await setDescription('Updated share');
 
-      await clickButton('Save');
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
     });
@@ -323,21 +355,17 @@ describe('NfsFormComponent', () => {
       spectator = createComponent({
         providers: [
           { provide: SlideInRef, useValue: null },
+          // Opt out of the panel-mode min-feedback hold so the close is synchronous.
+          { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
         ],
-        props: {
-          data: { existingNfsShare: existingShare },
-        },
+        props: { nfsShareData: { existingNfsShare: existingShare } },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
+      muteNestedFormArrayAdvisory();
     });
 
-    it('does not render the modal header or the in-form Save button', async () => {
-      expect(spectator.query('ix-modal-header')).toBeNull();
-      expect(await loader.hasHarness(TnButtonHarness.with({ label: 'Save' }))).toBe(false);
-    });
-
-    it('resolves incoming data from the data input and emits closed when saved', async () => {
+    it('resolves incoming data from the nfsShareData input and emits closed when saved', async () => {
       const closedSpy = jest.fn();
       spectator.component.closed.subscribe(closedSpy);
 
@@ -350,7 +378,6 @@ describe('NfsFormComponent', () => {
         expect.objectContaining({ comment: 'Panel edit', path: '/mnt/nfs/ds' }),
       ]);
       expect(closedSpy).toHaveBeenCalledWith(true);
-      expect(slideInRef.close).not.toHaveBeenCalled();
     });
   });
 });

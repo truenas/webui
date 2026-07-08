@@ -1,17 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent } from '@truenas/ui-components';
 import { isNumber } from 'lodash-es';
 import {
-  concatMap, firstValueFrom, mergeMap, Observable, of, from,
+  concatMap, firstValueFrom, from, mergeMap, Observable, of,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
@@ -25,17 +24,15 @@ import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -59,24 +56,20 @@ interface FormAclEntry {
   styleUrls: ['./smb-acl.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    IxFormComponent,
+    TnFormFieldComponent,
+    TnFormSectionComponent,
+    TnSelectComponent,
     IxListComponent,
     IxListItemComponent,
-    IxSelectComponent,
     IxComboboxComponent,
     IxErrorsComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
   ],
 })
-export class SmbAclComponent implements OnInit {
+export class SmbAclComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -84,19 +77,21 @@ export class SmbAclComponent implements OnInit {
   private translate = inject(TranslateService);
   private userService = inject(UserService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<string, boolean>>(SlideInRef);
+
+  /** Share name supplied by the `<tn-side-panel>` host. */
+  readonly shareName = input<string | undefined>(undefined);
 
   form = this.formBuilder.group({
     entries: this.formBuilder.array<FormAclEntry>([]),
   });
 
   protected isLoading = signal(false);
-  protected shareName: string;
 
+  private resolvedShareName: string | undefined;
   private shareAclName: string;
 
   readonly tags$ = of(mapToOptions(smbAclTagLabels, this.translate));
-  protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   readonly permissions$ = of([
     {
       label: 'FULL',
@@ -132,23 +127,12 @@ export class SmbAclComponent implements OnInit {
 
   protected groupProvider: GroupComboboxProvider;
 
-  constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.shareName = slideInRef.getData();
-  }
-
   ngOnInit(): void {
-    if (this.shareName) {
-      this.setSmbShareName();
+    // Share name arrives via the `shareName` input from the side-panel host.
+    this.resolvedShareName = this.shareName();
+    if (this.resolvedShareName) {
+      this.loadSmbAcl(this.resolvedShareName);
     }
-  }
-
-  private setSmbShareName(): void {
-    this.loadSmbAcl(this.shareName);
   }
 
   addAce(): void {
@@ -169,24 +153,21 @@ export class SmbAclComponent implements OnInit {
     this.form.controls.entries.removeAt(index);
   }
 
-  onSubmit(): void {
-    this.isLoading.set(true);
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
+    const request$ = of(undefined).pipe(
+      mergeMap(() => this.getAclEntriesFromForm()),
+      mergeMap((acl) => this.api.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])),
+    );
 
-    of(undefined)
-      .pipe(mergeMap(() => this.getAclEntriesFromForm()))
-      .pipe(mergeMap((acl) => this.api.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])))
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      request$,
+      successMessage: this.translate.instant('Share ACL updated'),
+      onError: (error: unknown) => {
+        this.formErrorHandler.handleValidationErrors(error, this.form);
+        return true;
+      },
+    };
+  };
 
   private loadSmbAcl(shareName: string): void {
     this.isLoading.set(true);

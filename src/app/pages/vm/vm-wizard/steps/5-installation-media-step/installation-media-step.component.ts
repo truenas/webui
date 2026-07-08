@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialog, TnStepperNextDirective, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UploadIsoDialogComponent } from 'app/pages/vm/vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -25,11 +25,10 @@ import { FilesystemService } from 'app/services/filesystem.service';
     ReactiveFormsModule,
     IxExplorerComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     FormActionsComponent,
-    MatStepperPrevious,
-    MatStepperNext,
+    TnStepperPreviousDirective,
+    TnStepperNextDirective,
     TranslateModule,
   ],
 })
@@ -43,6 +42,9 @@ export class InstallationMediaStepComponent implements SummaryProvider {
   form = this.formBuilder.nonNullable.group({
     iso_path: [''],
   });
+
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = stepCompletedSignal(this.form);
 
   readonly helptext = helptextVmWizard;
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();

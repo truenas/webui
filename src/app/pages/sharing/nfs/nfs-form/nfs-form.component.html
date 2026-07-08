@@ -1,12 +1,10 @@
-@if (slideInRef) {
-  <ix-modal-header
-    [requiredRoles]="requiredRoles"
-    [title]="title"
-    [loading]="isLoading()"
-  ></ix-modal-header>
-}
-
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section [heading]="'Path' | translate">
     <ix-explorer
       formControlName="path"
@@ -171,34 +169,23 @@
           [label]="'Hosts' | translate"
           (delete)="removeHostControl(i)"
         >
-          <ix-input
+          <tn-form-field
             [required]="true"
-            [formControlName]="i"
             [label]="'Authorized Hosts and IP addresses' | translate"
             [tooltip]="helptext.hostsTooltip | translate"
-          ></ix-input>
+          >
+            <tn-input [formControlName]="i"></tn-input>
+          </tn-form-field>
         </ix-list-item>
       }
     </ix-list>
   </tn-form-section>
 
-  <ix-form-actions>
-    @if (slideInRef) {
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        type="submit"
-        color="primary"
-        [testId]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="form.invalid || isLoading()"
-      ></tn-button>
-    }
-
-    <tn-button
-      type="button"
-      [testId]="'toggle-advanced-options'"
-      [label]="isAdvancedMode() ? ('Basic Options' | translate) : ('Advanced Options' | translate)"
-      (onClick)="toggleAdvancedMode()"
-    ></tn-button>
-  </ix-form-actions>
-</form>
+  <tn-button
+    ixExtraActions
+    type="button"
+    [testId]="'toggle-advanced-options'"
+    [label]="isAdvancedMode() ? ('Basic Options' | translate) : ('Advanced Options' | translate)"
+    (onClick)="toggleAdvancedMode()"
+  ></tn-button>
+</ix-form>

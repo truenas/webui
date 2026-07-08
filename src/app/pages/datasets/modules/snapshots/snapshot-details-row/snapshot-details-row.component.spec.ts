@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnDialog, TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -78,7 +77,7 @@ describe('SnapshotDetailsRowComponent', () => {
     const tnDialog = spectator.inject(TnDialog);
     jest.spyOn(tnDialog, 'open').mockImplementation();
 
-    const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clone To New Dataset' }));
+    const cloneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clone To New Dataset' }));
     await cloneButton.click();
 
     expect(tnDialog.open).toHaveBeenCalledWith(SnapshotCloneDialog, { data: fakeZfsSnapshot.name });
@@ -88,7 +87,7 @@ describe('SnapshotDetailsRowComponent', () => {
     const tnDialog = spectator.inject(TnDialog);
     jest.spyOn(tnDialog, 'open').mockImplementation();
 
-    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
+    const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
 
     // The dialog now accepts the full snapshot so it can render the creation
@@ -118,7 +117,7 @@ describe('SnapshotDetailsRowComponent', () => {
   });
 
   it('should delete snapshot when `Delete` button click', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({

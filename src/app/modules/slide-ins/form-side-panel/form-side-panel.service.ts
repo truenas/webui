@@ -11,13 +11,13 @@ import { IxFormRendererComponent } from 'app/modules/forms/ix-forms/components/i
 import {
   FormSidePanelContainerComponent,
 } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 
 /** A live panel in {@link FormSidePanelService}'s stack. */
 interface OpenPanel {
-  component: Type<SidePanelForm<unknown>>;
+  component: Type<SidePanelHostCloseable<unknown>>;
   result$: SlideInResult<unknown>;
   teardown: () => void;
   /** The panel's container, kept so {@link FormSidePanelService.swap} can replace its hosted component in place. */
@@ -25,7 +25,13 @@ interface OpenPanel {
 }
 
 export interface FormSidePanelOptions {
-  /** Panel header text. */
+  /**
+   * Panel header text. Rendered raw (not piped through `translate`), so pass an
+   * already-translated string, e.g. `translate.instant('Add Container')`.
+   *
+   * Note this is the opposite convention to {@link saveLabel} and footer-action labels, which are
+   * untranslated markers piped in the container template — mind the difference when setting both.
+   */
   title?: string;
   /** Explicit panel width; overrides {@link wide}. */
   width?: string;
@@ -33,7 +39,10 @@ export interface FormSidePanelOptions {
   wide?: boolean;
   /** Test-id applied to the panel root. */
   testId?: string;
-  /** Footer submit-button label; defaults to `Save`. */
+  /**
+   * Footer submit-button label; defaults to `Save`. An untranslated marker (`T('Create')`) — the
+   * container template pipes it through `translate`, so do NOT pre-translate with `instant()`.
+   */
   saveLabel?: string;
   /** Inputs set on the hosted form before its `ngOnInit` (e.g. the record being edited). */
   inputs?: Record<string, unknown>;
@@ -45,7 +54,7 @@ export interface FormSidePanelOptions {
 }
 
 /**
- * Opens a {@link SidePanelForm} in a `tn-side-panel`, imperatively — the form's host-agnostic
+ * Opens a {@link SidePanelHostForm} in a `tn-side-panel`, imperatively — the form's host-agnostic
  * "side-panel" mode (no {@link SlideInRef}; exposes `closed` / `canSubmit` / `submit`).
  *
  * This is the go-forward replacement for declaring a `<tn-side-panel>` in every card/page that
@@ -95,15 +104,14 @@ export class FormSidePanelService {
     options: Omit<FormSidePanelOptions, 'inputs'> & { editData?: Partial<T> | object | null } = {},
   ): SlideInResult<boolean> {
     const { editData, ...chrome } = options;
-    // The renderer structurally provides the host surface (closed/canSubmit/submit/
-    // hasUnsavedChanges/requiredRoles) the container reads; cast past the nominal base type.
-    return this.open(IxFormRendererComponent as unknown as Type<SidePanelForm>, {
+    // The renderer implements SidePanelHostForm, so it's accepted by `open` without a cast.
+    return this.open(IxFormRendererComponent, {
       ...chrome,
       inputs: { definition, editData: editData ?? null },
     });
   }
 
-  open<R = boolean>(component: Type<SidePanelForm<R>>, options: FormSidePanelOptions = {}): SlideInResult<R> {
+  open<R = boolean>(component: Type<SidePanelHostCloseable<R>>, options: FormSidePanelOptions = {}): SlideInResult<R> {
     const top = this.stack[this.stack.length - 1];
     // Dedupe a re-entrant open of the component already on top (e.g. a double-fired menu click);
     // a different component is a genuine nested open and stacks on top.
@@ -115,7 +123,7 @@ export class FormSidePanelService {
     // Defaults to a cancel; overwritten with the form's response when it closes itself via save.
     let pendingResponse: R | undefined;
 
-    const portal = new ComponentPortal<SidePanelForm<R>>(component, null, this.injector);
+    const portal = new ComponentPortal<SidePanelHostCloseable<R>>(component, null, this.injector);
     const containerRef = createComponent(FormSidePanelContainerComponent, {
       environmentInjector: this.environmentInjector,
     });
@@ -149,7 +157,7 @@ export class FormSidePanelService {
       // Form-initiated close (save / cancel). A truthy payload is a success — `true` for the
       // default boolean form, or the created record for a richer `R`; any falsy value is a
       // cancellation, matching SlideInResult's `=== undefined` convention.
-      (form as SidePanelForm<R>).closed.subscribe((saved) => {
+      (form as SidePanelHostCloseable<R>).closed.subscribe((saved) => {
         pendingResponse = saved || undefined;
         containerRef.setInput('open', false);
       });
@@ -171,7 +179,7 @@ export class FormSidePanelService {
 
     const result$ = new SlideInResult<R>(close$);
     this.stack.push({
-      component: component as Type<SidePanelForm<unknown>>,
+      component: component as Type<SidePanelHostCloseable<unknown>>,
       result$,
       teardown,
       containerRef,
@@ -188,7 +196,7 @@ export class FormSidePanelService {
    * when the portal re-attaches, and {@link open}'s subscription wires each attached form's close.
    * No-op if no panel is open.
    */
-  swap(component: Type<SidePanelForm>, options: FormSidePanelOptions = {}): void {
+  swap(component: Type<SidePanelHostCloseable>, options: FormSidePanelOptions = {}): void {
     const top = this.stack[this.stack.length - 1];
     if (!top || top.containerRef.hostView.destroyed) {
       return;
@@ -201,10 +209,10 @@ export class FormSidePanelService {
     containerRef.setInput('footerless', options.footerless ?? false);
     containerRef.setInput('formInputs', options.inputs ?? {});
     // Changing the portal input makes `cdkPortalOutlet` detach the old component and attach the new.
-    containerRef.setInput('portal', new ComponentPortal<SidePanelForm>(component, null, this.injector));
+    containerRef.setInput('portal', new ComponentPortal<SidePanelHostCloseable>(component, null, this.injector));
     containerRef.changeDetectorRef.detectChanges();
     // Keep the stack entry's component in sync so the re-entrant-open dedupe stays correct.
-    top.component = component as Type<SidePanelForm<unknown>>;
+    top.component = component as Type<SidePanelHostCloseable<unknown>>;
   }
 
   /**

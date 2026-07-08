@@ -1,25 +1,25 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, input, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, ReactiveFormsModule, FormGroup, FormControl,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
-import { of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent,
+} from '@truenas/ui-components';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  SidePanelFooterMenu, SidePanelFooterMenuItem,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
@@ -38,33 +38,28 @@ import {
   styleUrls: ['./certificate-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     CertificateDetailsComponent,
-    MatButton,
-    TestDirective,
-    FormActionsComponent,
-    RequiresRolesDirective,
     TranslateModule,
   ],
 })
-export class CertificateEditComponent implements OnInit {
+export class CertificateEditComponent extends SidePanelForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(FormErrorHandlerService);
   private tnDialog = inject(TnDialog);
-  slideInRef = inject<SlideInRef<Certificate, boolean>>(SlideInRef);
+  private translate = inject(TranslateService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CertificateWrite];
 
-  isLoading = false;
+  protected isLoading = signal(false);
 
   form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
@@ -75,22 +70,57 @@ export class CertificateEditComponent implements OnInit {
     renew_days?: FormControl<number | null>;
   }>;
 
-  certificate: Certificate;
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+
+  certificate: Certificate | undefined;
+
+  /** Record to edit, supplied by the `<tn-side-panel>` host. */
+  readonly editingCertificate = input<Certificate | undefined>(undefined);
 
   readonly helptext = helptextSystemCertificates;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.certificate = this.slideInRef.getData();
-  }
+  protected readonly InputType = InputType;
 
   get isCsr(): boolean {
-    return this.certificate?.cert_type_CSR;
+    return !!this.certificate?.cert_type_CSR;
   }
 
+  /**
+   * Secondary actions rendered as a dropdown in the `<tn-side-panel>` footer next to Save (read by
+   * the host container every change-detection cycle). Derived from the editing certificate; resolves
+   * to `undefined` on the create path so the host renders no menu.
+   */
+  readonly footerMenu = computed<SidePanelFooterMenu | undefined>(() => {
+    const certificate = this.editingCertificate();
+    if (!certificate) {
+      return undefined;
+    }
+    const isCsr = !!certificate.cert_type_CSR;
+    const items: SidePanelFooterMenuItem[] = [
+      {
+        label: isCsr ? T('View/Download CSR') : T('View/Download Certificate'),
+        testId: 'view-certificate-or-csr',
+        onClick: () => this.onViewCertificatePressed(),
+      },
+      {
+        label: T('View/Download Key'),
+        testId: 'view-key',
+        onClick: () => this.onViewKeyPressed(),
+      },
+    ];
+    if (isCsr) {
+      items.push({
+        label: T('Create ACME Certificate'),
+        testId: 'create-acme-certificate',
+        requiredRoles: this.requiredRoles,
+        onClick: () => this.onCreateAcmePressed(),
+      });
+    }
+    return { label: T('Actions'), testId: 'certificate-actions', items };
+  });
+
   ngOnInit(): void {
+    this.certificate = this.editingCertificate();
     this.setCertificate();
     this.setRenewDaysForEditIfAvailable();
   }
@@ -129,11 +159,18 @@ export class CertificateEditComponent implements OnInit {
   }
 
   onCreateAcmePressed(): void {
-    this.slideInRef.swap?.(CertificateAcmeAddComponent);
+    // Open the ACME form for the same CSR (stacked over this panel). On success, close
+    // this edit panel with a saved result so the opener's `onSuccess` fires and the
+    // dashboard reloads — matching the legacy SlideIn `swap()`, which preserved the
+    // original opener's success chain. On cancel, this panel stays open underneath.
+    this.formPanel.open(CertificateAcmeAddComponent, {
+      title: this.translate.instant('Create ACME Certificate'),
+      inputs: { csr: this.certificate },
+    }).onSuccess(() => this.close(true), this.destroyRef);
   }
 
-  onSubmit(): void {
-    this.isLoading = true;
+  protected onSubmit(): void {
+    this.isLoading.set(true);
 
     const payload = this.form.value;
 
@@ -145,12 +182,12 @@ export class CertificateEditComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.cdr.markForCheck();
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.cdr.markForCheck();
           this.errorHandler.handleValidationErrors(error, this.form);
         },
