@@ -6,12 +6,12 @@
   @if (isHaLicensed() && !canFailover()) {
     <div class="failover-reasons">
       <p class="dialog-message error">
-        <span>{{ 'Failover is unhealthy. Rebooting now will cause a production outage.' | translate }}</span>
+        <span>{{ 'Reboot will cause a failover event which may trigger temporary outages of services.' | translate }}</span>
       </p>
 
       @for (reason of failoverDisabledReasons(); track reason) {
         <li>
-          {{ reason | mapValue: disabledReasonExplanations | translate }}
+          {{ ((reason | mapValue: disabledReasonExplanations) || reason) | translate }}
         </li>
       }
     </div>
