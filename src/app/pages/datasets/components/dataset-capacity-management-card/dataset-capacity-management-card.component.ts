@@ -1,10 +1,8 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnChanges, OnInit, input, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnTestIdDirective,
-} from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective, type TnCardAction } from '@truenas/ui-components';
 import { maxBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { forkJoin, Subject } from 'rxjs';
@@ -12,7 +10,6 @@ import {
   map, take, switchMap, tap,
   filter,
 } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
@@ -20,6 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { isQuotaSet } from 'app/helpers/storage.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,10 +35,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    TnCardFooterActionsDirective,
     TranslateModule,
-    TnButtonComponent,
-    RequiresRolesDirective,
     TnTestIdDirective,
     SpaceManagementChartComponent,
     FileSizePipe,
@@ -55,13 +50,15 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   private cdr = inject(ChangeDetectorRef);
   private datasetStore = inject(DatasetTreeStore);
   private formPanel = inject(FormSidePanelService);
-  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private sharingTierService = inject(SharingTierService);
+  private authService = inject(AuthService);
+  private translate = inject(TranslateService);
 
   readonly dataset = input.required<DatasetDetails>();
 
-  protected readonly requiredRoles = [Role.DatasetWrite];
+  private hasDatasetWrite = toSignal(this.authService.hasRole(Role.DatasetWrite), { initialValue: false });
+
   protected readonly searchableElements = datasetCapacityManagementElements;
   protected readonly tierEnabled = this.sharingTierService.tierEnabled;
   protected readonly performanceTierAvailable = signal<number | null>(null);
@@ -102,6 +99,17 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
 
   protected hasInheritedQuotas = computed(() => {
     return this.inheritedQuotasDataset?.quota?.parsed && this.inheritedQuotasDataset?.id !== this.dataset()?.id;
+  });
+
+  protected readonly editAction = computed<TnCardAction | undefined>(() => {
+    if (this.isZvol() || !this.hasDatasetWrite()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Edit'),
+      testId: 'edit-quotas',
+      handler: () => this.editDataset(),
+    };
   });
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

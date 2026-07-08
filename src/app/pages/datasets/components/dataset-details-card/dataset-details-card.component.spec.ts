@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCardComponent, TnDialog } from '@truenas/ui-components';
+import {
+  TnDialog, TnButtonHarness, TnCardComponent, TnMenuHarness, TnMenuTesting,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -102,6 +104,11 @@ describe('DatasetDetailsCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
+  async function openCardMenu(): Promise<TnMenuHarness> {
+    spectator.click(spectator.query('[data-test="button-dataset-actions"]')!);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   function getDetails(): Record<string, string> {
     return spectator.queryAll('.details-item').reduce((acc, item: HTMLElement) => {
       const key = item.querySelector('.label')!.textContent!;
@@ -114,9 +121,10 @@ describe('DatasetDetailsCardComponent', () => {
   it('shows header', async () => {
     setupTest({ dataset });
 
+    // white-box: no TnCardHarness yet — read the public title() input
     expect(spectator.query(TnCardComponent)!.title()).toBe('Details');
-    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
-    expect(await editButton.getLabel()).toBe('Edit');
+    const editButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Edit' }));
+    expect(editButton).not.toBeNull();
   });
 
   describe('filesystem dataset', () => {
@@ -239,14 +247,13 @@ describe('DatasetDetailsCardComponent', () => {
   });
 
   describe('promoting dataset', () => {
-    it('does not show a Promote Dataset button when dataset cannot be promoted', async () => {
+    it('does not show a Promote Dataset action when dataset cannot be promoted', () => {
       setupTest({ dataset });
 
-      const promoteButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Promote' }));
-      expect(promoteButton).toBeNull();
+      expect(spectator.query('[data-test="button-dataset-actions"]')).toBeNull();
     });
 
-    it('promotes dataset when dataset can be promoted and Promote Dataset button is pressed', async () => {
+    it('promotes dataset when dataset can be promoted and Promote action is pressed', async () => {
       setupTest({
         dataset: {
           ...dataset,
@@ -256,8 +263,8 @@ describe('DatasetDetailsCardComponent', () => {
         } as DatasetDetails,
       });
 
-      const promoteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Promote' }));
-      await promoteButton.click();
+      const menu = await openCardMenu();
+      await menu.clickItem({ label: 'Promote' });
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.promote', ['pool/child']);
     });

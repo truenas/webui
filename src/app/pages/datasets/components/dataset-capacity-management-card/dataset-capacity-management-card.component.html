@@ -1,6 +1,7 @@
 <tn-card
-  class="card"
-  [title]="(isZvol() ? 'Zvol Space Management' : 'Space Management') | translate"
+  padding="small"
+  [title]="isZvol() ? ('Zvol Space Management' | translate) : ('Space Management' | translate)"
+  [secondaryAction]="editAction()"
 >
     <ix-space-management-chart [dataset]="dataset()"></ix-space-management-chart>
 
@@ -180,18 +181,6 @@
         }
       </div>
     </div>
-  }
-
-  @if (!isZvol()) {
-    <ng-template tnCardFooterActions>
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        variant="outline"
-        [testId]="'edit-quotas'"
-        [label]="'Edit' | translate"
-        (onClick)="editDataset()"
-      ></tn-button>
-    </ng-template>
   }
 </tn-card>
 

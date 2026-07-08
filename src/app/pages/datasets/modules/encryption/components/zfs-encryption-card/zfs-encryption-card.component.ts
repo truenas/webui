@@ -91,7 +91,7 @@ export class ZfsEncryptionCardComponent {
     return this.isEncryptionRoot() && this.dataset().locked && !this.parentDataset()?.locked;
   });
 
-  onEditPressed(): void {
+  protected onEditPressed(): void {
     const dialog = this.tnDialog.open(EncryptionOptionsDialog, {
       data: {
         dataset: this.dataset(),
@@ -104,7 +104,7 @@ export class ZfsEncryptionCardComponent {
       .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
-  onLock(): void {
+  protected onLock(): void {
     this.tnDialog.open(LockDatasetDialog, {
       data: this.dataset(),
     })
@@ -113,13 +113,13 @@ export class ZfsEncryptionCardComponent {
       .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
-  onExportKey(): void {
+  protected onExportKey(): void {
     this.tnDialog.open(ExportDatasetKeyDialog, {
       data: this.dataset(),
     });
   }
 
-  onExportAllKeys(): void {
+  protected onExportAllKeys(): void {
     this.tnDialog.open(ExportAllKeysDialog, {
       data: this.dataset(),
     });

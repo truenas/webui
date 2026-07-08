@@ -1,18 +1,18 @@
 @import 'mixins/cards';
+@import 'mixins/animations';
 
-@include tn-detail-card();
+@include tn-detail-card;
 
-.card {
-  height: 100%;
-
-  @include tn-details-item();
-
+:host {
   ix-copy-button {
     height: 24px;
     width: 24px;
   }
 
+  @include tn-details-item();
+
   .details-item {
+    // Detail rows here top-align (multi-line values wrap); the shared mixin centres.
     align-items: flex-start;
 
     .root-dataset {

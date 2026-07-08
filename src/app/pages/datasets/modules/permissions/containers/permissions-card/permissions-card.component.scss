@@ -1,17 +1,12 @@
 @import 'mixins/cards';
+@import 'mixins/animations';
 
-@include tn-detail-card();
+@include tn-detail-card;
 
-:host ::ng-deep {
-  ix-permissions-item {
+:host {
+  ::ng-deep ix-permissions-item {
     padding: 4px 0;
   }
-}
-
-.card {
-  height: 100%;
-
-  @include tn-details-item();
 
   .file-information {
     border-bottom: 1px solid var(--lines);
@@ -24,8 +19,27 @@
     }
 
     .details-item {
+      @include fade-in();
+
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
       max-width: 100%;
       width: 100%;
+
+      .label {
+        font-weight: bold;
+        margin-right: 5px;
+        white-space: normal;
+      }
+
+      .value {
+        font-weight: normal;
+        margin-right: 5px;
+        white-space: normal;
+      }
 
       .value.dataset-path {
         display: flow-root;

@@ -1,22 +1,26 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
-import { TnEmptyComponent } from '@truenas/ui-components';
+import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
+import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { TreeVirtualScrollViewComponent } from 'app/modules/ix-tree/components/tree-virtual-scroll-view/tree-virtual-scroll-view.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
+import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 
 describe('DatasetsManagementComponent', () => {
   let spectator: SpectatorRouting<DatasetsManagementComponent>;
+  let loader: HarnessLoader;
   let router: Router;
   let location: Location;
 
@@ -32,6 +36,15 @@ describe('DatasetsManagementComponent', () => {
     imports: [
       BasicSearchComponent,
       FakeProgressBarComponent,
+    ],
+    overrideComponents: [
+      [
+        DatasetsManagementComponent,
+        {
+          remove: { imports: [DatasetNodeComponent] },
+          add: { imports: [MockComponent(DatasetNodeComponent)] },
+        },
+      ],
     ],
     providers: [
       mockAuth(),
@@ -55,6 +68,7 @@ describe('DatasetsManagementComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     router = spectator.inject(Router);
     location = spectator.inject(Location);
   });
@@ -78,11 +92,11 @@ describe('DatasetsManagementComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/previous-route']);
   });
 
-  it('checks if tree node component is rendered', () => {
-    expect(spectator.query(TreeVirtualScrollViewComponent)).toBeTruthy();
+  it('checks if the dataset tree is rendered', () => {
+    expect(spectator.query(TnTreeVirtualScrollViewComponent)).toBeTruthy();
   });
 
-  it('should display error when datasets loading fails', () => {
+  it('should display error when datasets loading fails', async () => {
     error$.next(new ApiCallError({
       data: {
         reason: 'Network Error',
@@ -92,21 +106,23 @@ describe('DatasetsManagementComponent', () => {
 
     spectator.detectChanges();
 
-    const empty = spectator.query(TnEmptyComponent)!;
-    expect(empty.title()).toBe('Failed to load datasets');
-    expect(empty.description()).toBe('Network Error');
-    expect(empty.icon()).toBe('mdi-alert-octagon');
-    expect(empty.actionText()).toBe('Retry');
+    const empty = await loader.getHarness(TnEmptyHarness);
+    expect(await empty.getTitle()).toBe('Failed to load datasets');
+    expect(await empty.getDescription()).toBe('Network Error');
+    // white-box: TnEmptyHarness has no getter for icon / action text
+    expect(spectator.query(TnEmptyComponent)!.icon()).toBe('alert-octagon');
+    expect(spectator.query(TnEmptyComponent)!.actionText()).toBe('Retry');
   });
 
-  it('should display empty state when no datasets', () => {
+  it('should display empty state when no datasets', async () => {
     error$.next(null);
     datasets$.next([]);
     spectator.detectChanges();
 
-    const empty = spectator.query(TnEmptyComponent)!;
-    expect(empty.title()).toBe('No Datasets');
-    expect(empty.icon()).toBe('app-dataset-root');
-    expect(empty.actionText()).toBe('Create Pool');
+    const empty = await loader.getHarness(TnEmptyHarness);
+    expect(await empty.getTitle()).toBe('No Datasets');
+    // white-box: TnEmptyHarness has no getter for icon / action text
+    expect(spectator.query(TnEmptyComponent)!.icon()).toBe('dataset-root');
+    expect(spectator.query(TnEmptyComponent)!.actionText()).toBe('Create Pool');
   });
 });
