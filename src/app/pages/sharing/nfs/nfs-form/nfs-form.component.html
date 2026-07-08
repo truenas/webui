@@ -54,9 +54,12 @@
         [label]="'Maproot User' | translate"
         [tooltip]="helptext.maprootUserTooltip | translate"
       >
+        <!-- TODO: [placeholder] doubles as the accessible-name fallback — tn-autocomplete
+          has no [ariaLabel] input and tn-form-field does not associate its label yet. -->
         <tn-autocomplete
           formControlName="maproot_user"
           [testId]="'maproot-user'"
+          [placeholder]="'Maproot User' | translate"
           [options]="(userOptions$ | async) ?? []"
           [allowCustomValue]="true"
           [loading]="usersLoading()"
@@ -73,6 +76,7 @@
         <tn-autocomplete
           formControlName="maproot_group"
           [testId]="'maproot-group'"
+          [placeholder]="'Maproot Group' | translate"
           [options]="(groupOptions$ | async) ?? []"
           [allowCustomValue]="true"
           [loading]="groupsLoading()"
@@ -89,6 +93,7 @@
         <tn-autocomplete
           formControlName="mapall_user"
           [testId]="'mapall-user'"
+          [placeholder]="'Mapall User' | translate"
           [options]="(userOptions$ | async) ?? []"
           [allowCustomValue]="true"
           [loading]="usersLoading()"
@@ -105,6 +110,7 @@
         <tn-autocomplete
           formControlName="mapall_group"
           [testId]="'mapall-group'"
+          [placeholder]="'Mapall Group' | translate"
           [options]="(groupOptions$ | async) ?? []"
           [allowCustomValue]="true"
           [loading]="groupsLoading()"

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSidePanelHarness,
+  TnButtonHarness, TnCardComponent, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSidePanelHarness,
   TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
@@ -93,8 +93,8 @@ describe('NfsListComponent', () => {
   });
 
   it('shows accurate page title', () => {
-    const title = spectator.query('.tn-card__title');
-    expect(title).toHaveText('NFS');
+    // White-box: no TnCardHarness in @truenas/ui-components yet.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('NFS');
   });
 
   it('opens the side panel hosting the form when "Add" is pressed', async () => {

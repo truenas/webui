@@ -1,7 +1,5 @@
-@import '../../components/storage-tier-cell/tier-cell-host';
 @import '../../components/tn-table-in-card';
 
-@include tier-cell-host;
 @include tn-table-in-card;
 
 :host {

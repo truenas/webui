@@ -121,7 +121,7 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'tier'">
+      <ng-container [tnColumnDef]="'tier'" [width]="'160px'">
         <ng-template tnHeaderCellDef>{{ 'Storage Tier' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-tier-status [tier]="row.tier" />
@@ -147,6 +147,7 @@
 
 <tn-side-panel
   [title]="sidePanelTitle()"
+  [closeButtonTestId]="'close-slide-in'"
   [closeGuard]="closeFormGuard"
   [(open)]="configOpen"
 >
