@@ -75,11 +75,16 @@ export type HostedSidePanelForm = SidePanelHostForm & {
   readonly footerActions?: SidePanelFooterAction[];
   readonly footerMenu?: SidePanelFooterMenu;
   /**
-   * Whether the form is currently submitting / busy. The host shows an indeterminate progress bar
-   * at the top of the panel while true (Save is independently disabled via `canSubmit`). Optional —
-   * forms that don't expose it simply never show the bar.
+   * Whether the form is currently busy. The host shows an indeterminate progress bar at the top of
+   * the panel while true and keeps Save disabled. Optional — forms that don't expose it simply never
+   * show the bar.
    */
   readonly isBusy?: () => boolean;
+  /**
+   * Whether a save is actually in flight (as opposed to an initial data load). The host reads this —
+   * not `isBusy` — to switch Save to "Saving…", so a load never mislabels Save. Optional.
+   */
+  readonly isSubmitting?: () => boolean;
 };
 
 /**
