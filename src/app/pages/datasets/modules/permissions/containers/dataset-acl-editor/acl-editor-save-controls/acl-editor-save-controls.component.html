@@ -16,14 +16,12 @@
 
 </div>
 
-<button
+<tn-button
   *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
-  mat-button
   color="primary"
   class="save-button"
-  ixTest="save-acl"
+  [testId]="'save-acl'"
+  [label]="'Save Access Control List' | translate"
   [disabled]="!canBeSaved()"
-  (click)="onSavePressed()"
->
-  {{ 'Save Access Control List' | translate }}
-</button>
+  (onClick)="onSavePressed()"
+></tn-button>

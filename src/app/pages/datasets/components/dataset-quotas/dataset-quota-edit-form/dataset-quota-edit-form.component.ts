@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  InputType, TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import {
   EMPTY, Observable, of, switchMap,
 } from 'rxjs';
@@ -18,14 +21,10 @@ import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.inte
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -34,41 +33,42 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
     TranslateModule,
   ],
 })
-export class DatasetQuotaEditFormComponent implements OnInit {
+export class DatasetQuotaEditFormComponent extends SidePanelForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  formatter = inject(IxFormatterService);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   protected dialogService = inject(DialogService);
-  slideInRef = inject<SlideInRef<{
-    quotaType: DatasetQuotaType;
-    datasetId: string;
-    id: number;
-  }, boolean>>(SlideInRef);
 
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly InputType = InputType;
 
   protected isFormLoading = signal(false);
   private datasetQuota: DatasetQuota;
   private datasetId: string;
   private quotaType: DatasetQuotaType;
   private id: number;
+
+  /**
+   * Quota identity to preset when hosted in a `<tn-side-panel>` (which has no `SlideInRef`
+   * to carry data). Unused in the legacy SlideIn host.
+   */
+  readonly presetQuotaType = input<DatasetQuotaType | undefined>(undefined);
+  readonly presetDatasetId = input<string | undefined>(undefined);
+  readonly presetId = input<number | undefined>(undefined);
 
   get title(): string {
     return this.quotaType === DatasetQuotaType.User
@@ -134,19 +134,17 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     obj_quota: new FormControl(null as number | null),
   });
 
-  constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-
-    this.datasetId = slideInRef.getData().datasetId;
-    this.quotaType = slideInRef.getData().quotaType;
-    this.id = slideInRef.getData().id;
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   ngOnInit(): void {
+    const data = this.slideInRef
+      ? this.slideInRef.getData() as { quotaType: DatasetQuotaType; datasetId: string; id: number }
+      : { quotaType: this.presetQuotaType(), datasetId: this.presetDatasetId(), id: this.presetId() };
+
+    this.datasetId = data.datasetId;
+    this.quotaType = data.quotaType;
+    this.id = data.id;
+
     this.setupEditQuotaForm();
   }
 
@@ -196,10 +194,10 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       quota_value: values.obj_quota || 0,
     });
 
-    this.submit(values, payload);
+    this.applyQuota(values, payload);
   }
 
-  private submit(values: typeof this.form.value, payload: SetDatasetQuota[]): void {
+  private applyQuota(values: typeof this.form.value, payload: SetDatasetQuota[]): void {
     let canSubmit$ = of(true);
     if (this.isUnsettingQuota(values)) {
       canSubmit$ = this.getConfirmation(values.name);
@@ -216,7 +214,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       next: () => {
         this.snackbar.success(this.translate.instant('Quotas updated'));
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

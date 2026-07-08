@@ -1,17 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 
 const slideInRef: SlideInRef<string | undefined, unknown> = {
@@ -27,20 +26,6 @@ describe('SnapshotAddFormComponent', () => {
   let loader: HarnessLoader;
   let api: MockApiService;
 
-  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
-    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
-  );
-  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
-    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
-  );
-  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
-    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
-  );
-  const clickSave = async (): Promise<void> => {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-  };
-
   const createComponent = createComponentFactory({
     component: SnapshotAddFormComponent,
     imports: [
@@ -54,11 +39,25 @@ describe('SnapshotAddFormComponent', () => {
         mockCall('replication.list_naming_schemas', mockNamingSchema),
         mockCall('vmware.dataset_has_vms', true),
       ]),
-      mockProvider(SnackbarService),
+      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),
     ],
   });
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const clickSave = async (): Promise<void> => {
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+  };
 
   beforeEach(() => {
     spectator = createComponent();
@@ -95,7 +94,6 @@ describe('SnapshotAddFormComponent', () => {
 
   it('checks when form is submitted with naming schema', async () => {
     await (await getSelect('dataset')).selectOption('APPS');
-    // TnInputHarness.setValue('') throws on empty input; clear the name via the control directly.
     spectator.component.form.controls.name.setValue('');
     await (await getCheckbox('recursive')).check();
     await (await getSelect('naming_schema')).selectOption('%Y %H %d %M %m');

@@ -5,7 +5,7 @@
 </div>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div>
-    <ix-fieldset>
+    <tn-form-section>
       <tn-form-field
         [label]="'New IPv4 Default Gateway' | translate"
         [tooltip]="helptext.ipv4gatewayTooltip | translate"
@@ -50,7 +50,7 @@
           formControlName="dns3"
         ></tn-input>
       </tn-form-field>
-    </ix-fieldset>
+    </tn-form-section>
   </div>
 </form>
 

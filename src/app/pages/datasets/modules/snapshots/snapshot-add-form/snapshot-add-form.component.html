@@ -1,16 +1,14 @@
-<ix-form
-  [formGroup]="form"
-  [addTitle]="'Add Snapshot' | translate"
-  [requiredRoles]="requiredRoles"
-  [externalLoading]="isFormLoading()"
-  [submitHandler]="handleSubmit"
-  (closed)="closed.emit($event)"
->
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles"
+    [title]="'Add Snapshot' | translate"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <tn-form-section>
-    <tn-form-field
-      [label]="helptext.datasetLabel | translate"
-      [required]="true"
-    >
+    <tn-form-field [label]="helptext.datasetLabel | translate" [required]="true">
       <tn-select
         formControlName="dataset"
         [options]="(datasetOptions$ | async) ?? []"
@@ -31,13 +29,10 @@
       <tn-select
         formControlName="naming_schema"
         [options]="(namingSchemaOptions$ | async) ?? []"
-        [allowEmpty]="true"
       ></tn-select>
     </tn-form-field>
 
-    <tn-form-field
-      [tooltip]="helptext.recursiveTooltip | translate"
-    >
+    <tn-form-field [tooltip]="helptext.recursiveTooltip | translate">
       <tn-checkbox
         formControlName="recursive"
         [label]="helptext.recursiveLabel | translate"
@@ -53,4 +48,17 @@
       </tn-form-field>
     }
   </tn-form-section>
-</ix-form>
+
+  <ix-form-actions>
+    @if (slideInRef) {
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        type="submit"
+        color="primary"
+        [testId]="'save'"
+        [disabled]="form.invalid || isFormLoading()"
+        [label]="'Save' | translate"
+      ></tn-button>
+    }
+  </ix-form-actions>
+</form>

@@ -1,38 +1,10 @@
+@import 'mixins/cards';
 @import 'mixins/animations';
 
-.details-item {
-  @include fade-in();
+@include tn-detail-card();
 
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
+.card {
+  height: 100%;
 
-  &:first-child {
-    margin-top: 0;
-  }
-
-  .label {
-    font-weight: bold;
-    margin-right: 5px;
-    white-space: normal;
-  }
-
-  .value {
-    font-weight: normal;
-    margin-right: 5px;
-    white-space: normal;
-  }
-
-  .action {
-    color: var(--primary);
-    cursor: pointer;
-    margin-left: auto;
-    max-width: 100%;
-    overflow: hidden;
-    text-decoration: underline;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  @include tn-details-item();
 }

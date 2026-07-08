@@ -6,12 +6,19 @@ div.content {
   gap: 8px;
 
   .right-column {
+    display: flex;
     flex-basis: 35%;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
   }
 
   .left-column {
+    display: flex;
     flex-basis: 65%;
+    flex-direction: column;
     gap: 8px;
+    min-width: 0;
   }
 
   @media #{$media-lt-lg} {
@@ -28,10 +35,19 @@ div.right-column div.left-column {
   height: inherit;
 }
 
-mat-card > mat-card-actions.interface-pending-actions,
+.interface-pending-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
 div.disabled-notice {
-  margin: 0;
-  padding: 0 16px 16px;
+  margin-top: 16px;
+}
+
+.checkin-error {
+  color: var(--red);
 }
 
 .pseudolink {
@@ -41,16 +57,16 @@ div.disabled-notice {
 
 .dashboard-card {
   display: flex;
-  flex: 1 1 0;
+  flex: 0 0 auto;
 }
 
-#timeout-field {
-  text-align: center;
-  width: 50px;
+.pending-changes-card {
+  height: auto;
+}
 
-  input {
-    color: var(--fg2);
-    font-weight: 700;
-    text-align: center;
-  }
+.timeout-field {
+  display: inline-block;
+  margin: 0 4px;
+  vertical-align: middle;
+  width: 70px;
 }

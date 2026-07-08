@@ -46,7 +46,7 @@ describe('DataProtectionComponent', () => {
     expect(spectator.query('.backup-tasks.value')).toHaveText('');
   });
 
-  it('opens the snapshot add form when button clicked', async () => {
+  it('opens the snapshot add from when button clicked', async () => {
     const formPanel = spectator.inject(FormSidePanelService);
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Take Snapshot' }));
@@ -54,7 +54,7 @@ describe('DataProtectionComponent', () => {
 
     expect(formPanel.open).toHaveBeenCalledWith(SnapshotAddFormComponent, {
       title: 'Add Snapshot',
-      inputs: { datasetPreset: '/mnt/pool/ds' },
+      inputs: { presetDatasetId: '/mnt/pool/ds' },
     });
   });
 });

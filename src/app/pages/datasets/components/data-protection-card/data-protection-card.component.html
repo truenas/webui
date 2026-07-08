@@ -1,23 +1,10 @@
-<tn-card
-  padding="small"
-  [title]="'Data Protection' | translate"
->
-  <ng-template tnCardHeaderActions>
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      testId="create-snapshot"
-      [label]="'Take Snapshot' | translate"
-      [ixUiSearch]="searchableElements.elements.createSnapshot"
-      (onClick)="addSnapshot()"
-    ></tn-button>
-  </ng-template>
-
+<tn-card class="card" [title]="'Data Protection' | translate">
   <div class="details-item">
     <div class="label">{{ 'Snapshots' | translate }}:</div>
     <div class="total-snapshots value">{{ dataset().snapshot_count }}</div>
     <a
       class="action"
-      ixTest="manage-snapshots"
+      tnTestIdType="link" [tnTestId]="'manage-snapshots'"
       [routerLink]="['/datasets/snapshots', dataset().id]"
       [ixUiSearch]="searchableElements.elements.manageSnapshots"
     >
@@ -29,7 +16,7 @@
     <div class="snapshot-tasks value">{{ dataset().snapshot_tasks_count }}</div>
     <a
       class="action"
-      ixTest="manage-snapshot-tasks"
+      tnTestIdType="link" [tnTestId]="'manage-snapshot-tasks'"
       [routerLink]="['/data-protection/snapshot', dataset().id]"
       [ixUiSearch]="searchableElements.elements.manageSnapshotTasks"
     >
@@ -37,13 +24,24 @@
     </a>
   </div>
   <div class="details-item">
-    <div class="label backup-tasks">{{ backupTasksLabel }}</div>
+    <div class="label backup-tasks">{{ backupTasksLabel() }}</div>
     <a
       class="action"
-      ixTest="manage-backups"
+      tnTestIdType="link" [tnTestId]="'manage-backups'"
       [routerLink]="['/data-protection']"
     >
       {{ 'Go to Backups' | translate }}
     </a>
   </div>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      variant="outline"
+      [testId]="'create-snapshot'"
+      [label]="'Take Snapshot' | translate"
+      [ixUiSearch]="searchableElements.elements.createSnapshot"
+      (onClick)="addSnapshot()"
+    ></tn-button>
+  </ng-template>
 </tn-card>

@@ -98,6 +98,25 @@ export class UserFormComponent extends SidePanelForm<User> implements OnInit {
    */
   readonly canSubmit = computed(() => !this.isFormInvalid() && !this.isFormLoading());
 
+  /**
+   * Busy/loading state read by the `<tn-side-panel>` host to show its progress bar, switch Save to
+   * "Saving…", and keep Save disabled mid-submit. Overrides the base (which sources its loading
+   * from `trackCanSubmit`) because this form builds `canSubmit` from its four sub-forms instead.
+   */
+  override isBusy(): boolean {
+    return this.isFormLoading();
+  }
+
+  /**
+   * Whether a save is in flight, read by the host to switch Save to "Saving…". Overrides the base
+   * latch because {@link isFormLoading} is set true *only* by the submit path (never an initial data
+   * load), so busy and submitting coincide here. Tracking it directly also covers the async path
+   * where a save is gated behind a home-dir confirmation dialog — there `isFormLoading` flips true
+   * only after the user confirms, long after `submit()` returns, which the base's synchronous
+   * rising-edge latch can't catch.
+   */
+  override readonly isSubmitting = computed(() => this.isFormLoading());
+
   protected isNewUser = computed(() => {
     return !this.editingUser();
   });

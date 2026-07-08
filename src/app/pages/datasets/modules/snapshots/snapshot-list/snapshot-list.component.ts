@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, Type,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit,
   computed, effect, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -35,7 +35,6 @@ import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface'
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
@@ -106,7 +105,6 @@ export class SnapshotListComponent implements OnInit {
   protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$, { initialValue: 0 });
 
   protected readonly selectedSnapshots = signal<ZfsSnapshot[]>([]);
-  protected readonly selectionHasItems = computed(() => this.selectedSnapshots().length > 0);
 
   protected readonly displayedColumns = computed(() => {
     const base = ['dataset', 'snapshot_name'];
@@ -126,11 +124,6 @@ export class SnapshotListComponent implements OnInit {
     created: (row) => getSnapshotCreationMs(row) ?? 0,
     referenced: (row) => getFiniteNumber(row?.properties?.referenced?.parsed) ?? 0,
   };
-
-  // FormSidePanelService.open() expects Type<SidePanelForm>, but SnapshotAddFormComponent
-  // structurally provides the host surface (canSubmit/submit/closed) without extending it —
-  // mirroring how FormSidePanelService.openForm casts the renderer.
-  private readonly snapshotAddForm = SnapshotAddFormComponent as unknown as Type<SidePanelForm>;
 
   protected readonly emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
@@ -270,7 +263,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.formPanel.open(this.snapshotAddForm, {
+    this.formPanel.open(SnapshotAddFormComponent, {
       title: this.translate.instant('Add Snapshot'),
     });
   }

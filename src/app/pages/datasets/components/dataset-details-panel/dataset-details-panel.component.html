@@ -19,25 +19,21 @@
 
   <div class="add-buttons">
     @if (!dataset().locked && !isZvol()) {
-      <button
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="add-zvol"
+        [testId]="'add-zvol'"
+        [label]="'Add Zvol' | translate"
         [ixUiSearch]="searchableElements.elements.addZvol"
-        (click)="onAddZvol()"
-      >
-        {{ 'Add Zvol' | translate }}
-      </button>
-      <button
+        (onClick)="onAddZvol()"
+      ></tn-button>
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
         color="primary"
-        ixTest="add-dataset"
+        [testId]="'add-dataset'"
+        [label]="'Add Dataset' | translate"
         [ixUiSearch]="searchableElements.elements.addDataset"
-        (click)="onAddDataset()"
-      >
-        {{ 'Add Dataset' | translate }}
-      </button>
+        (onClick)="onAddDataset()"
+      ></tn-button>
     }
   </div>
 </div>

@@ -42,7 +42,6 @@
         [testId]="'delete-selected'"
         [tnTooltip]="'Delete selections' | translate"
         [label]="'Delete' | translate"
-        [disabled]="!selectionHasItems()"
         (onClick)="doBatchDelete(selectedSnapshots())"
       ></tn-button>
     </div>

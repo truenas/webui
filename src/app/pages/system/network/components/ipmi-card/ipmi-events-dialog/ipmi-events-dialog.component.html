@@ -19,7 +19,11 @@
       </div>
     }
   } @else {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
+    <tn-empty
+      icon="format-list-text"
+      iconLibrary="mdi"
+      [title]="'No events to display.' | translate"
+    ></tn-empty>
   }
 </div>
 <ix-form-actions tnDialogAction class="form-actions">
