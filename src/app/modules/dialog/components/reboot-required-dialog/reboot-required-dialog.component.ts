@@ -1,7 +1,9 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
@@ -53,7 +55,9 @@ export class RebootRequiredDialog {
   ));
 
   form = this.fb.group({
-    confirm: [false, Validators.requiredTrue],
+    // Initial null instead of false keeps the required error from showing
+    // before the user interacts with the checkbox.
+    confirm: new FormControl<boolean | null>(null, Validators.requiredTrue),
   });
 
   rebootLocalNode(): void {
