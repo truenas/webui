@@ -3,21 +3,23 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnDialog,
+  TnIconButtonComponent,
+  TnListComponent,
+  TnListItemComponent,
+  TnSlideToggleComponent,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { Observable, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport } from 'app/helptext/system/support';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
-import {
-  IxSlideToggleComponent,
-} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   LicenseFingerprintDialog,
@@ -34,15 +36,14 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   styleUrls: ['../../common-settings-card.scss', './sys-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatIconButton,
-    MatListModule,
-    TnTooltipDirective,
     ReactiveFormsModule,
-    IxSlideToggleComponent,
     RequiresRolesDirective,
-    TestDirective,
-    TnIconComponent,
+    TnButtonComponent,
+    TnIconButtonComponent,
+    TnListComponent,
+    TnListItemComponent,
+    TnSlideToggleComponent,
+    TnTooltipDirective,
     TranslateModule,
   ],
 })
