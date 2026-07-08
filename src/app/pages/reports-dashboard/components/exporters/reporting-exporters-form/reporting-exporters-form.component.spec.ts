@@ -10,6 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SchemaType } from 'app/enums/schema.enum';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { Schema } from 'app/interfaces/schema.interface';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
@@ -58,6 +59,8 @@ describe('ReportingExportersFormComponent', () => {
       ]),
       mockAuth(),
       ...ixFormTestingProviders(),
+      // Skip the min submit-feedback hold so the synchronous-close assertions below hold.
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
     ],
   });
 
