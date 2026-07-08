@@ -2,6 +2,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
+import { fakeAsync, tick } from '@angular/core/testing';
 import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -1228,5 +1229,65 @@ describe('IxFormComponent', () => {
       expect(form.status).toBe('INVALID');
       expect(spectator.component.ixForm().canSubmit()).toBe(false);
     });
+  });
+
+  describe('minimum submit feedback (side-panel host)', () => {
+    // No SlideInRef provided → the form is hosted in a `<tn-side-panel>`, where success is held for
+    // a minimum duration so the host's progress bar / dim overlay stay visible long enough to see.
+    const createSidePanelComponent = createComponentFactory({
+      component: TestHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        ...ixFormTestingProviders(),
+        // Force the `<tn-side-panel>` host: no SlideInRef (the harness would otherwise auto-mock
+        // one, taking the un-delayed legacy path). `null` is what `inject(…, {optional:true})` sees.
+        { provide: SlideInRef, useValue: null },
+        mockAuth(),
+      ],
+    });
+
+    it('holds submitting and defers close + snackbar until the minimum duration elapses', fakeAsync(() => {
+      submitHandlerSpy.mockReturnValue({
+        request$: of({ id: 1 }),
+        successMessage: 'Saved!' as TranslatedString,
+      });
+
+      const sidePanelSpectator = createSidePanelComponent();
+      const ixForm = sidePanelSpectator.component.ixForm();
+      const closedSpy = jest.fn();
+      ixForm.closed.subscribe(closedSpy);
+
+      ixForm.submit();
+
+      // The request resolves synchronously, but success handling waits on the min-duration timer:
+      // the loader stays up and nothing closes yet.
+      expect(ixForm.isSubmitting()).toBe(true);
+      expect(closedSpy).not.toHaveBeenCalled();
+      expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+
+      tick(499);
+      expect(ixForm.isSubmitting()).toBe(true);
+      expect(closedSpy).not.toHaveBeenCalled();
+
+      tick(1);
+      expect(ixForm.isSubmitting()).toBe(false);
+      expect(closedSpy).toHaveBeenCalledWith(true);
+      expect(sidePanelSpectator.inject(SnackbarService).success).toHaveBeenCalledWith('Saved!');
+    }));
+
+    it('surfaces a submit error immediately, without waiting out the minimum duration', fakeAsync(() => {
+      submitHandlerSpy.mockReturnValue({
+        request$: throwError(() => new Error('nope')),
+        successMessage: 'Saved!' as TranslatedString,
+      });
+
+      const sidePanelSpectator = createSidePanelComponent();
+      const ixForm = sidePanelSpectator.component.ixForm();
+
+      ixForm.submit();
+
+      expect(ixForm.isSubmitting()).toBe(false);
+      expect(sidePanelSpectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalled();
+    }));
   });
 });

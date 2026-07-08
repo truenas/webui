@@ -21,3 +21,24 @@
   display: block;
   margin: -36px -24px 32px;
 }
+
+// Positioning context for the busy overlay. `min-height: 100%` so the overlay covers the full
+// content viewport even when the form is shorter than the panel (otherwise it'd only span the
+// short form's height, leaving the empty area below un-dimmed).
+.panel-content {
+  position: relative;
+  min-height: 100%;
+}
+
+// Dimming scrim over the form while a save is in flight. Full-bleeds the content padding (36px top,
+// 24px sides/bottom — see `.tn-side-panel__content` in `_tn-styles.scss`) so the dim reaches the
+// panel edges. `pointer-events` default (auto) swallows clicks, blocking field edits mid-submit.
+// Sits below the progress bar (`z-index: 2`) so the bar stays visible on top.
+.panel-content__busy-overlay {
+  position: absolute;
+  inset: -36px -24px -24px;
+  z-index: 1;
+  background-color: var(--tn-bg2, #282828);
+  opacity: 0.6;
+  cursor: progress;
+}
