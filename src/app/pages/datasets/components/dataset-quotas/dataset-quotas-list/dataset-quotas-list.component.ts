@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker, TnButtonComponent, TnSlideToggleComponent, TnTablePagerComponent,
+} from '@truenas/ui-components';
 import { EMPTY, Observable, of } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
@@ -34,8 +34,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DatasetQuotaAddFormComponent,
@@ -59,10 +58,9 @@ interface QuotaData {
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    MatSlideToggle,
-    TestDirective,
+    TnSlideToggleComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
     IxTableComponent,
     AsyncPipe,
@@ -80,7 +78,7 @@ export class DatasetQuotasListComponent implements OnInit {
   protected loader = inject(LoaderService);
   protected route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   private emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
@@ -307,8 +305,11 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(DatasetQuotaAddFormComponent, {
-      data: { quotaType: this.quotaType, datasetId: this.datasetId },
+    this.formPanel.open(DatasetQuotaAddFormComponent, {
+      title: this.quotaType === DatasetQuotaType.User
+        ? this.translate.instant('Add User Quotas')
+        : this.translate.instant('Add Group Quotas'),
+      inputs: { presetQuotaType: this.quotaType, presetDatasetId: this.datasetId },
     }).onSuccess(() => this.getQuotas(), this.destroyRef);
   }
 
@@ -341,8 +342,11 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   private doEdit(row: DatasetQuota): void {
-    this.slideIn.open(DatasetQuotaEditFormComponent, {
-      data: { quotaType: this.quotaType, datasetId: this.datasetId, id: row.id },
+    this.formPanel.open(DatasetQuotaEditFormComponent, {
+      title: this.quotaType === DatasetQuotaType.User
+        ? this.translate.instant('Edit User Quota')
+        : this.translate.instant('Edit Group Quota'),
+      inputs: { presetQuotaType: this.quotaType, presetDatasetId: this.datasetId, presetId: row.id },
     }).onSuccess(() => this.getQuotas(), this.destroyRef);
   }
 

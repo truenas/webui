@@ -1,7 +1,9 @@
 @import 'mixins/cards';
 
+@include tn-detail-card();
+
 .card {
-  @include details-card();
+  @include tn-details-item();
 
   .value {
     align-items: center;

@@ -1,17 +1,15 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnTooltipDirective, TnDialog } from '@truenas/ui-components';
+import {
+  TnTooltipDirective, TnDialog, TnButtonComponent, TnCardComponent,
+  TnCardFooterActionsDirective, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import {
   EncryptionOptionsDialogData,
@@ -37,18 +35,14 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
   styleUrls: ['./zfs-encryption-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnButtonComponent,
     TnTooltipDirective,
     TranslateModule,
-    MatButton,
-    TestDirective,
+    TnTestIdDirective,
     RequiresRolesDirective,
     RouterLink,
-    MatCardContent,
-    MatCardActions,
-    MatAnchor,
     TooltipComponent,
   ],
 })

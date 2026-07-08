@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
+import { TnFormSectionHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -26,8 +27,6 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import {
   OtherOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/other-options-section/other-options-section.component';
@@ -38,7 +37,16 @@ import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 describe('OtherOptionsSectionComponent', () => {
   let spectator: Spectator<OtherOptionsSectionComponent>;
   let loader: HarnessLoader;
-  let form: IxFieldsetHarness;
+
+  const selectPredicate = (name: string): ReturnType<typeof TnSelectHarness.with> => TnSelectHarness.with({
+    selector: `[formControlName="${name}"]`,
+  });
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(selectPredicate(name));
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelectValue = async (name: string): Promise<string> => (await getSelect(name)).getDisplayText();
+
   const existingDataset = {
     user_properties: {
       comments: {
@@ -250,13 +258,12 @@ describe('OtherOptionsSectionComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     spectator.setInput({
       advancedMode: true,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFieldsetHarness);
   });
 
   describe('basic options', () => {
@@ -264,7 +271,7 @@ describe('OtherOptionsSectionComponent', () => {
       spectator.setInput('advancedMode', false);
       spectator.detectChanges();
 
-      expect(await loader.getAllHarnesses(IxFieldsetHarness)).toHaveLength(0);
+      expect(await loader.getAllHarnesses(TnFormSectionHarness)).toHaveLength(0);
     });
   });
 
@@ -275,24 +282,22 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      expect(await form.getValues()).toEqual({
-        Comments: '',
-        'Compression Level': 'LZJB',
-        'Enable Atime': 'Inherit (Off)',
-        Sync: 'Inherit (Standard)',
-        'ZFS Deduplication': 'Inherit (Off)',
-        'Case Sensitivity': 'Sensitive',
-        Checksum: 'SHA256',
-        'Read-only': 'Off',
-        Exec: 'Inherit (On)',
-        'Snapshot Directory': 'Inherit (Hidden)',
-        Snapdev: 'Hidden',
-        Copies: 'Inherit (1)',
-        'Record Size': 'Inherit (128K)',
-        'ACL Type': 'POSIX',
-        'ACL Mode': 'Discard',
-        'Use Metadata (Special) VDEVs': 'Inherit (0)',
-      });
+      expect(await (await getInput('comments')).getValue()).toBe('');
+      expect(await getSelectValue('compression')).toBe('LZJB');
+      expect(await getSelectValue('atime')).toBe('Inherit (Off)');
+      expect(await getSelectValue('sync')).toBe('Inherit (Standard)');
+      expect(await getSelectValue('deduplication')).toBe('Inherit (Off)');
+      expect(await getSelectValue('casesensitivity')).toBe('Sensitive');
+      expect(await getSelectValue('checksum')).toBe('SHA256');
+      expect(await getSelectValue('readonly')).toBe('Off');
+      expect(await getSelectValue('exec')).toBe('Inherit (On)');
+      expect(await getSelectValue('snapdir')).toBe('Inherit (Hidden)');
+      expect(await getSelectValue('snapdev')).toBe('Hidden');
+      expect(await getSelectValue('copies')).toBe('Inherit (1)');
+      expect(await getSelectValue('recordsize')).toBe('Inherit (128K)');
+      expect(await getSelectValue('acltype')).toBe('POSIX');
+      expect(await getSelectValue('aclmode')).toBe('Discard');
+      expect(await getSelectValue('special_small_block_size')).toBe('Inherit (0)');
     });
 
     it('returns update payload when getPayload() is called', () => {
@@ -410,24 +415,22 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      expect(await form.getValues()).toEqual({
-        Comments: '',
-        Sync: 'Inherit (Standard)',
-        'Compression Level': 'Inherit (LZJB)',
-        'Enable Atime': 'Inherit (Off)',
-        'ZFS Deduplication': 'Inherit (Off)',
-        'Case Sensitivity': 'Sensitive',
-        Checksum: 'Inherit (On)',
-        'ACL Mode': 'Inherit',
-        'ACL Type': 'Inherit',
-        Copies: 'Inherit (1)',
-        Exec: 'Inherit (On)',
-        'Use Metadata (Special) VDEVs': 'Inherit (0)',
-        'Read-only': 'Inherit (Off)',
-        'Record Size': 'Inherit (128K)',
-        Snapdev: 'Inherit (Hidden)',
-        'Snapshot Directory': 'Inherit (Hidden)',
-      });
+      expect(await (await getInput('comments')).getValue()).toBe('');
+      expect(await getSelectValue('sync')).toBe('Inherit (Standard)');
+      expect(await getSelectValue('compression')).toBe('Inherit (LZJB)');
+      expect(await getSelectValue('atime')).toBe('Inherit (Off)');
+      expect(await getSelectValue('deduplication')).toBe('Inherit (Off)');
+      expect(await getSelectValue('casesensitivity')).toBe('Sensitive');
+      expect(await getSelectValue('checksum')).toBe('Inherit (On)');
+      expect(await getSelectValue('aclmode')).toBe('Inherit');
+      expect(await getSelectValue('acltype')).toBe('Inherit');
+      expect(await getSelectValue('copies')).toBe('Inherit (1)');
+      expect(await getSelectValue('exec')).toBe('Inherit (On)');
+      expect(await getSelectValue('special_small_block_size')).toBe('Inherit (0)');
+      expect(await getSelectValue('readonly')).toBe('Inherit (Off)');
+      expect(await getSelectValue('recordsize')).toBe('Inherit (128K)');
+      expect(await getSelectValue('snapdev')).toBe('Inherit (Hidden)');
+      expect(await getSelectValue('snapdir')).toBe('Inherit (Hidden)');
     });
 
     it('shows warning if user selects "Sync" as Disabled', async () => {
@@ -435,9 +438,7 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      await form.fillForm({
-        Sync: 'Disabled',
-      });
+      await (await getSelect('sync')).selectOption('Disabled');
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -454,9 +455,7 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      await form.fillForm({
-        'ACL Type': 'SMB/NFSv4',
-      });
+      await (await getSelect('acltype')).selectOption('SMB/NFSv4');
       expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
         'ACL Types & ACL Modes',
         helptextDatasetForm.aclTypeChangeWarning,
@@ -468,19 +467,19 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      const aclType = await form.getControl('ACL Type') as IxSelectHarness;
-      const aclMode = await form.getControl('ACL Mode') as IxSelectHarness;
+      const aclType = await getSelect('acltype');
+      const aclMode = await getSelect('aclmode');
 
-      await aclType.setValue('SMB/NFSv4');
-      expect(await aclMode.getValue()).toBe('Passthrough');
+      await aclType.selectOption('SMB/NFSv4');
+      expect(await aclMode.getDisplayText()).toBe('Passthrough');
       expect(await aclMode.isDisabled()).toBe(false);
 
-      await aclType.setValue('POSIX');
-      expect(await aclMode.getValue()).toBe('Discard');
+      await aclType.selectOption('POSIX');
+      expect(await aclMode.getDisplayText()).toBe('Discard');
       expect(await aclMode.isDisabled()).toBe(true);
 
-      await aclType.setValue('Inherit');
-      expect(await aclMode.getValue()).toBe('Inherit');
+      await aclType.selectOption('Inherit');
+      expect(await aclMode.getDisplayText()).toBe('Inherit');
       expect(await aclMode.isDisabled()).toBe(true);
     });
 
@@ -498,13 +497,13 @@ describe('OtherOptionsSectionComponent', () => {
         },
       });
 
-      const aclType = await form.getControl('ACL Type') as IxSelectHarness;
-      const aclMode = await form.getControl('ACL Mode') as IxSelectHarness;
+      const aclType = await getSelect('acltype');
+      const aclMode = await getSelect('aclmode');
 
-      expect(await aclMode.getValue()).toBe('Passthrough');
+      expect(await aclMode.getDisplayText()).toBe('Passthrough');
       expect(await aclMode.isDisabled()).toBe(false);
 
-      expect(await aclType.getValue()).toBe('POSIX');
+      expect(await aclType.getDisplayText()).toBe('POSIX');
       expect(await aclType.isDisabled()).toBe(false);
     });
   });
@@ -515,9 +514,7 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      await form.fillForm({
-        'ZFS Deduplication': 'On',
-      });
+      await (await getSelect('deduplication')).selectOption('On');
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -528,7 +525,7 @@ describe('OtherOptionsSectionComponent', () => {
 
     it('shows deduplication field based on product type and license', async () => {
       // Default state (CommunityEdition) should show deduplication
-      expect(await form.getLabels()).toContain('ZFS Deduplication');
+      expect(await loader.getHarnessOrNull(selectPredicate('deduplication'))).not.toBeNull();
 
       // Test with Enterprise with dedup license - should show
       const store$ = spectator.inject(MockStore);
@@ -551,9 +548,8 @@ describe('OtherOptionsSectionComponent', () => {
       await testSpectator.fixture.whenStable();
 
       const testLoader = TestbedHarnessEnvironment.loader(testSpectator.fixture);
-      const testForm = await testLoader.getHarness(IxFieldsetHarness);
 
-      expect(await testForm.getLabels()).toContain('ZFS Deduplication');
+      expect(await testLoader.getHarnessOrNull(selectPredicate('deduplication'))).not.toBeNull();
     });
   });
 
@@ -564,9 +560,7 @@ describe('OtherOptionsSectionComponent', () => {
       });
 
       jest.spyOn(spectator.component.advancedModeChange, 'emit');
-      await form.fillForm({
-        'Record Size': '64K',
-      });
+      await (await getSelect('recordsize')).selectOption('64K');
 
       expect(spectator.query('.recordsize-warning')).toExist();
       expect(spectator.component.advancedModeChange.emit).toHaveBeenCalled();
@@ -615,11 +609,9 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      await form.fillForm({
-        'Use Metadata (Special) VDEVs': 'On',
-      });
+      await (await getSelect('special_small_block_size')).selectOption('On');
 
-      expect(spectator.query('ix-input[formControlName="special_small_block_size_custom"]')).toExist();
+      expect(spectator.query('tn-input[formControlName="special_small_block_size_custom"]')).toExist();
     });
 
     it('sends custom value when specified', () => {
@@ -728,7 +720,7 @@ describe('OtherOptionsSectionComponent', () => {
       it('hides the Use Metadata (Special) VDEVs field', async () => {
         spectator.setInput({ parent: parentDataset });
 
-        expect(await form.getLabels()).not.toContain('Use Metadata (Special) VDEVs');
+        expect(await loader.getHarnessOrNull(selectPredicate('special_small_block_size'))).toBeNull();
       });
 
       it('omits special_small_block_size and special_small_block_size_custom from the payload', () => {
