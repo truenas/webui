@@ -16,7 +16,7 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
@@ -81,7 +81,7 @@ describe('DatasetDetailsCardComponent', () => {
         datasetUpdated: jest.fn(),
         selectedParentDataset$: of({ id: 'pool' }),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -155,9 +155,13 @@ describe('DatasetDetailsCardComponent', () => {
       const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
       await editButton.click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
         DatasetFormComponent,
-        { wide: true, data: { datasetId: 'pool/child', isNew: false } },
+        {
+          wide: true,
+          title: 'Edit Dataset',
+          inputs: { params: { datasetId: 'pool/child', isNew: false } },
+        },
       );
     });
 
@@ -232,9 +236,12 @@ describe('DatasetDetailsCardComponent', () => {
 
       const editZvolButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit Zvol' }));
       await editZvolButton.click();
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
         ZvolFormComponent,
-        { data: { isNew: false, parentOrZvolId: 'pool/child' } },
+        {
+          title: 'Edit Zvol',
+          inputs: { params: { isNew: false, parentOrZvolId: 'pool/child' } },
+        },
       );
     });
   });

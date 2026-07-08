@@ -1,7 +1,7 @@
 <tn-card
   padding="small"
   [title]="isZvol() ? ('Zvol Space Management' | translate) : ('Space Management' | translate)"
-  [primaryAction]="editAction()"
+  [secondaryAction]="editAction()"
 >
     <ix-space-management-chart [dataset]="dataset()"></ix-space-management-chart>
 

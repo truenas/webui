@@ -12,11 +12,11 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { datasetDetailsHelptext } from 'app/helptext/storage/volumes/datasets/dataset-details';
-import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -51,7 +51,7 @@ export class DatasetDetailsCardComponent {
   private translate = inject(TranslateService);
   private tnDialog = inject(TnDialog);
   private datasetStore = inject(DatasetTreeStore);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private api = inject(ApiService);
@@ -171,14 +171,17 @@ export class DatasetDetailsCardComponent {
   }
 
   private editDataset(): void {
-    this.slideIn.open(DatasetFormComponent, {
-      wide: true, data: { datasetId: this.dataset().id, isNew: false },
+    this.formPanel.open<Dataset>(DatasetFormComponent, {
+      wide: true,
+      title: this.translate.instant('Edit Dataset'),
+      inputs: { params: { datasetId: this.dataset().id, isNew: false } },
     }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 
   private editZvol(): void {
-    this.slideIn.open(ZvolFormComponent, {
-      data: { isNew: false, parentOrZvolId: this.dataset().id },
+    this.formPanel.open<Dataset>(ZvolFormComponent, {
+      title: this.translate.instant('Edit Zvol'),
+      inputs: { params: { isNew: false, parentOrZvolId: this.dataset().id } },
     }).onSuccess((response) => {
       this.snackbar.success(
         this.translate.instant('Zvol «{name}» updated.', { name: getDatasetLabel(response) }),

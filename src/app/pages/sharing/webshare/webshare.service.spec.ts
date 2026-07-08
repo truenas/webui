@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of } from 'rxjs';
@@ -15,6 +16,10 @@ import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare
 import { LicenseService } from 'app/services/license.service';
 import { WebShareService } from './webshare.service';
 
+const mockConfiguredTncConfig = {
+  status: TruenasConnectStatus.Configured,
+} as TruenasConnectConfig;
+
 describe('WebShareService', () => {
   let spectator: SpectatorService<WebShareService>;
 
@@ -22,8 +27,6 @@ describe('WebShareService', () => {
     { id: 1, name: 'documents', path: '/mnt/tank/documents' },
     { id: 2, name: 'media', path: '/mnt/tank/media' },
   ];
-
-  const configuredConfig = { status: TruenasConnectStatus.Configured } as unknown as TruenasConnectConfig;
 
   const mockWindow = {
     location: {
@@ -53,7 +56,7 @@ describe('WebShareService', () => {
       }),
       mockProvider(TruenasConnectService, {
         openStatusModal: jest.fn(),
-        config: () => configuredConfig,
+        config: signal(mockConfiguredTncConfig),
       }),
       {
         provide: WINDOW,
@@ -220,7 +223,9 @@ describe('WebShareService - non-TrueNAS Direct domain', () => {
       mockProvider(TranslateService),
       mockProvider(LicenseService),
       mockProvider(FormSidePanelService),
-      mockProvider(TruenasConnectService),
+      mockProvider(TruenasConnectService, {
+        config: signal(mockConfiguredTncConfig),
+      }),
       {
         provide: WINDOW,
         useValue: {
@@ -272,7 +277,9 @@ describe('WebShareService - hostname mapping', () => {
         hasTruenasConnect$: of(true),
       }),
       mockProvider(FormSidePanelService),
-      mockProvider(TruenasConnectService),
+      mockProvider(TruenasConnectService, {
+        config: signal(mockConfiguredTncConfig),
+      }),
       {
         provide: WINDOW,
         useValue: mockWindow,
@@ -338,7 +345,9 @@ describe('WebShareService - no hostname mapping', () => {
         hasTruenasConnect$: of(true),
       }),
       mockProvider(FormSidePanelService),
-      mockProvider(TruenasConnectService),
+      mockProvider(TruenasConnectService, {
+        config: signal(mockConfiguredTncConfig),
+      }),
       {
         provide: WINDOW,
         useValue: mockWindow,
@@ -361,6 +370,77 @@ describe('WebShareService - no hostname mapping', () => {
     await firstValueFrom(spectator.service.hostnameMapping$);
 
     expect(spectator.service.canOpenWebShare()).toBe(false);
+  });
+
+  it('should expose the domain reason when TrueNAS Connect is configured but no hostname resolves', async () => {
+    await firstValueFrom(spectator.service.hostnameMapping$);
+
+    expect(spectator.service.webShareUnavailableReason()).toBe(
+      'WebShare can only be opened when accessed via a .truenas.direct domain',
+    );
+  });
+});
+
+describe('WebShareService - TrueNAS Connect disabled', () => {
+  let spectator: SpectatorService<WebShareService>;
+
+  const mockWindow = {
+    location: {
+      protocol: 'https:',
+      hostname: 'mynas.truenas.direct',
+    },
+    open: jest.fn(),
+  };
+
+  const createService = createServiceFactory({
+    service: WebShareService,
+    providers: [
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      ]),
+      mockProvider(SnackbarService),
+      mockProvider(TranslateService, {
+        instant: jest.fn((key: string) => key),
+      }),
+      mockProvider(LicenseService, {
+        hasTruenasConnect$: of(false),
+      }),
+      mockProvider(FormSidePanelService),
+      mockProvider(TruenasConnectService, {
+        config: signal({ status: TruenasConnectStatus.Disabled } as TruenasConnectConfig),
+      }),
+      {
+        provide: WINDOW,
+        useValue: mockWindow,
+      },
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createService();
+    jest.clearAllMocks();
+  });
+
+  it('should report canOpenWebShare as false even on a truenas.direct domain', () => {
+    expect(spectator.service.canOpenWebShare()).toBe(false);
+  });
+
+  it('should expose the TrueNAS Connect disabled reason rather than a domain reason', () => {
+    expect(spectator.service.webShareUnavailableReason()).toBe(
+      'WebShare is unavailable because TrueNAS Connect is disabled.',
+    );
+  });
+
+  it('should not open a WebShare window and shows an error when TrueNAS Connect is disabled', () => {
+    const snackbar = spectator.inject(SnackbarService);
+
+    spectator.service.openWebShare('documents');
+
+    expect(mockWindow.open).not.toHaveBeenCalled();
+    expect(snackbar.error).toHaveBeenCalledWith(
+      'WebShare is unavailable because TrueNAS Connect is disabled.',
+    );
   });
 });
 
@@ -394,7 +474,7 @@ describe('WebShareService - TrueNAS Connect not configured', () => {
       }),
       mockProvider(TruenasConnectService, {
         openStatusModal: jest.fn(),
-        config: () => ({ status: TruenasConnectStatus.Disabled } as unknown as TruenasConnectConfig),
+        config: signal({ status: TruenasConnectStatus.Disabled } as unknown as TruenasConnectConfig),
       }),
       {
         provide: WINDOW,

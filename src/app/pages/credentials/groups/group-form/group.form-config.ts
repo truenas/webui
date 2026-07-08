@@ -171,9 +171,13 @@ export function getGroupFormConfig(
           take(1),
           switchMap((privileges) => {
             const initialPrivilegeIds = editingGroup ? selectedPrivilegeIds(privileges, editingGroup) : [];
+            // Custom (non-builtin) privileges have a null `builtin_name`; keep only real role
+            // names so the group's `roles` never holds a null the list's roles cell would feed
+            // to translate.instant (which throws `Parameter "key" required`).
             const roles = privileges
               .filter((privilege) => values.privileges.some((id) => id === privilege.id))
-              .map((privilege) => privilege.builtin_name) as Role[];
+              .map((privilege) => privilege.builtin_name)
+              .filter(Boolean) as Role[];
             return togglePrivilegesForGroup(api, privileges, initialPrivilegeIds, group.gid, values.privileges).pipe(
               tap(() => {
                 const updated = { ...group, roles };

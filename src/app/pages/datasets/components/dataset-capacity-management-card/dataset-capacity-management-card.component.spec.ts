@@ -15,7 +15,7 @@ import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
@@ -98,7 +98,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
           },
         }]),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SharingTierService, {
@@ -117,12 +117,14 @@ describe('DatasetCapacityManagementCardComponent', () => {
       });
     });
 
-    it('shows header', async () => {
-      // white-box: no TnCardHarness yet — read the public title() input
+    it('shows header', () => {
       expect(spectator.query(TnCardComponent)!.title()).toBe('Space Management');
-      const editButton = await TestbedHarnessEnvironment.loader(spectator.fixture)
-        .getHarnessOrNull(TnButtonHarness.with({ label: 'Edit' }));
-      expect(editButton).not.toBeNull();
+    });
+
+    it('shows Edit button in footer', async () => {
+      const editLoader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const editButtons = await editLoader.getAllHarnesses(TnButtonHarness.with({ label: 'Edit' }));
+      expect(editButtons).toHaveLength(1);
     });
 
     it('shows SpaceManagementChartComponent', () => {
@@ -169,12 +171,14 @@ describe('DatasetCapacityManagementCardComponent', () => {
       });
     });
 
-    it('shows header', async () => {
-      // white-box: no TnCardHarness yet — read the public title() input
+    it('shows header', () => {
       expect(spectator.query(TnCardComponent)!.title()).toBe('Zvol Space Management');
-      const editButton = await TestbedHarnessEnvironment.loader(spectator.fixture)
-        .getHarnessOrNull(TnButtonHarness.with({ label: 'Edit' }));
-      expect(editButton).toBeNull();
+    });
+
+    it('does not show Edit button for zvol', async () => {
+      const editLoader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const editButtons = await editLoader.getAllHarnesses(TnButtonHarness.with({ label: 'Edit' }));
+      expect(editButtons).toHaveLength(0);
     });
 
     it('shows SpaceManagementChartComponent', () => {
@@ -216,8 +220,12 @@ describe('DatasetCapacityManagementCardComponent', () => {
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { data: datasetFilesystem, wide: true });
+    expect(spectator.inject(FormSidePanelService).open)
+      .toHaveBeenCalledWith(DatasetCapacitySettingsComponent, {
+        title: 'Capacity Settings',
+        wide: true,
+        inputs: { datasetToEdit: datasetFilesystem },
+      });
   });
 
   describe('tiering', () => {
@@ -248,7 +256,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
           datasetUpdated: jest.fn(),
           selectedBranch$: of([]),
         }),
-        mockProvider(SlideIn, { open: jest.fn(() => SlideInResult.empty()) }),
+        mockProvider(FormSidePanelService, { open: jest.fn(() => SlideInResult.empty()) }),
         mockProvider(SharingTierService, {
           getTierConfig: () => of({ enabled: true }),
           tierEnabled: () => true,

@@ -1,18 +1,4 @@
-<tn-card
-  padding="small"
-  [title]="'Permissions' | translate"
->
-  <ng-template tnCardHeaderActions>
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      testId="edit-permissions"
-      [label]="'Edit' | translate"
-      [disabled]="!canEditPermissions()"
-      [tnTooltip]="reasonEditIsDisabled()"
-      (onClick)="redirectToEditPermissions()"
-    ></tn-button>
-  </ng-template>
-
+<tn-card class="card" [title]="'Permissions' | translate">
   @if (stat()?.user || isLoading()) {
     <div class="file-information">
       <div class="details-item">
@@ -51,13 +37,20 @@
   }
 
   @if (!isLoading() && !acl()) {
-    <tn-empty
-      icon="format-list-text"
-      iconLibrary="mdi"
-      [title]="emptyTitle()"
-      [iconSize]="'56px'"
-    ></tn-empty>
+    <tn-empty [title]="emptyTitle()"></tn-empty>
   }
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      variant="outline"
+      [testId]="'edit-permissions'"
+      [label]="'Edit' | translate"
+      [disabled]="!canEditPermissions()"
+      [tnTooltip]="reasonEditIsDisabled()"
+      (onClick)="redirectToEditPermissions()"
+    ></tn-button>
+  </ng-template>
 </tn-card>
 
 

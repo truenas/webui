@@ -3,8 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
-  TnCardHeaderActionsDirective, TnDialog, TnTestIdDirective, TnTooltipDirective,
+  TnTooltipDirective, TnDialog, TnButtonComponent, TnCardComponent,
+  TnCardFooterActionsDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -36,7 +36,6 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    TnCardHeaderActionsDirective,
     TnCardFooterActionsDirective,
     TnButtonComponent,
     TnTooltipDirective,

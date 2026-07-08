@@ -12,7 +12,7 @@ import { filter, switchMap } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { Role, roleNames } from 'app/enums/role.enum';
+import { formatRoleNames, Role } from 'app/enums/role.enum';
 import { getDirectoryServiceTooltip, hasShellAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -95,9 +95,7 @@ export class UserAccessCardComponent {
   readonly noShellAccess = computed(() => !hasShellAccess(this.user()));
 
   readonly rolesAccessStatus = computed<string | null>(() => {
-    return this.user().roles
-      .map((role) => this.translate.instant(roleNames.get(role) || role))
-      .join(', ') || null;
+    return formatRoleNames(this.user().roles, (key) => this.translate.instant(key)) || null;
   });
 
   protected canAddApiKeys = computed(() => {

@@ -3,6 +3,11 @@
 
 @include tree-node-with-details-container;
 
+// RTL flip for the expand/collapse chevron (replaces Angular Material's mat-icon-rtl-mirror).
+[dir='rtl'] .rtl-mirror {
+  transform: scaleX(-1);
+}
+
 :host {
   display: block;
 

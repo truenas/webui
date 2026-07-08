@@ -19,7 +19,7 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetCapacityManagementElements } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.elements';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
@@ -49,7 +49,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private datasetStore = inject(DatasetTreeStore);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
   private sharingTierService = inject(SharingTierService);
   private authService = inject(AuthService);
@@ -204,7 +204,11 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   }
 
   editDataset(): void {
-    this.slideIn.open(DatasetCapacitySettingsComponent, { wide: true, data: this.dataset() })
+    this.formPanel.open(DatasetCapacitySettingsComponent, {
+      wide: true,
+      title: this.translate.instant('Capacity Settings'),
+      inputs: { datasetToEdit: this.dataset() },
+    })
       .onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 }

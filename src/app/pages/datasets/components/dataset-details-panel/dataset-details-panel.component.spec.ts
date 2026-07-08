@@ -11,7 +11,7 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -74,7 +74,7 @@ describe('DatasetDetailsPanelComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DatasetTreeStore, {
@@ -114,18 +114,25 @@ describe('DatasetDetailsPanelComponent', () => {
   it('opens a dataset form when Add Dataset is pressed', async () => {
     const addDatasetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Dataset' }));
     await addDatasetButton.click();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       DatasetFormComponent,
-      { data: { datasetId: 'root/parent/child', isNew: true }, wide: true },
+      {
+        wide: true,
+        title: 'Add Dataset',
+        inputs: { params: { datasetId: 'root/parent/child', isNew: true } },
+      },
     );
   });
 
   it('opens a zvol form when Add Zvol is pressed', async () => {
     const addZvolButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Zvol' }));
     await addZvolButton.click();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       ZvolFormComponent,
-      { data: { parentOrZvolId: 'root/parent/child', isNew: true } },
+      {
+        title: 'Add Zvol',
+        inputs: { params: { parentOrZvolId: 'root/parent/child', isNew: true } },
+      },
     );
   });
 

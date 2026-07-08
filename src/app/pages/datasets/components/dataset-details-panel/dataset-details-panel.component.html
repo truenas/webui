@@ -21,19 +21,17 @@
     @if (!dataset().locked && !isZvol()) {
       <tn-button
         *ixRequiresRoles="requiredRoles"
-        variant="outline"
         [testId]="'add-zvol'"
-        [ixUiSearch]="searchableElements.elements.addZvol"
         [label]="'Add Zvol' | translate"
+        [ixUiSearch]="searchableElements.elements.addZvol"
         (onClick)="onAddZvol()"
       ></tn-button>
       <tn-button
         *ixRequiresRoles="requiredRoles"
         color="primary"
-        variant="filled"
         [testId]="'add-dataset'"
-        [ixUiSearch]="searchableElements.elements.addDataset"
         [label]="'Add Dataset' | translate"
+        [ixUiSearch]="searchableElements.elements.addDataset"
         (onClick)="onAddDataset()"
       ></tn-button>
     }

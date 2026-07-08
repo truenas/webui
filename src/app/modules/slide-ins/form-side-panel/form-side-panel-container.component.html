@@ -13,10 +13,22 @@
     <tn-progress-bar class="panel-progress" mode="indeterminate"></tn-progress-bar>
   }
 
-  <ng-template
-    [cdkPortalOutlet]="portal()"
-    (attached)="onPortalAttached($event)"
-  ></ng-template>
+  <!--
+    Wraps the portaled form so the busy overlay can pin to it (positioned ancestor). The overlay
+    dims the form and swallows pointer events while a save is in flight — a visual cue alongside the
+    top progress bar, and a guard against editing fields mid-submit. Driven by the same `isBusy`
+    signal, so it appears exactly when the progress bar does; forms without `isBusy` never show it.
+  -->
+  <div class="panel-content">
+    <ng-template
+      [cdkPortalOutlet]="portal()"
+      (attached)="onPortalAttached($event)"
+    ></ng-template>
+
+    @if (form()?.isBusy?.()) {
+      <div class="panel-content__busy-overlay" aria-hidden="true"></div>
+    }
+  </div>
 
   <!--
     Each `tnSidePanelAction` host sits in its OWN `@if` block (one projectable node per block) so it
@@ -72,7 +84,7 @@
       tnSidePanelAction
       color="primary"
       [testId]="'save'"
-      [label]="(form.isBusy?.() ? ('Saving…' | translate) : (saveLabel() | translate))"
+      [label]="(form.isSubmitting?.() ? ('Saving…' | translate) : (saveLabel() | translate))"
       [disabled]="!form.canSubmit() || (form.isBusy?.() ?? false)"
       (onClick)="form.submit()"
     ></tn-button>

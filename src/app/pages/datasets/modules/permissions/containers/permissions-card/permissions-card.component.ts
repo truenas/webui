@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnEmptyComponent, TnTooltipDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnEmptyComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -29,9 +29,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    TnCardHeaderActionsDirective,
-    TnButtonComponent,
+    TnCardFooterActionsDirective,
     RequiresRolesDirective,
+    TnButtonComponent,
     NgxSkeletonLoaderModule,
     ViewTrivialPermissionsComponent,
     ViewPosixPermissionsComponent,
