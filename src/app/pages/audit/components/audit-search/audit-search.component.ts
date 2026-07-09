@@ -428,7 +428,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   private refreshSearchPlaceholders(): void {
     this.advancedSearchPlaceholder.set(
-      this.translate.instant("Event = 'Close' AND Username = 'admin'"),
+      this.translate.instant("Event = 'CLOSE' AND Username = 'admin'"),
     );
     this.basicSearchPlaceholder.set(this.translate.instant('Search by Event or Username'));
   }
