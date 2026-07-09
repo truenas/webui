@@ -38,23 +38,37 @@
             </tn-form-field>
 
             @if (entry.controls.ae_who.value === nfsAclTag.User) {
-              <ix-combobox
-                formControlName="user"
-                [label]="'User' | translate"
-                [provider]="userProvider"
-                [allowCustomValue]="true"
-                [required]="true"
-              ></ix-combobox>
+              <tn-form-field [label]="'User' | translate" [required]="true">
+                <!-- TODO: [placeholder] doubles as the accessible-name fallback — tn-autocomplete
+                  has no [ariaLabel] input and tn-form-field does not associate its label yet. -->
+                <tn-autocomplete
+                  formControlName="user"
+                  [testId]="'user'"
+                  [placeholder]="'User' | translate"
+                  [options]="(userOptions$ | async) ?? []"
+                  [allowCustomValue]="true"
+                  [loading]="usersLoading()"
+                  [loadingText]="'Loading...' | translate"
+                  [noResultsText]="'No results found' | translate"
+                  (searchChange)="userSearch$.next($event)"
+                ></tn-autocomplete>
+              </tn-form-field>
             }
 
-            @if (groupProvider && entry.controls.ae_who.value === nfsAclTag.UserGroup) {
-              <ix-combobox
-                formControlName="group"
-                [label]="'Group' | translate"
-                [provider]="groupProvider"
-                [allowCustomValue]="true"
-                [required]="true"
-              ></ix-combobox>
+            @if (entry.controls.ae_who.value === nfsAclTag.UserGroup) {
+              <tn-form-field [label]="'Group' | translate" [required]="true">
+                <tn-autocomplete
+                  formControlName="group"
+                  [testId]="'group'"
+                  [placeholder]="'Group' | translate"
+                  [options]="(groupOptions$ | async) ?? []"
+                  [allowCustomValue]="true"
+                  [loading]="groupsLoading()"
+                  [loadingText]="'Loading...' | translate"
+                  [noResultsText]="'No results found' | translate"
+                  (searchChange)="groupSearch$.next($event)"
+                ></tn-autocomplete>
+              </tn-form-field>
             }
           </div>
 

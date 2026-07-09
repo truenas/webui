@@ -6,10 +6,12 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnSelectComponent,
+  TnAutocompleteComponent, TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { combineLatest } from 'rxjs';
+import {
+  BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, tap,
+} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -22,19 +24,19 @@ import { helptextServiceSmb } from 'app/helptext/services/components/service-smb
 import { SmbConfigUpdate, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -56,9 +58,8 @@ interface BindIp {
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    IxChipsComponent,
-    IxUserComboboxComponent,
-    IxGroupComboboxComponent,
+    TnAutocompleteComponent,
+    TnChipInputComponent,
     IxListComponent,
     IxListItemComponent,
     FormActionsComponent,
@@ -76,6 +77,8 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
   private validatorsService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
   private truenasConnectService = inject(TruenasConnectService);
+  private userService = inject(UserService);
+  private existenceValidation = inject(UserGroupExistenceValidationService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
 
@@ -211,8 +214,51 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
 
   readonly encryptionOptions = mapToOptions(smbEncryptionLabels, this.translate);
 
+  // Server-searched option streams for the Guest Account / Administrators Group
+  // autocompletes (nfs-form precedent). switchMap cancels in-flight queries on new
+  // input; catchError keeps one failed DS query from killing the stream for the
+  // rest of the form's life.
+  protected readonly usersLoading = signal(false);
+  protected readonly userSearch$ = new BehaviorSubject('');
+  protected readonly userOptions$ = this.userSearch$.pipe(
+    debounceTime(defaultDebounceTimeMs),
+    distinctUntilChanged(),
+    tap(() => this.usersLoading.set(true)),
+    switchMap((query) => this.userService.userQueryDsCache(query).pipe(
+      catchError((error: unknown) => {
+        console.error('User autocomplete fetch failed:', error);
+        return of([]);
+      }),
+    )),
+    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
+    tap(() => this.usersLoading.set(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  protected readonly groupsLoading = signal(false);
+  protected readonly groupSearch$ = new BehaviorSubject('');
+  protected readonly groupOptions$ = this.groupSearch$.pipe(
+    debounceTime(defaultDebounceTimeMs),
+    distinctUntilChanged(),
+    tap(() => this.groupsLoading.set(true)),
+    switchMap((query) => this.userService.groupQueryDsCache(query).pipe(
+      catchError((error: unknown) => {
+        console.error('Group autocomplete fetch failed:', error);
+        return of([]);
+      }),
+    )),
+    map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
+    tap(() => this.groupsLoading.set(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
   ngOnInit(): void {
     this.isFormLoading.set(true);
+
+    // Parity with the former ix-user/group-combobox controls: custom-typed values
+    // must exist on the system (empty values pass).
+    this.form.controls.guest.addAsyncValidators(this.existenceValidation.validateUserExists());
+    this.form.controls.admin_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
 
     this.form.controls.minimum_protocol.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
