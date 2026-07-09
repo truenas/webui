@@ -11,6 +11,7 @@ import {
   TnCardHeaderDirective, TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective, TnIconComponent,
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTooltipDirective, type TnSortEvent,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { filter, map } from 'rxjs';
 import { combineLatestWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -148,7 +149,10 @@ export class WebShareListComponent implements OnInit {
   protected readonly trackByWebShareId = (_index: number, row: WebShareTableRow): number => row.id;
 
   protected uniqueRowTag(row: WebShareTableRow): string {
-    return convertStringToId(row.name);
+    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('docs2' → 'docs-2')
+    // while the library's kebab does not, so the tag resolves identically through the legacy
+    // [ixTest] directive and the tn cell components — byte-matching pre-migration data-test values.
+    return kebabCase(convertStringToId(row.name));
   }
 
   protected ariaLabel(row: WebShareTableRow): string {

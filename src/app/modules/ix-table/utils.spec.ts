@@ -1,6 +1,8 @@
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { filterTableRows, mapTnSortToProviderSorting, toDisplayedColumns } from './utils';
+import {
+  filterTableRows, mapTnSortToProviderSorting, mapTnSortToTableSort, toDisplayedColumns,
+} from './utils';
 
 describe('mapTnSortToProviderSorting', () => {
   it('maps an ascending sort to propertyName + direction', () => {
@@ -23,6 +25,42 @@ describe('mapTnSortToProviderSorting', () => {
     expect(mapTnSortToProviderSorting({ column: 'name', direction: '' })).toEqual({
       propertyName: null,
       direction: null,
+      active: null,
+    });
+  });
+});
+
+describe('mapTnSortToTableSort', () => {
+  const displayedColumns = ['name', 'path', 'enabled', 'actions'];
+
+  it('maps an ascending sort to propertyName + direction + column index', () => {
+    expect(mapTnSortToTableSort({ column: 'path', direction: 'asc' }, displayedColumns)).toEqual({
+      propertyName: 'path',
+      direction: SortDirection.Asc,
+      active: 1,
+    });
+  });
+
+  it('maps a descending sort to propertyName + direction + column index', () => {
+    expect(mapTnSortToTableSort({ column: 'enabled', direction: 'desc' }, displayedColumns)).toEqual({
+      propertyName: 'enabled',
+      direction: SortDirection.Desc,
+      active: 2,
+    });
+  });
+
+  it('clears sorting when the direction is empty', () => {
+    expect(mapTnSortToTableSort({ column: 'name', direction: '' }, displayedColumns)).toEqual({
+      propertyName: null,
+      direction: null,
+      active: null,
+    });
+  });
+
+  it('leaves active null when the sorted column is not displayed', () => {
+    expect(mapTnSortToTableSort({ column: 'comment', direction: 'asc' }, displayedColumns)).toEqual({
+      propertyName: 'comment',
+      direction: SortDirection.Asc,
       active: null,
     });
   });

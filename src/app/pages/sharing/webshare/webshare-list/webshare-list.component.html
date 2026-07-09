@@ -69,6 +69,7 @@
     @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
     <tn-table
       class="table"
+      [testId]="'table-table'"
       [ixUiSearch]="searchableElements.elements.webshareList"
       [dataSource]="(dataProvider.currentPage$ | async) ?? []"
       [displayedColumns]="displayedColumns()"
@@ -104,7 +105,7 @@
         <ng-template let-row tnCellDef>
           <span
             [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
-            [tnTooltip]="row.path ? (row.path | translate) : ''"
+            [tnTooltip]="row.path || ''"
           >{{ row.path }}</span>
         </ng-template>
       </ng-container>
