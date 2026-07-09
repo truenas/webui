@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -19,8 +19,6 @@ import { SmbShare, SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -239,8 +237,11 @@ describe('ServiceSmbComponent', () => {
     await (await getCheckbox('ntlmv1_auth')).check();
     await (await getInput('workgroup')).setValue('WORKGROUP2');
 
-    const aliasChips = await loader.getHarness(IxChipsHarness.with({ label: 'NetBIOS Alias' }));
-    await aliasChips.setValue(['truenas-alias', 'truenas-alias2']);
+    const aliasChips = await loader.getHarness(
+      TnChipInputHarness.with({ selector: '[formControlName="netbiosalias"]' }),
+    );
+    await aliasChips.addChip('truenas-alias');
+    await aliasChips.addChip('truenas-alias2');
 
     const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
     await advancedButton.click();
@@ -298,8 +299,11 @@ describe('ServiceSmbComponent', () => {
     await (await getCheckbox('aapl_extensions')).check();
     await (await getSelect('encryption')).selectOption('Default – follow upstream / TrueNAS default');
 
-    const adminGroup = await loader.getHarness(IxComboboxHarness.with({ label: 'Administrators Group' }));
-    await adminGroup.setValue('test-group');
+    const adminGroup = await loader.getHarness(TnAutocompleteHarness.with({ placeholder: 'Administrators Group' }));
+    // Zone-based harness stabilization waits out the debounced option fetch on
+    // blur, so the label match commits the option without an explicit wait.
+    await adminGroup.setInputValue('test-group');
+    await adminGroup.blur();
     await (await getInput('filemask')).setValue('0666');
     await (await getInput('dirmask')).setValue('0777');
 

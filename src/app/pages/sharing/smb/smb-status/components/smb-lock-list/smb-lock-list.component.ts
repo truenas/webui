@@ -1,25 +1,23 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnCardHeaderDirective, TnCellDefDirective,
+  TnDetailRowDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/components/smb-open-files/smb-open-files.component';
@@ -30,18 +28,18 @@ import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/componen
   styleUrls: ['./smb-lock-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnCardHeaderActionsDirective,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
-    MatButton,
+    TableColumnPickerComponent,
+    TnButtonComponent,
     TestDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
     SmbOpenFilesComponent,
     TnTablePagerComponent,
     TranslateModule,
@@ -59,7 +57,8 @@ export class SmbLockListComponent implements OnInit {
   dataProvider: AsyncDataProvider<SmbLockInfo>;
   locks: SmbLockInfo[] = [];
   files: SmbOpenInfo[] = [];
-  columns = createTable<SmbLockInfo>([
+
+  protected readonly columns = signal(createTable<SmbLockInfo>([
     textColumn({ title: this.translate.instant('Path'), propertyName: 'service_path' }),
     textColumn({ title: this.translate.instant('Filename'), propertyName: 'filename' }),
     textColumn({
@@ -83,7 +82,13 @@ export class SmbLockListComponent implements OnInit {
   ], {
     uniqueRowTag: (row) => `smb-lock-${row.filename}-${row.fileid.devid}-${row.fileid.extid}`,
     ariaLabels: (row) => [row.filename, this.translate.instant('SMB Lock')],
-  });
+  }));
+
+  protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
+
+  protected readonly trackByLock = (_index: number, row: SmbLockInfo): string => {
+    return `${row.filename}-${row.fileid.devid}-${row.fileid.extid}`;
+  };
 
   ngOnInit(): void {
     const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Locks]).pipe(
@@ -103,7 +108,7 @@ export class SmbLockListComponent implements OnInit {
     });
   }
 
-  loadData(): void {
+  protected loadData(): void {
     this.dataProvider.load();
   }
 
@@ -112,9 +117,27 @@ export class SmbLockListComponent implements OnInit {
     this.dataProvider.setFilter({ query, columnKeys: ['filename', 'service_path'] });
   }
 
-  columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
+  protected getFileId(row: SmbLockInfo): string {
+    return Object.values(row.fileid).join(':');
+  }
+
+  protected getOpenFilesLabel(row: SmbLockInfo): string {
+    return this.translate.instant(
+      '{n, plural, =0 {No open files} one {# open file} other {# open files}}',
+      { n: Object.keys(row.opens).length },
+    );
+  }
+
+  protected uniqueRowTag(row: SmbLockInfo): string {
+    return convertStringToId(`smb-lock-${row.filename}-${row.fileid.devid}-${row.fileid.extid}`);
+  }
+
+  protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
     this.cdr.markForCheck();
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<SmbLockInfo>(event, this.displayedColumns()));
   }
 }

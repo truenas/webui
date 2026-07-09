@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, inject, signal 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent, TnSpinnerComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -18,8 +19,10 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-snapshot-rollback-dialog',
@@ -48,6 +51,7 @@ export class SnapshotRollbackDialog implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private localeService = inject(LocaleService);
   private router = inject(Router);
+  private store$ = inject<Store<AppState>>(Store);
   protected dialogRef = inject(DialogRef);
   // `DIALOG_DATA` is whatever the caller passed to `dialog.open(...)` and
   // can be missing if invoked without data; type it honestly and guard in
@@ -187,6 +191,12 @@ export class SnapshotRollbackDialog implements OnInit {
     ).subscribe({
       next: () => {
         this.wasDatasetRolledBack.set(true);
+        // Rollback destroys every snapshot newer than the target at the ZFS
+        // level, but that destruction doesn't emit `Removed` events on the
+        // `pool.snapshot.query` collection subscription — so the list keeps
+        // showing stale rows whose every action then fails with "snapshot not
+        // found". Force a full reload so the list reflects true backend state.
+        this.store$.dispatch(snapshotPageEntered());
       },
       error: (error: unknown) => {
         this.formErrorHandler.handleValidationErrors(error, this.form);

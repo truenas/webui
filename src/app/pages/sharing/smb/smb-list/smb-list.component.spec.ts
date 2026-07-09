@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
-import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -17,14 +17,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -48,18 +41,6 @@ const shares: Partial<SmbShare>[] = [
   },
 ];
 
-const slideInRef: SlideInRef<SmbShare | undefined, unknown> = {
-  close: jest.fn(),
-  requireConfirmationWhen: jest.fn(),
-  getData: jest.fn((): undefined => undefined),
-};
-
-const commonImports = [
-  BasicSearchComponent,
-  IxTableColumnsSelectorComponent,
-  FakeProgressBarComponent,
-];
-
 const commonDeclarations = [
   MockComponents(
     ServiceStateButtonComponent,
@@ -69,7 +50,6 @@ const commonDeclarations = [
 const commonProviders = [
   mockProvider(EmptyService),
   mockAuth(),
-  mockProvider(SlideInRef, slideInRef),
   mockProvider(DialogService, {
     confirm: jest.fn(() => of(true)),
     confirmDelete: jest.fn(() => of(undefined)),
@@ -99,11 +79,10 @@ const commonProviders = [
 describe('SmbListComponent', () => {
   let spectator: Spectator<SmbListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: SmbListComponent,
-    imports: commonImports,
     declarations: commonDeclarations,
     providers: [
       ...commonProviders,
@@ -118,10 +97,16 @@ describe('SmbListComponent', () => {
     ],
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockImplementation();
 
@@ -138,8 +123,8 @@ describe('SmbListComponent', () => {
     expect(title).toHaveText('SMB');
   });
 
-  it('opens exporter form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+  it('opens the form in a side panel when "Add" is pressed', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
@@ -148,10 +133,9 @@ describe('SmbListComponent', () => {
     });
   });
 
-  it('opens smb edit form when "Edit" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+  it('opens the form with the row data when "Edit" is pressed', async () => {
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit' });
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
       title: 'Edit SMB Share',
@@ -159,10 +143,9 @@ describe('SmbListComponent', () => {
     });
   });
 
-  it('opens smb edit share ACL form when "Edit Share ACL" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit Share ACL' });
+  it('opens the ACL form with the resolved share name when "Edit Share ACL" is pressed', async () => {
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit Share ACL' });
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbAclComponent, {
       title: 'Share ACL for acl_share_name',
@@ -171,9 +154,8 @@ describe('SmbListComponent', () => {
   });
 
   it('redirects to edit ACL page when "Edit Filesystem ACL" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit Filesystem ACL' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit Filesystem ACL' });
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
       ['/', 'datasets', 'acl', 'edit'],
@@ -182,9 +164,8 @@ describe('SmbListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: expect.any(String),
@@ -194,8 +175,8 @@ describe('SmbListComponent', () => {
     });
   });
 
-  it('updates SMB Enabled status once mat-toggle is updated', async () => {
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
+  it('updates SMB Enabled status once the toggle is updated', async () => {
+    const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
 
     expect(await toggle.isChecked()).toBe(true);
 
@@ -208,19 +189,17 @@ describe('SmbListComponent', () => {
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Path', 'Description', 'Enabled', 'Audit Logging', ''],
+    expect(await table.getHeaderTexts()).toEqual([
+      'Name', 'Path', 'Description', 'Enabled', 'Audit Logging', '',
+    ]);
+    expect(await table.getAllRowTexts()).toEqual([
       ['some-name', '/some-path', 'comment', '', 'Yes', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
   describe('with exported pool shares', () => {
     const createExportedComponent = createComponentFactory({
       component: SmbListComponent,
-      imports: commonImports,
       declarations: commonDeclarations,
       providers: [
         ...commonProviders,
@@ -234,43 +213,35 @@ describe('SmbListComponent', () => {
           mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
           mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
+        mockSharingTierService({ enabled: false }),
       ],
     });
 
     beforeEach(async () => {
       spectator = createExportedComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      table = await loader.getHarness(IxTableHarness);
+      table = await loader.getHarness(TnTableHarness);
     });
 
     it('should disable toggle when share is on an exported pool', async () => {
-      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
       expect(await toggle.isDisabled()).toBe(true);
     });
 
     it('should disable Edit Share ACL for exported pool shares', async () => {
-      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-      await menu.open();
-
-      const items = await menu.getItems({ text: /Edit Share ACL/ });
-      expect(items).toHaveLength(1);
-      expect(await items[0].isDisabled()).toBe(true);
+      const menu = await openRowMenu();
+      expect(await menu.isItemDisabled({ label: /Edit Share ACL/ })).toBe(true);
     });
 
     it('should disable Edit Filesystem ACL for exported pool shares', async () => {
-      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-      await menu.open();
-
-      const items = await menu.getItems({ text: /Edit Filesystem ACL/ });
-      expect(items).toHaveLength(1);
-      expect(await items[0].isDisabled()).toBe(true);
+      const menu = await openRowMenu();
+      expect(await menu.isItemDisabled({ label: /Edit Filesystem ACL/ })).toBe(true);
     });
   });
 
   describe('with locked shares', () => {
     const createLockedComponent = createComponentFactory({
       component: SmbListComponent,
-      imports: commonImports,
       declarations: commonDeclarations,
       providers: [
         ...commonProviders,
@@ -285,36 +256,29 @@ describe('SmbListComponent', () => {
           mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
           mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
+        mockSharingTierService({ enabled: false }),
       ],
     });
 
     beforeEach(async () => {
       spectator = createLockedComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      table = await loader.getHarness(IxTableHarness);
+      table = await loader.getHarness(TnTableHarness);
     });
 
     it('should disable toggle when share is locked', async () => {
-      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
       expect(await toggle.isDisabled()).toBe(true);
     });
 
     it('should disable Edit Share ACL for locked shares', async () => {
-      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-      await menu.open();
-
-      const items = await menu.getItems({ text: /Edit Share ACL/ });
-      expect(items).toHaveLength(1);
-      expect(await items[0].isDisabled()).toBe(true);
+      const menu = await openRowMenu();
+      expect(await menu.isItemDisabled({ label: /Edit Share ACL/ })).toBe(true);
     });
 
     it('should disable Edit Filesystem ACL for locked shares', async () => {
-      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-      await menu.open();
-
-      const items = await menu.getItems({ text: /Edit Filesystem ACL/ });
-      expect(items).toHaveLength(1);
-      expect(await items[0].isDisabled()).toBe(true);
+      const menu = await openRowMenu();
+      expect(await menu.isItemDisabled({ label: /Edit Filesystem ACL/ })).toBe(true);
     });
   });
 });
