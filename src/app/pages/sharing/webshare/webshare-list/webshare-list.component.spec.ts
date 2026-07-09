@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnBannerHarness, TnDialog, TnEmptyHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -290,7 +292,9 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
       mockProvider(TnDialog),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
-        get: jest.fn(() => of({})),
+        // Echo the key so `| translate` pipes render the source string (the pipe
+        // resolves through get(), not instant()).
+        get: jest.fn((key: string) => of(key)),
         onLangChange: of({ lang: 'en' }),
         onTranslationChange: of({}),
         onDefaultLangChange: of({}),
@@ -328,8 +332,13 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
     spectator.detectChanges();
   });
 
-  it('should show empty state when TrueNAS Connect is not configured', () => {
-    expect(spectator.query('tn-empty')).toBeTruthy();
+  it('should show empty state when TrueNAS Connect is not configured', async () => {
+    // Assert the dedicated Connect empty state by title — tn-table renders its own
+    // internal tn-empty when the data source is empty, so a bare element query
+    // could pass even if the @if regressed to the table branch.
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const empty = await loader.getHarness(TnEmptyHarness);
+    expect(await empty.getTitle()).toBe('WebShare service provides web-based file access.');
   });
 });
 
@@ -411,10 +420,12 @@ describe('WebShareListComponent - No WebShare users configured', () => {
     spectator.detectChanges();
   });
 
-  it('should show info message when no users have WebShare access configured', () => {
-    const banners = spectator.queryAll('tn-banner');
+  it('should show info message when no users have WebShare access configured', async () => {
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const banners = await loader.getAllHarnesses(
+      TnBannerHarness.with({ textContains: 'It appears you have no users configured to access WebShare.' }),
+    );
     expect(banners).toHaveLength(1);
-    expect(banners[0].textContent).toContain('It appears you have no users configured to access WebShare.');
   });
 
   it('should navigate to users page when info message is clicked', () => {

@@ -160,7 +160,9 @@
           [tooltip]="helptextSharingSmb.watchListTooltip | translate"
         >
           <tn-chip-input
+            testId="watch-list"
             formControlName="watch_list"
+            [ariaLabel]="'Watch List' | translate"
             [suggestions]="(groupSuggestions$ | async) ?? []"
             [allowCustomValue]="true"
             (searchChange)="onGroupSearch($event)"
@@ -172,7 +174,9 @@
           [tooltip]="helptextSharingSmb.ignoreListTooltip | translate"
         >
           <tn-chip-input
+            testId="ignore-list"
             formControlName="ignore_list"
+            [ariaLabel]="'Ignore List' | translate"
             [suggestions]="(groupSuggestions$ | async) ?? []"
             [allowCustomValue]="true"
             (searchChange)="onGroupSearch($event)"

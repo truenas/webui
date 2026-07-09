@@ -1,10 +1,18 @@
-@import '../../components/storage-tier-cell/tier-cell-host';
-
-@include tier-cell-host;
-
 :host {
   display: block;
   max-width: 1080px;
+}
+
+.sessions-link {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
 }
 
 // The library defaults tn-card to height: 100%, which suits the equal-height

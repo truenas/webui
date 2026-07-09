@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnTableHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -103,9 +103,10 @@ describe('SmbLockListComponent', () => {
     ]);
   });
 
-  it('should call loadData when Refresh button is pressed', () => {
+  it('should call loadData when Refresh button is pressed', async () => {
     jest.spyOn(spectator.component.dataProvider, 'load');
-    spectator.component.loadData();
+    const refreshButton = await loader.getHarness(TnButtonHarness.with({ label: 'Refresh' }));
+    await refreshButton.click();
     expect(spectator.component.dataProvider.load).toHaveBeenCalled();
   });
 });

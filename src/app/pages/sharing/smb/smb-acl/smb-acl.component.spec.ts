@@ -81,15 +81,11 @@ describe('SmbAclComponent', () => {
 
   /**
    * Types a name and blurs to commit it. A label match commits the matching
-   * option's uid/gid value; the wait covers the debounced option fetch so the
-   * match can resolve before the blur.
+   * option's uid/gid value; zone-based harness stabilization waits out the
+   * debounced option fetch before the blur, so no explicit wait is needed.
    */
   const typeNameAndCommit = async (harness: TnAutocompleteHarness, name: string): Promise<void> => {
     await harness.setInputValue(name);
-    await new Promise<void>((resolve) => {
-      setTimeout(() => resolve(), 400);
-    });
-    spectator.detectChanges();
     await harness.blur();
   };
 

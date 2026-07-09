@@ -99,7 +99,7 @@ export class SmbSessionListComponent implements OnInit {
     });
   }
 
-  loadData(): void {
+  protected loadData(): void {
     this.dataProvider.load();
   }
 

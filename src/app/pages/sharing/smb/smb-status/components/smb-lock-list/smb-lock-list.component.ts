@@ -108,7 +108,7 @@ export class SmbLockListComponent implements OnInit {
     });
   }
 
-  loadData(): void {
+  protected loadData(): void {
     this.dataProvider.load();
   }
 

@@ -87,7 +87,7 @@ export class SmbNotificationListComponent implements OnInit {
     });
   }
 
-  loadData(): void {
+  protected loadData(): void {
     this.dataProvider.load();
   }
 

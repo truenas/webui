@@ -300,12 +300,9 @@ describe('ServiceSmbComponent', () => {
     await (await getSelect('encryption')).selectOption('Default – follow upstream / TrueNAS default');
 
     const adminGroup = await loader.getHarness(TnAutocompleteHarness.with({ placeholder: 'Administrators Group' }));
+    // Zone-based harness stabilization waits out the debounced option fetch on
+    // blur, so the label match commits the option without an explicit wait.
     await adminGroup.setInputValue('test-group');
-    // Wait out the debounced option fetch so the blur commits the matching option.
-    await new Promise<void>((resolve) => {
-      setTimeout(() => resolve(), 400);
-    });
-    spectator.detectChanges();
     await adminGroup.blur();
     await (await getInput('filemask')).setValue('0666');
     await (await getInput('dirmask')).setValue('0777');

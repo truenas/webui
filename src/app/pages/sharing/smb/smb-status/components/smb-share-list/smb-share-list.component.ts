@@ -97,7 +97,7 @@ export class SmbShareListComponent implements OnInit {
     });
   }
 
-  loadData(): void {
+  protected loadData(): void {
     this.dataProvider.load();
   }
 

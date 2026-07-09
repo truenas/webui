@@ -14,11 +14,16 @@
         (queryChange)="onListFiltered($event)"
       ></ix-basic-search>
 
-      <tn-button
-        [testId]="'smb-sessions'"
+      <!-- Kept as a real anchor (not tn-button) to preserve link semantics and the
+        legacy link-smb-sessions test id (tn-button would compose button-smb-sessions). -->
+      <a
+        class="sessions-link"
+        tnTestIdType="link"
+        [tnTestId]="'smb-sessions'"
         [routerLink]="['/sharing', 'smb', 'status', 'sessions']"
-        [label]="'SMB Sessions' | translate"
-      ></tn-button>
+      >
+        {{ 'SMB Sessions' | translate }}
+      </a>
 
       <ix-table-column-picker
         [columns]="columns()"
@@ -48,6 +53,7 @@
     @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
     <tn-table
       class="table"
+      [testId]="'table-table'"
       [ixUiSearch]="searchableElements.elements.smbList"
       [dataSource]="(dataProvider.currentPage$ | async) ?? []"
       [displayedColumns]="displayedColumns()"
@@ -62,7 +68,7 @@
         <ng-template let-row tnCellDef>
           <span
             [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
-            [tnTooltip]="row.name ? (row.name | translate) : ''"
+            [tnTooltip]="row.name || ''"
           >{{ row.name }}</span>
         </ng-template>
       </ng-container>
@@ -73,7 +79,7 @@
           @let path = getPathValue(row);
           <span
             [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
-            [tnTooltip]="path ? (path | translate) : ''"
+            [tnTooltip]="path || ''"
           >{{ path }}</span>
         </ng-template>
       </ng-container>
@@ -83,7 +89,7 @@
         <ng-template let-row tnCellDef>
           <span
             [ixTest]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
-            [tnTooltip]="row.comment ? (row.comment | translate) : ''"
+            [tnTooltip]="row.comment || ''"
           >{{ row.comment }}</span>
         </ng-template>
       </ng-container>
@@ -113,7 +119,7 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'tier'">
+      <ng-container [tnColumnDef]="'tier'" [width]="'160px'">
         <ng-template tnHeaderCellDef>{{ 'Storage Tier' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-tier-status [tier]="row.tier" />

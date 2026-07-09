@@ -3,14 +3,16 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnCardHeaderDirective,
   TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective,
-  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTooltipDirective, type TnSortEvent,
+  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
+  type TnSortEvent,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -65,6 +67,8 @@ import { selectService } from 'app/store/services/services.selectors';
     TableColumnPickerComponent,
     RequiresRolesDirective,
     TnButtonComponent,
+    TnTestIdDirective,
+    RouterLink,
     TestDirective,
     UiSearchDirective,
     TnEmptyComponent,
@@ -204,7 +208,10 @@ export class SmbListComponent implements OnInit {
   protected readonly trackBySmbId = (_index: number, row: SmbShare): number => row.id;
 
   protected uniqueRowTag(row: SmbShare): string {
-    return convertStringToId('smb-' + row.name);
+    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('share1' → 'share-1')
+    // while the library's kebab does not, so the tag resolves identically through the legacy
+    // [ixTest] directive and the tn cell components — byte-matching pre-migration data-test values.
+    return kebabCase(convertStringToId('smb-' + row.name));
   }
 
   protected ariaLabel(row: SmbShare): string {
