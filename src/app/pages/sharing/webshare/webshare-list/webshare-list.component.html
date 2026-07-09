@@ -3,6 +3,7 @@
     class="clickable"
     role="button"
     tabindex="0"
+    aria-live="polite"
     [heading]="'TrueNAS Connect required' | translate"
     [message]="'WebShare service requires TrueNAS Connect to be configured and active.' | translate"
     (click)="openTruenasConnectDialog()"
@@ -15,6 +16,7 @@
     class="clickable"
     role="button"
     tabindex="0"
+    aria-live="polite"
     [heading]="'No WebShare users' | translate"
     [message]="'It appears you have no users configured to access WebShare.' | translate"
     (click)="navigateToUsers()"
@@ -85,7 +87,7 @@
             <span
               role="text"
               [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
-              [attr.aria-label]="'WebShare name: ' + row.name"
+              [attr.aria-label]="('WebShare name' | translate) + ': ' + row.name"
             >{{ row.name }}</span>
             @if (row.isHomeBase) {
               <tn-icon
@@ -104,7 +106,7 @@
         <ng-template let-row tnCellDef>
           <span
             [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
-            [tnTooltip]="row.path ? (row.path | translate) : ''"
+            [tnTooltip]="row.path || ''"
           >{{ row.path }}</span>
         </ng-template>
       </ng-container>

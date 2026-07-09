@@ -22,6 +22,10 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
  * at least one titled column always stays visible. Visibility is persisted per
  * `columnPreferencesKey` via `preferredColumnsUpdated`, keyed by column title to
  * stay wire-compatible with the legacy selector's saved preferences.
+ *
+ * The input columns are never mutated: `columnsChange` emits copies with
+ * updated `hidden` flags, and the host is expected to feed them back into
+ * `[columns]` (the usual `columns` signal + `set` pattern).
  */
 @Component({
   selector: 'ix-table-column-picker',
@@ -79,12 +83,9 @@ export class TableColumnPickerComponent<T = unknown> implements OnInit {
   private applyVisibility(visibleTitles: string[]): void {
     this.lastSelected = visibleTitles;
     this.control.setValue(visibleTitles, { emitEvent: false });
-    this.columns().forEach((column) => {
-      if (column.title) {
-        column.hidden = !visibleTitles.includes(column.title);
-      }
-    });
-    this.columnsChange.emit([...this.columns()]);
+    this.columnsChange.emit(this.columns().map((column) => {
+      return column.title ? { ...column, hidden: !visibleTitles.includes(column.title) } : column;
+    }));
   }
 
   private saveColumnPreferences(): void {

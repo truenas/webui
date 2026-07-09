@@ -5,6 +5,7 @@ import {
   TnCardComponent, TnCardHeaderActionsDirective, TnCardHeaderDirective, TnCellDefDirective, TnEmptyComponent,
   TnHeaderCellDefDirective, TnIconButtonComponent, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent,
 } from '@truenas/ui-components';
+import { noSearchResultsConfig } from 'app/constants/empty-configs';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
@@ -46,6 +47,8 @@ export class SubsystemsListComponent {
   readonly search = output<string>();
 
   searchQuery = signal('');
+
+  protected readonly noSearchResults = noSearchResultsConfig;
 
   protected readonly displayedColumns = ['name', 'namespaces', 'ports', 'hosts', 'actions'];
 

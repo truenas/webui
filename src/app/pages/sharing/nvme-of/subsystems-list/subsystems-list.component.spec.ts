@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnTableHarness } from '@truenas/ui-components';
+import { TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
@@ -83,5 +83,19 @@ describe('SubsystemsListComponent', () => {
     expect(await table.getHeaderTexts()).toEqual(['Name', 'Namespaces', 'Ports', 'Hosts', '']);
     expect(await table.getRowTexts(0)).toEqual(['subsys-1', '2', '4', '3', '']);
     expect(await table.getRowTexts(1)).toEqual(['subsys-2', '2', '4', '3', '']);
+  });
+
+  it('expands the row once when its View Details chevron is pressed', async () => {
+    jest.spyOn(spectator.component.toggleShowMobileDetails, 'emit');
+
+    // Row chevrons render before the pager's chevron buttons, so [0] is the first row.
+    const chevron = (await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'chevron-right' })))[0];
+    await chevron.click();
+
+    // The chevron stops propagation, so the clickable row underneath must not
+    // receive the same click and toggle the expansion straight back off.
+    expect(spectator.component.dataProvider().expandedRow).toBe(mockSubsystems[0]);
+    expect(spectator.component.toggleShowMobileDetails.emit).toHaveBeenCalledTimes(1);
+    expect(spectator.component.toggleShowMobileDetails.emit).toHaveBeenCalledWith(true);
   });
 });

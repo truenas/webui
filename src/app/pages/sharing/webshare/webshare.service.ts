@@ -17,7 +17,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
+import { WebShareTableRow } from 'app/pages/sharing/webshare/webshare-table-row.interface';
 import { LicenseService } from 'app/services/license.service';
 import { WebShareSharesFormComponent, WebShareFormData } from './webshare-shares-form/webshare-shares-form.component';
 

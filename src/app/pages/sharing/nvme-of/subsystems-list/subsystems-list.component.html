@@ -13,8 +13,8 @@
   @if (!(dataProvider()?.currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
     @if (searchQuery().length) {
       <tn-empty
-        [title]="'No Search Results.' | translate"
-        [description]="'No matching results found' | translate"
+        [title]="noSearchResults.title | translate"
+        [description]="noSearchResults.message | translate"
       ></tn-empty>
     } @else {
       <tn-empty
@@ -70,7 +70,7 @@
               [ariaExpanded]="dataProvider().expandedRow === row"
               [tooltip]="'View Details' | translate"
               [testId]="['nvmeof-subsys-' + row.name, 'mdi-chevron-right', 'row-action']"
-              (onClick)="onRowClick(row)"
+              (onClick)="$event.stopPropagation(); onRowClick(row)"
             ></tn-icon-button>
           </span>
         </ng-template>
