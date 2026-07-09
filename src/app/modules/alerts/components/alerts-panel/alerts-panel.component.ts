@@ -1,6 +1,6 @@
 import { Overlay, OverlayContainer } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
-import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject, signal } from '@angular/core';
+import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, Type, computed, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationExtras, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -30,7 +30,8 @@ import {
   selectDismissedAlerts,
   selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -66,7 +67,7 @@ export class AlertsPanelComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private smartAlertService = inject(SmartAlertService);
   private destroyRef = inject(DestroyRef);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
 
   protected readonly requiredRoles = [Role.AlertListWrite];
@@ -286,7 +287,9 @@ export class AlertsPanelComponent implements OnInit {
 
   openEmailForm(): void {
     this.closePanel();
-    this.slideIn.open(EmailFormComponent, { data: undefined });
+    this.formPanel.open(this.emailForm, {
+      title: this.translate.instant('Email Options'),
+    });
   }
 
   closePanel(): void {
@@ -325,6 +328,8 @@ export class AlertsPanelComponent implements OnInit {
   getCategoryLabel(category: string): string {
     return this.categoryLabels[category as SmartAlertCategory] || category;
   }
+
+  private readonly emailForm = EmailFormComponent as unknown as Type<SidePanelForm>;
 
   private checkHaStatus(): void {
     if (!this.isEnterprise()) {

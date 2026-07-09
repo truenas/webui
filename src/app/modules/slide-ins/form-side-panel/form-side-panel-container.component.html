@@ -52,7 +52,7 @@
     </div>
   }
 
-  @if (!footerless() && form()?.footerMenu; as footerMenu) {
+  @if (!footerless() && form()?.footerMenu?.(); as footerMenu) {
     <div tnSidePanelAction class="footer-actions-group">
       <tn-icon-button
         name="dots-vertical"

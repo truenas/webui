@@ -1,6 +1,6 @@
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import {
-  ChangeDetectionStrategy, Component, ComponentRef, inject, input, model, output, signal,
+  ChangeDetectionStrategy, Component, ComponentRef, inject, input, model, output, signal, type Signal,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -73,7 +73,8 @@ export interface SidePanelFooterMenu {
 export type HostedSidePanelForm = SidePanelHostForm & {
   readonly requiredRoles?: Role[];
   readonly footerActions?: SidePanelFooterAction[];
-  readonly footerMenu?: SidePanelFooterMenu;
+  /** Read as a signal so the container re-reads it (label/items) reactively without churning a getter. */
+  readonly footerMenu?: Signal<SidePanelFooterMenu>;
   /**
    * Whether the form is currently busy. The host shows an indeterminate progress bar at the top of
    * the panel while true and keeps Save disabled. Optional — forms that don't expose it simply never

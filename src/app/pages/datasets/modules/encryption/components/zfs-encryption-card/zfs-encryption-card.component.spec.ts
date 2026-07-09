@@ -174,9 +174,8 @@ describe('ZfsEncryptionCardComponent', () => {
     });
 
     const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
-    const unlockHref = await unlockButton.getHref();
 
-    expect(unlockHref).toBe('/datasets/pool%2Fdataset/unlock');
+    expect(await unlockButton.getHref()).toBe('/datasets/pool%2Fdataset/unlock');
   });
 
   it('opens encryption options dialog when Edit button is pressed and reloads dataset tree when it is closed', async () => {

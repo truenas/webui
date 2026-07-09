@@ -1,25 +1,21 @@
 @import 'mixins/cards';
 @import 'scss-imports/variables';
 
-@include tn-detail-card();
+@include tn-detail-card;
 
-.card {
-  @include tn-details-item();
-
-  .chart-extra {
-    align-items: center;
-    display: flex;
-    justify-content: space-around;
-
-    .details-item {
-      margin: 20px 0 0;
-    }
-  }
+.chart-extra {
+  align-items: center;
+  display: flex;
+  justify-content: space-around;
 
   .details-item {
-    .value-placeholder {
-      flex: 1;
-    }
+    margin: 20px 0 0;
+  }
+}
+
+.details-item {
+  .value-placeholder {
+    flex: 1;
   }
 }
 

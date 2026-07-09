@@ -1,11 +1,12 @@
 @import 'mixins/cards';
+@import 'mixins/animations';
 
-@include tn-detail-card();
+@include tn-detail-card;
 
-.card {
+:host {
   @include tn-details-item();
 
-  .value {
+  .details-item .value {
     align-items: center;
     display: flex;
     gap: 5px;
