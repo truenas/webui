@@ -4,7 +4,7 @@ import { CompletionContext } from '@codemirror/autocomplete';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnCalendarComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { auditEventLabels, AuditService } from 'app/enums/audit.enum';
+import { AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AdvancedSearchComponent } from 'app/modules/forms/search-input/components/advanced-search/advanced-search.component';
@@ -53,7 +53,6 @@ describe('AdvancedSearchComponent – autocomplete', () => {
             'event',
             'Event',
             of<Option[]>([]),
-            auditEventLabels,
           ),
           dateProperty(
             'message_timestamp',

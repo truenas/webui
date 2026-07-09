@@ -70,9 +70,6 @@ describe('AuditListComponent', () => {
   });
 
   it('shows the raw event token verbatim so it matches what is recorded in remote logs', async () => {
-    // The Event column intentionally shows the raw token ("AUTHENTICATION",
-    // "CREATE") rather than a friendly label, so users see the same string here
-    // that they search for in the audit database / remote syslog.
     expect(await table.getHeaderTexts()).toEqual(['Service', 'User', 'Timestamp', 'Event', 'Event Data']);
     expect(await table.getAllRowTexts()).toEqual([
       ['SMB', 'Administrator', '2024-04-12 07:34:00', 'AUTHENTICATION', 'Account: Administrator'],
