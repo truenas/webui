@@ -46,7 +46,7 @@
       >
         {{ 'Name' | translate }}
         @if (sortIcon(sortField.Name); as icon) {
-          <tn-icon [name]="icon" library="mdi" class="sort-icon"></tn-icon>
+          <tn-icon library="mdi" class="sort-icon" [name]="icon"></tn-icon>
         }
       </div>
       <div
@@ -59,7 +59,7 @@
       >
         {{ 'Status' | translate }}
         @if (sortIcon(sortField.Status); as icon) {
-          <tn-icon [name]="icon" library="mdi" class="sort-icon"></tn-icon>
+          <tn-icon library="mdi" class="sort-icon" [name]="icon"></tn-icon>
         }
       </div>
       <div
@@ -72,7 +72,7 @@
       >
         {{ 'Autostart' | translate }}
         @if (sortIcon(sortField.Autostart); as icon) {
-          <tn-icon [name]="icon" library="mdi" class="sort-icon"></tn-icon>
+          <tn-icon library="mdi" class="sort-icon" [name]="icon"></tn-icon>
         }
       </div>
       <div class="cell">CPU</div>
