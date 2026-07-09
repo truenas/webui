@@ -2,14 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnTooltipDirective, TnDialog, TnSpinnerComponent, TnTablePagerComponent,
+} from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, combineLatest, of,
 } from 'rxjs';
@@ -40,8 +39,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
@@ -65,18 +63,16 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     ReactiveFormsModule,
     IxSlideToggleComponent,
     TranslateModule,
     BasicSearchComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
     AsyncPipe,
-    MatTooltip,
+    TnTooltipDirective,
     IxTableEmptyDirective,
-    TnIconComponent,
     IxTableComponent,
     IxTableHeadComponent,
     IxTableBodyComponent,
@@ -94,7 +90,7 @@ export class SnapshotListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private tnDialog = inject(TnDialog);
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
@@ -294,7 +290,9 @@ export class SnapshotListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(SnapshotAddFormComponent);
+    this.formPanel.open(SnapshotAddFormComponent, {
+      title: this.translate.instant('Add Snapshot'),
+    });
   }
 
   doBatchDelete(data: ZfsSnapshotUi[]): void {

@@ -1,9 +1,13 @@
 <div class="actions">
   @if (hasLogs()) {
     <a
+      role="button"
+      tnTestIdType="link"
       [attr.tabindex]="0"
-      [ixTest]="[uniqueRowTag(), 'row-view-logs']"
+      [tnTestId]="[uniqueRowTag(), 'row-view-logs']"
       (click)="$event.stopPropagation(); navigateToAuditLogs()"
+      (keydown.enter)="$event.stopPropagation(); navigateToAuditLogs()"
+      (keydown.space)="$event.preventDefault(); $event.stopPropagation(); navigateToAuditLogs()"
     >
       {{ 'View Logs' | translate }}
     </a>
@@ -11,21 +15,24 @@
 
   @if (hasSessions()) {
     <a
+      role="button"
+      tnTestIdType="link"
       [attr.tabindex]="0"
-      [ixTest]="[uniqueRowTag(), 'view-sessions']"
+      [tnTestId]="[uniqueRowTag(), 'view-sessions']"
       (click)="$event.stopPropagation(); navigateToSessions()"
+      (keydown.enter)="$event.stopPropagation(); navigateToSessions()"
+      (keydown.space)="$event.preventDefault(); $event.stopPropagation(); navigateToSessions()"
     >
       {{ 'View Sessions' | translate }}
     </a>
   }
 
-  <button
+  <tn-icon-button
     *ixRequiresRoles="requiredRoles()"
-    mat-icon-button
-    [ixTest]="[uniqueRowTag(), 'edit-service']"
-    [attr.aria-label]="'Edit Service' | translate"
-    (click)="$event.stopPropagation(); configureService()"
-  >
-    <tn-icon name="pencil" library="mdi"></tn-icon>
-  </button>
+    name="pencil"
+    library="mdi"
+    [testId]="[uniqueRowTag(), 'edit-service']"
+    [ariaLabel]="'Edit Service' | translate"
+    (onClick)="$event.stopPropagation(); configureService()"
+  ></tn-icon-button>
 </div>

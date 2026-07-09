@@ -1,10 +1,8 @@
 <tn-card
   padding="small"
   [headerStatus]="serviceStatus()"
-  [headerControl]="serviceControl()"
   [headerMenu]="serviceMenu()"
   [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
-  [primaryAction]="wizardAction()"
 >
   <a
     tnCardHeader
@@ -14,7 +12,7 @@
     [routerLink]="['/sharing', 'iscsi', 'targets']"
     [tnTooltip]="'Open iSCSI list in full page' | translate"
   >
-    <h3 class="card-title">
+    <h3 class="tn-card__title">
       @if (hasFibreChannel()) {
         {{ 'Block (iSCSI/FC) Shares Targets' | translate }}
       } @else {
@@ -29,6 +27,29 @@
       <ix-card-alert-badge [menuPath]="cardMenuPath" />
     </h3>
   </a>
+
+  <ng-template tnCardHeaderActions>
+    @if (service(); as service) {
+      <tn-slide-toggle
+        *ixRequiresRoles="requiredRoles"
+        [checked]="actionsMenu.isServiceRunning(service)"
+        [testId]="actionsMenu.serviceControlTestId(service)"
+        [ariaLabel]="'Toggle service' | translate"
+        (change)="actionsMenu.toggleServiceState(service)"
+      ></tn-slide-toggle>
+    }
+  </ng-template>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="filled"
+      testId="iscsi-share-wizard"
+      [label]="'Wizard' | translate"
+      (onClick)="openForm(undefined, true)"
+    ></tn-button>
+  </ng-template>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
@@ -95,23 +116,3 @@
     [routerLink]="['/sharing', 'iscsi', 'targets']"
   ></ix-table-pager-show-more>
 </tn-card>
-
-<tn-side-panel
-  [title]="'iSCSI Global Configuration' | translate"
-  [closeGuard]="closeConfigGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-global-target-configuration (closed)="onConfigClosed()"></ix-global-target-configuration>
-  }
-  @if (configForm(); as form) {
-    <tn-button
-      tnSidePanelAction
-      color="primary"
-      [ixTest]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
-  }
-</tn-side-panel>

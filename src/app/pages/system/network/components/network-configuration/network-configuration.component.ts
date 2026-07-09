@@ -1,10 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnRadioComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
@@ -15,17 +18,10 @@ import {
   NetworkConfiguration,
   NetworkConfigurationActivity,
 } from 'app/interfaces/network-configuration.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -52,23 +48,22 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
   styleUrls: ['./network-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
-    IxChipsComponent,
-    IxRadioGroupComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TnChipInputComponent,
+    TnRadioComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class NetworkConfigurationComponent implements OnInit {
+export class NetworkConfigurationComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -76,8 +71,8 @@ export class NetworkConfigurationComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
@@ -103,6 +98,8 @@ export class NetworkConfigurationComponent implements OnInit {
     httpproxy: [''],
     hosts: [[] as string[]],
   });
+
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   readonly helptext = helptextNetworkConfiguration;
 
@@ -189,30 +186,50 @@ export class NetworkConfigurationComponent implements OnInit {
   outboundNetworkActivity = {
     fcName: 'outbound_network_activity',
     label: helptextNetworkConfiguration.outboundActivity,
-    tooltip: '',
-    options: of([
-      // Mismatch between enum and label is expected.
-      // We will send empty list of services when Allow All or Deny All is selected.
-      // I.e. selecting 'Allow All' will send Deny [], effectively allowing all services.
+    // tn-radio has no per-option tooltip, so the per-option help is combined into a single
+    // field-level tooltip. Kept as plain text (the form-field pipes this string into both the
+    // tooltip's innerHTML AND the trigger's aria-label, so markup would leak to screen readers);
+    // the tooltip's `white-space: pre-line` renders the blank-line separators. Pre-translated for
+    // the same reason the labels below are.
+    tooltip: [
       {
         label: helptextNetworkConfiguration.outboundNetworkActivity.allow.label,
-        value: UiNetworkActivityType.Deny,
         tooltip: helptextNetworkConfiguration.outboundNetworkActivity.allow.tooltip,
       },
       {
         label: helptextNetworkConfiguration.outboundNetworkActivity.deny.label,
-        value: UiNetworkActivityType.Allow,
         tooltip: helptextNetworkConfiguration.outboundNetworkActivity.deny.tooltip,
       },
       {
         label: helptextNetworkConfiguration.outboundNetworkActivity.allowSpecific.label,
-        value: UiNetworkActivityType.AllowSpecific,
         tooltip: helptextNetworkConfiguration.outboundNetworkActivity.allowSpecific.tooltip,
       },
       {
         label: helptextNetworkConfiguration.outboundNetworkActivity.denySpecific.placeholder,
-        value: UiNetworkActivityType.DenySpecific,
         tooltip: helptextNetworkConfiguration.outboundNetworkActivity.denySpecific.tooltip,
+      },
+    ].map(({ label, tooltip }) => `${this.translate.instant(label)}: ${this.translate.instant(tooltip)}`)
+      .join('\n\n'),
+    // Mismatch between enum and label is expected.
+    // We will send empty list of services when Allow All or Deny All is selected.
+    // I.e. selecting 'Allow All' will send Deny [], effectively allowing all services.
+    // Labels are pre-translated because tn-radio does not translate its [label] input.
+    options: of([
+      {
+        label: this.translate.instant(helptextNetworkConfiguration.outboundNetworkActivity.allow.label),
+        value: UiNetworkActivityType.Deny,
+      },
+      {
+        label: this.translate.instant(helptextNetworkConfiguration.outboundNetworkActivity.deny.label),
+        value: UiNetworkActivityType.Allow,
+      },
+      {
+        label: this.translate.instant(helptextNetworkConfiguration.outboundNetworkActivity.allowSpecific.label),
+        value: UiNetworkActivityType.AllowSpecific,
+      },
+      {
+        label: this.translate.instant(helptextNetworkConfiguration.outboundNetworkActivity.denySpecific.placeholder),
+        value: UiNetworkActivityType.DenySpecific,
       },
     ]),
   };
@@ -235,12 +252,6 @@ export class NetworkConfigurationComponent implements OnInit {
     label: helptextNetworkConfiguration.hostsLabel,
     tooltip: helptextNetworkConfiguration.hostsTooltip,
   };
-
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
@@ -369,7 +380,7 @@ export class NetworkConfigurationComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.store$.dispatch(systemInfoUpdated());
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

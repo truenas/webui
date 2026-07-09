@@ -1,6 +1,10 @@
-tn-form-field {
-  display: block;
-  margin-bottom: 2rem;
+// TEMP: scoped styles can't reach the host of a control projected into a tn-* slot,
+// so we reset the projected tn-select's default top margin here. Remove once the
+// library exposes a spacing input on tn-select / tn-form-field.
+:host ::ng-deep {
+  tn-select {
+    margin-top: 0;
+  }
 }
 
 .entry-row {
@@ -9,11 +13,13 @@ tn-form-field {
   padding-left: 10px;
   padding-right: 10px;
 
-  > * {
-    flex: 1;
+  // Space the SID / Who / Permission+Type rows within an entry — without this the
+  // tn-form-field rows butt together (the migrated controls dropped the ix-* row margins).
+  &:not(:last-child) {
+    margin-bottom: 12px;
   }
 
-  tn-form-field {
-    margin-bottom: 0;
+  > * {
+    flex: 1;
   }
 }

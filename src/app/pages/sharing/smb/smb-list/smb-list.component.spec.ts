@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -17,13 +17,13 @@ import { Service } from 'app/interfaces/service.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
-import { SmbFormData } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
+import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { SmbListComponent } from 'app/pages/sharing/smb/smb-list/smb-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -41,12 +41,6 @@ const shares: Partial<SmbShare>[] = [
   },
 ];
 
-const slideInRef: SlideInRef<SmbShare | undefined, unknown> = {
-  close: jest.fn(),
-  requireConfirmationWhen: jest.fn(),
-  getData: jest.fn((): undefined => undefined),
-};
-
 const commonDeclarations = [
   MockComponents(
     ServiceStateButtonComponent,
@@ -56,12 +50,11 @@ const commonDeclarations = [
 const commonProviders = [
   mockProvider(EmptyService),
   mockAuth(),
-  mockProvider(SlideInRef, slideInRef),
   mockProvider(DialogService, {
     confirm: jest.fn(() => of(true)),
     confirmDelete: jest.fn(() => of(undefined)),
   }),
-  mockProvider(SlideIn, {
+  mockProvider(FormSidePanelService, {
     open: jest.fn(() => SlideInResult.empty()),
   }),
   provideMockStore({
@@ -129,25 +122,34 @@ describe('SmbListComponent', () => {
     expect(title).toHaveText('SMB');
   });
 
-  it('opens the side panel for a new share when "Add" is pressed', () => {
-    spectator.component.doAdd();
+  it('opens the form in a side panel when "Add" is pressed', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
 
-    expect(spectator.component.formOpen()).toBe(true);
-    expect(spectator.component.formData()).toBeUndefined();
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
+      title: 'Add SMB Share',
+      inputs: { smbShareData: { existingSmbShare: undefined } },
+    });
   });
 
-  it('opens the side panel with the row data when "Edit" is pressed', () => {
-    spectator.component.doEdit(shares[0] as SmbShare);
+  it('opens the form with the row data when "Edit" is pressed', async () => {
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit' });
 
-    expect(spectator.component.formOpen()).toBe(true);
-    expect(spectator.component.formData()).toEqual({ existingSmbShare: shares[0] } as SmbFormData);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
+      title: 'Edit SMB Share',
+      inputs: { smbShareData: { existingSmbShare: shares[0] } },
+    });
   });
 
-  it('opens the ACL side panel with the resolved share name when "Edit Share ACL" is pressed', () => {
-    spectator.component.actions[1].onClick(shares[0] as SmbShare);
+  it('opens the ACL form with the resolved share name when "Edit Share ACL" is pressed', async () => {
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit Share ACL' });
 
-    expect(spectator.component.aclOpen()).toBe(true);
-    expect(spectator.component.aclShareName()).toBe('acl_share_name');
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbAclComponent, {
+      title: 'Share ACL for acl_share_name',
+      inputs: { shareName: 'acl_share_name' },
+    });
   });
 
   it('redirects to edit ACL page when "Edit Filesystem ACL" button is pressed', async () => {

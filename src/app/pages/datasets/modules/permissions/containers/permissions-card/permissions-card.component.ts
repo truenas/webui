@@ -1,26 +1,20 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, input, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnEmptyComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ViewNfsPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-nfs-permissions/view-nfs-permissions.component';
 import { ViewPosixPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-posix-permissions/view-posix-permissions.component';
 import { ViewTrivialPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-trivial-permissions/view-trivial-permissions.component';
@@ -34,21 +28,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./permissions-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
+    TnButtonComponent,
     NgxSkeletonLoaderModule,
     ViewTrivialPermissionsComponent,
     ViewPosixPermissionsComponent,
     ViewNfsPermissionsComponent,
-    EmptyComponent,
+    TnEmptyComponent,
     TranslateModule,
     CastPipe,
-    MatTooltip,
+    TnTooltipDirective,
   ],
   providers: [
     PermissionsCardStore,
@@ -71,26 +62,6 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   protected readonly stat = signal<FileSystemStat | null>(null);
   protected readonly acl = signal<Acl | null>(null);
 
-  defaultEmptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No Data'),
-  };
-
-  missionMountpointEmptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('Dataset has no mountpoint'),
-  };
-
-  notMountedEmptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('Dataset is not mounted'),
-  };
-
-  lockedEmptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('Dataset is locked'),
-  };
-
   readonly AclType = AclType;
 
   redirectToEditPermissions(): void {
@@ -101,18 +72,18 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     }
   }
 
-  readonly emptyConfig = computed(() => {
+  readonly emptyTitle = computed(() => {
     if (this.isMissingMountpoint()) {
-      return this.missionMountpointEmptyConfig;
+      return this.translate.instant('Dataset has no mountpoint');
     }
     if (this.isNotMounted()) {
-      return this.notMountedEmptyConfig;
+      return this.translate.instant('Dataset is not mounted');
     }
     if (this.isLocked()) {
-      return this.lockedEmptyConfig;
+      return this.translate.instant('Dataset is locked');
     }
 
-    return this.defaultEmptyConfig;
+    return this.translate.instant('No Data');
   });
 
   readonly canEditPermissions = computed(() => {

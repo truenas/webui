@@ -2,9 +2,8 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import { tnIconMarker, TnSpinnerComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   catchError,
   EMPTY,
@@ -46,7 +45,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,

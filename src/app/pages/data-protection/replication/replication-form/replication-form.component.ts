@@ -1,11 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Signal, Type,
+  signal, viewChild, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { FormControl } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { merge, of } from 'rxjs';
-import { debounceTime, switchMap } from 'rxjs/operators';
+import { debounceTime, startWith, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Direction } from 'app/enums/direction.enum';
 import { Role } from 'app/enums/role.enum';
@@ -18,11 +21,14 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import {
+  SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   GeneralSectionComponent,
@@ -56,26 +62,21 @@ import { ReplicationService } from 'app/services/replication.service';
   providers: [ReplicationService],
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
-    ReactiveFormsModule,
     GeneralSectionComponent,
     TransportSectionComponent,
     SourceSectionComponent,
     TargetSectionComponent,
     ScheduleSectionComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class ReplicationFormComponent implements OnInit {
+export class ReplicationFormComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private errorParser = inject(ErrorParserService);
   private translate = inject(TranslateService);
-  formatter = inject(IxFormatterService);
   private cdr = inject(ChangeDetectorRef);
   private dialog = inject(DialogService);
   private snackbar = inject(SnackbarService);
@@ -83,8 +84,11 @@ export class ReplicationFormComponent implements OnInit {
   private replicationService = inject(ReplicationService);
   private keychainCredentials = inject(KeychainCredentialService);
   private authService = inject(AuthService);
-  slideInRef = inject<SlideInRef<ReplicationTask | undefined, ReplicationTask>>(SlideInRef);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
+
+  /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
+  readonly replicationToEdit = input<ReplicationTask | undefined>(undefined);
 
   protected readonly generalSection = viewChild.required(GeneralSectionComponent);
   protected readonly transportSection = viewChild.required(TransportSectionComponent);
@@ -96,6 +100,16 @@ export class ReplicationFormComponent implements OnInit {
 
   protected existingReplication: ReplicationTask | undefined;
 
+  /**
+   * The inherited {@link SidePanelForm.slideInRef} is typed `<unknown, boolean>`, but this form's
+   * legacy SlideIn host carries `ReplicationTask` data/response and swaps to/from the wizard. Read
+   * it through the concrete generics here so `getData()` and the wizard `swap` type-check. Null when
+   * hosted in a `<tn-side-panel>` (opened via FormSidePanelService).
+   */
+  private get typedSlideInRef(): SlideInRef<ReplicationTask | undefined, ReplicationTask> | null {
+    return this.slideInRef as unknown as SlideInRef<ReplicationTask | undefined, ReplicationTask> | null;
+  }
+
   sourceNodeProvider: TreeNodeProvider;
   targetNodeProvider: TreeNodeProvider;
 
@@ -104,26 +118,35 @@ export class ReplicationFormComponent implements OnInit {
   isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
 
-  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
-  constructor() {
-    this.existingReplication = this.slideInRef.getData();
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(Boolean(
-        this.generalSection()?.form?.dirty
-        || this.transportSection()?.form?.dirty
-        || this.sourceSection()?.form?.dirty
-        || this.targetSection()?.form?.dirty
-        || this.scheduleSection()?.form?.dirty,
-      ));
-    });
+  // The form aggregates five child sections instead of a single form group, so the base's
+  // `form` slot is satisfied with a placeholder and the dirty/validity hooks below override
+  // the base's single-form behaviour with section-aware logic.
+  protected readonly form = new FormControl();
+
+  private readonly isFormValidSignal = signal(false);
+
+  /**
+   * Whether the form may be submitted right now; the `<tn-side-panel>` host reads this to
+   * enable/disable its Save action. Driven by {@link trackSectionValidity} aggregating every
+   * section's validity (sections live in child components, hence the signal indirection).
+   */
+  readonly canSubmit: Signal<boolean> = this.isFormValidSignal.asReadonly();
+
+  /** Whether the form is currently submitting; the host shows a progress bar while true. */
+  override isBusy(): boolean {
+    return this.isLoading();
   }
 
   ngOnInit(): void {
+    this.existingReplication = this.typedSlideInRef?.getData() ?? this.replicationToEdit();
+
     this.countSnapshotsOnChanges();
     this.updateExplorersOnChanges();
     this.updateExplorers();
     this.listenForSudoEnabled();
+    this.trackSectionValidity();
 
     if (this.existingReplication) {
       this.setForEdit();
@@ -132,6 +155,16 @@ export class ReplicationFormComponent implements OnInit {
 
   get isNew(): boolean {
     return !this.existingReplication;
+  }
+
+  /**
+   * Secondary footer action rendered by the `<tn-side-panel>` host. Only in create mode (reached by
+   * swapping out of the wizard) — editing an existing task has no wizard to switch back to.
+   */
+  get footerActions(): SidePanelFooterAction[] {
+    return this.isNew
+      ? [{ label: T('Switch To Wizard'), testId: 'switch-to-wizard', onClick: () => this.onSwitchToWizard() }]
+      : [];
   }
 
   get sections(): [
@@ -174,11 +207,32 @@ export class ReplicationFormComponent implements OnInit {
     return this.sections.every((section) => section.form.valid);
   }
 
+  /** Host hook: confirm before discarding edits when any section is dirty. */
+  override hasUnsavedChanges(): boolean {
+    return this.sections.some((section) => section.form.dirty);
+  }
+
+  private trackSectionValidity(): void {
+    merge(
+      ...this.sections.map((section) => section.form.statusChanges),
+    )
+      .pipe(
+        startWith(null),
+        debounceTime(0),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.isFormValidSignal.set(this.isFormValid));
+  }
+
   setForEdit(): void {
     this.cdr.markForCheck();
   }
 
-  onSubmit(): void {
+  protected override onSubmit(): void {
+    if (!this.isFormValid) {
+      return;
+    }
+
     const payload = this.getPayload();
 
     const operation$ = this.existingReplication
@@ -190,14 +244,14 @@ export class ReplicationFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(
         {
-          next: (response) => {
+          next: () => {
             this.snackbar.success(
               this.isNew
                 ? this.translate.instant('Replication task created.')
                 : this.translate.instant('Replication task saved.'),
             );
             this.isLoading.set(false);
-            this.slideInRef.close({ response });
+            this.close(true);
           },
           error: (error: unknown) => {
             this.isLoading.set(false);
@@ -208,7 +262,16 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.swap?.(ReplicationWizardComponent, { wide: true });
+    if (this.typedSlideInRef) {
+      this.typedSlideInRef.swap?.(ReplicationWizardComponent, { wide: true });
+    } else {
+      // Panel host: swap back to the wizard in place (footerless — the stepper owns its buttons).
+      this.formPanel.swap(ReplicationWizardComponent as unknown as Type<SidePanelForm>, {
+        title: this.translate.instant('Replication Task Wizard'),
+        wide: true,
+        footerless: true,
+      });
+    }
   }
 
   private getPayload(): ReplicationCreate {

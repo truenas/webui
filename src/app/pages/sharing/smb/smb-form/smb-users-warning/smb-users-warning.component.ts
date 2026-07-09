@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 
@@ -21,9 +20,6 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
 export class SmbUsersWarningComponent implements OnInit {
   private router = inject(Router);
   private smbValidationService = inject(SmbValidationService);
-  // Optional: present when smb-form is hosted in the legacy SlideIn, absent when
-  // hosted in a tn-side-panel (navigating away tears the panel down on its own).
-  private slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
   protected hasSmbUsers = signal(true);
@@ -33,7 +29,7 @@ export class SmbUsersWarningComponent implements OnInit {
   }
 
   protected closeForm(routerLink: string[]): void {
-    this.slideInRef?.close({ response: undefined });
+    // Navigation tears the side panel down via FormSidePanelService's router closeAll.
     this.router.navigate(routerLink);
   }
 

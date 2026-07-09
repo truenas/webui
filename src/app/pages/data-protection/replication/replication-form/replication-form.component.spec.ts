@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -19,6 +19,8 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -180,6 +182,7 @@ describe('ReplicationFormComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(FormSidePanelService),
     ],
     componentProviders: [
       mockProvider(ReplicationService, {
@@ -204,7 +207,7 @@ describe('ReplicationFormComponent', () => {
     });
 
     it('switches to wizard when Switch To Wizard is pressed', async () => {
-      const switchButton = await loader.getHarness(MatButtonHarness.with({ text: 'Switch To Wizard' }));
+      const switchButton = await loader.getHarness(TnButtonHarness.with({ label: 'Switch To Wizard' }));
       await switchButton.click();
 
       expect(
@@ -213,7 +216,7 @@ describe('ReplicationFormComponent', () => {
     });
 
     it('creates a new replication task', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.query(GeneralSectionComponent)!.getPayload).toHaveBeenCalled();
@@ -233,7 +236,7 @@ describe('ReplicationFormComponent', () => {
         auto: true,
         sudo: false,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
     });
 
     it('shows eligible snapshots message', fakeAsync(() => {
@@ -276,7 +279,7 @@ describe('ReplicationFormComponent', () => {
     }));
 
     it('updates an existing replication task', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.update', [
@@ -293,7 +296,7 @@ describe('ReplicationFormComponent', () => {
           sudo: false,
         },
       ]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
     });
   });
 
@@ -338,6 +341,32 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.query(SourceSectionComponent)!.nodeProvider).toBe(localNodeProvider);
       expect(spectator.query(TargetSectionComponent)!.nodeProvider).toBe(localNodeProvider);
     }));
+  });
+
+  describe('side panel host (no SlideInRef)', () => {
+    beforeEach(fakeAsync(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+          // Skip the min submit-feedback hold so the synchronous-close assertions below hold.
+          { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
+        ],
+        props: {
+          replicationToEdit: { id: 1 } as ReplicationTask,
+        },
+      });
+      tick();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    }));
+
+    it('emits closed when saved via the host submit() entry point', () => {
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.update', [1, expect.anything()]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
+    });
   });
 
   describe('sudo enabled dialog', () => {

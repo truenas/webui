@@ -13,6 +13,13 @@
   position: relative;
   display: inline-block;
 
+  // No submit button projected (e.g. a wizard's `ix-form-actions` holds only Next/Back/Advanced):
+  // collapse the empty wrapper so the `gap` after it doesn't shift the visible buttons off the
+  // form's left edge.
+  &:empty {
+    display: none;
+  }
+
   &.validating {
     overflow: hidden;
 
@@ -54,13 +61,41 @@
   margin: 0 10px;
 }
 
-:host-context(mat-vertical-stepper) :host {
+// Declarative forms (ix-form-renderer) align the actions row with the fields,
+// so drop the left indent there only — legacy forms keep the 10px gutter.
+// The `.ix-form-container` in the context keeps this more specific than the
+// rule above, whose `margin` shorthand would otherwise reset margin-left.
+// (The `<ix-form>` wrapper is handled by a global rule in _tn-styles.scss —
+// a scoped `:host-context(ix-form …)` descendant selector is unreliable.)
+:host-context(ix-form-renderer .ix-form-container) :host {
+  margin-left: 0;
+}
+
+// Forms hosted in a `<tn-side-panel>` use tn-form-field (which has no legacy field
+// gutter), so the 10px left gutter would push in-form action buttons — e.g.
+// certificate-edit's "Create ACME Certificate" — right of the fields. Drop it so
+// they align flush-left, mirroring the ix-form-renderer rule above. Tracked NAS-141021.
+:host-context(.tn-side-panel__content .ix-form-container) :host {
+  margin-left: 0;
+}
+
+:host-context(tn-stepper) :host {
   flex-wrap: wrap;
   justify-content: flex-start;
 
   ::ng-deep > * {
     gap: 8px;
   }
+}
+
+// When an actions row has no projected `[type=submit]` button, the
+// submit-button-wrapper renders empty; as the first flex child it adds a leading
+// `gap` that pushes the remaining buttons ~8px right of the form fields. Collapse
+// it so non-submit actions (wizard Back/Next, a side-panel form's in-form
+// "Create ACME Certificate"/"View Key" buttons, etc.) align flush-left with the
+// fields. Tracked NAS-141021.
+:host .submit-button-wrapper:empty {
+  display: none;
 }
 
 // buttons at the bottom of forms are cut off on certain mobile devices,

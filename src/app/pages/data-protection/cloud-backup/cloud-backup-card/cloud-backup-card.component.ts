@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, signal, inject,
+  ChangeDetectionStrategy, Component, Type, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -36,7 +36,8 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { convertStringToId } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   TableActionsCellComponent,
@@ -84,7 +85,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
@@ -174,9 +175,18 @@ export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
     });
   }
 
+  // CloudBackupFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
+  private readonly cloudBackupForm = CloudBackupFormComponent as unknown as Type<SidePanelForm>;
+
   protected openForm(row?: CloudBackup): void {
-    this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
-      .onSuccess(() => this.reload(), this.destroyRef);
+    this.formPanel.open(this.cloudBackupForm, {
+      title: row
+        ? this.translate.instant('Edit TrueCloud Backup Task')
+        : this.translate.instant('Add TrueCloud Backup Task'),
+      wide: true,
+      inputs: { backupToEdit: row },
+    }).onSuccess(() => this.reload(), this.destroyRef);
   }
 
   protected onAdd(): void {
@@ -196,7 +206,7 @@ export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
     ).subscribe(() => this.reload());
   }
 
-  protected onChangeEnabledState(cloudBackup: CloudBackup): void {
+  protected onChangeEnabledState(cloudBackup: CloudBackup, toggle: TableToggleCellComponent): void {
     this.updatedCount.update((count) => count + 1);
     this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled }])
@@ -209,6 +219,7 @@ export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
           }
         },
         error: (error: unknown) => {
+          toggle.revert();
           this.updatedCount.update((count) => count - 1);
           if (!this.updatedCount()) {
             this.reload();

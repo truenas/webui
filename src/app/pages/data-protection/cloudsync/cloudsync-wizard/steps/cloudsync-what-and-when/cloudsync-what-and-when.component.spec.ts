@@ -1,17 +1,16 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnInputHarness, TnSelectHarness, TnStepperComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -23,7 +22,6 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
 describe('CloudSyncWhatAndWhenComponent', () => {
   let spectator: Spectator<CloudSyncWhatAndWhenComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const slideInRef: SlideInRef<unknown, unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
@@ -38,8 +36,9 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(FormSidePanelService),
       mockAuth(),
       mockApi([
         mockCall('cloudsync.create'),
@@ -63,12 +62,14 @@ describe('CloudSyncWhatAndWhenComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
 
-    await form.fillForm({
-      'Directory/Files': '/mnt/gphotos',
-      Description: 'Sync Google Photos',
-    });
+    const pathExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Directory/Files' }));
+    await pathExplorer.setValue('/mnt/gphotos');
+
+    const descriptionInput = await loader.getHarness(
+      TnInputHarness.with({ selector: '[formControlName="description"]' }),
+    );
+    await descriptionInput.setValue('Sync Google Photos');
   });
 
   it('returns fields when getPayload() is called', () => {
@@ -103,24 +104,28 @@ describe('CloudSyncWhatAndWhenComponent', () => {
   });
 
   it('when an required field is empty, the "Save" button is disabled', async () => {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
 
-    await form.fillForm({ Description: '' });
+    spectator.component.form.controls.description.setValue('');
+    spectator.detectChanges();
     expect(await saveButton.isDisabled()).toBe(true);
 
-    await form.fillForm({ Description: 'Sync Google Photos' });
+    const descriptionInput = await loader.getHarness(
+      TnInputHarness.with({ selector: '[formControlName="description"]' }),
+    );
+    await descriptionInput.setValue('Sync Google Photos');
     expect(await saveButton.isDisabled()).toBe(false);
   });
 
   it('emits (save) when Save is selected', async () => {
     jest.spyOn(spectator.component.save, 'emit');
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
     expect(spectator.component.save.emit).toHaveBeenCalled();
   });
 
   it('opens an advanced form when Advanced Options is pressed', async () => {
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
     await advancedButton.click();
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       buttonText: 'Continue',
@@ -130,17 +135,26 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       title: 'Switch to Advanced Options',
       hideCheckbox: true,
     });
-    expect(slideInRef.swap).toHaveBeenCalledWith(CloudSyncFormComponent, { wide: true });
+    expect(spectator.inject(FormSidePanelService).swap).toHaveBeenCalledWith(
+      CloudSyncFormComponent,
+      { title: 'Add Cloud Sync Task', wide: true },
+    );
   });
 
   it('checks payload when use invalid s3 credentials', async () => {
-    const bucketSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Bucket' }));
-    expect(await bucketSelect.getValue()).toBe('');
+    const bucketSelect = await loader.getHarness(
+      TnSelectHarness.with({ selector: '[formControlName="bucket"]' }),
+    );
+    await bucketSelect.open();
+    expect(await bucketSelect.getOptions()).toEqual([]);
+    await bucketSelect.close();
 
     spectator.component.isCredentialInvalid$.next(true);
     spectator.detectChanges();
 
-    const bucketInput = await loader.getHarness(IxInputHarness.with({ label: 'Bucket' }));
+    const bucketInput = await loader.getHarness(
+      TnInputHarness.with({ selector: '[formControlName="bucket_input"]' }),
+    );
     await bucketInput.setValue('selected');
 
     expect(spectator.component.getPayload()).toEqual(expect.objectContaining({

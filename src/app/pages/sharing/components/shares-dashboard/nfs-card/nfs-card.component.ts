@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed,
-  inject, DestroyRef, signal, viewChild,
+  inject, DestroyRef, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -11,22 +11,23 @@ import {
   tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
+  TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
-  type TnCardAction,
   type TnSortEvent,
 } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
@@ -38,7 +39,7 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -70,8 +71,10 @@ import { selectService } from 'app/store/services/services.selectors';
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
+    TnCardHeaderActionsDirective,
+    TnCardFooterActionsDirective,
+    TnSlideToggleComponent,
+    RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -85,14 +88,13 @@ import { selectService } from 'app/store/services/services.selectors';
     RouterLink,
     TnEmptyComponent,
     CardAlertBadgeComponent,
-    ServiceNfsComponent,
     TableToggleCellComponent,
     TableActionsCellComponent,
     TierStatusComponent,
   ],
 })
 export class NfsCardComponent implements OnInit {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
@@ -102,48 +104,25 @@ export class NfsCardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
   private authService = inject(AuthService);
-  private actionsMenu = inject(ServiceActionsMenuService);
+  protected actionsMenu = inject(ServiceActionsMenuService);
   private tierService = inject(SharingTierService);
   private snackbar = inject(SnackbarService);
 
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   service$ = this.store$.select(selectService(ServiceName.Nfs));
-  private service = toSignal(this.service$);
+  protected service = toSignal(this.service$);
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
   protected serviceStatus = computed(() => this.actionsMenu.buildCardHeaderStatus(this.service()));
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      testId: 'button-nfs-share-add',
-      handler: () => this.openForm(),
-    };
-  });
-
-  protected configOpen = signal(false);
-  protected configForm = viewChild(ServiceNfsComponent);
-  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
-    () => this.configForm()?.hasUnsavedChanges() ?? false,
-  );
-
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
     this.hasAddRole(),
-    () => this.configOpen.set(true),
+    () => this.openConfig(),
   ));
-
-  protected serviceControl = computed(() => this.actionsMenu.buildServiceControl(this.service(), this.hasAddRole()));
-
-  protected onConfigClosed(): void {
-    this.configOpen.set(false);
-  }
 
   dataProvider: AsyncDataProvider<NfsShare>;
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -236,8 +215,16 @@ export class NfsCardComponent implements OnInit {
   }
 
   protected openForm(row?: NfsShare): void {
-    this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } })
-      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+    this.formPanel.open(NfsFormComponent, {
+      title: row
+        ? this.translate.instant('Edit NFS Share')
+        : this.translate.instant('Add NFS Share'),
+      inputs: { nfsShareData: { existingNfsShare: row } },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
+  }
+
+  protected openConfig(): void {
+    this.formPanel.open(ServiceNfsComponent, { title: serviceNames.get(ServiceName.Nfs), wide: true });
   }
 
   protected doDelete(nfs: NfsShare): void {
@@ -251,7 +238,7 @@ export class NfsCardComponent implements OnInit {
     });
   }
 
-  protected onChangeEnabledState(row: NfsShare): void {
+  protected onChangeEnabledState(row: NfsShare, toggle: TableToggleCellComponent): void {
     const enabled = !row.enabled;
 
     this.api.call('sharing.nfs.update', [row.id, { enabled }]).pipe(
@@ -267,7 +254,7 @@ export class NfsCardComponent implements OnInit {
         );
       },
       error: (error: unknown) => {
-        this.dataProvider.load();
+        toggle.revert();
         this.errorHandler.showErrorModal(error);
       },
     });

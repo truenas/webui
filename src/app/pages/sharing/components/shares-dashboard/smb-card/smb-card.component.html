@@ -1,10 +1,8 @@
 <tn-card
   padding="small"
   [headerStatus]="serviceStatus()"
-  [headerControl]="serviceControl()"
   [headerMenu]="serviceMenu()"
   [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
-  [primaryAction]="addAction()"
 >
   <a
     tnCardHeader
@@ -13,7 +11,7 @@
     [routerLink]="['/sharing', 'smb']"
     [tnTooltip]="'Open SMB list in full page' | translate"
   >
-    <h3 class="card-title">
+    <h3 class="tn-card__title">
       {{ 'Windows (SMB) Shares' | translate }}
       <tn-icon
         name="open-in-new"
@@ -24,6 +22,29 @@
       <ix-card-alert-badge [menuPath]="cardMenuPath" />
     </h3>
   </a>
+
+  <ng-template tnCardHeaderActions>
+    @if (service(); as service) {
+      <tn-slide-toggle
+        *ixRequiresRoles="requiredRoles"
+        [checked]="actionsMenu.isServiceRunning(service)"
+        [testId]="actionsMenu.serviceControlTestId(service)"
+        [ariaLabel]="'Toggle service' | translate"
+        (change)="actionsMenu.toggleServiceState(service)"
+      ></tn-slide-toggle>
+    }
+  </ng-template>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="filled"
+      testId="smb-share-add"
+      [label]="'Add' | translate"
+      (onClick)="openForm()"
+    ></tn-button>
+  </ng-template>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
@@ -41,7 +62,7 @@
       [loading]="!!(dataProvider.isLoading$ | async)"
       (sortChange)="onSortChange($event)"
     >
-      <ng-container [tnColumnDef]="'name'" [sortable]="true">
+      <ng-container [tnColumnDef]="'name'" [sortable]="true" [width]="'20%'">
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
@@ -51,7 +72,7 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'path'" [sortable]="true">
+      <ng-container [tnColumnDef]="'path'" [sortable]="true" [width]="'25%'">
         <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           @let path = getPathValue(row);
@@ -62,13 +83,15 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'comment'" [sortable]="true">
+      <ng-container [tnColumnDef]="'comment'" [sortable]="true" [width]="'22%'">
         <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
+            [class.empty-value]="!row.comment"
             [ixTest]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.comment ? (row.comment | translate) : ''"
-          >{{ row.comment }}</span>
+            [attr.aria-label]="row.comment ? null : ('No description' | translate)"
+          >{{ row.comment || '—' }}</span>
         </ng-template>
       </ng-container>
 
@@ -76,6 +99,7 @@
         <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-toggle-cell
+            #enabledToggle
             [title]="'Enabled' | translate"
             [uniqueRowTag]="uniqueRowTag(row)"
             [ariaLabel]="ariaLabel(row)"
@@ -83,12 +107,12 @@
             [disabled]="isToggleDisabled(row)"
             [tooltip]="getEnabledTooltip(row)"
             [requiredRoles]="requiredRoles"
-            (toggled)="onChangeEnabledState(row)"
+            (toggled)="onChangeEnabledState(row, enabledToggle)"
           ></ix-table-toggle-cell>
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'audit'">
+      <ng-container [tnColumnDef]="'audit'" [width]="'120px'">
         <ng-template tnHeaderCellDef>{{ 'Audit Logging' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
@@ -125,23 +149,3 @@
     [routerLink]="['/sharing', 'smb']"
   ></ix-table-pager-show-more>
 </tn-card>
-
-<tn-side-panel
-  [title]="'SMB' | translate"
-  [closeGuard]="closeConfigGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-service-smb (closed)="onConfigClosed()"></ix-service-smb>
-  }
-  @if (configForm(); as form) {
-    <tn-button
-      tnSidePanelAction
-      color="primary"
-      [ixTest]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
-  }
-</tn-side-panel>

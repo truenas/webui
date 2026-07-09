@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnIn
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
 import { filter } from 'rxjs/operators';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-parts.service';
 
 // TODO: Bad. Redo.
@@ -17,7 +17,7 @@ const noLinksRoutes = ['/credentials', '/reportsdashboard', '/system'];
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

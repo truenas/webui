@@ -1,16 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import {
   createComponentFactory, mockProvider,
 } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnCardComponent, TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
-import { App, AppContainerState } from 'app/interfaces/app.interface';
+import { Role } from 'app/enums/role.enum';
+import { AppContainerState, App } from 'app/interfaces/app.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import {
@@ -91,7 +94,7 @@ describe('AppContainersCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('mat-card-header h3')).toHaveText('Workloads');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Workloads');
   });
 
   it('shows number of ports', () => {
@@ -117,7 +120,7 @@ describe('AppContainersCardComponent', () => {
   });
 
   it('opens volume mounts dialog when Volume Mounts button is pressed', async () => {
-    const volumeButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Volume Mounts"]' }));
+    const volumeButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'folder-outline' }));
     await volumeButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(VolumeMountsDialog, {
@@ -127,16 +130,78 @@ describe('AppContainersCardComponent', () => {
   });
 
   it('has a Shell button that links to shell page', async () => {
-    const shellButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Shell"]' }));
+    const navigateSpy = jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
+    const shellButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'console' }));
+    await shellButton.click();
 
-    const host = await shellButton.host();
-    expect(await host.getAttribute('href')).toBe('/apps/installed/ix-test-train/ix-test-app/shell/1');
+    expect(navigateSpy).toHaveBeenCalledWith(['/apps', 'installed', 'ix-test-train', 'ix-test-app', 'shell', '1']);
   });
 
   it('has a View Logs button that links to logs page', async () => {
-    const showLogsButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="View Logs"]' }));
+    const navigateSpy = jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
+    const showLogsButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'text-box' }));
+    await showLogsButton.click();
 
-    const host = await showLogsButton.host();
-    expect(await host.getAttribute('href')).toBe('/apps/installed/ix-test-train/ix-test-app/logs/1');
+    expect(navigateSpy).toHaveBeenCalledWith(['/apps', 'installed', 'ix-test-train', 'ix-test-app', 'logs', '1']);
+  });
+
+  describe('without web_shell access', () => {
+    const createDeniedComponent = createComponentFactory({
+      component: AppWorkloadsCardComponent,
+      declarations: [
+        MockComponent(VolumeMountsDialog),
+      ],
+      imports: [
+        MapValuePipe,
+      ],
+      providers: [
+        mockProvider(TnDialog, {
+          open: jest.fn(() => of(true)),
+        }),
+        mockAuth({
+          privilege: { roles: { $set: [Role.AppsWrite] }, web_shell: false },
+        } as LoggedInUser),
+      ],
+    });
+
+    it('shows the Shell button disabled with a lock icon and names web_shell as the reason', async () => {
+      spectator = createDeniedComponent({ props: { app } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const shellButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'lock' }));
+
+      expect(await shellButton.isDisabled()).toBe(true);
+      expect(await loader.getHarnessOrNull(TnIconButtonHarness.with({ name: 'console' }))).toBeNull();
+      expect(spectator.query('button[aria-label="Your user permissions do not allow Web Shell access."]')).toExist();
+    });
+  });
+
+  // MockAuthService.hasRole() always resolves true, so mock AuthService directly to
+  // exercise the has-web_shell-but-not-apps-write path the distinguished message targets.
+  describe('without apps-write role', () => {
+    const createDeniedComponent = createComponentFactory({
+      component: AppWorkloadsCardComponent,
+      declarations: [
+        MockComponent(VolumeMountsDialog),
+      ],
+      imports: [
+        MapValuePipe,
+      ],
+      providers: [
+        mockProvider(TnDialog, {
+          open: jest.fn(() => of(true)),
+        }),
+        mockProvider(AuthService, {
+          hasRole: () => of(false),
+          hasWebShellAccess$: of(true),
+        }),
+      ],
+    });
+
+    it('locks the Shell button and names the missing role, not web_shell', () => {
+      spectator = createDeniedComponent({ props: { app } });
+
+      expect(spectator.query('button[aria-label="You do not have permission to open this shell."]')).toExist();
+    });
   });
 });

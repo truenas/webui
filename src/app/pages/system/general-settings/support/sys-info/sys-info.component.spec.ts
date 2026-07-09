@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnIconButtonHarness, TnDialog } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContractType } from 'app/interfaces/system-info.interface';
@@ -14,6 +14,7 @@ import {
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('SysInfoComponent', () => {
   const systemInfo = {
@@ -42,11 +43,16 @@ describe('SysInfoComponent', () => {
       mockAuth(),
       mockProvider(TnDialog, { open: jest.fn() }),
       mockApi([mockCall('truenas.license.fingerprint', fingerprintBase64)]),
+      provideMockStore({
+        selectors: [
+          { selector: selectIsEnterprise, value: false },
+        ],
+      }),
     ],
   });
 
   function getInfoRows(): Record<string, string> {
-    const rows = spectator.queryAll('mat-list-item:not(.fingerprint-row)');
+    const rows = spectator.queryAll('tn-list-item:not(.fingerprint-row)');
     return rows.reduce((acc, row) => {
       const label = row.querySelector('.label')?.textContent ?? '';
       const value = row.querySelector('.value')?.textContent?.replace(/\s{2,}/g, ' ').trim() ?? '';
@@ -116,7 +122,7 @@ describe('SysInfoComponent', () => {
         editContactsEmitted = true;
       });
 
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
       await manageButton.click();
 
       expect(editContactsEmitted).toBe(true);
@@ -147,7 +153,7 @@ describe('SysInfoComponent', () => {
       expect(spectator.query('.proactive-status')).toExist();
       expect(spectator.query('.proactive-status .value')?.textContent?.trim()).toBe('Not Available');
 
-      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
       expect(await manageButton.isDisabled()).toBe(true);
     });
   });
@@ -165,33 +171,40 @@ describe('SysInfoComponent', () => {
       const modelRow = spectator.query('.model-row');
       expect(modelRow).toExist();
 
-      const toggle = spectator.query('.model-row ix-slide-toggle');
+      const toggle = spectator.query('.model-row tn-slide-toggle');
       expect(toggle).toExist();
     });
   });
 
   describe('License fingerprint', () => {
+    it('shows the thumbprint row on community (non-enterprise) systems', () => {
+      expect(spectator.query('.fingerprint-row')).toExist();
+    });
+
+    it('hides the thumbprint row on enterprise systems', () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectIsEnterprise, true);
+      store$.refreshState();
+      spectator.detectChanges();
+
+      expect(spectator.query('.fingerprint-row')).not.toExist();
+    });
+
     it('renders a View Fingerprint button regardless of license state', async () => {
       spectator.setInput({ hasLicense: false, licenseInfo: undefined });
       expect(spectator.query('.fingerprint-row')).toExist();
-      const viewWithoutLicense = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[ixTest="view-fingerprint"]' }),
-      );
+      const viewWithoutLicense = await loader.getHarness(TnIconButtonHarness.with({ name: 'eye' }));
       expect(viewWithoutLicense).toBeTruthy();
 
       spectator.setInput({ hasLicense: true, licenseInfo, isProactiveSupportAvailable: true });
-      const viewWithLicense = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[ixTest="view-fingerprint"]' }),
-      );
+      const viewWithLicense = await loader.getHarness(TnIconButtonHarness.with({ name: 'eye' }));
       expect(viewWithLicense).toBeTruthy();
     });
 
     it('opens the LicenseFingerprintDialog when the eye icon is clicked, with no fetch from sys-info', async () => {
       spectator.setInput({ hasLicense: true, licenseInfo, isProactiveSupportAvailable: true });
 
-      const viewButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[ixTest="view-fingerprint"]' }),
-      );
+      const viewButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'eye' }));
       await viewButton.click();
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
@@ -210,9 +223,7 @@ describe('SysInfoComponent', () => {
         value: { writeText },
       });
 
-      const copyButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[ixTest="copy-fingerprint"]' }),
-      );
+      const copyButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'content-copy' }));
       await copyButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.license.fingerprint');
@@ -229,9 +240,7 @@ describe('SysInfoComponent', () => {
         value: { writeText },
       });
 
-      const copyButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[ixTest="copy-fingerprint"]' }),
-      );
+      const copyButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'content-copy' }));
       await copyButton.click();
       await copyButton.click();
 

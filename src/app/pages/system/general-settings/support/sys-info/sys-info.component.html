@@ -1,14 +1,14 @@
 @let license = licenseInfo();
-<mat-list>
+<tn-list>
   @if (hasLicense() && license) {
     @if (license.contractType) {
-      <mat-list-item>
+      <tn-list-item>
         <span class="label">{{ 'Contract Type' | translate }}:</span>
         <span class="value">{{ getLabelForContractType(license.contractType) }}</span>
-      </mat-list-item>
+      </tn-list-item>
     }
     @if (license.expirationDateDisplay) {
-      <mat-list-item>
+      <tn-list-item>
         <span class="label">{{ 'Expiration Date' | translate }}:</span>
         <span class="value">
           {{ license.expirationDateDisplay }}
@@ -24,10 +24,10 @@
             }
           }
         </span>
-      </mat-list-item>
+      </tn-list-item>
     }
     @if (isProactiveSupportEnabled() || !isProactiveSupportAvailable()) {
-      <mat-list-item class="proactive-status">
+      <tn-list-item class="proactive-status">
         <span class="label">{{ 'Proactive Support' | translate }}:</span>
         @if (isProactiveSupportEnabled()) {
           <span class="value">{{ 'Enabled' | translate }}</span>
@@ -36,46 +36,46 @@
         }
         <span
           class="edit-contacts-wrapper"
-          [matTooltip]="isProactiveSupportAvailable() ? '' : (helptext.proactive.unavailableMessage | translate)"
+          [tnTooltip]="isProactiveSupportAvailable() ? '' : (helptext.proactive.unavailableMessage | translate)"
         >
-          <button
+          <tn-button
             *ixRequiresRoles="manageProactiveRoles"
-            mat-button
             class="edit-contacts-btn"
+            [label]="'Manage' | translate"
             [disabled]="!isProactiveSupportAvailable()"
-            (click)="editContacts.emit()"
-          >
-            {{ 'Manage' | translate }}
-          </button>
+            (onClick)="editContacts.emit()"
+          ></tn-button>
         </span>
-      </mat-list-item>
+      </tn-list-item>
     }
-    <mat-list-item class="model-row">
-      <span class="label">{{ 'Model' | translate }}:</span>
-      <span class="value">{{ license.model || systemInfo().model }}</span>
-      @if (productionControl()) {
-        <ix-slide-toggle
-          *ixRequiresRoles="productionToggleRoles"
-          class="production-toggle"
-          color="primary"
-          [formControl]="productionControl()"
-          [label]="'This is a production system' | translate"
-        ></ix-slide-toggle>
-      }
-    </mat-list-item>
+    <tn-list-item class="model-row">
+      <div class="row-with-action">
+        <span class="label">{{ 'Model' | translate }}:</span>
+        <span class="value">{{ license.model || systemInfo().model }}</span>
+        @if (productionControl()) {
+          <tn-slide-toggle
+            *ixRequiresRoles="productionToggleRoles"
+            class="production-toggle"
+            color="primary"
+            [formControl]="productionControl()"
+            [label]="'This is a production system' | translate"
+          ></tn-slide-toggle>
+        }
+      </div>
+    </tn-list-item>
     @if (systemInfo().system_serial) {
-      <mat-list-item>
+      <tn-list-item>
         <span class="label">{{ 'System Serial' | translate }}:</span>
         <span class="value">{{ systemInfo().system_serial }}</span>
-      </mat-list-item>
+      </tn-list-item>
     }
     @if (license.serials.length) {
-      <mat-list-item>
+      <tn-list-item>
         <span class="label">{{ 'Licensed Serials' | translate }}:</span>
         <span class="value">{{ license.serials.join(' / ') }}</span>
-      </mat-list-item>
+      </tn-list-item>
     }
-    <mat-list-item>
+    <tn-list-item>
       <span class="label">{{ 'Features' | translate }}:</span>
       <span class="value">
         @if (license.featureNames.length) {
@@ -84,66 +84,68 @@
           {{ 'NONE' | translate }}
         }
       </span>
-    </mat-list-item>
+    </tn-list-item>
     @if (license.additionalHardware) {
-      <mat-list-item>
+      <tn-list-item>
         <span class="label">{{ 'Additional Hardware' | translate }}:</span>
         <span class="value">{{ license.additionalHardware }}</span>
-      </mat-list-item>
+      </tn-list-item>
     }
   } @else {
-    <mat-list-item>
+    <tn-list-item>
       <span class="label">{{ 'OS Version' | translate }}:</span>
       <span class="value">{{ systemInfo().version }}</span>
-    </mat-list-item>
-    <mat-list-item>
+    </tn-list-item>
+    <tn-list-item>
       <span class="label">{{ 'Product' | translate }}:</span>
       <span class="value">{{ systemInfo().system_product }}</span>
-    </mat-list-item>
+    </tn-list-item>
     @if (systemInfo().model) {
-      <mat-list-item>
+      <tn-list-item>
         <span class="label">{{ 'Model' | translate }}:</span>
         <span class="value">{{ systemInfo().model }}</span>
-      </mat-list-item>
+      </tn-list-item>
     }
     @if (systemInfo().memory) {
-      <mat-list-item>
+      <tn-list-item>
         <span class="label">{{ 'Memory' | translate }}:</span>
         <span class="value">{{ systemInfo().memory }}</span>
-      </mat-list-item>
+      </tn-list-item>
     }
     @if (systemInfo().system_serial) {
-      <mat-list-item>
+      <tn-list-item>
         <span class="label">{{ 'System Serial' | translate }}:</span>
         <span class="value">{{ systemInfo().system_serial }}</span>
-      </mat-list-item>
+      </tn-list-item>
     }
   }
 
-  <mat-list-item class="fingerprint-row">
-    <span class="label">{{ 'System Thumbprint' | translate }}:</span>
-    <span class="value fingerprint-actions">
-      <button
-        mat-icon-button
-        type="button"
-        ixTest="view-fingerprint"
-        [attr.aria-label]="'View System Thumbprint' | translate"
-        [matTooltip]="'View Thumbprint' | translate"
-        (click)="openFingerprintDialog()"
-      >
-        <tn-icon name="eye" library="mdi" size="md"></tn-icon>
-      </button>
-      <button
-        mat-icon-button
-        type="button"
-        ixTest="copy-fingerprint"
-        [attr.aria-label]="'Copy System Thumbprint' | translate"
-        [disabled]="isFingerprintBusy()"
-        [matTooltip]="'Copy to Clipboard' | translate"
-        (click)="copyFingerprint()"
-      >
-        <tn-icon name="content-copy" library="mdi" size="md"></tn-icon>
-      </button>
-    </span>
-  </mat-list-item>
-</mat-list>
+  @if (!isEnterprise()) {
+    <tn-list-item class="fingerprint-row">
+      <div class="row-with-action">
+        <span class="label">{{ 'System Thumbprint' | translate }}:</span>
+        <span class="value fingerprint-actions">
+          <tn-icon-button
+            name="eye"
+            library="mdi"
+            size="md"
+            [testId]="'view-fingerprint'"
+            [ariaLabel]="'View System Thumbprint' | translate"
+            [tooltip]="'View Thumbprint' | translate"
+            (onClick)="openFingerprintDialog()"
+          ></tn-icon-button>
+          <tn-icon-button
+            name="content-copy"
+            library="mdi"
+            size="md"
+            [testId]="'copy-fingerprint'"
+            [ariaLabel]="'Copy System Thumbprint' | translate"
+            [disabled]="isFingerprintBusy()"
+            [tooltip]="'Copy to Clipboard' | translate"
+            (onClick)="copyFingerprint()"
+          ></tn-icon-button>
+        </span>
+      </div>
+    </tn-list-item>
+  }
+</tn-list>

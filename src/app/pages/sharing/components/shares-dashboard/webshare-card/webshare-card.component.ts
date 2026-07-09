@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, viewChild, DestroyRef,
+  ChangeDetectionStrategy, Component, computed, inject, OnInit, DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -11,13 +11,14 @@ import {
   TnBannerComponent,
   TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
+  TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
@@ -28,8 +29,9 @@ import {
   filter, switchMap, map, of, catchError, shareReplay, Subject, startWith,
 } from 'rxjs';
 import { combineLatestWith } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
@@ -42,7 +44,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TableActionsCellComponent,
@@ -71,8 +73,10 @@ import { selectService } from 'app/store/services/services.selectors';
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
+    TnCardHeaderActionsDirective,
+    TnCardFooterActionsDirective,
+    TnSlideToggleComponent,
+    RequiresRolesDirective,
     TnTooltipDirective,
     RouterLink,
     TnIconComponent,
@@ -85,7 +89,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCellDefDirective,
     IxTablePagerShowMoreComponent,
     CardAlertBadgeComponent,
-    ServiceWebshareComponent,
     TableActionsCellComponent,
   ],
 })
@@ -94,7 +97,7 @@ export class WebShareCardComponent implements OnInit {
   protected readonly cardMenuPath = ['sharing', 'webshare'];
 
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private router = inject(Router);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
@@ -104,10 +107,10 @@ export class WebShareCardComponent implements OnInit {
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
   private authService = inject(AuthService);
-  private actionsMenu = inject(ServiceActionsMenuService);
+  protected actionsMenu = inject(ServiceActionsMenuService);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
-  private service = toSignal(this.service$);
+  protected service = toSignal(this.service$);
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
   protected dataProvider: AsyncDataProvider<WebShareTableRow>;
 
@@ -131,7 +134,7 @@ export class WebShareCardComponent implements OnInit {
     map((config) => config?.status === TruenasConnectStatus.Configured),
   );
 
-  private hasTruenasConnect = toSignal(this.hasTruenasConnect$, { initialValue: false });
+  protected hasTruenasConnect = toSignal(this.hasTruenasConnect$, { initialValue: false });
 
   showNoWebshareUsersNotice$ = this.hasTruenasConnect$.pipe(
     combineLatestWith(this.webShareService.hasWebshareUsers$),
@@ -153,34 +156,14 @@ export class WebShareCardComponent implements OnInit {
     };
   });
 
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      disabled: !this.hasTruenasConnect(),
-      testId: 'button-webshare-add',
-      handler: () => this.onAddClicked(),
-    };
-  });
-
-  protected configOpen = signal(false);
-  protected configForm = viewChild(ServiceWebshareComponent);
-  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
-    () => this.configForm()?.hasUnsavedChanges() ?? false,
-  );
-
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
     this.hasAddRole(),
-    () => this.configOpen.set(true),
+    () => this.openConfig(),
   ));
 
-  protected serviceControl = computed(() => this.actionsMenu.buildServiceControl(this.service(), this.hasAddRole()));
-
-  protected onConfigClosed(): void {
-    this.configOpen.set(false);
+  protected openConfig(): void {
+    this.formPanel.open(ServiceWebshareComponent, { title: serviceNames.get(ServiceName.WebShare) });
   }
 
   protected readonly actions: IconActionConfig<WebShareTableRow>[] = [
@@ -189,10 +172,8 @@ export class WebShareCardComponent implements OnInit {
       tooltip: this.translate.instant('Open'),
       onClick: (row) => this.openWebShareByName(row),
       disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
-      dynamicTooltip: () => this.webShareService.canOpenWebShare$.pipe(
-        map((canOpen) => (canOpen
-          ? this.translate.instant('Open')
-          : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'))),
+      dynamicTooltip: () => this.webShareService.webShareUnavailableReason$.pipe(
+        map((reason) => reason ?? this.translate.instant('Open')),
       ),
     },
     {
@@ -273,13 +254,16 @@ export class WebShareCardComponent implements OnInit {
   }
 
   protected doEdit(row: WebShareTableRow): void {
-    this.slideIn.open(WebShareSharesFormComponent, {
-      data: {
-        id: row.id,
-        isNew: false,
-        name: row.name,
-        path: row.path,
-        isHomeBase: row.isHomeBase,
+    this.formPanel.open(WebShareSharesFormComponent, {
+      title: this.translate.instant(this.helptext.webshare_form_title_edit),
+      inputs: {
+        webShareData: {
+          id: row.id,
+          isNew: false,
+          name: row.name,
+          path: row.path,
+          isHomeBase: row.isHomeBase,
+        },
       },
     }).onSuccess(() => this.refreshConfig$.next(), this.destroyRef);
   }

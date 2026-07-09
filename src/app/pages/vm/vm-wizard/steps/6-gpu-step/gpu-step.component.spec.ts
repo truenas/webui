@@ -1,7 +1,7 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnStepperComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -17,7 +17,7 @@ describe('GpuStepComponent', () => {
   const createComponent = createComponentFactory({
     component: GpuStepComponent,
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(GpuService, {
         getRawGpuPciChoices: () => of({
           'GeForce GTX 1080 [0000:03:00.0]': {

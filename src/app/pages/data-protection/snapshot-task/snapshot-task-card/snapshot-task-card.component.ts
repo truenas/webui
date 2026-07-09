@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -36,7 +36,8 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -83,7 +84,7 @@ import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 })
 export class SnapshotTaskCardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
@@ -200,17 +201,30 @@ export class SnapshotTaskCardComponent implements OnInit {
     return this.api.call('pool.snapshottask.delete', [taskId, { fixate_removal_date: fixateRemovalDate }]).pipe(this.loader.withLoader());
   }
 
+  // SnapshotTaskFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
+  private readonly snapshotTaskForm = SnapshotTaskFormComponent as unknown as Type<SidePanelForm>;
+
   protected openForm(row?: PeriodicSnapshotTaskUi): void {
-    this.slideIn.open(SnapshotTaskFormComponent, { data: row, wide: true })
-      .onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
+    this.formPanel.open(this.snapshotTaskForm, {
+      title: row
+        ? this.translate.instant('Edit Periodic Snapshot Task')
+        : this.translate.instant('Add Periodic Snapshot Task'),
+      wide: true,
+      inputs: { taskToEdit: row },
+    }).onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
   }
 
-  protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
+  protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi, toggle: TableToggleCellComponent): void {
     this.api
       .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
+        next: () => {
+          this.getSnapshotTasks();
+        },
         error: (error: unknown) => {
+          toggle.revert();
           this.errorHandler.showErrorModal(error);
         },
       });

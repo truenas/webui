@@ -4,9 +4,8 @@ import { MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -39,7 +38,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatIconButton,
     TestDirective,
     UiSearchDirective,
-    MatTooltip,
+    TnTooltipDirective,
     RequiresRolesDirective,
   ],
 })

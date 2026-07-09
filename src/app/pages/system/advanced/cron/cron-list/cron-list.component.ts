@@ -1,34 +1,39 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnDialog,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnSortEvent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+} from '@truenas/ui-components';
+import { isValid } from 'date-fns';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { createTable } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -45,31 +50,30 @@ import { TaskService } from 'app/services/task.service';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
+    TnButtonComponent,
     UiSearchDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
-    IxTableDetailsRowComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
+    TnEmptyComponent,
     TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    YesNoPipe,
+    ScheduleDescriptionPipe,
   ],
 })
 export class CronListComponent implements OnInit {
-  private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private taskService = inject(TaskService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private slideIn = inject(SlideIn);
   private tnDialog = inject(TnDialog);
+  private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
@@ -79,58 +83,17 @@ export class CronListComponent implements OnInit {
   cronjobs: CronjobRow[] = [];
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<CronjobRow>;
-  columns = createTable<CronjobRow>([
-    textColumn({
-      title: this.translate.instant('Users'),
-      propertyName: 'user',
-    }),
-    textColumn({
-      title: this.translate.instant('Command'),
-      propertyName: 'command',
-    }),
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'description',
-    }),
-    textColumn({
-      title: this.translate.instant('Schedule'),
-      propertyName: 'schedule',
-      getValue: (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
-    }),
-    textColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-      getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Next Run'),
-      hidden: true,
-      getValue: (task) => {
-        if (task.enabled) {
-          return this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule));
-        }
-        return this.translate.instant('Disabled');
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Hide Stdout'),
-      propertyName: 'stdout',
-      getValue: (task) => (task.stdout ? this.translate.instant('Yes') : this.translate.instant('No')),
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Hide Stderr'),
-      propertyName: 'stderr',
-      getValue: (task) => (task.stderr ? this.translate.instant('Yes') : this.translate.instant('No')),
-      hidden: true,
-    }),
-  ], {
-    uniqueRowTag: (row) => 'cron-' + row.command + '-' + row.description,
-    ariaLabels: (row) => [row.command, this.translate.instant('Cron Job')],
-  });
 
-  protected get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
-    return this.columns.filter((column) => column?.hidden);
+  protected readonly displayedColumns = ['user', 'command', 'description', 'schedule', 'enabled', 'next_run'];
+
+  protected readonly trackBy = (_: number, row: CronjobRow): number => row.id;
+
+  protected getNextRun(row: CronjobRow): string {
+    if (!row.enabled) {
+      return this.translate.instant('Disabled');
+    }
+    const nextRun = this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule));
+    return isValid(nextRun) ? formatDistanceToNowShortened(nextRun as Date) : (nextRun as string);
   }
 
   ngOnInit(): void {
@@ -156,11 +119,15 @@ export class CronListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(CronFormComponent).onSuccess(() => this.getCronJobs(), this.destroyRef);
+    this.formPanel.open(CronFormComponent, { title: this.translate.instant('Add Cron Job') })
+      .onSuccess(() => this.getCronJobs(), this.destroyRef);
   }
 
   protected doEdit(row: CronjobRow): void {
-    this.slideIn.open(CronFormComponent, { data: row }).onSuccess(() => this.getCronJobs(), this.destroyRef);
+    this.formPanel.open(CronFormComponent, {
+      title: this.translate.instant('Edit Cron Job'),
+      inputs: { editCronjob: row },
+    }).onSuccess(() => this.getCronJobs(), this.destroyRef);
   }
 
   protected runNow(row: CronjobRow): void {
@@ -200,9 +167,7 @@ export class CronListComponent implements OnInit {
     this.dataProvider.setFilter({ query, columnKeys: ['user'] });
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<CronjobRow>(event, this.displayedColumns));
   }
 }

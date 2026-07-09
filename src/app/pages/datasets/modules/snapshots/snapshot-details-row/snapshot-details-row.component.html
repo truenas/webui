@@ -71,40 +71,34 @@
   </ng-container>
 </dl>
 
-<mat-divider></mat-divider>
+<tn-divider></tn-divider>
 
 <div class="actions">
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    [ixTest]="['clone', snapshot().snapshot_name]"
-    (click)="doClone(snapshot())"
-  >
-    {{ 'Clone To New Dataset' | translate }}
-  </button>
+    [label]="'Clone To New Dataset' | translate"
+    [testId]="['clone', snapshot().snapshot_name]"
+    (onClick)="doClone(snapshot())"
+  ></tn-button>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    [ixTest]="['rollback', snapshot().snapshot_name]"
-    (click)="doRollback(snapshot())"
-  >
-    {{ 'Rollback' | translate }}
-  </button>
+    [label]="'Rollback' | translate"
+    [testId]="['rollback', snapshot().snapshot_name]"
+    (onClick)="doRollback(snapshot())"
+  ></tn-button>
 
   <span
-    [matTooltip]="'Snapshots must not have dependent clones' | translate"
-    [matTooltipDisabled]="!hasClones"
+    [tnTooltip]="'Snapshots must not have dependent clones' | translate"
+    [tnTooltipDisabled]="!hasClones"
   >
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      [ixTest]="['delete', snapshot().snapshot_name]"
+      [label]="'Delete' | translate"
+      [testId]="['delete', snapshot().snapshot_name]"
       [disabled]="hasClones"
-      (click)="doDelete(snapshot())"
-    >
-      {{ 'Delete' | translate }}
-    </button>
+      (onClick)="doDelete(snapshot())"
+    ></tn-button>
   </span>
 </div>
 

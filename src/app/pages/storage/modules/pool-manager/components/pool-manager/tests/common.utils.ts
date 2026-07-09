@@ -1,5 +1,4 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatStepperModule } from '@angular/material/stepper';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnDialog } from '@truenas/ui-components';
@@ -92,7 +91,6 @@ import { selectHasEnclosureSupport, selectIsEnterprise } from 'app/store/system-
 
 export const commonImports = [
   ReactiveFormsModule,
-  MatStepperModule,
   FileSizePipe,
   MapValuePipe,
   CastPipe,

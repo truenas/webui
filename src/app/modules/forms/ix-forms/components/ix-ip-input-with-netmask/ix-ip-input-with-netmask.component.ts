@@ -1,14 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
-import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { MatOption } from '@angular/material/core';
-import { MatInput } from '@angular/material/input';
-import { MatSelectChange, MatSelect } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
+import { ControlValueAccessor, FormsModule, NgControl, ReactiveFormsModule } from '@angular/forms';
+import { TnSelectComponent, TnSelectOption, TnTestIdDirective } from '@truenas/ui-components';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { NetworkService } from 'app/services/network.service';
 
@@ -19,13 +15,11 @@ import { NetworkService } from 'app/services/network.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxLabelComponent,
-    MatInput,
-    MatSelect,
+    FormsModule,
     ReactiveFormsModule,
-    MatOption,
+    TnSelectComponent,
+    TnTestIdDirective,
     IxErrorsComponent,
-    TranslateModule,
-    TestDirective,
     TestOverrideDirective,
   ],
   hostDirectives: [
@@ -49,7 +43,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   address = '';
   netmask = '';
 
-  netmaskOptions = this.network.getV4Netmasks();
+  netmaskOptions: TnSelectOption<string>[] = this.mapNetmaskOptions(this.network.getV4Netmasks());
 
   constructor() {
     this.controlDirective.valueAccessor = this;
@@ -61,8 +55,8 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
     this.setNetmaskOptions();
   }
 
-  onNetmaskChange($event: MatSelectChange): void {
-    this.netmask = $event.value as string;
+  onNetmaskChange(value: string): void {
+    this.netmask = value;
     this.onValueChanged();
   }
 
@@ -102,9 +96,18 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   private setNetmaskOptions(): void {
     const isIp6 = this.address.includes(':');
     if (isIp6) {
-      this.netmaskOptions = this.network.getV6PrefixLength();
+      this.netmaskOptions = this.mapNetmaskOptions(this.network.getV6PrefixLength());
     } else {
-      this.netmaskOptions = this.network.getV4Netmasks();
+      this.netmaskOptions = this.mapNetmaskOptions(this.network.getV4Netmasks());
     }
+  }
+
+  // Netmask labels are display-ready (CIDR numbers / a placeholder), never translatable text, so
+  // they pass through verbatim — the form control value is `${address}/${netmask}`.
+  private mapNetmaskOptions(options: { label: string; value: string | number }[]): TnSelectOption<string>[] {
+    return options.map((option) => ({
+      label: option.label,
+      value: String(option.value),
+    }));
   }
 }

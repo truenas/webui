@@ -59,16 +59,7 @@ ix-fake-progress-bar {
 }
 
 .table-wrapper {
-  table {
-    th:last-child,
-    td:last-child {
-      text-align: right;
-    }
-
-    td:last-child button {
-      float: right;
-    }
-  }
+  display: block;
 }
 
 // tnTooltipClass is fed straight into the CDK overlay panelClass array, which

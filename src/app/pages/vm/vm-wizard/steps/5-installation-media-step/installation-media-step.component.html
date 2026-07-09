@@ -7,26 +7,26 @@
   ></ix-explorer>
 
   <div class="upload-button">
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="upload-image-file"
-      (click)="onUploadIsoClicked()"
-    >{{ 'Upload New Image File' | translate }}</button>
+      [testId]="'upload-image-file'"
+      [label]="'Upload New Image File' | translate"
+      (onClick)="onUploadIsoClicked()"
+    ></tn-button>
   </div>
 
   <ix-form-actions>
-    <button
-      mat-button
-      matStepperPrevious
-      ixTest="back"
-    >{{ 'Back' | translate }}</button>
-    <button
-      mat-button
-      matStepperNext
+    <tn-button
+      tnStepperPrevious
+      [testId]="'back'"
+      [label]="'Back' | translate"
+    ></tn-button>
+    <tn-button
+      tnStepperNext
       color="primary"
-      ixTest="next"
+      [testId]="'next'"
+      [label]="'Next' | translate"
       [disabled]="form.invalid"
-    >{{ 'Next' | translate }}</button>
+    ></tn-button>
   </ix-form-actions>
 </form>

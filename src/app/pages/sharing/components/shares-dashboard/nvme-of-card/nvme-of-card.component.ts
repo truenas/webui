@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, inject, signal, viewChild, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -8,21 +8,22 @@ import {
   tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
-  TnSidePanelActionDirective,
-  TnSidePanelComponent,
+  TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
-  type TnCardAction,
   type TnSortEvent,
   TnDialog,
 } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -36,7 +37,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TableActionsCellComponent,
@@ -65,8 +66,10 @@ import { selectService } from 'app/store/services/services.selectors';
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
-    TnSidePanelComponent,
-    TnSidePanelActionDirective,
+    TnCardHeaderActionsDirective,
+    TnCardFooterActionsDirective,
+    TnSlideToggleComponent,
+    RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -81,12 +84,11 @@ import { selectService } from 'app/store/services/services.selectors';
     TnEmptyComponent,
     SubSystemNameCellComponent,
     CardAlertBadgeComponent,
-    NvmeOfConfigurationComponent,
     TableActionsCellComponent,
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
   private store$ = inject<Store<ServicesState>>(Store);
@@ -98,47 +100,30 @@ export class NvmeOfCardComponent implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
-  private actionsMenu = inject(ServiceActionsMenuService);
+  protected actionsMenu = inject(ServiceActionsMenuService);
 
   requiredRoles = [Role.SharingNvmeTargetWrite];
   protected readonly isLoading = this.nvmeOfStore.isLoading;
   protected readonly cardMenuPath = ['sharing', 'nvme-of'];
 
   protected service$ = this.store$.select(selectService(ServiceName.NvmeOf));
-  private service = toSignal(this.service$);
+  protected service = toSignal(this.service$);
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
   protected serviceStatus = computed(() => this.actionsMenu.buildCardHeaderStatus(this.service()));
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
-  protected addAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasAddRole()) {
-      return undefined;
-    }
-    return {
-      label: this.translate.instant('Add'),
-      testId: 'button-nvme-of-share-add',
-      handler: () => this.openForm(),
-    };
-  });
-
-  protected configOpen = signal(false);
-  protected configForm = viewChild(NvmeOfConfigurationComponent);
-  protected closeConfigGuard = this.actionsMenu.buildUnsavedChangesGuard(
-    () => this.configForm()?.hasUnsavedChanges() ?? false,
-  );
-
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
     this.hasAddRole(),
-    () => this.configOpen.set(true),
+    () => this.openConfig(),
   ));
 
-  protected serviceControl = computed(() => this.actionsMenu.buildServiceControl(this.service(), this.hasAddRole()));
-
-  protected onConfigClosed(): void {
-    this.configOpen.set(false);
+  protected openConfig(): void {
+    this.formPanel.open(NvmeOfConfigurationComponent, {
+      title: this.translate.instant('NVMe-oF Global Configuration'),
+    });
   }
 
   protected readonly subsystems = this.nvmeOfStore.subsystems;
@@ -205,7 +190,12 @@ export class NvmeOfCardComponent implements OnInit {
   }
 
   openForm(): void {
-    this.slideIn.open(AddSubsystemComponent)
+    // Opened footerless — the add-subsystem stepper owns its own Next/Back/Save buttons. Uses the
+    // side-panel host (not legacy SlideIn) so a nested panel it opens (e.g. Add Host) stacks on top.
+    this.formPanel.open(AddSubsystemComponent, {
+      title: this.translate.instant('Add Subsystem'),
+      footerless: true,
+    })
       .onSuccess(() => this.nvmeOfStore.initialize(), this.destroyRef);
   }
 

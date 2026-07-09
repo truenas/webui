@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+} from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
-  Subject, distinctUntilChanged, map, shareReplay, startWith, switchMap, tap,
+  Subject, distinctUntilChanged, map, shareReplay, startWith, switchMap, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -19,8 +20,7 @@ import { SyslogServer } from 'app/interfaces/advanced-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { syslogCardElements } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.elements';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -36,19 +36,15 @@ export interface SyslogConfig {
 
 @Component({
   selector: 'ix-syslog-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./syslog-card.component.scss'],
   templateUrl: './syslog-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnButtonComponent,
     WithLoadingStateDirective,
     TranslateModule,
     MapValuePipe,
@@ -57,12 +53,13 @@ export interface SyslogConfig {
 })
 export class SyslogCardComponent {
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private translate = inject(TranslateService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   private readonly reloadConfig$ = new Subject<void>();
+  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
   protected readonly searchableElements = syslogCardElements;
 
   protected formatSyslogServers(config: { syslogservers?: SyslogServer[] }): string {
@@ -81,9 +78,6 @@ export class SyslogCardComponent {
       .join(', ');
   }
 
-  protected readonly requiredRoles = [Role.SystemAdvancedWrite];
-
-  private syslogConfig: SyslogConfig;
   readonly advancedConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => {
@@ -114,7 +108,6 @@ export class SyslogCardComponent {
         }),
       );
     }),
-    tap((config) => this.syslogConfig = config),
     toLoadingState(),
     shareReplay({
       refCount: false,
@@ -126,11 +119,11 @@ export class SyslogCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      // Using .success$ instead of .onSuccess() because we need it inside a switchMap chain.
-      switchMap(() => this.slideIn.open(SyslogFormComponent, { data: this.syslogConfig }).success$),
+      take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.reloadConfig$.next();
+      this.formPanel.open(SyslogFormComponent, { title: this.translate.instant('Syslog') })
+        .onSuccess(() => this.reloadConfig$.next(), this.destroyRef);
     });
   }
 }

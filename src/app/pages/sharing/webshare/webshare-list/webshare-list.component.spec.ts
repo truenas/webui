@@ -18,11 +18,12 @@ import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { selectService } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -32,6 +33,7 @@ describe('WebShareListComponent', () => {
   let spectator: Spectator<WebShareListComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+  let formPanel: FormSidePanelService;
   let table: TnTableHarness;
 
   const mockWebShares: WebShare[] = [
@@ -65,7 +67,7 @@ describe('WebShareListComponent', () => {
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
@@ -114,6 +116,7 @@ describe('WebShareListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
+    formPanel = spectator.inject(FormSidePanelService);
     spectator.detectChanges();
 
     table = await loader.getHarness(TnTableHarness);
@@ -126,31 +129,40 @@ describe('WebShareListComponent', () => {
     expect(spectator.component.dataProvider).toBeDefined();
   });
 
-  it('opens the side panel with new-share data when Add is clicked', () => {
+  it('should open form when Add button is clicked', () => {
     spectator.component.doAdd();
+    spectator.detectChanges();
 
-    expect(spectator.component.configOpen()).toBe(true);
-    expect(spectator.component.formData()).toEqual({
-      isNew: true,
-      name: '',
-      path: '',
+    expect(formPanel.open).toHaveBeenCalledWith(WebShareSharesFormComponent, {
+      title: 'Add WebShare',
+      inputs: {
+        webShareData: {
+          isNew: true,
+          name: '',
+          path: '',
+        },
+      },
     });
   });
 
-  it('opens the side panel with the row data when Edit is clicked', () => {
+  it('should open form when Edit action is clicked', () => {
     spectator.component.doEdit({
       id: 1,
       name: 'documents',
       path: '/mnt/tank/documents',
     });
 
-    expect(spectator.component.configOpen()).toBe(true);
-    expect(spectator.component.formData()).toEqual({
-      id: 1,
-      isNew: false,
-      name: 'documents',
-      path: '/mnt/tank/documents',
-      isHomeBase: undefined,
+    expect(formPanel.open).toHaveBeenCalledWith(WebShareSharesFormComponent, {
+      title: 'Edit WebShare',
+      inputs: {
+        webShareData: {
+          id: 1,
+          isNew: false,
+          name: 'documents',
+          path: '/mnt/tank/documents',
+          isHomeBase: undefined,
+        },
+      },
     });
   });
 
@@ -199,24 +211,14 @@ describe('WebShareListComponent', () => {
     });
   });
 
-  it('reloads data and closes the panel after a successful save', () => {
+  it('should reload data after successful form submission', () => {
+    jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(true));
     jest.spyOn(spectator.component.dataProvider, 'load');
+
     spectator.component.doAdd();
+    spectator.detectChanges();
 
-    spectator.component.onFormClosed(true);
-
-    expect(spectator.component.configOpen()).toBe(false);
     expect(spectator.component.dataProvider.load).toHaveBeenCalled();
-  });
-
-  it('does not reload when the panel is closed without saving', () => {
-    jest.spyOn(spectator.component.dataProvider, 'load');
-    spectator.component.doAdd();
-
-    spectator.component.onFormClosed(false);
-
-    expect(spectator.component.configOpen()).toBe(false);
-    expect(spectator.component.dataProvider.load).not.toHaveBeenCalled();
   });
 
   it('should sort shares by name by default', () => {
@@ -277,7 +279,7 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
@@ -358,7 +360,7 @@ describe('WebShareListComponent - No WebShare users configured', () => {
         mockCall('tn_connect.config', mockTruenasConnectConfig),
         mockCall('user.query', []),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
@@ -378,6 +380,7 @@ describe('WebShareListComponent - No WebShare users configured', () => {
         hostnameMapping$: of({ ipsWithHostnames: {}, localIp: '', hostname: undefined }),
         isTruenasDirectDomain: true,
         canOpenWebShare$: of(true),
+        webShareUnavailableReason$: of(null),
       }),
       provideMockStore({
         initialState: {

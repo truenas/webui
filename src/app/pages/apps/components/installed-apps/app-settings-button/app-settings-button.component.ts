@@ -3,23 +3,22 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, ViewContainerRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
-  filter, forkJoin, switchMap,
+  TnButtonComponent, TnDialog, TnIconComponent, TnMenuComponent, TnMenuItemComponent,
+  TnMenuTriggerDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
+import {
+  filter, forkJoin,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
@@ -32,35 +31,40 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   styleUrls: ['./app-settings-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    TestDirective,
-    UiSearchDirective,
-    MatMenuTrigger,
-    TranslateModule,
+    TnButtonComponent,
     TnIconComponent,
-    MatMenu,
+    UiSearchDirective,
+    TnMenuTriggerDirective,
+    TranslateModule,
+    TnMenuComponent,
     RequiresRolesDirective,
-    MatMenuItem,
-    RouterLink,
-    MatTooltipModule,
+    TnMenuItemComponent,
+    TnTooltipDirective,
     AsyncPipe,
   ],
 })
 export class AppSettingsButtonComponent {
-  private ixSlideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   protected dockerStore = inject(DockerStore);
   protected appsStore = inject(AppsStore);
+  private formPanel = inject(FormSidePanelService);
   private viewContainerRef = inject(ViewContainerRef);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   readonly searchableElements = appSettingsButtonElements;
   protected readonly updateDockerRoles = [Role.DockerWrite];
 
   protected readonly helptext = helptextApps;
+
+  // tn-menu-item renders as a button, not an anchor, so these navigation items
+  // can't use [routerLink] — route programmatically instead of from the template.
+  protected goTo(commands: string[]): void {
+    this.router.navigate(commands);
+  }
 
   onChoosePool(): void {
     this.tnDialog
@@ -86,12 +90,12 @@ export class AppSettingsButtonComponent {
   }
 
   manageCatalog(): void {
-    this.ixSlideIn.open(AppsSettingsComponent).success$.pipe(
-      switchMap(() => forkJoin([
-        this.dockerStore.reloadDockerConfig(),
-        this.appsStore.loadCatalog(),
-      ])),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    this.formPanel.open(AppsSettingsComponent, { title: this.translate.instant('Settings'), testId: 'apps-settings' })
+      .onSuccess(() => {
+        forkJoin([
+          this.dockerStore.reloadDockerConfig(),
+          this.appsStore.loadCatalog(),
+        ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+      }, this.destroyRef);
   }
 }

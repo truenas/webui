@@ -1,21 +1,18 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnRadioHarness, TnStepperComponent } from '@truenas/ui-components';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 
 describe('ReplicationWhenComponent', () => {
   let spectator: Spectator<ReplicationWhenComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const createComponent = createComponentFactory({
     component: ReplicationWhenComponent,
@@ -23,21 +20,22 @@ describe('ReplicationWhenComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockAuth(),
       mockApi(),
     ],
   });
 
+  const setRadio = async (label: string): Promise<void> => {
+    await (await loader.getHarness(TnRadioHarness.with({ label }))).check();
+  };
+
   beforeEach(async () => {
     spectator = createComponent();
     spectator.setInput('isSourceLocal', true);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
 
-    await form.fillForm({
-      'Destination Snapshot Lifetime': 'Custom',
-    });
+    await setRadio('Custom');
   });
 
   it('returns fields when getPayload() is called', () => {
@@ -60,9 +58,7 @@ describe('ReplicationWhenComponent', () => {
   });
 
   it('excludes source lifetime fields from payload when Run Once is selected', async () => {
-    await form.fillForm({
-      'Replication Schedule': 'Run Once',
-    });
+    await setRadio('Run Once');
 
     const payload = spectator.component.getPayload();
     expect(payload.source_lifetime_value).toBeUndefined();
@@ -79,7 +75,7 @@ describe('ReplicationWhenComponent', () => {
 
   it('emits (save) when Save is selected', async () => {
     jest.spyOn(spectator.component.save, 'emit');
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
     expect(spectator.component.save.emit).toHaveBeenCalled();
   });

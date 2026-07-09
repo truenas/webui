@@ -1,7 +1,7 @@
 <div class="table-header">
   @if (hasCheckedContainers) {
     <ix-container-list-bulk-actions
-      [checkedContainers]="checkedContainers"
+      [checkedContainers]="checkedContainers()"
       (resetBulkSelection)="resetSelection()"
     ></ix-container-list-bulk-actions>
   }
@@ -20,41 +20,138 @@
 </div>
 
 @if (containers() !== undefined && !filteredContainers().length && !isLoading()) {
-  <ix-empty [conf]="emptyConfig()"></ix-empty>
+  @if (searchQuery().length) {
+    <tn-empty
+      icon="magnify"
+      iconLibrary="mdi"
+      [title]="'No Search Results.' | translate"
+      [description]="'No matching results found' | translate"
+    ></tn-empty>
+  } @else {
+    <tn-empty
+      icon="laptop"
+      iconLibrary="mdi"
+      [title]="'No containers' | translate"
+      [description]="'Containers you create will automatically appear here.' | translate"
+    ></tn-empty>
+  }
 } @else {
-  <div class="containers">
-    <div class="containers-header-row">
-      <div class="cell checkbox">
-        @if (containers().length) {
-          <mat-checkbox
-            color="primary"
-            ixTest="select-all-containers"
-            [checked]="isAllSelected"
-            [indeterminate]="!isAllSelected && !!selection.selected.length"
-            [disabled]="filteredContainers().length === 0"
-            (change)="toggleAllChecked($event.checked)"
-          ></mat-checkbox>
-        }
-      </div>
-      <div class="cell">{{ 'Name' | translate }}</div>
-      <div class="cell">{{ 'Status' | translate }}</div>
-      <div class="cell">{{ 'Autostart' | translate }}</div>
-      <div class="cell">CPU</div>
-      <div class="cell">RAM</div>
-      <div class="cell">Disk I/O</div>
-      <div class="cell actions">{{ 'Controls' | translate }}</div>
-    </div>
+  <tn-table
+    class="containers-table"
+    [dataSource]="filteredContainers()"
+    [displayedColumns]="displayedColumns"
+    [trackBy]="trackByContainerId"
+    [selectable]="true"
+    [clickable]="true"
+    [activeRow]="selectedContainer() ?? null"
+    [loading]="isLoading()"
+    (rowClick)="navigateToDetails($event)"
+    (selectionChange)="onSelectionChange($event)"
+    (sortChange)="onSortChange($event)"
+  >
+    <ng-container [tnColumnDef]="'name'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span class="name">{{ row.name }}</span>
+      </ng-template>
+    </ng-container>
 
-    @for (container of filteredContainers(); track container.id) {
-      <ix-container-row
-        [container]="container"
-        [metrics]="metrics()?.[container.id]"
-        [class.selected]="selectedContainer()?.id === container.id"
-        [selected]="selection.isSelected(container.id)"
-        (click)="navigateToDetails(container)"
-        (selectionChange)="selection.toggle(container.id)"
-        (keydown.enter)="navigateToDetails(container)"
-      ></ix-container-row>
-    }
-  </div>
+    <ng-container [tnColumnDef]="'status'" [width]="'15%'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-container-status-cell [container]="row"></ix-container-status-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'autostart'" [width]="'11%'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Autostart' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        {{ row.autostart | yesNo }}
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'cpu'" [width]="'10%'">
+      <ng-template tnHeaderCellDef>{{ 'CPU' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span [tnTooltip]="'Percentage of total core utilization' | translate">
+          @if (hasMetrics(row)) {
+            {{ getMetrics(row)?.cpu.cpu_user_percentage.toFixed(0) }}%
+          } @else {
+            {{ 'N/A' | translate }}
+          }
+        </span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'ram'" [width]="'10%'">
+      <ng-template tnHeaderCellDef>{{ 'RAM' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span [tnTooltip]="'Memory Usage' | translate">
+          @if (hasMetrics(row)) {
+            {{ getMetrics(row)?.mem_usage.mem_usage_ram_mib.toFixed(0) }} MiB
+          } @else {
+            {{ 'N/A' | translate }}
+          }
+        </span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'io'" [width]="'10%'">
+      <ng-template tnHeaderCellDef>{{ 'Disk I/O' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span [tnTooltip]="'Disk I/O Full Pressure' | translate">
+          @if (hasMetrics(row)) {
+            {{ getMetrics(row)?.io_full_pressure.io_full_pressure_full_60_percentage.toFixed(0) }}%
+          } @else {
+            {{ 'N/A' | translate }}
+          }
+        </span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'controls'" [width]="'12%'">
+      <ng-template tnHeaderCellDef>{{ 'Controls' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <div class="controls-cell">
+          @if (isStopped(row)) {
+            <tn-icon-button
+              *ixRequiresRoles="requiredRoles"
+              name="play-circle"
+              library="mdi"
+              tooltipPosition="above"
+              [dense]="true"
+              [testId]="[row.name, 'start']"
+              [ariaLabel]="'Start' | translate"
+              [tooltip]="'Start' | translate"
+              (onClick)="start(row); $event.stopPropagation()"
+            ></tn-icon-button>
+          } @else {
+            <tn-icon-button
+              *ixRequiresRoles="requiredRoles"
+              name="restart"
+              library="mdi"
+              tooltipPosition="above"
+              [dense]="true"
+              [testId]="[row.name, 'restart']"
+              [ariaLabel]="'Restart' | translate"
+              [tooltip]="'Restart' | translate"
+              (onClick)="restart(row); $event.stopPropagation()"
+            ></tn-icon-button>
+
+            <tn-icon-button
+              *ixRequiresRoles="requiredRoles"
+              name="stop-circle"
+              library="mdi"
+              tooltipPosition="above"
+              [dense]="true"
+              [testId]="[row.name, 'stop']"
+              [ariaLabel]="'Stop' | translate"
+              [tooltip]="'Stop' | translate"
+              (onClick)="stop(row); $event.stopPropagation()"
+            ></tn-icon-button>
+          }
+        </div>
+      </ng-template>
+    </ng-container>
+  </tn-table>
 }

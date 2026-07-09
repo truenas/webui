@@ -1,24 +1,21 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { invalidDate } from 'app/constants/invalid-date';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { User } from 'app/interfaces/user.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxCellScheduleComponent,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
@@ -26,12 +23,14 @@ import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dia
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { TaskService } from 'app/services/task.service';
-import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+import { UserService } from 'app/services/user.service';
+import { selectSystemConfigState, selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('CronCardComponent', () => {
   let spectator: Spectator<CronCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
+  let formPanel: FormSidePanelService;
 
   const cronJobs = [
     {
@@ -56,7 +55,7 @@ describe('CronCardComponent', () => {
     component: CronCardComponent,
     overrideComponents: [
       [
-        IxCellScheduleComponent, {
+        CronCardComponent, {
           remove: { imports: [ScheduleDescriptionPipe] },
           add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'At 00:00, every day'))] },
         },
@@ -69,25 +68,35 @@ describe('CronCardComponent', () => {
             selector: selectSystemConfigState,
             value: {},
           },
+          {
+            selector: selectTimezone,
+            value: 'America/New_York',
+          },
         ],
       }),
       mockApi([
         mockCall('cronjob.query', cronJobs),
         mockCall('cronjob.run'),
+        mockCall('cronjob.create'),
+        mockCall('cronjob.update'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn((): undefined => undefined) }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
           closed: of(true),
         })),
       }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
+      }),
       mockProvider(LocaleService),
+      mockProvider(UserService, {
+        userQueryDsCache: () => of([{ username: 'root' }] as User[]),
+        getUserByName: (username: string) => of({ username } as User),
+        getUserByNameCached: (username: string) => of({ username } as User),
+      }),
       mockProvider(TaskService, {
         getTaskNextTime: jest.fn(() => invalidDate),
       }),
@@ -98,26 +107,38 @@ describe('CronCardComponent', () => {
     ],
   });
 
+  async function openFirstRowMenu(): Promise<TnMenuHarness> {
+    spectator.click(spectator.query('[data-test$="more-action"]') as HTMLElement);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Users', 'Command', 'Description', 'Schedule', 'Enabled', 'Next Run', ''],
+    expect(await table.getHeaderTexts()).toEqual([
+      'Users', 'Command', 'Description', 'Schedule', 'Enabled', 'Next Run', '',
+    ]);
+    expect(await table.getAllRowTexts()).toEqual([
       ['root', "echo 'Hello World'", 'test', 'At 00:00, every day', 'Yes', 'Invalid Date', ''],
-    ];
+    ]);
+  });
 
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+  it('opens the Add Cron Job form in a side panel when Add is pressed', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
+    expect(formPanel.open).toHaveBeenCalledWith(CronFormComponent, { title: 'Add Cron Job' });
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
@@ -128,21 +149,19 @@ describe('CronCardComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.run', [1]);
   });
 
-  it('shows form to edit an existing cronjob when Edit button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+  it('opens the Edit Cron Job form in the side panel with the selected row', async () => {
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      CronFormComponent,
-      { data: expect.objectContaining(cronJobs[0]) },
-    );
+    expect(formPanel.open).toHaveBeenCalledWith(CronFormComponent, {
+      title: 'Edit Cron Job',
+      inputs: { editCronjob: expect.objectContaining(cronJobs[0]) },
+    });
   });
 
   it('deletes a cronjob with confirmation when Delete button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openFirstRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(CronDeleteDialog, {
       data: expect.objectContaining({ id: 1 }),

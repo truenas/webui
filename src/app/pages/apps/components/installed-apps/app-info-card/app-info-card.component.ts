@@ -1,16 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, output, signal, WritableSignal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, output, signal,
+  WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import {
-  MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnDialog, TnIconButtonComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
@@ -28,8 +23,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
@@ -48,23 +42,20 @@ import { RedirectService } from 'app/services/redirect.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatButton,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    TestDirective,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnButtonComponent,
+    TnCardFooterActionsDirective,
+    TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     RequiresRolesDirective,
-    MatCardContent,
+    TnTestIdDirective,
     ImgFallbackModule,
     OrNotAvailablePipe,
-    MatCardActions,
     CleanLinkPipe,
-    MatTooltip,
-    TnIconComponent,
+    TnTooltipDirective,
     RouterLink,
   ],
 })
@@ -79,7 +70,7 @@ export class AppInfoCardComponent {
   private translate = inject(TranslateService);
   private router = inject(Router);
   private installedAppsStore = inject(InstalledAppsStore);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
@@ -87,8 +78,10 @@ export class AppInfoCardComponent {
   readonly startApp = output();
   readonly stopApp = output();
   protected readonly requiredRoles = [Role.AppsWrite];
+
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
+
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
   protected rollbackUpdateButtonSetEffect = effect(() => {
@@ -174,7 +167,12 @@ export class AppInfoCardComponent {
   editButtonPressed(): void {
     const app = this.app();
     if (app.custom_app) {
-      this.slideIn.open(CustomAppFormComponent, { data: app });
+      this.formPanel.open(CustomAppFormComponent, {
+        title: this.translate.instant('Edit App YAML'),
+        wide: true,
+        testId: 'custom-app-edit',
+        inputs: { app },
+      });
     } else {
       this.router.navigate(['/apps', 'installed', app.metadata.train, app.id, 'edit']);
     }

@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy, DestroyRef, signal, OnInit, ChangeDetectorRef, inject, viewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, signal, OnInit, ChangeDetectorRef, Type, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -12,7 +12,8 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
@@ -37,7 +38,8 @@ import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/
 })
 export class AllCloudBackupsComponent implements OnInit {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
@@ -68,9 +70,18 @@ export class AllCloudBackupsComponent implements OnInit {
     ).subscribe();
   }
 
+  // CloudBackupFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
+  private readonly cloudBackupForm = CloudBackupFormComponent as unknown as Type<SidePanelForm>;
+
   protected openForm(row?: CloudBackup): void {
-    this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
-      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+    this.formPanel.open(this.cloudBackupForm, {
+      title: row
+        ? this.translate.instant('Edit TrueCloud Backup Task')
+        : this.translate.instant('Add TrueCloud Backup Task'),
+      wide: true,
+      inputs: { backupToEdit: row },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private loadCloudBackups(id?: string): void {

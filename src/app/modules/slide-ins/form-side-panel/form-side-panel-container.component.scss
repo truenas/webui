@@ -1,0 +1,44 @@
+// `display: contents` dissolves the secondary-actions wrapper box so its buttons flex directly in
+// the panel footer alongside Save (the wrapper exists only to project the group as one node).
+.footer-actions-group {
+  display: contents;
+}
+
+// Optimistic save progress bar. `sticky` keeps it pinned under the panel's header line while the
+// content scrolls (vs `absolute`, which would scroll away). The panel content (the scroll container)
+// has a 36px top padding + 24px side padding (see `_tn-styles.scss`).
+//
+//  - `top: -36px`  — sticky pins at the padding edge, so offsetting by the 36px top padding keeps the
+//    bar flush under the header line while scrolling.
+//  - `margin-top: -36px` — sit flush under the header line at rest (cancel the content top padding).
+//  - `margin: … -24px …` — full-bleed across the side padding (clipped by `overflow-x: hidden`).
+//  - `margin-bottom: 32px` — the bar is ~4px tall; 4 + 32 ≈ the 36px gap the negative top margin
+//    removed, so the form content below it does NOT jump when the bar appears/disappears.
+.panel-progress {
+  position: sticky;
+  top: -36px;
+  z-index: 2;
+  display: block;
+  margin: -36px -24px 32px;
+}
+
+// Positioning context for the busy overlay. `min-height: 100%` so the overlay covers the full
+// content viewport even when the form is shorter than the panel (otherwise it'd only span the
+// short form's height, leaving the empty area below un-dimmed).
+.panel-content {
+  position: relative;
+  min-height: 100%;
+}
+
+// Dimming scrim over the form while a save is in flight. Full-bleeds the content padding (36px top,
+// 24px sides/bottom — see `.tn-side-panel__content` in `_tn-styles.scss`) so the dim reaches the
+// panel edges. `pointer-events` default (auto) swallows clicks, blocking field edits mid-submit.
+// Sits below the progress bar (`z-index: 2`) so the bar stays visible on top.
+.panel-content__busy-overlay {
+  position: absolute;
+  inset: -36px -24px -24px;
+  z-index: 1;
+  background-color: var(--tn-bg2, #282828);
+  opacity: 0.6;
+  cursor: progress;
+}

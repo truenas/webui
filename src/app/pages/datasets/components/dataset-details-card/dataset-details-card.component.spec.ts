@@ -1,9 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnDialog, TnButtonHarness, TnCardComponent, TnMenuHarness, TnMenuTesting,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,7 +16,7 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
@@ -80,7 +81,7 @@ describe('DatasetDetailsCardComponent', () => {
         datasetUpdated: jest.fn(),
         selectedParentDataset$: of({ id: 'pool' }),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -103,6 +104,11 @@ describe('DatasetDetailsCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
+  async function openCardMenu(): Promise<TnMenuHarness> {
+    spectator.click(spectator.query('[data-test="button-dataset-actions"]')!);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   function getDetails(): Record<string, string> {
     return spectator.queryAll('.details-item').reduce((acc, item: HTMLElement) => {
       const key = item.querySelector('.label')!.textContent!;
@@ -112,11 +118,13 @@ describe('DatasetDetailsCardComponent', () => {
     }, {} as Record<string, string>);
   }
 
-  it('shows header', () => {
+  it('shows header', async () => {
     setupTest({ dataset });
 
-    expect(spectator.query('mat-card-header h3')).toHaveText('Details');
-    expect(spectator.query('mat-card-header button')).toHaveText('Edit');
+    // white-box: no TnCardHarness yet — read the public title() input
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Details');
+    const editButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Edit' }));
+    expect(editButton).not.toBeNull();
   });
 
   describe('filesystem dataset', () => {
@@ -144,12 +152,16 @@ describe('DatasetDetailsCardComponent', () => {
     it('opens edit dataset form when Edit button is clicked', async () => {
       setupTest({ dataset });
 
-      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
       await editButton.click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
         DatasetFormComponent,
-        { wide: true, data: { datasetId: 'pool/child', isNew: false } },
+        {
+          wide: true,
+          title: 'Edit Dataset',
+          inputs: { params: { datasetId: 'pool/child', isNew: false } },
+        },
       );
     });
 
@@ -197,7 +209,7 @@ describe('DatasetDetailsCardComponent', () => {
     it('opens delete dataset dialog when Delete button is clicked', async () => {
       setupTest({ dataset });
 
-      const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+      const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
       await deleteButton.click();
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteDatasetDialog, { data: dataset });
@@ -222,24 +234,26 @@ describe('DatasetDetailsCardComponent', () => {
     it('opens edit zvol form when Edit Zvol button is clicked', async () => {
       setupTest({ dataset: zvol });
 
-      const editZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Zvol' }));
+      const editZvolButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit Zvol' }));
       await editZvolButton.click();
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
         ZvolFormComponent,
-        { data: { isNew: false, parentOrZvolId: 'pool/child' } },
+        {
+          title: 'Edit Zvol',
+          inputs: { params: { isNew: false, parentOrZvolId: 'pool/child' } },
+        },
       );
     });
   });
 
   describe('promoting dataset', () => {
-    it('does not show a Promote Dataset button when dataset cannot be promoted', async () => {
+    it('does not show a Promote Dataset action when dataset cannot be promoted', () => {
       setupTest({ dataset });
 
-      const promoteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Promote' }));
-      expect(promoteButton).toBeNull();
+      expect(spectator.query('[data-test="button-dataset-actions"]')).toBeNull();
     });
 
-    it('promotes dataset when dataset can be promoted and Promote Dataset button is pressed', async () => {
+    it('promotes dataset when dataset can be promoted and Promote action is pressed', async () => {
       setupTest({
         dataset: {
           ...dataset,
@@ -249,8 +263,8 @@ describe('DatasetDetailsCardComponent', () => {
         } as DatasetDetails,
       });
 
-      const promoteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Promote' }));
-      await promoteButton.click();
+      const menu = await openCardMenu();
+      await menu.clickItem({ label: 'Promote' });
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.promote', ['pool/child']);
     });

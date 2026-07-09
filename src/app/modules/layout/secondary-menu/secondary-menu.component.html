@@ -22,7 +22,7 @@
                 [class.critical]="getBadgeType(subItem) === AlertBadgeType.Critical"
                 [class.warning]="getBadgeType(subItem) === AlertBadgeType.Warning"
                 [class.info]="getBadgeType(subItem) === AlertBadgeType.Info"
-                [matTooltip]="getBadgeTooltip(subItem) | translate"
+                [tnTooltip]="getBadgeTooltip(subItem) | translate"
                 [attr.aria-label]="getBadgeTooltip(subItem) | translate"
               >
                 <tn-icon [name]="getBadgeIcon(subItem)"></tn-icon>

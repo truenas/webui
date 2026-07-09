@@ -3,11 +3,9 @@ import { Component, ChangeDetectionStrategy, DestroyRef, input, computed, inject
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnSpinnerComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -24,8 +22,7 @@ import { AppState } from 'app/store';
   imports: [
     TnIconComponent,
     TnTooltipDirective,
-    MatTooltip,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     MatProgressBar,
     MatIconButton,
     TestDirective,

@@ -1,67 +1,75 @@
-::ng-deep .scheduler-modal .mat-mdc-dialog-container {
-  padding: 0;
+// TEMP (NAS-141021): TnDialog's global `.tn-dialog-panel > .cdk-dialog-container > :first-child` rule
+// forces the projected modal host to `flex-direction: column`; this two-column scheduler (settings +
+// preview) needs a row. Scoped to our own `.scheduler-modal` panelClass so it only affects this dialog.
+// Remove if the modal adopts `tn-dialog-shell` or the library stops forcing the column direction.
+::ng-deep .scheduler-modal.tn-dialog-panel > .cdk-dialog-container > ix-scheduler-modal {
+  flex-direction: row;
 }
 
 :host {
   display: flex;
-  font-family: var(--mdc-dialog-subhead-font);
 }
 
 .settings-column {
+  flex: 1 1 auto;
   margin-bottom: 10px;
   margin-top: 19px;
-  width: 100%;
+  min-width: 0;
 
   form {
-    padding: 0 14px 24px 20px;
+    padding: 4px 20px 8px;
   }
 
   .no-spaces-hint {
+    color: var(--fg2);
     font-size: 85%;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   section {
     border-bottom: 1px solid var(--lines);
-    margin-bottom: 16px;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
 
     h4 {
-      margin-bottom: 4px;
+      margin-bottom: 8px;
+    }
+
+    // No trailing divider directly above the Done action.
+    &:last-of-type {
+      border-bottom: 0;
+      margin-bottom: 8px;
     }
   }
 
   .input {
-    margin-bottom: 8px;
-    margin-top: 4px;
+    display: block;
+    margin-bottom: 20px;
 
     &:last-of-type {
-      margin-bottom: 12px;
+      margin-bottom: 0;
     }
   }
 
   .months {
     display: grid;
-    grid-row-gap: 2px;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    margin-bottom: 5px;
-    margin-top: 12px;
+    gap: 8px 10px;
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: 4px;
   }
 
   .weekdays {
-    column-gap: 3px;
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 6px;
-    margin-top: 12px;
-
-    .weekend {
-      margin-right: 4px;
-    }
+    display: grid;
+    gap: 8px 10px;
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 4px;
+    margin-top: 4px;
   }
 
   .form-actions {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    padding-top: 4px;
   }
 
   .input.days-of-month-input {
@@ -93,7 +101,11 @@
   }
 
   .days-of-week-header {
-    font-size: x-small;
+    color: var(--fg2);
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0;
+    margin-top: 12px;
   }
 }
 

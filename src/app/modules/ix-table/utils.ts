@@ -1,6 +1,9 @@
+import { Signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { type TnSortEvent } from '@truenas/ui-components';
 import { get } from 'lodash-es';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
+import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
@@ -23,8 +26,13 @@ export function convertStringToId(inputString: string): string {
 
 export function createTable<T>(
   columns: Column<T, ColumnComponent<T>>[],
-  config: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
+  config?: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
 ): Column<T, ColumnComponent<T>>[] {
+  // tn-table renders cells from the template and supplies its own row tags/aria
+  // labels, so migrated tables build a column model for the picker without config.
+  if (!config) {
+    return columns;
+  }
   return columns.map((column) => {
     const uniqueRowTag = (row: T): string => convertStringToId(config.uniqueRowTag(row));
     const ariaLabels = (row: T): string[] => config.ariaLabels(row);
@@ -78,6 +86,41 @@ export function toDisplayedColumns<T>(columns: Column<T, ColumnComponent<T>>[]):
   return columns
     .filter((column) => !column.hidden)
     .map((column) => (column.propertyName ? String(column.propertyName) : 'actions'));
+}
+
+/**
+ * Adapts a data provider's paged rows into a signal for binding to a `tn-table`
+ * `[dataSource]`. Replaces the `(dataProvider.currentPage$ | async) ?? []` idiom
+ * so migrated cards follow the declarative-signal recipe. Must be called from an
+ * injection context (e.g. a component field initializer).
+ */
+export function dataProviderRows<T>(provider: BaseDataProvider<T>): Signal<T[]> {
+  return toSignal(provider.currentPage$, { initialValue: [] as T[] });
+}
+
+/**
+ * Adapts a data provider's loading state into a signal for binding to a `tn-table`
+ * `[loading]`. Must be called from an injection context (e.g. a component field
+ * initializer).
+ */
+export function dataProviderLoading<T>(provider: BaseDataProvider<T>): Signal<boolean> {
+  return toSignal(provider.isLoading$, { initialValue: false });
+}
+
+/**
+ * Translates a tn-table `(sortChange)` event into the `TableSort` shape an
+ * `AsyncDataProvider`/`ApiDataProvider` `setSorting()` expects, where sorting is
+ * driven purely by `propertyName`/`direction` and `active` (column index) is
+ * unused. Shared by the simple tn-table list migrations (docker images,
+ * docker registries) so the empty-direction handling can't drift between them.
+ */
+export function mapTnSortToProviderSorting<T>(event: TnSortEvent): TableSort<T> {
+  const direction = event.direction === '' ? null : (event.direction as SortDirection);
+  return {
+    propertyName: direction ? (event.column as keyof T) : null,
+    direction,
+    active: null,
+  };
 }
 
 export function filterTableRows<T>(filter: TableFilter<T>): T[] {

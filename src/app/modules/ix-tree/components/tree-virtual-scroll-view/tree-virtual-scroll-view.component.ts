@@ -7,9 +7,8 @@ import {
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, HostBinding, inject, Input, IterableDiffers, OnChanges, OnDestroy, OnInit, output, TrackByFunction, viewChild, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { ResizedEvent, AngularResizeEventModule } from 'angular-resize-event';
 import {
   animationFrameScheduler, asapScheduler, BehaviorSubject,
@@ -42,7 +41,7 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
     AngularResizeEventModule,
     TreeVirtualScrollNodeOutletDirective,
     TreeNodeOutletDirective,
-    MatTooltip,
+    TnTooltipDirective,
     TnIconButtonComponent,
     TranslateModule,
     AsyncPipe,

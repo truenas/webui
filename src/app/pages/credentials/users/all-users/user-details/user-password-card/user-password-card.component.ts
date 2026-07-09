@@ -1,13 +1,9 @@
 import { Component, ChangeDetectionStrategy, computed, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardTitle, MatCardHeader, MatCardContent,
-  MatCardActions,
-} from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { filter, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -18,7 +14,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { userPasswordCardElements } from 'app/pages/credentials/users/all-users/user-details/user-password-card/user-password-card.elements';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
@@ -30,18 +25,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./user-password-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardTitle,
-    MatCardHeader,
-    MatCardContent,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     TranslateModule,
     FormatDateTimePipe,
-    MatCardActions,
-    MatTooltip,
+    TnTooltipDirective,
     RequiresRolesDirective,
-    TestDirective,
-    TnIconComponent,
-    MatButton,
+    TnButtonComponent,
     UiSearchDirective,
   ],
 })

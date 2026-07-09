@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -80,7 +80,7 @@ describe('CategoryViewComponent', () => {
   });
 
   it('should redirect to Discover page', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Back to Discover Page' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Back to Discover Page' }));
     await button.click();
 
     jest.spyOn(store$, 'resetFilters').mockImplementation();

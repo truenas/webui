@@ -1,0 +1,92 @@
+<tn-side-panel
+  closeButtonTestId="close-side-panel"
+  [title]="title()"
+  [width]="width()"
+  [testId]="testId()"
+  [closeGuard]="closeGuard"
+  [open]="open()"
+  (openChange)="open.set($event)"
+  (closed)="panelClosed.emit()"
+>
+  <!-- Indeterminate loader pinned to the top of the panel while the hosted form submits. -->
+  @if (form()?.isBusy?.()) {
+    <tn-progress-bar class="panel-progress" mode="indeterminate"></tn-progress-bar>
+  }
+
+  <!--
+    Wraps the portaled form so the busy overlay can pin to it (positioned ancestor). The overlay
+    dims the form and swallows pointer events while a save is in flight — a visual cue alongside the
+    top progress bar, and a guard against editing fields mid-submit. Driven by the same `isBusy`
+    signal, so it appears exactly when the progress bar does; forms without `isBusy` never show it.
+  -->
+  <div class="panel-content">
+    <ng-template
+      [cdkPortalOutlet]="portal()"
+      (attached)="onPortalAttached($event)"
+    ></ng-template>
+
+    @if (form()?.isBusy?.()) {
+      <div class="panel-content__busy-overlay" aria-hidden="true"></div>
+    }
+  </div>
+
+  <!--
+    Each `tnSidePanelAction` host sits in its OWN `@if` block (one projectable node per block) so it
+    projects into the footer slot — multiple projected nodes sharing one `@if`, or a `@for` of them,
+    fall through to the default content slot (named `ng-content` projection doesn't route them).
+    Secondary actions are grouped under ONE `display: contents` host so the loop's buttons still flex
+    directly in the footer (gap + Save layout intact) without each needing its own projection.
+  -->
+  @if (!footerless() && (form()?.footerActions ?? []).length) {
+    <div tnSidePanelAction class="footer-actions-group">
+      @for (action of form()?.footerActions ?? []; track action.testId) {
+        <tn-button
+          *ixRequiresRoles="action.requiredRoles ?? []"
+          [color]="action.color ?? 'default'"
+          [testId]="action.testId"
+          [label]="action.label | translate"
+          [disabled]="action.disabled?.() ?? false"
+          (onClick)="action.onClick()"
+        ></tn-button>
+      }
+    </div>
+  }
+
+  @if (!footerless() && form()?.footerMenu?.(); as footerMenu) {
+    <div tnSidePanelAction class="footer-actions-group">
+      <tn-icon-button
+        name="dots-vertical"
+        library="mdi"
+        tnMenuPosition="above"
+        [testId]="footerMenu.testId"
+        [ariaLabel]="footerMenu.label | translate"
+        [tooltip]="footerMenu.label | translate"
+        [tnMenuTriggerFor]="footerActionsMenu"
+      ></tn-icon-button>
+      <tn-menu #footerActionsMenu>
+        @for (item of footerMenu.items; track item.testId) {
+          <tn-menu-item
+            *ixRequiresRoles="item.requiredRoles ?? []"
+            [testId]="item.testId"
+            [icon]="item.icon"
+            [iconLibrary]="item.iconLibrary"
+            [disabled]="item.disabled?.() ?? false"
+            (itemClick)="item.onClick()"
+          >{{ item.label | translate }}</tn-menu-item>
+        }
+      </tn-menu>
+    </div>
+  }
+
+  @if (!footerless() && form(); as form) {
+    <tn-button
+      *ixRequiresRoles="form.requiredRoles || []"
+      tnSidePanelAction
+      color="primary"
+      [testId]="'save'"
+      [label]="(form.isSubmitting?.() ? ('Saving…' | translate) : (saveLabel() | translate))"
+      [disabled]="!form.canSubmit() || (form.isBusy?.() ?? false)"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

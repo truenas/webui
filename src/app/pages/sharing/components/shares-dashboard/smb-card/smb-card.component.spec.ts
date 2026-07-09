@@ -5,6 +5,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
+  TnButtonHarness,
   TnDialog,
   TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
@@ -21,11 +22,15 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
@@ -81,6 +86,9 @@ describe('SmbCardComponent', () => {
       withLoader: jest.fn(() => (source$: unknown) => source$),
     }),
     mockProvider(SlideIn, {
+      open: jest.fn(() => SlideInResult.empty()),
+    }),
+    mockProvider(FormSidePanelService, {
       open: jest.fn(() => SlideInResult.empty()),
     }),
     mockProvider(SnackbarService),
@@ -147,12 +155,34 @@ describe('SmbCardComponent', () => {
       ]);
     });
 
+    it('opens the SMB form when the projected Add button is clicked', async () => {
+      const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+      await addButton.click();
+
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
+        title: 'Add SMB Share',
+        inputs: { smbShareData: { existingSmbShare: undefined } },
+      });
+    });
+
+    it('toggles the SMB service when the projected header toggle is changed', async () => {
+      const toggleState = jest.spyOn(spectator.inject(ServiceActionsMenuService), 'toggleServiceState')
+        .mockImplementation(() => {});
+      const toggle = await loader.getHarness(
+        TnSlideToggleHarness.with({ ancestor: '.tn-card__header-right' }),
+      );
+      await toggle.toggle();
+
+      expect(toggleState).toHaveBeenCalledWith(expect.objectContaining({ service: ServiceName.Cifs }));
+    });
+
     it('shows form to edit an existing SMB Share when Edit button is pressed', async () => {
       const menu = await openRowMenu();
       await menu.clickItem({ label: /^Edit$/ });
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbFormComponent, {
-        data: { existingSmbShare: expect.objectContaining(smbShares[0]) },
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
+        title: 'Edit SMB Share',
+        inputs: { smbShareData: { existingSmbShare: expect.objectContaining(smbShares[0]) } },
       });
     });
 
@@ -186,7 +216,10 @@ describe('SmbCardComponent', () => {
         [{ share_name: 'homes' }],
       );
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbAclComponent, { data: 'test' });
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbAclComponent, {
+        title: 'Share ACL for test',
+        inputs: { shareName: 'test' },
+      });
     });
 
     it('handles edit Filesystem ACL', async () => {
@@ -287,6 +320,38 @@ describe('SmbCardComponent', () => {
     it('should disable Edit Filesystem ACL for locked shares', async () => {
       const menu = await openRowMenu();
       expect(await menu.isItemDisabled({ label: 'Edit Filesystem ACL' })).toBe(true);
+    });
+  });
+
+  describe('with a share that has no description', () => {
+    const createNoCommentComponent = createComponentFactory({
+      component: SmbCardComponent,
+      imports: commonImports,
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('sharing.smb.query', [{
+            ...smbShares[0],
+            comment: '',
+          }] as SmbShare[]),
+          mockCall('sharing.smb.delete'),
+          mockCall('sharing.smb.update'),
+          mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
+          mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
+        ]),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createNoCommentComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+    });
+
+    it('renders an em-dash placeholder in the Description cell', async () => {
+      expect(await table.getAllRowTexts()).toEqual([
+        ['smb123', '/mnt/APPS/smb1', '—', '', 'Yes', ''],
+      ]);
     });
   });
 });

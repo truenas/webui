@@ -1,12 +1,10 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -25,7 +23,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { extractVersion } from 'app/modules/global-search/helpers/extract-version';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SaveConfigDialog,
@@ -51,13 +48,12 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './update.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     UiSearchDirective,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
     RequiresRolesDirective,
     NgxSkeletonLoaderModule,
-    MatButton,
+    TnButtonComponent,
     TnIconComponent,
     ReactiveFormsModule,
     PageHeaderComponent,
@@ -167,8 +163,9 @@ export class UpdateComponent implements OnInit {
     map((info) => info.remote_info.version),
   ));
 
-  protected isUpdateInProgress$ = this.store$.select(selectUpdateJobs).pipe(
-    map((jobs) => jobs.length > 0),
+  protected readonly isUpdateInProgress = toSignal(
+    this.store$.select(selectUpdateJobs).pipe(map((jobs) => jobs.length > 0)),
+    { initialValue: false },
   );
 
   ngOnInit(): void {

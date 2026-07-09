@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -22,7 +24,8 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
@@ -55,7 +58,7 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
 })
 export class VmwareSnapshotListComponent implements OnInit {
   protected translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
@@ -115,14 +118,20 @@ export class VmwareSnapshotListComponent implements OnInit {
     this.dataProvider.load();
   }
 
+  // VmwareSnapshotFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
+  private readonly vmwareSnapshotForm = VmwareSnapshotFormComponent as unknown as Type<SidePanelForm>;
+
   protected doAdd(): void {
-    this.slideIn.open(VmwareSnapshotFormComponent)
+    this.formPanel.open(this.vmwareSnapshotForm, { title: this.translate.instant('Add VM Snapshot') })
       .onSuccess(() => this.getSnapshotsData(), this.destroyRef);
   }
 
   protected doEdit(snapshot: VmwareSnapshot): void {
-    this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot })
-      .onSuccess(() => this.getSnapshotsData(), this.destroyRef);
+    this.formPanel.open(this.vmwareSnapshotForm, {
+      title: this.translate.instant('Edit VM Snapshot'),
+      inputs: { snapshotToEdit: snapshot },
+    }).onSuccess(() => this.getSnapshotsData(), this.destroyRef);
   }
 
   protected doDelete(snapshot: VmwareSnapshot): void {

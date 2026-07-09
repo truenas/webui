@@ -1,14 +1,24 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialog, TnSelectHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness,
+  TnCheckboxHarness,
+  TnChipInputHarness,
+  TnDialog,
+  TnFormFieldHarness,
+  TnInputHarness,
+  TnSelectHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -27,7 +37,6 @@ import {
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
@@ -79,46 +88,6 @@ describe('SmbFormComponent', () => {
 
   const formLabels: Record<string, string> = {
     path: 'Path',
-    name: 'Name',
-    purpose: 'Purpose',
-    comment: 'Description',
-    enabled: 'Enabled',
-    ro: 'Export Read Only',
-    browsable: 'Browsable to Network Clients',
-    abe: 'Access Based Share Enumeration',
-    aapl_name_mangling: 'Use Apple-style Character Encoding',
-    watch_list: 'Watch List',
-    ignore_list: 'Ignore List',
-  };
-
-  // Maps Purpose option labels to the SmbSharePurpose enum value the form control stores.
-  const purposeByLabel: Record<string, SmbSharePurpose> = {
-    'Default Share': SmbSharePurpose.DefaultShare,
-    'Time Machine Share': SmbSharePurpose.TimeMachineShare,
-    'Multi-Protocol Share': SmbSharePurpose.MultiProtocolShare,
-    'Time Locked Share': SmbSharePurpose.TimeLockedShare,
-    'Private Datasets Share': SmbSharePurpose.PrivateDatasetsShare,
-    'External Share': SmbSharePurpose.ExternalShare,
-    'Veeam Repository Share': SmbSharePurpose.VeeamRepositoryShare,
-    'Final Cut Pro Storage Share': SmbSharePurpose.FcpShare,
-    'Legacy Share': SmbSharePurpose.LegacyShare,
-  };
-
-  // tn-migrated fields are set through form controls (no longer reachable via Ix*Harness).
-  const tnFieldControlByLabel: Record<string, string> = {
-    Name: 'name',
-    Description: 'comment',
-    Enabled: 'enabled',
-    'Export Read Only': 'readonly',
-    'Browsable to Network Clients': 'browsable',
-    'Access Based Share Enumeration': 'access_based_share_enumeration',
-    'Use Apple-style Character Encoding': 'aapl_name_mangling',
-    'Auto Snapshot': 'auto_snapshot',
-    'Auto Dataset Creation': 'auto_dataset_creation',
-    'Dataset Naming Schema': 'dataset_naming_schema',
-    VUID: 'vuid',
-    'Grace Period': 'grace_period',
-    'Auto Quota': 'auto_quota',
   };
 
   let spectator: Spectator<SmbFormComponent>;
@@ -126,6 +95,39 @@ describe('SmbFormComponent', () => {
   let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
+
+  const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnCheckboxes = (name: string): Promise<TnCheckboxHarness[]> => loader.getAllHarnesses(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnChipInput = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
+    TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  // tn-select fires a value change even when re-selecting the currently displayed option,
+  // which re-runs the purpose presets and wipes edit-loaded values. Mirror the Material
+  // dedupe by only selecting when the displayed purpose actually differs.
+  const selectPurpose = async (label: string): Promise<void> => {
+    const select = await getTnSelect('purpose');
+    if ((await select.getDisplayText()) !== label) {
+      await select.selectOption(label);
+    }
+  };
+  const setTnCheckbox = async (name: string, value: boolean): Promise<void> => {
+    const checkbox = await getTnCheckbox(name);
+    if (value) {
+      await checkbox.check();
+    } else {
+      await checkbox.uncheck();
+    }
+  };
 
   const createComponent = createComponentFactory({
     component: SmbFormComponent,
@@ -152,7 +154,9 @@ describe('SmbFormComponent', () => {
         mockCall('user.query', []),
         mockJob('service.control', fakeSuccessfulJob()),
       ]),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
+      }),
       mockProvider(Router),
       mockProvider(LoaderService),
       mockProvider(FilesystemService, {
@@ -189,156 +193,65 @@ describe('SmbFormComponent', () => {
       mockProvider(FormErrorHandlerService, {
         handleValidationErrors: jest.fn(),
       }),
+      provideTnFormFieldErrors(),
     ],
   });
 
-  const clickButton = async (label: string): Promise<void> => {
-    const button = await loader.getHarness(TnButtonHarness.with({ label }));
-    await button.click();
-  };
-
-  const getSaveButton = (): Promise<TnButtonHarness> => {
-    return loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-  };
-
-  /** Lets the debounced (300ms) async name validator settle so the form leaves the PENDING state. */
-  const waitForValidation = async (): Promise<void> => {
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 400);
-    });
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
-  };
-
-  /** Waits for the debounced (300ms) async name validator to settle, then clicks Save. */
-  const saveForm = async (): Promise<void> => {
-    await waitForValidation();
-    await clickButton('Save');
-  };
-
-  /**
-   * Sets a mix of tn-migrated fields (via form controls) and the fields that stayed ix-* (via harnesses).
-   * Purpose is applied first because the preset logic enables/disables the other controls.
-   */
-  async function fillSmbForm(values: Record<string, unknown>): Promise<void> {
-    if ('Purpose' in values) {
-      const targetPurpose = purposeByLabel[values.Purpose as string];
-      // Re-selecting the same purpose would re-run the preset logic (clearing edited values
-      // and firing change warnings), so only set it when it actually changes.
-      if (spectator.component.form.controls.purpose.value !== targetPurpose) {
-        spectator.component.form.controls.purpose.setValue(targetPurpose);
-        spectator.detectChanges();
-        await spectator.fixture.whenStable();
-      }
-    }
-
-    for (const [label, value] of Object.entries(values)) {
-      if (label === 'Purpose') {
-        continue;
-      }
-
-      if (label === 'Path') {
-        // The Path explorer is not rendered for External shares (path is auto-derived).
-        if (spectator.component.form.controls.purpose.value === SmbSharePurpose.ExternalShare) {
-          spectator.component.form.controls.path.setValue(value as string);
-          continue;
-        }
-        const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
-        await pathControl.setValue(value as string);
-        continue;
-      }
-
-      if (label === 'Time Machine Quota') {
-        const quotaControl = await loader.getHarness(IxInputHarness.with({ label: 'Time Machine Quota' }));
-        await quotaControl.setValue(value as string);
-        continue;
-      }
-
-      if (label === 'Hosts Allow') {
-        spectator.component.form.controls.hostsallow.setValue(value as string[]);
-        continue;
-      }
-
-      if (label === 'Hosts Deny') {
-        spectator.component.form.controls.hostsdeny.setValue(value as string[]);
-        continue;
-      }
-
-      if (label === 'Remote Paths') {
-        spectator.component.form.controls.remote_path.setValue(value as string[]);
-        continue;
-      }
-
-      const controlName = tnFieldControlByLabel[label];
-      if (controlName) {
-        // eslint-disable-next-line no-restricted-syntax
-        spectator.component.form.get(controlName)?.setValue(value);
-      }
-    }
-
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
-  }
-
   async function setupTest(share?: Partial<SmbShare>): Promise<void> {
     spectator = createComponent({
-      providers: [
-        mockProvider(SlideInRef, {
-          ...slideInRef,
-          getData: () => ({
-            existingSmbShare: share
-              ? { ...existingShare, ...share }
-              : null,
-          }),
-        }),
-      ],
+      props: {
+        smbShareData: {
+          existingSmbShare: share
+            ? { ...existingShare, ...share }
+            : null,
+        },
+      },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     mockStore$ = spectator.inject(MockStore);
     api = spectator.inject(ApiService);
 
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: /Advanced Options|Basic Options/ }));
-    if ((await advancedButton.getLabel()).includes('Advanced Options')) {
+    // The toggle's label flips between 'Advanced Options' and 'Basic Options';
+    // only click when it currently offers to reveal the advanced section.
+    const advancedButton = await loader.getHarnessOrNull(
+      TnButtonHarness.with({ label: 'Advanced Options' }),
+    );
+    if (advancedButton) {
       await advancedButton.click();
     }
   }
 
-  const commonValues = {
-    Path: '/mnt/pool123/ds222',
-    Name: 'Default',
-    Description: 'Description',
-    Enabled: true,
-    'Export Read Only': true,
-    'Browsable to Network Clients': true,
-    'Access Based Share Enumeration': true,
-    'Enable Logging': false,
-  };
+  /**
+   * Applies the migrated tn-* and remaining ix-* common fields used across create/update payloads.
+   * `Path` stays an ix-explorer; the rest are tn-* controls driven via their harnesses.
+   */
+  async function applyCommonValues(): Promise<void> {
+    const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+    await pathControl.setValue('/mnt/pool123/ds222');
+    await (await getTnInput('name')).setValue('Default');
+    await (await getTnInput('comment')).setValue('Description');
+    await setTnCheckbox('enabled', true);
+    await setTnCheckbox('readonly', true);
+    await setTnCheckbox('browsable', true);
+    await setTnCheckbox('access_based_share_enumeration', true);
+    await setTnCheckbox('enable', false);
+  }
 
-  async function submitForm(values: Record<string, unknown>): Promise<void> {
-    await fillSmbForm(values);
-    // Let the debounced (300ms) async name validator settle so the form leaves the PENDING state.
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 400);
-    });
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
-    await clickButton('Save');
+  async function clickSave(): Promise<void> {
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
   }
 
   describe('legacy share', () => {
     beforeEach(async () => {
       await setupTest({ purpose: SmbSharePurpose.LegacyShare });
 
-      await fillSmbForm({
-        Purpose: 'Legacy Share',
-      });
+      await selectPurpose('Legacy Share');
     });
 
     it('should show confirmation warning when afp is checked', async () => {
-      spectator.component.form.controls.afp.setValue(true);
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
+      const afpCheckbox = await getTnCheckbox('afp');
+      await afpCheckbox.check();
       expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
         title: helptextSharingSmb.afpWarningTitle,
         message: helptextSharingSmb.afpWarningMessage,
@@ -356,6 +269,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('should show restart dialog when save is clicked with any changes', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
       mockStore$.overrideSelector(selectServices, [{
         id: 4,
         service: ServiceName.Cifs,
@@ -363,11 +277,10 @@ describe('SmbFormComponent', () => {
         state: ServiceStatus.Running,
       } as Service]);
 
-      await fillSmbForm({
-        Path: '/mnt/pool123/new',
-      });
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/new');
 
-      await saveForm();
+      await clickSave();
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(RestartSmbDialog);
 
@@ -377,6 +290,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('should not restart service when user clicks No in restart dialog', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
       const tnDialog = spectator.inject(TnDialog);
       tnDialog.open = jest.fn(() => ({
         closed: of(false),
@@ -389,14 +303,17 @@ describe('SmbFormComponent', () => {
         state: ServiceStatus.Running,
       } as Service]);
 
-      await fillSmbForm({
-        Path: '/mnt/pool123/new',
-      });
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/new');
 
-      await saveForm();
+      await clickSave();
 
       expect(tnDialog.open).toHaveBeenCalledWith(RestartSmbDialog);
-      expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+      // The wrapper still shows its own "SMB share updated" success toast, but the
+      // service-restart toast must not appear when the user declines the restart.
+      expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalledWith(
+        helptextSharingSmb.restartedSmbDialog.message,
+      );
     });
 
     it('should show strip acl warning if acl is trivial when path changes', async () => {
@@ -410,9 +327,8 @@ describe('SmbFormComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.form.controls.acl.setValue(false);
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
+      const aclCheckbox = await getTnCheckbox('acl');
+      await aclCheckbox.uncheck();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
         title: helptextSharingSmb.stripACLDialog.title,
@@ -427,14 +343,15 @@ describe('SmbFormComponent', () => {
   describe('creating share of each type', () => {
     beforeEach(async () => {
       await setupTest();
+      jest.spyOn(console, 'warn').mockImplementation();
     });
 
     it('creates default share', async () => {
-      await submitForm({
-        ...commonValues,
-        Purpose: 'Default Share',
-        'Use Apple-style Character Encoding': true,
-      });
+      await selectPurpose('Default Share');
+      await applyCommonValues();
+      await (await getTnCheckbox('aapl_name_mangling')).check();
+
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [{
         purpose: SmbSharePurpose.DefaultShare,
@@ -459,15 +376,16 @@ describe('SmbFormComponent', () => {
     });
 
     it('creates time machine share', async () => {
-      await submitForm({
-        ...commonValues,
-        Purpose: 'Time Machine Share',
-        'Time Machine Quota': '10G',
-        VUID: '08e00781-18ac-4c6c-bfeb-9c1c504ea0d7',
-        'Auto Snapshot': true,
-        'Auto Dataset Creation': true,
-        'Dataset Naming Schema': '%u',
-      });
+      await selectPurpose('Time Machine Share');
+      await applyCommonValues();
+      const timeMachineQuota = await loader.getHarness(IxInputHarness.with({ label: 'Time Machine Quota' }));
+      await timeMachineQuota.setValue('10G');
+      await (await getTnInput('vuid')).setValue('08e00781-18ac-4c6c-bfeb-9c1c504ea0d7');
+      await (await getTnCheckbox('auto_snapshot')).check();
+      await (await getTnCheckbox('auto_dataset_creation')).check();
+      await (await getTnInput('dataset_naming_schema')).setValue('%u');
+
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -486,11 +404,11 @@ describe('SmbFormComponent', () => {
     });
 
     it('creates Multi-Protocol share', async () => {
-      await submitForm({
-        ...commonValues,
-        Purpose: 'Multi-Protocol Share',
-        'Use Apple-style Character Encoding': true,
-      });
+      await selectPurpose('Multi-Protocol Share');
+      await applyCommonValues();
+      await (await getTnCheckbox('aapl_name_mangling')).check();
+
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -505,12 +423,12 @@ describe('SmbFormComponent', () => {
     });
 
     it('creates Time Locked share', async () => {
-      await submitForm({
-        ...commonValues,
-        Purpose: 'Time Locked Share',
-        'Grace Period': 900,
-        'Use Apple-style Character Encoding': true,
-      });
+      await selectPurpose('Time Locked Share');
+      await applyCommonValues();
+      await (await getTnInput('grace_period')).setValue('900');
+      await (await getTnCheckbox('aapl_name_mangling')).check();
+
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -526,13 +444,13 @@ describe('SmbFormComponent', () => {
     });
 
     it('creates Private Datasets share', async () => {
-      await submitForm({
-        ...commonValues,
-        Purpose: 'Private Datasets Share',
-        'Dataset Naming Schema': '%u',
-        'Auto Quota': 20,
-        'Use Apple-style Character Encoding': true,
-      });
+      await selectPurpose('Private Datasets Share');
+      await applyCommonValues();
+      await (await getTnInput('dataset_naming_schema')).setValue('%u');
+      await (await getTnInput('auto_quota')).setValue('20');
+      await (await getTnCheckbox('aapl_name_mangling')).check();
+
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -549,11 +467,13 @@ describe('SmbFormComponent', () => {
     });
 
     it('creates External share', async () => {
-      await submitForm({
-        ...commonValues,
-        Purpose: 'External Share',
-        'Remote Paths': ['192.168.0.1\\SHARE'],
-      });
+      await selectPurpose('External Share');
+      await (await getTnInput('name')).setValue('Default');
+      await (await getTnInput('comment')).setValue('Description');
+      await setTnCheckbox('enabled', true);
+      await (await getTnChipInput('remote_path')).addChip('192.168.0.1\\SHARE');
+
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -566,10 +486,10 @@ describe('SmbFormComponent', () => {
     });
 
     it('creates Veeam Repository share', async () => {
-      await submitForm({
-        ...commonValues,
-        Purpose: 'Veeam Repository Share',
-      });
+      await selectPurpose('Veeam Repository Share');
+      await applyCommonValues();
+
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -583,10 +503,10 @@ describe('SmbFormComponent', () => {
     });
 
     it('creates FCP (Final Cut Pro Storage Share) share', async () => {
-      await submitForm({
-        ...commonValues,
-        Purpose: 'Final Cut Pro Storage Share',
-      });
+      await selectPurpose('Final Cut Pro Storage Share');
+      await applyCommonValues();
+
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -613,12 +533,14 @@ describe('SmbFormComponent', () => {
     });
 
     it('sends hosts allow and deny values when specified', async () => {
-      await submitForm({
-        ...commonValues,
-        Purpose: 'Default Share',
-        'Hosts Allow': ['192.168.1.0/24', '10.0.0.1'],
-        'Hosts Deny': ['172.16.0.0/16'],
-      });
+      await selectPurpose('Default Share');
+      await applyCommonValues();
+      const hostsAllow = await getTnChipInput('hostsallow');
+      await hostsAllow.addChip('192.168.1.0/24');
+      await hostsAllow.addChip('10.0.0.1');
+      await (await getTnChipInput('hostsdeny')).addChip('172.16.0.0/16');
+
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -636,39 +558,34 @@ describe('SmbFormComponent', () => {
     beforeEach(async () => {
       await setupTest({ purpose: SmbSharePurpose.DefaultShare });
 
-      await fillSmbForm({
-        Purpose: 'Default Share',
-      });
+      await selectPurpose('Default Share');
     });
 
     it('shows values of existing share when editing', async () => {
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      expect(await (await getTnSelect('purpose')).getDisplayText()).toBe('Default Share');
+      expect(await (await getTnInput('name')).getValue()).toBe('ds222');
+      expect(await (await getTnInput('comment')).getValue()).toBe('Description');
+      expect(await (await getTnCheckbox('enabled')).isChecked()).toBe(true);
+      expect(await (await getTnCheckbox('readonly')).isChecked()).toBe(true);
+      expect(await (await getTnCheckbox('browsable')).isChecked()).toBe(true);
+      expect(await (await getTnCheckbox('access_based_share_enumeration')).isChecked()).toBe(true);
+      expect(await (await getTnCheckbox('enable')).isChecked()).toBe(false);
+      expect(await (await getTnChipInput('hostsallow')).getChips()).toEqual([]);
+      expect(await (await getTnChipInput('hostsdeny')).getChips()).toEqual([]);
+      expect(await (await getTnCheckbox('aapl_name_mangling')).isChecked()).toBe(true);
 
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
       expect(await pathControl.getValue()).toBe('/mnt/pool123/ds222');
-      expect(spectator.component.form.controls.hostsallow.value).toEqual([]);
-      expect(spectator.component.form.controls.hostsdeny.value).toEqual([]);
-
-      const rawValues = spectator.component.form.getRawValue();
-      expect(rawValues.name).toBe('ds222');
-      expect(rawValues.purpose).toBe(SmbSharePurpose.DefaultShare);
-      expect(rawValues.comment).toBe('Description');
-      expect(rawValues.enabled).toBe(true);
-      expect(rawValues.readonly).toBe(true);
-      expect(rawValues.browsable).toBe(true);
-      expect(rawValues.access_based_share_enumeration).toBe(true);
-      expect(rawValues.audit.enable).toBe(false);
-      expect(rawValues.aapl_name_mangling).toBe(true);
     });
 
     it('should show warning if aaple_name_mangling value changes when editing', async () => {
-      if ((existingShare.options as LegacySmbShareOptions).aapl_name_mangling) {
-        spectator.component.form.controls.aapl_name_mangling.setValue(false);
-      } else {
-        spectator.component.form.controls.aapl_name_mangling.setValue(true);
-      }
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
+      const aaplNameManglingCheckbox = await getTnCheckbox('aapl_name_mangling');
 
+      if ((existingShare.options as LegacySmbShareOptions).aapl_name_mangling) {
+        await aaplNameManglingCheckbox.uncheck();
+      } else {
+        await aaplNameManglingCheckbox.check();
+      }
       expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(1, {
         title: helptextSharingSmb.manglingDialog.title,
         message: helptextSharingSmb.manglingDialog.message,
@@ -679,11 +596,10 @@ describe('SmbFormComponent', () => {
     });
 
     it('should not show warning if aaple_name_mangling value is unchanged when editing', async () => {
-      spectator.component.form.controls.aapl_name_mangling.setValue(
+      await setTnCheckbox(
+        'aapl_name_mangling',
         (existingShare.options as LegacySmbShareOptions).aapl_name_mangling,
       );
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
 
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
     });
@@ -705,7 +621,7 @@ describe('SmbFormComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const saveButton = await getSaveButton();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
     });
   });
@@ -717,10 +633,10 @@ describe('SmbFormComponent', () => {
         options: { aapl_name_mangling: true },
       } as FcpSmbShare);
 
-      const control = spectator.component.form.controls.aapl_name_mangling;
-      expect(control.value).toBe(true);
-      expect(control.disabled).toBe(true);
-      expect(spectator.query('[data-test="checkbox-aapl-name-mangling"]')).toBeTruthy();
+      const checkbox = await getTnCheckbox('aapl_name_mangling');
+
+      expect(await checkbox.isChecked()).toBe(true);
+      expect(await checkbox.isDisabled()).toBe(true);
     });
 
     it('shows extensions warning when FCP share is selected and aapl_extensions is disabled', async () => {
@@ -732,9 +648,7 @@ describe('SmbFormComponent', () => {
         aapl_extensions: false,
       } as SmbConfig);
 
-      await fillSmbForm({
-        Purpose: 'Final Cut Pro Storage Share',
-      });
+      await selectPurpose('Final Cut Pro Storage Share');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -749,24 +663,32 @@ describe('SmbFormComponent', () => {
         purpose: SmbSharePurpose.ExternalShare,
       } as SmbShare);
 
-      expect(spectator.query('[data-test="checkbox-aapl-name-mangling"]')).toBeFalsy();
+      const checkboxes = await getTnCheckboxes('aapl_name_mangling');
+
+      expect(checkboxes).toHaveLength(0);
     });
 
     it('disables aapl_name_mangling checkbox for FCP purpose', async () => {
       await setupTest();
 
-      // Start with Default Share - control should be enabled
-      await fillSmbForm({ Purpose: 'Default Share' });
-      expect(spectator.component.form.controls.aapl_name_mangling.disabled).toBe(false);
+      // Start with Default Share - checkbox should be enabled
+      await selectPurpose('Default Share');
+      spectator.detectChanges();
+      let checkbox = await getTnCheckbox('aapl_name_mangling');
+      expect(await checkbox.isDisabled()).toBe(false);
 
-      // Switch to FCP - control should be checked and disabled
-      await fillSmbForm({ Purpose: 'Final Cut Pro Storage Share' });
-      expect(spectator.component.form.controls.aapl_name_mangling.value).toBe(true);
-      expect(spectator.component.form.controls.aapl_name_mangling.disabled).toBe(true);
+      // Switch to FCP - checkbox should be checked and disabled
+      await selectPurpose('Final Cut Pro Storage Share');
+      spectator.detectChanges();
+      checkbox = await getTnCheckbox('aapl_name_mangling');
+      expect(await checkbox.isChecked()).toBe(true);
+      expect(await checkbox.isDisabled()).toBe(true);
 
-      // Switch back to Default - control should be enabled again
-      await fillSmbForm({ Purpose: 'Default Share' });
-      expect(spectator.component.form.controls.aapl_name_mangling.disabled).toBe(false);
+      // Switch back to Default - checkbox should be enabled again
+      await selectPurpose('Default Share');
+      spectator.detectChanges();
+      checkbox = await getTnCheckbox('aapl_name_mangling');
+      expect(await checkbox.isDisabled()).toBe(false);
     });
   });
 
@@ -776,31 +698,46 @@ describe('SmbFormComponent', () => {
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
 
-      await fillSmbForm({
-        Purpose: 'Default Share',
-      });
+      await selectPurpose('Default Share');
     });
 
     it('toggle between Basic/Advanced fields when corresponding buttons are pressed', async () => {
-      // Advanced options were opened in setupTest, so an advanced-only field is rendered.
-      expect(spectator.query('[data-test="checkbox-readonly"]')).toBeTruthy();
-      expect(spectator.query('[data-test="checkbox-access-based-share-enumeration"]')).toBeTruthy();
-      // A basic field is always rendered.
-      expect(spectator.query('[data-test="input-name"]')).toBeTruthy();
+      // Start with advanced options visible because we opened it in beforeEach
+      expect(await (await getTnSelect('purpose')).getDisplayText()).toBe('Default Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      expect(pathControl).toBeTruthy();
+      expect(await getTnInput('name')).toBeTruthy();
+      expect(await getTnInput('comment')).toBeTruthy();
+      expect(await getTnCheckbox('enabled')).toBeTruthy();
+      expect(await getTnCheckbox('readonly')).toBeTruthy();
+      expect(await getTnCheckbox('browsable')).toBeTruthy();
+      expect(await getTnCheckbox('access_based_share_enumeration')).toBeTruthy();
+      expect(await getTnChipInput('hostsallow')).toBeTruthy();
+      expect(await getTnChipInput('hostsdeny')).toBeTruthy();
+      expect(await getTnCheckbox('enable')).toBeTruthy();
+      expect(await getTnCheckbox('aapl_name_mangling')).toBeTruthy();
 
-      await clickButton('Basic Options');
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
+      const basicOptions = await loader.getHarness(TnButtonHarness.with({ label: 'Basic Options' }));
+      await basicOptions.click();
 
-      // Advanced fields are gone, basic fields remain.
-      expect(spectator.query('[data-test="checkbox-readonly"]')).toBeFalsy();
-      expect(spectator.query('[data-test="checkbox-access-based-share-enumeration"]')).toBeFalsy();
-      expect(spectator.query('[data-test="input-name"]')).toBeTruthy();
-      expect(spectator.query('[data-test="select-purpose"]')).toBeTruthy();
+      // Advanced-only controls are gone after switching to Basic Options.
+      expect(await getTnCheckboxes('readonly')).toHaveLength(0);
+      expect(await getTnCheckboxes('access_based_share_enumeration')).toHaveLength(0);
+      expect(await getTnCheckboxes('aapl_name_mangling')).toHaveLength(0);
+      expect(await loader.getAllHarnesses(
+        TnChipInputHarness.with({ selector: '[formControlName="hostsallow"]' }),
+      )).toHaveLength(0);
+
+      // Basic controls remain.
+      expect(await getTnSelect('purpose')).toBeTruthy();
+      expect(await getTnInput('name')).toBeTruthy();
+      expect(await getTnInput('comment')).toBeTruthy();
+      expect(await getTnCheckbox('enabled')).toBeTruthy();
     });
 
     it('sets the correct options array for purpose field', async () => {
-      const purposeSelect = await loader.getHarness(TnSelectHarness.with({ displayText: /Default Share/ }));
+      const purposeSelect = await getTnSelect('purpose');
+      await purposeSelect.open();
       const optionLabels = await purposeSelect.getOptions();
       expect(optionLabels).toEqual([
         'Default Share',
@@ -834,6 +771,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('should dispatch', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
       mockStore$.overrideSelector(selectServices, [{
         id: 4,
         service: ServiceName.Cifs,
@@ -842,16 +780,18 @@ describe('SmbFormComponent', () => {
       } as Service]);
       mockStore$.refreshState();
 
-      await submitForm(commonValues);
+      await applyCommonValues();
+      await clickSave();
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
     });
 
     it('should change purpose to External when path contains IP address/share format', async () => {
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const purposeControl = await getTnSelect('purpose');
 
       // Initially should be Default Share
-      expect(spectator.component.form.controls.purpose.value).toBe(SmbSharePurpose.DefaultShare);
+      expect(await purposeControl.getDisplayText()).toBe('Default Share');
 
       // Set IP address path format
       await pathControl.setValue('192.168.0.200\\SHARE');
@@ -863,13 +803,14 @@ describe('SmbFormComponent', () => {
       spectator.detectChanges();
 
       // Purpose should now be External Share
-      expect(spectator.component.form.controls.purpose.value).toBe(SmbSharePurpose.ExternalShare);
+      expect(await (await getTnSelect('purpose')).getDisplayText()).toBe('External Share');
     });
 
     it('should change purpose to External when path starts with EXTERNAL prefix', async () => {
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const purposeControl = await getTnSelect('purpose');
 
-      expect(spectator.component.form.controls.purpose.value).toBe(SmbSharePurpose.DefaultShare);
+      expect(await purposeControl.getDisplayText()).toBe('Default Share');
 
       await pathControl.setValue('EXTERNAL:192.168.0.200\\SHARE');
 
@@ -879,13 +820,14 @@ describe('SmbFormComponent', () => {
       });
       spectator.detectChanges();
 
-      expect(spectator.component.form.controls.purpose.value).toBe(SmbSharePurpose.ExternalShare);
+      expect(await (await getTnSelect('purpose')).getDisplayText()).toBe('External Share');
     });
 
     it('should change purpose to External when path starts with EXTERNAL only', async () => {
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const purposeControl = await getTnSelect('purpose');
 
-      expect(spectator.component.form.controls.purpose.value).toBe(SmbSharePurpose.DefaultShare);
+      expect(await purposeControl.getDisplayText()).toBe('Default Share');
 
       await pathControl.setValue('external:');
 
@@ -895,7 +837,7 @@ describe('SmbFormComponent', () => {
       });
       spectator.detectChanges();
 
-      expect(spectator.component.form.controls.purpose.value).toBe(SmbSharePurpose.ExternalShare);
+      expect(await (await getTnSelect('purpose')).getDisplayText()).toBe('External Share');
     });
   });
 
@@ -919,20 +861,14 @@ describe('SmbFormComponent', () => {
     });
 
     it('should have error for duplicate share name', async () => {
-      const nameControl = spectator.component.form.controls.name;
-      nameControl.setValue('ds222');
-      nameControl.markAsTouched();
+      const nameControl = await getTnInput('name');
+      await nameControl.setValue('ds222');
 
-      // Wait for the debounced (300ms) async validator to settle.
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 400);
-      });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      expect(nameControl.hasError('customValidator')).toBe(true);
-      expect((nameControl.getError('customValidator') as { message: string }).message)
-        .toBe('Share with this name already exists');
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+      expect(await nameField.getErrorMessage()).toContain('Share with this name already exists');
     });
 
     it('should have a component for warning user about missing SMB users', () => {
@@ -968,11 +904,13 @@ describe('SmbFormComponent', () => {
     });
 
     it('calls handleValidationErrors when an error occurs during save', async () => {
-      await submitForm({
-        Path: '/mnt/pool123/ds222',
-        Name: 'test-share',
-        Purpose: 'Default Share',
-      });
+      jest.spyOn(console, 'warn').mockImplementation();
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/ds222');
+      await (await getTnInput('name')).setValue('test-share');
+      await selectPurpose('Default Share');
+
+      await clickSave();
 
       // Wait for async operations to complete
       await new Promise<void>((resolve) => {
@@ -999,14 +937,15 @@ describe('SmbFormComponent', () => {
       });
 
       // Change to a share type that supports aapl_name_mangling
-      await fillSmbForm({
-        Purpose: 'Default Share',
-      });
+      await selectPurpose('Default Share');
 
-      // Change the aapl_name_mangling value
-      spectator.component.form.controls.aapl_name_mangling.setValue(true);
+      // Wait for the form to update and render the new fields
       spectator.detectChanges();
       await spectator.fixture.whenStable();
+
+      // Change the aapl_name_mangling value
+      const aaplNameManglingCheckbox = await getTnCheckbox('aapl_name_mangling');
+      await aaplNameManglingCheckbox.check();
 
       // Mangle warning should NOT be shown since External shares don't support this field
       // Check that the manglingDialog specifically was not called
@@ -1028,9 +967,7 @@ describe('SmbFormComponent', () => {
         purpose: SmbSharePurpose.LegacyShare,
       });
 
-      await fillSmbForm({
-        Purpose: 'Legacy Share',
-      });
+      await selectPurpose('Legacy Share');
 
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
       await pathControl.setValue('/mnt/pool2/ds22');
@@ -1042,9 +979,8 @@ describe('SmbFormComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.form.controls.acl.setValue(false);
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
+      const aclCheckbox = await getTnCheckbox('acl');
+      await aclCheckbox.uncheck();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
         title: helptextSharingSmb.stripACLDialog.title,
@@ -1060,9 +996,7 @@ describe('SmbFormComponent', () => {
         purpose: SmbSharePurpose.DefaultShare,
       });
 
-      await fillSmbForm({
-        Purpose: 'Default Share',
-      });
+      await selectPurpose('Default Share');
 
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
       await pathControl.setValue('/mnt/pool2/ds22');
@@ -1083,9 +1017,7 @@ describe('SmbFormComponent', () => {
       await setupTest(); // New share
 
       // Verify form processes successfully for new shares
-      await fillSmbForm({
-        Purpose: 'Default Share',
-      });
+      await selectPurpose('Default Share');
 
       expect(spectator.component.isNew).toBe(true);
     });
@@ -1096,9 +1028,7 @@ describe('SmbFormComponent', () => {
       });
 
       // Verify form recognizes this as an existing share
-      await fillSmbForm({
-        Purpose: 'Default Share',
-      });
+      await selectPurpose('Default Share');
 
       expect(spectator.component.isNew).toBe(false);
     });
@@ -1108,14 +1038,12 @@ describe('SmbFormComponent', () => {
     it('should set auto_quota to 0 when Private Datasets purpose is selected', async () => {
       await setupTest();
 
-      await fillSmbForm({
-        Purpose: 'Private Datasets Share',
-      });
+      await selectPurpose('Private Datasets Share');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      expect(spectator.component.form.controls.auto_quota.value).toBe(0);
+      expect(await (await getTnInput('auto_quota')).getNumericValue()).toBe(0);
     });
 
     it('should not override existing auto_quota value', async () => {
@@ -1124,11 +1052,9 @@ describe('SmbFormComponent', () => {
         options: { auto_quota: 50 },
       });
 
-      await fillSmbForm({
-        Purpose: 'Private Datasets Share',
-      });
+      await selectPurpose('Private Datasets Share');
 
-      expect(spectator.component.form.controls.auto_quota.value).toBe(50);
+      expect(await (await getTnInput('auto_quota')).getNumericValue()).toBe(50);
     });
   });
 
@@ -1139,112 +1065,107 @@ describe('SmbFormComponent', () => {
 
     it('should disable save button when audit logging is enabled without groups', async () => {
       // Fill in required fields first
-      await fillSmbForm({
-        Path: '/mnt/pool123/test',
-        Name: 'TestShare',
-        Purpose: 'Default Share',
-      });
-      spectator.component.form.controls.audit.controls.enable.setValue(true);
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/test');
+      await (await getTnInput('name')).setValue('TestShare');
+      await selectPurpose('Default Share');
+      await (await getTnCheckbox('enable')).check();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       // User should see save button disabled due to validation error
-      const saveButton = await getSaveButton();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
     });
 
     it('should enable save button when group is added to watch list', async () => {
       // Fill in required fields and enable audit logging
-      await fillSmbForm({
-        Path: '/mnt/pool123/test',
-        Name: 'TestShare',
-        Purpose: 'Default Share',
-      });
-      spectator.component.form.controls.audit.controls.enable.setValue(true);
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/test');
+      await (await getTnInput('name')).setValue('TestShare');
+      await selectPurpose('Default Share');
+      await (await getTnCheckbox('enable')).check();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       // Verify save button is initially disabled
-      let saveButton = await getSaveButton();
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Add a group to watch list
-      const watchListChips = await loader.getHarness(IxChipsHarness.with({ label: 'Watch List' }));
-      await watchListChips.selectSuggestionValue('test');
+      const watchListChips = await getTnChipInput('watch_list');
+      await watchListChips.addChip('test');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       // User should now see save button enabled
-      saveButton = await getSaveButton();
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
     });
 
     it('should enable save button when group is added to ignore list', async () => {
       // Fill in required fields and enable audit logging
-      await fillSmbForm({
-        Path: '/mnt/pool123/test',
-        Name: 'TestShare',
-        Purpose: 'Default Share',
-      });
-      spectator.component.form.controls.audit.controls.enable.setValue(true);
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/test');
+      await (await getTnInput('name')).setValue('TestShare');
+      await selectPurpose('Default Share');
+      await (await getTnCheckbox('enable')).check();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       // Verify save button is initially disabled
-      let saveButton = await getSaveButton();
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Add a group to ignore list
-      const ignoreListChips = await loader.getHarness(IxChipsHarness.with({ label: 'Ignore List' }));
-      await ignoreListChips.selectSuggestionValue('test');
+      const ignoreListChips = await getTnChipInput('ignore_list');
+      await ignoreListChips.addChip('test');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       // User should now see save button enabled
-      saveButton = await getSaveButton();
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
     });
 
     it('should enable save button when audit logging is disabled', async () => {
       // Fill in required fields and enable audit logging
-      await fillSmbForm({
-        Path: '/mnt/pool123/test',
-        Name: 'TestShare',
-        Purpose: 'Default Share',
-      });
-      spectator.component.form.controls.audit.controls.enable.setValue(true);
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/test');
+      await (await getTnInput('name')).setValue('TestShare');
+      await selectPurpose('Default Share');
+      await (await getTnCheckbox('enable')).check();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       // Verify save button is initially disabled
-      let saveButton = await getSaveButton();
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Disable audit logging
-      spectator.component.form.controls.audit.controls.enable.setValue(false);
+      await (await getTnCheckbox('enable')).uncheck();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       // User should now see save button enabled
-      saveButton = await getSaveButton();
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
     });
 
     it('should display error message when audit logging is enabled without groups', async () => {
       // Fill in required fields and enable audit logging
-      await fillSmbForm({
-        Path: '/mnt/pool123/test',
-        Name: 'TestShare',
-        Purpose: 'Default Share',
-      });
-      spectator.component.form.controls.audit.controls.enable.setValue(true);
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/test');
+      await (await getTnInput('name')).setValue('TestShare');
+      await selectPurpose('Default Share');
+      await (await getTnCheckbox('enable')).check();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1257,12 +1178,11 @@ describe('SmbFormComponent', () => {
 
     it('should re-validate and show error when group is added then removed (reactivity)', async () => {
       // Fill in required fields and enable audit logging
-      await fillSmbForm({
-        Path: '/mnt/pool123/test',
-        Name: 'TestShare',
-        Purpose: 'Default Share',
-      });
-      spectator.component.form.controls.audit.controls.enable.setValue(true);
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/test');
+      await (await getTnInput('name')).setValue('TestShare');
+      await selectPurpose('Default Share');
+      await (await getTnCheckbox('enable')).check();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1272,8 +1192,8 @@ describe('SmbFormComponent', () => {
       expect(errorElement).toBeTruthy();
 
       // Add a group to watch list
-      const watchListChips = await loader.getHarness(IxChipsHarness.with({ label: 'Watch List' }));
-      await watchListChips.selectSuggestionValue('test');
+      const watchListChips = await getTnChipInput('watch_list');
+      await watchListChips.addChip('test');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1283,7 +1203,7 @@ describe('SmbFormComponent', () => {
       expect(errorElement).toBeFalsy();
 
       // Remove the group
-      await watchListChips.removeAllChips();
+      await watchListChips.removeChip('test');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1300,12 +1220,11 @@ describe('SmbFormComponent', () => {
       jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(throwError(() => new Error('Group not found')));
 
       // Fill in required fields and enable audit logging
-      await fillSmbForm({
-        Path: '/mnt/pool123/test',
-        Name: 'TestShare',
-        Purpose: 'Default Share',
-      });
-      spectator.component.form.controls.audit.controls.enable.setValue(true);
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/test');
+      await (await getTnInput('name')).setValue('TestShare');
+      await selectPurpose('Default Share');
+      await (await getTnCheckbox('enable')).check();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1324,11 +1243,11 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify error message is displayed
-      const errorElement = spectator.query('ix-errors mat-error');
-      expect(errorElement?.textContent).toContain('The following groups do not exist: nonexistent');
+      const watchListField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Watch List' }));
+      expect(await watchListField.getErrorMessage()).toContain('The following groups do not exist: nonexistent');
 
       // Verify save button is disabled
-      const saveButton = await getSaveButton();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
     });
 
@@ -1338,12 +1257,11 @@ describe('SmbFormComponent', () => {
       jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(throwError(() => new Error('Group not found')));
 
       // Fill in required fields and enable audit logging
-      await fillSmbForm({
-        Path: '/mnt/pool123/test',
-        Name: 'TestShare',
-        Purpose: 'Default Share',
-      });
-      spectator.component.form.controls.audit.controls.enable.setValue(true);
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/test');
+      await (await getTnInput('name')).setValue('TestShare');
+      await selectPurpose('Default Share');
+      await (await getTnCheckbox('enable')).check();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1362,11 +1280,11 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify error message is displayed
-      const errorElement = spectator.query('ix-errors mat-error');
-      expect(errorElement?.textContent).toContain('The following groups do not exist: nonexistent');
+      const ignoreListField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Ignore List' }));
+      expect(await ignoreListField.getErrorMessage()).toContain('The following groups do not exist: nonexistent');
 
       // Verify save button is disabled
-      const saveButton = await getSaveButton();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
     });
 
@@ -1382,12 +1300,11 @@ describe('SmbFormComponent', () => {
       } as Group));
 
       // Fill in required fields and enable audit logging
-      await fillSmbForm({
-        Path: '/mnt/pool123/test',
-        Name: 'TestShare',
-        Purpose: 'Default Share',
-      });
-      spectator.component.form.controls.audit.controls.enable.setValue(true);
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/test');
+      await (await getTnInput('name')).setValue('TestShare');
+      await selectPurpose('Default Share');
+      await (await getTnCheckbox('enable')).check();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1410,7 +1327,7 @@ describe('SmbFormComponent', () => {
       expect(errorElement).toBeFalsy();
 
       // Verify save button is enabled
-      const saveButton = await getSaveButton();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
     });
 
@@ -1429,12 +1346,11 @@ describe('SmbFormComponent', () => {
       userService.isGroupCachedAsNonExistent = jest.fn(() => false);
 
       // Fill in required fields and enable audit logging
-      await fillSmbForm({
-        Path: '/mnt/pool123/test',
-        Name: 'TestShare',
-        Purpose: 'Default Share',
-      });
-      spectator.component.form.controls.audit.controls.enable.setValue(true);
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/test');
+      await (await getTnInput('name')).setValue('TestShare');
+      await selectPurpose('Default Share');
+      await (await getTnCheckbox('enable')).check();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1452,7 +1368,7 @@ describe('SmbFormComponent', () => {
       spectator.detectChanges();
 
       // Verify save button is disabled while validation is pending
-      const saveButton = await getSaveButton();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Complete the async validation
@@ -1477,53 +1393,51 @@ describe('SmbFormComponent', () => {
     it('should allow null value for dataset_naming_schema when auto_dataset_creation is enabled', async () => {
       await setupTest();
 
-      await fillSmbForm({
-        Purpose: 'Time Machine Share',
-        Path: '/mnt/pool/time-machine',
-        Name: 'time-machine',
-        'Auto Dataset Creation': true,
-        'Dataset Naming Schema': null,
-      });
+      await selectPurpose('Time Machine Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool/time-machine');
+      await (await getTnInput('name')).setValue('time-machine');
+      await (await getTnCheckbox('auto_dataset_creation')).check();
 
       await spectator.fixture.whenStable();
 
-      expect(spectator.component.form.controls.dataset_naming_schema.value).toBeNull();
+      // The harness displays null as empty string in the UI
+      expect(await (await getTnInput('dataset_naming_schema')).getValue()).toBe('');
     });
 
     it('should clear dataset_naming_schema when auto_dataset_creation is disabled', async () => {
       await setupTest();
 
-      await fillSmbForm({
-        Purpose: 'Time Machine Share',
-        Path: '/mnt/pool/time-machine',
-        Name: 'time-machine',
-        'Auto Dataset Creation': true,
-        'Dataset Naming Schema': 'test-schema',
-      });
+      await selectPurpose('Time Machine Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool/time-machine');
+      await (await getTnInput('name')).setValue('time-machine');
+      await (await getTnCheckbox('auto_dataset_creation')).check();
+      await (await getTnInput('dataset_naming_schema')).setValue('test-schema');
 
       await spectator.fixture.whenStable();
 
-      await fillSmbForm({
-        'Auto Dataset Creation': false,
-      });
+      await (await getTnCheckbox('auto_dataset_creation')).uncheck();
 
       await spectator.fixture.whenStable();
 
-      expect(spectator.component.form.controls.dataset_naming_schema.value).toBeNull();
+      // dataset_naming_schema field is hidden once auto_dataset_creation is off.
+      expect(await loader.getAllHarnesses(
+        TnInputHarness.with({ selector: '[formControlName="dataset_naming_schema"]' }),
+      )).toHaveLength(0);
     });
 
     it('should send null to API when dataset_naming_schema is empty', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
       await setupTest();
 
-      await fillSmbForm({
-        Purpose: 'Time Machine Share',
-        Path: '/mnt/pool/time-machine',
-        Name: 'time-machine',
-        'Auto Dataset Creation': true,
-        'Dataset Naming Schema': null,
-      });
+      await selectPurpose('Time Machine Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool/time-machine');
+      await (await getTnInput('name')).setValue('time-machine');
+      await (await getTnCheckbox('auto_dataset_creation')).check();
 
-      await saveForm();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1540,25 +1454,26 @@ describe('SmbFormComponent', () => {
     });
 
     it('should convert empty string to null when user clears the field', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
       await setupTest();
 
-      await fillSmbForm({
-        Purpose: 'Time Machine Share',
-        Path: '/mnt/pool/time-machine',
-        Name: 'time-machine',
-        'Auto Dataset Creation': true,
-        'Dataset Naming Schema': 'initial-value',
-      });
+      await selectPurpose('Time Machine Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool/time-machine');
+      await (await getTnInput('name')).setValue('time-machine');
+      await (await getTnCheckbox('auto_dataset_creation')).check();
+      await (await getTnInput('dataset_naming_schema')).setValue('initial-value');
 
       await spectator.fixture.whenStable();
 
-      await fillSmbForm({
-        'Dataset Naming Schema': '', // User clears the field
-      });
+      // The tn-input harness can't sendKeys an empty string; clear via the control to
+      // mirror the user emptying the field (the component converts '' to null on submit).
+      spectator.component.form.controls.dataset_naming_schema.setValue('');
+      spectator.detectChanges();
 
       await spectator.fixture.whenStable();
 
-      await saveForm();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1571,44 +1486,40 @@ describe('SmbFormComponent', () => {
     });
 
     it('should handle toggling auto_dataset_creation on/off/on correctly', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
       await setupTest();
 
-      await fillSmbForm({
-        Purpose: 'Time Machine Share',
-        Path: '/mnt/pool/time-machine',
-        Name: 'time-machine',
-        'Auto Dataset Creation': true,
-        'Dataset Naming Schema': '%u',
-      });
+      await selectPurpose('Time Machine Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool/time-machine');
+      await (await getTnInput('name')).setValue('time-machine');
+      await (await getTnCheckbox('auto_dataset_creation')).check();
+      await (await getTnInput('dataset_naming_schema')).setValue('%u');
 
       await spectator.fixture.whenStable();
 
       // Disable auto-creation (should clear the field)
-      await fillSmbForm({
-        'Auto Dataset Creation': false,
-      });
+      await (await getTnCheckbox('auto_dataset_creation')).uncheck();
 
       await spectator.fixture.whenStable();
-      expect(spectator.component.form.controls.dataset_naming_schema.value).toBeNull();
+      expect(await loader.getAllHarnesses(
+        TnInputHarness.with({ selector: '[formControlName="dataset_naming_schema"]' }),
+      )).toHaveLength(0);
 
       // Re-enable auto-creation (field should stay null/empty, allowing server defaults)
-      await fillSmbForm({
-        'Auto Dataset Creation': true,
-      });
+      await (await getTnCheckbox('auto_dataset_creation')).check();
 
       await spectator.fixture.whenStable();
-      // Field should remain null, allowing user to leave blank or enter custom value
-      expect(spectator.component.form.controls.dataset_naming_schema.value).toBeNull();
+      // Field should display as empty, allowing user to leave blank or enter custom value
+      expect(await (await getTnInput('dataset_naming_schema')).getValue()).toBe('');
 
       // User can optionally enter a new value
-      await fillSmbForm({
-        'Dataset Naming Schema': 'custom-schema',
-      });
+      await (await getTnInput('dataset_naming_schema')).setValue('custom-schema');
 
       await spectator.fixture.whenStable();
-      expect(spectator.component.form.controls.dataset_naming_schema.value).toBe('custom-schema');
+      expect(await (await getTnInput('dataset_naming_schema')).getValue()).toBe('custom-schema');
 
-      await saveForm();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1621,33 +1532,29 @@ describe('SmbFormComponent', () => {
     });
 
     it('should send null when toggling auto_dataset_creation and leaving field empty', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
       await setupTest();
 
-      await fillSmbForm({
-        Purpose: 'Time Machine Share',
-        Path: '/mnt/pool/time-machine',
-        Name: 'time-machine',
-        'Auto Dataset Creation': true,
-        'Dataset Naming Schema': '%u',
-      });
+      await selectPurpose('Time Machine Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool/time-machine');
+      await (await getTnInput('name')).setValue('time-machine');
+      await (await getTnCheckbox('auto_dataset_creation')).check();
+      await (await getTnInput('dataset_naming_schema')).setValue('%u');
 
       await spectator.fixture.whenStable();
 
       // Disable and re-enable auto-creation
-      await fillSmbForm({
-        'Auto Dataset Creation': false,
-      });
+      await (await getTnCheckbox('auto_dataset_creation')).uncheck();
 
       await spectator.fixture.whenStable();
 
-      await fillSmbForm({
-        'Auto Dataset Creation': true,
-      });
+      await (await getTnCheckbox('auto_dataset_creation')).check();
 
       await spectator.fixture.whenStable();
 
       // Leave field empty (should send null for server defaults)
-      await saveForm();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1677,11 +1584,10 @@ describe('SmbFormComponent', () => {
 
     it('should disable submit button when extensions warning is shown', async () => {
       // Select Time Machine Share (requires Apple SMB2/3 extensions)
-      await fillSmbForm({
-        Purpose: 'Time Machine Share',
-        Path: '/mnt/pool/timemachine',
-        Name: 'timemachine',
-      });
+      await selectPurpose('Time Machine Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool/timemachine');
+      await (await getTnInput('name')).setValue('timemachine');
 
       // Manually set the smbConfig signal to trigger the warning
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -1695,7 +1601,7 @@ describe('SmbFormComponent', () => {
       expect(spectator.component['showExtensionsWarning']()).toBe(true);
 
       // Verify submit button is disabled
-      const saveButton = await getSaveButton();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Verify warning component is shown with correct id
@@ -1705,21 +1611,20 @@ describe('SmbFormComponent', () => {
 
     it('should enable submit button after extensions are enabled', async () => {
       // Select Time Machine Share (requires Apple SMB2/3 extensions)
-      await fillSmbForm({
-        Purpose: 'Time Machine Share',
-        Path: '/mnt/pool/timemachine',
-        Name: 'timemachine',
-      });
+      await selectPurpose('Time Machine Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool/timemachine');
+      await (await getTnInput('name')).setValue('timemachine');
 
       // Set config to show warning
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['updateExtensionsWarning']();
-      await waitForValidation();
+      spectator.detectChanges();
 
       // Verify button is disabled
-      const saveButton = await getSaveButton();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Enable extensions
@@ -1739,28 +1644,25 @@ describe('SmbFormComponent', () => {
 
     it('should show warning reactively when switching between purposes requiring extensions', async () => {
       // Start with Default Share (no warning)
-      await fillSmbForm({
-        Purpose: 'Default Share',
-        Path: '/mnt/pool/default',
-        Name: 'default',
-      });
+      await selectPurpose('Default Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool/default');
+      await (await getTnInput('name')).setValue('default');
 
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['updateExtensionsWarning']();
-      await waitForValidation();
+      spectator.detectChanges();
 
       // Verify no warning for Default Share
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(spectator.component['showExtensionsWarning']()).toBe(false);
-      let saveButton = await getSaveButton();
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
 
       // Switch to Time Machine Share (warning should appear)
-      await fillSmbForm({
-        Purpose: 'Time Machine Share',
-      });
+      await selectPurpose('Time Machine Share');
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['updateExtensionsWarning']();
       spectator.detectChanges();
@@ -1783,9 +1685,7 @@ describe('SmbFormComponent', () => {
       // Switch to FCP Share (another purpose requiring extensions with extensions disabled)
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
-      await fillSmbForm({
-        Purpose: 'Final Cut Pro Storage Share',
-      });
+      await selectPurpose('Final Cut Pro Storage Share');
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['updateExtensionsWarning']();
       spectator.detectChanges();
@@ -1793,13 +1693,11 @@ describe('SmbFormComponent', () => {
       // Verify warning appears again for FCP share
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(spectator.component['showExtensionsWarning']()).toBe(true);
-      saveButton = await getSaveButton();
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
       // Switch back to Default Share (warning should disappear)
-      await fillSmbForm({
-        Purpose: 'Default Share',
-      });
+      await selectPurpose('Default Share');
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['updateExtensionsWarning']();
       spectator.detectChanges();
@@ -1817,26 +1715,24 @@ describe('SmbFormComponent', () => {
     });
 
     it('should disable save button when grace_period is below minimum (60)', async () => {
-      await fillSmbForm({
-        Purpose: 'Time Locked Share',
-        Path: '/mnt/pool123/locked',
-        Name: 'locked-share',
-        'Grace Period': 59,
-      });
+      await selectPurpose('Time Locked Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/locked');
+      await (await getTnInput('name')).setValue('locked-share');
+      await (await getTnInput('grace_period')).setValue('59');
 
-      const saveButton = await getSaveButton();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
     });
 
     it('should disable save button when grace_period is above maximum (15552000)', async () => {
-      await fillSmbForm({
-        Purpose: 'Time Locked Share',
-        Path: '/mnt/pool123/locked',
-        Name: 'locked-share',
-        'Grace Period': 15552001,
-      });
+      await selectPurpose('Time Locked Share');
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      await pathControl.setValue('/mnt/pool123/locked');
+      await (await getTnInput('name')).setValue('locked-share');
+      await (await getTnInput('grace_period')).setValue('15552001');
 
-      const saveButton = await getSaveButton();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
     });
   });

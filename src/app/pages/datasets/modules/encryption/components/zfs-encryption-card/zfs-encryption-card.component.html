@@ -1,96 +1,91 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>{{ 'Encryption' | translate }}</h3>
+<tn-card class="card" [title]="'Encryption' | translate">
+  <div class="details-item">
+    <div class="label">{{ 'Current State' | translate }}:</div>
+    <div class="value">{{ currentStateLabel() }}</div>
+  </div>
+  @if (dataset().encrypted) {
+    <div class="details-item">
+      @if (isEncryptionRoot()) {
+        <div class="label">{{ 'Encryption Root' | translate }}:</div>
+        <div class="value">
+          {{ 'Yes' | translate }}
+          <ix-tooltip
+            [message]="'Encryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.' | translate"
+            [header]="'Encryption Root' | translate"
+          ></ix-tooltip>
+        </div>
+      } @else {
+        <div class="label">{{ 'Inherits Encryption From' | translate }}:</div>
+        <div class="value">
+          <a
+            class="action"
+            tnTestIdType="link"
+            [tnTestId]="'go-to-encryption-root'"
+            [routerLink]="['/datasets', dataset().encryption_root]"
+          >
+            /{{ dataset().encryption_root }}
+          </a>
+        </div>
+      }
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Type' | translate }}:</div>
+      <div class="value">
+        {{ hasPassphrase() ? ('Passphrase' | translate) : ('Key' | translate) }}
+      </div>
+    </div>
+  }
 
+  <ng-template tnCardFooterActions>
     @if (canEdit()) {
-      <a
-        mat-button
-        ixTest="edit"
-        (click)="onEditPressed()"
-      >
-        {{ 'Edit' | translate }}
-      </a>
+      <tn-button
+        variant="outline"
+        [label]="'Edit' | translate"
+        [testId]="'edit'"
+        (onClick)="onEditPressed()"
+      ></tn-button>
     }
     @if (canUnlock()) {
-      <a
+      <tn-button
         *ixRequiresRoles="[Role.DatasetWrite]"
-        mat-button
         color="primary"
-        ixTest="unlock"
+        variant="outline"
+        [label]="'Unlock' | translate"
+        [testId]="'unlock'"
         [routerLink]="['/datasets', dataset().id, 'unlock']"
-      >
-        {{ 'Unlock' | translate }}
-      </a>
+      ></tn-button>
     }
-  </mat-card-header>
-  <mat-card-content>
-    <div class="details-item">
-      <div class="label">{{ 'Current State' | translate }}:</div>
-      <div class="value">{{ currentStateLabel() }}</div>
-    </div>
-    @if (dataset().encrypted) {
-      <div class="details-item">
-        @if (isEncryptionRoot()) {
-          <div class="label">{{ 'Encryption Root' | translate }}:</div>
-          <div class="value">
-            {{ 'Yes' | translate }}
-            <ix-tooltip
-              [message]="'Encryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.' | translate"
-              [header]="'Encryption Root' | translate"
-            ></ix-tooltip>
-          </div>
-        } @else {
-          <div class="label">{{ 'Inherits Encryption From' | translate }}:</div>
-          <div class="value">
-            <a
-              class="action"
-              ixTest="go-to-encryption-root"
-              [routerLink]="['/datasets', dataset().encryption_root]"
-            >
-              /{{ dataset().encryption_root }}
-            </a>
-          </div>
-        }
-      </div>
-      <div class="details-item">
-        <div class="label">{{ 'Type' | translate }}:</div>
-        <div class="value">
-          {{ hasPassphrase() ? ('Passphrase' | translate) : ('Key' | translate) }}
-        </div>
-      </div>
-    }
-  </mat-card-content>
-  @if (dataset().encrypted && isEncryptionRoot() && !dataset().locked) {
-    <mat-card-actions>
+    @if (dataset().encrypted && isEncryptionRoot() && !dataset().locked) {
       <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
         @if (canExportKey() && isRoot()) {
-          <button
-            mat-button
-            ixTest="export-all-keys"
-            (click)="onExportAllKeys()"
-          >
-            {{ 'Export All Keys' | translate }}
-          </button>
+          <tn-button
+            variant="outline"
+            [label]="'Export All Keys' | translate"
+            [testId]="'export-all-keys'"
+            (onClick)="onExportAllKeys()"
+          ></tn-button>
         }
       </ng-container>
       <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
         @if (canExportKey()) {
-          <button mat-button ixTest="export-key" (click)="onExportKey()">
-            {{ 'Export Key' | translate }}
-          </button>
+          <tn-button
+            variant="outline"
+            [label]="'Export Key' | translate"
+            [testId]="'export-key'"
+            (onClick)="onExportKey()"
+          ></tn-button>
         }
       </ng-container>
       <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
-        <button
-          mat-button
-          ixTest="lock"
-          [matTooltip]="!hasPassphrase() ? ('You can only lock a dataset if it was encrypted with a passphrase' | translate) : ''"
+        <tn-button
+          variant="outline"
+          [label]="'Lock' | translate"
+          [testId]="'lock'"
+          [tnTooltip]="!hasPassphrase() ? ('You can only lock a dataset if it was encrypted with a passphrase' | translate) : ''"
           [disabled]="!hasPassphrase()"
-          (click)="onLock()"
-        >
-          {{ 'Lock' | translate }}
-        </button>
+          (onClick)="onLock()"
+        ></tn-button>
       </ng-container>
-    </mat-card-actions>
-  }
-</mat-card>
+    }
+  </ng-template>
+</tn-card>

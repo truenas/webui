@@ -1,15 +1,13 @@
 <div class="list-item">
   @if (canDelete()) {
-    <button
-      mat-icon-button
-      type="button"
+    <tn-icon-button
+      name="close"
+      library="mdi"
       class="delete-btn"
-      ixTest="remove-from-list"
-      [attr.aria-label]="'Remove {label} item' | translate: { label: label() }"
-      (click)="deleteItem()"
-    >
-      <tn-icon name="close" library="mdi"></tn-icon>
-    </button>
+      testId="remove-from-list"
+      [ariaLabel]="'Remove {label} item' | translate: { label: label() }"
+      (onClick)="deleteItem()"
+    ></tn-icon-button>
   }
   <ng-content></ng-content>
 </div>

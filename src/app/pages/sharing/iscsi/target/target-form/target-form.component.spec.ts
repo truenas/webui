@@ -4,7 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
@@ -15,7 +19,6 @@ import {
 import { Option } from 'app/interfaces/option.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -63,6 +66,36 @@ describe('TargetFormComponent', () => {
     getData: jest.fn((): undefined => undefined),
   };
 
+  const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  const getTnSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  // Fills the four group selects (portal / initiator / authmethod / auth) for the single
+  // group item the mode-switching tests create.
+  const fillGroupSelects = async (values: {
+    portal?: string;
+    initiator?: string;
+    authmethod?: string;
+    auth?: string;
+  }): Promise<void> => {
+    if (values.portal !== undefined) {
+      await (await getTnSelect('portal')).selectOption(values.portal);
+    }
+    if (values.initiator !== undefined) {
+      await (await getTnSelect('initiator')).selectOption(values.initiator);
+    }
+    if (values.authmethod !== undefined) {
+      await (await getTnSelect('authmethod')).selectOption(values.authmethod);
+    }
+    if (values.auth !== undefined) {
+      await (await getTnSelect('auth')).selectOption(values.auth);
+    }
+  };
+
   const createComponent = createComponentFactory({
     component: TargetFormComponent,
     imports: [
@@ -84,7 +117,9 @@ describe('TargetFormComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
+      }),
       mockProvider(DialogService),
       mockProvider(FibreChannelService, {
         loadTargetPorts: jest.fn(() => of([])),
@@ -137,6 +172,7 @@ describe('TargetFormComponent', () => {
         }] as IscsiAuthAccess[]),
       ]),
       mockAuth(),
+      provideTnFormFieldErrors(),
     ],
   });
 
@@ -145,6 +181,7 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+      jest.spyOn(console, 'warn').mockImplementation();
       api = spectator.inject(ApiService);
     });
 
@@ -152,7 +189,7 @@ describe('TargetFormComponent', () => {
       // Click Add buttons to create FormArray items:
       // addButtons[0] = Add button for groups (click twice for 2 groups)
       // addButtons[1] = Add button for auth_networks (click twice for 2 networks)
-      const addButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Add' }));
+      const addButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Add' }));
       await addButtons[0].click();
       await addButtons[0].click();
       await addButtons[1].click();
@@ -210,19 +247,20 @@ describe('TargetFormComponent', () => {
   describe('edit new target', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingTarget }),
-        ],
+        props: {
+          targetData: existingTarget,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+      jest.spyOn(console, 'warn').mockImplementation();
       api = spectator.inject(ApiService);
     });
 
     it('edits existing target when form opened for edit is submitted', async () => {
+      await (await getTnInput('name')).setValue('name_new');
+      await (await getTnInput('alias')).setValue('alias_new');
       await form.fillForm({
-        'Target Name': 'name_new',
-        'Target Alias': 'alias_new',
         Mode: 'Fibre Channel',
       });
 
@@ -294,15 +332,14 @@ describe('TargetFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+      jest.spyOn(console, 'warn').mockImplementation();
     });
 
     it('should display an error message for invalid target name', async () => {
-      await form.fillForm({
-        'Target Name': 'name_test',
-      });
+      await (await getTnInput('name')).setValue('name_test');
 
-      const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Target Name' }));
-      expect(await nameControl.getErrorText()).toBe('Target with this name already exists');
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Target Name' }));
+      expect(await nameField.getErrorMessage()).toBe('Target with this name already exists');
     });
   });
 
@@ -311,6 +348,7 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+      jest.spyOn(console, 'warn').mockImplementation();
     });
 
     it('should not display banner when there are 0 FC ports', async () => {
@@ -329,6 +367,7 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+      jest.spyOn(console, 'warn').mockImplementation();
     });
 
     it('shows groups section when mode is iSCSI', async () => {
@@ -362,12 +401,13 @@ describe('TargetFormComponent', () => {
   describe('groups in API calls based on mode', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingTarget }),
-        ],
+        props: {
+          targetData: existingTarget,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+      jest.spyOn(console, 'warn').mockImplementation();
       api = spectator.inject(ApiService);
     });
 
@@ -433,13 +473,14 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+      jest.spyOn(console, 'warn').mockImplementation();
       api = spectator.inject(ApiService);
     });
 
     it('preserves groups when switching from iSCSI to FC and back to iSCSI', async () => {
       // Start with iSCSI mode and add a group
+      await (await getTnInput('name')).setValue('test-target');
       await form.fillForm({
-        'Target Name': 'test-target',
         Mode: 'iSCSI',
       });
 
@@ -447,25 +488,24 @@ describe('TargetFormComponent', () => {
       await groupsList.pressAddButton();
 
       // Fill in the group details
-      await form.fillForm({
-        'Portal Group ID': '1 (comment_1)',
-        'Initiator Group ID': '3 (initiator_1)',
-        'Authentication Method': 'Mutual CHAP',
-        'Authentication Group Number': '55',
+      await fillGroupSelects({
+        portal: '1 (comment_1)',
+        initiator: '3 (initiator_1)',
+        authmethod: 'Mutual CHAP',
+        auth: '55',
       });
 
       // Verify groups section is visible
       let groupsSection = spectator.query('ix-list[formArrayName="groups"]');
       expect(groupsSection).toExist();
 
-      // Get the form values to verify groups are populated
-      let groupsValues = await groupsList.getFormValues();
-      expect(groupsValues).toHaveLength(1);
-      expect(groupsValues[0]).toEqual({
-        'Portal Group ID': '1 (comment_1)',
-        'Initiator Group ID': '3 (initiator_1)',
-        'Authentication Method': 'Mutual CHAP',
-        'Authentication Group Number': '55',
+      // Verify groups are populated in the form model
+      expect(spectator.component.form.controls.groups).toHaveLength(1);
+      expect(spectator.component.form.controls.groups.at(0).getRawValue()).toEqual({
+        portal: 1,
+        initiator: 3,
+        authmethod: IscsiAuthMethod.ChapMutual,
+        auth: 55,
       });
 
       // Switch to FC mode - groups should be hidden but preserved
@@ -485,31 +525,30 @@ describe('TargetFormComponent', () => {
       expect(groupsSection).toExist();
 
       // Verify the groups still have the same values
-      groupsValues = await groupsList.getFormValues();
-      expect(groupsValues).toHaveLength(1);
-      expect(groupsValues[0]).toEqual({
-        'Portal Group ID': '1 (comment_1)',
-        'Initiator Group ID': '3 (initiator_1)',
-        'Authentication Method': 'Mutual CHAP',
-        'Authentication Group Number': '55',
+      expect(spectator.component.form.controls.groups).toHaveLength(1);
+      expect(spectator.component.form.controls.groups.at(0).getRawValue()).toEqual({
+        portal: 1,
+        initiator: 3,
+        authmethod: IscsiAuthMethod.ChapMutual,
+        auth: 55,
       });
     });
 
     it('submits correct API payload after mode switching: iSCSI with groups → FC (no groups) → iSCSI with groups', async () => {
       // Start with iSCSI mode and add a group
+      await (await getTnInput('name')).setValue('test-target');
       await form.fillForm({
-        'Target Name': 'test-target',
         Mode: 'iSCSI',
       });
 
       const groupsList = await loader.getHarness(IxListHarness.with({ label: 'Add groups' }));
       await groupsList.pressAddButton();
 
-      await form.fillForm({
-        'Portal Group ID': '1 (comment_1)',
-        'Initiator Group ID': '3 (initiator_1)',
-        'Authentication Method': 'Mutual CHAP',
-        'Authentication Group Number': '55',
+      await fillGroupSelects({
+        portal: '1 (comment_1)',
+        initiator: '3 (initiator_1)',
+        authmethod: 'Mutual CHAP',
+        auth: '55',
       });
 
       // Switch to FC mode and submit - should send empty groups array
@@ -555,18 +594,18 @@ describe('TargetFormComponent', () => {
     });
 
     it('preserves groups when switching from BOTH to FC and back to BOTH', async () => {
+      await (await getTnInput('name')).setValue('test-target');
       await form.fillForm({
-        'Target Name': 'test-target',
         Mode: 'Both',
       });
 
       const groupsList = await loader.getHarness(IxListHarness.with({ label: 'Add groups' }));
       await groupsList.pressAddButton();
 
-      await form.fillForm({
-        'Portal Group ID': '2 (comment_2)',
-        'Initiator Group ID': '4 (initiator_2)',
-        'Authentication Method': 'CHAP',
+      await fillGroupSelects({
+        portal: '2 (comment_2)',
+        initiator: '4 (initiator_2)',
+        authmethod: 'CHAP',
       });
 
       // Switch to FC mode
@@ -586,12 +625,11 @@ describe('TargetFormComponent', () => {
       expect(groupsSection).toExist();
 
       // Verify groups are preserved
-      const groupsValues = await groupsList.getFormValues();
-      expect(groupsValues).toHaveLength(1);
-      expect(groupsValues[0]).toMatchObject({
-        'Portal Group ID': '2 (comment_2)',
-        'Initiator Group ID': '4 (initiator_2)',
-        'Authentication Method': 'CHAP',
+      expect(spectator.component.form.controls.groups).toHaveLength(1);
+      expect(spectator.component.form.controls.groups.at(0).getRawValue()).toMatchObject({
+        portal: 2,
+        initiator: 4,
+        authmethod: IscsiAuthMethod.Chap,
       });
     });
   });
