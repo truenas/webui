@@ -91,6 +91,11 @@ export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsy
     return this.form.dirty;
   }
 
+  /** The footerless `<tn-side-panel>` host shows its progress bar while this is true. */
+  isBusy(): boolean {
+    return this.isLoading();
+  }
+
   protected form = this.formBuilder.group({
     name: ['', Validators.required],
     subnqn: [''],
