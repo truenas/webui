@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -56,7 +58,9 @@ export class RebootRequiredDialog {
   ));
 
   form = this.fb.group({
-    confirm: [false, Validators.requiredTrue],
+    // Initial null instead of false keeps ix-errors from showing
+    // "Confirm is required" before the user interacts with the checkbox.
+    confirm: new FormControl<boolean | null>(null, Validators.requiredTrue),
   });
 
   rebootLocalNode(): void {
