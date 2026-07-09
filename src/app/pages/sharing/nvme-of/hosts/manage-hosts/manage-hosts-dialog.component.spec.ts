@@ -2,7 +2,7 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog, TnIconHarness, TnTableHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -89,7 +89,8 @@ describe('ManageHostsDialog', () => {
   });
 
   it('opens host form when Edit button is pressed', async () => {
-    const editButton = (await loader.getAllHarnesses(TnIconHarness.with({ name: 'mdi-pencil' })))[0];
+    // TODO: switch to a row-scoped lookup once TnTableHarness ships getHarnessInCell (library follow-up).
+    const editButton = (await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-pencil' })))[0];
     await editButton.click();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
@@ -100,7 +101,7 @@ describe('ManageHostsDialog', () => {
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
-    const deleteButton = (await loader.getAllHarnesses(TnIconHarness.with({ name: 'mdi-delete' })))[0];
+    const deleteButton = (await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' })))[0];
     await deleteButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SubsystemPortOrHostDeleteDialogComponent, {

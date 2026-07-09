@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, input } from '@
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCardComponent, TnCardFooterActionsDirective, TnIconButtonComponent, TnIconComponent, TnTooltipDirective,
+  TnBannerComponent, TnCardComponent, TnCardFooterActionsDirective, TnIconButtonComponent, TnIconComponent,
+  TnTooltipDirective,
 } from '@truenas/ui-components';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -25,6 +26,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrl: './subsystem-hosts-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnBannerComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
     TnIconComponent,

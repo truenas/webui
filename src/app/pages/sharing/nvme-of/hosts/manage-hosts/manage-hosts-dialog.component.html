@@ -2,6 +2,7 @@
   @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
   <tn-table
     class="table"
+    [testId]="'table-table'"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByHostId"

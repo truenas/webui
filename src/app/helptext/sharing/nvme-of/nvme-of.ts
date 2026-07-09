@@ -24,6 +24,7 @@ export const helptextNvmeOf = {
   noNamespacesWarning: T('Hosts that connect will see no storage until you add a namespace backed by a zvol or file.'),
   noPortsWarningHeading: T('Subsystem unreachable'),
   noPortsWarning: T('Hosts cannot connect until you add a port that exposes this subsystem on the network.'),
+  noHostsWarningHeading: T('No hosts allowed'),
   noHostsWarning: T('No hosts are allowed to access this subsystem. It will not be accessible.'),
   hasHostAuthentication: T('Host authentication is enabled'),
 

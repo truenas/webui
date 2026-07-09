@@ -13,8 +13,6 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemsListComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystems-list.component';
 
@@ -62,9 +60,6 @@ describe('SubsystemsListComponent', () => {
     ],
     providers: [
       mockProvider(EmptyService),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.success({ ...mockSubsystems[0], name: 'subsys-3' })),
-      }),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
       }),

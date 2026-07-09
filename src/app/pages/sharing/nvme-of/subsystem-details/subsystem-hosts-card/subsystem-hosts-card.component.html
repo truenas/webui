@@ -12,17 +12,11 @@
   @if (subsystem().allow_any_host && !subsystem().hosts.length) {
     {{ 'All hosts are allowed.' | translate }}
   } @else if (!subsystem().hosts?.length) {
-    <div class="no-hosts-warning">
-      <tn-icon
-        name="alert"
-        library="mdi"
-        class="icon"
-      ></tn-icon>
-
-      <div>
-        {{ helptext.noHostsWarning | translate }}
-      </div>
-    </div>
+    <tn-banner
+      type="warning"
+      [heading]="helptext.noHostsWarningHeading | translate"
+      [message]="helptext.noHostsWarning | translate"
+    ></tn-banner>
   } @else {
     <ul class="host-list">
       @for (host of subsystem().hosts; track host.id) {

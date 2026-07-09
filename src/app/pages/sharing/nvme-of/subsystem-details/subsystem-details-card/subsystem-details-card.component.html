@@ -36,7 +36,7 @@
           <tn-input
             testId="subnqn"
             formControlName="subnqn"
-            ariaLabel="NQN"
+            [ariaLabel]="'NQN' | translate"
             [multiline]="true"
           ></tn-input>
         </div>
@@ -44,7 +44,8 @@
 
       <a
         class="copy-link"
-        ixTest="copy-link"
+        tnTestIdType="link"
+        [tnTestId]="'copy-link'"
         [ixUiSearch]="searchableElements.elements.copyNqn"
         (click)="copyNqn()"
       >

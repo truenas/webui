@@ -1,7 +1,5 @@
 <tn-card [padContent]="false">
-  <div tnCardHeader class="header-title">
-    <h3 class="tn-card__title">{{ 'Subsystems' | translate }}</h3>
-  </div>
+  <h3 tnCardHeader class="tn-card__title">{{ 'Subsystems' | translate }}</h3>
 
   <ng-template tnCardHeaderActions>
     <div class="actions action-icon">
@@ -30,6 +28,7 @@
   } @else {
     <tn-table
       class="table"
+      [testId]="'table-table'"
       [dataSource]="(dataProvider().currentPage$ | async) ?? []"
       [displayedColumns]="displayedColumns"
       [trackBy]="trackBySubsystemId"
@@ -67,9 +66,10 @@
             <tn-icon-button
               name="chevron-right"
               library="mdi"
-              [ariaLabel]="'View Details' | translate"
+              [ariaLabel]="('View Details' | translate) + ' ' + row.name"
+              [ariaExpanded]="dataProvider().expandedRow === row"
               [tooltip]="'View Details' | translate"
-              [testId]="['view-details', row.name]"
+              [testId]="['nvmeof-subsys-' + row.name, 'mdi-chevron-right', 'row-action']"
               (onClick)="onRowClick(row)"
             ></tn-icon-button>
           </span>

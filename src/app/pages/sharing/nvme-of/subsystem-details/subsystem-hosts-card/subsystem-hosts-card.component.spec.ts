@@ -1,6 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfHost, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
@@ -48,7 +48,7 @@ describe('SubsystemHostsCardComponent', () => {
     expect(allowedHosts.textContent).toContain('All hosts are allowed');
   });
 
-  it('shows a warning when allow_any_host is off and no hosts are allowed', () => {
+  it('shows a warning banner when allow_any_host is off and no hosts are allowed', async () => {
     spectator = createComponent({
       props: {
         subsystem: {
@@ -58,8 +58,9 @@ describe('SubsystemHostsCardComponent', () => {
       },
     });
 
-    const allowedHosts = spectator.query('.no-hosts-warning');
-    expect(allowedHosts.textContent).toContain('No hosts are allowed');
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain('No hosts are allowed');
   });
 
   it('shows a list of allowed hosts', () => {

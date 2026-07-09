@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, inject, inpu
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCardComponent, TnInputComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnInputComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { finalize } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -18,7 +18,6 @@ import {
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { subsystemDetailsCardElements } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-details-card/subsystem-details-card.elements';
@@ -38,7 +37,7 @@ import { subsystemDetailsCardElements } from 'app/pages/sharing/nvme-of/subsyste
     FormsModule,
     ReactiveFormsModule,
     EditableSaveOnEnterDirective,
-    TestDirective,
+    TnTestIdDirective,
     UiSearchDirective,
     AsyncPipe,
   ],
