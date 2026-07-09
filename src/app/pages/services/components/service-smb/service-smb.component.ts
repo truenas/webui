@@ -215,9 +215,11 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
   readonly encryptionOptions = mapToOptions(smbEncryptionLabels, this.translate);
 
   // Server-searched option streams for the Guest Account / Administrators Group
-  // autocompletes (nfs-form precedent). switchMap cancels in-flight queries on new
-  // input; catchError keeps one failed DS query from killing the stream for the
-  // rest of the form's life.
+  // autocompletes. switchMap cancels in-flight queries on new input; catchError
+  // keeps one failed DS query from killing the stream for the rest of the form's
+  // life — the dropdown shows "Options cannot be loaded" via [noResultsText],
+  // the same in-panel signal the old ix-combobox rendered.
+  protected readonly usersFetchFailed = signal(false);
   protected readonly usersLoading = signal(false);
   protected readonly userSearch$ = new BehaviorSubject('');
   protected readonly userOptions$ = this.userSearch$.pipe(
@@ -225,8 +227,10 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
     distinctUntilChanged(),
     tap(() => this.usersLoading.set(true)),
     switchMap((query) => this.userService.userQueryDsCache(query).pipe(
+      tap(() => this.usersFetchFailed.set(false)),
       catchError((error: unknown) => {
         console.error('User autocomplete fetch failed:', error);
+        this.usersFetchFailed.set(true);
         return of([]);
       }),
     )),
@@ -235,6 +239,7 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  protected readonly groupsFetchFailed = signal(false);
   protected readonly groupsLoading = signal(false);
   protected readonly groupSearch$ = new BehaviorSubject('');
   protected readonly groupOptions$ = this.groupSearch$.pipe(
@@ -242,8 +247,10 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
     distinctUntilChanged(),
     tap(() => this.groupsLoading.set(true)),
     switchMap((query) => this.userService.groupQueryDsCache(query).pipe(
+      tap(() => this.groupsFetchFailed.set(false)),
       catchError((error: unknown) => {
         console.error('Group autocomplete fetch failed:', error);
+        this.groupsFetchFailed.set(true);
         return of([]);
       }),
     )),

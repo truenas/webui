@@ -39,7 +39,7 @@
 
             @if (entry.controls.ae_who.value === nfsAclTag.User) {
               <tn-form-field [label]="'User' | translate" [required]="true">
-                <!-- TODO: [placeholder] doubles as the accessible-name fallback — tn-autocomplete
+                <!-- TODO(NAS-141021): [placeholder] doubles as the accessible-name fallback — tn-autocomplete
                   has no [ariaLabel] input and tn-form-field does not associate its label yet. -->
                 <tn-autocomplete
                   formControlName="user"
@@ -49,7 +49,7 @@
                   [allowCustomValue]="true"
                   [loading]="usersLoading()"
                   [loadingText]="'Loading...' | translate"
-                  [noResultsText]="'No results found' | translate"
+                  [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
                   (searchChange)="userSearch$.next($event)"
                 ></tn-autocomplete>
               </tn-form-field>
@@ -65,7 +65,7 @@
                   [allowCustomValue]="true"
                   [loading]="groupsLoading()"
                   [loadingText]="'Loading...' | translate"
-                  [noResultsText]="'No results found' | translate"
+                  [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
                   (searchChange)="groupSearch$.next($event)"
                 ></tn-autocomplete>
               </tn-form-field>

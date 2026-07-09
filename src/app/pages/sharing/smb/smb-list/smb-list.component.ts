@@ -190,10 +190,7 @@ export class SmbListComponent implements OnInit {
       propertyName: 'audit',
     }),
     actionsColumn({}),
-  ], {
-    uniqueRowTag: (row) => 'smb-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed<string[]>(() => {
     const columns = toDisplayedColumns(this.columns());

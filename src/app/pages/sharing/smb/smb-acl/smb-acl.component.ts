@@ -131,6 +131,11 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
   // single SMB directory query per search. Option values are uid/gid numbers;
   // free-typed names commit as strings and are resolved to ids on submit
   // (see `getAclEntriesFromForm`), matching the old combobox behavior.
+  // On a failed fetch the stream stays alive with empty options and the dropdown
+  // shows "Options cannot be loaded" via [noResultsText] — the same in-panel
+  // signal the old ix-combobox rendered (a modal per failed keystroke query
+  // would be far noisier than the transient panel notice).
+  protected readonly usersFetchFailed = signal(false);
   protected readonly usersLoading = signal(false);
   protected readonly userSearch$ = new BehaviorSubject('');
   protected readonly userOptions$ = combineLatest([
@@ -139,8 +144,10 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
       distinctUntilChanged(),
       tap(() => this.usersLoading.set(true)),
       switchMap((query) => this.userService.smbUserQueryDsCache(query).pipe(
+        tap(() => this.usersFetchFailed.set(false)),
         catchError((error: unknown) => {
           console.error('SMB user autocomplete fetch failed:', error);
+          this.usersFetchFailed.set(true);
           return of([] as User[]);
         }),
       )),
@@ -156,6 +163,7 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  protected readonly groupsFetchFailed = signal(false);
   protected readonly groupsLoading = signal(false);
   protected readonly groupSearch$ = new BehaviorSubject('');
   protected readonly groupOptions$ = combineLatest([
@@ -164,8 +172,10 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
       distinctUntilChanged(),
       tap(() => this.groupsLoading.set(true)),
       switchMap((query) => this.userService.smbGroupQueryDsCache(query, false).pipe(
+        tap(() => this.groupsFetchFailed.set(false)),
         catchError((error: unknown) => {
           console.error('SMB group autocomplete fetch failed:', error);
+          this.groupsFetchFailed.set(true);
           return of([] as Group[]);
         }),
       )),
