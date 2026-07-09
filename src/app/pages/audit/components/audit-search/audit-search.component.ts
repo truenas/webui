@@ -15,7 +15,7 @@ import {
   map, Observable, of, ReplaySubject, shareReplay, skip, switchMap, take, tap,
 } from 'rxjs';
 import {
-  AuditEvent, auditEventLabels, AuditService, auditServiceLabels,
+  AuditEvent, AuditService, auditServiceLabels,
 } from 'app/enums/audit.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -69,7 +69,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
   protected readonly searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "Close" AND Username = "admin"');
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "CLOSE" AND Username = "admin"');
   protected readonly basicSearchPlaceholder = this.translate.instant('Search by Event or Username');
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
   protected readonly serviceOptions$ = of(mapToOptions(auditServiceLabels, this.translate));
@@ -273,11 +273,14 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       textProperty(
         'event',
         this.translate.instant('Event'),
+        // Suggest the raw event tokens (e.g. AUTHENTICATION, SET_ACL) verbatim, and omit
+        // the enumMap so the value shown is exactly the value queried. This keeps the
+        // filter consistent with the table and with what is stored in the audit DB /
+        // remote syslog, rather than a friendly label that users can't search for remotely.
         of(Object.values(AuditEvent).map((key) => ({
-          label: this.translate.instant(auditEventLabels.get(key) || key),
-          value: `"${this.translate.instant(auditEventLabels.get(key) || key)}"`,
+          label: key,
+          value: `"${key}"`,
         }))),
-        auditEventLabels,
       ),
       textProperty(
         'event_data.clientAccount',

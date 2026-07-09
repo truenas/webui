@@ -5,10 +5,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { finalize, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { auditEventLabels } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -24,7 +22,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     TestDirective,
     NgxSkeletonLoaderModule,
     RouterLink,
-    MapValuePipe,
     IxDateComponent,
   ],
 })
@@ -47,8 +44,6 @@ export class UserLastActionComponent implements OnChanges {
       },
     });
   });
-
-  protected readonly eventLabels = auditEventLabels;
 
   ngOnChanges(): void {
     this.isLoading.set(true);

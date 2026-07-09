@@ -4,7 +4,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { auditServiceLabels, auditEventLabels } from 'app/enums/audit.enum';
+import { auditServiceLabels } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -73,12 +73,12 @@ export class AuditListComponent {
       getValue: (row) => row.message_timestamp * 1000,
     }),
     textColumn({
+      // Show the raw event token verbatim (e.g. SET_ACL) rather than a friendly label.
+      // This is the exact value recorded in the audit database and forwarded to remote
+      // syslog, so users see the same string here that they search for remotely.
       title: this.translate.instant('Event'),
       propertyName: 'event',
-      getValue: (row) => {
-        const event = auditEventLabels.get(row.event);
-        return event ? this.translate.instant(event) : row.event || '-';
-      },
+      getValue: (row) => row.event || '-',
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
