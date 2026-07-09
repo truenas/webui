@@ -1,6 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, output, viewChild } from '@angular/core';
-import { of } from 'rxjs';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ChangeDetectionStrategy, Component, output, viewChild } from '@angular/core';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
@@ -15,34 +13,17 @@ import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-name
   ],
 })
 export class AddSubsystemNamespaceComponent {
-  /** Present when opened via legacy SlideIn host. Absent when hosted in `<tn-side-panel>`. */
-  readonly slideInRef = inject<SlideInRef<void, NamespaceChanges>>(SlideInRef, { optional: true });
   private baseForm = viewChild(BaseNamespaceFormComponent);
 
-  /** Emitted with the namespace changes when hosted in a `<tn-side-panel>`. */
-  readonly saved = output<NamespaceChanges>();
+  /** Emitted to a `tn-side-panel` host with the new namespace on save. */
+  readonly closed = output<NamespaceChanges>();
 
-  /** Whether the form can be submitted — read by a `<tn-side-panel>` host's footer Save. */
-  readonly canSubmit = computed(() => this.baseForm()?.canSubmit() ?? false);
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
-  }
-
-  /** Public entry point for a `<tn-side-panel>` host's footer Save. */
-  submit(): void {
-    this.baseForm()?.submit();
-  }
-
+  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
   hasUnsavedChanges(): boolean {
-    return this.baseForm()?.isFormDirty ?? false;
+    return this.baseForm()?.isFormDirty || false;
   }
 
   onSubmit(newNamespace: NamespaceChanges): void {
-    if (this.slideInRef) {
-      this.slideInRef.close({ response: newNamespace });
-    } else {
-      this.saved.emit(newNamespace);
-    }
+    this.closed.emit(newNamespace);
   }
 }

@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import {
-  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
-} from '@angular/material/expansion';
-import { MatList, MatListItem } from '@angular/material/list';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnDialog,
+  TnExpansionPanelComponent,
+  TnIconButtonComponent,
+  TnListComponent,
+  TnListItemComponent,
+} from '@truenas/ui-components';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -27,7 +28,6 @@ import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolAttachDialog } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolReplaceDialog } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
@@ -53,16 +53,11 @@ export interface BootPoolActionEvent {
   imports: [
     FakeProgressBarComponent,
     UiSearchDirective,
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatList,
-    MatListItem,
+    TnExpansionPanelComponent,
+    TnListComponent,
+    TnListItemComponent,
     BootenvNodeItemComponent,
-    MatIconButton,
-    TestDirective,
-    TnIconComponent,
+    TnIconButtonComponent,
     TranslateModule,
     FormatDateTimePipe,
     TreeViewComponent,
@@ -86,18 +81,19 @@ export class BootStatusListComponent implements OnInit {
   protected readonly searchableElements = bootEnvStatusElements;
 
   protected isLoading = signal(false);
-  dataSource: NestedTreeDataSource<VDevNestedDataNode>;
-  treeControl: TreeExpansion<VDevNestedDataNode, string> = createNestedTreeControl<VDevNestedDataNode, string>(
-    (vdev) => vdev.children,
-    { trackBy: (vdev) => vdev.guid },
-  );
+  protected dataSource: NestedTreeDataSource<VDevNestedDataNode>;
+  protected treeControl: TreeExpansion<VDevNestedDataNode, string>
+    = createNestedTreeControl<VDevNestedDataNode, string>(
+      (vdev) => vdev.children,
+      { trackBy: (vdev) => vdev.guid },
+    );
 
-  poolInstance: PoolInstance;
-  readonly hasNestedChild = (_: number, node: VDevNestedDataNode): boolean => {
+  protected poolInstance: PoolInstance;
+  protected readonly hasNestedChild = (_: number, node: VDevNestedDataNode): boolean => {
     return Boolean(node?.children?.length);
   };
 
-  get oneDisk(): boolean {
+  protected get oneDisk(): boolean {
     if (!this.poolInstance) {
       return false;
     }
@@ -126,21 +122,21 @@ export class BootStatusListComponent implements OnInit {
     });
   }
 
-  attach(): void {
+  protected attach(): void {
     this.tnDialog.open(BootPoolAttachDialog)
       .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadPoolInstance());
   }
 
-  replace(diskPath: string): void {
+  protected replace(diskPath: string): void {
     this.tnDialog.open(BootPoolReplaceDialog, { data: diskPath })
       .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadPoolInstance());
   }
 
-  detach(diskPath: string): void {
+  protected detach(diskPath: string): void {
     const disk = diskPath.substring(5, diskPath.length);
     this.api.call('boot.detach', [disk])
       .pipe(
@@ -154,7 +150,7 @@ export class BootStatusListComponent implements OnInit {
       });
   }
 
-  doAction(event: BootPoolActionEvent): void {
+  protected doAction(event: BootPoolActionEvent): void {
     switch (event.action) {
       case BootPoolActionType.Replace:
         this.replace(event.node.name);

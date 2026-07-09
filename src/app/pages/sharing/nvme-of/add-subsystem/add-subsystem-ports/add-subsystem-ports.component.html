@@ -23,10 +23,9 @@
             <tn-icon-button
               name="close"
               library="mdi"
-              iconClass="icon"
-              [ariaLabel]="'Remove' | translate"
+              [ariaLabel]="'Remove port' | translate"
               [testId]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
-              (onClick)="onRemovePort(port)"
+              (click)="onRemovePort(port)"
             ></tn-icon-button>
           </span>
         </span>

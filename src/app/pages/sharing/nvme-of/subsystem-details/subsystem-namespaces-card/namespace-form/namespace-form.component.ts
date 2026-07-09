@@ -3,10 +3,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -27,9 +26,7 @@ export interface NamespaceFormParams {
     BaseNamespaceFormComponent,
   ],
 })
-export class NamespaceFormComponent {
-  /** Present when opened via legacy SlideIn host. Absent when hosted in `<tn-side-panel>`. */
-  readonly slideInRef = inject<SlideInRef<NamespaceFormParams, NamespaceChanges>>(SlideInRef, { optional: true });
+export class NamespaceFormComponent implements SidePanelHostCloseable<NamespaceChanges> {
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
@@ -37,43 +34,36 @@ export class NamespaceFormComponent {
   private destroyRef = inject(DestroyRef);
   private baseForm = viewChild(BaseNamespaceFormComponent);
 
-  /** Provided by a `<tn-side-panel>` host (the legacy SlideIn host supplies it via `slideInRef`). */
-  readonly data = input<NamespaceFormParams>();
+  /** Form data supplied by the `tn-side-panel` host. */
+  readonly namespaceData = input<NamespaceFormParams>();
+
+  /** Emitted to a `tn-side-panel` host with the saved namespace on success. */
   readonly closed = output<NamespaceChanges>();
 
+  protected existingNamespace = computed<NvmeOfNamespace>(() => this.namespaceData()?.namespace);
   protected error = signal<unknown>(null);
 
-  protected readonly existingNamespace = computed(() => this.incomingData?.namespace);
-
-  /** Whether the form can be submitted — read by a `<tn-side-panel>` host's footer Save. */
-  readonly canSubmit = computed(() => this.baseForm()?.canSubmit() ?? false);
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
+  private get data(): NamespaceFormParams | undefined {
+    return this.namespaceData();
   }
 
-  /** Public entry point for a `<tn-side-panel>` host to trigger submission. */
-  submit(): void {
-    this.baseForm()?.submit();
+  protected get subsystemId(): number {
+    return this.data?.subsystemId;
   }
 
+  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
   hasUnsavedChanges(): boolean {
-    return this.baseForm()?.isFormDirty ?? false;
-  }
-
-  private get incomingData(): NamespaceFormParams | undefined {
-    return this.slideInRef?.getData() ?? this.data();
+    return this.baseForm()?.isFormDirty || false;
   }
 
   protected onSubmit(newNamespace: NamespaceChanges): void {
     const payload = {
       ...newNamespace,
-      subsys_id: this.incomingData?.subsystemId,
+      subsys_id: this.subsystemId,
     };
 
-    const existing = this.existingNamespace();
-    const request$ = existing
-      ? this.api.call('nvmet.namespace.update', [existing.id, payload])
+    const request$ = this.existingNamespace()
+      ? this.api.call('nvmet.namespace.update', [this.existingNamespace().id, payload])
       : this.api.call('nvmet.namespace.create', [payload]);
 
     request$.pipe(
@@ -82,23 +72,17 @@ export class NamespaceFormComponent {
     )
       .subscribe({
         next: () => {
-          this.snackbar.success(existing
+          const message = this.existingNamespace()
             ? this.translate.instant('Namespace updated.')
-            : this.translate.instant('Namespace created.'));
+            : this.translate.instant('Namespace created.');
 
-          this.close(newNamespace);
+          this.snackbar.success(message);
+
+          this.closed.emit(newNamespace);
         },
         error: (error: unknown) => {
           this.error.set(error);
         },
       });
-  }
-
-  private close(saved: NamespaceChanges): void {
-    if (this.slideInRef) {
-      this.slideInRef.close({ response: saved });
-    } else {
-      this.closed.emit(saved);
-    }
   }
 }

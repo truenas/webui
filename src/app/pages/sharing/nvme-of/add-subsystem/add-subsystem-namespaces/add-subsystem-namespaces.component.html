@@ -1,6 +1,7 @@
 <div class="section-header">
   <h5>{{ 'Namespaces' | translate }}</h5>
   <tn-button
+    type="button"
     [testId]="'add-namespace'"
     [label]="'Add' | translate"
     (onClick)="onAddNamespace()"
@@ -23,32 +24,11 @@
             library="mdi"
             [testId]="'delete-namespace'"
             [ariaLabel]="'Remove namespace' | translate"
-            [tooltip]="'Remove namespace' | translate"
-            (onClick)="onDeleteNamespace(i)"
+            [tnTooltip]="'Remove namespace' | translate"
+            (click)="onDeleteNamespace(i)"
           ></tn-icon-button>
         </div>
       </div>
     }
   </div>
 }
-
-<tn-side-panel
-  [title]="'Add Namespace' | translate"
-  [closeGuard]="namespaceCloseGuard"
-  [(open)]="namespacePanelOpen"
->
-  @if (namespacePanelOpen()) {
-    <ix-add-subsystem-namespace (saved)="onNamespaceSaved($event)"></ix-add-subsystem-namespace>
-  }
-  @if (namespaceForm(); as form) {
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      tnSidePanelAction
-      color="primary"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
-  }
-</tn-side-panel>

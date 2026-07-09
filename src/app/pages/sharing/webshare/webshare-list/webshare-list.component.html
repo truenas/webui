@@ -126,27 +126,3 @@
     <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
   }
 </tn-card>
-
-<tn-side-panel
-  [title]="sidePanelTitle() | translate"
-  [closeGuard]="closeFormGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-webshare-shares-form
-      [data]="formData()"
-      (closed)="onFormClosed($event)"
-    ></ix-webshare-shares-form>
-  }
-  @if (configForm(); as form) {
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      tnSidePanelAction
-      color="primary"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
-  }
-</tn-side-panel>

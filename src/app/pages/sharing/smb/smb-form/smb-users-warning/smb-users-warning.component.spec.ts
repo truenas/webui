@@ -3,7 +3,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { SmbUsersWarningComponent } from './smb-users-warning.component';
 
@@ -21,9 +20,6 @@ describe('SmbUsersWarningComponent', () => {
       mockProvider(Router),
       mockProvider(SmbValidationService, {
         checkForSmbUsersWarning: jest.fn(() => of(true)),
-      }),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
       }),
     ],
   });
@@ -60,7 +56,7 @@ describe('SmbUsersWarningComponent', () => {
     expect(warning).toBeFalsy();
   });
 
-  it('should close form and navigate when navigation links are clicked', () => {
+  it('navigates when navigation links are clicked', () => {
     const smbValidationService = spectator.inject(SmbValidationService);
     jest.spyOn(smbValidationService, 'checkForSmbUsersWarning').mockReturnValue(of(true));
 
@@ -68,18 +64,14 @@ describe('SmbUsersWarningComponent', () => {
     spectator.detectChanges();
 
     const router = spectator.inject(Router);
-    const slideInRef = spectator.inject(SlideInRef);
     jest.spyOn(router, 'navigate');
-    jest.spyOn(slideInRef, 'close');
 
     const options = spectator.queryAll('ul li');
 
     options[0].querySelector('a')?.click();
-    expect(slideInRef.close).toHaveBeenCalledWith({ response: undefined });
     expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'users']);
 
     options[1].querySelector('a')?.click();
-    expect(slideInRef.close).toHaveBeenCalledWith({ response: undefined });
     expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'directory-services']);
   });
 

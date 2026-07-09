@@ -39,27 +39,3 @@
     </ul>
   }
 </tn-card>
-
-<tn-side-panel
-  [title]="'Add Namespace' | translate"
-  [closeGuard]="namespaceCloseGuard"
-  [(open)]="namespacePanelOpen"
->
-  @if (namespacePanelOpen()) {
-    <ix-namespace-form
-      [data]="namespaceFormData()"
-      (closed)="onNamespaceSaved()"
-    ></ix-namespace-form>
-  }
-  @if (namespaceForm(); as form) {
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      tnSidePanelAction
-      color="primary"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
-  }
-</tn-side-panel>

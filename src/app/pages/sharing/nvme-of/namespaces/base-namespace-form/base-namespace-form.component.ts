@@ -1,16 +1,12 @@
-import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output,
-} from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnFormFieldComponent,
-  TnInputComponent,
+  InputType, TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent,
+  TnCardComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { startWith, of } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
@@ -18,7 +14,6 @@ import { Role } from 'app/enums/role.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -26,14 +21,12 @@ import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-export enum FormNamespaceType {
+enum FormNamespaceType {
   Zvol = 'Zvol',
   NewFile = 'NewFile',
   ExistingFile = 'ExistingFile',
@@ -60,18 +53,16 @@ const typeOptions: Option[] = [
   styleUrl: './base-namespace-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     IxExplorerComponent,
     ReactiveFormsModule,
     TranslateModule,
+    TnCardComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     TnButtonComponent,
     TnButtonToggleGroupComponent,
     TnButtonToggleComponent,
-    TnFormFieldComponent,
-    TnInputComponent,
-    FormActionsComponent,
-    ModalHeaderComponent,
-    IxFieldsetComponent,
     ExplorerCreateDatasetComponent,
     ExplorerCreateZvolComponent,
     RequiresRolesDirective,
@@ -84,12 +75,8 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
   private formErrorHandler = inject(FormErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly InputType = InputType;
-
   namespace = input<NvmeOfNamespace>();
   error = input<unknown>(null);
-  /** Hide the internal modal-header + Save when the form is hosted in a `<tn-side-panel>`. */
-  showActions = input(true);
 
   submitted = output<NamespaceChanges>();
 
@@ -112,26 +99,15 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
   });
 
   protected readonly FormNamespaceType = FormNamespaceType;
+  protected readonly InputType = InputType;
+  protected readonly typeToggleLabelId = 'namespace-device-type-label';
 
-  protected typeOptions$ = of(translateOptions(this.translate, typeOptions));
+  protected typeOptions = translateOptions(this.translate, typeOptions);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  private readonly formStatus = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status)),
-    { initialValue: this.form.status },
-  );
-
-  /** Whether the form can be submitted — read by a `<tn-side-panel>` host's footer Save. */
-  readonly canSubmit = computed(() => this.formStatus() === 'VALID');
-
   get isFormDirty(): boolean {
     return this.form.dirty;
-  }
-
-  /** Public entry point so a `<tn-side-panel>` host can trigger submission from its footer. */
-  submit(): void {
-    this.onSubmit();
   }
 
   constructor() {

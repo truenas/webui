@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { when } from 'jest-when';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -18,8 +19,9 @@ import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { User } from 'app/interfaces/user.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -44,10 +46,21 @@ describe('EmailFormComponent', () => {
   let form: IxFormHarness;
   let api: ApiService;
 
-  const slideInRef: SlideInRef<MailConfig | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => fakeEmailConfig),
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  // pattern to click a footer action borrowed from:
+  // src/app/pages/system/alert-service/alert-service/alert-service.component.spec.ts
+  const clickSendTestMail = (): void => {
+    spectator.component.footerActions[0].onClick();
+    spectator.detectChanges();
   };
 
   const createComponent = createComponentFactory({
@@ -83,7 +96,8 @@ describe('EmailFormComponent', () => {
           afterClosed: () => of(null),
         }),
       }),
-      mockProvider(SnackbarService),
+      ...ixFormTestingProviders(),
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockAuth(),
       mockWindow({
         open: jest.fn(),
@@ -104,23 +118,21 @@ describe('EmailFormComponent', () => {
         }),
         removeEventListener: jest.fn(),
       }),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
   describe('form checks', () => {
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({ props: { config: fakeEmailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
     });
 
-    it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
+    it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', () => {
       spectator.inject(MockApiService).mockCall('mail.local_administrator_email', null);
 
-      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
-      await button.click();
+      clickSendTestMail();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.local_administrator_email');
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
@@ -130,9 +142,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('opens new window with OAuth page when user presses Log In To Gmail', async () => {
-      await form.fillForm({
-        'Send Mail Method': 'GMail OAuth',
-      });
+      await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
@@ -151,9 +161,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('calls removeEventListener when gmail oAuth callback is called', async () => {
-      await form.fillForm({
-        'Send Mail Method': 'GMail OAuth',
-      });
+      await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
       const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await loginButton.click();
@@ -163,34 +171,25 @@ describe('EmailFormComponent', () => {
     });
 
     it('enables Save button after switching from SMTP to Gmail and completing OAuth', async () => {
-      await form.fillForm({
-        'Send Mail Method': 'GMail OAuth',
-      });
+      await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
-      // Before OAuth login, Save should be disabled
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
-      // Log in to Gmail
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
 
-      // After OAuth login, Save should be enabled
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
 
     it('saves Gmail Oauth config when user authorizes via Gmail and saves the form', async () => {
-      await form.fillForm({
-        'From Email': 'newfrom@ixsystems.com',
-        'From Name': 'Johnny',
-        'Send Mail Method': 'GMail OAuth',
-      });
+      await (await getInput('fromemail')).setValue('newfrom@ixsystems.com');
+      await (await getInput('fromname')).setValue('Johnny');
+      await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
@@ -208,15 +207,12 @@ describe('EmailFormComponent', () => {
     });
 
     it('sends test email with Gmail Oauth config when Gmail used and Send Test Mail is pressed', async () => {
-      await form.fillForm({
-        'Send Mail Method': 'GMail OAuth',
-      });
+      await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
       await logInButton.click();
 
-      const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
-      await sendTestEmailButton.click();
+      clickSendTestMail();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'mail.send',
@@ -243,9 +239,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('opens new window with OAuth page when user presses Log In To Outlook', async () => {
-      await form.fillForm({
-        'Send Mail Method': 'Outlook OAuth',
-      });
+      await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
       await logInButton.click();
@@ -264,19 +258,15 @@ describe('EmailFormComponent', () => {
     });
 
     it('disables Save button when no From Email is provided for Outlook OAuth', async () => {
-      await form.fillForm({
-        'Send Mail Method': 'Outlook OAuth',
-        'From Email': '',
-      });
+      await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
+      spectator.component.form.controls.fromemail.setValue('');
+      spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('calls removeEventListener when outlook oAuth callback is called', async () => {
-      await form.fillForm({
-        'Send Mail Method': 'Outlook OAuth',
-      });
+      await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
 
       const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
       await loginButton.click();
@@ -286,17 +276,14 @@ describe('EmailFormComponent', () => {
     });
 
     it('saves Outlook Oauth config when user authorizes via Outlook and saves the form', async () => {
-      await form.fillForm({
-        'From Email': 'newfrom@ixsystems.com',
-        'From Name': 'Johnny',
-        'Send Mail Method': 'Outlook OAuth',
-      });
+      await (await getInput('fromemail')).setValue('newfrom@ixsystems.com');
+      await (await getInput('fromname')).setValue('Johnny');
+      await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
       await logInButton.click();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
@@ -317,15 +304,12 @@ describe('EmailFormComponent', () => {
     });
 
     it('sends test email with Outlook Oauth config when Outlook used and Send Test Mail is pressed', async () => {
-      await form.fillForm({
-        'Send Mail Method': 'Outlook OAuth',
-      });
+      await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
 
       const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
       await logInButton.click();
 
-      const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
-      await sendTestEmailButton.click();
+      clickSendTestMail();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'mail.send',
@@ -357,24 +341,21 @@ describe('EmailFormComponent', () => {
 
   describe('SMTP config', () => {
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({ props: { config: fakeEmailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
     });
 
     it('saves SMTP config when form is filled and Save is pressed', async () => {
-      await form.fillForm({
-        'From Email': 'newfrom@ixsystems.com',
-        'From Name': 'Jeremy',
-        'Outgoing Mail Server': 'smtp.ixsystems.com',
-        'Mail Server Port': '21',
-        Security: 'SSL (Implicit TLS)',
-        'SMTP Authentication': false,
-      });
+      await (await getInput('fromemail')).setValue('newfrom@ixsystems.com');
+      await (await getInput('fromname')).setValue('Jeremy');
+      await (await getInput('outgoingserver')).setValue('smtp.ixsystems.com');
+      await (await getInput('port')).setValue('21');
+      await (await getSelect('security')).selectOption('SSL (Implicit TLS)');
+      await (await getCheckbox('smtp')).uncheck();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
@@ -391,24 +372,18 @@ describe('EmailFormComponent', () => {
     });
 
     it('loads and shows current SMTP config when SMTP is selected', async () => {
-      const values = await form.getValues();
-
-      expect(values).toEqual({
-        'Send Mail Method': 'SMTP',
-        'From Email': 'from@ixsystems.com',
-        'From Name': 'John Smith',
-        'Outgoing Mail Server': 'smtp.gmail.com',
-        'Mail Server Port': '587',
-        Security: 'TLS (STARTTLS)',
-        'SMTP Authentication': true,
-        Password: '12345678',
-        Username: 'authuser@ixsystems.com',
-      });
+      expect(await (await getInput('fromemail')).getValue()).toBe('from@ixsystems.com');
+      expect(await (await getInput('fromname')).getValue()).toBe('John Smith');
+      expect(await (await getInput('outgoingserver')).getValue()).toBe('smtp.gmail.com');
+      expect(await (await getInput('port')).getValue()).toBe('587');
+      expect(await (await getSelect('security')).getDisplayText()).toBe('TLS (STARTTLS)');
+      expect(await (await getCheckbox('smtp')).isChecked()).toBe(true);
+      expect(await (await getInput('pass')).getValue()).toBe('12345678');
+      expect(await (await getInput('user')).getValue()).toBe('authuser@ixsystems.com');
     });
 
-    it('sends test email with SMTP settings when SMTP form is used and Send Test Mail is pressed', async () => {
-      const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
-      await sendTestEmailButton.click();
+    it('sends test email with SMTP settings when SMTP form is used and Send Test Mail is pressed', () => {
+      clickSendTestMail();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'mail.send',
@@ -448,30 +423,20 @@ describe('EmailFormComponent', () => {
     };
 
     beforeEach(async () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => fakeGmailEmailConfig }),
-        ],
-      });
+      spectator = createComponent({ props: { config: fakeGmailEmailConfig as MailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
     });
 
     it('shows current Gmail config when Gmail is set', async () => {
-      const values = await form.getValues();
-
-      expect(values).toEqual({
-        'From Email': 'from@ixsystems.com',
-        'From Name': 'John Smith',
-        'Send Mail Method': 'GMail OAuth',
-      });
+      expect(await (await getInput('fromemail')).getValue()).toBe('from@ixsystems.com');
+      expect(await (await getInput('fromname')).getValue()).toBe('John Smith');
       expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
     });
 
-    it('has Save button enabled when Gmail config is loaded', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
+    it('has Save button enabled when Gmail config is loaded', () => {
+      expect(spectator.component.canSubmit()).toBe(true);
     });
   });
 
@@ -488,12 +453,7 @@ describe('EmailFormComponent', () => {
       } as MailConfig;
 
       beforeEach(async () => {
-        spectator = createComponent({
-          detectChanges: false,
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
-          ],
-        });
+        spectator = createComponent({ detectChanges: false });
         spectator.inject(MockApiService).mockCall('mail.config', fakeGmailConfig);
         spectator.detectChanges();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -503,27 +463,17 @@ describe('EmailFormComponent', () => {
       it('fetches email config from API and shows Gmail config with Save enabled', async () => {
         expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.config');
 
-        const values = await form.getValues();
-        expect(values).toEqual({
-          'From Email': 'from@ixsystems.com',
-          'From Name': 'John Smith',
-          'Send Mail Method': 'GMail OAuth',
-        });
+        expect(await (await getInput('fromemail')).getValue()).toBe('from@ixsystems.com');
+        expect(await (await getInput('fromname')).getValue()).toBe('John Smith');
         expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-        expect(await saveButton.isDisabled()).toBe(false);
+        expect(spectator.component.canSubmit()).toBe(true);
       });
     });
 
     describe('with SMTP config', () => {
       beforeEach(async () => {
-        spectator = createComponent({
-          detectChanges: false,
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
-          ],
-        });
+        spectator = createComponent({ detectChanges: false });
         spectator.inject(MockApiService).mockCall('mail.config', fakeEmailConfig);
         spectator.detectChanges();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -534,28 +484,21 @@ describe('EmailFormComponent', () => {
       it('fetches email config from API and shows SMTP config', async () => {
         expect(api.call).toHaveBeenCalledWith('mail.config');
 
-        const values = await form.getValues();
-        expect(values).toEqual({
-          'Send Mail Method': 'SMTP',
-          'From Email': 'from@ixsystems.com',
-          'From Name': 'John Smith',
-          'Outgoing Mail Server': 'smtp.gmail.com',
-          'Mail Server Port': '587',
-          Security: 'TLS (STARTTLS)',
-          'SMTP Authentication': true,
-          Password: '12345678',
-          Username: 'authuser@ixsystems.com',
-        });
+        expect(await (await getInput('fromemail')).getValue()).toBe('from@ixsystems.com');
+        expect(await (await getInput('fromname')).getValue()).toBe('John Smith');
+        expect(await (await getInput('outgoingserver')).getValue()).toBe('smtp.gmail.com');
+        expect(await (await getInput('port')).getValue()).toBe('587');
+        expect(await (await getSelect('security')).getDisplayText()).toBe('TLS (STARTTLS)');
+        expect(await (await getCheckbox('smtp')).isChecked()).toBe(true);
+        expect(await (await getInput('pass')).getValue()).toBe('12345678');
+        expect(await (await getInput('user')).getValue()).toBe('authuser@ixsystems.com');
       });
 
       it('saves SMTP config when form is filled and Save is pressed', async () => {
-        await form.fillForm({
-          'From Email': 'newfrom@ixsystems.com',
-          'From Name': 'Jeremy',
-        });
+        await (await getInput('fromemail')).setValue('newfrom@ixsystems.com');
+        await (await getInput('fromname')).setValue('Jeremy');
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-        await saveButton.click();
+        spectator.component.submit();
 
         expect(api.call).toHaveBeenCalledWith('mail.update', [{
           fromemail: 'newfrom@ixsystems.com',
@@ -574,12 +517,8 @@ describe('EmailFormComponent', () => {
 
   describe('opened from alerts panel with API error', () => {
     it('shows error modal and keeps form open when mail.config request fails', () => {
-      spectator = createComponent({
-        detectChanges: false,
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
-        ],
-      });
+      spectator = createComponent({ detectChanges: false });
+      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       when(spectator.inject(MockApiService).call)
         .calledWith('mail.config')
@@ -587,7 +526,7 @@ describe('EmailFormComponent', () => {
 
       spectator.detectChanges();
 
-      expect(spectator.inject(SlideInRef).close).not.toHaveBeenCalled();
+      expect(closeSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -603,24 +542,15 @@ describe('EmailFormComponent', () => {
     };
 
     beforeEach(async () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => fakeOutlookEmailConfig }),
-        ],
-      });
+      spectator = createComponent({ props: { config: fakeOutlookEmailConfig as MailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
     });
 
     it('shows current Outlook config when Outlook is set', async () => {
-      const values = await form.getValues();
-
-      expect(values).toEqual({
-        'From Email': 'from@ixsystems.com',
-        'From Name': 'John Smith',
-        'Send Mail Method': 'Outlook OAuth',
-      });
+      expect(await (await getInput('fromemail')).getValue()).toBe('from@ixsystems.com');
+      expect(await (await getInput('fromname')).getValue()).toBe('John Smith');
       expect(spectator.query('.oauth-message')).toHaveText('Outlook credentials have been applied.');
     });
   });

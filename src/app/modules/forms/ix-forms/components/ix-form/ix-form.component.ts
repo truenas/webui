@@ -4,6 +4,7 @@ import {
   computed,
   DestroyRef,
   inject,
+  InjectionToken,
   input,
   isDevMode,
   OnInit,
@@ -18,7 +19,7 @@ import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  defer, Observable, of, startWith, take,
+  defer, forkJoin, map, Observable, of, startWith, take, timer,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -29,6 +30,21 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
+
+/**
+ * Minimum time (ms) the submitting indicator stays up on a successful `<tn-side-panel>`-hosted save.
+ * A local API call can resolve in a few ms, closing the panel before the host's progress bar / dim
+ * overlay are perceptible — the save reads as if nothing happened. Holding success handling
+ * (snackbar + close) until at least this long has elapsed guarantees the loader is actually seen.
+ * Only the success path waits; errors surface immediately (see {@link IxFormComponent.onFormSubmit}).
+ *
+ * Injectable so specs that assert a synchronous close can set it to `0` (which skips the timer
+ * entirely, restoring the un-delayed path).
+ */
+export const ixFormMinSubmitFeedbackMs = new InjectionToken<number>('ixFormMinSubmitFeedbackMs', {
+  providedIn: 'root',
+  factory: () => 500,
+});
 
 export interface FormSubmitEvent<T = Record<string, unknown>> {
   /** Whether this form is in edit mode. */
@@ -81,8 +97,12 @@ export interface SubmitResult {
  * ```
  *
  * For self-managed async setup use `initialFormSnapshot` + `externalLoading` +
- * `isEditMode` instead of `editData` (snapshot wins if both are set). Must
- * render inside a slide-in (injects SlideInRef; tests use ixFormTestingProviders()).
+ * `isEditMode` instead of `editData` (snapshot wins if both are set).
+ *
+ * Hosts either way: inside a legacy slide-in (injects `SlideInRef`, closed directly
+ * through it) or host-less inside a `<tn-side-panel>` (`SlideInRef` is `{ optional: true }`
+ * and absent — the {@link closed} output drives the panel to close and reload). Tests use
+ * `ixFormTestingProviders()`.
  *
  * Input surface is FROZEN: no new top-level inputs without team review — keep
  * outlier forms bespoke rather than grow this API.
@@ -191,9 +211,17 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    */
   private readonly formStatus = signal<FormControlStatus>('INVALID');
 
-  /** True while the form may be submitted; drives a host-owned Save button. */
+  /**
+   * True while the form may be submitted; drives a host-owned Save button (the `<tn-side-panel>`
+   * footer). Mirrors {@link isSaveDisabled} — which gates the in-body SlideIn Save — so both hosts
+   * enable Save under the same condition. Blocks only on `INVALID`, not `PENDING`: an edit form
+   * runs its async validators (e.g. name/path uniqueness) against unchanged, already-valid data on
+   * open, and gating on `=== 'VALID'` would leave Save disabled through that pending window (the
+   * "Save disabled until I change something" on WebShare Edit). `form.invalid` is false while
+   * PENDING, so the SlideIn Save stayed enabled there — match it.
+   */
   readonly canSubmit = computed(
-    () => this.formStatus() === 'VALID' && !this.isLoading() && !this.extraDisabled(),
+    () => this.formStatus() !== 'INVALID' && !this.isLoading() && !this.extraDisabled(),
   );
 
   private readonly internalSnapshot = signal<Partial<T> | null>(null);
@@ -208,6 +236,7 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   // and in-form Save are gated on it). Absent inside a `<tn-side-panel>`, where
   // the host owns the header + Save and close happens via {@link closed}.
   protected slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef, { optional: true });
+  private minSubmitFeedbackMs = inject(ixFormMinSubmitFeedbackMs);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
@@ -317,7 +346,17 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
 
     this.isSubmitting.set(true);
     let handledSuccess = false;
-    request$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
+    // In a `<tn-side-panel>` host, pair the request with a minimum-duration timer so a fast save
+    // still shows the panel's progress bar / dim overlay long enough to register. `forkJoin` waits
+    // for BOTH to complete, so success is handled at `max(request duration, min)`; a request error
+    // rejects `forkJoin` immediately, so failures are never artificially delayed. The legacy SlideIn
+    // host renders its own inline chrome (no host loader to hold), so it keeps the un-delayed path —
+    // as does a `0` min (specs asserting a synchronous close opt out that way).
+    const holdForFeedback = !this.slideInRef && this.minSubmitFeedbackMs > 0;
+    const submit$ = holdForFeedback
+      ? forkJoin([request$.pipe(take(1)), timer(this.minSubmitFeedbackMs)]).pipe(map(([result]) => result))
+      : request$.pipe(take(1));
+    submit$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result: unknown) => {
         handledSuccess = true;
         this.hadSuccessfulSubmit = true;

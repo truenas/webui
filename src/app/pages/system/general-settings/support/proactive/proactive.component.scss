@@ -2,14 +2,11 @@
 
 .two-columns {
   display: flex;
+  gap: 16px;
   margin-top: 20px;
 
   @media (max-width: $breakpoint-tablet) {
     display: block;
-  }
-
-  .form-disable {
-    opacity: 0.7;
   }
 
   > * {
@@ -20,8 +17,8 @@
       width: 100%;
     }
   }
-}
 
-.form-actions {
-  padding: 0 11px;
+  tn-form-section {
+    margin-top: 0;
+  }
 }

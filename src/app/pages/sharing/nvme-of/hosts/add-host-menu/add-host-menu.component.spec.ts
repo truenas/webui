@@ -5,16 +5,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
-import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
-import {
-  ManageHostsAction, ManageHostsDialog, ManageHostsResult,
-} from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
+import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 describe('AddHostMenuComponent', () => {
@@ -37,18 +35,16 @@ describe('AddHostMenuComponent', () => {
   const allHosts = signal<NvmeOfHost[]>([]);
   const createComponent = createComponentFactory({
     component: AddHostMenuComponent,
-    declarations: [
-      MockComponent(HostFormComponent),
-    ],
     providers: [
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
       }),
       mockProvider(NvmeOfStore, {
         hosts: allHosts,
-        reloadHosts: jest.fn(),
       }),
-      mockProvider(SnackbarService),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.success(newHost)),
+      }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
           closed: of(undefined),
@@ -58,8 +54,6 @@ describe('AddHostMenuComponent', () => {
   });
 
   beforeEach(() => {
-    // The "Create New" host form is mocked, so seed the signal the panel footer reads.
-    MockInstance(HostFormComponent, 'canSubmit', signal(false));
     spectator = createComponent({
       props: {
         hosts: [],
@@ -70,51 +64,18 @@ describe('AddHostMenuComponent', () => {
     jest.spyOn(spectator.component.hostSelected, 'emit');
   });
 
-  afterEach(() => MockInstance.restore());
-
   async function openMenu(): Promise<TnMenuHarness> {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
     return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
   }
 
-  it('opens the Add Host side panel when the single Add button is pressed', async () => {
+  it('opens the host form when the single Add button is pressed and emits (hostSelected) with the new host', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.component.hostPanelOpen()).toBe(true);
-  });
-
-  it('emits (hostSelected) and closes the panel when the host form saves', () => {
-    spectator.component.hostPanelOpen.set(true);
-    spectator.component.onHostSaved(newHost);
-
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(HostFormComponent, { title: 'Add Host' });
     expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(newHost);
-    expect(spectator.component.hostPanelOpen()).toBe(false);
-  });
-
-  it('opens the Edit Host side panel when Manage Hosts requests an edit', () => {
-    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
-      closed: of({ action: ManageHostsAction.Edit, host: usedHost } as ManageHostsResult),
-    } as ReturnType<TnDialog['open']>);
-
-    spectator.component.manageHosts();
-
-    expect(spectator.component.hostPanelOpen()).toBe(true);
-    expect(spectator.component.hostToEdit()).toEqual(usedHost);
-  });
-
-  it('reloads hosts without selecting when a Manage Hosts edit saves', () => {
-    jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
-      closed: of({ action: ManageHostsAction.Add } as ManageHostsResult),
-    } as ReturnType<TnDialog['open']>);
-
-    spectator.component.manageHosts();
-    spectator.component.onHostSaved(newHost);
-
-    expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
-    expect(spectator.component.hostSelected.emit).not.toHaveBeenCalled();
-    expect(spectator.component.hostPanelOpen()).toBe(false);
   });
 
   it('shows menu with Allow all hosts option when no hosts exist but showAllowAnyHost is true', async () => {
@@ -161,12 +122,13 @@ describe('AddHostMenuComponent', () => {
       expect(spectator.component.allowAllHostsSelected.emit).toHaveBeenCalled();
     });
 
-    it('opens the Add Host side panel from the Create New menu item', async () => {
+    it('opens the host form from the Create New menu item and emits (hostSelected) with the new host', async () => {
       const menu = await openMenu();
 
       await menu.clickItem({ label: 'Create New' });
 
-      expect(spectator.component.hostPanelOpen()).toBe(true);
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(HostFormComponent, { title: 'Add Host' });
+      expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(newHost);
     });
 
     it('has Manage Hosts button that opens Manage hosts dialog', async () => {

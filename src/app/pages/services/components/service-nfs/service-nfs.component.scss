@@ -5,6 +5,10 @@
   border-top: 1px solid var(--lines);
   display: flex;
   gap: 24px;
+  // The bordered column block sits between plain sections; without this the block butts
+  // flush against the previous section and its headings sit tight under the top border.
+  margin: 1.25rem 0;
+  padding-top: 1.25rem;
 
   @media (max-width: $breakpoint-tablet) {
     display: block;

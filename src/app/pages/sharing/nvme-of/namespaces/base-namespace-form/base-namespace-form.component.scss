@@ -1,5 +1,11 @@
-tn-button-toggle-group,
-tn-form-field {
-  display: block;
-  margin-bottom: 2rem;
+.device-type-toggle {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  &__label {
+    color: var(--fg2);
+    font-size: 13px;
+  }
 }

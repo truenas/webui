@@ -1,11 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnStepperNextDirective, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { omit } from 'lodash-es';
 import { of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { findLabelsByValue } from 'app/helpers/options.helper';
@@ -18,11 +22,7 @@ import {
 } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -40,15 +40,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './csr-constraints.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    IxInputComponent,
-    IxSelectComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
-    MatStepperNext,
+    TnButtonComponent,
+    TnStepperPreviousDirective,
+    TnStepperNextDirective,
     TranslateModule,
     TranslateOptionsPipe,
   ],
@@ -78,7 +79,15 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
     }),
   });
 
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
+
   readonly helptext = helptextSystemCertificates;
+
+  protected readonly InputType = InputType;
 
   readonly basicConstraintsOptions$ = of(basicConstraintOptions);
   readonly keyUsageOptions$ = of(keyUsageOptions);

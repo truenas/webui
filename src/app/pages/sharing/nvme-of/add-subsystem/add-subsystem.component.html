@@ -1,98 +1,88 @@
-@if (slideInRef) {
-  <ix-modal-header
-    [title]="'Add Subsystem' | translate"
-    [loading]="isLoading()"
-  ></ix-modal-header>
-}
-
-<form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
-  <tn-stepper orientation="horizontal" [(selectedIndex)]="currentStepIndex">
-    <tn-step [label]="'What To Share' | translate">
-      <tn-form-field
-        class="name-input"
-        [label]="'Subsystem Name' | translate"
-        [required]="true"
-      >
-        <tn-input testId="name" formControlName="name"></tn-input>
-      </tn-form-field>
-
-      <ix-details-table>
-        <ix-details-item
-          [label]="'NQN' | translate"
-          [tooltip]="helptext.subsystemNqn | translate"
+<tn-card class="card">
+  <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+    <tn-stepper #stepper orientation="vertical">
+      <tn-step [label]="'What To Share' | translate" [completed]="whatToShareCompleted()">
+        <tn-form-field
+          class="name-input"
+          [label]="'Subsystem Name' | translate"
         >
-          <ix-editable>
-            <div view>
-              {{ form.value.subnqn || ('Generate from global settings' | translate) }}
-            </div>
+          <tn-input formControlName="name" [required]="true"></tn-input>
+        </tn-form-field>
 
-            <div edit>
-              <tn-input
-                class="nqn-input"
-                testId="subnqn"
-                formControlName="subnqn"
-                ariaLabel="NQN"
-              ></tn-input>
-            </div>
-          </ix-editable>
-        </ix-details-item>
-      </ix-details-table>
+        <ix-details-table>
+          <ix-details-item
+            [label]="'NQN' | translate"
+            [tooltip]="helptext.subsystemNqn | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ form.value.subnqn || ('Generate from global settings' | translate) }}
+              </div>
 
-      <ix-add-subsystem-namespaces
-        class="namespaces-block"
-        [namespacesControl]="form.controls.namespaces"
-      ></ix-add-subsystem-namespaces>
+              <div edit>
+                <tn-input
+                  class="nqn-input"
+                  name="subnqn"
+                  formControlName="subnqn"
+                  [ariaLabel]="'NQN' | translate"
+                ></tn-input>
+              </div>
+            </ix-editable>
+          </ix-details-item>
+        </ix-details-table>
 
-      @if (slideInRef) {
+        <ix-add-subsystem-namespaces
+          class="namespaces-block"
+          [namespacesControl]="form.controls.namespaces"
+        ></ix-add-subsystem-namespaces>
+
         <div class="step-buttons">
           <tn-button
+            tnStepperNext
             color="primary"
             [testId]="'next'"
             [label]="'Next' | translate"
-            [disabled]="!canProceed()"
-            (onClick)="nextStep()"
+            [disabled]="form.controls.name.invalid"
           ></tn-button>
         </div>
-      }
-    </tn-step>
+      </tn-step>
 
-    <tn-step [label]="'Access' | translate">
-      <tn-checkbox
-        testId="allow-any-host"
-        formControlName="allowAnyHost"
-        [label]="'Allow any host to connect' | translate"
-      ></tn-checkbox>
+      <tn-step [label]="'Access' | translate">
+        <tn-form-field>
+          <tn-checkbox
+            formControlName="allowAnyHost"
+            [label]="'Allow any host to connect' | translate"
+          ></tn-checkbox>
+        </tn-form-field>
 
-      @if (!form.value.allowAnyHost) {
-        <ix-add-subsystem-hosts
-          class="hosts-block"
-          [hostsControl]="form.controls.allowedHosts"
-        ></ix-add-subsystem-hosts>
-      }
+        @if (!form.value.allowAnyHost) {
+          <ix-add-subsystem-hosts
+            class="hosts-block"
+            [hostsControl]="form.controls.allowedHosts"
+          ></ix-add-subsystem-hosts>
+        }
 
-      <ix-add-subsystem-ports
-        class="ports-block"
-        [portsControl]="form.controls.ports"
-      ></ix-add-subsystem-ports>
+        <ix-add-subsystem-ports
+          class="ports-block"
+          [portsControl]="form.controls.ports"
+        ></ix-add-subsystem-ports>
 
-      @if (slideInRef) {
         <div class="step-buttons last-step-buttons">
           <tn-button
-            color="default"
+            tnStepperPrevious
             [testId]="'back'"
             [label]="'Back' | translate"
-            (onClick)="previousStep()"
           ></tn-button>
           <tn-button
             *ixRequiresRoles="requiredRoles"
-            type="submit"
             color="primary"
             [testId]="'save'"
             [label]="'Save' | translate"
-            [disabled]="!canSubmit()"
+            [disabled]="form.invalid || isLoading()"
+            (onClick)="onSubmit()"
           ></tn-button>
         </div>
-      }
-    </tn-step>
-  </tn-stepper>
-</form>
+      </tn-step>
+    </tn-stepper>
+  </form>
+</tn-card>

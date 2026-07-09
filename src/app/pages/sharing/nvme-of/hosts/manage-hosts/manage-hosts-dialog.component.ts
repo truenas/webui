@@ -1,4 +1,3 @@
-import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -14,24 +13,17 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemPortOrHostDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-port-ot-host-delete-dialog/subsystem-port-ot-host-delete-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface NvmeOfHostAndUsage extends NvmeOfHost {
   usedInSubsystems: number;
-}
-
-export const enum ManageHostsAction {
-  Add = 'add',
-  Edit = 'edit',
-}
-
-export interface ManageHostsResult {
-  action: ManageHostsAction;
-  host?: NvmeOfHost;
 }
 
 @Component({
@@ -59,7 +51,8 @@ export class ManageHostsDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);
-  private dialogRef = inject<DialogRef<ManageHostsResult>>(DialogRef);
+  private formPanel = inject(FormSidePanelService);
+  private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
@@ -100,13 +93,23 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onAdd(): void {
-    // Close the dialog and let the host open the host form in a side panel.
-    this.dialogRef.close({ action: ManageHostsAction.Add });
+    // The side panel mounts on document.body and paints on top of this dialog's backdrop,
+    // so the dialog can stay open behind it (no need to close it first as the slide-in did).
+    this.formPanel
+      .open(HostFormComponent, { title: this.translate.instant('Add Host') })
+      .onSuccess(() => {
+        this.snackbar.success(this.translate.instant('Host Added'));
+        this.nvmeOfStore.reloadHosts();
+      }, this.destroyRef);
   }
 
   onEdit(host: NvmeOfHostAndUsage): void {
-    // Close the dialog and let the host open the host form in a side panel.
-    this.dialogRef.close({ action: ManageHostsAction.Edit, host });
+    this.formPanel
+      .open(HostFormComponent, { title: this.translate.instant('Edit Host'), inputs: { host } })
+      .onSuccess(() => {
+        this.snackbar.success(this.translate.instant('Host Updated'));
+        this.nvmeOfStore.reloadHosts();
+      }, this.destroyRef);
   }
 
   onDelete(host: NvmeOfHostAndUsage): void {

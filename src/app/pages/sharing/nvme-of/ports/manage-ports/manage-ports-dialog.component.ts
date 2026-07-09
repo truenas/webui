@@ -1,4 +1,3 @@
-import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -15,24 +14,17 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemPortOrHostDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-port-ot-host-delete-dialog/subsystem-port-ot-host-delete-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface NvmeOfPortAndUsage extends NvmeOfPort {
   usedInSubsystems: number;
-}
-
-export const enum ManagePortsAction {
-  Add = 'add',
-  Edit = 'edit',
-}
-
-export interface ManagePortsResult {
-  action: ManagePortsAction;
-  port?: NvmeOfPort;
 }
 
 @Component({
@@ -60,7 +52,8 @@ export class ManagePortsDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);
-  private dialogRef = inject<DialogRef<ManagePortsResult>>(DialogRef);
+  private formPanel = inject(FormSidePanelService);
+  private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
@@ -105,13 +98,23 @@ export class ManagePortsDialog implements OnInit {
   }
 
   onAdd(): void {
-    // Close the dialog and let the host open the port form in a side panel.
-    this.dialogRef.close({ action: ManagePortsAction.Add });
+    // The side panel mounts on document.body and paints on top of this dialog's backdrop,
+    // so the dialog can stay open behind it (no need to close it first as the slide-in did).
+    this.formPanel
+      .open(PortFormComponent, { title: this.translate.instant('Add Port') })
+      .onSuccess(() => {
+        this.snackbar.success(this.translate.instant('Port Added'));
+        this.nvmeOfStore.reloadPorts();
+      }, this.destroyRef);
   }
 
   onEdit(port: NvmeOfPort): void {
-    // Close the dialog and let the host open the port form in a side panel.
-    this.dialogRef.close({ action: ManagePortsAction.Edit, port });
+    this.formPanel
+      .open(PortFormComponent, { title: this.translate.instant('Edit Port'), inputs: { port } })
+      .onSuccess(() => {
+        this.snackbar.success(this.translate.instant('Port Updated'));
+        this.nvmeOfStore.reloadPorts();
+      }, this.destroyRef);
   }
 
   onDelete(port: NvmeOfPortAndUsage): void {

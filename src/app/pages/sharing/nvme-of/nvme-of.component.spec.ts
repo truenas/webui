@@ -1,17 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
-import { MockComponents, MockInstance } from 'ng-mocks';
+import { MockComponents } from 'ng-mocks';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import {
-  NvmeOfHost, NvmeOfPort, NvmeOfSubsystem, NvmeOfSubsystemDetails,
+  NvmeOfHost, NvmeOfPort, NvmeOfSubsystemDetails,
 } from 'app/interfaces/nvme-of.interface';
-import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
@@ -40,14 +40,17 @@ describe('NvmeOfComponent', () => {
         SubsystemsDetailsHeaderComponent,
         SubsystemNamespacesCardComponent,
         SubsystemPortsCardComponent,
-        NvmeOfConfigurationComponent,
-        AddSubsystemComponent,
       ),
     ],
     providers: [
       mockApi([
         mockCall('tn_connect.config'),
       ]),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => {
+          return SlideInResult.success({ name: 'test-subsystem' });
+        }),
+      }),
       mockAuth(),
       mockProvider(NvmeOfStore, {
         subsystems: () => [{ id: 2 }] as NvmeOfSubsystemDetails[],
@@ -74,23 +77,18 @@ describe('NvmeOfComponent', () => {
   });
 
   beforeEach(() => {
-    // The hosted forms are mocked, so seed the signals their panel footers read
-    // (`form.canSubmit()` etc.) — the viewChildren bind to these mock instances.
-    MockInstance(NvmeOfConfigurationComponent, 'canSubmit', signal(false));
-    MockInstance(AddSubsystemComponent, 'isLastStep', signal(false));
-    MockInstance(AddSubsystemComponent, 'canProceed', signal(false));
-    MockInstance(AddSubsystemComponent, 'canSubmit', signal(false));
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  afterEach(() => MockInstance.restore());
-
-  it('opens the Global Configuration side panel when corresponding button is pressed', async () => {
+  it('opens Global Configuration form when corresponding button is pressed', async () => {
     const configurationButton = await loader.getHarness(TnButtonHarness.with({ label: 'Global Configuration' }));
     await configurationButton.click();
 
-    expect(spectator.component.configPanelOpen()).toBe(true);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      NvmeOfConfigurationComponent,
+      { title: 'NVMe-oF Global Configuration' },
+    );
   });
 
   it('shows a table with subsystems', () => {
@@ -98,22 +96,10 @@ describe('NvmeOfComponent', () => {
     expect(table).toBeTruthy();
   });
 
-  it('initializes the store on load', () => {
-    expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalledTimes(1);
-  });
-
-  it('opens the Add Subsystem side panel when the button is pressed', async () => {
+  it('initializes store when added', async () => {
     const addSubsystemButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Subsystem' }));
+    expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalledTimes(1);
     await addSubsystemButton.click();
-
-    expect(spectator.component.addSubsystemPanelOpen()).toBe(true);
-  });
-
-  it('reloads the store after a subsystem is created', () => {
-    spectator.component.addSubsystemPanelOpen.set(true);
-    spectator.component.onSubsystemCreated({ name: 'subsys-1' } as NvmeOfSubsystem);
-
-    expect(spectator.component.addSubsystemPanelOpen()).toBe(false);
     expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalledTimes(2);
   });
 });

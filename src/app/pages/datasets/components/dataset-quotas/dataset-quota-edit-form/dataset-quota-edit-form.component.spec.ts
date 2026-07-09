@@ -3,14 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness } from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
@@ -25,6 +24,10 @@ describe('DatasetQuotaEditFormComponent', () => {
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn((): undefined => undefined),
   };
+
+  const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const createComponent = createComponentFactory({
     component: DatasetQuotaEditFormComponent,
@@ -41,12 +44,7 @@ describe('DatasetQuotaEditFormComponent', () => {
         } as DatasetQuota]),
         mockCall('pool.dataset.set_quota'),
       ]),
-      mockProvider(SlideIn),
       mockProvider(DialogService),
-      mockProvider(IxFormatterService, {
-        memorySizeFormatting: jest.fn(() => '500 KiB'),
-        memorySizeParsing: jest.fn(() => 1024000),
-      }),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
@@ -55,36 +53,29 @@ describe('DatasetQuotaEditFormComponent', () => {
   describe('editing user quota', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ quotaType: DatasetQuotaType.User, datasetId: 'Test', id: 1 })) }),
-        ],
+        props: {
+          quotaType: DatasetQuotaType.User,
+          datasetId: 'Test',
+          quotaId: 1,
+        },
       });
       api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('shows current quota values when editing', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
-
       expect(api.call).toHaveBeenCalledWith(
         'pool.dataset.get_quota',
         ['Test', DatasetQuotaType.User, [['id', '=', 1]]],
       );
 
-      expect(values).toEqual({
-        User: 'daemon',
-        'User Data Quota (Examples: 500 KiB, 500M, 2 TB)': '500 KiB',
-        'User Object Quota': '0',
-      });
+      expect(await (await getTnInput('name')).getValue()).toBe('daemon');
+      expect(await (await getTnInput('data_quota')).getValue()).toBe('500 KiB');
+      expect(await (await getTnInput('obj_quota')).getValue()).toBe('0');
     });
 
-    it('sends an update payload to websocket and closes slide when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-
-      await form.fillForm({
-        'User Data Quota (Examples: 500 KiB, 500M, 2 TB)': '1000 KiB',
-      });
+    it('sends an update payload to websocket when save is pressed', async () => {
+      await (await getTnInput('data_quota')).setValue('1000 KiB');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -101,43 +92,35 @@ describe('DatasetQuotaEditFormComponent', () => {
           quota_value: 0,
         },
       ]]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
   describe('editing group quota', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ quotaType: DatasetQuotaType.Group, datasetId: 'Test', id: 1 })) }),
-        ],
+        props: {
+          quotaType: DatasetQuotaType.Group,
+          datasetId: 'Test',
+          quotaId: 1,
+        },
       });
       api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('shows current quota values when editing', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
-
       expect(api.call).toHaveBeenCalledWith(
         'pool.dataset.get_quota',
         ['Test', DatasetQuotaType.Group, [['id', '=', 1]]],
       );
 
-      expect(values).toEqual({
-        Group: 'daemon',
-        'Group Data Quota (Examples: 500 KiB, 500M, 2 TB)': '500 KiB',
-        'Group Object Quota': '0',
-      });
+      expect(await (await getTnInput('name')).getValue()).toBe('daemon');
+      expect(await (await getTnInput('data_quota')).getValue()).toBe('500 KiB');
+      expect(await (await getTnInput('obj_quota')).getValue()).toBe('0');
     });
 
-    it('sends an update payload to websocket and closes slide when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-
-      await form.fillForm({
-        'Group Object Quota': 1,
-      });
+    it('sends an update payload to websocket when save is pressed', async () => {
+      await (await getTnInput('obj_quota')).setValue('1');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -154,7 +137,48 @@ describe('DatasetQuotaEditFormComponent', () => {
           quota_value: 1,
         },
       ]]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+  });
+
+  describe('unsetting both quotas', () => {
+    let dialogService: DialogService;
+
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          quotaType: DatasetQuotaType.User,
+          datasetId: 'Test',
+          quotaId: 1,
+        },
+      });
+      api = spectator.inject(ApiService);
+      dialogService = spectator.inject(DialogService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('asks for confirmation when both quotas are cleared', async () => {
+      const confirmSpy = jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true));
+      await (await getTnInput('data_quota')).setValue('0');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(confirmSpy).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Delete User Quota',
+      }));
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', expect.anything());
+    });
+
+    it('does not update the quota when the confirmation is declined', async () => {
+      jest.spyOn(dialogService, 'confirm').mockReturnValue(of(false));
+      await (await getTnInput('data_quota')).setValue('0');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(dialogService.confirm).toHaveBeenCalled();
+      expect(api.call).not.toHaveBeenCalledWith('pool.dataset.set_quota', expect.anything());
+      expect(slideInRef.close).not.toHaveBeenCalled();
     });
   });
 });

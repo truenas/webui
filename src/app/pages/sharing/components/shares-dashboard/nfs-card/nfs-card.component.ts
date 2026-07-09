@@ -40,7 +40,6 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -95,7 +94,6 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class NfsCardComponent implements OnInit {
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -217,8 +215,12 @@ export class NfsCardComponent implements OnInit {
   }
 
   protected openForm(row?: NfsShare): void {
-    this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } })
-      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+    this.formPanel.open(NfsFormComponent, {
+      title: row
+        ? this.translate.instant('Edit NFS Share')
+        : this.translate.instant('Add NFS Share'),
+      inputs: { nfsShareData: { existingNfsShare: row } },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected openConfig(): void {

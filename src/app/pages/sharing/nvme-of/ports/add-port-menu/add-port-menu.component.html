@@ -41,27 +41,3 @@
     ></tn-menu-item>
   </tn-menu>
 }
-
-<tn-side-panel
-  [title]="portPanelTitle()"
-  [closeGuard]="portCloseGuard"
-  [(open)]="portPanelOpen"
->
-  @if (portPanelOpen()) {
-    <ix-port-form
-      [data]="portToEdit()"
-      (saved)="onPortSaved($event)"
-    ></ix-port-form>
-  }
-  @if (portForm(); as form) {
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      tnSidePanelAction
-      color="primary"
-      [testId]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
-  }
-</tn-side-panel>

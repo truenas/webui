@@ -4,7 +4,8 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent, TnTooltipDirective,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnRadioComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { finalize, forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -12,8 +13,8 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
+import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -28,12 +29,11 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 @Component({
   selector: 'ix-nvme-of-configuration',
   templateUrl: './nvme-of-configuration.component.html',
-  styleUrl: './nvme-of-configuration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
     TranslateModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnRadioComponent,
@@ -70,7 +70,7 @@ export class NvmeOfConfigurationComponent extends SidePanelForm implements OnIni
 
   protected readonly helptext = helptextNvmeOf;
 
-  protected readonly implementationOptions = [
+  protected readonly implementationOptions: Option<boolean>[] = [
     {
       label: this.translate.instant('Linux Kernel'),
       value: true,

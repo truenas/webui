@@ -20,6 +20,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -381,6 +382,8 @@ describe('CloudSyncFormComponent', () => {
       spectator = createComponent({
         providers: [
           { provide: SlideInRef, useValue: null },
+          // Skip the min submit-feedback hold so the synchronous-close assertions below hold.
+          { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
         ],
         props: {
           taskToEdit: existingTask,

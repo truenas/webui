@@ -1,11 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
   TnButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
@@ -13,8 +11,8 @@ import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownFormComponent,
@@ -22,12 +20,12 @@ import {
 import {
   InitShutdownListComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
-import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('InitShutdownListComponent', () => {
   let spectator: Spectator<InitShutdownListComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
+  let formPanel: FormSidePanelService;
   const scripts = [
     {
       id: 1,
@@ -49,9 +47,6 @@ describe('InitShutdownListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: InitShutdownListComponent,
-    imports: [
-      ReactiveFormsModule,
-    ],
     providers: [
       mockApi([
         mockCall('initshutdownscript.query', scripts),
@@ -60,11 +55,9 @@ describe('InitShutdownListComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(FilesystemService, {
-        getFilesystemNodeProvider: jest.fn(() => () => of([])),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
       }),
-      mockProvider(SnackbarService),
-      mockProvider(FormErrorHandlerService),
       mockAuth(),
     ],
   });
@@ -78,6 +71,7 @@ describe('InitShutdownListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('shows table rows', async () => {
@@ -89,35 +83,22 @@ describe('InitShutdownListComponent', () => {
   });
 
   it('opens the Add form in a side panel when Add is pressed', async () => {
-    expect(spectator.query('ix-init-shutdown-form')).toBeNull();
-
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
-    spectator.detectChanges();
 
-    expect(spectator.query('ix-init-shutdown-form')).not.toBeNull();
-  });
-
-  it('closes the side panel when the hosted form emits closed', async () => {
-    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    await addButton.click();
-    spectator.detectChanges();
-    expect(spectator.query('ix-init-shutdown-form')).not.toBeNull();
-
-    spectator.query(InitShutdownFormComponent).closed.emit(true);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-init-shutdown-form')).toBeNull();
+    expect(formPanel.open).toHaveBeenCalledWith(InitShutdownFormComponent, {
+      title: 'Add Init/Shutdown Script',
+    });
   });
 
   it('opens an edit form in the side panel with the selected row when Edit is pressed', async () => {
     const menu = await openFirstRowMenu();
     await menu.clickItem({ label: 'Edit' });
-    spectator.detectChanges();
 
-    const form = spectator.query(InitShutdownFormComponent);
-    expect(form).not.toBeNull();
-    expect(form.editScript()).toEqual(scripts[0]);
+    expect(formPanel.open).toHaveBeenCalledWith(InitShutdownFormComponent, {
+      title: 'Edit Init/Shutdown Script',
+      inputs: { editScript: scripts[0] },
+    });
   });
 
   it('deletes an item when delete button is pressed', async () => {

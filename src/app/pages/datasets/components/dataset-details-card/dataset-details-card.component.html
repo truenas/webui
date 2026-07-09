@@ -1,133 +1,107 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ isFilesystem() ? ('Details' | translate) : ('Zvol Details' | translate) }}
-    </h3>
-
-    @if (isFilesystem()) {
-      <button
-        *ixRequiresRoles="[Role.DatasetWrite]"
-        mat-button
-        ixTest="edit-dataset"
-        (click)="editDataset()"
-      >
-        {{ 'Edit' | translate }}
-      </button>
-    } @else {
-      <button
-        *ixRequiresRoles="[Role.DatasetWrite]"
-        mat-button
-        ixTest="edit-zvol"
-        (click)="editZvol()"
-      >
-        {{ 'Edit Zvol' | translate }}
-      </button>
-    }
-  </mat-card-header>
-  <mat-card-content>
-    @if (isRootDataset) {
-      <div class="details-item">
-        <div class="label root-dataset">
-          {{ 'Root Dataset' | translate }}
-          <ix-tooltip
-            class="tooltip"
-            [message]="helptext.rootDatasetTooltip| translate"
-            [header]="'Root Dataset' | translate"
-          ></ix-tooltip>
-        </div>
-      </div>
-    }
+<tn-card
+  padding="small"
+  [title]="isFilesystem() ? ('Details' | translate) : ('Zvol Details' | translate)"
+  [headerMenu]="actionsMenu()"
+  [headerMenuTriggerTestId]="'dataset-actions'"
+>
+  @if (isRootDataset()) {
     <div class="details-item">
-      <div class="label">{{ 'Sync' | translate }}:</div>
-      <div class="value">{{ dataset().sync.value | orNotAvailable }}</div>
+      <div class="label root-dataset">
+        {{ 'Root Dataset' | translate }}
+        <ix-tooltip
+          class="tooltip"
+          [message]="helptext.rootDatasetTooltip| translate"
+          [header]="'Root Dataset' | translate"
+        ></ix-tooltip>
+      </div>
     </div>
-    @if (datasetCompression() && dataset().compression?.value !== OnOff.Off) {
-      <div class="details-item">
-        <div class="label">{{ 'Compression' | translate }}:</div>
-        <div class="value">
-          @if (datasetCompression()) {
-            {{ datasetCompression() }}
-          }
-        </div>
-      </div>
-    }
-    @if (!isZvol()) {
-      <div class="details-item">
-        <div class="label">{{ 'Enable Atime' | translate }}:</div>
-        <div class="value">
-        {{ (dataset().atime.parsed ? OnOff.On : OnOff.Off) | translate }}
-        </div>
-      </div>
-    }
+  }
+  <div class="details-item">
+    <div class="label">{{ 'Sync' | translate }}:</div>
+    <div class="value">{{ dataset().sync.value | orNotAvailable }}</div>
+  </div>
+  @if (datasetCompression() && dataset().compression?.value !== OnOff.Off) {
     <div class="details-item">
-      <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
-      <div class="value">{{ dataset().deduplication.value | orNotAvailable }}</div>
-    </div>
-    @if (!isZvol()) {
-      <div class="details-item">
-        <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
-        <div class="value">
-          {{ (
-              dataset().casesensitivity.value === DatasetCaseSensitivity.Sensitive
-                ? OnOff.On
-                : OnOff.Off
-            ) | translate }}
-        </div>
-      </div>
-    }
-    @if (dataset().tier) {
-      <div class="details-item tier-item">
-        <div class="label">{{ 'Storage Tier' | translate }}:</div>
-        <div class="value tier-value">
-          <ix-tier-status [tier]="dataset().tier" />
-        </div>
-        @if (!dataset().locked) {
-          <button type="button" class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
-            {{ 'Change' | translate }}
-          </button>
+      <div class="label">{{ 'Compression' | translate }}:</div>
+      <div class="value">
+        @if (datasetCompression()) {
+          {{ datasetCompression() }}
         }
       </div>
-    }
-    <div class="details-item">
-      <div class="label">{{ 'Path' | translate }}:</div>
-      <div
-        tnTooltipPosition="above"
-        class="value dataset-path"
-        tnTooltipClass="dataset-path-tooltip"
-        [tnTooltip]="dataset().name"
-      >
-        {{ dataset().name }}
-      </div>
-      <ix-copy-button [text]="dataset().name"></ix-copy-button>
     </div>
-    @if (hasComments()) {
-      <div class="details-item">
-        <div class="label">{{ 'Comments' | translate }}:</div>
-        <div class="value dataset-comments">{{ commentsValue() }}</div>
+  }
+  @if (!isZvol()) {
+    <div class="details-item">
+      <div class="label">{{ 'Enable Atime' | translate }}:</div>
+      <div class="value">
+      {{ (dataset().atime.parsed ? OnOff.On : OnOff.Off) | translate }}
       </div>
-    }
-  </mat-card-content>
-  @if (dataset().id !== dataset().pool) {
-    <mat-card-actions>
-      @if (canBePromoted()) {
-        <button
-          *ixRequiresRoles="[Role.DatasetWrite]"
-          mat-button
-          ixTest="promote-dataset"
-          (click)="promoteDataset()"
-        >
-          {{ 'Promote' | translate }}
+    </div>
+  }
+  <div class="details-item">
+    <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
+    <div class="value">{{ dataset().deduplication.value | orNotAvailable }}</div>
+  </div>
+  @if (!isZvol()) {
+    <div class="details-item">
+      <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
+      <div class="value">
+        {{ (
+            dataset().casesensitivity.value === DatasetCaseSensitivity.Sensitive
+              ? OnOff.On
+              : OnOff.Off
+          ) | translate }}
+      </div>
+    </div>
+  }
+  @if (dataset().tier) {
+    <div class="details-item tier-item">
+      <div class="label">{{ 'Storage Tier' | translate }}:</div>
+      <div class="value tier-value">
+        <ix-tier-status [tier]="dataset().tier" />
+      </div>
+      @if (!dataset().locked) {
+        <button type="button" class="change-tier-link" tnTestIdType="button" [tnTestId]="'change-tier'" (click)="changeTier()">
+          {{ 'Change' | translate }}
         </button>
       }
-      <button
-        *ixRequiresRoles="[Role.DatasetDelete]"
-        mat-button
-        ixTest="delete-dataset"
-        (click)="deleteDataset()"
-      >
-        {{ 'Delete' | translate }}
-      </button>
-    </mat-card-actions>
+    </div>
   }
-</mat-card>
+  <div class="details-item">
+    <div class="label">{{ 'Path' | translate }}:</div>
+    <div
+      tnTooltipPosition="above"
+      class="value dataset-path"
+      tnTooltipClass="dataset-path-tooltip"
+      [tnTooltip]="dataset().name"
+    >
+      {{ dataset().name }}
+    </div>
+    <ix-copy-button [text]="dataset().name"></ix-copy-button>
+  </div>
+  @if (hasComments()) {
+    <div class="details-item">
+      <div class="label">{{ 'Comments' | translate }}:</div>
+      <div class="value dataset-comments">{{ commentsValue() }}</div>
+    </div>
+  }
 
+  <ng-template tnCardFooterActions>
+    @if (editAction(); as action) {
+      <tn-button
+        variant="outline"
+        [testId]="action.testId"
+        [label]="action.label"
+        (onClick)="action.handler()"
+      ></tn-button>
+    }
+    @if (deleteAction(); as action) {
+      <tn-button
+        variant="outline"
+        [testId]="action.testId"
+        [label]="action.label"
+        (onClick)="action.handler()"
+      ></tn-button>
+    }
+  </ng-template>
+</tn-card>

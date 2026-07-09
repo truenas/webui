@@ -1,23 +1,25 @@
 import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnIconButtonComponent,
+  TnInputComponent,
+  TnProgressBarComponent,
+} from '@truenas/ui-components';
 import { unionBy } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { initiatorFormElements } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -33,17 +35,15 @@ interface InitiatorItem {
   styleUrls: ['./initiator-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
     UiSearchDirective,
-    MatProgressBar,
+    TnProgressBarComponent,
     ReactiveFormsModule,
-    MatCardContent,
-    IxCheckboxComponent,
-    IxInputComponent,
-    MatButton,
-    TestDirective,
-    TnIconComponent,
-    MatCardActions,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
+    TnButtonComponent,
+    TnIconButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
     DualListBoxComponent,

@@ -1,14 +1,14 @@
 @if (tile(); as tile) {
   <div class="tile">
     <div class="tile-content">
-      <ul class="caption">
-        <span class="title">{{ tile.title | translate }}</span>
+      <div class="caption">
+        <h4 class="title">{{ tile.title | translate }}</h4>
         @if (hasSendTasks() && !tile.totalSend) {
           <div class="backup-actions">
             <ng-template *ngTemplateOutlet="backupActions() || null"></ng-template>
           </div>
         }
-      </ul>
+      </div>
 
       <div class="divider"></div>
 
@@ -41,7 +41,7 @@
 
       <div class="divider"></div>
 
-      <ul [style.max-width.%]="50">
+      <ul class="activity">
         <li>
           @if (tile.lastWeekSend) {
             <span class="label">

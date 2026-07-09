@@ -1,34 +1,38 @@
 <ng-container [formGroup]="form">
-  <ix-input
-    formControlName="host"
+  <tn-form-field
     [label]="'Host' | translate"
-    [required]="true"
     [tooltip]="helptext.influxDb.hostTooltip | translate"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input formControlName="host" [testId]="'host'"></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="username"
+  <tn-form-field
     [label]="'Username' | translate"
     [required]="true"
-  ></ix-input>
+  >
+    <tn-input formControlName="username" [testId]="'username'"></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="password"
-    type="password"
+  <tn-form-field
     [label]="'Password' | translate"
     [required]="true"
-  ></ix-input>
+  >
+    <tn-input formControlName="password" [testId]="'password'" [inputType]="InputType.Password"></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="database"
+  <tn-form-field
     [label]="'Database' | translate"
     [required]="true"
-  ></ix-input>
+  >
+    <tn-input formControlName="database" [testId]="'database'"></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="series_name"
+  <tn-form-field
     [label]="'Series' | translate"
-    [required]="true"
     [tooltip]="helptext.influxDb.seriesNameTooltip | translate"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input formControlName="series_name" [testId]="'series_name'"></tn-input>
+  </tn-form-field>
 </ng-container>

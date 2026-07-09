@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnRadioHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -76,34 +78,37 @@ describe('NvmeOfConfigurationComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  async function clickSave(): Promise<void> {
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
-  }
-
   it('loads current global config when component is initialized', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.config');
   });
 
-  it('shows current values for global settings', () => {
-    expect(spectator.component.form.getRawValue()).toEqual({
-      basenqn: 'iqn.2005-10.org.freenas:ctl',
-      kernel: true,
-      ana: true,
-      rdma: true,
-    });
+  it('shows current values for global settings', async () => {
+    const basenqn = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="basenqn"]' }));
+    expect(await basenqn.getValue()).toBe('iqn.2005-10.org.freenas:ctl');
+
+    const kernelRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Linux Kernel' }));
+    expect(await kernelRadio.isChecked()).toBe(true);
+
+    const ana = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Enable Asymmetric Namespace Access (ANA)' }),
+    );
+    expect(await ana.isChecked()).toBe(true);
+
+    const rdma = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Enable Remote Direct Memory Access (RDMA)' }),
+    );
+    expect(await rdma.isChecked()).toBe(true);
   });
 
   it('saves form values when Save is pressed', async () => {
-    spectator.component.form.patchValue({
-      basenqn: 'new.2005-10.org.freenas:ctl',
-      kernel: false,
-      ana: true,
-      rdma: true,
-    });
-    spectator.detectChanges();
+    const basenqn = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="basenqn"]' }));
+    await basenqn.setValue('new.2005-10.org.freenas:ctl');
 
-    await clickSave();
+    const spdkRadio = await loader.getHarness(TnRadioHarness.with({ label: 'SPDK (userspace)' }));
+    await spdkRadio.check();
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
       ana: true,
@@ -114,21 +119,29 @@ describe('NvmeOfConfigurationComponent', () => {
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
-  it('disables RDMA control if RDMA support is missing from the system', () => {
+  it('disables RDMA control if RDMA support is missing from the system', async () => {
     spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(false));
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    expect(spectator.component.form.controls.rdma.disabled).toBe(true);
+    const rdma = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Enable Remote Direct Memory Access (RDMA)' }),
+    );
+    expect(await rdma.isDisabled()).toBe(true);
   });
 
-  it('disables ANA for systems without HA license', () => {
+  it('disables ANA for systems without HA license', async () => {
     spectator.inject(MockStore).overrideSelector(selectIsHaLicensed, false);
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    expect(spectator.component.form.controls.ana.disabled).toBe(true);
+    const ana = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Enable Asymmetric Namespace Access (ANA)' }),
+    );
+    expect(await ana.isDisabled()).toBe(true);
   });
 
-  it('disables Implementation field when NVMe service is running', () => {
+  it('disables Implementation field when NVMe service is running', async () => {
     spectator.inject(MockStore).overrideSelector(selectServices, [{
       id: 1,
       service: ServiceName.NvmeOf,
@@ -137,16 +150,19 @@ describe('NvmeOfConfigurationComponent', () => {
       pids: [1234],
     } as Service]);
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    expect(spectator.component.form.controls.kernel.disabled).toBe(true);
+    const kernelRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Linux Kernel' }));
+    expect(await kernelRadio.isDisabled()).toBe(true);
   });
 
-  it('hides Implementation field on non-enterprise systems', () => {
+  it('hides Implementation field on non-enterprise systems', async () => {
     spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
     spectator = createComponent();
-    spectator.detectChanges();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    expect(spectator.query('tn-radio')).toBeNull();
+    const radios = await loader.getAllHarnesses(TnRadioHarness);
+    expect(radios).toHaveLength(0);
   });
 
   it('does not include kernel in payload when saving on non-enterprise systems', async () => {
@@ -155,7 +171,8 @@ describe('NvmeOfConfigurationComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    await clickSave();
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
       ana: true,

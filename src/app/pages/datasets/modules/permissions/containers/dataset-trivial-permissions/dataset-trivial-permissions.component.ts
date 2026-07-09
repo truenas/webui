@@ -2,14 +2,12 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -27,7 +25,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
@@ -38,11 +35,9 @@ import { StorageService } from 'app/services/storage.service';
   styleUrls: ['./dataset-trivial-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
     TnTooltipDirective,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxUserComboboxComponent,
@@ -50,8 +45,7 @@ import { StorageService } from 'app/services/storage.service';
     IxCheckboxComponent,
     IxPermissionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     RouterLink,
     TranslateModule,
     AsyncPipe,

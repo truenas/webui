@@ -1,21 +1,23 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
+import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSubsystemHostsComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-hosts/add-subsystem-hosts.component';
 import {
   AddSubsystemNamespacesComponent,
+
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespaces.component';
 import {
   AddSubsystemPortsComponent,
@@ -48,10 +50,6 @@ describe('AddSubsystemComponent', () => {
         mockCall('nvmet.subsys.create', newSubsystem),
         mockCall('nvmet.namespace.create'),
       ]),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
     ],
   });
 
@@ -61,28 +59,55 @@ describe('AddSubsystemComponent', () => {
   });
 
   it('creates a subsystem with ports, hosts, and namespaces', async () => {
-    spectator.component.form.patchValue({
-      name: 'subsystem1',
-      subnqn: 'my-nqn',
-      namespaces: [
-        {
-          device_path: '/dev/zvol/pool/zvol1',
-          device_type: NvmeOfNamespaceType.Zvol,
-        },
-        {
-          device_path: '/mnt/pool/file.img',
-          device_type: NvmeOfNamespaceType.File,
-        },
-      ] as NamespaceChanges[],
-      allowAnyHost: false,
-      allowedHosts: [{ id: 200 } as NvmeOfHost],
-      ports: [{ id: 100 } as NvmeOfPort],
-    });
-    spectator.detectChanges();
+    const closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
+
+    // tn-stepper renders only the active step's content, so harnesses resolve
+    // straight from the document-root loader.
+    const name = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="name"]' }));
+    await name.setValue('subsystem1');
+    await spectator.fixture.whenStable();
+    await spectator.fixture.whenRenderingDone();
+
+    const details = await loader.getHarness(DetailsTableHarness);
+    const nqnEditable = await details.getHarnessForItem('NQN', EditableHarness);
+    await nqnEditable.open();
+    const nqnInput = await loader.getHarness(TnInputHarness.with({ name: 'subnqn' }));
+    await nqnInput.setValue('my-nqn');
+    await nqnEditable.tryToClose();
+
+    // Namespaces
+    const addNamespaces = spectator.query(AddSubsystemNamespacesComponent);
+    const namespaces = [
+      {
+        device_path: '/dev/zvol/pool/zvol1',
+        device_type: NvmeOfNamespaceType.Zvol,
+      },
+      {
+        device_path: '/mnt/pool/file.img',
+        device_type: NvmeOfNamespaceType.File,
+      },
+    ] as NamespaceChanges[];
+    (addNamespaces.namespacesControl as unknown as FormControl).setValue(namespaces);
 
     const nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
     await nextButton.click();
-    spectator.detectChanges();
+
+    // Ports, hosts
+    const addPorts = spectator.query(AddSubsystemPortsComponent);
+    (addPorts.portsControl as unknown as FormControl).setValue([
+      { id: 100 } as NvmeOfPort,
+    ]);
+
+    const allowAnyHost = await loader.getHarness(
+      TnCheckboxHarness.with({ selector: '[formControlName="allowAnyHost"]' }),
+    );
+    await allowAnyHost.uncheck();
+
+    const addHosts = spectator.query(AddSubsystemHostsComponent);
+    (addHosts.hostsControl as unknown as FormControl).setValue([
+      { id: 200 } as NvmeOfHost,
+    ]);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -109,8 +134,6 @@ describe('AddSubsystemComponent', () => {
       device_path: '/mnt/pool/file.img',
     }]);
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-      response: newSubsystem,
-    });
+    expect(closedSpy).toHaveBeenCalledWith(newSubsystem);
   });
 });

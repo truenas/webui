@@ -45,7 +45,6 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TableActionsCellComponent,
@@ -98,7 +97,6 @@ export class WebShareCardComponent implements OnInit {
   protected readonly cardMenuPath = ['sharing', 'webshare'];
 
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private router = inject(Router);
   private translate = inject(TranslateService);
@@ -174,10 +172,8 @@ export class WebShareCardComponent implements OnInit {
       tooltip: this.translate.instant('Open'),
       onClick: (row) => this.openWebShareByName(row),
       disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
-      dynamicTooltip: () => this.webShareService.canOpenWebShare$.pipe(
-        map((canOpen) => (canOpen
-          ? this.translate.instant('Open')
-          : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'))),
+      dynamicTooltip: () => this.webShareService.webShareUnavailableReason$.pipe(
+        map((reason) => reason ?? this.translate.instant('Open')),
       ),
     },
     {
@@ -258,13 +254,16 @@ export class WebShareCardComponent implements OnInit {
   }
 
   protected doEdit(row: WebShareTableRow): void {
-    this.slideIn.open(WebShareSharesFormComponent, {
-      data: {
-        id: row.id,
-        isNew: false,
-        name: row.name,
-        path: row.path,
-        isHomeBase: row.isHomeBase,
+    this.formPanel.open(WebShareSharesFormComponent, {
+      title: this.translate.instant(this.helptext.webshare_form_title_edit),
+      inputs: {
+        webShareData: {
+          id: row.id,
+          isNew: false,
+          name: row.name,
+          path: row.path,
+          isHomeBase: row.isHomeBase,
+        },
       },
     }).onSuccess(() => this.refreshConfig$.next(), this.destroyRef);
   }

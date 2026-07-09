@@ -1,9 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatStepperHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -35,7 +32,6 @@ describe('CloudSyncWizardComponent', () => {
     component: CloudSyncWizardComponent,
     imports: [
       ReactiveFormsModule,
-      MatStepperModule,
       StorjProviderFormComponent,
     ],
     providers: [
@@ -62,11 +58,10 @@ describe('CloudSyncWizardComponent', () => {
   });
 
   async function updateStepHarnesses(): Promise<void> {
-    const stepper = await loader.getHarness(MatStepperHarness);
-    const activeStep = (await stepper.getSteps({ selected: true }))[0];
-
-    form = await activeStep.getHarnessOrNull(IxFormHarness);
-    nextButton = await activeStep.getHarnessOrNull(TnButtonHarness.with({ label: 'Next' }));
+    // tn-stepper renders only the active step's content, so the single visible
+    // form and Next button resolve straight from the document-root loader.
+    form = await loader.getHarnessOrNull(IxFormHarness);
+    nextButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Next' }));
   }
 
   async function goToNextStep(): Promise<void> {
@@ -89,7 +84,7 @@ describe('CloudSyncWizardComponent', () => {
     );
     await descriptionInput.setValue('Sync Google Photos - TestUser');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [{

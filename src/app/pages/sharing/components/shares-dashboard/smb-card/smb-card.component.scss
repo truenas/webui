@@ -10,12 +10,31 @@
   text-decoration: none;
 }
 
-.card-title {
-  align-items: center;
-  display: flex;
-  margin: 0;
+// TEMP: tn-table defaults to `table-layout: auto`, so the SMB card's extra columns
+// (Audit Logging, Storage Tier) push the table wider than the fixed-width dashboard
+// card — and tn-card's `overflow: hidden` clips the rightmost columns (Audit Logging
+// was cut off). Fixed layout makes the columns share the card width and truncate; the
+// text cells already carry ellipsis + tooltips. Remove once the library exposes a
+// fit/fixed-layout option for tn-table.
+.table {
+  ::ng-deep .tn-table__table {
+    table-layout: fixed;
+  }
 
-  tn-icon {
-    margin-left: 5px;
+  // TEMP: tn-table's `.tn-table__cell-content` is a flex container, so its
+  // `text-overflow: ellipsis` never applies — long Name/Path values get clipped
+  // with no "…". Apply real ellipsis to the text cell so truncated values show it
+  // (the full value stays available via the cell's tooltip). Remove once the
+  // library renders ellipsis on truncated cell content itself.
+  ::ng-deep .tn-table__cell-content > span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // Muted em-dash placeholder shown when a text cell (e.g. Description) has no value.
+  ::ng-deep .empty-value {
+    color: var(--fg2);
   }
 }

@@ -15,8 +15,8 @@ import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-m
     AddHostMenuComponent,
     TranslateModule,
     TnIconComponent,
-    TnIconButtonComponent,
     TnTooltipDirective,
+    TnIconButtonComponent,
   ],
 })
 export class AddSubsystemHostsComponent {

@@ -10,7 +10,10 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { AppContainerState, App } from 'app/interfaces/app.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import {
@@ -140,5 +143,65 @@ describe('AppContainersCardComponent', () => {
     await showLogsButton.click();
 
     expect(navigateSpy).toHaveBeenCalledWith(['/apps', 'installed', 'ix-test-train', 'ix-test-app', 'logs', '1']);
+  });
+
+  describe('without web_shell access', () => {
+    const createDeniedComponent = createComponentFactory({
+      component: AppWorkloadsCardComponent,
+      declarations: [
+        MockComponent(VolumeMountsDialog),
+      ],
+      imports: [
+        MapValuePipe,
+      ],
+      providers: [
+        mockProvider(TnDialog, {
+          open: jest.fn(() => of(true)),
+        }),
+        mockAuth({
+          privilege: { roles: { $set: [Role.AppsWrite] }, web_shell: false },
+        } as LoggedInUser),
+      ],
+    });
+
+    it('shows the Shell button disabled with a lock icon and names web_shell as the reason', async () => {
+      spectator = createDeniedComponent({ props: { app } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const shellButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'lock' }));
+
+      expect(await shellButton.isDisabled()).toBe(true);
+      expect(await loader.getHarnessOrNull(TnIconButtonHarness.with({ name: 'console' }))).toBeNull();
+      expect(spectator.query('button[aria-label="Your user permissions do not allow Web Shell access."]')).toExist();
+    });
+  });
+
+  // MockAuthService.hasRole() always resolves true, so mock AuthService directly to
+  // exercise the has-web_shell-but-not-apps-write path the distinguished message targets.
+  describe('without apps-write role', () => {
+    const createDeniedComponent = createComponentFactory({
+      component: AppWorkloadsCardComponent,
+      declarations: [
+        MockComponent(VolumeMountsDialog),
+      ],
+      imports: [
+        MapValuePipe,
+      ],
+      providers: [
+        mockProvider(TnDialog, {
+          open: jest.fn(() => of(true)),
+        }),
+        mockProvider(AuthService, {
+          hasRole: () => of(false),
+          hasWebShellAccess$: of(true),
+        }),
+      ],
+    });
+
+    it('locks the Shell button and names the missing role, not web_shell', () => {
+      spectator = createDeniedComponent({ props: { app } });
+
+      expect(spectator.query('button[aria-label="You do not have permission to open this shell."]')).toExist();
+    });
   });
 });

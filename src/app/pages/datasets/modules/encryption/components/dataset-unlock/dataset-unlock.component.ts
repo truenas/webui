@@ -3,11 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnCardComponent, TnDialog } from '@truenas/ui-components';
 import {
   Observable,
   from, of, switchMap,
@@ -29,7 +27,6 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UnlockSummaryDialog } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -49,8 +46,7 @@ interface DatasetFormGroup {
   styleUrls: ['./dataset-unlock.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     IxRadioGroupComponent,
     ReactiveFormsModule,
     IxCheckboxComponent,
@@ -60,9 +56,8 @@ interface DatasetFormGroup {
     TranslateModule,
     IxInputComponent,
     IxTextareaComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
   ],
 })
 export class DatasetUnlockComponent implements OnInit {

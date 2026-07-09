@@ -35,10 +35,9 @@
             <tn-icon-button
               name="close"
               library="mdi"
-              iconClass="icon"
-              [ariaLabel]="'Remove' | translate"
+              [ariaLabel]="'Remove host' | translate"
               [testId]="['remove-host-association', host.hostnqn]"
-              (onClick)="onRemoveHost(host)"
+              (click)="onRemoveHost(host)"
             ></tn-icon-button>
           </span>
         </span>

@@ -3,12 +3,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatStepper } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnFormSectionComponent } from '@truenas/ui-components';
-import {
-  catchError, EMPTY, of, pairwise, startWith,
-} from 'rxjs';
+import { TnButtonComponent, TnFormSectionComponent, TnStepperComponent } from '@truenas/ui-components';
+import { catchError, EMPTY, of } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { newOption } from 'app/interfaces/option.interface';
@@ -52,7 +49,7 @@ export class CloudSyncProviderComponent implements OnInit {
   private translate = inject(TranslateService);
   private cloudCredentialService = inject(CloudCredentialService);
   private snackbarService = inject(SnackbarService);
-  private stepper = inject(MatStepper);
+  private stepper = inject(TnStepperComponent);
   private destroyRef = inject(DestroyRef);
 
   readonly save = output<CloudSyncCredential>();
@@ -123,6 +120,9 @@ export class CloudSyncProviderComponent implements OnInit {
   }
 
   onVerify(): void {
+    if (!this.existingCredential) {
+      return;
+    }
     this.loading.emit(true);
 
     const payload = this.existingCredential.provider;
@@ -162,12 +162,8 @@ export class CloudSyncProviderComponent implements OnInit {
 
   private setFormEvents(): void {
     this.form.controls.exist_credential.valueChanges
-      .pipe(
-        startWith(undefined),
-        pairwise(),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe(([previousCreds, currentCreds]) => {
-        const isPreviousValueAddNew = previousCreds != null && previousCreds.toString() === addNewIxSelectValue;
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((currentCreds) => {
         const isCurrentValueExists = currentCreds != null;
         const isCurrentValueAddNew = isCurrentValueExists && currentCreds.toString() === addNewIxSelectValue;
 
@@ -175,27 +171,40 @@ export class CloudSyncProviderComponent implements OnInit {
           return;
         }
 
-        if (!isPreviousValueAddNew) {
-          this.emitSelectedCredential(currentCreds as number);
-          return;
-        }
-
-        this.loading.emit(true);
-        this.cloudCredentialService.getCloudSyncCredentials().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: (creds) => {
-            this.credentials = creds;
-            this.emitSelectedCredential(currentCreds as number);
-          },
-          complete: () => {
-            this.loading.emit(false);
-          },
-        });
+        // A freshly created credential (via the select's "Add New") isn't in the cached list yet;
+        // emitSelectedCredential re-fetches on a cache miss, so both cases funnel through it.
+        this.emitSelectedCredential(currentCreds as number);
       });
   }
 
   private emitSelectedCredential(credsId: number): void {
-    this.existingCredential = this.credentials.find((credential) => credential.id === credsId);
-    this.save.emit(this.existingCredential);
-    this.cdr.markForCheck();
+    const cached = this.credentials.find((credential) => credential.id === credsId);
+    if (cached) {
+      this.existingCredential = cached;
+      this.save.emit(this.existingCredential);
+      this.cdr.markForCheck();
+      return;
+    }
+
+    // The credentials cache may not be loaded yet — e.g. when the wizard is opened from the
+    // dashboard, where many concurrent API calls delay this step's own credentials query. Fetch
+    // before resolving so actions (Next/Verify) never operate on an undefined credential.
+    this.loading.emit(true);
+    this.cloudCredentialService.getCloudSyncCredentials().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (creds) => {
+        this.credentials = creds;
+        this.existingCredential = creds.find((credential) => credential.id === credsId);
+        this.save.emit(this.existingCredential);
+        this.cdr.markForCheck();
+      },
+      error: (error: unknown) => {
+        this.loading.emit(false);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
+        this.cdr.markForCheck();
+      },
+      complete: () => {
+        this.loading.emit(false);
+      },
+    });
   }
 }

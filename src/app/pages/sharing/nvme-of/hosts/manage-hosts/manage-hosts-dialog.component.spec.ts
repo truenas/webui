@@ -7,10 +7,11 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfHost, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  ManageHostsAction, ManageHostsDialog,
-} from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
+import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
+import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemPortOrHostDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-port-ot-host-delete-dialog/subsystem-port-ot-host-delete-dialog.component';
 
@@ -63,6 +64,9 @@ describe('ManageHostsDialog', () => {
         }),
         reloadHosts: jest.fn(),
       }),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.success({})),
+      }),
       mockProvider(DialogRef, {
         close: jest.fn(),
       }),
@@ -84,14 +88,15 @@ describe('ManageHostsDialog', () => {
     ]);
   });
 
-  it('closes the dialog with an edit request when the Edit button is pressed', async () => {
+  it('opens host form when Edit button is pressed', async () => {
     const editButton = (await loader.getAllHarnesses(TnIconHarness.with({ name: 'mdi-pencil' })))[0];
     await editButton.click();
 
-    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
-      action: ManageHostsAction.Edit,
-      host: expect.objectContaining(hosts[0]),
-    });
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      HostFormComponent,
+      { title: 'Edit Host', inputs: { host: expect.objectContaining(hosts[0]) } },
+    );
+    expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
@@ -116,10 +121,11 @@ describe('ManageHostsDialog', () => {
     expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
   });
 
-  it('closes the dialog with an add request when Add New is pressed', async () => {
+  it('opens a form to add a new host when Add New is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add New' }));
     await addButton.click();
 
-    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({ action: ManageHostsAction.Add });
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(HostFormComponent, { title: 'Add Host' });
+    expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
   });
 });
