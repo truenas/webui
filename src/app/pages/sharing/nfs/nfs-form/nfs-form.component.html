@@ -118,18 +118,20 @@
         ></tn-autocomplete>
       </tn-form-field>
 
-      <tn-form-field
-        [label]="'Security' | translate"
-        [tooltip]="helptext.securityTooltip | translate"
-      >
-        <tn-select
-          testId="security"
-          formControlName="security"
-          [multiple]="true"
-          [options]="securityOptions"
-          [ariaLabel]="'Security' | translate"
-        ></tn-select>
-      </tn-form-field>
+      @if (hasNfsSecurityField()) {
+        <tn-form-field
+          [label]="'Security' | translate"
+          [tooltip]="helptext.securityTooltip | translate"
+        >
+          <tn-select
+            testId="security"
+            formControlName="security"
+            [multiple]="true"
+            [options]="securityOptions"
+            [ariaLabel]="'Security' | translate"
+          ></tn-select>
+        </tn-form-field>
+      }
     </tn-form-section>
   }
 

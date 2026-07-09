@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Provider } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -7,10 +8,8 @@ import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
-  TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
@@ -71,9 +70,6 @@ describe('NfsFormComponent', () => {
   const getTnCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const getTnSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
-    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
-  );
   const clickAdvancedOptions = async (): Promise<void> => {
     const button = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
     await button.click();
@@ -113,58 +109,58 @@ describe('NfsFormComponent', () => {
     });
   };
 
+  const makeProviders = (nfsConfig: NfsConfig): (Provider | Provider[])[] => [
+    mockApi([
+      mockCall('sharing.nfs.create'),
+      mockCall('sharing.nfs.update'),
+      mockCall('nfs.config', nfsConfig),
+    ]),
+    mockAuth(),
+    mockProvider(FilesystemService),
+    mockProvider(UserService, {
+      userQueryDsCache: () => of([
+        { username: 'news' },
+        { username: 'root' },
+      ]),
+      groupQueryDsCache: () => of([
+        { group: 'sys' },
+        { group: 'operator' },
+      ]),
+      getUserByName: (username: string) => of({ username } as { username: string }),
+      getGroupByName: (groupName: string) => of({ group: groupName }),
+      getUserByNameCached: (username: string) => of({ username } as { username: string }),
+      getGroupByNameCached: (groupName: string) => of({ group: groupName }),
+    }),
+    mockProvider(DialogService, {
+      confirm: jest.fn(() => of(true)),
+    }),
+    mockProvider(TnDialog, {
+      open: jest.fn(() => ({
+        closed: of(true),
+      })),
+    }),
+    mockProvider(SlideInRef, slideInRef),
+    provideMockStore({
+      selectors: [
+        {
+          selector: selectServices,
+          value: [],
+        },
+        {
+          selector: selectIsEnterprise,
+          value: false,
+        },
+      ],
+    }),
+  ];
+
   const createComponent = createComponentFactory({
     component: NfsFormComponent,
     imports: [
       ReactiveFormsModule,
       IxIpInputWithNetmaskComponent,
     ],
-    providers: [
-      mockApi([
-        mockCall('sharing.nfs.create'),
-        mockCall('sharing.nfs.update'),
-        mockCall('nfs.config', {
-          protocols: [NfsProtocol.V3],
-        } as NfsConfig),
-      ]),
-      mockAuth(),
-      mockProvider(FilesystemService),
-      mockProvider(UserService, {
-        userQueryDsCache: () => of([
-          { username: 'news' },
-          { username: 'root' },
-        ]),
-        groupQueryDsCache: () => of([
-          { group: 'sys' },
-          { group: 'operator' },
-        ]),
-        getUserByName: (username: string) => of({ username } as { username: string }),
-        getGroupByName: (groupName: string) => of({ group: groupName }),
-        getUserByNameCached: (username: string) => of({ username } as { username: string }),
-        getGroupByNameCached: (groupName: string) => of({ group: groupName }),
-      }),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(TnDialog, {
-        open: jest.fn(() => ({
-          closed: of(true),
-        })),
-      }),
-      mockProvider(SlideInRef, slideInRef),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectServices,
-            value: [],
-          },
-          {
-            selector: selectIsEnterprise,
-            value: false,
-          },
-        ],
-      }),
-    ],
+    providers: makeProviders({ protocols: [NfsProtocol.V3] } as NfsConfig),
   });
 
   describe('creates a new NFS share', () => {
@@ -195,20 +191,11 @@ describe('NfsFormComponent', () => {
       expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Read Only' }))).toBe(true);
     });
 
-    it('loads NFS config and shows Security select in Access fieldset when NFS is version 4', async () => {
-      const websocketMock = spectator.inject(MockApiService);
-      websocketMock.mockCallOnce('nfs.config', {
-        protocols: [NfsProtocol.V4],
-      } as NfsConfig);
-      spectator.component.ngOnInit();
-
+    it('hides the Security select when the NFS service does not have v4 enabled', async () => {
+      // Factory default mocks nfs.config with protocols: [NfsProtocol.V3].
       await clickAdvancedOptions();
 
-      const security = await getTnSelect('security');
-      expect(security).toBeTruthy();
-      // Accessible-name guard: the tn-form-field label is visual-only, so the combobox
-      // relies on [ariaLabel] for its name.
-      expect(spectator.query('tn-select [aria-label="Security"]')).toBeTruthy();
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Security' }))).toBe(false);
     });
 
     it('creates a new NFS share when form is submitted', async () => {
@@ -262,6 +249,31 @@ describe('NfsFormComponent', () => {
       }]);
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+  });
+
+  describe('with NFSv4 protocol enabled', () => {
+    const createComponentWithV4 = createComponentFactory({
+      component: NfsFormComponent,
+      imports: [
+        ReactiveFormsModule,
+        IxIpInputWithNetmaskComponent,
+      ],
+      providers: makeProviders({ protocols: [NfsProtocol.V3, NfsProtocol.V4] } as NfsConfig),
+    });
+
+    beforeEach(() => {
+      spectator = createComponentWithV4();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows the Security select in the Access fieldset', async () => {
+      await clickAdvancedOptions();
+
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Security' }))).toBe(true);
+      // Accessible-name guard: the tn-form-field label is visual-only, so the combobox
+      // relies on [ariaLabel] for its name.
+      expect(spectator.query('tn-select [aria-label="Security"]')).toBeTruthy();
     });
   });
 

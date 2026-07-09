@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, signal,
+  ChangeDetectionStrategy, Component, OnInit, inject, input, signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
@@ -40,6 +40,7 @@ import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -84,10 +85,10 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   private datasetService = inject(DatasetService);
   private userService = inject(UserService);
   private existenceValidation = inject(UserGroupExistenceValidationService);
+  private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<ServicesState>>(Store);
 
   private validatorsService = inject(IxValidatorsService);
-  private destroyRef = inject(DestroyRef);
 
   /** Edit/default data supplied by the `<tn-side-panel>` host. */
   readonly nfsShareData = input<NfsFormData | undefined>(undefined);
@@ -96,7 +97,6 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   defaultNfsShare: NfsShare | undefined;
 
   protected isAdvancedMode = signal(false);
-  hasNfsSecurityField = false;
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
     share_type: DatasetPreset.Multiprotocol,
   };
@@ -125,6 +125,18 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
+  /** The Security select only applies when the NFS service has protocol v4 enabled. */
+  protected readonly hasNfsSecurityField = toSignal(
+    this.api.call('nfs.config').pipe(
+      map((config) => !!config.protocols?.includes(NfsProtocol.V4)),
+      catchError((error: unknown) => {
+        this.errorHandler.handleError(error);
+        return of(false);
+      }),
+    ),
+    { initialValue: false },
+  );
+
   readonly securityOptions = translateOptions(this.translate, [
     { label: 'SYS', value: NfsSecurityProvider.Sys },
     { label: 'KRB5', value: NfsSecurityProvider.Krb5 },
@@ -146,7 +158,7 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
     tap(() => this.usersLoading.set(true)),
     switchMap((query) => this.userService.userQueryDsCache(query).pipe(
       catchError((error: unknown) => {
-        console.error('User autocomplete fetch failed:', error);
+        this.errorHandler.handleError(error);
         return of([]);
       }),
     )),
@@ -163,7 +175,7 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
     tap(() => this.groupsLoading.set(true)),
     switchMap((query) => this.userService.groupQueryDsCache(query).pipe(
       catchError((error: unknown) => {
-        console.error('Group autocomplete fetch failed:', error);
+        this.errorHandler.handleError(error);
         return of([]);
       }),
     )),
@@ -195,8 +207,6 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
     this.form.controls.mapall_user.addAsyncValidators(this.existenceValidation.validateUserExists());
     this.form.controls.maproot_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
     this.form.controls.mapall_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
-
-    this.checkForNfsSecurityField();
 
     if (this.defaultNfsShare) {
       this.form.patchValue(this.defaultNfsShare);
@@ -259,12 +269,4 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
       },
     };
   };
-
-  private checkForNfsSecurityField(): void {
-    this.api.call('nfs.config')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((nfsConfig) => {
-        this.hasNfsSecurityField = nfsConfig.protocols?.includes(NfsProtocol.V4);
-      });
-  }
 }
