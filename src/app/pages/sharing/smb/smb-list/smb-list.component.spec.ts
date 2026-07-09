@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+  TnButtonHarness, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -98,7 +98,8 @@ describe('SmbListComponent', () => {
   });
 
   async function openRowMenu(): Promise<TnMenuHarness> {
-    spectator.click('[data-test$="more-action"]');
+    const trigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
     return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
   }
 

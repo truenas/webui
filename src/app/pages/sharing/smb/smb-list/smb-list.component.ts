@@ -317,7 +317,7 @@ export class SmbListComponent implements OnInit {
     this.columns.set([...columns]);
   }
 
-  private onChangeEnabledState(row: SmbShare): void {
+  protected onChangeEnabledState(row: SmbShare): void {
     this.api.call('sharing.smb.update', [row.id, { enabled: !row.enabled }]).pipe(
       this.loader.withLoader(),
       takeUntilDestroyed(this.destroyRef),
@@ -330,9 +330,5 @@ export class SmbListComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
-  }
-
-  protected onToggle(row: SmbShare): void {
-    this.onChangeEnabledState(row);
   }
 }

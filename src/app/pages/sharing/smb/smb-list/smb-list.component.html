@@ -105,7 +105,7 @@
             [disabled]="isToggleDisabled(row)"
             [tooltip]="getEnabledTooltip(row)"
             [requiredRoles]="requiredRoles"
-            (toggled)="onToggle(row)"
+            (toggled)="onChangeEnabledState(row)"
           ></ix-table-toggle-cell>
         </ng-template>
       </ng-container>
