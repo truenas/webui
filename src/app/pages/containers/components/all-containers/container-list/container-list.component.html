@@ -36,9 +36,45 @@
           ></mat-checkbox>
         }
       </div>
-      <div class="cell">{{ 'Name' | translate }}</div>
-      <div class="cell">{{ 'Status' | translate }}</div>
-      <div class="cell">{{ 'Autostart' | translate }}</div>
+      <div
+        class="cell sortable"
+        role="button"
+        tabindex="0"
+        ixTest="sort-name"
+        (click)="sortBy(sortField.Name)"
+        (keydown.enter)="sortBy(sortField.Name)"
+      >
+        {{ 'Name' | translate }}
+        @if (sortIcon(sortField.Name); as icon) {
+          <tn-icon library="mdi" class="sort-icon" [name]="icon"></tn-icon>
+        }
+      </div>
+      <div
+        class="cell sortable"
+        role="button"
+        tabindex="0"
+        ixTest="sort-status"
+        (click)="sortBy(sortField.Status)"
+        (keydown.enter)="sortBy(sortField.Status)"
+      >
+        {{ 'Status' | translate }}
+        @if (sortIcon(sortField.Status); as icon) {
+          <tn-icon library="mdi" class="sort-icon" [name]="icon"></tn-icon>
+        }
+      </div>
+      <div
+        class="cell sortable"
+        role="button"
+        tabindex="0"
+        ixTest="sort-autostart"
+        (click)="sortBy(sortField.Autostart)"
+        (keydown.enter)="sortBy(sortField.Autostart)"
+      >
+        {{ 'Autostart' | translate }}
+        @if (sortIcon(sortField.Autostart); as icon) {
+          <tn-icon library="mdi" class="sort-icon" [name]="icon"></tn-icon>
+        }
+      </div>
       <div class="cell">CPU</div>
       <div class="cell">RAM</div>
       <div class="cell">Disk I/O</div>
