@@ -56,10 +56,8 @@ export class SubsystemNamespacesCardComponent {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected onAddNamespace(): void {
-    // Opened footerless — the base form owns Save.
     this.formPanel.open(NamespaceFormComponent, {
       title: this.translate.instant('Add Namespace'),
-      footerless: true,
       inputs: { namespaceData: { subsystemId: this.subsystem().id } },
     }).onSuccess(() => this.nvmeOfStore.initialize(), this.destroyRef);
   }

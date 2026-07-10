@@ -1,16 +1,15 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent,
-  TnCardComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  InputType, TnButtonToggleComponent, TnButtonToggleGroupComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
+import { startWith } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
-import { Role } from 'app/enums/role.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -56,16 +55,13 @@ const typeOptions: Option[] = [
     IxExplorerComponent,
     ReactiveFormsModule,
     TranslateModule,
-    TnCardComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TnButtonComponent,
     TnButtonToggleGroupComponent,
     TnButtonToggleComponent,
     ExplorerCreateDatasetComponent,
     ExplorerCreateZvolComponent,
-    RequiresRolesDirective,
   ],
 })
 export class BaseNamespaceFormComponent implements OnInit, OnChanges {
@@ -91,20 +87,27 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
 
   protected isNew = computed(() => !this.namespace());
 
-  protected form = this.formBuilder.group({
+  /** Public — side-panel host wrappers delegate their `SidePanelForm.form` to it. */
+  readonly form = this.formBuilder.group({
     device_type: [FormNamespaceType.Zvol],
     device_path: ['', Validators.required],
     filename: [''],
     filesize: [null as number | null],
   });
 
+  private readonly formStatus = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status)),
+    { initialValue: this.form.status },
+  );
+
+  /** Mirrors `SidePanelForm.trackCanSubmit` semantics: block only on INVALID, not PENDING. */
+  readonly canSubmit = computed(() => this.formStatus() !== 'INVALID');
+
   protected readonly FormNamespaceType = FormNamespaceType;
   protected readonly InputType = InputType;
   protected readonly typeToggleLabelId = 'namespace-device-type-label';
 
   protected typeOptions = translateOptions(this.translate, typeOptions);
-
-  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   get isFormDirty(): boolean {
     return this.form.dirty;
@@ -131,7 +134,16 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
     }
   }
 
+  /** Public entry point for side-panel host wrappers to trigger submission. */
+  submit(): void {
+    this.onSubmit();
+  }
+
   protected onSubmit(): void {
+    if (this.form.invalid) {
+      return;
+    }
+
     const value = this.form.value;
     let path = '';
 
