@@ -133,10 +133,8 @@ export class NvmeOfComponent implements OnInit {
   }
 
   protected addSubsystem(): void {
-    // Opened footerless — its stepper owns Next/Back/Save.
     this.formPanel.open(AddSubsystemComponent, {
       title: this.translate.instant('Add Subsystem'),
-      footerless: true,
     })
       .onSuccess((response) => {
         this.selectedSubsystemName = response.name;

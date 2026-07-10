@@ -76,6 +76,12 @@ export type HostedSidePanelForm = SidePanelHostForm & {
   /** Read as a signal so the container re-reads it (label/items) reactively without churning a getter. */
   readonly footerMenu?: Signal<SidePanelFooterMenu>;
   /**
+   * Whether the host should hide its footer Save entirely — e.g. a wizard whose earlier steps
+   * offer only Next, so a (disabled) Save wouldn't be actionable anyway. Re-evaluated each change
+   * detection — read signals inside for reactive hiding. Optional; absent = Save always shown.
+   */
+  readonly hideSave?: () => boolean;
+  /**
    * Whether the form is currently busy. The host shows an indeterminate progress bar at the top of
    * the panel while true and keeps Save disabled. Optional — forms that don't expose it simply never
    * show the bar.
