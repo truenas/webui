@@ -7,7 +7,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness,
   TnCheckboxHarness,
   TnChipInputHarness,
   TnDialog,
@@ -211,14 +210,14 @@ describe('SmbFormComponent', () => {
     mockStore$ = spectator.inject(MockStore);
     api = spectator.inject(ApiService);
 
-    // The toggle's label flips between 'Advanced Options' and 'Basic Options';
-    // only click when it currently offers to reveal the advanced section.
-    const advancedButton = await loader.getHarnessOrNull(
-      TnButtonHarness.with({ label: 'Advanced Options' }),
-    );
-    if (advancedButton) {
-      await advancedButton.click();
+    // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`;
+    // only invoke it when it currently offers to reveal the advanced section.
+    const [toggleAdvanced] = spectator.component.footerActions;
+    if (toggleAdvanced.label === 'Advanced Options') {
+      toggleAdvanced.onClick();
+      spectator.detectChanges();
     }
+    await spectator.fixture.whenStable();
   }
 
   /**
@@ -717,8 +716,10 @@ describe('SmbFormComponent', () => {
       expect(await getTnCheckbox('enable')).toBeTruthy();
       expect(await getTnCheckbox('aapl_name_mangling')).toBeTruthy();
 
-      const basicOptions = await loader.getHarness(TnButtonHarness.with({ label: 'Basic Options' }));
-      await basicOptions.click();
+      const [basicOptions] = spectator.component.footerActions;
+      expect(basicOptions.label).toBe('Basic Options');
+      basicOptions.onClick();
+      spectator.detectChanges();
 
       // Advanced-only controls are gone after switching to Basic Options.
       expect(await getTnCheckboxes('readonly')).toHaveLength(0);
@@ -922,8 +923,6 @@ describe('SmbFormComponent', () => {
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalledWith(
         expect.any(ApiCallError),
         expect.any(FormGroup),
-        {},
-        'smb-form-toggle-advanced-options',
       );
     });
   });

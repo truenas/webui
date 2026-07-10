@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnDialog, TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnDialog, TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -73,9 +73,13 @@ describe('NfsFormComponent', () => {
   const getTnSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
   const clickAdvancedOptions = async (): Promise<void> => {
-    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-    await button.click();
+    const [toggleAdvanced] = spectator.component.footerActions;
+    expect(toggleAdvanced.label).toBe('Advanced Options');
+    toggleAdvanced.onClick();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
   };
 
   /**

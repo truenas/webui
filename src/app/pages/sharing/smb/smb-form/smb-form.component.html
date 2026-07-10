@@ -70,7 +70,7 @@
     </tn-form-field>
   </tn-form-section>
 
-  @if (isAdvancedMode) {
+  @if (isAdvancedMode()) {
     <tn-form-section [heading]="'Access' | translate">
       @if (form.controls.acl.enabled) {
         <tn-form-field [tooltip]="helptextSharingSmb.aclTooltip | translate">
@@ -343,12 +343,4 @@
       </tn-form-section>
     }
   }
-
-  <tn-button
-    ixExtraActions
-    type="button"
-    [testId]="'toggle-advanced-options'"
-    [label]="isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate)"
-    (onClick)="toggleAdvancedMode()"
-  ></tn-button>
 </ix-form>
