@@ -232,8 +232,10 @@ export const helptextSharingSmb = {
   },
 
   gracePeriodLabel: T('Grace Period'),
-  gracePeriodTooltip: T('Time in seconds after creation in which write access is allowed.\
- After the grace period is up, the share will become read-only.\
+  gracePeriodTooltip: T('Time in seconds during which each file can be written after it is\
+ created or saved on the share. After the grace period is up, that file becomes read-only.\
+ The countdown starts individually for each file, and new files can still be written to the\
+ share after the grace period has passed.\
  Must be between 60 seconds (1 minute) and 15552000 seconds (180 days).'),
 
   restartMessage: T(
