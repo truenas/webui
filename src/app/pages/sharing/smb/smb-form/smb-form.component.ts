@@ -15,11 +15,11 @@ import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent,
   TnCheckboxComponent,
   TnChipInputComponent,
   TnDialog,
@@ -67,7 +67,9 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
@@ -97,11 +99,11 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnSelectComponent,
     TnCheckboxComponent,
     TnChipInputComponent,
-    TnButtonComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxInputComponent,
     IxErrorsComponent,
+    TestDirective,
     TranslateModule,
     AsyncPipe,
     WarningComponent,
@@ -160,10 +162,23 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   protected SmbPresetType = SmbSharePurpose;
-  protected isAdvancedMode = false;
+  protected isAdvancedMode = signal(false);
   private namesInUse: string[] = [];
   protected readonly helptextSharingSmb = helptextSharingSmb;
   readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+
+  /**
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
+   * change detection, so the label flips with {@link isAdvancedMode}.
+   */
+  get footerActions(): SidePanelFooterAction[] {
+    // Labels are extraction markers — the panel container pipes them through `translate`.
+    return [{
+      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
+      testId: 'toggle-advanced-options',
+      onClick: () => this.toggleAdvancedMode(),
+    }];
+  }
 
   private wasStripAclWarningShown = false;
   private smbConfig = signal<SmbConfig | null>(null);
@@ -340,17 +355,30 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     this.form.updateValueAndValidity({ emitEvent: false });
 
     if (this.hasAdvancedErrorsInternal()) {
-      this.isAdvancedMode = true;
+      this.isAdvancedMode.set(true);
       this.updateAuditValidationState();
     }
   }
 
   protected toggleAdvancedMode(): void {
-    this.isAdvancedMode = !this.isAdvancedMode;
+    this.isAdvancedMode.update((isAdvanced) => !isAdvanced);
 
-    if (this.isAdvancedMode) {
+    if (this.isAdvancedMode()) {
       this.updateAuditValidationState();
     }
+  }
+
+  /**
+   * Clicked programmatically by {@link FormErrorHandlerService} (via the
+   * `smb-form-toggle-advanced-options` trigger anchor) to reveal advanced fields before it attaches
+   * API validation errors to them. Only ever opens — never collapses an already-open section.
+   */
+  protected openAdvancedMode(): void {
+    if (this.isAdvancedMode()) {
+      return;
+    }
+    this.isAdvancedMode.set(true);
+    this.updateAuditValidationState();
   }
 
   protected form = this.formBuilder.group({
