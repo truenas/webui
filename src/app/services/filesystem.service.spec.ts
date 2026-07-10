@@ -1,5 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
+import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
@@ -110,6 +111,24 @@ describe('FilesystemService', () => {
           },
         ],
       );
+    });
+
+    it('returns fresh copies of the root node constants so cached children do not leak across trees', async () => {
+      const treeNodeProvider = spectator.service.getFilesystemNodeProvider({ datasetsAndZvols: true });
+
+      const firstRootNodes = await lastValueFrom(treeNodeProvider({
+        data: { path: '/' },
+      } as TreeNode<ExplorerNodeData>));
+      const secondRootNodes = await lastValueFrom(treeNodeProvider({
+        data: { path: '/' },
+      } as TreeNode<ExplorerNodeData>));
+
+      expect(firstRootNodes).not.toBe(datasetsRootNode);
+      expect(firstRootNodes[0]).not.toBe(datasetsRootNode);
+      expect(firstRootNodes[1]).not.toBe(zvolsRootNode);
+      // A new copy on every call, so children cached by the tree on one instance cannot leak to the next.
+      expect(secondRootNodes[0]).not.toBe(firstRootNodes[0]);
+      expect(firstRootNodes[0]).toEqual(datasetsRootNode);
     });
   });
 });
