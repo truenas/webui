@@ -923,7 +923,21 @@ describe('SmbFormComponent', () => {
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalledWith(
         expect.any(ApiCallError),
         expect.any(FormGroup),
+        {},
+        'smb-form-toggle-advanced-options',
       );
+    });
+
+    it('opens the advanced section when the hidden trigger anchor is clicked', async () => {
+      // Starts in basic mode — advanced-only controls are absent.
+      expect(await getTnCheckboxes('readonly')).toHaveLength(0);
+
+      const anchor = spectator.query<HTMLButtonElement>('#smb-form-toggle-advanced-options');
+      expect(anchor).toBeTruthy();
+      anchor.click();
+      spectator.detectChanges();
+
+      expect(await getTnCheckbox('readonly')).toBeTruthy();
     });
   });
 

@@ -69,6 +69,7 @@ import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
@@ -102,6 +103,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     ExplorerCreateDatasetComponent,
     IxInputComponent,
     IxErrorsComponent,
+    TestDirective,
     TranslateModule,
     AsyncPipe,
     WarningComponent,
@@ -364,6 +366,19 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     if (this.isAdvancedMode()) {
       this.updateAuditValidationState();
     }
+  }
+
+  /**
+   * Clicked programmatically by {@link FormErrorHandlerService} (via the
+   * `smb-form-toggle-advanced-options` trigger anchor) to reveal advanced fields before it attaches
+   * API validation errors to them. Only ever opens — never collapses an already-open section.
+   */
+  protected openAdvancedMode(): void {
+    if (this.isAdvancedMode()) {
+      return;
+    }
+    this.isAdvancedMode.set(true);
+    this.updateAuditValidationState();
   }
 
   protected form = this.formBuilder.group({
@@ -814,12 +829,7 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
         if (apiError?.reason?.includes('[ENOENT]') || apiError?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-        // The Advanced/Basic toggle lives in the side-panel footer now, so there is no in-form
-        // trigger anchor for the error handler to click — reveal errored advanced fields directly.
-        if (this.hasAdvancedErrorsInternal()) {
-          this.isAdvancedMode.set(true);
-        }
+        this.formErrorHandler.handleValidationErrors(error, this.form, {}, 'smb-form-toggle-advanced-options');
         return true;
       },
     };

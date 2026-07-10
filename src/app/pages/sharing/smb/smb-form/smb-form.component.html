@@ -6,6 +6,21 @@
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"
 >
+  <!--
+    Hidden trigger anchor: the form error handler clicks it (`triggerAnchor`) to reveal the
+    advanced section before attaching API validation errors to fields inside it. The visible
+    Advanced/Basic toggle lives in the side-panel footer (footerActions), outside this template,
+    so it can't carry the anchor id itself.
+  -->
+  <button
+    hidden
+    id="smb-form-toggle-advanced-options"
+    type="button"
+    tabindex="-1"
+    ixTest="toggle-advanced-options-anchor"
+    (click)="openAdvancedMode()"
+  ></button>
+
   <ix-smb-users-warning></ix-smb-users-warning>
 
   <tn-form-section [heading]="'Basic' | translate">
