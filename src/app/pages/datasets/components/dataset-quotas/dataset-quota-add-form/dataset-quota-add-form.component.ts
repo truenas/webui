@@ -1,26 +1,24 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
+  ChangeDetectionStrategy, Component, inject, input,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Observable } from 'rxjs';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
 import { IxUserChipsComponent } from 'app/modules/forms/ix-forms/components/ix-user-chips/ix-user-chips.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -28,50 +26,31 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './dataset-quota-add-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    RequiresRolesDirective,
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TranslateModule,
     IxGroupChipsComponent,
     IxUserChipsComponent,
-    FormActionsComponent,
-    TnButtonComponent,
   ],
 })
-export class DatasetQuotaAddFormComponent extends SidePanelForm implements OnInit {
+export class DatasetQuotaAddFormComponent extends IxFormHostForm {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
-  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private errorHandler = inject(FormErrorHandlerService);
 
-  private destroyRef = inject(DestroyRef);
+  /** Context supplied by the `<tn-side-panel>` host (via {@link FormSidePanelService}). */
+  readonly datasetId = input.required<string>();
+  readonly quotaType = input.required<DatasetQuotaType>();
 
   protected readonly requiredRoles = [Role.DatasetWrite];
-
-  protected isLoading = signal(false);
-  quotaType: DatasetQuotaType;
-  readonly DatasetQuotaType = DatasetQuotaType;
   protected readonly InputType = InputType;
+  protected readonly DatasetQuotaType = DatasetQuotaType;
 
-  /**
-   * Quota type / dataset to preset when hosted in a `<tn-side-panel>` (which has no
-   * `SlideInRef` to carry data). Unused in the legacy SlideIn host.
-   */
-  readonly presetQuotaType = input<DatasetQuotaType | undefined>(undefined);
-  readonly presetDatasetId = input<string | undefined>(undefined);
-
-  get title(): string {
-    return this.quotaType === DatasetQuotaType.User
-      ? this.translate.instant('Add User Quotas')
-      : this.translate.instant('Add Group Quotas');
-  }
-
-  get dataQuotaLabel(): string {
-    if (this.quotaType === DatasetQuotaType.User) {
+  protected get dataQuotaLabel(): string {
+    if (this.quotaType() === DatasetQuotaType.User) {
       return this.translate.instant(helptextQuotas.users.dataQuota.label)
         + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
     }
@@ -80,75 +59,53 @@ export class DatasetQuotaAddFormComponent extends SidePanelForm implements OnIni
       + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
   }
 
-  get objectQuotaLabel(): string {
-    return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.label
-      : helptextQuotas.groups.objectQuota.label;
+  protected get objectQuotaLabel(): string {
+    return this.quotaType() === DatasetQuotaType.User
+      ? this.translate.instant(helptextQuotas.users.objQuota.label)
+      : this.translate.instant(helptextQuotas.groups.objectQuota.label);
   }
 
-  get dataQuotaTooltip(): string {
-    return this.quotaType === DatasetQuotaType.User
+  protected get dataQuotaTooltip(): string {
+    return this.quotaType() === DatasetQuotaType.User
       ? this.translate.instant(helptextQuotas.users.dataQuota.tooltip)
       + ' ' + this.translate.instant(helptextQuotas.fieldAcceptsTooltip)
       : this.translate.instant(helptextQuotas.groups.dataQuota.tooltip)
         + ' ' + this.translate.instant(helptextQuotas.fieldAcceptsTooltip);
   }
 
-  get objectQuotaTooltip(): string {
-    return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.tooltip
-      : helptextQuotas.groups.objectQuota.tooltip;
+  protected get objectQuotaTooltip(): string {
+    return this.quotaType() === DatasetQuotaType.User
+      ? this.translate.instant(helptextQuotas.users.objQuota.tooltip)
+      : this.translate.instant(helptextQuotas.groups.objectQuota.tooltip);
   }
 
-  form = this.formBuilder.nonNullable.group({
+  protected form = this.formBuilder.nonNullable.group({
     data_quota: [null as number | null],
     obj_quota: [null as number | null],
     users: [[] as string[]],
     groups: [[] as string[]],
   });
 
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
-
   readonly tooltips = {
     users: helptextQuotas.users.tooltip,
     groups: helptextQuotas.groups.tooltip,
   };
 
-  private datasetId: string;
-
-  ngOnInit(): void {
-    const data = this.slideInRef
-      ? this.slideInRef.getData() as { quotaType: DatasetQuotaType; datasetId: string }
-      : { quotaType: this.presetQuotaType(), datasetId: this.presetDatasetId() };
-
-    this.quotaType = data.quotaType;
-    this.datasetId = data.datasetId;
-  }
-
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const quotas = this.getQuotas();
-    this.api.call('pool.dataset.set_quota', [this.datasetId, quotas])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.snackbar.success(this.translate.instant('Quotas added'));
-          this.isLoading.set(false);
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.errorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    const request$: Observable<void> = this.api.call('pool.dataset.set_quota', [this.datasetId(), quotas]);
+
+    return {
+      request$,
+      successMessage: this.translate.instant('Quotas added'),
+    };
+  };
 
   private getQuotas(): SetDatasetQuota[] {
     const quotas: SetDatasetQuota[] = [];
     const formValues = this.form.getRawValue();
 
-    switch (this.quotaType) {
+    switch (this.quotaType()) {
       case DatasetQuotaType.User:
         formValues.users.forEach((user) => {
           if (Number(formValues.data_quota) > 0) {
@@ -186,7 +143,7 @@ export class DatasetQuotaAddFormComponent extends SidePanelForm implements OnIni
         });
         break;
       default:
-        throw new Error(`Unexpected quota type: ${this.quotaType}`);
+        throw new Error(`Unexpected quota type: ${this.quotaType()}`);
     }
 
     return quotas;

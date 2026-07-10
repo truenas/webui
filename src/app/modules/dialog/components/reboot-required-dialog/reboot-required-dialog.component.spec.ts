@@ -50,7 +50,15 @@ describe('RebootRequiredDialogComponent', () => {
           },
           { selector: selectIsHaLicensed, value: true },
           { selector: selectCanFailover, value: false },
-          { selector: selectHaStatus, value: { reasons: [FailoverDisabledReason.MismatchNics] } },
+          {
+            selector: selectHaStatus,
+            value: {
+              reasons: [
+                FailoverDisabledReason.MismatchNics,
+                'NEW_UNMAPPED_REASON' as FailoverDisabledReason,
+              ],
+            },
+          },
         ],
       }),
       mockProvider(RebootService, {
@@ -68,11 +76,16 @@ describe('RebootRequiredDialogComponent', () => {
 
   it('shows failover warning when failover is unhealthy', () => {
     expect(spectator.query('.dialog-message.error')).toHaveText(
-      'Failover is unhealthy. Rebooting now will cause a production outage.',
+      'Reboot will cause a failover event which may trigger temporary outages of services.',
     );
 
     expect(spectator.queryAll('.failover-reasons li').map((item) => item.textContent!.trim()))
       .toContain('Network interfaces do not match between storage controllers.');
+  });
+
+  it('falls back to the raw reason when there is no label for it', () => {
+    expect(spectator.queryAll('.failover-reasons li').map((item) => item.textContent!.trim()))
+      .toContain('NEW_UNMAPPED_REASON');
   });
 
   it('shows reasons why reboot is required', () => {
@@ -84,6 +97,10 @@ describe('RebootRequiredDialogComponent', () => {
       'Test Reason 3',
       'Test Reason 4',
     ]);
+  });
+
+  it('does not show validation error on the confirmation checkbox before user interacts', () => {
+    expect(spectator.query('tn-form-field .tn-form-field-error')).not.toExist();
   });
 
   it('reboots another node and closes dialog when Reboot Standby Controller is pressed', async () => {

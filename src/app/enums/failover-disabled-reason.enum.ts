@@ -25,6 +25,8 @@ export enum FailoverDisabledReason {
   RemoteDatasetMigrationInProgress = 'REM_SYSTEM_DATASET_MIGRATION_IN_PROGRESS',
   LocalGposStigRebootRequired = 'LOC_GPOSSTIG_REBOOT_REQ',
   RemoteGposStigRebootRequired = 'REM_GPOSSTIG_REBOOT_REQ',
+  LocalUpgradeRebootRequired = 'LOC_UPGRADE_REBOOT_REQ',
+  RemoteUpgradeRebootRequired = 'REM_UPGRADE_REBOOT_REQ',
 }
 
 export const failoverAllowedReasons = [
@@ -60,4 +62,6 @@ export const failoverDisabledReasonLabels = new Map<FailoverDisabledReason, stri
   [FailoverDisabledReason.RemoteDatasetMigrationInProgress, T('Other node is currently configuring the system dataset.')],
   [FailoverDisabledReason.LocalGposStigRebootRequired, T('Reboot of this node is required for GPOS STIG changes.')],
   [FailoverDisabledReason.RemoteGposStigRebootRequired, T('Reboot of the other node is required for GPOS STIG changes.')],
+  [FailoverDisabledReason.LocalUpgradeRebootRequired, T('Reboot of this node is required to complete the system upgrade.')],
+  [FailoverDisabledReason.RemoteUpgradeRebootRequired, T('Reboot of the other node is required to complete the system upgrade.')],
 ]);

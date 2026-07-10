@@ -20,7 +20,7 @@ import {
   map, Observable, of, ReplaySubject, shareReplay, skip, switchMap, take,
 } from 'rxjs';
 import {
-  AuditEvent, auditEventLabels, AuditService, auditServiceLabels,
+  AuditEvent, AuditService, auditServiceLabels,
 } from 'app/enums/audit.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -326,11 +326,14 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
         textProperty(
           'event',
           this.translate.instant('Event'),
+          // Suggest the raw event tokens (e.g. AUTHENTICATION, SET_ACL) verbatim, and omit
+          // the enumMap so the value shown is exactly the value queried. This keeps the
+          // filter consistent with the table and with what is stored in the audit DB /
+          // remote syslog, rather than a friendly label that users can't search for remotely.
           of(Object.values(AuditEvent).map((key) => ({
-            label: this.translate.instant(auditEventLabels.get(key) || key),
-            value: `"${this.translate.instant(auditEventLabels.get(key) || key)}"`,
+            label: key,
+            value: `"${key}"`,
           }))),
-          auditEventLabels,
         ),
         textProperty('event_data.host', this.translate.instant('SMB - Host')),
         textProperty('event_data.file.path', this.translate.instant('SMB - File Path')),
@@ -425,7 +428,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   private refreshSearchPlaceholders(): void {
     this.advancedSearchPlaceholder.set(
-      this.translate.instant("Event = 'Close' AND Username = 'admin'"),
+      this.translate.instant("Event = 'CLOSE' AND Username = 'admin'"),
     );
     this.basicSearchPlaceholder.set(this.translate.instant('Search by Event or Username'));
   }
