@@ -1,7 +1,7 @@
 // cspell:ignore zvol zvols volsize volblocksize snapdev Snapdev Vdev helptext ngneat rawvalue pbkdf
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, input, output, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -42,6 +42,7 @@ import { DetailsItemComponent } from 'app/modules/details-table/details-item/det
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
@@ -50,7 +51,6 @@ import {
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
@@ -87,7 +87,7 @@ const volsizeUnchangedRelativeTolerance = 0.001;
     FileSizePipe,
   ],
 })
-export class ZvolFormComponent implements OnInit, SidePanelHostForm<Dataset> {
+export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit {
   private formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
   private formBuilder = inject(NonNullableFormBuilder);
@@ -111,10 +111,6 @@ export class ZvolFormComponent implements OnInit, SidePanelHostForm<Dataset> {
    */
   readonly params = input<{ isNew: boolean; parentOrZvolId: string }>();
 
-  /** Emits the created/updated zvol when hosted in a `<tn-side-panel>`. */
-  readonly closed = output<Dataset>();
-
-  private ixForm = viewChild.required(IxFormComponent);
   private savedDataset: Dataset | undefined;
 
   protected readonly addTitle = this.translate.instant(helptextZvol.addTitle);
@@ -207,6 +203,7 @@ export class ZvolFormComponent implements OnInit, SidePanelHostForm<Dataset> {
   );
 
   constructor() {
+    super();
     this.form.controls.key.disable();
     this.form.controls.passphrase.disable();
     this.form.controls.confirm_passphrase.disable();
@@ -252,19 +249,6 @@ export class ZvolFormComponent implements OnInit, SidePanelHostForm<Dataset> {
     }
     return this.buildEditResult(event);
   };
-
-  /** Public entry point for a `<tn-side-panel>` footer Save. */
-  submit(): void {
-    this.ixForm().submit();
-  }
-
-  canSubmit(): boolean {
-    return this.ixForm().canSubmit();
-  }
-
-  hasUnsavedChanges(): boolean {
-    return this.ixForm().hasUnsavedChanges();
-  }
 
   /**
    * `<ix-form>` closes host-agnostically: in a SlideIn host it hands the saved zvol back
