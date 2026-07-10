@@ -1,14 +1,15 @@
 <ix-page-header [pageTitle]="pageTitle">
-  @if (loadingExtraColumns$ | async) {
+  @if (loadingExtraColumns()) {
     <tn-spinner
       mode="indeterminate"
       [diameter]="30"
     ></tn-spinner>
   } @else {
-    <ix-slide-toggle
+    <tn-slide-toggle
       [formControl]="showExtraColumnsControl"
+      [testId]="'show-extra-columns'"
       [label]="'Show extra columns' | translate"
-    ></ix-slide-toggle>
+    ></tn-slide-toggle>
   }
 
   <ix-basic-search
@@ -26,7 +27,7 @@
   ></tn-button>
 </ix-page-header>
 
-@if (selectedSnapshots.length) {
+@if (selectedSnapshots().length) {
   <div class="batch-actions-toolbar">
     <div class="title">
       <strong>{{ 'Batch Operations' | translate }}</strong>
@@ -38,36 +39,69 @@
         icon="mdi-delete"
         tnTooltipPosition="below"
         [testId]="'delete-selected'"
-        [label]="'Delete' | translate"
         [tnTooltip]="'Delete selections' | translate"
-        [disabled]="!selectionHasItems"
-        (onClick)="doBatchDelete(selectedSnapshots)"
+        [label]="'Delete' | translate"
+        (onClick)="doBatchDelete(selectedSnapshots())"
       ></tn-button>
     </div>
   </div>
 }
 
-<ix-table
-  class="table"
-  [ixUiSearch]="searchableElements.elements.list"
-  [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-  [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
->
-  <thead
-    ix-table-head
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-  ></thead>
-  <tbody
-    ix-table-body
-    detailsRowIdentifier="name"
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-    [isLoading]="!!(isLoading$ | async)"
+@if (!currentPageCount() && !isLoading()) {
+  @let emptyConfig = emptyService.defaultEmptyConfig(emptyType());
+  <tn-empty
+    [ixUiSearch]="searchableElements.elements.list"
+    [icon]="emptyService.iconForType(emptyType())"
+    [title]="emptyConfig.title | translate"
+    [description]="emptyConfig.message ? (emptyConfig.message | translate) : undefined"
+  ></tn-empty>
+} @else {
+  <tn-table
+    class="table"
+    [ixUiSearch]="searchableElements.elements.list"
+    [dataSource]="currentPage()"
+    [displayedColumns]="displayedColumns()"
+    [trackBy]="trackBySnapshotId"
+    [selectable]="true"
+    [expandable]="true"
+    [clickable]="true"
+    [loading]="isLoading()"
+    (selectionChange)="onSelectionChange($event)"
+    (rowClick)="onRowClick($event)"
+    (sortChange)="onSortChange($event)"
   >
-    <ng-template let-snapshot ix-table-details-row [dataProvider]="dataProvider">
+    <ng-container tnColumnDef="dataset" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Dataset' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.dataset }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="snapshot_name" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Snapshot' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.snapshot_name }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="used" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Used' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ getUsed(row) | ixFileSize }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="created" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Date created' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        @if (getCreated(row); as created) {
+          <ix-date [date]="created"></ix-date>
+        }
+      </ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="referenced" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Referenced' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ getReferenced(row) | ixFileSize }}</ng-template>
+    </ng-container>
+
+    <ng-template let-snapshot tnDetailRowDef>
       <ix-snapshot-details-row [snapshot]="snapshot"></ix-snapshot-details-row>
     </ng-template>
-  </tbody>
-</ix-table>
-<tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+  </tn-table>
+  <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+}

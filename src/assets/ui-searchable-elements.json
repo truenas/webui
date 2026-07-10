@@ -4426,6 +4426,23 @@
   },
   {
     "hierarchy": [
+      "Data Protection",
+      "Snapshots"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/datasets",
+      "snapshots"
+    ],
+    "routerLink": null,
+    "anchor": "snapshots",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
       "Datasets",
       "Add Zvol"
     ],

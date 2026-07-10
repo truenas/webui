@@ -3,21 +3,22 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { snapshotsInitialState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
@@ -29,7 +30,7 @@ import { SnapshotListComponent } from './snapshot-list.component';
 describe('SnapshotListComponent', () => {
   let spectator: Spectator<SnapshotListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: SnapshotListComponent,
@@ -37,7 +38,7 @@ describe('SnapshotListComponent', () => {
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
       ReactiveFormsModule,
-      IxTableDetailsRowDirective,
+      MockComponent(IxDateComponent),
     ],
     declarations: [
       FakeFormatDateTimePipe,
@@ -52,7 +53,7 @@ describe('SnapshotListComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(FormSidePanelService, {
-        open: jest.fn(),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
         selectors: [
@@ -101,32 +102,70 @@ describe('SnapshotListComponent', () => {
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['', 'Dataset', 'Snapshot'],
-      ['', 'test-dataset', 'second-snapshot'],
-      ['', 'test-dataset', 'first-snapshot'],
-    ];
-    const tableData = await table.getCellTexts();
-    expect(tableData).toEqual(expectedRows);
+    expect(await table.getRowCount()).toBe(2);
+
+    expect(await table.getCellText(0, 'dataset')).toBe('test-dataset');
+    expect(await table.getCellText(0, 'snapshot_name')).toBe('second-snapshot');
+    expect(await table.getCellText(1, 'dataset')).toBe('test-dataset');
+    expect(await table.getCellText(1, 'snapshot_name')).toBe('first-snapshot');
   });
 
   it('should show table with extra columns', async () => {
-    const slideToggle = await loader.getHarness(IxSlideToggleHarness.with({ label: 'Show extra columns' }));
+    const slideToggle = await loader.getHarness(TnSlideToggleHarness.with({ label: 'Show extra columns' }));
     await slideToggle.toggle();
 
-    const expectedRows = [
-      ['', 'Dataset', 'Snapshot', 'Used', 'Date created', 'Referenced'],
-      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-10-18 19:51:43', '1.49 TiB'],
-      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-10-18 19:51:54', '1.49 TiB'],
-    ];
-    expect(await table.getCellTexts()).toEqual(expectedRows);
+    // The real flow reloads snapshots via an effect and flips loading off on
+    // `snapshotsLoaded`; there is no effect in the test, so release it manually.
+    spectator.component.loadingExtraColumns$.next(false);
+    spectator.detectChanges();
+
+    expect(await table.getHeaderTexts()).toEqual(
+      expect.arrayContaining(['Dataset', 'Snapshot', 'Used', 'Date created', 'Referenced']),
+    );
+    expect(await table.getCellText(0, 'used')).toBe('1.49 TiB');
+    expect(await table.getCellText(0, 'referenced')).toBe('1.49 TiB');
   });
 
-  it('should show form when Add button is pressed', async () => {
+  it('snaps the extra-columns toggle back when the confirmation is cancelled', async () => {
+    // Model the real async confirm dialog: the toggle flips on optimistically, then
+    // the user cancels. tn-slide-toggle latches its visual state internally, so this
+    // proves the control value is written back (not merely that the signal stayed
+    // false) — with the old markForCheck-only revert the switch stays stuck on.
+    const confirmResult$ = new Subject<boolean>();
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(confirmResult$);
+    const slideToggle = await loader.getHarness(TnSlideToggleHarness.with({ label: 'Show extra columns' }));
+
+    await slideToggle.toggle();
+    spectator.detectChanges();
+    expect(await slideToggle.isChecked()).toBe(true);
+
+    confirmResult$.next(false);
+    spectator.detectChanges();
+
+    expect(await slideToggle.isChecked()).toBe(false);
+    expect(await table.getHeaderTexts()).not.toContain('Used');
+  });
+
+  it('clears the current selection when the snapshot list reloads', async () => {
+    const store$ = spectator.inject(MockStore);
+
+    await table.toggleRowSelection(0);
+    expect(await table.getSelectedRowCount()).toBe(1);
+
+    // A store re-emission hands back fresh row objects; the prior selection now
+    // points at stale references that no longer map to visible rows, so it is cleared.
+    store$.overrideSelector(selectSnapshots, [...fakeZfsSnapshotDataSource]);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(await table.getSelectedRowCount()).toBe(0);
+  });
+
+  it('should open form when Add button is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
@@ -159,7 +198,7 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots.map((snapshot) => ({ ...snapshot, selected: false }));
+    component.snapshots = testSnapshots;
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
@@ -193,7 +232,7 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots.map((snapshot) => ({ ...snapshot, selected: false }));
+    component.snapshots = testSnapshots;
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
@@ -240,7 +279,7 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots.map((snapshot) => ({ ...snapshot, selected: false }));
+    component.snapshots = testSnapshots;
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 

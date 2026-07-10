@@ -5,16 +5,16 @@ import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent, TnSpinnerComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import {
+  TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
+  TnDialogShellComponent, TnRadioComponent, TnSpinnerComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -34,8 +34,7 @@ import { AppState } from 'app/store';
     TranslateModule,
     TnSpinnerComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxRadioGroupComponent,
+    TnRadioComponent,
     TnCheckboxComponent, TnFormFieldComponent,
     TnButtonComponent,
     FormatDateTimePipe,
@@ -77,23 +76,26 @@ export class SnapshotRollbackDialog implements OnInit {
     fcName: 'recursive',
     tooltip: helptextSnapshots.stopRollbackTooltip,
     label: helptextSnapshots.stopRollbackLabel,
-    options: of([
+    // tn-radio has no per-option tooltip, so the per-option safety guidance is
+    // surfaced as a hint line under each radio (see template) — dropping it would
+    // remove exactly the guidance users need before a destructive rollback.
+    options: [
       {
         value: '',
         label: helptextSnapshots.rollbackDatasetLabel,
-        tooltip: helptextSnapshots.rollbackDatasetTooltip,
+        hint: helptextSnapshots.rollbackDatasetTooltip,
       },
       {
         value: RollbackRecursiveType.Recursive,
         label: helptextSnapshots.rollbackRecursiveLabel,
-        tooltip: helptextSnapshots.rollbackRecursiveTooltip,
+        hint: helptextSnapshots.rollbackRecursiveTooltip,
       },
       {
         value: RollbackRecursiveType.RecursiveClones,
         label: helptextSnapshots.rollbackRecursiveClonesLabel,
-        tooltip: helptextSnapshots.rollbackRecursiveClonesTooltip,
+        hint: helptextSnapshots.rollbackRecursiveClonesTooltip,
       },
-    ]),
+    ],
   };
 
   readonly force = {
