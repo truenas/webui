@@ -48,7 +48,6 @@
     @if (canUnlock()) {
       <tn-button
         *ixRequiresRoles="[Role.DatasetWrite]"
-        color="primary"
         variant="outline"
         [label]="'Unlock' | translate"
         [testId]="'unlock'"
