@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { of, throwError } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -14,6 +15,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
+import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -56,6 +58,7 @@ describe('SnapshotRollbackDialog', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockProvider(ErrorHandlerService),
+      provideMockStore(),
       mockProvider(LocaleService, {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         toMachineTime: (date: number | Date) => new Date(date),
@@ -88,6 +91,7 @@ describe('SnapshotRollbackDialog', () => {
 
   it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
     setupDialog();
+    const dispatchSpy = jest.spyOn(spectator.inject(MockStore), 'dispatch');
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Stop Rollback if Snapshots Exist:': 'Newer Intermediate, Child, and Clone',
@@ -102,6 +106,9 @@ describe('SnapshotRollbackDialog', () => {
       { force: true },
     ]);
     expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot first-snapshot.');
+    // Rollback destroys newer snapshots without emitting collection-removal
+    // events, so the dialog forces a full list reload to drop stale rows.
+    expect(dispatchSpy).toHaveBeenCalledWith(snapshotPageEntered());
   });
 
   it('checks payload when RollbackRecursiveType.Recursive', async () => {

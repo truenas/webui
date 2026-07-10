@@ -1,12 +1,11 @@
 import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
+import { MatButton, MatAnchor } from '@angular/material/button';
+import { MatDialogTitle, MatDialogContent, MatDialogClose, MatDialogActions, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -25,8 +24,10 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-snapshot-rollback-dialog',
@@ -61,8 +62,9 @@ export class SnapshotRollbackDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private localeService = inject(LocaleService);
+  private store$ = inject<Store<AppState>>(Store);
   private dialogRef = inject(MatDialogRef<SnapshotRollbackDialog>);
-  // `MAT_DIALOG_DATA` is whatever the caller passed to `dialog.open(...)` and
+  // `DIALOG_DATA` is whatever the caller passed to `dialog.open(...)` and
   // can be missing if invoked without data; type it honestly and guard in
   // `ngOnInit` before touching any of its properties.
   protected readonly snapshot = inject<ZfsSnapshot | undefined>(MAT_DIALOG_DATA);
@@ -200,6 +202,12 @@ export class SnapshotRollbackDialog implements OnInit {
     ).subscribe({
       next: () => {
         this.wasDatasetRolledBack.set(true);
+        // Rollback destroys every snapshot newer than the target at the ZFS
+        // level, but that destruction doesn't emit `Removed` events on the
+        // `pool.snapshot.query` collection subscription — so the list keeps
+        // showing stale rows whose every action then fails with "snapshot not
+        // found". Force a full reload so the list reflects true backend state.
+        this.store$.dispatch(snapshotPageEntered());
       },
       error: (error: unknown) => {
         this.formErrorHandler.handleValidationErrors(error, this.form);
