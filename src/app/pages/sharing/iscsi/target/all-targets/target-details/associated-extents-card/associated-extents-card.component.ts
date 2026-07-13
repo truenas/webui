@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButtonModule, MatIconButton } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnDialog, TnIconButtonComponent,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, finalize, forkJoin, switchMap, take,
@@ -17,7 +16,6 @@ import {
 } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-target-form/associated-target-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -28,15 +26,11 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './associated-extents-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatButtonModule,
-    TestDirective,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
+    TnButtonComponent,
+    TnIconButtonComponent,
     TranslateModule,
-    MatIconButton,
-    TnIconComponent,
-    MatCardContent,
     RequiresRolesDirective,
     TnTooltipDirective,
     NgxSkeletonLoaderModule,

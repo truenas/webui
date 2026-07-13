@@ -52,7 +52,7 @@ describe('FibreChannelConnectionsCardComponent', () => {
   it('shows connections', () => {
     setupTest(connections);
 
-    const content = spectator.queryAll('mat-card-content p');
+    const content = spectator.queryAll('tn-card p');
     expect(content).toHaveLength(1);
     expect(content[0]).toHaveText('naa.210034800d75aec4 (Active Controller)');
   });

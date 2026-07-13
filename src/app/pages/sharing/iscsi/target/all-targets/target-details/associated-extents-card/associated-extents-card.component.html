@@ -1,9 +1,5 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Extents' | translate }}
-    </h3>
-
+<tn-card class="card" padding="small" [title]="'Extents' | translate">
+  <ng-template tnCardHeaderActions>
     @if (isLoadingExtents()) {
       <ngx-skeleton-loader class="button-loader"></ngx-skeleton-loader>
     } @else {
@@ -11,48 +7,45 @@
         class="actions"
         [tnTooltip]="unassociatedExtents().length > 0 ? null : ('No unassociated extents available.' | translate)"
       >
-        <button
+        <tn-button
           *ixRequiresRoles="requiredRoles"
           color="default"
-          mat-button
           [disabled]="!unassociatedExtents().length"
-          [ixTest]="[target().name, 'associate-target']"
-          (click)="associateTarget()"
-        >
-          {{ 'Associate' | translate }}
-        </button>
+          [testId]="[target().name, 'associate-target']"
+          [label]="'Associate' | translate"
+          (onClick)="associateTarget()"
+        ></tn-button>
       </div>
     }
-  </mat-card-header>
-  <mat-card-content>
-    @if (isLoadingExtents()) {
-      <ngx-skeleton-loader></ngx-skeleton-loader>
-    } @else {
-      @for (extent of mappedTargetExtents(); track extent.extent) {
-        <div class="mapped-extent">
-          <p>
-            {{ 'LUN ID' | translate }}: {{ extent.lunid }} |
-            {{ extent.name }} |
-            {{ extent.path }}
-          </p>
+  </ng-template>
 
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-icon-button
-            [ixTest]="'remove-extent-association' + extent.extent"
-            [title]="'Remove extent association' | translate"
-            [attr.aria-label]="'Remove extent association' | translate"
-            [tnTooltip]="'Remove extent association' | translate"
-            (click)="removeExtentAssociation(extent)"
-          >
-            <tn-icon name="link-off" library="mdi"></tn-icon>
-          </button>
-        </div>
-      } @empty {
-        <div>
-          <p>{{ 'No extents associated.' | translate }}</p>
-        </div>
-      }
+  @if (isLoadingExtents()) {
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+  } @else {
+    @for (extent of mappedTargetExtents(); track extent.extent) {
+      <div class="mapped-extent">
+        <p>
+          {{ 'LUN ID' | translate }}: {{ extent.lunid }} |
+          {{ extent.name }} |
+          {{ extent.path }}
+        </p>
+
+        <!-- Array testId so the digit-bearing extent id resolves with the same
+          `-`-separated segments the legacy [ixTest] kebab produced. -->
+        <tn-icon-button
+          *ixRequiresRoles="requiredRoles"
+          name="link-off"
+          library="mdi"
+          [testId]="['remove-extent-association', extent.extent]"
+          [ariaLabel]="'Remove extent association' | translate"
+          [tooltip]="'Remove extent association' | translate"
+          (onClick)="removeExtentAssociation(extent)"
+        ></tn-icon-button>
+      </div>
+    } @empty {
+      <div>
+        <p>{{ 'No extents associated.' | translate }}</p>
+      </div>
     }
-  </mat-card-content>
-</mat-card>
+  }
+</tn-card>

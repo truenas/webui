@@ -2,10 +2,8 @@ import {
   Component, ChangeDetectionStrategy, input,
   computed,
 } from '@angular/core';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 
@@ -15,11 +13,8 @@ import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/ca
   styleUrls: ['./fibre-channel-connections-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnCardComponent,
     CardExpandCollapseComponent,
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
     TranslateModule,
   ],
 })
