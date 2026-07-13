@@ -2,6 +2,7 @@
 @import 'scss-imports/variables';
 
 @include tn-detail-card;
+@include tn-details-item;
 
 .chart-extra {
   align-items: center;

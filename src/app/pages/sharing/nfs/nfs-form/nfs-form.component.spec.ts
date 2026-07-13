@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
+  TnAutocompleteHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -70,9 +70,13 @@ describe('NfsFormComponent', () => {
   const getTnCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
   const clickAdvancedOptions = async (): Promise<void> => {
-    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-    await button.click();
+    const [toggleAdvanced] = spectator.component.footerActions;
+    expect(toggleAdvanced.label).toBe('Advanced Options');
+    toggleAdvanced.onClick();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
   };
   const setDescription = async (value: string): Promise<void> => {
     const description = await loader.getHarness(TnInputHarness.with({ name: 'comment' }));

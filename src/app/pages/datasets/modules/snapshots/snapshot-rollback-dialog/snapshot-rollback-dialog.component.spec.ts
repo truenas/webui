@@ -5,14 +5,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { TnBannerHarness, TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import {
+  TnBannerHarness, TnButtonHarness, TnCheckboxHarness, TnRadioHarness,
+} from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
@@ -101,10 +102,7 @@ describe('SnapshotRollbackDialog', () => {
   it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
     setupDialog();
     const dispatchSpy = jest.spyOn(spectator.inject(MockStore), 'dispatch');
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Stop Rollback if Snapshots Exist:': 'Newer Intermediate, Child, and Clone',
-    });
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Newer Intermediate, Child, and Clone' }))).check();
     await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).check();
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
@@ -122,10 +120,7 @@ describe('SnapshotRollbackDialog', () => {
 
   it('checks payload when RollbackRecursiveType.Recursive', async () => {
     setupDialog();
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Stop Rollback if Snapshots Exist:': 'Newer Clone',
-    });
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Newer Clone' }))).check();
     await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).check();
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
@@ -197,10 +192,7 @@ describe('SnapshotRollbackDialog', () => {
 
   it('checks payload when RollbackRecursiveType.RecursiveClones', async () => {
     setupDialog();
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Stop Rollback if Snapshots Exist:': 'No Safety Check (CAUTION)',
-    });
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'No Safety Check (CAUTION)' }))).check();
     await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).check();
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));

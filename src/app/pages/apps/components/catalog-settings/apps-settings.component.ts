@@ -13,6 +13,7 @@ import {
 import {
   combineLatest,
   filter,
+  finalize,
   forkJoin,
   take,
 } from 'rxjs';
@@ -113,13 +114,14 @@ export class AppsSettingsComponent extends SidePanelForm implements OnInit {
   }
 
   setupForm(): void {
+    this.isFormLoading.set(true);
     combineLatest([
       this.api.call('catalog.config'),
       this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
       this.api.call('system.advanced.nvidia_present'),
       this.api.call('system.advanced.config'),
     ])
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(finalize(() => this.isFormLoading.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe(([catalogConfig, dockerConfig, hasNvidiaCard, advancedConfig]) => {
         this.showNvidiaCheckbox.set(hasNvidiaCard || advancedConfig.nvidia);
 

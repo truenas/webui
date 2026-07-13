@@ -101,6 +101,14 @@ export class CloudCredentialsFormComponent extends SidePanelForm<CloudSyncCreden
     return this.commonStatus() === 'VALID' && this.providerFormValid() && !this.isLoading();
   });
 
+  /**
+   * Surfaces the panel's progress bar during initial load and submit. Overridden (not backed by
+   * `trackCanSubmit`) because this form builds `canSubmit` from its dynamic provider sub-form.
+   */
+  override isBusy(): boolean {
+    return this.isLoading();
+  }
+
   existingCredential: CloudSyncCredential;
   limitProviders: CloudSyncProviderName[];
   providers: CloudSyncProvider[] = [];

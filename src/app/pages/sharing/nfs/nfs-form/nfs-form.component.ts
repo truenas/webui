@@ -4,11 +4,12 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnAutocompleteComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
@@ -36,6 +37,7 @@ import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.const
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
+import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
@@ -67,7 +69,6 @@ export interface NfsFormData {
     TnCheckboxComponent,
     TnSelectComponent,
     TnAutocompleteComponent,
-    TnButtonComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxListComponent,
@@ -121,6 +122,20 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   }
 
   readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+
+  /**
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
+   * change detection, so the label flips with {@link isAdvancedMode}.
+   */
+  get footerActions(): SidePanelFooterAction[] {
+    // Labels are extraction markers — the panel container pipes them through `translate`.
+    return [{
+      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
+      testId: 'toggle-advanced-options',
+      onClick: () => this.toggleAdvancedMode(),
+    }];
+  }
+
   readonly helptext = helptextSharingNfs;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));

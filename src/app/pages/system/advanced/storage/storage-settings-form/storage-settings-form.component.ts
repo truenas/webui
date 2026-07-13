@@ -112,11 +112,13 @@ export class StorageSettingsFormComponent extends SidePanelForm implements OnIni
   }
 
   private setFormData(): void {
+    this.isLoading.set(true);
     forkJoin([
       this.api.call('systemdataset.config'),
       this.api.call('pool.resilver.config'),
     ]).pipe(
       take(1),
+      finalize(() => this.isLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(([systemDatasetConfig, resilverConfig]) => {
       this.form.patchValue({

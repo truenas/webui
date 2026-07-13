@@ -269,6 +269,11 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
     return this.form.dirty;
   }
 
+  /** The footerless `<tn-side-panel>` host shows its progress bar while this is true. */
+  isBusy(): boolean {
+    return this.isLoading();
+  }
+
   constructor() {
     this.iscsiService.getExtents().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((extents) => {
       this.namesInUse.set(extents.map((extent) => extent.name));

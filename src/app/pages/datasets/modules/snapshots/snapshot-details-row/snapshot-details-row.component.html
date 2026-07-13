@@ -64,10 +64,11 @@
     }
   </div>
   <ng-container *ixRequiresRoles="requiredRoles">
-    <ix-checkbox
+    <tn-checkbox
       [formControl]="holdControl"
+      [testId]="'hold'"
       [label]="'Hold' | translate"
-    ></ix-checkbox>
+    ></tn-checkbox>
   </ng-container>
 </dl>
 
@@ -76,15 +77,15 @@
 <div class="actions">
   <tn-button
     *ixRequiresRoles="requiredRoles"
-    [label]="'Clone To New Dataset' | translate"
     [testId]="['clone', snapshot().snapshot_name]"
+    [label]="'Clone To New Dataset' | translate"
     (onClick)="doClone(snapshot())"
   ></tn-button>
 
   <tn-button
     *ixRequiresRoles="requiredRoles"
-    [label]="'Rollback' | translate"
     [testId]="['rollback', snapshot().snapshot_name]"
+    [label]="'Rollback' | translate"
     (onClick)="doRollback(snapshot())"
   ></tn-button>
 
@@ -94,8 +95,8 @@
   >
     <tn-button
       *ixRequiresRoles="requiredRoles"
-      [label]="'Delete' | translate"
       [testId]="['delete', snapshot().snapshot_name]"
+      [label]="'Delete' | translate"
       [disabled]="hasClones"
       (onClick)="doDelete(snapshot())"
     ></tn-button>
