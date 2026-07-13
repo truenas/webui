@@ -1,11 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal, OnInit, computed, inject, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, signal, OnInit, computed, inject, DestroyRef,
+} from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
+import {
+  tnIconMarker, TnCardComponent, TnCardHeaderActionsDirective, TnCellDefDirective, TnDialog,
+  TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { finalize, forkJoin, of } from 'rxjs';
 import {
   catchError,
@@ -16,14 +20,9 @@ import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/inte
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { convertStringToId } from 'app/modules/ix-table/utils';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   buildPortsTableRow,
@@ -43,16 +42,16 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   styleUrl: './fibre-channel-ports.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FakeProgressBarComponent,
-    IxTableBodyComponent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    TnTablePagerComponent,
-    MatCard,
-    MatCardContent,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
     BasicSearchComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TableActionsCellComponent,
+    TnTablePagerComponent,
+    TnTestIdDirective,
     TranslateModule,
     UiSearchDirective,
     AsyncPipe,
@@ -75,71 +74,54 @@ export class FibreChannelPortsComponent implements OnInit {
 
   private rows = signal<FibreChannelPortRow[]>([]);
 
-  protected columns = computed(() => {
-    return createTable<FibreChannelPortRow>([
-      textColumn({
-        title: this.translate.instant('Port'),
-        propertyName: 'name',
-        getValue: (row) => {
-          if (row.isPhysical) {
-            return row.name;
-          }
+  protected readonly actions: IconActionConfig<FibreChannelPortRow>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+      hidden: (row) => of(!row.isPhysical),
+    },
+  ];
 
-          return ` – ${this.translate.instant('{port} (virtual)', { port: row.name })}`;
-        },
-        disableSorting: true,
-      }),
-      textColumn({
-        title: this.translate.instant('Target'),
-        propertyName: 'target',
-        getValue: (row) => {
-          return row.target?.iscsi_target_name || '-';
-        },
-        disableSorting: true,
-      }),
-      textColumn({
-        title: this.translate.instant('WWPN'),
-        propertyName: 'wwpn',
-        getValue: (row) => this.resolveWwpn(row, 'wwpn'),
-        disableSorting: true,
-      }),
-      textColumn({
-        title: this.translate.instant('WWPN (B)'),
-        propertyName: 'wwpn_b',
-        getValue: (row) => this.resolveWwpn(row, 'wwpn_b'),
-        hidden: !this.isHa(),
-        disableSorting: true,
-      }),
-      textColumn({
-        title: this.translate.instant('State'),
-        getValue: (row) => {
-          return `A: ${row.aPortState || '–'} B: ${row.bPortState || '–'}`;
-        },
-        hidden: !this.isHa(),
-        disableSorting: true,
-      }),
-      actionsWithMenuColumn({
-        disableSorting: true,
-        actions: [
-          {
-            iconName: tnIconMarker('pencil', 'mdi'),
-            tooltip: this.translate.instant('Edit'),
-            onClick: (row) => this.doEdit(row),
-            hidden: (row) => of(!row.isPhysical),
-          },
-        ],
-      }),
-    ], {
-      uniqueRowTag: (row) => 'fibre-channel-port-' + row.name,
-      ariaLabels: (row) => [row.name, this.translate.instant('Fibre Channel Port')],
-    });
+  // The WWPN (B) and State columns only apply to HA systems.
+  protected readonly displayedColumns = computed<string[]>(() => {
+    const columns = ['name', 'target', 'wwpn'];
+    if (this.isHa()) {
+      columns.push('wwpn_b', 'state');
+    }
+    columns.push('actions');
+    return columns;
   });
+
+  protected readonly trackByPortName = (_index: number, row: FibreChannelPortRow): string => row.name;
+
+  protected uniqueRowTag(row: FibreChannelPortRow): string {
+    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
+    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+    return kebabCase(convertStringToId('fibre-channel-port-' + row.name));
+  }
+
+  protected ariaLabel(row: FibreChannelPortRow): string {
+    return [row.name, this.translate.instant('Fibre Channel Port')].join(' ');
+  }
+
+  protected portLabel(row: FibreChannelPortRow): string {
+    if (row.isPhysical) {
+      return row.name;
+    }
+
+    return ` – ${this.translate.instant('{port} (virtual)', { port: row.name })}`;
+  }
+
+  protected stateLabel(row: FibreChannelPortRow): string {
+    return `A: ${row.aPortState || '–'} B: ${row.bPortState || '–'}`;
+  }
 
   ngOnInit(): void {
     this.loadTable();
   }
 
-  doEdit(row: FibreChannelPortRow): void {
+  protected doEdit(row: FibreChannelPortRow): void {
     this.tnDialog.open(VirtualPortsNumberDialog, { data: row.host })
       .closed
       .pipe(
@@ -177,7 +159,7 @@ export class FibreChannelPortsComponent implements OnInit {
       });
   }
 
-  private resolveWwpn(row: FibreChannelPortRow, key: 'wwpn' | 'wwpn_b'): string {
+  protected resolveWwpn(row: FibreChannelPortRow, key: 'wwpn' | 'wwpn_b'): string {
     if (row?.[key]) {
       return row[key];
     }
