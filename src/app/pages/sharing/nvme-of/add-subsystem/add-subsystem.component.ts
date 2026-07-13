@@ -85,11 +85,6 @@ export class AddSubsystemComponent extends SidePanelForm<NvmeOfSubsystem> {
 
   private readonly stepper = viewChild(TnStepperComponent);
 
-  /** The footerless `<tn-side-panel>` host shows its progress bar while this is true. */
-  isBusy(): boolean {
-    return this.isLoading();
-  }
-
   protected readonly form = this.formBuilder.group({
     name: ['', Validators.required],
     subnqn: [''],
