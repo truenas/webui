@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -17,7 +17,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import {
   NvmeOfConfigurationComponent,
@@ -40,10 +39,9 @@ import { setSubsystemNameInUrl } from 'app/pages/sharing/nvme-of/utils/router-ut
   templateUrl: './nvme-of.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
+    TnButtonComponent,
     PageHeaderComponent,
     RequiresRolesDirective,
-    TestDirective,
     TranslateModule,
     UiSearchDirective,
     MasterDetailViewComponent,
@@ -135,10 +133,8 @@ export class NvmeOfComponent implements OnInit {
   }
 
   protected addSubsystem(): void {
-    // Opened footerless — its stepper owns Next/Back/Save.
     this.formPanel.open(AddSubsystemComponent, {
       title: this.translate.instant('Add Subsystem'),
-      footerless: true,
     })
       .onSuccess((response) => {
         this.selectedSubsystemName = response.name;

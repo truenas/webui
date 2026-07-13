@@ -1,22 +1,20 @@
 <ix-page-header pageTitle="NVMe-oF">
-  <button
-    mat-button
+  <tn-button
     color="default"
-    ixTest="global-configuration"
+    [testId]="'global-configuration'"
+    [label]="'Global Configuration' | translate"
     [ixUiSearch]="searchableElements.elements.config"
-    (click)="openGlobalConfiguration()"
-  >{{ 'Global Configuration' | translate }}</button>
+    (onClick)="openGlobalConfiguration()"
+  ></tn-button>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="primary"
-    ixTest="add-subsystem"
+    [testId]="'add-subsystem'"
+    [label]="'Add Subsystem' | translate"
     [ixUiSearch]="searchableElements.elements.addSubsystem"
-    (click)="addSubsystem()"
-  >
-    {{ 'Add Subsystem' | translate }}
-  </button>
+    (onClick)="addSubsystem()"
+  ></tn-button>
 </ix-page-header>
 
 @let subsystem = dataProvider.expandedRow;

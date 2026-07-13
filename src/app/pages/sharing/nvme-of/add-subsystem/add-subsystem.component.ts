@@ -1,18 +1,20 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
-  TnStepComponent, TnStepperComponent, TnStepperNextDirective, TnStepperPreviousDirective,
+  TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
+  TnStepComponent, TnStepperComponent,
 } from '@truenas/ui-components';
 import {
   catchError,
   finalize, forkJoin, map, Observable, of, switchMap,
   tap,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
@@ -24,7 +26,8 @@ import { DetailsItemComponent } from 'app/modules/details-table/details-item/det
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -50,26 +53,21 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    TnCardComponent,
     ReactiveFormsModule,
     TnStepperComponent,
     TnStepComponent,
-    TnButtonComponent,
-    TnStepperNextDirective,
-    TnStepperPreviousDirective,
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
     AddSubsystemHostsComponent,
     AddSubsystemNamespacesComponent,
-    RequiresRolesDirective,
     AddSubsystemPortsComponent,
     DetailsItemComponent,
     DetailsTableComponent,
     EditableComponent,
   ],
 })
-export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsystem> {
+export class AddSubsystemComponent extends SidePanelForm<NvmeOfSubsystem> {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
@@ -81,17 +79,13 @@ export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsy
   private destroyRef = inject(DestroyRef);
 
   protected isLoading = signal(false);
-  requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  /** Emitted to a `tn-side-panel` host with the created subsystem on save. */
-  readonly closed = output<NvmeOfSubsystem>();
+  /** Gates the host-rendered footer Save. */
+  readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
+  private readonly stepper = viewChild(TnStepperComponent);
 
-  protected form = this.formBuilder.group({
+  protected readonly form = this.formBuilder.group({
     name: ['', Validators.required],
     subnqn: [''],
     namespaces: [[] as NamespaceChanges[]],
@@ -106,6 +100,45 @@ export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsy
 
   // Drives the stepper's "finished step" pencil icon (replaces mat's [stepControl]).
   protected readonly whatToShareCompleted = stepCompletedSignal(this.form.controls.name);
+
+  private readonly isOnFinalStep = computed(() => {
+    const stepper = this.stepper();
+    return !!stepper && stepper.selectedIndex() === stepper.steps().length - 1;
+  });
+
+  private readonly baseCanSubmit = this.trackCanSubmit(this.isLoading);
+
+  /** Also gated on the final step so the footer Save can't short-circuit the wizard. */
+  readonly canSubmit = computed(() => this.baseCanSubmit() && this.isOnFinalStep());
+
+  /** Hides the host footer Save until the final step — Next is the only way forward before that. */
+  hideSave(): boolean {
+    return !this.isOnFinalStep();
+  }
+
+  /**
+   * Step-dependent wizard navigation rendered in the `<tn-side-panel>` footer before Save:
+   * Next until the final step, Back on it. Re-read each change detection, so the buttons
+   * swap as the stepper advances. Labels are extraction markers — the panel container
+   * pipes them through `translate`.
+   */
+  get footerActions(): SidePanelFooterAction[] {
+    if (this.isOnFinalStep()) {
+      return [{
+        label: T('Back'),
+        testId: 'back',
+        onClick: () => this.stepper()?.previous(),
+      }];
+    }
+
+    return [{
+      label: T('Next'),
+      testId: 'next',
+      color: 'primary',
+      disabled: () => !this.whatToShareCompleted(),
+      onClick: () => this.stepper()?.next(),
+    }];
+  }
 
   protected onSubmit(): void {
     this.isLoading.set(true);
@@ -129,7 +162,7 @@ export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsy
       }
 
       this.snackbar.success(this.translate.instant('New subsystem added'));
-      this.closed.emit(subsystem);
+      this.closeWith(subsystem);
     });
   }
 

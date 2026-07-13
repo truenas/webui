@@ -2,13 +2,12 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog, TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -20,7 +19,7 @@ import { SubsystemPortOrHostDeleteDialogComponent } from 'app/pages/sharing/nvme
 describe('ManagePortsDialog', () => {
   let spectator: Spectator<ManagePortsDialog>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const ports = [
     {
@@ -81,19 +80,20 @@ describe('ManagePortsDialog', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('shows a list of ports', async () => {
-    expect(await table.getCellTexts()).toEqual([
-      ['Type', 'Address', 'Port', 'Used In Subsystems', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Type', 'Address', 'Port', 'Used In Subsystems', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['TCP', '10.120.120.120', '7000', '2', ''],
       ['RDMA', '10.100.100.100', '9000', '1', ''],
     ]);
   });
 
   it('opens port form when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'TCP');
+    // TODO: switch to a row-scoped lookup once TnTableHarness ships getHarnessInCell (library follow-up).
+    const editButton = (await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-pencil' })))[0];
     await editButton.click();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
@@ -104,7 +104,7 @@ describe('ManagePortsDialog', () => {
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
-    const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'TCP');
+    const deleteButton = (await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' })))[0];
     await deleteButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SubsystemPortOrHostDeleteDialogComponent, {

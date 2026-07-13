@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
 import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnBannerComponent, TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog, TnIconButtonComponent,
+} from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -13,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   NamespaceDescriptionComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
@@ -30,18 +29,14 @@ import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete
   styleUrl: './subsystem-namespaces-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     TranslateModule,
-    TnIconComponent,
-    MatCardContent,
-    MatIconButton,
+    TnBannerComponent,
+    TnIconButtonComponent,
     NamespaceDescriptionComponent,
-    TnTooltipDirective,
-    TestDirective,
     UiSearchDirective,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
   ],
 })
@@ -61,10 +56,8 @@ export class SubsystemNamespacesCardComponent {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected onAddNamespace(): void {
-    // Opened footerless — the base form owns Save.
     this.formPanel.open(NamespaceFormComponent, {
       title: this.translate.instant('Add Namespace'),
-      footerless: true,
       inputs: { namespaceData: { subsystemId: this.subsystem().id } },
     }).onSuccess(() => this.nvmeOfStore.initialize(), this.destroyRef);
   }

@@ -83,7 +83,7 @@ describe('AddSubsystemNamespacesComponent', () => {
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       AddSubsystemNamespaceComponent,
-      { title: 'Add Namespace', footerless: true },
+      { title: 'Add Namespace' },
     );
 
     expect(formControl.value).toEqual([newNamespace]);

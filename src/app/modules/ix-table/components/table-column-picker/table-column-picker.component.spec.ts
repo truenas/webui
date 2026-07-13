@@ -48,30 +48,35 @@ describe('TableColumnPickerComponent', () => {
     expect(await select.getOptions()).toEqual(['Name', 'Path']);
   });
 
-  it('hides a column, emits columnsChange and persists when toggled off', async () => {
-    const emitted = jest.fn();
-    spectator.component.columnsChange.subscribe(emitted);
+  it('emits updated column copies and persists when a column is toggled off', async () => {
+    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    spectator.component.columnsChange.subscribe((columns) => emitted = columns);
 
     const select = await loader.getHarness(TnSelectHarness);
     await select.open();
     await select.selectOption('Path');
 
-    expect(spectator.component.columns().find((column) => column.propertyName === 'path')?.hidden).toBe(true);
-    expect(spectator.component.columns().find((column) => column.propertyName === 'name')?.hidden).toBe(false);
-    expect(emitted).toHaveBeenCalled();
+    expect(emitted?.find((column) => column.propertyName === 'path')?.hidden).toBe(true);
+    expect(emitted?.find((column) => column.propertyName === 'name')?.hidden).toBe(false);
+    // Input columns are not mutated — visibility only changes via the emitted copies.
+    expect(spectator.component.columns().find((column) => column.propertyName === 'path')?.hidden).toBe(false);
     expect(store$.dispatch).toHaveBeenCalledWith(preferredColumnsUpdated({
       tableDisplayedColumns: [{ title: 'testList', columns: ['Name'] }],
     }));
   });
 
   it('keeps at least one column visible', async () => {
+    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    spectator.component.columnsChange.subscribe((columns) => emitted = columns);
+
     const select = await loader.getHarness(TnSelectHarness);
     await select.open();
     await select.selectOption('Path');
-    await select.selectOption('Name'); // would empty the selection -> reverted
+    await select.selectOption('Name'); // would empty the selection -> reverted without emitting
 
-    const visible = spectator.component.columns().filter((column) => column.title && !column.hidden);
+    const visible = emitted?.filter((column) => column.title && !column.hidden);
     expect(visible).toHaveLength(1);
+    expect(visible?.[0]?.propertyName).toBe('name');
   });
 
   it('restores visibility from saved preferences', () => {
@@ -79,9 +84,12 @@ describe('TableColumnPickerComponent', () => {
 
     spectator = createComponent({
       props: { columns: makeColumns(), columnPreferencesKey: 'testList' },
+      detectChanges: false,
     });
+    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    spectator.component.columnsChange.subscribe((columns) => emitted = columns);
     spectator.detectChanges();
 
-    expect(spectator.component.columns().find((column) => column.propertyName === 'path')?.hidden).toBe(true);
+    expect(emitted?.find((column) => column.propertyName === 'path')?.hidden).toBe(true);
   });
 });
