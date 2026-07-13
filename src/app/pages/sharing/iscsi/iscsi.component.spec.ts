@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTabNavBarHarness } from '@angular/material/tabs/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent, MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -48,7 +48,7 @@ describe('IscsiComponent', () => {
   });
 
   it('has a Global Target Configuration button that opens the settings form', async () => {
-    const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Target Configuration' }));
+    const configurationButton = await loader.getHarness(TnButtonHarness.with({ label: 'Global Target Configuration' }));
     await configurationButton.click();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent, {
