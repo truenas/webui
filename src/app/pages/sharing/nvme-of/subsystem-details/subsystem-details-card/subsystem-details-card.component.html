@@ -1,54 +1,56 @@
-<tn-card class="card" [title]="'Details' | translate">
+<tn-card class="card" padding="small" [title]="'Details' | translate">
   <ix-details-table [formGroup]="form">
-      <ix-details-item [label]="'Name' | translate">
-        <ix-editable
-          editableSaveOnEnter
-          [readonly]="!(hasRole$ | async)"
-          [disabled]="isSaving()"
-          (closed)="updateField('name')"
-        >
-          <div view>
-            {{ subsystem().name }}
-          </div>
+    <ix-details-item [label]="'Name' | translate">
+      <ix-editable
+        editableSaveOnEnter
+        [readonly]="!(hasRole$ | async)"
+        [disabled]="isSaving()"
+        (closed)="updateField('name')"
+      >
+        <div view>
+          {{ subsystem().name }}
+        </div>
 
-          <div edit>
-            <tn-input
-              formControlName="name"
-              [ariaLabel]="'Name' | translate"
-            ></tn-input>
-          </div>
-        </ix-editable>
-      </ix-details-item>
+        <div edit>
+          <tn-input
+            testId="name"
+            formControlName="name"
+            [ariaLabel]="'Name' | translate"
+          ></tn-input>
+        </div>
+      </ix-editable>
+    </ix-details-item>
 
-      <ix-details-item [label]="'NQN' | translate">
-        <ix-editable
-          editableSaveOnEnter
-          [readonly]="!(hasRole$ | async)"
-          [disabled]="isSaving()"
-          (closed)="updateField('subnqn')"
-        >
-          <div view>
-            {{ subsystem().subnqn }}
-          </div>
+    <ix-details-item [label]="'NQN' | translate">
+      <ix-editable
+        editableSaveOnEnter
+        [readonly]="!(hasRole$ | async)"
+        [disabled]="isSaving()"
+        (closed)="updateField('subnqn')"
+      >
+        <div view>
+          {{ subsystem().subnqn }}
+        </div>
 
-          <div edit>
-            <tn-input
-              formControlName="subnqn"
-              [multiline]="true"
-              [ariaLabel]="'NQN' | translate"
-            ></tn-input>
-          </div>
-        </ix-editable>
+        <div edit>
+          <tn-input
+            testId="subnqn"
+            formControlName="subnqn"
+            [ariaLabel]="'NQN' | translate"
+            [multiline]="true"
+          ></tn-input>
+        </div>
+      </ix-editable>
 
-        <a
-          class="copy-link"
-          tnTestIdType="link"
-          [tnTestId]="'copy-link'"
-          [ixUiSearch]="searchableElements.elements.copyNqn"
-          (click)="copyNqn()"
-        >
-          {{ 'Copy' | translate }}
-        </a>
-      </ix-details-item>
-    </ix-details-table>
+      <a
+        class="copy-link"
+        tnTestIdType="link"
+        [tnTestId]="'copy-link'"
+        [ixUiSearch]="searchableElements.elements.copyNqn"
+        (click)="copyNqn()"
+      >
+        {{ 'Copy' | translate }}
+      </a>
+    </ix-details-item>
+  </ix-details-table>
 </tn-card>

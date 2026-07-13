@@ -1,77 +1,65 @@
-<tn-card>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <tn-form-section>
-        <div class="device-type-toggle">
-          <span class="device-type-toggle__label" [id]="typeToggleLabelId">{{ 'Type' | translate }}</span>
-          <tn-button-toggle-group
-            formControlName="device_type"
-            [testId]="'device-type'"
-            [ariaLabelledby]="typeToggleLabelId"
-          >
-            @for (option of typeOptions; track option.value) {
-              <tn-button-toggle
-                [value]="option.value"
-                [testId]="['device-type', option.label]"
-              >{{ option.label }}</tn-button-toggle>
-            }
-          </tn-button-toggle-group>
-        </div>
-
-        @switch (form.value.device_type) {
-          @case (FormNamespaceType.Zvol) {
-            <ix-explorer
-              formControlName="device_path"
-              [label]="'Path To Zvol' | translate"
-              [rootNodes]="zvolsRootNode"
-              [nodeProvider]="zvolProvider"
-            >
-              <ix-explorer-create-zvol></ix-explorer-create-zvol>
-            </ix-explorer>
-          }
-
-          @case (FormNamespaceType.ExistingFile) {
-            <ix-explorer
-              formControlName="device_path"
-              [label]="'Path To File' | translate"
-              [rootNodes]="datasetsRootNode"
-              [nodeProvider]="fileProvider"
-            ></ix-explorer>
-          }
-
-          @case (FormNamespaceType.NewFile) {
-            <ix-explorer
-              formControlName="device_path"
-              [label]="'Parent Directory' | translate"
-              [rootNodes]="datasetsRootNode"
-              [nodeProvider]="directoryProvider"
-            >
-              <ix-explorer-create-dataset></ix-explorer-create-dataset>
-            </ix-explorer>
-
-            <tn-form-field [label]="'Filename' | translate">
-              <tn-input formControlName="filename" [required]="true"></tn-input>
-            </tn-form-field>
-
-            <tn-form-field [label]="'File Size' | translate">
-              <tn-input
-                formControlName="filesize"
-                sizeDefaultUnit="MiB"
-                [required]="true"
-                [inputType]="InputType.Size"
-              ></tn-input>
-            </tn-form-field>
-          }
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <tn-form-section>
+    <div class="device-type-toggle">
+      <span class="device-type-toggle__label" [id]="typeToggleLabelId">{{ 'Type' | translate }}</span>
+      <tn-button-toggle-group
+        formControlName="device_type"
+        [testId]="'device-type'"
+        [ariaLabelledby]="typeToggleLabelId"
+      >
+        @for (option of typeOptions; track option.value) {
+          <tn-button-toggle
+            [value]="option.value"
+            [testId]="['device-type', option.label]"
+          >{{ option.label }}</tn-button-toggle>
         }
-      </tn-form-section>
+      </tn-button-toggle-group>
+    </div>
 
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        type="submit"
-        variant="filled"
-        [primary]="true"
-        [testId]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="form.invalid"
-      ></tn-button>
-    </form>
-</tn-card>
+    @switch (form.value.device_type) {
+      @case (FormNamespaceType.Zvol) {
+        <ix-explorer
+          formControlName="device_path"
+          [label]="'Path To Zvol' | translate"
+          [rootNodes]="zvolsRootNode"
+          [nodeProvider]="zvolProvider"
+        >
+          <ix-explorer-create-zvol></ix-explorer-create-zvol>
+        </ix-explorer>
+      }
+
+      @case (FormNamespaceType.ExistingFile) {
+        <ix-explorer
+          formControlName="device_path"
+          [label]="'Path To File' | translate"
+          [rootNodes]="datasetsRootNode"
+          [nodeProvider]="fileProvider"
+        ></ix-explorer>
+      }
+
+      @case (FormNamespaceType.NewFile) {
+        <ix-explorer
+          formControlName="device_path"
+          [label]="'Parent Directory' | translate"
+          [rootNodes]="datasetsRootNode"
+          [nodeProvider]="directoryProvider"
+        >
+          <ix-explorer-create-dataset></ix-explorer-create-dataset>
+        </ix-explorer>
+
+        <tn-form-field [label]="'Filename' | translate">
+          <tn-input formControlName="filename" [required]="true"></tn-input>
+        </tn-form-field>
+
+        <tn-form-field [label]="'File Size' | translate">
+          <tn-input
+            formControlName="filesize"
+            sizeDefaultUnit="MiB"
+            [required]="true"
+            [inputType]="InputType.Size"
+          ></tn-input>
+        </tn-form-field>
+      }
+    }
+  </tn-form-section>
+</form>

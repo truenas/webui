@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
 import {
   filter, switchMap,
 } from 'rxjs';
@@ -10,7 +9,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SubsystemDeleteDialogComponent,
@@ -20,9 +18,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 @Component({
   selector: 'ix-subsystems-details-header',
   imports: [
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
     TranslateModule,
   ],
   templateUrl: './subsystems-details-header.component.html',

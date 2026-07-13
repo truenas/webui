@@ -1,11 +1,13 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { finalize } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
-import { LoaderService } from 'app/modules/loader/loader.service';
-import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -26,22 +28,24 @@ export interface NamespaceFormParams {
     BaseNamespaceFormComponent,
   ],
 })
-export class NamespaceFormComponent implements SidePanelHostCloseable<NamespaceChanges> {
+export class NamespaceFormComponent extends SidePanelForm<NamespaceChanges> {
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
-  private loader = inject(LoaderService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private baseForm = viewChild(BaseNamespaceFormComponent);
 
+  /** Gates the host-rendered footer Save. */
+  readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+
   /** Form data supplied by the `tn-side-panel` host. */
   readonly namespaceData = input<NamespaceFormParams>();
 
-  /** Emitted to a `tn-side-panel` host with the saved namespace on success. */
-  readonly closed = output<NamespaceChanges>();
-
   protected existingNamespace = computed<NvmeOfNamespace>(() => this.namespaceData()?.namespace);
   protected error = signal<unknown>(null);
+  private readonly isLoading = signal(false);
+
+  readonly canSubmit = computed(() => (this.baseForm()?.canSubmit() ?? false) && !this.isLoading());
 
   private get data(): NamespaceFormParams | undefined {
     return this.namespaceData();
@@ -51,12 +55,26 @@ export class NamespaceFormComponent implements SidePanelHostCloseable<NamespaceC
     return this.data?.subsystemId;
   }
 
+  /** The form lives in the projected base form; only read through the guarded overrides below. */
+  protected get form(): Pick<AbstractControl, 'dirty' | 'status' | 'statusChanges'> {
+    return this.baseForm()?.form;
+  }
+
+  override isBusy(): boolean {
+    return this.isLoading();
+  }
+
   /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
+  override hasUnsavedChanges(): boolean {
     return this.baseForm()?.isFormDirty || false;
   }
 
-  protected onSubmit(newNamespace: NamespaceChanges): void {
+  /** Invoked by the host-facing `submit()`; delegates to the base form, which emits `submitted`. */
+  protected onSubmit(): void {
+    this.baseForm()?.submit();
+  }
+
+  protected onNamespaceSubmitted(newNamespace: NamespaceChanges): void {
     const payload = {
       ...newNamespace,
       subsys_id: this.subsystemId,
@@ -66,8 +84,9 @@ export class NamespaceFormComponent implements SidePanelHostCloseable<NamespaceC
       ? this.api.call('nvmet.namespace.update', [this.existingNamespace().id, payload])
       : this.api.call('nvmet.namespace.create', [payload]);
 
+    this.isLoading.set(true);
     request$.pipe(
-      this.loader.withLoader(),
+      finalize(() => this.isLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     )
       .subscribe({
@@ -78,7 +97,7 @@ export class NamespaceFormComponent implements SidePanelHostCloseable<NamespaceC
 
           this.snackbar.success(message);
 
-          this.closed.emit(newNamespace);
+          this.closeWith(newNamespace);
         },
         error: (error: unknown) => {
           this.error.set(error);

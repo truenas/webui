@@ -1,17 +1,16 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatDivider } from '@angular/material/divider';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialog, TnDividerComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
+  tnIconMarker,
+} from '@truenas/ui-components';
 import { sortBy } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -22,14 +21,12 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
   styleUrl: './add-host-menu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnIconComponent,
-    MatButton,
-    MatMenu,
-    MatMenuItem,
-    TestDirective,
+    TnButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
+    TnDividerComponent,
     TranslateModule,
-    MatMenuTrigger,
-    MatDivider,
     RequiresRolesDirective,
   ],
 })
@@ -56,6 +53,7 @@ export class AddHostMenuComponent {
   });
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+  protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
   protected openHostForm(): void {
     this.formPanel
