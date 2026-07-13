@@ -1,23 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
@@ -35,21 +28,10 @@ const authAccess: IscsiAuthAccess[] = [
 describe('AuthorizedAccessListComponent', () => {
   let spectator: Spectator<AuthorizedAccessListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: AuthorizedAccessListComponent,
-    imports: [
-      BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
-      FakeProgressBarComponent,
-    ],
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
@@ -57,15 +39,11 @@ describe('AuthorizedAccessListComponent', () => {
         mockCall('iscsi.auth.query', authAccess),
         mockCall('iscsi.auth.delete'),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(FormSidePanelService, {
         openForm: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockProvider(TnDialog, {
-        open: jest.fn(),
       }),
       provideMockStore({
         selectors: [
@@ -78,20 +56,27 @@ describe('AuthorizedAccessListComponent', () => {
     ],
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('shows accurate page title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Authorized Access');
+    // White-box: no TnCardHarness in @truenas/ui-components yet.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Authorized Access');
   });
 
   it('opens authorized access form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
+    spectator.detectChanges();
 
     expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
       title: 'Add Authorized Access',
@@ -99,9 +84,9 @@ describe('AuthorizedAccessListComponent', () => {
   });
 
   it('opens authorized access form when "Edit" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit' });
+    spectator.detectChanges();
 
     expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
       title: 'Edit Authorized Access',
@@ -114,9 +99,8 @@ describe('AuthorizedAccessListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       message: 'Are you sure you want to delete this item?',
@@ -127,17 +111,9 @@ describe('AuthorizedAccessListComponent', () => {
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Group ID', 'User', 'Peer User', ''],
-      [
-        '1',
-        'test',
-        'test',
-        '',
-      ],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    expect(await table.getHeaderTexts()).toEqual(['Group ID', 'User', 'Peer User', '']);
+    expect(await table.getAllRowTexts()).toEqual([
+      ['1', 'test', 'test', ''],
+    ]);
   });
 });
