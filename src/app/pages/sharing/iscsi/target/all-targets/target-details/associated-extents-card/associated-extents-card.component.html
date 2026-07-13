@@ -32,12 +32,13 @@
 
         <!-- Array testId so the digit-bearing extent id resolves with the same
           `-`-separated segments the legacy [ixTest] kebab produced. -->
+        <!-- ariaLabel appends the extent name so per-row buttons are distinguishable to AT. -->
         <tn-icon-button
           *ixRequiresRoles="requiredRoles"
           name="link-off"
           library="mdi"
           [testId]="['remove-extent-association', extent.extent]"
-          [ariaLabel]="'Remove extent association' | translate"
+          [ariaLabel]="('Remove extent association' | translate) + ' ' + extent.name"
           [tooltip]="'Remove extent association' | translate"
           (onClick)="removeExtentAssociation(extent)"
         ></tn-icon-button>

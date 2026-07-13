@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
@@ -11,6 +11,7 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
+import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -76,7 +77,11 @@ export class PortalListComponent implements OnInit {
   protected readonly searchQuery = signal('');
   protected dataProvider: AsyncDataProvider<IscsiPortal>;
 
-  private ipChoices: Map<string, string>;
+  // Signal (not a subscription-set field) so Listen cells re-render under
+  // OnPush when the choices arrive after the rows.
+  private readonly ipChoices = toSignal(this.iscsiService.getIpChoices().pipe(
+    map((choices) => new Map(Object.entries(choices))),
+  ));
 
   protected readonly actions: IconActionConfig<IscsiPortal>[] = [
     {
@@ -139,15 +144,12 @@ export class PortalListComponent implements OnInit {
 
   protected formatListen(row: IscsiPortal): string {
     return row.listen.map((listenInterface) => {
-      const listenIp = this.ipChoices?.get(listenInterface.ip) || listenInterface.ip;
+      const listenIp = this.ipChoices()?.get(listenInterface.ip) || listenInterface.ip;
       return `${listenIp}:${listenInterface.port}`;
     }).join(', ');
   }
 
   ngOnInit(): void {
-    this.iscsiService.getIpChoices().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((choices) => {
-      this.ipChoices = new Map(Object.entries(choices));
-    });
     const portals$ = this.api.call('iscsi.portal.query', []);
 
     this.iscsiService.listenForDataRefresh()

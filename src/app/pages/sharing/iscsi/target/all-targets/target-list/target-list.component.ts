@@ -109,7 +109,7 @@ export class TargetListComponent implements OnInit {
     }
   }
 
-  expanded(target: IscsiTarget | null): void {
+  private expanded(target: IscsiTarget | null): void {
     this.toggleShowMobileDetails.emit(!!target);
     if (!target) {
       this.dataProvider().expandedRow = null;
@@ -117,7 +117,7 @@ export class TargetListComponent implements OnInit {
     }
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider().setSorting({
       active: 0,
       direction: SortDirection.Asc,
@@ -129,7 +129,7 @@ export class TargetListComponent implements OnInit {
     this.dataProvider().setSorting(mapTnSortToTableSort<IscsiTarget>(event, this.displayedColumns()));
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     // The created target's expand + reload is driven by `iscsiService.refreshData(...)` (emitted
     // from the form's onSuccess) which `all-targets` listens for and reloads the shared
     // dataProvider — so no explicit reload here (it would double-load).
@@ -139,7 +139,7 @@ export class TargetListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider().setFilter({ query, columnKeys: ['name'] });
   }

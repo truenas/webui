@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, signal, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -40,7 +40,6 @@ export class AssociatedExtentsCardComponent {
   private tnDialog = inject(TnDialog);
   private iscsiService = inject(IscsiService);
   private loader = inject(LoaderService);
-  private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -124,7 +123,6 @@ export class AssociatedExtentsCardComponent {
     ).subscribe(([extents, targetExtents]) => {
       this.extents.set(extents);
       this.targetExtents.set(targetExtents);
-      this.cdr.markForCheck();
     });
   }
 }

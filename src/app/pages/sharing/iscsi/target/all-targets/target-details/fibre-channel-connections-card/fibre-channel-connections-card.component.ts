@@ -20,8 +20,12 @@ import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/ca
 })
 export class FibreChannelConnectionsCardComponent {
   connections = input<FibreChannelStatus[]>([]);
+  // Only for the "ports exist but none have sessions" case — the template's
+  // @empty branch owns the no-connections-at-all message, so gate on length
+  // to avoid rendering both ([].every() is true).
   protected showEmptyMessage = computed<boolean>(() => {
-    return this.connections()?.every((connection) => {
+    const connections = this.connections() ?? [];
+    return connections.length > 0 && connections.every((connection) => {
       return !connection?.A?.sessions?.length && !connection?.B?.sessions?.length;
     });
   });
