@@ -1,13 +1,17 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit,
+  computed, effect, inject, signal, viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnTooltipDirective, TnDialog, TnSpinnerComponent, TnTablePagerComponent,
+  TnTooltipDirective, TnDialog, TnButtonComponent, TnSlideToggleComponent, TnSpinnerComponent,
+  TnEmptyComponent, TnTableComponent, TnTableColumnDirective, TnHeaderCellDefDirective,
+  TnCellDefDirective, TnDetailRowDefDirective, TnTablePagerComponent, TnSortEvent,
 } from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, combineLatest, of,
@@ -22,23 +26,15 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
-import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { sizeColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
@@ -51,11 +47,6 @@ import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
-// TODO: Exclude AnythingUi when NAS-127632 is done
-export interface ZfsSnapshotUi extends ZfsSnapshot {
-  selected: boolean;
-}
-
 @Component({
   selector: 'ix-snapshot-list',
   templateUrl: './snapshot-list.component.html',
@@ -64,22 +55,24 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
   imports: [
     PageHeaderComponent,
     TnSpinnerComponent,
-    ReactiveFormsModule,
-    IxSlideToggleComponent,
+    TnSlideToggleComponent,
     TranslateModule,
+    ReactiveFormsModule,
     BasicSearchComponent,
     TnButtonComponent,
     RequiresRolesDirective,
-    AsyncPipe,
     TnTooltipDirective,
-    IxTableEmptyDirective,
-    IxTableComponent,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
     SnapshotDetailsRowComponent,
     TnTablePagerComponent,
     UiSearchDirective,
+    FileSizePipe,
+    IxDateComponent,
   ],
 })
 export class SnapshotListComponent implements OnInit {
@@ -96,18 +89,50 @@ export class SnapshotListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.SnapshotDelete];
   searchQuery = signal('');
-  dataProvider = new ArrayDataProvider<ZfsSnapshotUi>();
-  snapshots: ZfsSnapshotUi[] = [];
-  showExtraColumnsControl = new FormControl<boolean>(false);
+  dataProvider = new ArrayDataProvider<ZfsSnapshot>();
+  snapshots: ZfsSnapshot[] = [];
+  protected readonly showExtraColumns = signal(false);
+  // Drives the slide toggle through a ControlValueAccessor rather than a plain
+  // `[checked]` binding: tn-slide-toggle latches its own visual state internally,
+  // so only writing the control value back (`writeValue`) can snap the switch to a
+  // prior position when the user cancels the confirmation. See onToggleExtraColumns.
+  protected readonly showExtraColumnsControl = new FormControl(false, { nonNullable: true });
   loadingExtraColumns$ = new BehaviorSubject(true);
+  protected readonly loadingExtraColumns = toSignal(this.loadingExtraColumns$, { initialValue: true });
   isLoading$ = combineLatest([
     this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading)),
     this.loadingExtraColumns$,
   ]).pipe(map(([isLoading, loadingExtraColumns]) => isLoading || loadingExtraColumns));
 
+  protected readonly isLoading = toSignal(this.isLoading$, { initialValue: true });
   protected readonly searchableElements = snapshotListElements;
 
-  emptyType$: Observable<EmptyType> = combineLatest([
+  private readonly table = viewChild(TnTableComponent<ZfsSnapshot>);
+  protected readonly currentPage = toSignal(this.dataProvider.currentPage$, { initialValue: [] as ZfsSnapshot[] });
+  protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$, { initialValue: 0 });
+
+  protected readonly selectedSnapshots = signal<ZfsSnapshot[]>([]);
+
+  protected readonly displayedColumns = computed(() => {
+    const base = ['dataset', 'snapshot_name'];
+    return this.showExtraColumns() ? [...base, 'used', 'created', 'referenced'] : base;
+  });
+
+  protected readonly trackBySnapshotId = (_: number, row: ZfsSnapshot): string => row.name;
+
+  // tn-table allows multiple rows expanded at once and exposes no single-expand input, so we
+  // restore the previous ix-table single-expand behavior: whenever a second row opens we collapse
+  // back to just the newly-opened one. Diff against the previous set (rather than caching a single
+  // reference) so a data reload swapping in fresh row objects can't leave a stale reference behind.
+  private previousExpandedRows = new Set<unknown>();
+
+  private readonly sortByMap: Record<string, (row: ZfsSnapshot) => number> = {
+    used: (row) => getFiniteNumber(row?.properties?.used?.parsed) ?? 0,
+    created: (row) => getSnapshotCreationMs(row) ?? 0,
+    referenced: (row) => getFiniteNumber(row?.properties?.referenced?.parsed) ?? 0,
+  };
+
+  protected readonly emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
     this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0)),
     this.store$.select(selectSnapshotState).pipe(map((state) => state.error)),
@@ -126,56 +151,7 @@ export class SnapshotListComponent implements OnInit {
     }),
   );
 
-  columns = createTable<ZfsSnapshotUi>([
-    checkboxColumn({
-      propertyName: 'selected',
-      onRowCheck: (row, checked) => {
-        const snapshotToSelect = this.snapshots.find((snapshot) => row.name === snapshot.name);
-        if (snapshotToSelect) {
-          snapshotToSelect.selected = checked;
-        }
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.searchQuery());
-      },
-      onColumnCheck: (checked) => {
-        this.dataProvider.currentPage$.pipe(
-          take(1),
-          takeUntilDestroyed(this.destroyRef),
-        ).subscribe((snapshots) => {
-          snapshots.forEach((snapshot) => snapshot.selected = checked);
-          this.dataProvider.setRows([]);
-          this.onListFiltered(this.searchQuery());
-        });
-      },
-      cssClass: 'checkboxs-column',
-    }),
-    textColumn({
-      title: this.translate.instant('Dataset'),
-      propertyName: 'dataset',
-    }),
-    textColumn({
-      title: this.translate.instant('Snapshot'),
-      propertyName: 'snapshot_name',
-    }),
-    sizeColumn({
-      title: this.translate.instant('Used'),
-      hidden: !this.showExtraColumnsControl.value,
-      getValue: (row) => getFiniteNumber(row?.properties?.used?.parsed),
-    }),
-    dateColumn({
-      title: this.translate.instant('Date created'),
-      hidden: !this.showExtraColumnsControl.value,
-      getValue: (row) => getSnapshotCreationMs(row),
-    }),
-    sizeColumn({
-      title: this.translate.instant('Referenced'),
-      hidden: !this.showExtraColumnsControl.value,
-      getValue: (row) => getFiniteNumber(row?.properties?.referenced?.parsed),
-    }),
-  ], {
-    uniqueRowTag: (row) => 'snapshot-' + row.id,
-    ariaLabels: (row) => [row.name, this.translate.instant('Snapshot')],
-  });
+  protected readonly emptyType = toSignal(this.emptyType$, { initialValue: EmptyType.Loading });
 
   get pageTitle(): string {
     if (this.searchQuery().length) {
@@ -184,52 +160,65 @@ export class SnapshotListComponent implements OnInit {
     return this.translate.instant('Snapshots');
   }
 
-  get selectedSnapshots(): ZfsSnapshotUi[] {
-    return this.snapshots.filter((snapshot) => snapshot.selected);
-  }
-
-  get selectionHasItems(): boolean {
-    return this.selectedSnapshots.some((snapshot) => snapshot.selected);
-  }
-
   constructor() {
     this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
+
+    effect(() => {
+      const table = this.table();
+      if (!table) {
+        return;
+      }
+      const expanded = table.expandedRows();
+      if (expanded.size <= 1) {
+        this.previousExpandedRows = new Set(expanded);
+        return;
+      }
+      const newest = [...expanded].find((row) => !this.previousExpandedRows.has(row));
+      const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
+      this.previousExpandedRows = collapsed;
+      table.expandedRows.set(collapsed);
+    });
+
+    this.showExtraColumnsControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((willShow) => this.onToggleExtraColumns(willShow));
   }
 
   ngOnInit(): void {
     this.getPreferences();
     this.getSnapshots();
     this.setDefaultSort();
-    this.listenForShowExtraColumnsChange();
   }
 
-  private listenForShowExtraColumnsChange(): void {
-    this.showExtraColumnsControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.toggleExtraColumns());
+  protected getUsed(row: ZfsSnapshot): number | undefined {
+    return getFiniteNumber(row?.properties?.used?.parsed);
   }
 
-  private updateColumnVisibility(): void {
-    this.columns = this.columns.map((column) => {
-      if (column.hasOwnProperty('hidden')) {
-        column.hidden = !this.showExtraColumnsControl.value;
-      }
-      return column;
-    });
-    this.cdr.markForCheck();
+  protected getReferenced(row: ZfsSnapshot): number | undefined {
+    return getFiniteNumber(row?.properties?.referenced?.parsed);
+  }
+
+  protected getCreated(row: ZfsSnapshot): number | undefined {
+    return getSnapshotCreationMs(row);
   }
 
   getSnapshots(): void {
     this.store$.select(selectSnapshots).pipe(
-      map((snapshots) => {
-        this.snapshots = snapshots.map((snapshot) => ({
-          ...snapshot,
-          selected: false,
-        }));
-        return this.snapshots;
-      }),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
+    ).subscribe((snapshots) => {
+      // The store hands back fresh row objects on every emission, so any prior
+      // selection now points at stale references that no longer map to visible
+      // rows. Clear it before swapping in the new set so the batch-operations
+      // toolbar can't act on a phantom selection.
+      //
+      // Reconciling the prior selection by `name` (to preserve an in-progress
+      // batch across a background reload) isn't achievable here: tn-table clears
+      // its own selection whenever the `dataSource` reference changes, so any rows
+      // we re-selected would be wiped by that internal effect on the next tick.
+      // Preserving intent would need key-based selection support in tn-table.
+      this.table()?.selection.clear();
+      this.selectedSnapshots.set([]);
+      this.snapshots = [...snapshots];
       this.onListFiltered(this.searchQuery());
       this.cdr.markForCheck();
     });
@@ -241,38 +230,39 @@ export class SnapshotListComponent implements OnInit {
       map((preferences) => preferences.showSnapshotExtraColumns),
       take(1),
     ).subscribe((showExtraColumns) => {
+      this.showExtraColumns.set(showExtraColumns);
+      // Sync the toggle without re-entering the confirm flow.
       this.showExtraColumnsControl.setValue(showExtraColumns, { emitEvent: false });
-      this.updateColumnVisibility();
       this.store$.dispatch(snapshotPageEntered());
       this.loadingExtraColumns$.next(false);
     });
   }
 
-  private getConfirmOptions(): ConfirmOptions {
-    if (!this.showExtraColumnsControl.value) {
+  private getConfirmOptions(willShow: boolean): ConfirmOptions {
+    if (willShow) {
       return {
-        title: this.translate.instant(helptextSnapshots.extraColumns.hide),
-        message: this.translate.instant(helptextSnapshots.extraColumns.hideMessage),
-        buttonText: this.translate.instant(helptextSnapshots.extraColumns.hideButton),
+        title: this.translate.instant(helptextSnapshots.extraColumns.show),
+        message: this.translate.instant(helptextSnapshots.extraColumns.showMessage),
+        buttonText: this.translate.instant(helptextSnapshots.extraColumns.showButton),
         hideCheckbox: true,
       };
     }
 
     return {
-      title: this.translate.instant(helptextSnapshots.extraColumns.show),
-      message: this.translate.instant(helptextSnapshots.extraColumns.showMessage),
-      buttonText: this.translate.instant(helptextSnapshots.extraColumns.showButton),
+      title: this.translate.instant(helptextSnapshots.extraColumns.hide),
+      message: this.translate.instant(helptextSnapshots.extraColumns.hideMessage),
+      buttonText: this.translate.instant(helptextSnapshots.extraColumns.hideButton),
       hideCheckbox: true,
     };
   }
 
-  private toggleExtraColumns(): void {
-    this.dialogService.confirm(this.getConfirmOptions())
+  protected onToggleExtraColumns(willShow: boolean): void {
+    this.dialogService.confirm(this.getConfirmOptions(willShow))
       .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed) => {
         if (confirmed) {
+          this.showExtraColumns.set(willShow);
           this.loadingExtraColumns$.next(true);
-          this.updateColumnVisibility();
           this.store$.dispatch(snapshotExtraColumnsToggled());
           this.store$.dispatch(snapshotPageEntered());
 
@@ -284,7 +274,10 @@ export class SnapshotListComponent implements OnInit {
             this.loadingExtraColumns$.next(false);
           });
         } else {
-          this.showExtraColumnsControl.setValue(!this.showExtraColumnsControl.value, { emitEvent: false });
+          // Revert the toggle. tn-slide-toggle latches its visual state internally,
+          // so leaving the signal unchanged isn't enough — write the prior value back
+          // through the control (emitEvent: false to avoid re-triggering the confirm).
+          this.showExtraColumnsControl.setValue(!willShow, { emitEvent: false });
         }
       });
   }
@@ -295,14 +288,40 @@ export class SnapshotListComponent implements OnInit {
     });
   }
 
-  doBatchDelete(data: ZfsSnapshotUi[]): void {
+  doBatchDelete(data: ZfsSnapshot[]): void {
     this.tnDialog.open(SnapshotBatchDeleteDialog, { data })
       .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.selectedSnapshots.forEach((snapshot) => snapshot.selected = false);
+        this.table()?.selection.clear();
+        this.selectedSnapshots.set([]);
         this.cdr.markForCheck();
       });
+  }
+
+  protected onSelectionChange(snapshots: ZfsSnapshot[]): void {
+    this.selectedSnapshots.set(snapshots);
+  }
+
+  protected onRowClick(row: ZfsSnapshot): void {
+    this.table()?.toggleRowExpansion(row);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    const direction = event.direction === '' ? null : (event.direction as SortDirection);
+    // `dataset`/`snapshot_name` are real ZfsSnapshot keys the data provider can sort on
+    // directly. `used`/`created`/`referenced` are display-only columns whose values live
+    // under `properties`, so the cast is nominal for those — the sortByMap override below
+    // supplies the actual accessor and `propertyName` is never read for them.
+    const sorting: TableSort<ZfsSnapshot> = {
+      propertyName: direction ? (event.column as keyof ZfsSnapshot) : null,
+      direction,
+      active: null,
+    };
+    if (direction && this.sortByMap[event.column]) {
+      sorting.sortBy = this.sortByMap[event.column];
+    }
+    this.dataProvider.setSorting(sorting);
   }
 
   protected onListFiltered(query: string): void {

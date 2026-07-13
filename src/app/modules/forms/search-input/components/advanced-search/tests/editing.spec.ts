@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { auditEventLabels, AuditService } from 'app/enums/audit.enum';
+import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
@@ -65,7 +65,10 @@ describe('AdvancedSearchComponent – editing', () => {
             'event',
             'Event',
             of<Option[]>([]),
-            auditEventLabels,
+            new Map<AuditEvent, string>([
+              [AuditEvent.Authentication, 'Authentication'],
+              [AuditEvent.Close, 'Close'],
+            ]),
           ),
         ]),
       },

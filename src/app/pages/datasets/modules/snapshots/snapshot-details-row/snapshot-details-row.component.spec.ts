@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
-import { TnDialog, TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -11,7 +11,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -54,7 +53,7 @@ describe('SnapshotDetailsRowComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        snapshot: { ...fakeZfsSnapshot, selected: false },
+        snapshot: fakeZfsSnapshot,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -105,12 +104,12 @@ describe('SnapshotDetailsRowComponent', () => {
   });
 
   it('should make websocket query when Hold is changed', async () => {
-    const holdCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Hold' }));
-    expect(await holdCheckbox.getValue()).toBeTruthy();
+    const holdCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Hold' }));
+    expect(await holdCheckbox.isChecked()).toBeTruthy();
 
     await holdCheckbox.toggle();
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.release', [fakeZfsSnapshot.name]);
-    expect(await holdCheckbox.getValue()).toBeFalsy();
+    expect(await holdCheckbox.isChecked()).toBeFalsy();
 
     await holdCheckbox.toggle();
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.hold', [fakeZfsSnapshot.name]);

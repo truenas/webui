@@ -7,7 +7,7 @@ import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
-import { filter, switchMap } from 'rxjs/operators';
+import { filter, finalize, switchMap } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -60,7 +60,11 @@ export class FailoverFormComponent extends SidePanelForm {
   constructor() {
     super();
 
-    this.api.call('failover.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
+    this.isLoading.set(true);
+    this.api.call('failover.config').pipe(
+      finalize(() => this.isLoading.set(false)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
       this.form.patchValue({
         enabled: !config.disabled,
         timeout: config.timeout,

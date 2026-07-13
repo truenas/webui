@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnChipHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { auditEventLabels } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FilterPreset } from 'app/interfaces/query-api.interface';
@@ -46,7 +45,7 @@ describe('AdvancedSearchComponent – presets', () => {
         filterPresets: userPresets,
         properties: searchProperties<AuditEntry>([
           textProperty('username', 'Username', of<Option[]>([])),
-          textProperty('service', 'Service', of<Option[]>([]), auditEventLabels),
+          textProperty('service', 'Service', of<Option[]>([])),
         ]),
       },
     });

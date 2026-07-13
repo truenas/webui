@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnTooltipDirective, TnDialog, TnButtonComponent, TnDividerComponent,
+  TnTooltipDirective, TnDialog, TnButtonComponent, TnCheckboxComponent, TnDividerComponent,
 } from '@truenas/ui-components';
 import { isEmpty } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -16,12 +16,10 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
-import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -38,7 +36,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormatDateTimePipe,
     IxDateComponent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
     TnDividerComponent,
     TnButtonComponent,
     RequiresRolesDirective,
@@ -55,10 +53,10 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
-  readonly snapshot = input.required<ZfsSnapshotUi>();
+  readonly snapshot = input.required<ZfsSnapshot>();
 
   isLoading = true;
-  snapshotInfo: ZfsSnapshotUi | undefined;
+  snapshotInfo: ZfsSnapshot | undefined;
   holdControl = new FormControl(false);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
@@ -104,7 +102,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       ],
     )
       .pipe(
-        map((snapshots) => ({ ...snapshots[0], selected: this.snapshot().selected })),
+        map((snapshots) => snapshots[0]),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
