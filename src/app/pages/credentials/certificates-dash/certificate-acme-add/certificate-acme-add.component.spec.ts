@@ -88,9 +88,10 @@ describe('CertificateAcmeAddComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('loads and shows domain names associated with the certificate', () => {
-    expect(spectator.fixture.nativeElement.textContent).toContain('DNS:truenas.com');
-    expect(spectator.fixture.nativeElement.textContent).toContain('DNS:truenas.io');
+  it('loads and shows domain names associated with the certificate without the DNS: prefix', () => {
+    expect(spectator.fixture.nativeElement.textContent).toContain('truenas.com');
+    expect(spectator.fixture.nativeElement.textContent).toContain('truenas.io');
+    expect(spectator.fixture.nativeElement.textContent).not.toContain('DNS:');
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webui.crypto.get_certificate_domain_names', [2]);
   });
 
@@ -112,8 +113,8 @@ describe('CertificateAcmeAddComponent', () => {
         create_type: CertificateCreateType.CreateAcme,
         csr_id: 2,
         dns_mapping: {
-          'DNS:truenas.com': 1,
-          'DNS:truenas.io': 2,
+          'truenas.com': 1,
+          'truenas.io': 2,
         },
         name: 'new',
         renew_days: 10,
@@ -143,8 +144,8 @@ describe('CertificateAcmeAddComponent', () => {
         create_type: CertificateCreateType.CreateAcme,
         csr_id: 2,
         dns_mapping: {
-          'DNS:truenas.com': 1,
-          'DNS:truenas.io': 2,
+          'truenas.com': 1,
+          'truenas.io': 2,
         },
         name: 'new',
         renew_days: 10,

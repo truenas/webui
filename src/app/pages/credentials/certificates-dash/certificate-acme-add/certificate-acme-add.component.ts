@@ -158,8 +158,9 @@ export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (domains) => {
-          this.domains = domains.map(ignoreTranslation);
-          domains.forEach((domain) => this.addDomainControls(domain));
+          const normalizedDomains = domains.map((domain) => this.normalizeDomain(domain));
+          this.domains = normalizedDomains.map(ignoreTranslation);
+          normalizedDomains.forEach((domain) => this.addDomainControls(domain));
           this.isLoading.set(false);
         },
         error: (error: unknown) => {
@@ -167,6 +168,16 @@ export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit
           this.errorHandler.showErrorModal(error);
         },
       });
+  }
+
+  /**
+   * The backend returns SAN entries prefixed with their type (e.g. `DNS:truenas.com`).
+   * Strip the `DNS:` prefix so the rendered value and the resulting `dns_mapping` keys
+   * contain the raw domain name, otherwise the payload fails backend validation with
+   * "[EFAULT] ... Domain name needs at least one dot".
+   */
+  private normalizeDomain(domain: string): string {
+    return domain.replace(/^DNS:/i, '').trim();
   }
 
   private addDomainControls(domain: string): void {
