@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
@@ -54,7 +54,7 @@ describe('AddPortMenuComponent', () => {
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          closed: of(true),
+          closed: of(undefined),
         })),
       }),
     ],
@@ -70,8 +70,14 @@ describe('AddPortMenuComponent', () => {
     jest.spyOn(spectator.component.portSelected, 'emit');
   });
 
-  it('shows single Add button when there are no ports in the system at all', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+  async function openMenu(): Promise<TnMenuHarness> {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
+  it('opens the port form when the single Add button is pressed and emits (portSelected) with the new port', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(PortFormComponent, { title: 'Add Port' });
@@ -85,44 +91,34 @@ describe('AddPortMenuComponent', () => {
     });
 
     it('lists available ports that are not used in current subsystem', async () => {
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+      const menu = await openMenu();
 
-      const items = await menu.getItems();
-      expect(items).toHaveLength(3);
-      expect(await items[0].getText()).toBe('RDMA\n—\n10.100.100.100:9000');
+      const labels = await menu.getItemLabels();
+      expect(labels).toHaveLength(3);
+      expect(labels[0]).toContain('10.100.100.100:9000');
     });
 
     it('emits (portSelected) when a port is selected', async () => {
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+      const menu = await openMenu();
 
-      await menu.clickItem({ text: 'RDMA\n—\n10.100.100.100:9000' });
+      await menu.clickItem({ label: /10\.100\.100\.100:9000/ });
 
       expect(spectator.component.portSelected.emit).toHaveBeenCalledWith(unusedPort);
     });
 
-    it('has create new button that opens port form and emits (portSelected) with new port', async () => {
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+    it('opens the port form from the Create New menu item and emits (portSelected) with the new port', async () => {
+      const menu = await openMenu();
 
-      const items = await menu.getItems();
-      expect(await items[1].getText()).toBe('Create New');
-
-      await items[1].click();
+      await menu.clickItem({ label: 'Create New' });
 
       expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(PortFormComponent, { title: 'Add Port' });
       expect(spectator.component.portSelected.emit).toHaveBeenCalledWith(newPort);
     });
 
     it('has Manage Ports button that opens Manage ports dialog', async () => {
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+      const menu = await openMenu();
 
-      const items = await menu.getItems();
-      expect(await items[2].getText()).toBe('Manage Ports');
-
-      await items[2].click();
+      await menu.clickItem({ label: 'Manage Ports' });
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ManagePortsDialog, { minWidth: '450px', maxWidth: '768px' });
     });

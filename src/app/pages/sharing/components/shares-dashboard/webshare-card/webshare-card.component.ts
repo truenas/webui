@@ -55,8 +55,8 @@ import { ServiceWebshareComponent } from 'app/pages/services/components/service-
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
-import { WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
+import { WebShareTableRow } from 'app/pages/sharing/webshare/webshare-table-row.interface';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';

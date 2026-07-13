@@ -37,9 +37,9 @@ import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-ce
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
-import { webShareNameColumn, WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
 import { webshareListElements } from 'app/pages/sharing/webshare/webshare-list/webshare-list.elements';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
+import { WebShareTableRow } from 'app/pages/sharing/webshare/webshare-table-row.interface';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
@@ -133,7 +133,7 @@ export class WebShareListComponent implements OnInit {
   // (visibility + saved prefs); tn-table renders cells from the template and
   // derives its `displayedColumns` from these via `toDisplayedColumns`.
   protected readonly columns = signal(createTable<WebShareTableRow>([
-    webShareNameColumn({
+    textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),

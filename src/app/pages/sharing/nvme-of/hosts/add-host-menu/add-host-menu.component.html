@@ -1,33 +1,26 @@
 @if (noHostsExist() && !showAllowAnyHost()) {
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    type="button"
-    [ixTest]="'add-host'"
-    (click)="openHostForm()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    [testId]="'add-host'"
+    [label]="'Add' | translate"
+    (onClick)="openHostForm()"
+  ></tn-button>
 }
 @else {
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    type="button"
-    [ixTest]="'add-host'"
-    [matMenuTriggerFor]="addMenu"
-  >
-    {{ 'Add' | translate }}
+    iconPosition="right"
+    [icon]="menuDownIcon"
+    [testId]="'add-host'"
+    [label]="'Add' | translate"
+    [tnMenuTriggerFor]="addMenu"
+  ></tn-button>
 
-    <tn-icon name="menu-down" library="mdi"></tn-icon>
-  </button>
-
-  <mat-menu #addMenu="matMenu">
+  <tn-menu #addMenu>
     @for (host of unusedHosts(); track host.id) {
-      <button
-        mat-menu-item
-        [ixTest]="['add-host', host.hostnqn]"
-        (click)="selectHost(host)"
+      <tn-menu-item
+        [testId]="['add-host', host.hostnqn]"
+        (itemClick)="selectHost(host)"
       >
         @if (host.description) {
           <div class="host-item">
@@ -37,37 +30,31 @@
         } @else {
           {{ host.hostnqn }}
         }
-      </button>
+      </tn-menu-item>
     }
 
     @if (unusedHosts().length) {
-      <mat-divider></mat-divider>
+      <tn-divider></tn-divider>
     }
 
-    <button
-      mat-menu-item
-      ixTest="create-new-host"
-      (click)="openHostForm()"
-    >
-      {{ 'Create New' | translate }}
-    </button>
+    <tn-menu-item
+      [testId]="'create-new-host'"
+      [label]="'Create New' | translate"
+      (itemClick)="openHostForm()"
+    ></tn-menu-item>
 
-    <button
-      mat-menu-item
-      ixTest="manage-hosts"
-      (click)="manageHosts()"
-    >
-      {{ 'Manage Hosts' | translate }}
-    </button>
+    <tn-menu-item
+      [testId]="'manage-hosts'"
+      [label]="'Manage Hosts' | translate"
+      (itemClick)="manageHosts()"
+    ></tn-menu-item>
 
     @if (showAllowAnyHost()) {
-      <button
-        mat-menu-item
-        ixTest="allow-all-hosts"
-        (click)="allowAllHosts()"
-      >
-        {{ 'Allow all hosts' | translate }}
-      </button>
+      <tn-menu-item
+        [testId]="'allow-all-hosts'"
+        [label]="'Allow all hosts' | translate"
+        (itemClick)="allowAllHosts()"
+      ></tn-menu-item>
     }
-  </mat-menu>
+  </tn-menu>
 }

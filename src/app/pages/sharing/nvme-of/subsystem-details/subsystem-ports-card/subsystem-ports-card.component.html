@@ -1,48 +1,40 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>{{ 'Ports' | translate }}</h3>
-
+<tn-card class="card" padding="small" [title]="'Ports' | translate">
+  <ng-template tnCardFooterActions>
     <ix-add-port-menu
       [subsystemPorts]="subsystem().ports"
       [ixUiSearch]="searchableElements.elements.addPort"
       (portSelected)="onPortAdded($event)"
     ></ix-add-port-menu>
-  </mat-card-header>
-  <mat-card-content>
-    @if (!subsystem().ports?.length) {
-      <div class="no-ports-warning">
-        <tn-icon
-          name="alert"
-          library="mdi"
-          class="icon"
-        ></tn-icon>
+  </ng-template>
 
-        <div>
-          {{ helptext.noPortsWarning | translate }}
-        </div>
-      </div>
-    } @else {
-      <ul class="port-list">
-        @for (port of subsystem().ports; track port.id) {
-          <li>
-            <span class="port">
-              <ix-port-description [port]="port"></ix-port-description>
+  @if (!subsystem().ports?.length) {
+    <tn-banner
+      type="warning"
+      [heading]="helptext.noPortsWarningHeading | translate"
+      [message]="helptext.noPortsWarning | translate"
+    ></tn-banner>
+  } @else {
+    <ul class="port-list">
+      @for (port of subsystem().ports; track port.id) {
+        <li>
+          <span class="port">
+            <ix-port-description [port]="port"></ix-port-description>
 
-              <span class="port-actions">
-                <button
-                  *ixRequiresRoles="requiredRoles"
-                  mat-icon-button
-                  [ixTest]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
-                  [tnTooltip]="'Remove port from the subsystem' | translate"
-                  (click)="onRemoveAssociation(port)"
-                >
-                  <tn-icon class="icon" name="link-variant-off" library="mdi"></tn-icon>
-                </button>
-              </span>
+            <span class="port-actions">
+              <tn-icon-button
+                *ixRequiresRoles="requiredRoles"
+                name="link-variant-off"
+                library="mdi"
+                iconClass="icon"
+                [ariaLabel]="'Remove port from the subsystem' | translate"
+                [tooltip]="'Remove port from the subsystem' | translate"
+                [testId]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
+                (onClick)="onRemoveAssociation(port)"
+              ></tn-icon-button>
             </span>
-          </li>
-        }
-      </ul>
-    }
-  </mat-card-content>
-</mat-card>
+          </span>
+        </li>
+      }
+    </ul>
+  }
+</tn-card>

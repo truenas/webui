@@ -46,6 +46,27 @@ class SecondTestFormComponent extends SidePanelForm {
   }
 }
 
+@Component({
+  selector: 'ix-wizard-test-form',
+  template: '<p>wizard form body</p>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class WizardTestFormComponent extends SidePanelForm {
+  /** Static so the test can flip it without a handle on the portaled instance. */
+  static readonly saveHidden = signal(true);
+
+  protected readonly form = new FormControl('');
+  readonly canSubmit = signal(true);
+
+  hideSave(): boolean {
+    return WizardTestFormComponent.saveHidden();
+  }
+
+  protected onSubmit(): void {
+    this.close(true);
+  }
+}
+
 @Component({ selector: 'ix-test-host', template: '', changeDetection: ChangeDetectionStrategy.OnPush })
 class TestHostComponent {}
 
@@ -73,7 +94,10 @@ describe('FormSidePanelService', () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [TestHostComponent, TestFormComponent, SecondTestFormComponent, TranslateModule.forRoot()],
+      imports: [
+        TestHostComponent, TestFormComponent, SecondTestFormComponent, WizardTestFormComponent,
+        TranslateModule.forRoot(),
+      ],
       providers: [
         mockAuth(),
         {
@@ -114,6 +138,20 @@ describe('FormSidePanelService', () => {
     flushPanelClose();
 
     expect(onSuccess).toHaveBeenCalledWith(true);
+  });
+
+  it('hides the footer Save while the hosted form\'s hideSave() returns true', async () => {
+    WizardTestFormComponent.saveHidden.set(true);
+    service.open(WizardTestFormComponent, { title: 'Wizard' });
+    fixture.detectChanges();
+
+    expect(await rootLoader.hasHarness(TnButtonHarness.with({ label: 'Save' }))).toBe(false);
+
+    // E.g. the wizard advanced to its final step.
+    WizardTestFormComponent.saveHidden.set(false);
+    fixture.detectChanges();
+
+    expect(await rootLoader.hasHarness(TnButtonHarness.with({ label: 'Save' }))).toBe(true);
   });
 
   it('removes the panel from the DOM after it closes', async () => {

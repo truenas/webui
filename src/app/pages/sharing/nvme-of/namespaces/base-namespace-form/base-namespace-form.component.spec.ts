@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnButtonToggleHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnButtonToggleHarness, TnInputHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -14,7 +14,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
@@ -48,7 +47,6 @@ describe('BaseNamespaceFormComponent', () => {
       }),
       mockProvider(FormErrorHandlerService),
       mockProvider(FilesystemService),
-      mockProvider(SlideInRef),
     ],
   });
 
@@ -67,8 +65,7 @@ describe('BaseNamespaceFormComponent', () => {
         'Path To Zvol': '/dev/zvol/tank/test-zvol',
       });
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
         device_path: 'zvol/tank/test-zvol',
@@ -84,8 +81,7 @@ describe('BaseNamespaceFormComponent', () => {
         'Path To File': '/mnt/tank/test-file',
       });
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
         device_path: '/mnt/tank/test-file',
@@ -103,8 +99,7 @@ describe('BaseNamespaceFormComponent', () => {
       await (await getTnInput('filename')).setValue('new-file.img');
       await (await getTnInput('filesize')).setValue('1024 MiB');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
         device_path: '/mnt/tank/new-file.img',
@@ -161,8 +156,7 @@ describe('BaseNamespaceFormComponent', () => {
         'Path To File': '/mnt/tank/updated-file',
       });
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
         device_path: '/mnt/tank/updated-file',

@@ -84,13 +84,6 @@ export const nfsCardEmptyConfig = {
   message: T('<p>Optimized for Linux and Unix systems, offering deeper integration in those environments. </p>\n<p>Choose NFS if you\'re working primarily with Linux servers or need efficient file access in Unix-based workflows.</p>'),
 } as EmptyConfig;
 
-export const nvmeOfEmptyConfig = {
-  type: EmptyType.NoPageData,
-  icon: tnIconMarker('nvme-share', 'custom'),
-  large: true,
-  message: T('<p>Raw block storage using NVMe over Fabrics (e.g. NVMe/TCP), appearing as a local disk on the client.</p>\n<p>Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.</p>'),
-} as EmptyConfig;
-
 export const installedAppsEmptyConfig = {
   type: EmptyType.NoPageData,
   title: T('No Applications Installed'),
