@@ -1,49 +1,85 @@
-<mat-card [ixUiSearch]="searchableElements.elements.list">
-  <ix-fake-progress-bar [loading]="!!(dataProvider().isLoading$ | async)"></ix-fake-progress-bar>
-  <mat-toolbar-row>
-    <h3>{{ 'Targets' | translate }}</h3>
-
-    <div class="actions action-icon">
+<tn-card
+  [padContent]="false"
+  [title]="'Targets' | translate"
+  [ixUiSearch]="searchableElements.elements.list"
+>
+  <ng-template tnCardHeaderActions>
+    <div class="actions">
       <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
 
-      <button
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
         color="primary"
-        ixTest="add-target"
+        [testId]="'add-target'"
         [ixUiSearch]="searchableElements.elements.add"
-        (click)="doAdd()"
-      >
-        {{ 'Add' | translate }}
-      </button>
+        [label]="'Add' | translate"
+        (onClick)="doAdd()"
+      ></tn-button>
     </div>
-  </mat-toolbar-row>
-  <mat-card-content>
-    <ix-table
-      [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
-    >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider()"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider()"
-        [isLoading]="!!(dataProvider().isLoading$ | async)"
-        (expanded)="expanded($event)"
-      >
-        <ng-template
-          ix-table-cell
-          [columnIndex]="3"
-          [dataProvider]="dataProvider()"
-        >
-          <tn-icon name="chevron-right" library="mdi"></tn-icon>
-        </ng-template>
-      </tbody>
-    </ix-table>
-    <tn-table-pager [dataProvider]="dataProvider()"></tn-table-pager>
-  </mat-card-content>
-</mat-card>
+  </ng-template>
+
+  @let emptyConf = emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async);
+  <tn-table
+    class="table"
+    [testId]="'table-table'"
+    [dataSource]="(dataProvider().currentPage$ | async) ?? []"
+    [displayedColumns]="displayedColumns()"
+    [trackBy]="trackByTargetId"
+    [loading]="!!(dataProvider().isLoading$ | async)"
+    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyIcon]="emptyConf?.icon ?? ''"
+    [clickable]="true"
+    [activeRow]="dataProvider().expandedRow"
+    (rowClick)="onRowClick($event)"
+    (sortChange)="onSortChange($event)"
+  >
+    <ng-container [tnColumnDef]="'name'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.name }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'alias'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Alias' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Alias' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.alias }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'mode'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Mode' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Mode' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ modeLabel(row) }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'actions'" [width]="'60px'">
+      <ng-template tnHeaderCellDef></ng-template>
+      <ng-template let-row tnCellDef>
+        <span class="view-details-column">
+          <tn-icon-button
+            name="chevron-right"
+            library="mdi"
+            [ariaLabel]="('View Details' | translate) + ' ' + row.name"
+            [ariaExpanded]="dataProvider().expandedRow === row"
+            [tooltip]="'View Details' | translate"
+            [testId]="[uniqueRowTag(row), 'mdi-chevron-right', 'row-action']"
+            (onClick)="$event.stopPropagation(); onRowClick(row)"
+          ></tn-icon-button>
+        </span>
+      </ng-template>
+    </ng-container>
+  </tn-table>
+
+  <tn-table-pager [dataProvider]="dataProvider()"></tn-table-pager>
+</tn-card>
