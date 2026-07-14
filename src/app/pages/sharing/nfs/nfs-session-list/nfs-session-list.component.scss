@@ -1,0 +1,12 @@
+// Standard clip-pattern screen-reader-only text: labels the NFS version
+// button-toggle-group (via aria-labelledby) without rendering visibly in the
+// page header.
+.visually-hidden-label {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

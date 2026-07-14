@@ -21,19 +21,22 @@
 
   <tn-form-section [heading]="'General Options' | translate">
     <tn-form-field [label]="'Description' | translate">
-      <tn-input formControlName="comment"></tn-input>
+      <!-- TODO: [ariaLabel] duplicates the tn-form-field label — remove once the
+        library associates its label with the projected control (for/aria-labelledby). -->
+      <tn-input
+        testId="comment"
+        name="comment"
+        formControlName="comment"
+        [ariaLabel]="'Description' | translate"
+      ></tn-input>
     </tn-form-field>
 
-    <tn-form-field>
-      <tn-checkbox
-        formControlName="enabled"
-        [label]="'Enabled' | translate"
-      ></tn-checkbox>
-    </tn-form-field>
+    <tn-checkbox testId="enabled" formControlName="enabled" [label]="'Enabled' | translate"></tn-checkbox>
 
     @if (isEnterprise()) {
       <tn-form-field [tooltip]="helptext.exposeTooltip | translate">
         <tn-checkbox
+          testId="expose-snapshots"
           formControlName="expose_snapshots"
           [label]="'Expose Snapshots' | translate"
         ></tn-checkbox>
@@ -43,44 +46,92 @@
 
   @if (isAdvancedMode()) {
     <tn-form-section [heading]="'Access' | translate">
-      <tn-form-field>
-        <tn-checkbox
-          formControlName="ro"
-          [label]="'Read Only' | translate"
-        ></tn-checkbox>
-      </tn-form-field>
+      <tn-checkbox testId="ro" formControlName="ro" [label]="'Read Only' | translate"></tn-checkbox>
 
-      <ix-user-combobox
-        formControlName="maproot_user"
+      <tn-form-field
         [label]="'Maproot User' | translate"
         [tooltip]="helptext.maprootUserTooltip | translate"
-      ></ix-user-combobox>
+      >
+        <!-- TODO: [placeholder] doubles as the accessible-name fallback — tn-autocomplete
+          has no [ariaLabel] input and tn-form-field does not associate its label yet. -->
+        <tn-autocomplete
+          formControlName="maproot_user"
+          [testId]="'maproot-user'"
+          [placeholder]="'Maproot User' | translate"
+          [options]="(userOptions$ | async) ?? []"
+          [allowCustomValue]="true"
+          [loading]="usersLoading()"
+          [loadingText]="'Loading...' | translate"
+          [noResultsText]="'No results found' | translate"
+          (searchChange)="userSearch$.next($event)"
+        ></tn-autocomplete>
+      </tn-form-field>
 
-      <ix-group-combobox
-        formControlName="maproot_group"
+      <tn-form-field
         [label]="'Maproot Group' | translate"
         [tooltip]="helptext.maprootGroupTooltip | translate"
-      ></ix-group-combobox>
+      >
+        <tn-autocomplete
+          formControlName="maproot_group"
+          [testId]="'maproot-group'"
+          [placeholder]="'Maproot Group' | translate"
+          [options]="(groupOptions$ | async) ?? []"
+          [allowCustomValue]="true"
+          [loading]="groupsLoading()"
+          [loadingText]="'Loading...' | translate"
+          [noResultsText]="'No results found' | translate"
+          (searchChange)="groupSearch$.next($event)"
+        ></tn-autocomplete>
+      </tn-form-field>
 
-      <ix-user-combobox
-        formControlName="mapall_user"
+      <tn-form-field
         [label]="'Mapall User' | translate"
         [tooltip]="helptext.mapallUserTooltip | translate"
-      ></ix-user-combobox>
+      >
+        <tn-autocomplete
+          formControlName="mapall_user"
+          [testId]="'mapall-user'"
+          [placeholder]="'Mapall User' | translate"
+          [options]="(userOptions$ | async) ?? []"
+          [allowCustomValue]="true"
+          [loading]="usersLoading()"
+          [loadingText]="'Loading...' | translate"
+          [noResultsText]="'No results found' | translate"
+          (searchChange)="userSearch$.next($event)"
+        ></tn-autocomplete>
+      </tn-form-field>
 
-      <ix-group-combobox
-        formControlName="mapall_group"
+      <tn-form-field
         [label]="'Mapall Group' | translate"
         [tooltip]="helptext.mapallGroupTooltip | translate"
-      ></ix-group-combobox>
-
-      <tn-form-field [label]="'Security' | translate" [tooltip]="helptext.securityTooltip | translate">
-        <tn-select
-          formControlName="security"
-          [multiple]="true"
-          [options]="(securityOptions$ | async) ?? []"
-        ></tn-select>
+      >
+        <tn-autocomplete
+          formControlName="mapall_group"
+          [testId]="'mapall-group'"
+          [placeholder]="'Mapall Group' | translate"
+          [options]="(groupOptions$ | async) ?? []"
+          [allowCustomValue]="true"
+          [loading]="groupsLoading()"
+          [loadingText]="'Loading...' | translate"
+          [noResultsText]="'No results found' | translate"
+          (searchChange)="groupSearch$.next($event)"
+        ></tn-autocomplete>
       </tn-form-field>
+
+      @if (hasNfsSecurityField()) {
+        <tn-form-field
+          [label]="'Security' | translate"
+          [tooltip]="helptext.securityTooltip | translate"
+        >
+          <tn-select
+            testId="security"
+            formControlName="security"
+            [multiple]="true"
+            [options]="securityOptions"
+            [ariaLabel]="'Security' | translate"
+          ></tn-select>
+        </tn-form-field>
+      }
     </tn-form-section>
   }
 
