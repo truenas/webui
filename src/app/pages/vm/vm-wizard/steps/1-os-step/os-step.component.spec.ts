@@ -75,6 +75,18 @@ describe('OsStepComponent', () => {
     await setSelect('vnc_bind', '10.10.16.82');
   }
 
+  it('requires an OS to be selected before the step is valid', async () => {
+    await setInput('name', 'vm1');
+    await setInput('vnc_password', '12345678');
+
+    expect(spectator.component.form.controls.os.hasError('required')).toBe(true);
+    expect(spectator.component.form.invalid).toBe(true);
+
+    await setSelect('os', 'Linux');
+
+    expect(spectator.component.form.valid).toBe(true);
+  });
+
   it('shows a form with basic VM fields like name, description, OS, etc.', async () => {
     await fillForm();
 

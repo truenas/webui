@@ -58,7 +58,7 @@ export class OsStepComponent implements SummaryProvider {
   private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.nonNullable.group({
-    os: [null as VmOs | null],
+    os: [null as VmOs | null, Validators.required],
     hyperv_enlightenments: [false],
     name: ['',
       [Validators.required, Validators.pattern(vmNamePattern)],
