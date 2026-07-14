@@ -16,7 +16,6 @@ import {
   AssociatedTargetDialogData, IscsiExtent, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { convertStringToId } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-target-form/associated-target-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -49,9 +48,11 @@ export class AssociatedExtentsCardComponent {
 
   readonly target = input.required<IscsiTarget>();
 
-  // Pre-split with lodash kebabCase so digit-bearing target names resolve identically
-  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-  protected readonly targetTestIdSlug = computed(() => kebabCase(convertStringToId(this.target().name)));
+  // Pre-split with lodash kebabCase so digit-bearing and camelCase target names resolve
+  // identically through the legacy [ixTest] directive and the library [tnTestId] directive.
+  // No convertStringToId here: the legacy path was a raw [ixTest] array (no table config),
+  // and its lowercasing would destroy the camelCase boundaries lodash kebab splits on.
+  protected readonly targetTestIdSlug = computed(() => kebabCase(this.target().name));
 
   readonly isLoadingExtents = signal<boolean>(false);
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);

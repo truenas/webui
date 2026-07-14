@@ -35,7 +35,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Has Host Authentication' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="[('Has Host Authentication' | translate), uniqueRowTag(row), 'row-yesno']"
         >{{ row.dhchap_key ? ('Yes' | translate) : ('No' | translate) }}</span>
       </ng-template>
     </ng-container>
