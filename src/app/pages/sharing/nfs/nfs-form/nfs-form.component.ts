@@ -1,19 +1,20 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
+  ChangeDetectionStrategy, Component, OnInit, inject, input, signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnSelectComponent,
+  TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, filter, of, switchMap,
+  BehaviorSubject, Observable, catchError, debounceTime, distinctUntilChanged, filter, map, of, shareReplay,
+  switchMap, tap,
 } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
@@ -23,30 +24,32 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
+import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-/** Edit/default data supplied either by the legacy SlideIn host (via `getData()`) or the panel host (input). */
+/** Edit/default data supplied by the panel host (via `nfsShareData` input). */
 export interface NfsFormData {
   existingNfsShare?: NfsShare;
   defaultNfsShare?: NfsShare;
@@ -65,10 +68,9 @@ export interface NfsFormData {
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
+    TnAutocompleteComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    IxUserComboboxComponent,
-    IxGroupComboboxComponent,
     IxListComponent,
     IxListItemComponent,
     IxIpInputWithNetmaskComponent,
@@ -82,10 +84,12 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
   private datasetService = inject(DatasetService);
+  private userService = inject(UserService);
+  private existenceValidation = inject(UserGroupExistenceValidationService);
+  private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<ServicesState>>(Store);
 
   private validatorsService = inject(IxValidatorsService);
-  private destroyRef = inject(DestroyRef);
 
   /** Edit/default data supplied by the `<tn-side-panel>` host. */
   readonly nfsShareData = input<NfsFormData | undefined>(undefined);
@@ -94,7 +98,6 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   defaultNfsShare: NfsShare | undefined;
 
   protected isAdvancedMode = signal(false);
-  hasNfsSecurityField = false;
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
     share_type: DatasetPreset.Multiprotocol,
   };
@@ -137,24 +140,64 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
-  readonly securityOptions$ = of([
-    {
-      label: 'SYS',
-      value: NfsSecurityProvider.Sys,
-    },
-    {
-      label: 'KRB5',
-      value: NfsSecurityProvider.Krb5,
-    },
-    {
-      label: 'KRB5I',
-      value: NfsSecurityProvider.Krb5i,
-    },
-    {
-      label: 'KRB5P',
-      value: NfsSecurityProvider.Krb5p,
-    },
-  ] as Option[]);
+  /** The Security select only applies when the NFS service has protocol v4 enabled. */
+  protected readonly hasNfsSecurityField = toSignal(
+    this.api.call('nfs.config').pipe(
+      map((config) => !!config.protocols?.includes(NfsProtocol.V4)),
+      catchError((error: unknown) => {
+        this.errorHandler.handleError(error);
+        return of(false);
+      }),
+    ),
+    { initialValue: false },
+  );
+
+  readonly securityOptions = translateOptions(this.translate, [
+    { label: 'SYS', value: NfsSecurityProvider.Sys },
+    { label: 'KRB5', value: NfsSecurityProvider.Krb5 },
+    { label: 'KRB5I', value: NfsSecurityProvider.Krb5i },
+    { label: 'KRB5P', value: NfsSecurityProvider.Krb5p },
+  ]);
+
+  // Server-searched option streams for the user/group autocompletes. Both user fields
+  // (maproot/mapall) share one stream — options only matter while that dropdown is open —
+  // and shareReplay collapses their two `async` subscribers into a single query per search
+  // (directory-service queries can be slow; never duplicate them). switchMap cancels
+  // in-flight queries on new input; catchError keeps one failed DS query from killing the
+  // stream for the rest of the form's life.
+  protected readonly usersLoading = signal(false);
+  protected readonly userSearch$ = new BehaviorSubject('');
+  protected readonly userOptions$ = this.userSearch$.pipe(
+    debounceTime(defaultDebounceTimeMs),
+    distinctUntilChanged(),
+    tap(() => this.usersLoading.set(true)),
+    switchMap((query) => this.userService.userQueryDsCache(query).pipe(
+      catchError((error: unknown) => {
+        this.errorHandler.handleError(error);
+        return of([]);
+      }),
+    )),
+    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
+    tap(() => this.usersLoading.set(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  protected readonly groupsLoading = signal(false);
+  protected readonly groupSearch$ = new BehaviorSubject('');
+  protected readonly groupOptions$ = this.groupSearch$.pipe(
+    debounceTime(defaultDebounceTimeMs),
+    distinctUntilChanged(),
+    tap(() => this.groupsLoading.set(true)),
+    switchMap((query) => this.userService.groupQueryDsCache(query).pipe(
+      catchError((error: unknown) => {
+        this.errorHandler.handleError(error);
+        return of([]);
+      }),
+    )),
+    map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
+    tap(() => this.groupsLoading.set(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   private setNfsShareForEdit(share: NfsShare): void {
     share.networks.forEach(() => this.addNetworkControl());
@@ -173,7 +216,12 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
       this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
     ));
 
-    this.checkForNfsSecurityField();
+    // Parity with the former ix-user/group-combobox controls: custom-typed values
+    // must exist on the system (empty values pass).
+    this.form.controls.maproot_user.addAsyncValidators(this.existenceValidation.validateUserExists());
+    this.form.controls.mapall_user.addAsyncValidators(this.existenceValidation.validateUserExists());
+    this.form.controls.maproot_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
+    this.form.controls.mapall_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
 
     if (this.defaultNfsShare) {
       this.form.patchValue(this.defaultNfsShare);
@@ -236,12 +284,4 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
       },
     };
   };
-
-  private checkForNfsSecurityField(): void {
-    this.api.call('nfs.config')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((nfsConfig) => {
-        this.hasNfsSecurityField = nfsConfig.protocols?.includes(NfsProtocol.V4);
-      });
-  }
 }
