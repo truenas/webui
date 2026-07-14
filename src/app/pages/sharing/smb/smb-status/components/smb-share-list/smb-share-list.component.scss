@@ -1,7 +1,6 @@
-tn-card {
-  display: block;
-  height: auto;
-}
+@import '../../../../components/tn-table-in-card';
+
+@include tn-table-in-card;
 
 .actions {
   align-items: center;
@@ -9,17 +8,4 @@ tn-card {
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
-}
-
-// TEMP: tn-table-pager hardcodes a bordered boxed footer; drop the box, keep a top divider.
-tn-table-pager {
-  background-color: transparent;
-  border: none;
-  border-top: 1px solid var(--tn-lines);
-}
-
-// TEMP: square the table header's top corners (tn-table rounds all corners).
-:host ::ng-deep tn-table .tn-table__table {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
 }

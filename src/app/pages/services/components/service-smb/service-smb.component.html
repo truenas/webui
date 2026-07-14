@@ -19,12 +19,9 @@
       [label]="'NetBIOS Alias' | translate"
       [tooltip]="tooltips.netbiosalias | translate"
     >
-      <!-- TODO(NAS-141021): [ariaLabel] duplicates the tn-form-field label — remove once the
-        library associates its label with the projected control (for/aria-labelledby). -->
       <tn-chip-input
         formControlName="netbiosalias"
         [testId]="'netbiosalias'"
-        [ariaLabel]="'NetBIOS Alias' | translate"
         [allowCustomValue]="true"
       ></tn-chip-input>
     </tn-form-field>
@@ -124,8 +121,6 @@
         [label]="'Administrators Group' | translate"
         [tooltip]="tooltips.admin_group | translate"
       >
-        <!-- TODO(NAS-141021): [placeholder] doubles as the accessible-name fallback — tn-autocomplete
-          has no [ariaLabel] input and tn-form-field does not associate its label yet. -->
         <tn-autocomplete
           formControlName="admin_group"
           [testId]="'admin-group'"
