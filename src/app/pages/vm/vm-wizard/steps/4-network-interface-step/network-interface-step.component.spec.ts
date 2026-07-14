@@ -2,11 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnStepperComponent } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VmNicType } from 'app/enums/vm.enum';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   NetworkInterfaceStepComponent,
@@ -15,7 +15,6 @@ import {
 describe('NetworkInterfaceStepComponent', () => {
   let spectator: Spectator<NetworkInterfaceStepComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: NetworkInterfaceStepComponent,
     imports: [
@@ -33,19 +32,25 @@ describe('NetworkInterfaceStepComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   async function fillForm(): Promise<void> {
-    await form.fillForm({
-      'Adapter Type': 'VirtIO',
-      'Mac Address': '00:00:00:00:00:AA',
-      'Attach NIC': 'eno1',
-      'Trust Guest Filters': true,
-    });
+    const nicType = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="nic_type"]' }));
+    await nicType.selectOption('VirtIO');
+
+    const macAddress = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="nic_mac"]' }));
+    await macAddress.setValue('00:00:00:00:00:AA');
+
+    const nicAttach = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="nic_attach"]' }));
+    await nicAttach.selectOption('eno1');
+
+    const trustGuestFilters = await loader.getHarness(
+      TnCheckboxHarness.with({ selector: '[formControlName="trust_guest_rx_filters"]' }),
+    );
+    await trustGuestFilters.check();
   }
 
   it('shows form with fields related to NIC', async () => {
@@ -73,7 +78,7 @@ describe('NetworkInterfaceStepComponent', () => {
   it('generates random MAC when form is initialized', async () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.random_mac');
 
-    const macAddress = await form.getControl('Mac Address') as IxInputHarness;
+    const macAddress = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="nic_mac"]' }));
     expect(await macAddress.getValue()).toBe('00:00:00:00:00:01');
   });
 });

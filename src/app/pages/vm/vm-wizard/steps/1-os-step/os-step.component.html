@@ -1,96 +1,127 @@
 <form [formGroup]="form">
-  <ix-select
-    formControlName="os"
+  <tn-form-field
     [label]="'Guest Operating System' | translate"
-    [required]="true"
-    [options]="osOptions$"
     [tooltip]="helptext.os_tooltip | translate"
-  ></ix-select>
+    [required]="true"
+  >
+    <tn-select
+      formControlName="os"
+      [options]="(osOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   @if (form.controls.os.value === VmOs.Windows) {
-    <ix-checkbox
-      formControlName="hyperv_enlightenments"
-      [label]="'Enable Hyper-V Enlightenments' | translate"
-      [tooltip]="helptext.hyperv_enlightenments_tooltip | translate"
-    ></ix-checkbox>
+    <tn-form-field [tooltip]="helptext.hyperv_enlightenments_tooltip | translate">
+      <tn-checkbox
+        formControlName="hyperv_enlightenments"
+        [label]="'Enable Hyper-V Enlightenments' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
 
-  <ix-input
-    formControlName="name"
+  <tn-form-field
     [label]="'Name' | translate"
-    [required]="true"
     [tooltip]="helptext.name_tooltip | translate"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input
+      formControlName="name"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="description"
+  <tn-form-field
     [label]="'Description' | translate"
     [tooltip]="helptext.description_tooltip | translate"
-  ></ix-input>
+  >
+    <tn-input formControlName="description"></tn-input>
+  </tn-form-field>
 
-  <ix-select
-    formControlName="time"
+  <tn-form-field
     [label]="'System Clock' | translate"
-    [required]="true"
-    [options]="timeOptions$"
     [tooltip]="helptext.time_tooltip | translate"
-  ></ix-select>
-
-  <ix-select
-    formControlName="bootloader"
-    [label]="'Boot Method' | translate"
-    [options]="bootloaderOptions$"
     [required]="true"
+  >
+    <tn-select
+      formControlName="time"
+      [options]="(timeOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
+
+  <tn-form-field
+    [label]="'Boot Method' | translate"
     [tooltip]="helptext.bootloader_tooltip | translate"
-  ></ix-select>
+    [required]="true"
+  >
+    <tn-select
+      formControlName="bootloader"
+      [options]="(bootloaderOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="enable_secure_boot"
-    [label]="'Enable Secure Boot' | translate"
-    [tooltip]="helptext.enableSecureBoot | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="helptext.enableSecureBoot | translate">
+    <tn-checkbox
+      formControlName="enable_secure_boot"
+      [label]="'Enable Secure Boot' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="trusted_platform_module"
-    [label]="'Enable Trusted Platform Module (TPM)' | translate"
-    [tooltip]="helptext.enableTrustedPlatformModule | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="helptext.enableTrustedPlatformModule | translate">
+    <tn-checkbox
+      formControlName="trusted_platform_module"
+      [label]="'Enable Trusted Platform Module (TPM)' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="shutdown_timeout"
-    type="number"
+  <tn-form-field
     [label]="'Shutdown Timeout' | translate"
     [tooltip]="helptext.shutdown_timeout.tooltip | translate"
-  ></ix-input>
+  >
+    <tn-input
+      formControlName="shutdown_timeout"
+      [inputType]="InputType.Number"
+      [allowDecimals]="false"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="autostart"
-    [label]="'Start on Boot' | translate"
-    [tooltip]="helptext.autostart_tooltip | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="helptext.autostart_tooltip | translate">
+    <tn-checkbox
+      formControlName="autostart"
+      [label]="'Start on Boot' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="enable_vnc"
-    [label]="'Enable Display (VNC)' | translate"
-    [tooltip]="helptext.enable_vnc_tooltip | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="helptext.enable_vnc_tooltip | translate">
+    <tn-checkbox
+      formControlName="enable_vnc"
+      [label]="'Enable Display (VNC)' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
   @if (form.value.enable_vnc) {
-    <ix-select
-      formControlName="vnc_bind"
+    <tn-form-field
       [label]="'Bind' | translate"
-      [options]="bindOptions$"
-      [required]="true"
       [tooltip]="helptext.vnc_bind_tooltip | translate"
-    ></ix-select>
-
-    <ix-input
-      formControlName="vnc_password"
-      type="password"
-      [label]="'Password' | translate"
       [required]="true"
+    >
+      <tn-select
+        formControlName="vnc_bind"
+        [options]="(bindOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Password' | translate"
       [tooltip]="helptext.vnc_password_tooltip | translate"
-    ></ix-input>
+      [required]="true"
+    >
+      <tn-input
+        formControlName="vnc_password"
+        [inputType]="InputType.Password"
+        [required]="true"
+        [testId]="'vnc_password'"
+      ></tn-input>
+    </tn-form-field>
 
     <div class="vnc-warning">
       <p><strong>{{ 'Note' | translate }}:</strong> {{ 'VNC requires a separate client application and cannot be accessed through the web browser. Password is limited to 8 characters.' | translate }}</p>

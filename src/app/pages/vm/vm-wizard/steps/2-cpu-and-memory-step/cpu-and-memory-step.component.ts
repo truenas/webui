@@ -1,8 +1,18 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
+import {
+  InputType,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnInputComponent,
+  TnSelectComponent,
+  TnStepperNextDirective,
+  TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { VmCpuMode, vmCpuModeLabels } from 'app/enums/vm.enum';
@@ -12,10 +22,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -31,10 +37,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   providers: [CpuValidatorService],
   standalone: true,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxInputComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
     TnStepperPreviousDirective,
@@ -43,7 +51,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
-  formatter = inject(IxFormatterService);
   private formBuilder = inject(FormBuilder);
   private cpuValidator = inject(CpuValidatorService);
   private validator = inject(IxValidatorsService);
@@ -87,6 +94,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
   readonly completed = stepCompletedSignal(this.form);
 
   readonly helptext = helptextVmWizard;
+  protected readonly InputType = InputType;
 
   readonly cpuModes$ = of(mapToOptions(vmCpuModeLabels, this.translate));
   readonly cpuModels$ = this.api.call('vm.cpu_model_choices').pipe(choicesToOptions());

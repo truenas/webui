@@ -1,14 +1,27 @@
 <form [formGroup]="form">
-  <ix-radio-group
-    formControlName="newOrExisting"
-    [options]="newOrExistingOptions$"
-  ></ix-radio-group>
+  <tn-form-field
+    [label]="'Disk' | translate"
+    [tooltip]="helptext.disk_radio_tooltip | translate"
+  >
+    @for (option of (newOrExistingOptions$ | async) ?? []; track option.value) {
+      <tn-radio
+        name="newOrExisting"
+        formControlName="newOrExisting"
+        [value]="option.value"
+        [label]="option.label"
+        [testId]="['newOrExisting', option.value]"
+      ></tn-radio>
+    }
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="import_image"
-    [label]="'Import Image' | translate"
+  <tn-form-field
     [tooltip]="'Import a disk image (qcow2, qed, raw, vdi, vhdx, vmdk) to the zvol' | translate"
-  ></ix-checkbox>
+  >
+    <tn-checkbox
+      formControlName="import_image"
+      [label]="'Import Image' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
   @if (isImportingImage) {
     <ix-explorer
@@ -20,38 +33,49 @@
     ></ix-explorer>
   }
 
-  <ix-select
-    formControlName="hdd_type"
-    [required]="true"
+  <tn-form-field
     [label]="'Select Disk Type' | translate"
-    [options]="hddTypeOptions$"
     [tooltip]="helptext.hdd_type_tooltip | translate"
-  ></ix-select>
+    [required]="true"
+  >
+    <tn-select
+      formControlName="hdd_type"
+      [options]="(hddTypeOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   @if (isCreatingNewDisk) {
-    <ix-select
-      formControlName="datastore"
+    <tn-form-field
       [label]="'Zvol Location' | translate"
-      [required]="true"
-      [options]="datastoreOptions$"
       [tooltip]="helptext.datastore_tooltip | translate"
-    ></ix-select>
-
-    <ix-input
-      formControlName="volsize"
-      [label]="'Size' | translate"
-      [format]="formatter.memorySizeFormatting"
-      [parse]="formatter.memorySizeParsing"
-      [tooltip]="helptext.volsize_tooltip | translate"
-    ></ix-input>
-  } @else {
-    <ix-select
-      formControlName="hdd_path"
-      [label]="'Select Existing Zvol' | translate"
-      [options]="hddPathOptions$"
       [required]="true"
+    >
+      <tn-select
+        formControlName="datastore"
+        [options]="(datastoreOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Size' | translate"
+      [tooltip]="helptext.volsize_tooltip | translate"
+    >
+      <tn-input
+        formControlName="volsize"
+        [inputType]="InputType.Size"
+      ></tn-input>
+    </tn-form-field>
+  } @else {
+    <tn-form-field
+      [label]="'Select Existing Zvol' | translate"
       [tooltip]="helptext.hdd_path_tooltip | translate"
-    ></ix-select>
+      [required]="true"
+    >
+      <tn-select
+        formControlName="hdd_path"
+        [options]="(hddPathOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
     @if (selectedZvolOtherVmNames.length > 0) {
       <tn-banner

@@ -5,78 +5,105 @@
     </p>
   }
 
-  <ix-input
-    formControlName="vcpus"
-    type="number"
+  <tn-form-field
     [label]="'Virtual CPUs' | translate"
-    [required]="true"
     [tooltip]="helptext.vcpus_tooltip | translate"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input
+      formControlName="vcpus"
+      [inputType]="InputType.Number"
+      [allowDecimals]="false"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="cores"
-    type="number"
+  <tn-form-field
     [label]="'Cores' | translate"
-    [required]="true"
     [tooltip]="helptext.cores.tooltip | translate"
-  ></ix-input>
-
-  <ix-input
-    formControlName="threads"
-    type="number"
-    [label]="'Threads' | translate"
     [required]="true"
-    [tooltip]="helptext.threads.tooltip | translate"
-  ></ix-input>
+  >
+    <tn-input
+      formControlName="cores"
+      [inputType]="InputType.Number"
+      [allowDecimals]="false"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="cpuset"
+  <tn-form-field
+    [label]="'Threads' | translate"
+    [tooltip]="helptext.threads.tooltip | translate"
+    [required]="true"
+  >
+    <tn-input
+      formControlName="threads"
+      [inputType]="InputType.Number"
+      [allowDecimals]="false"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
+
+  <tn-form-field
     [label]="'Optional: CPU Set (Examples: 0-3,8-11)' | translate"
     [tooltip]="helptext.cpuset.tooltip | translate"
-  ></ix-input>
+  >
+    <tn-input formControlName="cpuset"></tn-input>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="pin_vcpus"
-    [label]="'Pin vcpus' | translate"
-    [tooltip]="helptext.pin_vcpus.tooltip | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="helptext.pin_vcpus.tooltip | translate">
+    <tn-checkbox
+      formControlName="pin_vcpus"
+      [label]="'Pin vcpus' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-select
-    formControlName="cpu_mode"
+  <tn-form-field
     [label]="'CPU Mode' | translate"
-    [options]="cpuModes$"
     [required]="true"
-  ></ix-select>
+  >
+    <tn-select
+      formControlName="cpu_mode"
+      [options]="(cpuModes$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   @if (isCpuCustom) {
-    <ix-select
-      formControlName="cpu_model"
-      [label]="'CPU Model' | translate"
-      [options]="cpuModels$"
-    ></ix-select>
+    <tn-form-field [label]="'CPU Model' | translate">
+      <tn-select
+        formControlName="cpu_model"
+        [options]="(cpuModels$ | async) ?? []"
+        [allowEmpty]="true"
+      ></tn-select>
+    </tn-form-field>
   }
 
-  <ix-input
-    formControlName="memory"
+  <tn-form-field
     [label]="'Memory Size' | translate"
-    [format]="formatter.memorySizeFormatting"
-    [parse]="formatter.memorySizeParsing"
     [tooltip]="helptext.memory_tooltip | translate"
-  ></ix-input>
+  >
+    <tn-input
+      formControlName="memory"
+      [inputType]="InputType.Size"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="min_memory"
+  <tn-form-field
     [label]="'Minimum Memory Size' | translate"
-    [format]="formatter.memorySizeFormatting"
-    [parse]="formatter.memorySizeParsing"
     [tooltip]="helptext.min_memory_tooltip | translate"
-  ></ix-input>
+  >
+    <tn-input
+      formControlName="min_memory"
+      [inputType]="InputType.Size"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="nodeset"
+  <tn-form-field
     [label]="'Optional: NUMA nodeset (Example: 0-1)' | translate"
     [tooltip]="helptext.nodeset.tooltip | translate"
-  ></ix-input>
+  >
+    <tn-input formControlName="nodeset"></tn-input>
+  </tn-form-field>
 
   <p class="warning-text">{{ helptext.memory_warning | translate }}</p>
 

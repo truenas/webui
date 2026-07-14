@@ -1,8 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnInputComponent,
+  TnSelectComponent,
+  TnStepperNextDirective,
+  TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { VmNicType, vmNicTypeLabels } from 'app/enums/vm.enum';
 import { nicChoicesToOptions } from 'app/helpers/operators/options.operators';
@@ -10,9 +19,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -23,10 +29,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxSelectComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
     TnButtonComponent,
     TnStepperPreviousDirective,

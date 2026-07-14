@@ -2,10 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnStepperComponent } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VmCpuMode } from 'app/enums/vm.enum';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import {
   CpuAndMemoryStepComponent,
@@ -13,7 +14,6 @@ import {
 
 describe('CpuAndMemoryStepComponent', () => {
   let spectator: Spectator<CpuAndMemoryStepComponent>;
-  let form: IxFormHarness;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: CpuAndMemoryStepComponent,
@@ -33,25 +33,33 @@ describe('CpuAndMemoryStepComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  async function setInput(controlName: string, value: string): Promise<void> {
+    const input = await loader.getHarness(TnInputHarness.with({ selector: `[formControlName="${controlName}"]` }));
+    await input.setValue(value);
+  }
+
+  async function setSelect(controlName: string, optionLabel: string): Promise<void> {
+    const select = await loader.getHarness(TnSelectHarness.with({ selector: `[formControlName="${controlName}"]` }));
+    await select.selectOption(optionLabel);
+  }
+
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   async function fillForm(): Promise<void> {
-    await form.fillForm({
-      'Virtual CPUs': 2,
-      Cores: 1,
-      Threads: 1,
-      'Optional: CPU Set (Examples: 0-3,8-11)': 2,
-      'Pin vcpus': true,
-      'CPU Mode': 'Custom',
-      'CPU Model': 'EPYC',
-      'Memory Size': '1 GiB',
-      'Minimum Memory Size': '512 MiB',
-      'Optional: NUMA nodeset (Example: 0-1)': 2,
-    });
+    await setInput('vcpus', '2');
+    await setInput('cores', '1');
+    await setInput('threads', '1');
+    await setInput('cpuset', '2');
+    const pinVcpus = await loader.getHarness(TnCheckboxHarness.with({ selector: '[formControlName="pin_vcpus"]' }));
+    await pinVcpus.check();
+    await setSelect('cpu_mode', 'Custom');
+    await setSelect('cpu_model', 'EPYC');
+    await setInput('memory', '1 GiB');
+    await setInput('min_memory', '512 MiB');
+    await setInput('nodeset', '2');
   }
 
   it('shows a form with fields for CPU and Memory settings', async () => {
