@@ -74,10 +74,7 @@ export class NfsSessionListComponent implements OnInit {
       title: this.translate.instant('Export'),
       propertyName: 'export',
     }),
-  ], {
-    uniqueRowTag: (row) => 'nfs3-session-' + row.export + '-' + row.ip,
-    ariaLabels: (row) => [row.ip, this.translate.instant('NFS3 Session')],
-  }));
+  ]));
 
   protected readonly nfs4Columns = signal(createTable<Nfs4Session['info']>([
     textColumn({
@@ -95,7 +92,6 @@ export class NfsSessionListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Status'),
       propertyName: 'status',
-      getValue: (row) => stringToTitleCase(row.status),
     }),
     textColumn({
       title: this.translate.instant('Seconds From Last Renew'),
@@ -126,10 +122,7 @@ export class NfsSessionListComponent implements OnInit {
       propertyName: 'callback address',
       hidden: true,
     }),
-  ], {
-    uniqueRowTag: (row) => `nfs4-session-${row.address}-${row.clientid}`,
-    ariaLabels: (row) => [row.name, this.translate.instant('NFS4 Session')],
-  }));
+  ]));
 
   protected readonly nfs3DisplayedColumns = computed(() => toDisplayedColumns(this.nfs3Columns()));
   protected readonly nfs4DisplayedColumns = computed(() => toDisplayedColumns(this.nfs4Columns()));

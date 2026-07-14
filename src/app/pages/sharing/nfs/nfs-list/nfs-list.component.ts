@@ -159,10 +159,7 @@ export class NfsListComponent implements OnInit {
       hidden: !this.isEnterprise(),
     }),
     actionsColumn({}),
-  ], {
-    uniqueRowTag: (row) => 'nfs-share-' + row.path + '-' + row.comment,
-    ariaLabels: (row) => [row.path, this.translate.instant('NFS Share')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed<string[]>(() => {
     const columns = toDisplayedColumns(this.columns());
