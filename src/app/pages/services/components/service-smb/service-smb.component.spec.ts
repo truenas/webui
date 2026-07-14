@@ -598,8 +598,10 @@ describe('ServiceSmbComponent', () => {
       const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
       await advancedButton.click();
 
-      const statefulFailoverCheckbox = spectator.query('[formControlName="stateful_failover"]');
-      expect(statefulFailoverCheckbox).toBeFalsy();
+      const statefulFailoverCheckbox = await loader.getHarnessOrNull(
+        TnCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }),
+      );
+      expect(statefulFailoverCheckbox).toBeNull();
     });
 
     it('should show and enable Stateful Failover checkbox when HA is licensed with no incompatible shares and SMB1 disabled', async () => {

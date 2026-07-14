@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
@@ -31,7 +30,9 @@ import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cell
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -73,7 +74,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnTablePagerComponent,
     TnTooltipDirective,
     TranslateModule,
-    AsyncPipe,
     YesNoPipe,
   ],
 })
@@ -94,7 +94,17 @@ export class NfsListComponent implements OnInit {
   protected readonly EmptyType = EmptyType;
 
   protected readonly searchQuery = signal('');
-  protected dataProvider: AsyncDataProvider<NfsShare>;
+
+  private readonly shares$ = this.api.call('sharing.nfs.query').pipe(
+    tap((shares) => this.nfsShares = shares),
+    takeUntilDestroyed(this.destroyRef),
+  );
+
+  protected readonly dataProvider = new AsyncDataProvider<NfsShare>(this.shares$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
+  protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$);
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   private nfsShares: NfsShare[] = [];
@@ -200,11 +210,6 @@ export class NfsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const shares$ = this.api.call('sharing.nfs.query').pipe(
-      tap((shares) => this.nfsShares = shares),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<NfsShare>(shares$);
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

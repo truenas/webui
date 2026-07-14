@@ -32,7 +32,7 @@
     </div>
   </ng-template>
 
-  @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
+  @if (emptyType() === EmptyType.NoPageData && !currentPageCount()) {
     <tn-empty
       icon="nfs-share"
       iconLibrary="custom"
@@ -40,15 +40,15 @@
       [title]="'Optimized for Linux and Unix systems, offering deeper integration in those environments. Choose NFS if you\'re working primarily with Linux servers or need efficient file access in Unix-based workflows.' | translate"
     ></tn-empty>
   } @else {
-    @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+    @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
     <tn-table
       class="table"
       [testId]="'table-table'"
       [ixUiSearch]="searchableElements.elements.nfs"
-      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [dataSource]="rows()"
       [displayedColumns]="displayedColumns()"
       [trackBy]="trackByNfsId"
-      [loading]="!!(dataProvider.isLoading$ | async)"
+      [loading]="isLoading()"
       [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
       [emptyIcon]="emptyConf?.icon ?? ''"
       (sortChange)="onSortChange($event)"

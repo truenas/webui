@@ -1,0 +1,6 @@
+// Bare tn-form-fields (no <ix-form>/<tn-form-section> host to space them): restore the
+// inter-field gap the legacy SlideIn container's global margin used to provide.
+tn-form-field {
+  display: block;
+  margin-bottom: 12px;
+}

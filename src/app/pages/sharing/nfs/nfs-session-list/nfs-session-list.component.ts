@@ -1,8 +1,7 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -20,7 +19,9 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
@@ -48,7 +49,6 @@ let nextLabelId = 0;
     UiSearchDirective,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class NfsSessionListComponent implements OnInit {
@@ -141,6 +141,9 @@ export class NfsSessionListComponent implements OnInit {
   );
 
   protected readonly nfs3DataProvider = new AsyncDataProvider<Nfs3Session>(this.nfs3ProviderRequest$);
+  protected readonly nfs3Rows = dataProviderRows(this.nfs3DataProvider);
+  protected readonly nfs3Loading = dataProviderLoading(this.nfs3DataProvider);
+  protected readonly nfs3EmptyType = toSignal(this.nfs3DataProvider.emptyType$);
 
   private readonly nfs4ProviderRequest$ = this.api.call('nfs.get_nfs4_clients', []).pipe(
     map((sessions) => sessions.map((session) => session.info)),
@@ -154,6 +157,9 @@ export class NfsSessionListComponent implements OnInit {
   );
 
   protected readonly nfs4DataProvider = new AsyncDataProvider<Nfs4Session['info']>(this.nfs4ProviderRequest$);
+  protected readonly nfs4Rows = dataProviderRows(this.nfs4DataProvider);
+  protected readonly nfs4Loading = dataProviderLoading(this.nfs4DataProvider);
+  protected readonly nfs4EmptyType = toSignal(this.nfs4DataProvider.emptyType$);
 
   protected formatStatus(status: string): string {
     return stringToTitleCase(status);

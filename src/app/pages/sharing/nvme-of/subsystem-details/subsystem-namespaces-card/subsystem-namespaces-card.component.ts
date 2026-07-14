@@ -6,6 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog, TnIconButtonComponent,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -54,6 +55,12 @@ export class SubsystemNamespacesCardComponent {
   protected readonly searchableElements = subsystemNamespacesCardElements;
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+
+  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
+  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+  protected namespaceTestIdSlug(namespace: NvmeOfNamespace): string {
+    return kebabCase(namespace.device_path);
+  }
 
   protected onAddNamespace(): void {
     this.formPanel.open(NamespaceFormComponent, {

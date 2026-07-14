@@ -106,9 +106,9 @@ export class IscsiCardComponent implements OnInit {
   private authService = inject(AuthService);
   protected actionsMenu = inject(ServiceActionsMenuService);
 
-  service$ = this.store$.select(selectService(ServiceName.Iscsi));
+  private service$ = this.store$.select(selectService(ServiceName.Iscsi));
   protected service = toSignal(this.service$);
-  requiredRoles = [
+  protected requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -116,7 +116,7 @@ export class IscsiCardComponent implements OnInit {
 
   private hasWriteRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
-  targets = signal<IscsiTarget[] | null>(null);
+  private targets = signal<IscsiTarget[] | null>(null);
 
   protected readonly hasFibreChannel = toSignal(
     this.license.hasFibreChannel$.pipe(startWith(false)),
@@ -148,7 +148,7 @@ export class IscsiCardComponent implements OnInit {
     takeUntilDestroyed(this.destroyRef),
   );
 
-  dataProvider = new AsyncDataProvider<IscsiTarget>(this.iscsiShares$);
+  protected dataProvider = new AsyncDataProvider<IscsiTarget>(this.iscsiShares$);
   protected readonly rows = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
 
@@ -205,7 +205,7 @@ export class IscsiCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  openForm(row?: IscsiTarget, openWizard?: boolean): void {
+  protected openForm(row?: IscsiTarget, openWizard?: boolean): void {
     if (openWizard) {
       // The panel footer owns Back/Next/Save (via the wizard's footerActions/hideSave).
       this.formPanel.open(IscsiWizardComponent, {
@@ -221,7 +221,7 @@ export class IscsiCardComponent implements OnInit {
     }
   }
 
-  doDelete(iscsi: IscsiTarget): void {
+  private doDelete(iscsi: IscsiTarget): void {
     this.tnDialog
       .open(DeleteTargetDialog, { data: iscsi, width: '600px' })
       .closed
@@ -229,7 +229,7 @@ export class IscsiCardComponent implements OnInit {
       .subscribe(() => this.dataProvider.load());
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,

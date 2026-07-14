@@ -1,13 +1,14 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnCardHeaderDirective, TnCellDefDirective,
-  TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, type TnSortEvent,
+  TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
+  type TnSortEvent,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbShareInfo } from 'app/interfaces/smb-status.interface';
@@ -16,8 +17,9 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -32,14 +34,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
     BasicSearchComponent,
     TableColumnPickerComponent,
     TnButtonComponent,
-    TestDirective,
+    TnTestIdDirective,
     TnTableComponent,
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class SmbShareListComponent implements OnInit {
@@ -50,7 +51,20 @@ export class SmbShareListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   searchQuery = signal('');
-  dataProvider: AsyncDataProvider<SmbShareInfo>;
+  private readonly smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Shares]).pipe(
+    tap((shares: SmbShareInfo[]) => {
+      this.shares = shares;
+      if (this.searchQuery()) {
+        this.onListFiltered(this.searchQuery());
+      }
+    }),
+    takeUntilDestroyed(this.destroyRef),
+  );
+
+  dataProvider = new AsyncDataProvider<SmbShareInfo>(this.smbStatus$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
   shares: SmbShareInfo[] = [];
 
   protected readonly columns = signal(createTable<SmbShareInfo>([
@@ -80,17 +94,6 @@ export class SmbShareListComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Shares]).pipe(
-      tap((shares: SmbShareInfo[]) => {
-        this.shares = shares;
-        if (this.searchQuery()) {
-          this.onListFiltered(this.searchQuery());
-        }
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    );
-
-    this.dataProvider = new AsyncDataProvider<SmbShareInfo>(smbStatus$);
     this.loadData();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -110,7 +113,9 @@ export class SmbShareListComponent implements OnInit {
   }
 
   protected uniqueRowTag(row: SmbShareInfo): string {
-    return convertStringToId('smb-share-' + row.server_id.unique_id + '-' + row.machine);
+    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
+    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+    return kebabCase(convertStringToId('smb-share-' + row.server_id.unique_id + '-' + row.machine));
   }
 
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {

@@ -1,4 +1,4 @@
-@if (!(hasTruenasConnect$ | async)) {
+@if (!hasTruenasConnect()) {
   <tn-banner
     class="clickable"
     role="button"
@@ -11,7 +11,7 @@
     (keydown.space)="openTruenasConnectDialog(); $event.preventDefault()"
   ></tn-banner>
 }
-@if (showNoWebshareUsersNotice$ | async) {
+@if (showNoWebshareUsersNotice()) {
   <tn-banner
     class="clickable"
     role="button"
@@ -29,15 +29,15 @@
   <div tnCardHeader class="header-title">
     <h3 class="tn-card__title">{{ 'WebShare' | translate }}</h3>
     <ix-service-state-button
-      [service]="service$ | async"
-      [count]="+(dataProvider.currentPageCount$ | async)"
+      [service]="service()"
+      [count]="currentPageCount() ?? 0"
     ></ix-service-state-button>
   </div>
 
   <ng-template tnCardHeaderActions>
     <div class="actions">
       <ix-basic-search
-        [query]="searchQuery"
+        [query]="searchQuery()"
         (queryChange)="onListFiltered($event)"
       ></ix-basic-search>
 
@@ -52,14 +52,14 @@
         color="primary"
         [testId]="'add-webshare'"
         [ixUiSearch]="searchableElements.elements.createWebShare"
-        [disabled]="!(hasTruenasConnect$ | async)"
+        [disabled]="!hasTruenasConnect()"
         [label]="'Add' | translate"
         (onClick)="doAdd()"
       ></tn-button>
     </div>
   </ng-template>
 
-  @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
+  @if (emptyType() === EmptyType.NoPageData && !currentPageCount()) {
     <tn-empty
       icon="webshare"
       iconLibrary="custom"
@@ -68,15 +68,15 @@
       [description]="'Users can access these shares if they have the WebShare Enabled option set on their account.' | translate"
     ></tn-empty>
   } @else {
-    @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+    @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
     <tn-table
       class="table"
       [testId]="'table-table'"
       [ixUiSearch]="searchableElements.elements.webshareList"
-      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [dataSource]="rows()"
       [displayedColumns]="displayedColumns()"
       [trackBy]="trackByWebShareId"
-      [loading]="!!(dataProvider.isLoading$ | async)"
+      [loading]="isLoading()"
       [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
       [emptyIcon]="emptyConf?.icon ?? ''"
       (sortChange)="onSortChange($event)"
@@ -86,15 +86,17 @@
         <ng-template let-row tnCellDef>
           <span class="webshare-name-container">
             <span
-              role="text"
-              [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
-              [attr.aria-label]="('WebShare name' | translate) + ': ' + row.name"
+              tnTestIdType="text"
+              [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
             >{{ row.name }}</span>
             @if (row.isHomeBase) {
+              <!-- role/aria-label expose the icon-only home-share state to AT; the tooltip is hover-only. -->
               <tn-icon
                 class="home-icon"
                 name="folder-account"
                 library="mdi"
+                role="img"
+                [attr.aria-label]="'Home Share' | translate"
                 [tnTooltip]="'Home Share' | translate"
               ></tn-icon>
             }
@@ -106,7 +108,8 @@
         <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.path || ''"
           >{{ row.path }}</span>
         </ng-template>

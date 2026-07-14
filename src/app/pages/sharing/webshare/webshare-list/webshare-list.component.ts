@@ -1,15 +1,15 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker, TnBannerComponent, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
   TnCardHeaderDirective, TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective, TnIconComponent,
-  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTooltipDirective, type TnSortEvent,
+  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
 import { filter, map } from 'rxjs';
@@ -30,9 +30,10 @@ import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cel
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -59,7 +60,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TableColumnPickerComponent,
     RequiresRolesDirective,
     TnButtonComponent,
-    TestDirective,
+    TnTestIdDirective,
     UiSearchDirective,
     TnBannerComponent,
     TnEmptyComponent,
@@ -72,7 +73,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnIconComponent,
     TnTooltipDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class WebShareListComponent implements OnInit {
@@ -91,18 +91,32 @@ export class WebShareListComponent implements OnInit {
   private truenasConnectService = inject(TruenasConnectService);
   private router = inject(Router);
 
-  service$ = this.store$.select(selectService(ServiceName.WebShare));
-  searchQuery = '';
-  dataProvider: AsyncDataProvider<WebShareTableRow>;
+  private readonly service$ = this.store$.select(selectService(ServiceName.WebShare));
+  protected readonly service = toSignal(this.service$);
 
-  hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
+  protected searchQuery = signal('');
+
+  private readonly webshares$ = this.webShareService.getWebShareTableRows().pipe(
+    takeUntilDestroyed(this.destroyRef),
+  );
+
+  // Public: the spec drives filtering/sorting/loading through the provider directly.
+  dataProvider = new AsyncDataProvider<WebShareTableRow>(this.webshares$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
+  protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$);
+
+  private readonly hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
     map((config) => config?.status === TruenasConnectStatus.Configured),
   );
 
-  showNoWebshareUsersNotice$ = this.hasTruenasConnect$.pipe(
+  protected readonly hasTruenasConnect = toSignal(this.hasTruenasConnect$);
+
+  protected readonly showNoWebshareUsersNotice = toSignal(this.hasTruenasConnect$.pipe(
     combineLatestWith(this.webShareService.hasWebshareUsers$),
     map(([hasTruenasConnect, hasWebshareUsers]) => hasTruenasConnect && !hasWebshareUsers),
-  );
+  ));
 
   protected readonly helptext = helptextSharingWebshare;
 
@@ -160,10 +174,10 @@ export class WebShareListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setDataProvider();
+    this.dataProvider.load();
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.onListFiltered(this.searchQuery);
+      this.onListFiltered(this.searchQuery());
     });
 
     // Trigger hostname lookup to enable WebShare opening when not on truenas.direct domain
@@ -193,7 +207,7 @@ export class WebShareListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.searchQuery = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['name', 'path'],
@@ -240,15 +254,6 @@ export class WebShareListComponent implements OnInit {
     }).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.loadWebShareConfig());
-  }
-
-  private setDataProvider(): void {
-    const webshares$ = this.webShareService.getWebShareTableRows().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    );
-
-    this.dataProvider = new AsyncDataProvider<WebShareTableRow>(webshares$);
-    this.dataProvider.load();
   }
 
   private loadWebShareConfig(): void {

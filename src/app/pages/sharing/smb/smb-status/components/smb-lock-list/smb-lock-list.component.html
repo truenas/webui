@@ -20,15 +20,15 @@
     </div>
   </ng-template>
 
-  @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
   <tn-table
     class="table"
     [testId]="'table-table'"
     [expandable]="true"
-    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [dataSource]="rows()"
     [displayedColumns]="displayedColumns()"
     [trackBy]="trackByLock"
-    [loading]="!!(dataProvider.isLoading$ | async)"
+    [loading]="isLoading()"
     [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
     [emptyIcon]="emptyConf?.icon ?? ''"
     (sortChange)="onSortChange($event)"
@@ -36,35 +36,35 @@
     <ng-container [tnColumnDef]="'service_path'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']">{{ row.service_path }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Path' | translate), uniqueRowTag(row), 'row-text']">{{ row.service_path }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'filename'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Filename' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Filename' | translate), uniqueRowTag(row), 'row-text']">{{ row.filename }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Filename' | translate), uniqueRowTag(row), 'row-text']">{{ row.filename }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'fileid'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'File ID' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('File ID' | translate), uniqueRowTag(row), 'row-text']">{{ getFileId(row) }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('File ID' | translate), uniqueRowTag(row), 'row-text']">{{ getFileId(row) }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'opens'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Open Files' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Open Files' | translate), uniqueRowTag(row), 'row-text']">{{ getOpenFilesLabel(row) }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Open Files' | translate), uniqueRowTag(row), 'row-text']">{{ getOpenFilesLabel(row) }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'num_pending_deletes'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Num Pending Deletes' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Num Pending Deletes' | translate), uniqueRowTag(row), 'row-text']">
+        <span tnTestIdType="text" [tnTestId]="[('Num Pending Deletes' | translate), uniqueRowTag(row), 'row-text']">
           {{ row.num_pending_deletes }}
         </span>
       </ng-template>

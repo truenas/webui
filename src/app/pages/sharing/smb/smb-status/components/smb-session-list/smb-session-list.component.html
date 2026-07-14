@@ -20,14 +20,14 @@
     </div>
   </ng-template>
 
-  @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
   <tn-table
     class="table"
     [testId]="'table-table'"
-    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [dataSource]="rows()"
     [displayedColumns]="displayedColumns()"
     [trackBy]="trackBySession"
-    [loading]="!!(dataProvider.isLoading$ | async)"
+    [loading]="isLoading()"
     [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
     [emptyIcon]="emptyConf?.icon ?? ''"
     (sortChange)="onSortChange($event)"
@@ -35,70 +35,70 @@
     <ng-container [tnColumnDef]="'session_id'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Session ID' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Session ID' | translate), uniqueRowTag(row), 'row-text']">{{ row.session_id }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Session ID' | translate), uniqueRowTag(row), 'row-text']">{{ row.session_id }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'hostname'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Hostname' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Hostname' | translate), uniqueRowTag(row), 'row-text']">{{ row.hostname }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Hostname' | translate), uniqueRowTag(row), 'row-text']">{{ row.hostname }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'remote_machine'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Remote machine' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Remote machine' | translate), uniqueRowTag(row), 'row-text']">{{ row.remote_machine }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Remote machine' | translate), uniqueRowTag(row), 'row-text']">{{ row.remote_machine }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'username'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Username' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Username' | translate), uniqueRowTag(row), 'row-text']">{{ row.username }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Username' | translate), uniqueRowTag(row), 'row-text']">{{ row.username }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'groupname'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Groupname' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Groupname' | translate), uniqueRowTag(row), 'row-text']">{{ row.groupname }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Groupname' | translate), uniqueRowTag(row), 'row-text']">{{ row.groupname }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'uid'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'UID' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('UID' | translate), uniqueRowTag(row), 'row-text']">{{ row.uid }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('UID' | translate), uniqueRowTag(row), 'row-text']">{{ row.uid }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'gid'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'GID' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('GID' | translate), uniqueRowTag(row), 'row-text']">{{ row.gid }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('GID' | translate), uniqueRowTag(row), 'row-text']">{{ row.gid }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'session_dialect'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Session dialect' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Session dialect' | translate), uniqueRowTag(row), 'row-text']">{{ row.session_dialect }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Session dialect' | translate), uniqueRowTag(row), 'row-text']">{{ row.session_dialect }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'encryption'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Encryption' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Encryption' | translate), uniqueRowTag(row), 'row-text']">{{ row.encryption.cipher }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Encryption' | translate), uniqueRowTag(row), 'row-text']">{{ row.encryption.cipher }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'signing'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Signing' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [ixTest]="[('Signing' | translate), uniqueRowTag(row), 'row-text']">{{ row.signing.cipher }}</span>
+        <span tnTestIdType="text" [tnTestId]="[('Signing' | translate), uniqueRowTag(row), 'row-text']">{{ row.signing.cipher }}</span>
       </ng-template>
     </ng-container>
   </tn-table>

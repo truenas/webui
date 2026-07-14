@@ -1,11 +1,11 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCellDefDirective, TnDialog, TnDialogShellComponent, TnHeaderCellDefDirective,
-  TnTableColumnDirective, TnTableComponent, tnIconMarker,
+  TnTableColumnDirective, TnTableComponent, TnTestIdDirective, tnIconMarker,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
 import { Role } from 'app/enums/role.enum';
@@ -13,6 +13,7 @@ import { NvmeOfPort, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'ap
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -36,11 +37,11 @@ interface NvmeOfPortAndUsage extends NvmeOfPort {
     TnDialogShellComponent,
     TnButtonComponent,
     TranslateModule,
-    AsyncPipe,
     TnTableComponent,
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
+    TnTestIdDirective,
     TableActionsCellComponent,
   ],
 })
@@ -61,6 +62,12 @@ export class ManagePortsDialog implements OnInit {
   protected readonly displayedColumns = ['addr_trtype', 'addr_traddr', 'addr_trsvcid', 'usedInSubsystems', 'actions'];
 
   protected readonly trackByPortId = (_: number, row: NvmeOfPortAndUsage): number => row.id;
+
+  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
+  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+  protected uniqueRowTag(row: NvmeOfPortAndUsage): string {
+    return kebabCase(convertStringToId(`port-${row.addr_trtype}-${row.addr_traddr}-${row.addr_trsvcid}`));
+  }
 
   protected readonly actions: IconActionConfig<NvmeOfPortAndUsage>[] = [
     {
@@ -92,6 +99,10 @@ export class ManagePortsDialog implements OnInit {
       }),
     ),
   );
+
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
 
   ngOnInit(): void {
     this.dataProvider.load();

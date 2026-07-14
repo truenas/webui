@@ -89,18 +89,19 @@ export class IscsiWizardComponent extends SidePanelForm<IscsiTarget> implements 
   protected readonly protocolOptionsStep = viewChild(ProtocolOptionsWizardStepComponent);
   private readonly stepper = viewChild(TnStepperComponent);
 
-  isLoading = signal<boolean>(false);
-  toStop = signal<boolean>(false);
-  namesInUse = signal<string[]>([]);
-  fcHosts = signal<{ id: number; alias: string }[]>([]);
-  availableFcPorts = signal<string[]>([]);
+  private isLoading = signal<boolean>(false);
+  private toStop = signal<boolean>(false);
+  private namesInUse = signal<string[]>([]);
+  private fcHosts = signal<{ id: number; alias: string }[]>([]);
+  protected availableFcPorts = signal<string[]>([]);
 
+  // Public: the spec seeds this directly to exercise the rollback path.
   createdZvol: Dataset | undefined;
-  createdExtent: IscsiExtent | undefined;
-  createdPortal: IscsiPortal | undefined;
-  createdInitiator: IscsiInitiatorGroup | undefined;
-  createdTarget: IscsiTarget | undefined;
-  createdTargetExtent: IscsiTargetExtent | undefined;
+  private createdExtent: IscsiExtent | undefined;
+  private createdPortal: IscsiPortal | undefined;
+  private createdInitiator: IscsiInitiatorGroup | undefined;
+  private createdTarget: IscsiTarget | undefined;
+  private createdTargetExtent: IscsiTargetExtent | undefined;
 
   protected readonly form = this.fb.group({
     target: this.fb.group({
@@ -455,7 +456,7 @@ export class IscsiWizardComponent extends SidePanelForm<IscsiTarget> implements 
     return lastValueFrom(this.api.call('iscsi.targetextent.create', [payload]));
   }
 
-  rollBack(): void {
+  private rollBack(): void {
     this.isLoading.set(false);
 
     const requests = [];
@@ -507,7 +508,7 @@ export class IscsiWizardComponent extends SidePanelForm<IscsiTarget> implements 
     }
   }
 
-  handleError(error: unknown): void {
+  private handleError(error: unknown): void {
     this.toStop.set(true);
     this.errorHandler.showErrorModal(error);
   }

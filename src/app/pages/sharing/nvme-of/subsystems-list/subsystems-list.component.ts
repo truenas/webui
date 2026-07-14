@@ -1,16 +1,18 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnCardComponent, TnCardHeaderActionsDirective, TnCardHeaderDirective, TnCellDefDirective, TnEmptyComponent,
   TnHeaderCellDefDirective, TnIconButtonComponent, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { noSearchResultsConfig } from 'app/constants/empty-configs';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
 import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystem-name-cell/subsystem-name-cell.component';
 
 @Component({
@@ -24,7 +26,6 @@ import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems
     TnCardHeaderActionsDirective,
     BasicSearchComponent,
     TranslateModule,
-    AsyncPipe,
     TnTableComponent,
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
@@ -32,6 +33,7 @@ import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems
     TnIconButtonComponent,
     TnEmptyComponent,
     TnTablePagerComponent,
+    TnTestIdDirective,
     SubSystemNameCellComponent,
   ],
 })
@@ -43,6 +45,9 @@ export class SubsystemsListComponent {
   readonly toggleShowMobileDetails = output<boolean>();
   readonly subsystemSelected = output<NvmeOfSubsystemDetails>();
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
+
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isProviderLoading = dataProviderLoading(this.dataProvider);
   // eslint-disable-next-line @angular-eslint/no-output-native
   readonly search = output<string>();
 
@@ -53,6 +58,12 @@ export class SubsystemsListComponent {
   protected readonly displayedColumns = ['name', 'namespaces', 'ports', 'hosts', 'actions'];
 
   protected readonly trackBySubsystemId = (_: number, row: NvmeOfSubsystemDetails): number => row.id;
+
+  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
+  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+  protected uniqueRowTag(row: NvmeOfSubsystemDetails): string {
+    return kebabCase(convertStringToId('nvmeof-subsys-' + row.name));
+  }
 
   constructor() {
     setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);

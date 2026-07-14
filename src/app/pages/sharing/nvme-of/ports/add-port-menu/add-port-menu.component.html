@@ -19,7 +19,7 @@
   <tn-menu #addMenu>
     @for (port of unusedPorts(); track port.id) {
       <tn-menu-item
-        [testId]="['add-port', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
+        [testId]="addPortTestId(port)"
         (itemClick)="selectPort(port)"
       >
         <ix-port-description [port]="port"></ix-port-description>
