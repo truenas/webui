@@ -16,23 +16,12 @@
   ></tn-button>
 </ix-page-header>
 
-<!-- HELD on mat-tab-nav-bar: link-based tab-nav has no tn-* equivalent yet (tn-tabs is
-  content-panel based, no routerLink support — anchors preserve middle-click/new-tab and
-  the legacy link-* test ids). Same hold as smb-status. Surface to NAS-141021 lead. -->
-<nav mat-tab-nav-bar [tabPanel]="tabPanel">
-  @for (link of navLinks(); track link.label) {
-    <a
-      #rla="routerLinkActive"
-      mat-tab-link
-      routerLinkActive
-      [ixTest]="link.label"
-      [routerLink]="link.path"
-      [active]="rla.isActive"
-    >
-      {{ link.label | translate }}
-    </a>
+<!-- tn-tabs is content/index-based, so routing is wired manually: the URL drives
+  [selectedIndex] and a user tab switch navigates (see onTabChange). Tabs render as
+  buttons — legacy `link-*` test ids become `tab-*` (e2e callout). -->
+<tn-tabs [selectedIndex]="activeTabIndex()" (tabChange)="onTabChange($event)">
+  @for (link of navLinks(); track link.path) {
+    <tn-tab [label]="link.label" [testId]="link.slug" />
   }
-</nav>
-<mat-tab-nav-panel #tabPanel>
-  <router-outlet></router-outlet>
-</mat-tab-nav-panel>
+</tn-tabs>
+<router-outlet></router-outlet>

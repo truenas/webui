@@ -1,8 +1,7 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, input, output, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnCellDefDirective,
@@ -11,6 +10,7 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
+import { switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
@@ -20,7 +20,9 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
+} from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { targetListElements } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.elements';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
@@ -45,7 +47,6 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
     TnIconButtonComponent,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class TargetListComponent implements OnInit {
@@ -58,6 +59,12 @@ export class TargetListComponent implements OnInit {
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input.required<AsyncDataProvider<IscsiTarget>>();
   readonly targets = input<IscsiTarget[]>();
+
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(
+    toObservable(this.dataProvider).pipe(switchMap((provider) => provider.emptyType$)),
+  );
 
   protected readonly searchableElements = targetListElements;
 

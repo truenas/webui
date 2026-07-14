@@ -11,7 +11,7 @@
           *ixRequiresRoles="requiredRoles"
           color="default"
           [disabled]="!unassociatedExtents().length"
-          [testId]="[target().name, 'associate-target']"
+          [testId]="[targetTestIdSlug(), 'associate-target']"
           [label]="'Associate' | translate"
           (onClick)="associateTarget()"
         ></tn-button>

@@ -1,8 +1,7 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
@@ -23,7 +22,9 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -56,7 +57,6 @@ import { IscsiService } from 'app/services/iscsi.service';
     TableActionsCellComponent,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class AuthorizedAccessListComponent implements OnInit {
@@ -77,7 +77,10 @@ export class AuthorizedAccessListComponent implements OnInit {
   ];
 
   protected readonly searchQuery = signal('');
-  protected dataProvider: AsyncDataProvider<IscsiAuthAccess>;
+  protected readonly dataProvider = new AsyncDataProvider<IscsiAuthAccess>(this.iscsiService.getAuth());
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
 
   protected readonly actions: IconActionConfig<IscsiAuthAccess>[] = [
     {
@@ -144,13 +147,10 @@ export class AuthorizedAccessListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const authorizedAccess$ = this.iscsiService.getAuth();
-
     this.iscsiService.listenForDataRefresh()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
 
-    this.dataProvider = new AsyncDataProvider(authorizedAccess$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

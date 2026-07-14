@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, signal, OnInit, computed, inject, DestroyRef,
 } from '@angular/core';
@@ -21,7 +20,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { convertStringToId } from 'app/modules/ix-table/utils';
+import { convertStringToId, dataProviderRows } from 'app/modules/ix-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -54,7 +53,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     TnTestIdDirective,
     TranslateModule,
     UiSearchDirective,
-    AsyncPipe,
   ],
 })
 export class FibreChannelPortsComponent implements OnInit {
@@ -69,6 +67,8 @@ export class FibreChannelPortsComponent implements OnInit {
   protected readonly searchableElements = fibreChannelPortsElements;
   protected searchQuery = signal<string>('');
   protected dataProvider = new ArrayDataProvider<FibreChannelPortRow>();
+  protected readonly currentPage = dataProviderRows(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
   protected isLoading = signal(false);
   protected isHa = toSignal(this.store$.select(selectIsHaLicensed));
 

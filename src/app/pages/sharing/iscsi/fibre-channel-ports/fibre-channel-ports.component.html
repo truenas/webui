@@ -12,11 +12,11 @@
     </div>
   </ng-template>
 
-  @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
   <tn-table
     class="table"
     [testId]="'table-table'"
-    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [dataSource]="currentPage()"
     [displayedColumns]="displayedColumns()"
     [trackBy]="trackByPortName"
     [loading]="isLoading()"

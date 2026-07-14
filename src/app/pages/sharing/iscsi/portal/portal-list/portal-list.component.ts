@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, DestroyRef,
 } from '@angular/core';
@@ -24,7 +23,9 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -54,7 +55,6 @@ import { IscsiService } from 'app/services/iscsi.service';
     TnTablePagerComponent,
     TnTooltipDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class PortalListComponent implements OnInit {
@@ -75,7 +75,10 @@ export class PortalListComponent implements OnInit {
   ];
 
   protected readonly searchQuery = signal('');
-  protected dataProvider: AsyncDataProvider<IscsiPortal>;
+  protected readonly dataProvider = new AsyncDataProvider<IscsiPortal>(this.api.call('iscsi.portal.query', []));
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
 
   // Signal (not a subscription-set field) so Listen cells re-render under
   // OnPush when the choices arrive after the rows.
@@ -147,13 +150,10 @@ export class PortalListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const portals$ = this.api.call('iscsi.portal.query', []);
-
     this.iscsiService.listenForDataRefresh()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
 
-    this.dataProvider = new AsyncDataProvider(portals$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

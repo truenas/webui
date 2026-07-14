@@ -1,7 +1,8 @@
-import { Signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { isSignal, Signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { type TnSortEvent } from '@truenas/ui-components';
 import { get } from 'lodash-es';
+import { Observable, switchMap } from 'rxjs';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -88,23 +89,34 @@ export function toDisplayedColumns<T>(columns: Column<T, ColumnComponent<T>>[]):
     .map((column) => (column.propertyName ? String(column.propertyName) : 'actions'));
 }
 
+function fromProvider<T, R>(
+  provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
+  select: (instance: BaseDataProvider<T>) => Observable<R>,
+): Observable<R> {
+  return isSignal(provider)
+    ? toObservable(provider).pipe(switchMap((instance) => select(instance)))
+    : select(provider);
+}
+
 /**
  * Adapts a data provider's paged rows into a signal for binding to a `tn-table`
  * `[dataSource]`. Replaces the `(dataProvider.currentPage$ | async) ?? []` idiom
- * so migrated cards follow the declarative-signal recipe. Must be called from an
- * injection context (e.g. a component field initializer).
+ * so migrated cards follow the declarative-signal recipe. Accepts the provider
+ * directly or as a signal (e.g. an `input.required` provider). Must be called
+ * from an injection context (e.g. a component field initializer).
  */
-export function dataProviderRows<T>(provider: BaseDataProvider<T>): Signal<T[]> {
-  return toSignal(provider.currentPage$, { initialValue: [] as T[] });
+export function dataProviderRows<T>(provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>): Signal<T[]> {
+  return toSignal(fromProvider(provider, (instance) => instance.currentPage$), { initialValue: [] as T[] });
 }
 
 /**
  * Adapts a data provider's loading state into a signal for binding to a `tn-table`
- * `[loading]`. Must be called from an injection context (e.g. a component field
- * initializer).
+ * `[loading]`. Accepts the provider directly or as a signal (e.g. an
+ * `input.required` provider). Must be called from an injection context (e.g. a
+ * component field initializer).
  */
-export function dataProviderLoading<T>(provider: BaseDataProvider<T>): Signal<boolean> {
-  return toSignal(provider.isLoading$, { initialValue: false });
+export function dataProviderLoading<T>(provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>): Signal<boolean> {
+  return toSignal(fromProvider(provider, (instance) => instance.isLoading$), { initialValue: false });
 }
 
 /**

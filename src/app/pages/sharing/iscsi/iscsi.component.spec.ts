@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTabNavBarHarness } from '@angular/material/tabs/testing';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnTabsHarness } from '@truenas/ui-components';
 import { MockComponent, MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -27,7 +26,6 @@ describe('IscsiComponent', () => {
       MockComponents(GlobalTargetConfigurationComponent),
     ],
     imports: [
-      MatTabsModule,
       MockComponent(PageHeaderComponent),
     ],
     providers: [
@@ -57,25 +55,35 @@ describe('IscsiComponent', () => {
   });
 
   it('shows a navtab with supported links', async () => {
-    const navbar = await loader.getHarness(MatTabNavBarHarness);
-    const links = await navbar.getLinks();
+    const tabs = await loader.getHarness(TnTabsHarness);
 
-    expect(links).toHaveLength(5);
-    expect(await links[0].getLabel()).toBe('Targets');
-    expect(await links[1].getLabel()).toBe('Extents');
-    expect(await links[2].getLabel()).toBe('Initiators');
-    expect(await links[3].getLabel()).toBe('Portals');
-    expect(await links[4].getLabel()).toBe('Authorized Access');
+    expect(await tabs.getTabLabels()).toEqual([
+      'Targets',
+      'Extents',
+      'Initiators',
+      'Portals',
+      'Authorized Access',
+    ]);
   });
 
   it('shows fibre channel link navtab on a fibre channel capable system', async () => {
     hasFibreChannel$.next(true);
     spectator.detectChanges();
 
-    const navbar = await loader.getHarness(MatTabNavBarHarness);
-    const links = await navbar.getLinks();
+    const tabs = await loader.getHarness(TnTabsHarness);
+    const labels = await tabs.getTabLabels();
 
-    expect(links).toHaveLength(6);
-    expect(await links[5].getLabel()).toBe('Fibre Channel Ports');
+    expect(labels).toHaveLength(6);
+    expect(labels[5]).toBe('Fibre Channel Ports');
+  });
+
+  it('navigates to the tab route when a tab is selected', async () => {
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    const tabs = await loader.getHarness(TnTabsHarness);
+    await tabs.selectTab({ label: 'Extents' });
+
+    expect(router.navigate).toHaveBeenCalledWith(['/sharing/iscsi/extents']);
   });
 });

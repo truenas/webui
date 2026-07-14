@@ -1,8 +1,7 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -24,7 +23,9 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { initiatorListElements } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.elements';
@@ -52,7 +53,6 @@ import { IscsiService } from 'app/services/iscsi.service';
     TnTablePagerComponent,
     TnTooltipDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class InitiatorListComponent implements OnInit {
@@ -73,7 +73,10 @@ export class InitiatorListComponent implements OnInit {
   ];
 
   protected readonly searchQuery = signal('');
-  protected dataProvider: AsyncDataProvider<IscsiInitiatorGroup>;
+  protected readonly dataProvider = new AsyncDataProvider<IscsiInitiatorGroup>(this.iscsiService.getInitiators());
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
 
   protected readonly actions: IconActionConfig<IscsiInitiatorGroup>[] = [
     {
@@ -136,13 +139,10 @@ export class InitiatorListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const initiators$ = this.iscsiService.getInitiators();
-
     this.iscsiService.listenForDataRefresh()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
 
-    this.dataProvider = new AsyncDataProvider(initiators$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
