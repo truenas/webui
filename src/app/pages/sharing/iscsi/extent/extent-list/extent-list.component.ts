@@ -130,10 +130,7 @@ export class ExtentListComponent implements OnInit {
       propertyName: 'enabled',
     }),
     actionsWithMenuColumn({ actions: [] }),
-  ], {
-    uniqueRowTag: (row) => 'iscsi-extent-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('iSCSI Extent')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
 

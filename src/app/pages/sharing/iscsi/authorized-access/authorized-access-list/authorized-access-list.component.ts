@@ -127,10 +127,7 @@ export class AuthorizedAccessListComponent implements OnInit {
       propertyName: 'peeruser',
     }),
     actionsWithMenuColumn({ actions: [] }),
-  ], {
-    uniqueRowTag: (row) => 'iscsi-authorized-access-' + row.user + '-' + row.peeruser,
-    ariaLabels: (row) => [row.user, this.translate.instant('Authorized Access')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
 

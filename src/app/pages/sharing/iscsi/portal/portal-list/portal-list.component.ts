@@ -123,10 +123,7 @@ export class PortalListComponent implements OnInit {
       propertyName: 'comment',
     }),
     actionsWithMenuColumn({ actions: [] }),
-  ], {
-    uniqueRowTag: (row) => 'iscsi-portal-' + row.comment,
-    ariaLabels: (row) => [row.comment, this.translate.instant('Portal')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
 

@@ -115,10 +115,7 @@ export class InitiatorListComponent implements OnInit {
       propertyName: 'comment',
     }),
     actionsWithMenuColumn({ actions: [] }),
-  ], {
-    uniqueRowTag: (row) => `iscsi-initiator-${row.id}`,
-    ariaLabels: (row) => [row.id.toString(), this.translate.instant('iSCSI Initiator')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
 
