@@ -1,8 +1,47 @@
+import { signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
-  filterTableRows, mapTnSortToProviderSorting, mapTnSortToTableSort, toDisplayedColumns,
+  dataProviderLoading, dataProviderRows, filterTableRows, mapTnSortToProviderSorting,
+  mapTnSortToTableSort, toDisplayedColumns,
 } from './utils';
+
+describe('dataProviderRows / dataProviderLoading', () => {
+  const makeProvider = (rows: string[], isLoading: boolean): BaseDataProvider<string> => ({
+    currentPage$: of(rows),
+    isLoading$: of(isLoading),
+  } as BaseDataProvider<string>);
+
+  it('adapts a provider passed directly into rows and loading signals', () => {
+    TestBed.runInInjectionContext(() => {
+      const provider = makeProvider(['a'], true);
+
+      expect(dataProviderRows(provider)()).toEqual(['a']);
+      expect(dataProviderLoading(provider)()).toBe(true);
+    });
+  });
+
+  it('adapts a provider passed as a signal, following provider swaps', () => {
+    TestBed.runInInjectionContext(() => {
+      const provider = signal(makeProvider(['a'], false));
+      const rows = dataProviderRows(provider);
+      const isLoading = dataProviderLoading(provider);
+      TestBed.tick();
+
+      expect(rows()).toEqual(['a']);
+      expect(isLoading()).toBe(false);
+
+      provider.set(makeProvider(['b'], true));
+      TestBed.tick();
+
+      expect(rows()).toEqual(['b']);
+      expect(isLoading()).toBe(true);
+    });
+  });
+});
 
 describe('mapTnSortToProviderSorting', () => {
   it('maps an ascending sort to propertyName + direction', () => {

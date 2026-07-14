@@ -4,9 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
-import {
-  TnButtonHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
-} from '@truenas/ui-components';
+import { TnChipInputHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -143,11 +141,16 @@ describe('IscsiWizardComponent', () => {
     jest.spyOn(store$, 'dispatch');
   });
 
-  // tn-stepper renders only the active step's content, so navigate with the
-  // Next button and re-resolve the form on each step.
+  // Back/Next/Save live in the side-panel footer (rendered by the host container, not
+  // this fixture), so navigation is driven through the public footer surface — same
+  // pattern as the add-subsystem wizard spec.
   async function clickNext(): Promise<void> {
-    const nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
-    await nextButton.click();
+    const next = spectator.component.footerActions.find((action) => action.testId === 'next');
+    expect(next).toBeTruthy();
+    expect(next.disabled?.()).toBeFalsy();
+    next.onClick();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
   }
 
   async function fillIscsiWizard(): Promise<void> {
@@ -181,8 +184,10 @@ describe('IscsiWizardComponent', () => {
   }
 
   async function submitWizard(): Promise<void> {
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Save renders in the host footer and calls the form's public submit().
+    expect(spectator.component.hideSave()).toBe(false);
+    expect(spectator.component.canSubmit()).toBe(true);
+    spectator.component.submit();
 
     // Wait for all async operations to complete
     await new Promise<void>((resolve) => {
@@ -372,9 +377,8 @@ describe('IscsiWizardComponent', () => {
 
       spectator.detectChanges();
 
-      // Verify submit button is disabled due to validation failure
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      // The footer Save is disabled via canSubmit due to the validation failure.
+      expect(spectator.component.canSubmit()).toBe(false);
 
       // Note: Error detection for NPIV ports would require backend resolution
       // of host_id to port string, so validation happens at a different level

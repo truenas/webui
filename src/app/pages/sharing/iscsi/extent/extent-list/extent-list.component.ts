@@ -1,14 +1,16 @@
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
-import { filter, tap } from 'rxjs';
+import {
+  tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
+  TnCellDefDirective, TnDialog, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
+  TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
+import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -17,18 +19,17 @@ import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import {
   DeleteExtentDialog,
@@ -39,33 +40,33 @@ import { IscsiService } from 'app/services/iscsi.service';
 @Component({
   selector: 'ix-iscsi-extent-list',
   templateUrl: './extent-list.component.html',
+  styleUrls: ['./extent-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    FakeProgressBarComponent,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    TnTablePagerComponent,
-    TranslateModule,
-    AsyncPipe,
+    TnButtonComponent,
+    TnTestIdDirective,
     UiSearchDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TableActionsCellComponent,
+    TnTablePagerComponent,
+    TnTooltipDirective,
+    TranslateModule,
+    YesNoPipe,
   ],
 })
 export class ExtentListComponent implements OnInit {
-  emptyService = inject(EmptyService);
+  protected emptyService = inject(EmptyService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private tnDialog = inject(TnDialog);
-  private cdr = inject(ChangeDetectorRef);
   private iscsiService = inject(IscsiService);
   private destroyRef = inject(DestroyRef);
 
@@ -77,13 +78,32 @@ export class ExtentListComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  isLoading = false;
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<IscsiExtent>;
+  protected readonly searchQuery = signal('');
+  protected readonly dataProvider = new AsyncDataProvider<IscsiExtent>(this.iscsiService.getExtents());
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
 
-  extents: IscsiExtent[] = [];
+  protected readonly actions: IconActionConfig<IscsiExtent>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (extent) => {
+        this.openForm(extent);
+      },
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.showDeleteDialog(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
 
-  columns = createTable<IscsiExtent>([
+  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // (visibility + saved prefs); tn-table renders cells from the template and
+  // derives its `displayedColumns` from these via `toDisplayedColumns`.
+  protected readonly columns = signal(createTable<IscsiExtent>([
     textColumn({
       title: this.translate.instant('Extent Name'),
       propertyName: 'name',
@@ -91,9 +111,6 @@ export class ExtentListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Device/File'),
       propertyName: 'path',
-      getValue: (extent) => {
-        return extent.type === IscsiExtentType.Disk ? extent.disk : extent.path;
-      },
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -115,39 +132,32 @@ export class ExtentListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (extent) => {
-            this.openForm(extent);
-          },
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.showDeleteDialog(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'iscsi-extent-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('iSCSI Extent')],
-  });
+    actionsWithMenuColumn({ actions: [] }),
+  ]));
+
+  protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
+
+  protected readonly trackByExtentId = (_index: number, row: IscsiExtent): number => row.id;
+
+  protected uniqueRowTag(row: IscsiExtent): string {
+    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
+    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+    return kebabCase(convertStringToId('iscsi-extent-' + row.name));
+  }
+
+  protected ariaLabel(row: IscsiExtent): string {
+    return [row.name, this.translate.instant('iSCSI Extent')].join(' ');
+  }
+
+  protected devicePath(extent: IscsiExtent): string {
+    return extent.type === IscsiExtentType.Disk ? extent.disk : extent.path;
+  }
 
   ngOnInit(): void {
-    const extents$ = this.iscsiService.getExtents().pipe(
-      tap((extents) => this.extents = extents),
-      takeUntilDestroyed(this.destroyRef),
-    );
-
     this.iscsiService.listenForDataRefresh()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
 
-    this.dataProvider = new AsyncDataProvider(extents$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -175,15 +185,17 @@ export class ExtentListComponent implements OnInit {
       .subscribe(() => this.refresh());
   }
 
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<IscsiExtent>(event, this.displayedColumns()));
+  }
+
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+  protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
   }
 
   private refresh(): void {

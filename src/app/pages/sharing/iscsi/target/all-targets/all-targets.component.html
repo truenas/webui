@@ -23,23 +23,19 @@
       </span>
 
       <div class="detail-actions">
-        <button
+        <tn-button
           *ixRequiresRoles="requiredRoles"
-          mat-button
-          ixTest="edit-target"
-          (click)="editTarget(target)"
-        >
-          {{ 'Edit' | translate }}
-        </button>
+          [testId]="'edit-target'"
+          [label]="'Edit' | translate"
+          (onClick)="editTarget(target)"
+        ></tn-button>
 
-        <button
+        <tn-button
           *ixRequiresRoles="requiredRoles"
-          mat-button
-          ixTest="delete-target"
-          (click)="deleteTarget(target)"
-        >
-          {{ 'Delete' | translate }}
-        </button>
+          [testId]="'delete-target'"
+          [label]="'Delete' | translate"
+          (onClick)="deleteTarget(target)"
+        ></tn-button>
       </div>
     }
   </div>

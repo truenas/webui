@@ -1,25 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
-import { SpectatorRouting } from '@ngneat/spectator';
-import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
+import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
@@ -41,23 +33,12 @@ const portals: IscsiPortal[] = [
 ];
 
 describe('PortalListComponent', () => {
-  let spectator: SpectatorRouting<PortalListComponent>;
+  let spectator: Spectator<PortalListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
-  const createComponent = createRoutingFactory({
+  const createComponent = createComponentFactory({
     component: PortalListComponent,
-    imports: [
-      BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
-      FakeProgressBarComponent,
-    ],
     providers: [
       mockProvider(EmptyService),
       mockApi([
@@ -65,15 +46,11 @@ describe('PortalListComponent', () => {
         mockCall('iscsi.portal.delete'),
         mockCall('iscsi.portal.listen_ip_choices', { '0.0.0.0': '0.0.0.0' } as Choices),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockProvider(TnDialog, {
-        open: jest.fn(),
       }),
       provideMockStore({
         selectors: [
@@ -87,20 +64,27 @@ describe('PortalListComponent', () => {
     ],
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
-  it('shows acurate page title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Portals');
+  it('shows accurate page title', () => {
+    // White-box: no TnCardHarness in @truenas/ui-components yet.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Portals');
   });
 
   it('opens portal form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
+    spectator.detectChanges();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(PortalFormComponent, {
       title: 'Add Portal',
@@ -109,9 +93,9 @@ describe('PortalListComponent', () => {
   });
 
   it('opens portal form when "Edit" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit' });
+    spectator.detectChanges();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(PortalFormComponent, {
       title: 'Edit Portal',
@@ -120,9 +104,8 @@ describe('PortalListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       message: 'Are you sure you want to delete this item?',
@@ -133,17 +116,9 @@ describe('PortalListComponent', () => {
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Portal Group ID', 'Listen', 'Description', ''],
-      [
-        '1',
-        '0.0.0.0:3260',
-        'test-portal',
-        '',
-      ],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    expect(await table.getHeaderTexts()).toEqual(['Portal Group ID', 'Listen', 'Description', '']);
+    expect(await table.getAllRowTexts()).toEqual([
+      ['1', '0.0.0.0:3260', 'test-portal', ''],
+    ]);
   });
 });

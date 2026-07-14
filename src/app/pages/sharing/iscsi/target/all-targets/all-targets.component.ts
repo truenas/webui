@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
 import {
   filter,
   tap,
@@ -13,7 +12,6 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetDetailsComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/target-details.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
@@ -31,8 +29,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     MasterDetailViewComponent,
     TargetDetailsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
   ],
 })
 export class AllTargetsComponent implements OnInit {

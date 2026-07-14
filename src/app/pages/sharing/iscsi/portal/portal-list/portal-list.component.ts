@@ -1,14 +1,16 @@
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import {
+  tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
+  TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
+  TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
+import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -17,17 +19,15 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { portalListElements } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.elements';
@@ -36,34 +36,33 @@ import { IscsiService } from 'app/services/iscsi.service';
 @Component({
   selector: 'ix-iscsi-portal-list',
   templateUrl: './portal-list.component.html',
+  styleUrls: ['./portal-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    FakeProgressBarComponent,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    TnTablePagerComponent,
-    TranslateModule,
-    AsyncPipe,
+    TnButtonComponent,
+    TnTestIdDirective,
     UiSearchDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TableActionsCellComponent,
+    TnTablePagerComponent,
+    TnTooltipDirective,
+    TranslateModule,
   ],
 })
 export class PortalListComponent implements OnInit {
-  emptyService = inject(EmptyService);
+  protected emptyService = inject(EmptyService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
-  private cdr = inject(ChangeDetectorRef);
   private iscsiService = inject(IscsiService);
   private destroyRef = inject(DestroyRef);
 
@@ -75,14 +74,45 @@ export class PortalListComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  isLoading = false;
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<IscsiPortal>;
+  protected readonly searchQuery = signal('');
+  protected readonly dataProvider = new AsyncDataProvider<IscsiPortal>(this.api.call('iscsi.portal.query', []));
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
 
-  portals: IscsiPortal[] = [];
-  ipChoices: Map<string, string>;
+  // Signal (not a subscription-set field) so Listen cells re-render under
+  // OnPush when the choices arrive after the rows.
+  private readonly ipChoices = toSignal(this.iscsiService.getIpChoices().pipe(
+    map((choices) => new Map(Object.entries(choices))),
+  ));
 
-  columns = createTable<IscsiPortal>([
+  protected readonly actions: IconActionConfig<IscsiPortal>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => {
+        this.openForm(row);
+      },
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => {
+        this.dialogService.confirmDelete({
+          message: this.translate.instant('Are you sure you want to delete this item?'),
+          call: () => this.api.call('iscsi.portal.delete', [row.id]),
+        }).pipe(
+          takeUntilDestroyed(this.destroyRef),
+        ).subscribe(() => this.refresh());
+      },
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // (visibility + saved prefs); tn-table renders cells from the template and
+  // derives its `displayedColumns` from these via `toDisplayedColumns`.
+  protected readonly columns = signal(createTable<IscsiPortal>([
     textColumn({
       title: this.translate.instant('Portal Group ID'),
       propertyName: 'id',
@@ -90,59 +120,40 @@ export class PortalListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Listen'),
       propertyName: 'listen',
-      getValue: (row) => {
-        return row.listen.map((listenInterface) => {
-          const listenIp = this.ipChoices?.get(listenInterface.ip) || listenInterface.ip;
-          return `${listenIp}:${listenInterface.port}`;
-        });
-      },
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
     }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => {
-            this.openForm(row);
-          },
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => {
-            this.dialogService.confirmDelete({
-              message: this.translate.instant('Are you sure you want to delete this item?'),
-              call: () => this.api.call('iscsi.portal.delete', [row.id]),
-            }).pipe(
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.refresh());
-          },
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'iscsi-portal-' + row.comment,
-    ariaLabels: (row) => [row.comment, this.translate.instant('Portal')],
-  });
+    actionsWithMenuColumn({ actions: [] }),
+  ]));
+
+  protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
+
+  protected readonly trackByPortalId = (_index: number, row: IscsiPortal): number => row.id;
+
+  protected uniqueRowTag(row: IscsiPortal): string {
+    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
+    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+    return kebabCase(convertStringToId('iscsi-portal-' + row.comment));
+  }
+
+  protected ariaLabel(row: IscsiPortal): string {
+    return [row.comment, this.translate.instant('Portal')].join(' ');
+  }
+
+  protected formatListen(row: IscsiPortal): string {
+    return row.listen.map((listenInterface) => {
+      const listenIp = this.ipChoices()?.get(listenInterface.ip) || listenInterface.ip;
+      return `${listenIp}:${listenInterface.port}`;
+    }).join(', ');
+  }
 
   ngOnInit(): void {
-    this.iscsiService.getIpChoices().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((choices) => {
-      this.ipChoices = new Map(Object.entries(choices));
-    });
-    const portals$ = this.api.call('iscsi.portal.query', []).pipe(
-      tap((portals) => this.portals = portals),
-    );
-
     this.iscsiService.listenForDataRefresh()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
 
-    this.dataProvider = new AsyncDataProvider(portals$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -162,15 +173,17 @@ export class PortalListComponent implements OnInit {
     }).onSuccess(() => this.refresh(), this.destroyRef);
   }
 
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<IscsiPortal>(event, this.displayedColumns()));
+  }
+
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['comment'] });
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+  protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
   }
 
   private refresh(): void {

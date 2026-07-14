@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, signal, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButtonModule, MatIconButton } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog, TnIconButtonComponent,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, finalize, forkJoin, switchMap, take,
@@ -16,8 +16,8 @@ import {
   AssociatedTargetDialogData, IscsiExtent, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { convertStringToId } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-target-form/associated-target-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -28,15 +28,11 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './associated-extents-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatButtonModule,
-    TestDirective,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnButtonComponent,
+    TnIconButtonComponent,
     TranslateModule,
-    MatIconButton,
-    TnIconComponent,
-    MatCardContent,
     RequiresRolesDirective,
     TnTooltipDirective,
     NgxSkeletonLoaderModule,
@@ -46,13 +42,16 @@ export class AssociatedExtentsCardComponent {
   private tnDialog = inject(TnDialog);
   private iscsiService = inject(IscsiService);
   private loader = inject(LoaderService);
-  private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   readonly target = input.required<IscsiTarget>();
+
+  // Pre-split with lodash kebabCase so digit-bearing target names resolve identically
+  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+  protected readonly targetTestIdSlug = computed(() => kebabCase(convertStringToId(this.target().name)));
 
   readonly isLoadingExtents = signal<boolean>(false);
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);
@@ -130,7 +129,6 @@ export class AssociatedExtentsCardComponent {
     ).subscribe(([extents, targetExtents]) => {
       this.extents.set(extents);
       this.targetExtents.set(targetExtents);
-      this.cdr.markForCheck();
     });
   }
 }

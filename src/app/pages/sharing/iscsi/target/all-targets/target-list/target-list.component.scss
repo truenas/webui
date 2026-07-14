@@ -1,4 +1,19 @@
 @import 'scss-imports/variables';
+@import '../../../../components/tn-table-in-card';
+
+@include tn-table-in-card;
+
+:host {
+  display: block;
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
 
 :host ::ng-deep .view-details-column {
   align-items: center;

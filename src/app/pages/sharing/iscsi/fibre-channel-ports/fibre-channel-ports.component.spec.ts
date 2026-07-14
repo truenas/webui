@@ -3,14 +3,15 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnDialog, TnIconButtonHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   VirtualPortsNumberDialog,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
@@ -20,7 +21,7 @@ import { FibreChannelPortsComponent } from './fibre-channel-ports.component';
 describe('FibreChannelPortsComponent', () => {
   let spectator: Spectator<FibreChannelPortsComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
   let store$: MockStore;
 
   const hosts = [
@@ -110,19 +111,18 @@ describe('FibreChannelPortsComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
     store$ = spectator.inject(MockStore);
   });
 
   it('shows accurate page title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Fibre Channel Ports');
+    // White-box: no TnCardHarness in @truenas/ui-components yet.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Fibre Channel Ports');
   });
 
   it('should show correct table rows', async () => {
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual([
-      ['Port', 'Target', 'WWPN', 'WWPN (B)', 'State', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Port', 'Target', 'WWPN', 'WWPN (B)', 'State', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['fc0', 'target1', 'naa.220034800d75aec4', 'naa.220034800d75aec5', 'A: Online B: Offline', ''],
       ['– fc0/1 (virtual)', 'target2', 'naa.220034800d75aec8', 'naa.220034800d75aec9', 'A: – B: –', ''],
       ['– fc0/2 (virtual)', '-', '-', '-', 'A: – B: –', ''],
@@ -131,25 +131,16 @@ describe('FibreChannelPortsComponent', () => {
     ]);
   });
 
-  it('shows edit icon on physical ports only', async () => {
-    const firstRowIcons = await table.getAllHarnessesInCell(TnIconHarness, 1, 5);
-    const secondRowIcons = await table.getAllHarnessesInCell(TnIconHarness, 2, 5);
-    const thirdRowIcons = await table.getAllHarnessesInCell(TnIconHarness, 3, 5);
-    const fourthRowIcons = await table.getAllHarnessesInCell(TnIconHarness, 4, 5);
-    const fifthRowIcons = await table.getAllHarnessesInCell(TnIconHarness, 5, 5);
-
-    expect(firstRowIcons).toHaveLength(1);
-    expect(await firstRowIcons[0].getName()).toBe('mdi-pencil');
-    expect(secondRowIcons).toHaveLength(0);
-    expect(thirdRowIcons).toHaveLength(0);
-    expect(fourthRowIcons).toHaveLength(1);
-    expect(await fourthRowIcons[0].getName()).toBe('mdi-pencil');
-    expect(fifthRowIcons).toHaveLength(0);
+  it('shows edit action on physical ports only', async () => {
+    // The single visible action renders as an inline tn-icon-button; virtual
+    // ports hide it, so only the two physical ports (fc0, fc1) carry a button.
+    const editButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
+    expect(editButtons).toHaveLength(2);
   });
 
   it('opens fibre channel port form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 5);
-    await editButton.click();
+    const [firstEditButton] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
+    await firstEditButton.click();
 
     expect(spectator.inject(TnDialog).open)
       .toHaveBeenCalledWith(VirtualPortsNumberDialog, { data: hosts[0] });
