@@ -1,22 +1,21 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, output, signal, viewChild, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, viewChild, inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnStepComponent, TnStepperComponent, TnStepperNextDirective,
-  TnStepperPreviousDirective,
+  TnStepComponent, TnStepperComponent,
 } from '@truenas/ui-components';
 import {
   lastValueFrom, forkJoin,
   of,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { startWith, switchMap } from 'rxjs/operators';
 import { patterns } from 'app/constants/name-patterns.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
   IscsiAuthMethod,
@@ -47,7 +46,8 @@ import { newOption } from 'app/interfaces/option.interface';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
@@ -64,21 +64,16 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnCardComponent,
     ReactiveFormsModule,
     TnStepperComponent,
     TnStepComponent,
-    TnButtonComponent,
-    TnStepperNextDirective,
-    TnStepperPreviousDirective,
     TargetWizardStepComponent,
     ExtentWizardStepComponent,
     ProtocolOptionsWizardStepComponent,
-    RequiresRolesDirective,
     TranslateModule,
   ],
 })
-export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<IscsiTarget> {
+export class IscsiWizardComponent extends SidePanelForm<IscsiTarget> implements OnInit {
   private fb = inject(FormBuilder);
   private iscsiService = inject(IscsiService);
   private fcService = inject(FibreChannelService);
@@ -89,12 +84,10 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
   private store$ = inject<Store<ServicesState>>(Store);
   private destroyRef = inject(DestroyRef);
 
-  /** Emitted to the `tn-side-panel` host with the created target on save. */
-  readonly closed = output<IscsiTarget>();
-
   protected readonly targetStep = viewChild.required(TargetWizardStepComponent);
   protected readonly extentStep = viewChild.required(ExtentWizardStepComponent);
   protected readonly protocolOptionsStep = viewChild(ProtocolOptionsWizardStepComponent);
+  private readonly stepper = viewChild(TnStepperComponent);
 
   isLoading = signal<boolean>(false);
   toStop = signal<boolean>(false);
@@ -109,7 +102,7 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
   createdTarget: IscsiTarget | undefined;
   createdTargetExtent: IscsiTargetExtent | undefined;
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     target: this.fb.group({
       target: [newOption as typeof newOption | number, [Validators.required]],
       mode: [IscsiTargetMode.Iscsi],
@@ -155,11 +148,84 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
     this.destroyRef,
   );
 
-  protected readonly requiredRoles = [
+  /** Gates the host-rendered footer Save. */
+  readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
   ];
+
+  /** Reactive mirror of the target mode so `canSubmit`/`fcPortErrors` recompute on change. */
+  private readonly targetMode = toSignal(
+    this.form.controls.target.controls.mode.valueChanges.pipe(startWith(IscsiTargetMode.Iscsi)),
+    { initialValue: IscsiTargetMode.Iscsi },
+  );
+
+  private readonly isOnFinalStep = computed(() => {
+    const stepper = this.stepper();
+    return !!stepper && stepper.selectedIndex() === stepper.steps().length - 1;
+  });
+
+  /** Duplicate-physical-port errors for FC mode; reactive via the fcPorts snapshot. */
+  protected readonly fcPortErrors = computed<string[]>(() => {
+    const ports = this.fcPortsSnapshot();
+    const validation = this.fcService.validatePhysicalPortUniqueness(ports, this.fcHosts());
+
+    if (!validation.valid) {
+      return validation.duplicates.map((port) => this.translate.instant(
+        'Physical port {port} is used multiple times. Each target port must use a different physical FC port.',
+        { port },
+      ));
+    }
+
+    return [];
+  });
+
+  private readonly baseCanSubmit = this.trackCanSubmit(this.isLoading);
+
+  /** Also gated on the final step + FC port uniqueness so the footer Save can't short-circuit the wizard. */
+  readonly canSubmit = computed(() => {
+    const fcPortsOk = this.targetMode() === IscsiTargetMode.Iscsi || this.fcPortErrors().length === 0;
+    return this.baseCanSubmit() && this.isOnFinalStep() && fcPortsOk;
+  });
+
+  /** Hides the host footer Save until the final step — Next is the only way forward before that. */
+  hideSave(): boolean {
+    return !this.isOnFinalStep();
+  }
+
+  /**
+   * Step-dependent wizard navigation rendered in the `<tn-side-panel>` footer before Save:
+   * Next until the final step (gated on the current step's controls), Back from the second
+   * step on. Re-read each change detection, so the buttons swap as the stepper advances.
+   * Labels are extraction markers — the panel container pipes them through `translate`.
+   */
+  get footerActions(): SidePanelFooterAction[] {
+    const currentIndex = this.stepper()?.selectedIndex() ?? 0;
+    const actions: SidePanelFooterAction[] = [];
+
+    if (currentIndex > 0) {
+      actions.push({
+        label: T('Back'),
+        testId: 'back',
+        onClick: () => this.stepper()?.previous(),
+      });
+    }
+
+    if (!this.isOnFinalStep()) {
+      actions.push({
+        label: T('Next'),
+        testId: 'next',
+        color: 'primary',
+        disabled: () => (currentIndex === 0
+          ? this.form.controls.target.invalid
+          : this.form.controls.extent.invalid),
+        onClick: () => this.stepper()?.next(),
+      });
+    }
+
+    return actions;
+  }
 
   get isNewZvol(): boolean {
     return this.form.controls.extent.enabled && this.form.value.extent.disk === newOption;
@@ -264,17 +330,8 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
     } as IscsiTargetExtentUpdate;
   }
 
-  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
-  hasUnsavedChanges(): boolean {
-    return this.form.dirty;
-  }
-
-  /** The footerless `<tn-side-panel>` host shows its progress bar while this is true. */
-  isBusy(): boolean {
-    return this.isLoading();
-  }
-
   constructor() {
+    super();
     this.iscsiService.getExtents().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((extents) => {
       this.namesInUse.set(extents.map((extent) => extent.name));
     });
@@ -294,24 +351,6 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
 
   protected deleteFcPort(index: number): void {
     this.form.controls.options.controls.fcPorts.removeAt(index);
-  }
-
-  protected validateFcPorts(): string[] {
-    const ports = this.form.controls.options.controls.fcPorts.getRawValue();
-    const validation = this.fcService.validatePhysicalPortUniqueness(ports, this.fcHosts());
-
-    if (!validation.valid) {
-      return validation.duplicates.map((port) => this.translate.instant(
-        'Physical port {port} is used multiple times. Each target port must use a different physical FC port.',
-        { port },
-      ));
-    }
-
-    return [];
-  }
-
-  protected areFcPortsValid(): boolean {
-    return this.form.controls.options.controls.fcPorts.valid && this.validateFcPorts().length === 0;
   }
 
   // Array of used physical ports for each index (excluding that index)
@@ -473,7 +512,7 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
     this.errorHandler.showErrorModal(error);
   }
 
-  async onSubmit(): Promise<void> {
+  protected async onSubmit(): Promise<void> {
     this.isLoading.set(true);
     this.toStop.set(false);
 
@@ -566,6 +605,6 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
 
     this.isLoading.set(false);
     this.form.markAsPristine();
-    this.closed.emit(this.createdTarget);
+    this.closeWith(this.createdTarget);
   }
 }

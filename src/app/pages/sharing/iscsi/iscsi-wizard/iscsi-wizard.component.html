@@ -1,83 +1,30 @@
-<tn-card class="card">
-  <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
-    <tn-stepper #stepper orientation="vertical">
-      <tn-step [label]="'Target' | translate" [completed]="targetStep().completed()">
-        <ix-target-wizard-step [form]="form.controls.target"></ix-target-wizard-step>
-        <div class="step-buttons">
-          <tn-button
-            tnStepperNext
-            color="primary"
-            [testId]="'next'"
-            [label]="'Next' | translate"
-            [disabled]="form.controls.target.invalid"
-          ></tn-button>
-        </div>
-      </tn-step>
+<form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+  <tn-stepper orientation="vertical">
+    <tn-step [label]="'Target' | translate" [completed]="targetStep().completed()">
+      <ix-target-wizard-step [form]="form.controls.target"></ix-target-wizard-step>
+    </tn-step>
 
-      <tn-step [label]="'Extent' | translate" [completed]="extentStep().completed()">
-        <ix-extent-wizard-step [form]="form.controls.extent"></ix-extent-wizard-step>
-        <div class="step-buttons">
-          <tn-button
-            tnStepperPrevious
-            color="secondary"
-            [testId]="'back'"
-            [label]="'Back' | translate"
-          ></tn-button>
-          @if (isNewTarget) {
-            <tn-button
-              tnStepperNext
-              color="primary"
-              [testId]="'next'"
-              [label]="'Next' | translate"
-              [disabled]="form.controls.extent.invalid"
-            ></tn-button>
-          } @else {
-            <tn-button
-              color="primary"
-              type="submit"
-              [testId]="'save'"
-              [label]="'Save' | translate"
-              [disabled]="form.invalid || isLoading()"
-            ></tn-button>
-          }
-        </div>
-      </tn-step>
+    <tn-step [label]="'Extent' | translate" [completed]="extentStep().completed()">
+      <ix-extent-wizard-step [form]="form.controls.extent"></ix-extent-wizard-step>
+    </tn-step>
 
-      @if (isNewTarget) {
-        <tn-step [label]="'Protocol Options' | translate" [completed]="protocolOptionsStep()?.completed()">
-          <ix-protocol-options-wizard-step
-            [form]="form.controls.options"
-            [isFibreChannelMode]="isFibreChannelMode"
-            [addFcPort]="addFcPort.bind(this)"
-            [deleteFcPort]="deleteFcPort.bind(this)"
-            [getUsedPhysicalPorts]="getUsedPhysicalPortsFn()"
-            [availablePorts]="availableFcPorts()"
-          ></ix-protocol-options-wizard-step>
+    @if (isNewTarget) {
+      <tn-step [label]="'Protocol Options' | translate" [completed]="protocolOptionsStep()?.completed()">
+        <ix-protocol-options-wizard-step
+          [form]="form.controls.options"
+          [isFibreChannelMode]="isFibreChannelMode"
+          [addFcPort]="addFcPort.bind(this)"
+          [deleteFcPort]="deleteFcPort.bind(this)"
+          [getUsedPhysicalPorts]="getUsedPhysicalPortsFn()"
+          [availablePorts]="availableFcPorts()"
+        ></ix-protocol-options-wizard-step>
 
-          @if (isFibreChannelMode && validateFcPorts().length > 0) {
-            <div class="fc-port-error" role="alert">
-              {{ validateFcPorts().join(', ') }}
-            </div>
-          }
-
-          <div class="step-buttons">
-            <tn-button
-              tnStepperPrevious
-              color="secondary"
-              [testId]="'back'"
-              [label]="'Back' | translate"
-            ></tn-button>
-            <tn-button
-              *ixRequiresRoles="requiredRoles"
-              color="primary"
-              type="submit"
-              [testId]="'save'"
-              [label]="'Save' | translate"
-              [disabled]="form.invalid || (isFibreChannelMode && !areFcPortsValid()) || isLoading()"
-            ></tn-button>
+        @if (isFibreChannelMode && fcPortErrors().length > 0) {
+          <div class="fc-port-error" role="alert">
+            {{ fcPortErrors().join(', ') }}
           </div>
-        </tn-step>
-      }
-    </tn-stepper>
-  </form>
-</tn-card>
+        }
+      </tn-step>
+    }
+  </tn-stepper>
+</form>

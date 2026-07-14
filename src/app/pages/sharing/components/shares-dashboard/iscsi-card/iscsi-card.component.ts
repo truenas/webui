@@ -202,11 +202,10 @@ export class IscsiCardComponent implements OnInit {
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
     if (openWizard) {
-      // Opened footerless — the wizard's stepper owns its own Next/Back/Save buttons.
+      // The panel footer owns Back/Next/Save (via the wizard's footerActions/hideSave).
       this.formPanel.open(IscsiWizardComponent, {
         title: this.translate.instant('iSCSI Wizard'),
         wide: true,
-        footerless: true,
       }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
     } else {
       this.formPanel.open(TargetFormComponent, {
