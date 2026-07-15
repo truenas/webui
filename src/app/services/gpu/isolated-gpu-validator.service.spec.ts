@@ -73,7 +73,7 @@ describe('IsolatedGpuValidatorService', () => {
       const result = await firstValueFrom(spectator.service.validateGpu(control));
       expect(result).toEqual({
         gpus: {
-          message: 'At least 1 GPU is required by the host for its functions.<p>With your selection, no GPU is available for the host to consume.</p>',
+          message: 'At least 1 GPU is required by the host for its functions. With your selection, no GPU is available for the host to consume.',
         },
       });
     });
@@ -83,7 +83,7 @@ describe('IsolatedGpuValidatorService', () => {
       const result = await firstValueFrom(spectator.service.validateGpu(control));
       expect(result).toEqual({
         gpus: {
-          message: 'At least 1 GPU is required by the host for its functions.<p>Currently following GPU(s) have been isolated:<ol><li>1. Radeon</li></ol></p><p>With your selection, no GPU is available for the host to consume.</p>',
+          message: 'At least 1 GPU is required by the host for its functions. Currently isolated GPU(s): Radeon. With your selection, no GPU is available for the host to consume.',
         },
       });
     });
