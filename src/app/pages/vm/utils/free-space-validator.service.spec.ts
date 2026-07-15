@@ -40,5 +40,8 @@ describe('FreeSpaceValidatorService', () => {
         message: 'Not enough free space. Maximum available: 10 TiB',
       },
     });
+    // tn-form-field only shows errors for touched controls; the validator must
+    // mark volsize touched so its programmatically-set error is visible.
+    expect(formGroup.controls.volsize.touched).toBe(true);
   });
 });

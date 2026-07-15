@@ -46,6 +46,11 @@ export class FreeSpaceValidatorService {
           return null;
         }
 
+        // This error is set programmatically (e.g. on datastore change), but tn-form-field
+        // only displays errors for touched/dirty controls — mark touched first so the error
+        // is visible immediately. Touched must be set before setErrors: the field re-reads
+        // interaction state on the statusChanges emission that setErrors triggers.
+        form.controls.volsize.markAsTouched();
         form.controls.volsize.setErrors(
           this.makeError(freeSpace),
         );

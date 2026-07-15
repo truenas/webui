@@ -10,13 +10,20 @@
     <ix-explorer-create-dataset></ix-explorer-create-dataset>
   </ix-explorer>
 
-  <ix-file-input
-    formControlName="files"
-    acceptedFiles=".img,.iso"
-    [required]="true"
+  <tn-form-field
     [label]="'Installer image file' | translate"
     [tooltip]="helptext.upload_iso_tooltip | translate"
-  ></ix-file-input>
+  >
+    <tn-file-input
+      formControlName="files"
+      accept=".img,.iso"
+      testId="files"
+      [showFileName]="true"
+      [buttonLabel]="'Choose File' | translate"
+      [noFileText]="'No file chosen' | translate"
+      [ariaLabel]="'Installer image file' | translate"
+    ></tn-file-input>
+  </tn-form-field>
 
   </form>
 <ix-form-actions tnDialogAction>

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnIn
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnStepComponent, TnStepperComponent, TnStepperPreviousDirective,
+  TnButtonComponent, TnStepComponent, TnStepperComponent, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { pick } from 'lodash-es';
 import {
@@ -49,7 +49,6 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   standalone: true,
   imports: [
     ModalHeaderComponent,
-    TnCardComponent,
     TnStepperComponent,
     TnStepComponent,
     OsStepComponent,

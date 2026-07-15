@@ -1,32 +1,44 @@
 <form [formGroup]="form">
-  <ix-select
-    formControlName="nic_type"
+  <tn-form-field
     [label]="'Adapter Type' | translate"
-    [required]="true"
-    [options]="nicTypeOptions$"
     [tooltip]="helptext.NIC_type_tooltip | translate"
-  ></ix-select>
+    [required]="true"
+  >
+    <tn-select
+      formControlName="nic_type"
+      [options]="(nicTypeOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="nic_mac"
+  <tn-form-field
     [label]="'Mac Address' | translate"
-    [required]="true"
     [tooltip]="helptext.NIC_mac_tooltip | translate"
-  ></ix-input>
-
-  <ix-select
-    formControlName="nic_attach"
-    [label]="'Attach NIC' | translate"
     [required]="true"
-    [options]="nicAttachOptions$"
+  >
+    <tn-input
+      formControlName="nic_mac"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
+
+  <tn-form-field
+    [label]="'Attach NIC' | translate"
     [tooltip]="helptext.nic_attach_tooltip | translate"
-  ></ix-select>
+    [required]="true"
+  >
+    <tn-select
+      formControlName="nic_attach"
+      [options]="(nicAttachOptions$ | async) ?? []"
+    ></tn-select>
+  </tn-form-field>
 
   @if (isVirtio) {
-    <ix-checkbox
-      formControlName="trust_guest_rx_filters"
-      [label]="'Trust Guest Filters' | translate"
-    ></ix-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="trust_guest_rx_filters"
+        [label]="'Trust Guest Filters' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   }
 
   <ix-form-actions>

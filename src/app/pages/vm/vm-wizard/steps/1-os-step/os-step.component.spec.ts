@@ -2,18 +2,18 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnStepperComponent } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import {
   VmBootloader, VmOs, VmTime,
 } from 'app/enums/vm.enum';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { OsStepComponent } from 'app/pages/vm/vm-wizard/steps/1-os-step/os-step.component';
 
 describe('OsStepComponent', () => {
   let spectator: Spectator<OsStepComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: OsStepComponent,
     imports: [
@@ -35,27 +35,57 @@ describe('OsStepComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  async function setInput(controlName: string, value: string): Promise<void> {
+    const input = await loader.getHarness(TnInputHarness.with({ selector: `[formControlName="${controlName}"]` }));
+    await input.setValue(value);
+  }
+
+  async function setSelect(controlName: string, optionLabel: string): Promise<void> {
+    const select = await loader.getHarness(TnSelectHarness.with({ selector: `[formControlName="${controlName}"]` }));
+    await select.selectOption(optionLabel);
+  }
+
+  async function setCheckbox(controlName: string, checked: boolean): Promise<void> {
+    const checkbox = await loader.getHarness(
+      TnCheckboxHarness.with({ selector: `[formControlName="${controlName}"]` }),
+    );
+    if (checked) {
+      await checkbox.check();
+    } else {
+      await checkbox.uncheck();
+    }
+  }
+
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   async function fillForm(): Promise<void> {
-    await form.fillForm({
-      'Guest Operating System': 'Linux',
-      'Enable Secure Boot': 'Linux',
-      Name: 'vm1',
-      Description: 'My first VM',
-      'System Clock': 'UTC',
-      'Boot Method': 'UEFI',
-      'Shutdown Timeout': 90,
-      'Start on Boot': true,
-      'Enable Display (VNC)': true,
-      Password: '12345678',
-      Bind: '10.10.16.82',
-    });
+    await setSelect('os', 'Linux');
+    await setCheckbox('enable_secure_boot', true);
+    await setInput('name', 'vm1');
+    await setInput('description', 'My first VM');
+    await setSelect('time', 'UTC');
+    await setSelect('bootloader', 'UEFI');
+    await setInput('shutdown_timeout', '90');
+    await setCheckbox('autostart', true);
+    await setCheckbox('enable_vnc', true);
+    await setInput('vnc_password', '12345678');
+    await setSelect('vnc_bind', '10.10.16.82');
   }
+
+  it('requires an OS to be selected before the step is valid', async () => {
+    await setInput('name', 'vm1');
+    await setInput('vnc_password', '12345678');
+
+    expect(spectator.component.form.controls.os.hasError('required')).toBe(true);
+    expect(spectator.component.form.invalid).toBe(true);
+
+    await setSelect('os', 'Linux');
+
+    expect(spectator.component.form.valid).toBe(true);
+  });
 
   it('shows a form with basic VM fields like name, description, OS, etc.', async () => {
     await fillForm();
@@ -80,12 +110,8 @@ describe('OsStepComponent', () => {
   it('shows Hyper-V Enlightenments checkbox when Windows is selected as OS', async () => {
     await fillForm();
 
-    await form.fillForm(
-      {
-        'Guest Operating System': 'Windows',
-        'Enable Hyper-V Enlightenments': true,
-      },
-    );
+    await setSelect('os', 'Windows');
+    await setCheckbox('hyperv_enlightenments', true);
 
     expect(spectator.component.form.value).toMatchObject({
       os: VmOs.Windows,
@@ -110,14 +136,12 @@ describe('OsStepComponent', () => {
 
   describe('VNC Display', () => {
     it('enables VNC fields when Enable Display (VNC) is checked', async () => {
-      await form.fillForm({
-        'Enable Display (VNC)': true,
-      });
+      await setCheckbox('enable_vnc', true);
 
-      const formValues = await form.getValues();
-      expect(formValues).toMatchObject({
-        'Enable Display (VNC)': true,
-      });
+      const vncCheckbox = await loader.getHarness(
+        TnCheckboxHarness.with({ selector: '[formControlName="enable_vnc"]' }),
+      );
+      expect(await vncCheckbox.isChecked()).toBe(true);
 
       // VNC fields should be accessible
       expect(spectator.component.form.controls.vnc_bind.enabled).toBe(true);
@@ -125,15 +149,11 @@ describe('OsStepComponent', () => {
     });
 
     it('disables VNC fields when Enable Display (VNC) is unchecked', async () => {
-      await form.fillForm({
-        'Enable Display (VNC)': true,
-        Bind: '10.10.16.82',
-        Password: 'vncpass',
-      });
+      await setCheckbox('enable_vnc', true);
+      await setSelect('vnc_bind', '10.10.16.82');
+      await setInput('vnc_password', 'vncpass');
 
-      await form.fillForm({
-        'Enable Display (VNC)': false,
-      });
+      await setCheckbox('enable_vnc', false);
 
       // VNC fields should be disabled
       expect(spectator.component.form.controls.vnc_bind.disabled).toBe(true);
@@ -141,40 +161,34 @@ describe('OsStepComponent', () => {
     });
 
     it('validates VNC password with 8-character limit', async () => {
-      await form.fillForm({
-        'Enable Display (VNC)': true,
-        Password: '123456789', // 9 characters - should be invalid
-      });
+      await setCheckbox('enable_vnc', true);
+      await setInput('vnc_password', '123456789'); // 9 characters - should be invalid
 
       expect(spectator.component.form.controls.vnc_password.invalid).toBe(true);
       expect(spectator.component.form.controls.vnc_password.hasError('maxlength')).toBe(true);
     });
 
     it('accepts VNC password with 8 characters or less', async () => {
-      await form.fillForm({
-        'Enable Display (VNC)': true,
-        Password: '12345678', // 8 characters - should be valid
-      });
+      await setCheckbox('enable_vnc', true);
+      await setInput('vnc_password', '12345678'); // 8 characters - should be valid
 
       expect(spectator.component.form.controls.vnc_password.valid).toBe(true);
     });
 
     it('requires VNC password when VNC is enabled', async () => {
-      await form.fillForm({
-        'Enable Display (VNC)': true,
-        Password: '', // Empty password - should be invalid
-      });
+      await setCheckbox('enable_vnc', true);
+      // TnInputHarness.setValue('') cannot send empty keys; set the control directly.
+      spectator.component.form.controls.vnc_password.setValue('');
+      spectator.component.form.controls.vnc_password.markAsTouched();
 
       expect(spectator.component.form.controls.vnc_password.invalid).toBe(true);
       expect(spectator.component.form.controls.vnc_password.hasError('required')).toBe(true);
     });
 
     it('shows VNC form values when enabled', async () => {
-      await form.fillForm({
-        'Enable Display (VNC)': true,
-        Password: 'vncpass',
-        Bind: '10.10.16.82',
-      });
+      await setCheckbox('enable_vnc', true);
+      await setInput('vnc_password', 'vncpass');
+      await setSelect('vnc_bind', '10.10.16.82');
 
       expect(spectator.component.form.value).toMatchObject({
         enable_vnc: true,
@@ -184,13 +198,11 @@ describe('OsStepComponent', () => {
     });
 
     it('shows complete form values with VNC enabled', async () => {
-      await form.fillForm({
-        'Guest Operating System': 'Linux',
-        Name: 'vnc-test-vm',
-        'Enable Display (VNC)': true,
-        Password: 'vncpass',
-        Bind: '10.10.16.82',
-      });
+      await setSelect('os', 'Linux');
+      await setInput('name', 'vnc-test-vm');
+      await setCheckbox('enable_vnc', true);
+      await setInput('vnc_password', 'vncpass');
+      await setSelect('vnc_bind', '10.10.16.82');
 
       expect(spectator.component.form.value).toMatchObject({
         os: VmOs.Linux,

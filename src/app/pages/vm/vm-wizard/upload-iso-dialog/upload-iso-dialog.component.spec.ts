@@ -59,8 +59,10 @@ describe('UploadIsoDialogComponent', () => {
 
     await form.fillForm({
       'ISO save location': '/mnt/tank/iso',
-      'Installer image file': [upload],
     });
+    // Native file inputs cannot be populated programmatically; set the control directly.
+    spectator.component.form.patchValue({ files: upload });
+    spectator.detectChanges();
 
     const uploadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Upload' }));
     await uploadButton.click();
@@ -85,8 +87,9 @@ describe('UploadIsoDialogComponent', () => {
 
     await form.fillForm({
       'ISO save location': '/mnt/tank/iso',
-      'Installer image file': [upload],
     });
+    spectator.component.form.patchValue({ files: upload });
+    spectator.detectChanges();
 
     const uploadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Upload' }));
     await uploadButton.click();
@@ -152,7 +155,7 @@ describe('UploadIsoDialogComponent', () => {
     it('accepts dataset paths like /mnt/poolname/dataset', () => {
       spectator.component.form.patchValue({
         path: '/mnt/tank/iso',
-        files: [fakeFile('test.iso')],
+        files: fakeFile('test.iso'),
       });
       spectator.detectChanges();
 
@@ -163,7 +166,7 @@ describe('UploadIsoDialogComponent', () => {
     it('accepts nested dataset paths', () => {
       spectator.component.form.patchValue({
         path: '/mnt/tank/iso/images',
-        files: [fakeFile('test.iso')],
+        files: fakeFile('test.iso'),
       });
       spectator.detectChanges();
 

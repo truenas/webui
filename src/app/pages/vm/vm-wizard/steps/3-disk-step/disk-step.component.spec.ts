@@ -2,16 +2,16 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnStepperComponent } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnSelectHarness, TnStepperComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 import { ImageVirtualSizeValidatorService } from 'app/pages/vm/utils/image-virtual-size-validator.service';
 import { DiskStepComponent, NewOrExistingDisk } from 'app/pages/vm/vm-wizard/steps/3-disk-step/disk-step.component';
@@ -20,7 +20,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 describe('DiskStepComponent', () => {
   let spectator: Spectator<DiskStepComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const createComponent = createComponentFactory({
     component: DiskStepComponent,
@@ -54,19 +53,42 @@ describe('DiskStepComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  async function setInput(controlName: string, value: string): Promise<void> {
+    const input = await loader.getHarness(TnInputHarness.with({ selector: `[formControlName="${controlName}"]` }));
+    await input.setValue(value);
+  }
+
+  async function setSelect(controlName: string, optionLabel: string): Promise<void> {
+    const select = await loader.getHarness(TnSelectHarness.with({ selector: `[formControlName="${controlName}"]` }));
+    await select.selectOption(optionLabel);
+  }
+
+  async function setImportImage(checked: boolean): Promise<void> {
+    const checkbox = await loader.getHarness(
+      TnCheckboxHarness.with({ selector: '[formControlName="import_image"]' }),
+    );
+    if (checked) {
+      await checkbox.check();
+    } else {
+      await checkbox.uncheck();
+    }
+  }
+
+  async function selectDiskMode(label: string): Promise<void> {
+    const radio = await loader.getHarness(TnRadioHarness.with({ label }));
+    await radio.check();
+  }
+
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   describe('create new disk image', () => {
     beforeEach(async () => {
-      await form.fillForm({
-        'Select Disk Type': 'AHCI',
-        'Zvol Location': 'poolio',
-        Size: '20 GiB',
-      });
+      await setSelect('hdd_type', 'AHCI');
+      await setSelect('datastore', 'poolio');
+      await setInput('volsize', '20 GiB');
     });
 
     it('shows form fields', () => {
@@ -97,13 +119,10 @@ describe('DiskStepComponent', () => {
 
   describe('use existing disk image', () => {
     beforeEach(async () => {
-      const modeRadio = await loader.getHarness(IxRadioGroupHarness);
-      await modeRadio.setValue('Use existing disk image');
+      await selectDiskMode('Use existing disk image');
 
-      await form.fillForm({
-        'Select Disk Type': 'VirtIO',
-        'Select Existing Zvol': 'poolio/test-327brn',
-      });
+      await setSelect('hdd_type', 'VirtIO');
+      await setSelect('hdd_path', 'poolio/test-327brn');
     });
 
     it('shows form fields', () => {
@@ -134,18 +153,16 @@ describe('DiskStepComponent', () => {
 
   describe('import disk image', () => {
     beforeEach(async () => {
-      const importCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Import Image' }));
-      await importCheckbox.setValue(true);
+      await setImportImage(true);
     });
 
     it('shows image source field when import checkbox is checked', async () => {
-      const formValues = await form.getValues();
-      expect(formValues).toMatchObject({
-        'Import Image': true,
+      expect(spectator.component.form.value).toMatchObject({
+        import_image: true,
       });
 
-      const labels = await form.getLabels();
-      expect(labels).toContain('Image Source');
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Image Source' }));
+      expect(explorer).toBeTruthy();
     });
 
     it('validates image file extensions', () => {
@@ -169,11 +186,9 @@ describe('DiskStepComponent', () => {
     });
 
     it('includes import information in summary when image is selected', async () => {
-      await form.fillForm({
-        'Select Disk Type': 'AHCI',
-        'Zvol Location': 'poolio',
-        Size: '20 GiB',
-      });
+      await setSelect('hdd_type', 'AHCI');
+      await setSelect('datastore', 'poolio');
+      await setInput('volsize', '20 GiB');
 
       spectator.component.form.controls.image_source.setValue('/mnt/pool/ubuntu.qcow2');
 
@@ -223,8 +238,7 @@ describe('DiskStepComponent', () => {
     it('attaches volsize async validator when creating new disk and importing image', async () => {
       const validateVolsizeSpy = jest.spyOn(imageVirtualSizeValidator, 'validateVolsize');
 
-      const importCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Import Image' }));
-      await importCheckbox.setValue(true);
+      await setImportImage(true);
 
       expect(validateVolsizeSpy).toHaveBeenCalledWith(spectator.component.form, expect.any(Function));
     });
@@ -232,11 +246,8 @@ describe('DiskStepComponent', () => {
     it('attaches hdd_path async validator when using existing disk and importing image', async () => {
       const validateHddPathSpy = jest.spyOn(imageVirtualSizeValidator, 'validateHddPath');
 
-      const modeRadio = await loader.getHarness(IxRadioGroupHarness);
-      await modeRadio.setValue('Use existing disk image');
-
-      const importCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Import Image' }));
-      await importCheckbox.setValue(true);
+      await selectDiskMode('Use existing disk image');
+      await setImportImage(true);
 
       expect(validateHddPathSpy).toHaveBeenCalledWith(
         spectator.component.form,
@@ -261,8 +272,7 @@ describe('DiskStepComponent', () => {
       const validateVolsizeSpy = jest.spyOn(imageVirtualSizeValidator, 'validateVolsize');
       const validateHddPathSpy = jest.spyOn(imageVirtualSizeValidator, 'validateHddPath');
 
-      const importCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Import Image' }));
-      await importCheckbox.setValue(true);
+      await setImportImage(true);
 
       // Initially in "new disk" mode - validateVolsize should be called
       expect(validateVolsizeSpy).toHaveBeenCalledTimes(1);
@@ -272,8 +282,7 @@ describe('DiskStepComponent', () => {
       validateHddPathSpy.mockClear();
 
       // Switch to "existing disk" mode
-      const modeRadio = await loader.getHarness(IxRadioGroupHarness);
-      await modeRadio.setValue('Use existing disk image');
+      await selectDiskMode('Use existing disk image');
 
       // Now validateHddPath should be called
       expect(validateHddPathSpy).toHaveBeenCalledTimes(1);
@@ -283,7 +292,7 @@ describe('DiskStepComponent', () => {
       validateHddPathSpy.mockClear();
 
       // Switch back to "new disk" mode
-      await modeRadio.setValue('Create new disk image');
+      await selectDiskMode('Create new disk image');
 
       // validateVolsize should be called again
       expect(validateVolsizeSpy).toHaveBeenCalledTimes(1);
@@ -291,15 +300,14 @@ describe('DiskStepComponent', () => {
     });
 
     it('does not trigger validation on image source change if import is disabled', async () => {
-      const importCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Import Image' }));
-      await importCheckbox.setValue(true);
+      await setImportImage(true);
 
       // Spy on updateValueAndValidity
       const volsizeUpdateSpy = jest.spyOn(spectator.component.form.controls.volsize, 'updateValueAndValidity');
       const hddPathUpdateSpy = jest.spyOn(spectator.component.form.controls.hdd_path, 'updateValueAndValidity');
 
       // Disable import - this will trigger updateValueAndValidity via setConditionalValidators
-      await importCheckbox.setValue(false);
+      await setImportImage(false);
 
       // Clear spy call history after setup
       volsizeUpdateSpy.mockClear();

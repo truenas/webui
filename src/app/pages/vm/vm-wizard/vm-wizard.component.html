@@ -4,52 +4,50 @@
   [loading]="isLoading"
 ></ix-modal-header>
 
-<tn-card>
-  <tn-stepper #stepper orientation="vertical" [linear]="true" (selectionChange)="updateSummary()">
-    <tn-step [label]="'Operating System' | translate" [completed]="osStep().completed()">
-      <ix-os-step></ix-os-step>
-    </tn-step>
+<tn-stepper #stepper orientation="vertical" [linear]="true" (selectionChange)="updateSummary()">
+  <tn-step [label]="'Operating System' | translate" [completed]="osStep().completed()">
+    <ix-os-step></ix-os-step>
+  </tn-step>
 
-    <tn-step [label]="'CPU And Memory' | translate" [completed]="cpuAndMemoryStep().completed()">
-      <ix-cpu-and-memory-step></ix-cpu-and-memory-step>
-    </tn-step>
+  <tn-step [label]="'CPU And Memory' | translate" [completed]="cpuAndMemoryStep().completed()">
+    <ix-cpu-and-memory-step></ix-cpu-and-memory-step>
+  </tn-step>
 
-    <tn-step [label]="'Disks' | translate" [completed]="diskStep().completed()">
-      <ix-disk-step></ix-disk-step>
-    </tn-step>
+  <tn-step [label]="'Disks' | translate" [completed]="diskStep().completed()">
+    <ix-disk-step></ix-disk-step>
+  </tn-step>
 
-    <tn-step [label]="'Network Interface' | translate" [completed]="networkInterfaceStep().completed()">
-      <ix-network-interface-step></ix-network-interface-step>
-    </tn-step>
+  <tn-step [label]="'Network Interface' | translate" [completed]="networkInterfaceStep().completed()">
+    <ix-network-interface-step></ix-network-interface-step>
+  </tn-step>
 
-    <tn-step [label]="'Installation Media' | translate" [completed]="installationMediaStep().completed()">
-      <ix-installation-media-step></ix-installation-media-step>
-    </tn-step>
+  <tn-step [label]="'Installation Media' | translate" [completed]="installationMediaStep().completed()">
+    <ix-installation-media-step></ix-installation-media-step>
+  </tn-step>
 
-    <tn-step [label]="'GPU' | translate" [completed]="gpuStep().completed()">
-      <ix-gpu-step></ix-gpu-step>
-    </tn-step>
+  <tn-step [label]="'GPU' | translate" [completed]="gpuStep().completed()">
+    <ix-gpu-step></ix-gpu-step>
+  </tn-step>
 
-    <tn-step [label]="'Confirm Options' | translate">
-      <ix-summary [summary]="summary"></ix-summary>
+  <tn-step [label]="'Confirm Options' | translate">
+    <ix-summary [summary]="summary"></ix-summary>
 
-      <p class="confirm-line">{{ 'Confirm these settings.' | translate }}</p>
+    <p class="confirm-line">{{ 'Confirm these settings.' | translate }}</p>
 
-      <ix-form-actions>
-        <tn-button
-          tnStepperPrevious
-          [testId]="'back'"
-          [label]="'Back' | translate"
-        ></tn-button>
-        <tn-button
-          *ixRequiresRoles="requiredRoles"
-          color="primary"
-          [testId]="'save'"
-          [label]="'Save' | translate"
-          [disabled]="isLoading"
-          (onClick)="onSubmit()"
-        ></tn-button>
-      </ix-form-actions>
-    </tn-step>
-  </tn-stepper>
-</tn-card>
+    <ix-form-actions>
+      <tn-button
+        tnStepperPrevious
+        [testId]="'back'"
+        [label]="'Back' | translate"
+      ></tn-button>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="isLoading"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    </ix-form-actions>
+  </tn-step>
+</tn-stepper>
