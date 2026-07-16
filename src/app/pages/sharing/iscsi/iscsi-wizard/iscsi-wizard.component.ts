@@ -7,7 +7,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnStepComponent, TnStepperComponent, TnStepperNextDirective,
+  TnButtonComponent, TnStepComponent, TnStepperComponent, TnStepperNextDirective,
   TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import {
@@ -64,7 +64,6 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnCardComponent,
     ReactiveFormsModule,
     TnStepperComponent,
     TnStepComponent,
