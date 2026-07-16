@@ -194,6 +194,7 @@ export class NvmeOfCardComponent implements OnInit {
     // stacks on top.
     this.formPanel.open(AddSubsystemComponent, {
       title: this.translate.instant('Add Subsystem'),
+      footerless: true,
     })
       .onSuccess(() => this.nvmeOfStore.initialize(), this.destroyRef);
   }

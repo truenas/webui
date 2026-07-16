@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -90,12 +90,8 @@ describe('AddSubsystemComponent', () => {
     ] as NamespaceChanges[];
     (addNamespaces.namespacesControl as unknown as FormControl).setValue(namespaces);
 
-    // Next/Back/Save live in the side-panel footer, driven through the form's public
-    // footer surface (footerActions / hideSave / canSubmit / submit) — there's no host here.
-    expect(spectator.component.hideSave()).toBe(true);
-    expect(spectator.component.footerActions).toMatchObject([{ testId: 'next' }]);
-    spectator.component.footerActions[0].onClick();
-    spectator.detectChanges();
+    const nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
+    await nextButton.click();
 
     // Ports, hosts
     const addPorts = spectator.query(AddSubsystemPortsComponent);
@@ -113,10 +109,8 @@ describe('AddSubsystemComponent', () => {
       { id: 200 } as NvmeOfHost,
     ]);
 
-    expect(spectator.component.footerActions).toMatchObject([{ testId: 'back' }]);
-    expect(spectator.component.hideSave()).toBe(false);
-    expect(spectator.component.canSubmit()).toBe(true);
-    spectator.component.submit();
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.create', [
       {

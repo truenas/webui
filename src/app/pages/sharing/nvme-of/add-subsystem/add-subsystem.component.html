@@ -1,60 +1,88 @@
-<form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
-  <tn-stepper orientation="vertical">
-    <tn-step [label]="'What To Share' | translate" [completed]="whatToShareCompleted()">
-      <tn-form-field
-        class="name-input"
-        [label]="'Subsystem Name' | translate"
-      >
-        <tn-input formControlName="name" [required]="true"></tn-input>
-      </tn-form-field>
-
-      <ix-details-table>
-        <ix-details-item
-          [label]="'NQN' | translate"
-          [tooltip]="helptext.subsystemNqn | translate"
+<tn-card class="card">
+  <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+    <tn-stepper #stepper orientation="vertical">
+      <tn-step [label]="'What To Share' | translate" [completed]="whatToShareCompleted()">
+        <tn-form-field
+          class="name-input"
+          [label]="'Subsystem Name' | translate"
         >
-          <ix-editable>
-            <div view>
-              {{ form.value.subnqn || ('Generate from global settings' | translate) }}
-            </div>
+          <tn-input formControlName="name" [required]="true"></tn-input>
+        </tn-form-field>
 
-            <div edit>
-              <tn-input
-                class="nqn-input"
-                name="subnqn"
-                formControlName="subnqn"
-                [ariaLabel]="'NQN' | translate"
-              ></tn-input>
-            </div>
-          </ix-editable>
-        </ix-details-item>
-      </ix-details-table>
+        <ix-details-table>
+          <ix-details-item
+            [label]="'NQN' | translate"
+            [tooltip]="helptext.subsystemNqn | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ form.value.subnqn || ('Generate from global settings' | translate) }}
+              </div>
 
-      <ix-add-subsystem-namespaces
-        class="namespaces-block"
-        [namespacesControl]="form.controls.namespaces"
-      ></ix-add-subsystem-namespaces>
-    </tn-step>
+              <div edit>
+                <tn-input
+                  class="nqn-input"
+                  name="subnqn"
+                  formControlName="subnqn"
+                  [ariaLabel]="'NQN' | translate"
+                ></tn-input>
+              </div>
+            </ix-editable>
+          </ix-details-item>
+        </ix-details-table>
 
-    <tn-step [label]="'Access' | translate">
-      <tn-form-field>
-        <tn-checkbox
-          formControlName="allowAnyHost"
-          [label]="'Allow any host to connect' | translate"
-        ></tn-checkbox>
-      </tn-form-field>
+        <ix-add-subsystem-namespaces
+          class="namespaces-block"
+          [namespacesControl]="form.controls.namespaces"
+        ></ix-add-subsystem-namespaces>
 
-      @if (!form.value.allowAnyHost) {
-        <ix-add-subsystem-hosts
-          class="hosts-block"
-          [hostsControl]="form.controls.allowedHosts"
-        ></ix-add-subsystem-hosts>
-      }
+        <div class="step-buttons">
+          <tn-button
+            tnStepperNext
+            color="primary"
+            [testId]="'next'"
+            [label]="'Next' | translate"
+            [disabled]="form.controls.name.invalid"
+          ></tn-button>
+        </div>
+      </tn-step>
 
-      <ix-add-subsystem-ports
-        class="ports-block"
-        [portsControl]="form.controls.ports"
-      ></ix-add-subsystem-ports>
-    </tn-step>
-  </tn-stepper>
-</form>
+      <tn-step [label]="'Access' | translate">
+        <tn-form-field>
+          <tn-checkbox
+            formControlName="allowAnyHost"
+            [label]="'Allow any host to connect' | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+
+        @if (!form.value.allowAnyHost) {
+          <ix-add-subsystem-hosts
+            class="hosts-block"
+            [hostsControl]="form.controls.allowedHosts"
+          ></ix-add-subsystem-hosts>
+        }
+
+        <ix-add-subsystem-ports
+          class="ports-block"
+          [portsControl]="form.controls.ports"
+        ></ix-add-subsystem-ports>
+
+        <div class="step-buttons last-step-buttons">
+          <tn-button
+            tnStepperPrevious
+            [testId]="'back'"
+            [label]="'Back' | translate"
+          ></tn-button>
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            color="primary"
+            [testId]="'save'"
+            [label]="'Save' | translate"
+            [disabled]="form.invalid || isLoading()"
+            (onClick)="onSubmit()"
+          ></tn-button>
+        </div>
+      </tn-step>
+    </tn-stepper>
+  </form>
+</tn-card>

@@ -138,6 +138,7 @@ describe('IscsiCardComponent', () => {
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(IscsiWizardComponent, {
       title: 'iSCSI Wizard',
       wide: true,
+      footerless: true,
     });
   });
 
