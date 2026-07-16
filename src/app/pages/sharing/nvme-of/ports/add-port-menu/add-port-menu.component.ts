@@ -6,7 +6,7 @@ import {
   TnButtonComponent, TnDialog, TnDividerComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
   tnIconMarker,
 } from '@truenas/ui-components';
-import { sortBy } from 'lodash-es';
+import { kebabCase, sortBy } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
@@ -52,6 +52,13 @@ export class AddPortMenuComponent {
   });
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+
+  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
+  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+  protected addPortTestId(port: NvmeOfPort): string[] {
+    return ['add-port', kebabCase(port.addr_trtype), kebabCase(port.addr_traddr), kebabCase(String(port.addr_trsvcid))];
+  }
+
   protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
   protected openPortForm(): void {

@@ -19,6 +19,7 @@ import { LicenseService } from 'app/services/license.service';
 @Component({
   selector: 'ix-target-wizard-step',
   templateUrl: './target-wizard-step.component.html',
+  styleUrls: ['./target-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

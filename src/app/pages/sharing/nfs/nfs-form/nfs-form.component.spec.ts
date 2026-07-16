@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Provider } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+// TODO(NAS-141028): swap to TnButtonHarness once the shared ix-form's Save migrates to tn-button.
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
@@ -179,9 +180,14 @@ describe('NfsFormComponent', () => {
       muteNestedFormArrayAdvisory();
     });
 
-    it('gives the Description input an accessible name matching its field label', async () => {
+    it('gives the Description input an accessible name via its field label', async () => {
+      // The tn-form-field label is auto-associated (aria-labelledby) since 0.3.23, so the
+      // input carries no aria-label of its own. White-box: no harness API for labelledby yet.
       const description = await loader.getHarness(TnInputHarness.with({ name: 'comment' }));
-      expect(await description.getAriaLabel()).toBe('Description');
+      expect(await description.getAriaLabel()).toBeNull();
+
+      const inputEl = spectator.query('tn-input[formcontrolname="comment"] input');
+      expect(inputEl.getAttribute('aria-labelledby')).toBeTruthy();
     });
 
     it('shows Access fields when Advanced Options button is pressed', async () => {

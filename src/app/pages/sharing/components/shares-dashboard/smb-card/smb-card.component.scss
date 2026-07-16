@@ -1,7 +1,9 @@
 @import '../../storage-tier-cell/tier-cell-host';
+@import '../card-flush-table';
 @import '../card-service-toggle';
 
 @include tier-cell-host;
+@include card-flush-table;
 @include card-service-toggle;
 
 .card-title-link {

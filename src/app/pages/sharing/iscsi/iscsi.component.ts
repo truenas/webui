@@ -116,10 +116,11 @@ export class IscsiComponent {
   }
 
   protected openWizard(): void {
-    // The panel footer owns Back/Next/Save (via the wizard's footerActions/hideSave).
+    // Opened footerless — the wizard's stepper owns its own Next/Back/Save buttons.
     this.formPanel.open(IscsiWizardComponent, {
       title: this.translate.instant('iSCSI Wizard'),
       wide: true,
+      footerless: true,
     })
       .onSuccess((response) => {
         this.iscsiService.refreshData(response);

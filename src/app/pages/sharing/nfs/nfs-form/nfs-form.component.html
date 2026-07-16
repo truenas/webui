@@ -21,13 +21,10 @@
 
   <tn-form-section [heading]="'General Options' | translate">
     <tn-form-field [label]="'Description' | translate">
-      <!-- TODO: [ariaLabel] duplicates the tn-form-field label — remove once the
-        library associates its label with the projected control (for/aria-labelledby). -->
       <tn-input
         testId="comment"
         name="comment"
         formControlName="comment"
-        [ariaLabel]="'Description' | translate"
       ></tn-input>
     </tn-form-field>
 
@@ -52,8 +49,6 @@
         [label]="'Maproot User' | translate"
         [tooltip]="helptext.maprootUserTooltip | translate"
       >
-        <!-- TODO: [placeholder] doubles as the accessible-name fallback — tn-autocomplete
-          has no [ariaLabel] input and tn-form-field does not associate its label yet. -->
         <tn-autocomplete
           formControlName="maproot_user"
           [testId]="'maproot-user'"

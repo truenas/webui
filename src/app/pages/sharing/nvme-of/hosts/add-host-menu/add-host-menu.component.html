@@ -19,7 +19,7 @@
   <tn-menu #addMenu>
     @for (host of unusedHosts(); track host.id) {
       <tn-menu-item
-        [testId]="['add-host', host.hostnqn]"
+        [testId]="['add-host', hostTestIdSlug(host)]"
         (itemClick)="selectHost(host)"
       >
         @if (host.description) {

@@ -4,7 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnSelectComponent, type TnSelectOption } from '@truenas/ui-components';
 import { map, take } from 'rxjs';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
@@ -36,6 +36,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 })
 export class TableColumnPickerComponent<T = unknown> implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   readonly columns = input.required<Column<T, ColumnComponent<T>>[]>();
@@ -44,8 +45,14 @@ export class TableColumnPickerComponent<T = unknown> implements OnInit {
 
   protected readonly control = new FormControl<string[]>([], { nonNullable: true });
 
+  // Label is translated for display; value stays the raw title — it is the
+  // persistence key and must remain wire-compatible with the legacy selector's
+  // saved preferences.
   protected readonly options = computed<TnSelectOption<string>[]>(
-    () => this.selectableColumns().map((column) => ({ value: column.title, label: column.title })),
+    () => this.selectableColumns().map((column) => ({
+      value: column.title,
+      label: this.translate.instant(column.title),
+    })),
   );
 
   private lastSelected: string[] = [];

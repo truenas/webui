@@ -39,8 +39,6 @@
 
             @if (entry.controls.ae_who.value === nfsAclTag.User) {
               <tn-form-field [label]="'User' | translate" [required]="true">
-                <!-- TODO(NAS-141021): [placeholder] doubles as the accessible-name fallback — tn-autocomplete
-                  has no [ariaLabel] input and tn-form-field does not associate its label yet. -->
                 <tn-autocomplete
                   formControlName="user"
                   [testId]="'user'"

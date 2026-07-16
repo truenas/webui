@@ -1,20 +1,23 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input, OnChanges, inject, signal,
 } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCardComponent, TnCardHeaderDirective, TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective,
   TnTableComponent, TnTablePagerComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { kebabCase } from 'lodash-es';
+import { of, switchMap } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { convertStringToId, createTable, toDisplayedColumns } from 'app/modules/ix-table/utils';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 
 @Component({
   selector: 'ix-smb-open-files',
@@ -24,14 +27,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     TnCardComponent,
     TnCardHeaderDirective,
-    TestDirective,
+    TnTestIdDirective,
     TnTableComponent,
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class SmbOpenFilesComponent implements OnChanges {
@@ -43,7 +45,15 @@ export class SmbOpenFilesComponent implements OnChanges {
     return Object.values(this.lock()?.opens || []);
   });
 
-  dataProvider: AsyncDataProvider<SmbOpenInfo>;
+  // The provider is rebuilt whenever the lock input changes, so it is held in a
+  // signal and adapted via the Signal<provider> helper overload (see target-list).
+  dataProvider = signal(new AsyncDataProvider<SmbOpenInfo>(of([] as SmbOpenInfo[])));
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(
+    toObservable(this.dataProvider).pipe(switchMap((provider) => provider.emptyType$)),
+  );
+
   protected readonly columns = signal(createTable<SmbOpenInfo>([
     textColumn({
       title: this.translate.instant('Server'),
@@ -80,12 +90,15 @@ export class SmbOpenFilesComponent implements OnChanges {
   }
 
   protected uniqueRowTag(row: SmbOpenInfo): string {
-    return convertStringToId(`smb-open-file-${row.username}-${row.uid}`);
+    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
+    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+    return kebabCase(convertStringToId(`smb-open-file-${row.username}-${row.uid}`));
   }
 
   private createProvider(): void {
-    this.dataProvider = new AsyncDataProvider(of(this.files()));
-    this.dataProvider.load();
+    const provider = new AsyncDataProvider(of(this.files()));
+    this.dataProvider.set(provider);
+    provider.load();
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

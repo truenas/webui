@@ -4,6 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnCardComponent, TnCardFooterActionsDirective, TnIconButtonComponent,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -51,6 +52,12 @@ export class SubsystemPortsCardComponent {
   protected readonly searchableElements = subsystemPortsCardElements;
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+
+  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
+  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+  protected removePortTestId(port: NvmeOfPort): string[] {
+    return ['remove-port-association', kebabCase(port.addr_trtype), kebabCase(port.addr_traddr), kebabCase(String(port.addr_trsvcid))];
+  }
 
   protected onPortAdded(port: NvmeOfPort): void {
     this.nvmeOfService.associatePorts(this.subsystem(), [port])

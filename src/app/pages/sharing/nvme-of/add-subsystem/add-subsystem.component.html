@@ -1,5 +1,5 @@
 <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
-  <tn-stepper orientation="vertical">
+  <tn-stepper #stepper orientation="vertical">
     <tn-step [label]="'What To Share' | translate" [completed]="whatToShareCompleted()">
       <tn-form-field
         class="name-input"
@@ -34,6 +34,16 @@
         class="namespaces-block"
         [namespacesControl]="form.controls.namespaces"
       ></ix-add-subsystem-namespaces>
+
+      <div class="step-buttons">
+        <tn-button
+          tnStepperNext
+          color="primary"
+          [testId]="'next'"
+          [label]="'Next' | translate"
+          [disabled]="form.controls.name.invalid"
+        ></tn-button>
+      </div>
     </tn-step>
 
     <tn-step [label]="'Access' | translate">
@@ -55,6 +65,22 @@
         class="ports-block"
         [portsControl]="form.controls.ports"
       ></ix-add-subsystem-ports>
+
+      <div class="step-buttons last-step-buttons">
+        <tn-button
+          tnStepperPrevious
+          [testId]="'back'"
+          [label]="'Back' | translate"
+        ></tn-button>
+        <tn-button
+          *ixRequiresRoles="requiredRoles"
+          color="primary"
+          [testId]="'save'"
+          [label]="'Save' | translate"
+          [disabled]="form.invalid || isLoading()"
+          (onClick)="onSubmit()"
+        ></tn-button>
+      </div>
     </tn-step>
   </tn-stepper>
 </form>

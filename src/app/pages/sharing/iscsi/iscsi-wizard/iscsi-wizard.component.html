@@ -1,11 +1,45 @@
-<form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
-  <tn-stepper orientation="vertical">
+<form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
+  <tn-stepper #stepper orientation="vertical">
     <tn-step [label]="'Target' | translate" [completed]="targetStep().completed()">
       <ix-target-wizard-step [form]="form.controls.target"></ix-target-wizard-step>
+      <div class="step-buttons">
+        <tn-button
+          tnStepperNext
+          color="primary"
+          [testId]="'next'"
+          [label]="'Next' | translate"
+          [disabled]="form.controls.target.invalid"
+        ></tn-button>
+      </div>
     </tn-step>
 
     <tn-step [label]="'Extent' | translate" [completed]="extentStep().completed()">
       <ix-extent-wizard-step [form]="form.controls.extent"></ix-extent-wizard-step>
+      <div class="step-buttons">
+        <tn-button
+          tnStepperPrevious
+          color="secondary"
+          [testId]="'back'"
+          [label]="'Back' | translate"
+        ></tn-button>
+        @if (isNewTarget) {
+          <tn-button
+            tnStepperNext
+            color="primary"
+            [testId]="'next'"
+            [label]="'Next' | translate"
+            [disabled]="form.controls.extent.invalid"
+          ></tn-button>
+        } @else {
+          <tn-button
+            color="primary"
+            type="submit"
+            [testId]="'save'"
+            [label]="'Save' | translate"
+            [disabled]="form.invalid || isLoading()"
+          ></tn-button>
+        }
+      </div>
     </tn-step>
 
     @if (isNewTarget) {
@@ -19,11 +53,28 @@
           [availablePorts]="availableFcPorts()"
         ></ix-protocol-options-wizard-step>
 
-        @if (isFibreChannelMode && fcPortErrors().length > 0) {
+        @if (isFibreChannelMode && validateFcPorts().length > 0) {
           <div class="fc-port-error" role="alert">
-            {{ fcPortErrors().join(', ') }}
+            {{ validateFcPorts().join(', ') }}
           </div>
         }
+
+        <div class="step-buttons">
+          <tn-button
+            tnStepperPrevious
+            color="secondary"
+            [testId]="'back'"
+            [label]="'Back' | translate"
+          ></tn-button>
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            color="primary"
+            type="submit"
+            [testId]="'save'"
+            [label]="'Save' | translate"
+            [disabled]="form.invalid || (isFibreChannelMode && !areFcPortsValid()) || isLoading()"
+          ></tn-button>
+        </div>
       </tn-step>
     }
   </tn-stepper>

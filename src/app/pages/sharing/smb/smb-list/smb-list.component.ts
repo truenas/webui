@@ -1,8 +1,7 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -32,11 +31,12 @@ import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cell
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -69,7 +69,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnButtonComponent,
     TnTestIdDirective,
     RouterLink,
-    TestDirective,
     UiSearchDirective,
     TnEmptyComponent,
     TnTableComponent,
@@ -82,7 +81,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnTablePagerComponent,
     TnTooltipDirective,
     TranslateModule,
-    AsyncPipe,
     YesNoPipe,
   ],
 })
@@ -105,12 +103,23 @@ export class SmbListComponent implements OnInit {
   protected readonly searchableElements = smbListElements;
   protected readonly EmptyType = EmptyType;
 
-  service$ = this.store$.select(selectService(ServiceName.Cifs));
+  private readonly service$ = this.store$.select(selectService(ServiceName.Cifs));
+  protected readonly service = toSignal(this.service$);
 
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<SmbShare>;
+  protected searchQuery = signal('');
 
-  smbShares: SmbShare[] = [];
+  private readonly shares$ = this.api.call('sharing.smb.query').pipe(
+    tap((shares) => this.smbShares = shares),
+    takeUntilDestroyed(this.destroyRef),
+  );
+
+  protected dataProvider = new AsyncDataProvider<SmbShare>(this.shares$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
+  protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$);
+
+  private smbShares: SmbShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
 
@@ -230,11 +239,6 @@ export class SmbListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const shares$ = this.api.call('sharing.smb.query').pipe(
-      tap((shares) => this.smbShares = shares),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<SmbShare>(shares$);
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

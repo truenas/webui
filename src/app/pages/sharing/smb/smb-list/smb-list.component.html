@@ -2,8 +2,8 @@
   <div tnCardHeader class="header-title">
     <h3 class="tn-card__title">{{ 'SMB' | translate }}</h3>
     <ix-service-state-button
-      [service]="service$ | async"
-      [count]="+(dataProvider.currentPageCount$ | async)"
+      [service]="service()"
+      [count]="currentPageCount() ?? 0"
     ></ix-service-state-button>
   </div>
 
@@ -42,7 +42,7 @@
     </div>
   </ng-template>
 
-  @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
+  @if (emptyType() === EmptyType.NoPageData && !currentPageCount()) {
     <tn-empty
       icon="smb-share"
       iconLibrary="custom"
@@ -50,15 +50,15 @@
       [title]="'Well supported by all major operating systems, allows for easy authentication and authorization. Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.' | translate"
     ></tn-empty>
   } @else {
-    @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+    @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
     <tn-table
       class="table"
       [testId]="'table-table'"
       [ixUiSearch]="searchableElements.elements.smbList"
-      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [dataSource]="rows()"
       [displayedColumns]="displayedColumns()"
       [trackBy]="trackBySmbId"
-      [loading]="!!(dataProvider.isLoading$ | async)"
+      [loading]="isLoading()"
       [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
       [emptyIcon]="emptyConf?.icon ?? ''"
       (sortChange)="onSortChange($event)"
@@ -67,7 +67,8 @@
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.name || ''"
           >{{ row.name }}</span>
         </ng-template>
@@ -78,7 +79,8 @@
         <ng-template let-row tnCellDef>
           @let path = getPathValue(row);
           <span
-            [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="path || ''"
           >{{ path }}</span>
         </ng-template>
@@ -88,7 +90,8 @@
         <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.comment || ''"
           >{{ row.comment }}</span>
         </ng-template>
@@ -114,7 +117,8 @@
         <ng-template tnHeaderCellDef>{{ 'Audit Logging' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Audit Logging' | translate), uniqueRowTag(row), 'row-yesno']"
+            tnTestIdType="text"
+            [tnTestId]="[('Audit Logging' | translate), uniqueRowTag(row), 'row-yesno']"
           >{{ !!row.audit?.enable | yesNo | translate }}</span>
         </ng-template>
       </ng-container>

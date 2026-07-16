@@ -10,7 +10,7 @@
     </div>
   </ng-template>
 
-  @if (!(dataProvider()?.currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
+  @if (!rows().length && !isProviderLoading()) {
     @if (searchQuery().length) {
       <tn-empty
         [title]="noSearchResults.title | translate"
@@ -29,7 +29,7 @@
     <tn-table
       class="table"
       [testId]="'table-table'"
-      [dataSource]="(dataProvider().currentPage$ | async) ?? []"
+      [dataSource]="rows()"
       [displayedColumns]="displayedColumns"
       [trackBy]="trackBySubsystemId"
       [loading]="isLoading()"
@@ -46,17 +46,32 @@
 
       <ng-container [tnColumnDef]="'namespaces'">
         <ng-template tnHeaderCellDef>{{ 'Namespaces' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.namespaces.length }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Namespaces' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.namespaces.length }}</span>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'ports'">
         <ng-template tnHeaderCellDef>{{ 'Ports' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.ports.length }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Ports' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.ports.length }}</span>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'hosts'">
         <ng-template tnHeaderCellDef>{{ 'Hosts' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.hosts.length }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Hosts' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.hosts.length }}</span>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'actions'" [width]="'60px'">
@@ -69,7 +84,7 @@
               [ariaLabel]="('View Details' | translate) + ' ' + row.name"
               [ariaExpanded]="dataProvider().expandedRow === row"
               [tooltip]="'View Details' | translate"
-              [testId]="['nvmeof-subsys-' + row.name, 'mdi-chevron-right', 'row-action']"
+              [testId]="[uniqueRowTag(row), 'mdi-chevron-right', 'row-action']"
               (onClick)="$event.stopPropagation(); onRowClick(row)"
             ></tn-icon-button>
           </span>

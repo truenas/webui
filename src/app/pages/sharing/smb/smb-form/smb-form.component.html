@@ -17,7 +17,8 @@
     id="smb-form-toggle-advanced-options"
     type="button"
     tabindex="-1"
-    ixTest="toggle-advanced-options-anchor"
+    tnTestIdType="button"
+    [tnTestId]="'toggle-advanced-options-anchor'"
     (click)="openAdvancedMode()"
   ></button>
 
@@ -177,7 +178,6 @@
           <tn-chip-input
             testId="watch-list"
             formControlName="watch_list"
-            [ariaLabel]="'Watch List' | translate"
             [suggestions]="(groupSuggestions$ | async) ?? []"
             [allowCustomValue]="true"
             (searchChange)="onGroupSearch($event)"
@@ -191,7 +191,6 @@
           <tn-chip-input
             testId="ignore-list"
             formControlName="ignore_list"
-            [ariaLabel]="'Ignore List' | translate"
             [suggestions]="(groupSuggestions$ | async) ?? []"
             [allowCustomValue]="true"
             (searchChange)="onGroupSearch($event)"

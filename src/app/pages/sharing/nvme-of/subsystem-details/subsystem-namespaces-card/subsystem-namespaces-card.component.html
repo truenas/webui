@@ -29,7 +29,7 @@
                 library="mdi"
                 [ariaLabel]="'Delete namespace' | translate"
                 [tooltip]="'Delete namespace' | translate"
-                [testId]="['delete-namespace', namespace.device_path]"
+                [testId]="['delete-namespace', namespaceTestIdSlug(namespace)]"
                 (onClick)="onDeleteNamespace(namespace)"
               ></tn-icon-button>
             </span>

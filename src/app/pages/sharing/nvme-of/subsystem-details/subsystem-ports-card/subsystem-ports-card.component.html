@@ -28,7 +28,7 @@
                 iconClass="icon"
                 [ariaLabel]="'Remove port from the subsystem' | translate"
                 [tooltip]="'Remove port from the subsystem' | translate"
-                [testId]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
+                [testId]="removePortTestId(port)"
                 (onClick)="onRemoveAssociation(port)"
               ></tn-icon-button>
             </span>

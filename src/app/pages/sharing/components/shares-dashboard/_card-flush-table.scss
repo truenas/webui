@@ -1,0 +1,10 @@
+// TEMP: the dashboard cards render their tn-table flush against the card edges
+// ([padContent]="false"), so the table's internal rounded corners
+// (.tn-table__table border-radius: 4px) poke out against the card's square content
+// area. Square them on all sides. Remove once @truenas/ui-components exposes
+// control over the table's corner radius.
+@mixin card-flush-table {
+  :host ::ng-deep tn-table .tn-table__table {
+    border-radius: 0;
+  }
+}

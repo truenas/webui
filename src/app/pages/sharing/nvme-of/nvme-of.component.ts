@@ -135,6 +135,7 @@ export class NvmeOfComponent implements OnInit {
   protected addSubsystem(): void {
     this.formPanel.open(AddSubsystemComponent, {
       title: this.translate.instant('Add Subsystem'),
+      footerless: true,
     })
       .onSuccess((response) => {
         this.selectedSubsystemName = response.name;

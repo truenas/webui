@@ -37,15 +37,15 @@
 </ix-page-header>
 
 @if (activeNfsType() === NfsType.Nfs3) {
-  @let emptyConf = emptyService.defaultEmptyConfig(nfs3DataProvider.emptyType$ | async);
+  @let emptyConf = emptyService.defaultEmptyConfig(nfs3EmptyType());
   <tn-table
     class="table"
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.nfsSessions"
-    [dataSource]="(nfs3DataProvider.currentPage$ | async) ?? []"
+    [dataSource]="nfs3Rows()"
     [displayedColumns]="nfs3DisplayedColumns()"
     [trackBy]="trackByNfs3"
-    [loading]="!!(nfs3DataProvider.isLoading$ | async)"
+    [loading]="nfs3Loading()"
     [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
     [emptyIcon]="emptyConf?.icon ?? ''"
     (sortChange)="onNfs3SortChange($event)"
@@ -72,15 +72,15 @@
   </tn-table>
   <tn-table-pager [dataProvider]="nfs3DataProvider"></tn-table-pager>
 } @else {
-  @let emptyConf = emptyService.defaultEmptyConfig(nfs4DataProvider.emptyType$ | async);
+  @let emptyConf = emptyService.defaultEmptyConfig(nfs4EmptyType());
   <tn-table
     class="table"
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.nfsSessions"
-    [dataSource]="(nfs4DataProvider.currentPage$ | async) ?? []"
+    [dataSource]="nfs4Rows()"
     [displayedColumns]="nfs4DisplayedColumns()"
     [trackBy]="trackByNfs4"
-    [loading]="!!(nfs4DataProvider.isLoading$ | async)"
+    [loading]="nfs4Loading()"
     [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
     [emptyIcon]="emptyConf?.icon ?? ''"
     (sortChange)="onNfs4SortChange($event)"

@@ -47,7 +47,7 @@
                 iconClass="icon"
                 [ariaLabel]="'Remove host from the subsystem' | translate"
                 [tooltip]="'Remove host from the subsystem' | translate"
-                [testId]="['remove-host-association', host.hostnqn]"
+                [testId]="['remove-host-association', hostTestIdSlug(host)]"
                 (onClick)="removeAssociation(host)"
               ></tn-icon-button>
             </span>

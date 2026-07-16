@@ -5,6 +5,7 @@ import {
   TnBannerComponent, TnCardComponent, TnCardFooterActionsDirective, TnIconButtonComponent, TnIconComponent,
   TnTooltipDirective,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -54,6 +55,12 @@ export class SubsystemHostsCardComponent {
   protected readonly searchableElements = subsystemHostsCardElements;
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+
+  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
+  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+  protected hostTestIdSlug(host: NvmeOfHost): string {
+    return kebabCase(host.hostnqn);
+  }
 
   protected hostAdded(host: NvmeOfHost): void {
     const subsystem = this.subsystem();

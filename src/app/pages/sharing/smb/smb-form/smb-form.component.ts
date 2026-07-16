@@ -27,6 +27,7 @@ import {
   TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   BehaviorSubject, endWith, Observable, of,
@@ -69,7 +70,6 @@ import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
@@ -103,7 +103,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     ExplorerCreateDatasetComponent,
     IxInputComponent,
     IxErrorsComponent,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
     AsyncPipe,
     WarningComponent,

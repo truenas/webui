@@ -18,10 +18,15 @@
 
 <!-- tn-tabs is content/index-based, so routing is wired manually: the URL drives
   [selectedIndex] and a user tab switch navigates (see onTabChange). Tabs render as
-  buttons — legacy `link-*` test ids become `tab-*` (e2e callout). -->
+  buttons — legacy `link-*` test ids become `tab-*` (e2e callout), and anchor semantics
+  (middle-click/open-in-new-tab) are lost — accepted trade-off of the tn-tabs mapping.
+  The div supplies the tabpanel role mat-tab-nav-panel used to provide; a projected
+  tn-tab-panel can't host router content (panels are index-matched to selectedIndex). -->
 <tn-tabs [selectedIndex]="activeTabIndex()" (tabChange)="onTabChange($event)">
   @for (link of navLinks(); track link.path) {
     <tn-tab [label]="link.label" [testId]="link.slug" />
   }
 </tn-tabs>
-<router-outlet></router-outlet>
+<div role="tabpanel" [attr.aria-label]="navLinks()[activeTabIndex()]?.label">
+  <router-outlet></router-outlet>
+</div>

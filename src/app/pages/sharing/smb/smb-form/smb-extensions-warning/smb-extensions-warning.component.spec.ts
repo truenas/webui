@@ -26,11 +26,12 @@ describe('SmbExtensionsWarningComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows the warning', () => {
+  it('shows the warning', async () => {
     expect(spectator.query('.warning-text')).toHaveText(
       'This parameter requires Apple SMB2/3 protocol extension support to be enabled in SMB service.',
     );
-    expect(spectator.query('[data-test="button-enable-apple-extensions"]')).toHaveText('Enable Now');
+
+    expect(await loader.hasHarness(TnButtonHarness.with({ label: 'Enable Now' }))).toBe(true);
   });
 
   it('updates SMB config when Enable Now is pressed', async () => {

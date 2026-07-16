@@ -1,10 +1,7 @@
-// The wizard steps render bare `tn-form-field`s (no `<ix-form>`/`<tn-form-section>` to space them).
-// The legacy SlideIn host spaced them via the global `ix-slide-in-container tn-form-field` margin;
-// the `<tn-side-panel>` host has no such rule, so consecutive step fields butt together (a label sits
-// tight under the control above). Restore the inter-field gap for the projected step controls.
-:host ::ng-deep tn-form-field {
-  display: block;
-  margin-bottom: 12px;
+.step-buttons {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
 }
 
 .fc-port-error {

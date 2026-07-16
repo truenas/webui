@@ -1,33 +1,53 @@
 <tn-dialog-shell testId="dialog" [title]="'Hosts' | translate">
-  @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
   <tn-table
     class="table"
     [testId]="'table-table'"
-    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [dataSource]="rows()"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByHostId"
-    [loading]="!!(dataProvider.isLoading$ | async)"
+    [loading]="isLoading()"
     [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
     [emptyIcon]="emptyConf?.icon ?? ''"
   >
     <ng-container [tnColumnDef]="'hostnqn'">
       <ng-template tnHeaderCellDef>{{ 'NQN' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.hostnqn }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('NQN' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.hostnqn }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'description'">
       <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.description }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.description }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'dhchap_key'">
       <ng-template tnHeaderCellDef>{{ 'Has Host Authentication' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.dhchap_key ? ('Yes' | translate) : ('No' | translate) }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Has Host Authentication' | translate), uniqueRowTag(row), 'row-yesno']"
+        >{{ row.dhchap_key ? ('Yes' | translate) : ('No' | translate) }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'usedInSubsystems'">
       <ng-template tnHeaderCellDef>{{ 'Used In Subsystems' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.usedInSubsystems }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Used In Subsystems' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.usedInSubsystems }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'actions'" [width]="'120px'">
@@ -37,7 +57,7 @@
           mode="inline"
           [actions]="actions"
           [row]="row"
-          [uniqueRowTag]="'host-' + row.hostnqn"
+          [uniqueRowTag]="uniqueRowTag(row)"
           [ariaLabel]="row.id + ' ' + ('Host' | translate)"
         ></ix-table-actions-cell>
       </ng-template>
