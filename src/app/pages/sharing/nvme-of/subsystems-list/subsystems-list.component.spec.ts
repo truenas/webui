@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
@@ -11,10 +12,7 @@ import {
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemsListComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystems-list.component';
 
@@ -52,7 +50,7 @@ const mockSubsystems: NvmeOfSubsystemDetails[] = [
 describe('SubsystemsListComponent', () => {
   let spectator: Spectator<SubsystemsListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: SubsystemsListComponent,
@@ -62,9 +60,6 @@ describe('SubsystemsListComponent', () => {
     ],
     providers: [
       mockProvider(EmptyService),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.success({ ...mockSubsystems[0], name: 'subsys-3' })),
-      }),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
       }),
@@ -81,16 +76,26 @@ describe('SubsystemsListComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('shows table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Namespaces', 'Ports', 'Hosts', ''],
-      ['subsys-1', '2', '4', '3', ''],
-      ['subsys-2', '2', '4', '3', ''],
-    ];
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Namespaces', 'Ports', 'Hosts', '']);
+    expect(await table.getRowTexts(0)).toEqual(['subsys-1', '2', '4', '3', '']);
+    expect(await table.getRowTexts(1)).toEqual(['subsys-2', '2', '4', '3', '']);
+  });
 
-    expect(await table.getCellTexts()).toEqual(expectedRows);
+  it('expands the row once when its View Details chevron is pressed', async () => {
+    jest.spyOn(spectator.component.toggleShowMobileDetails, 'emit');
+
+    // Row chevrons render before the pager's chevron buttons, so [0] is the first row.
+    const chevron = (await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'chevron-right' })))[0];
+    await chevron.click();
+
+    // The chevron stops propagation, so the clickable row underneath must not
+    // receive the same click and toggle the expansion straight back off.
+    expect(spectator.component.dataProvider().expandedRow).toBe(mockSubsystems[0]);
+    expect(spectator.component.toggleShowMobileDetails.emit).toHaveBeenCalledTimes(1);
+    expect(spectator.component.toggleShowMobileDetails.emit).toHaveBeenCalledWith(true);
   });
 });

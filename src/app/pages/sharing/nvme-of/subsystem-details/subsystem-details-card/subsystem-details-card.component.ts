@@ -29,12 +29,12 @@ import { subsystemDetailsCardElements } from 'app/pages/sharing/nvme-of/subsyste
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
+    TnInputComponent,
     TranslateModule,
     DetailsItemComponent,
     DetailsTableComponent,
     EditableComponent,
     FormsModule,
-    TnInputComponent,
     ReactiveFormsModule,
     EditableSaveOnEnterDirective,
     TnTestIdDirective,

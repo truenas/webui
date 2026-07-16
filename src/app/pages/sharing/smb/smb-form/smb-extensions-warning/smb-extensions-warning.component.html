@@ -4,13 +4,10 @@
   <span class="warning-text">
     {{ 'This parameter requires Apple SMB2/3 protocol extension support to be enabled in SMB service.' | translate }}
   </span>
-  <button
-    mat-button
-    type="button"
+  <tn-button
     class="enable-button"
-    ixTest="enable-apple-extensions"
-    (click)="enableExtensions()"
-  >
-    {{ 'Enable Now' | translate }}
-  </button>
+    [testId]="'enable-apple-extensions'"
+    [label]="'Enable Now' | translate"
+    (onClick)="enableExtensions()"
+  ></tn-button>
 </div>

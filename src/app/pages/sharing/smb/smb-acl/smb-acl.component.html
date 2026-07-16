@@ -31,29 +31,42 @@
           <div class="entry-row">
             <tn-form-field [label]="'Who' | translate" [required]="true">
               <tn-select
+                testId="ae-who"
                 formControlName="ae_who"
                 [options]="(tags$ | async) ?? []"
               ></tn-select>
             </tn-form-field>
 
             @if (entry.controls.ae_who.value === nfsAclTag.User) {
-              <ix-combobox
-                formControlName="user"
-                [label]="'User' | translate"
-                [provider]="userProvider"
-                [allowCustomValue]="true"
-                [required]="true"
-              ></ix-combobox>
+              <tn-form-field [label]="'User' | translate" [required]="true">
+                <tn-autocomplete
+                  formControlName="user"
+                  [testId]="'user'"
+                  [placeholder]="'User' | translate"
+                  [options]="(userOptions$ | async) ?? []"
+                  [allowCustomValue]="true"
+                  [loading]="usersLoading()"
+                  [loadingText]="'Loading...' | translate"
+                  [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
+                  (searchChange)="userSearch$.next($event)"
+                ></tn-autocomplete>
+              </tn-form-field>
             }
 
-            @if (groupProvider && entry.controls.ae_who.value === nfsAclTag.UserGroup) {
-              <ix-combobox
-                formControlName="group"
-                [label]="'Group' | translate"
-                [provider]="groupProvider"
-                [allowCustomValue]="true"
-                [required]="true"
-              ></ix-combobox>
+            @if (entry.controls.ae_who.value === nfsAclTag.UserGroup) {
+              <tn-form-field [label]="'Group' | translate" [required]="true">
+                <tn-autocomplete
+                  formControlName="group"
+                  [testId]="'group'"
+                  [placeholder]="'Group' | translate"
+                  [options]="(groupOptions$ | async) ?? []"
+                  [allowCustomValue]="true"
+                  [loading]="groupsLoading()"
+                  [loadingText]="'Loading...' | translate"
+                  [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
+                  (searchChange)="groupSearch$.next($event)"
+                ></tn-autocomplete>
+              </tn-form-field>
             }
           </div>
 
@@ -68,6 +81,7 @@
               [tooltip]="helptext.aePermTooltip | translate"
             >
               <tn-select
+                testId="ae-perm"
                 formControlName="ae_perm"
                 [options]="(permissions$ | async) ?? []"
               ></tn-select>
@@ -79,6 +93,7 @@
               [tooltip]="helptext.aeTypeTooltip | translate"
             >
               <tn-select
+                testId="ae-type"
                 formControlName="ae_type"
                 [options]="(types$ | async) ?? []"
               ></tn-select>

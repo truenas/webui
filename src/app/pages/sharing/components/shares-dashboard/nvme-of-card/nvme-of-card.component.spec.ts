@@ -132,7 +132,7 @@ describe('NvmeOfCardComponent', () => {
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       AddSubsystemComponent,
-      expect.objectContaining({ footerless: true }),
+      expect.objectContaining({ title: 'Add Subsystem' }),
     );
   });
 

@@ -1,17 +1,18 @@
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
+  TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective,
+  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { tap } from 'rxjs';
-import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -19,28 +20,26 @@ import { Role } from 'app/enums/role.enum';
 import { shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
-import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
+import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
@@ -55,26 +54,27 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   styleUrls: ['./nfs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    FakeProgressBarComponent,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderActionsDirective,
     BasicSearchComponent,
-    MatAnchor,
-    TestDirective,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
-    MatButton,
-    UiSearchDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    TnTablePagerComponent,
-    TranslateModule,
-    AsyncPipe,
+    TnButtonComponent,
+    TnTestIdDirective,
     RouterLink,
-    EmptyComponent,
+    UiSearchDirective,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TableToggleCellComponent,
+    TableActionsCellComponent,
+    TierStatusComponent,
+    TnTablePagerComponent,
+    TnTooltipDirective,
+    TranslateModule,
+    YesNoPipe,
   ],
 })
 export class NfsListComponent implements OnInit {
@@ -83,32 +83,66 @@ export class NfsListComponent implements OnInit {
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private formPanel = inject(FormSidePanelService);
-  private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
   private tierService = inject(SharingTierService);
 
-  requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
-  protected readonly emptyConfig = nfsCardEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<NfsShare>;
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly searchQuery = signal('');
 
-  nfsShares: NfsShare[] = [];
+  private readonly shares$ = this.api.call('sharing.nfs.query').pipe(
+    tap((shares) => this.nfsShares = shares),
+    takeUntilDestroyed(this.destroyRef),
+  );
+
+  protected readonly dataProvider = new AsyncDataProvider<NfsShare>(this.shares$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
+  protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$);
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+
+  private nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
 
   private tierAction: IconActionConfig<NfsShare> = this.tierService.createChangeTierAction<NfsShare>({
     destroyRef: this.destroyRef,
     reload: () => this.refresh(),
+    requiredRoles: this.requiredRoles,
   });
 
-  columns = createTable<NfsShare>([
+  protected readonly actions: IconActionConfig<NfsShare>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+    },
+    this.tierAction,
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => {
+        this.dialog.confirmDelete({
+          title: this.translate.instant('Delete {name}', { name: row.path }),
+          message: this.translate.instant(shared.deleteShareMessage),
+          call: () => this.api.call('sharing.nfs.delete', [row.id]),
+        }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.refresh());
+      },
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // (visibility + saved prefs); tn-table renders cells from the template and
+  // derives its `displayedColumns` from these via `toDisplayedColumns`. The
+  // `tier` column is reactive (see `displayedColumns`), not picker-managed.
+  protected readonly columns = signal(createTable<NfsShare>([
     textColumn({
       title: this.translate.instant('Path'),
       propertyName: 'path',
@@ -120,76 +154,62 @@ export class NfsListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Networks'),
       propertyName: 'networks',
-      getValue: (row) => {
-        return row.networks.reduce((networkList, network, index) => {
-          return index > 0 ? networkList + ', ' + network : network;
-        }, '');
-      },
     }),
     textColumn({
       title: this.translate.instant('Hosts'),
       propertyName: 'hosts',
-      getValue: (row) => {
-        return row.hosts.reduce((hostsList, host, index) => {
-          return index > 0 ? hostsList + ', ' + host : host;
-        }, '');
-      },
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
-      requiredRoles: this.requiredRoles,
-      isDisabled: (row: NfsShare) => isShareUnavailable(row, this.activePoolPaths()),
-      getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
     }),
     yesNoColumn({
       title: this.translate.instant('Expose Snapshots'),
       propertyName: 'expose_snapshots',
       hidden: !this.isEnterprise(),
     }),
-    storageTierColumn({
-      title: this.translate.instant('Storage Tier'),
-      hidden: true,
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (nfsShare) => {
-            this.formPanel.open(NfsFormComponent, {
-              title: this.translate.instant('Edit NFS Share'),
-              inputs: { nfsShareData: { existingNfsShare: nfsShare } },
-            }).onSuccess(() => this.refresh(), this.destroyRef);
-          },
-        },
-        this.tierAction,
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => {
-            this.dialog.confirmDelete({
-              title: this.translate.instant('Delete {name}', { name: row.path }),
-              message: this.translate.instant(shared.deleteShareMessage),
-              call: () => this.api.call('sharing.nfs.delete', [row.id]),
-            }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.refresh());
-          },
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'nfs-share-' + row.path + '-' + row.comment,
-    ariaLabels: (row) => [row.path, this.translate.instant('NFS Share')],
+    actionsColumn({}),
+  ]));
+
+  protected readonly displayedColumns = computed<string[]>(() => {
+    const columns = toDisplayedColumns(this.columns());
+    if (this.tierService.tierEnabled()) {
+      const actionsIndex = columns.indexOf('actions');
+      const insertAt = actionsIndex >= 0 ? actionsIndex : columns.length;
+      columns.splice(insertAt, 0, 'tier');
+    }
+    return columns;
   });
 
+  protected readonly trackByNfsId = (_index: number, row: NfsShare): number => row.id;
+
+  protected uniqueRowTag(row: NfsShare): string {
+    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('pool1' → 'pool-1')
+    // while the library's kebab does not, so the pre-split tag resolves identically through
+    // the legacy [ixTest] directive, the library [tnTestId] directive, and the tn cell
+    // components — byte-matching the pre-migration data-test values.
+    return kebabCase(convertStringToId('nfs-share-' + row.path + '-' + row.comment));
+  }
+
+  protected ariaLabel(row: NfsShare): string {
+    return [row.path, this.translate.instant('NFS Share')].join(' ');
+  }
+
+  protected formatList(values: string[]): string {
+    return (values ?? []).join(', ');
+  }
+
+  protected isToggleDisabled(row: NfsShare): boolean {
+    return isShareUnavailable(row, this.activePoolPaths());
+  }
+
+  protected getEnabledTooltip(row: NfsShare): string {
+    return this.isToggleDisabled(row)
+      ? this.translate.instant(getUnavailableReason(row, this.activePoolPaths()))
+      : '';
+  }
+
   ngOnInit(): void {
-    const shares$ = this.api.call('sharing.nfs.query').pipe(
-      tap((shares) => this.nfsShares = shares),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<NfsShare>(shares$);
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -207,11 +227,11 @@ export class NfsListComponent implements OnInit {
       },
     });
 
-    this.tierService.attachTierToShareList<NfsShare>({
+    // Prime the tier config so `displayedColumns` reactively reveals the tier
+    // column when tiering is enabled, and reload the list on tier-job ticks.
+    this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.tierService.wireTierJobRefresh({
       destroyRef: this.destroyRef,
-      cdr: this.cdr,
-      getColumns: () => this.columns,
-      setColumns: (columns) => { this.columns = columns; },
       reload: () => this.refresh(),
     });
   }
@@ -231,26 +251,34 @@ export class NfsListComponent implements OnInit {
     }).onSuccess(() => this.refresh(), this.destroyRef);
   }
 
+  protected doEdit(row: NfsShare): void {
+    this.formPanel.open(NfsFormComponent, {
+      title: this.translate.instant('Edit NFS Share'),
+      inputs: { nfsShareData: { existingNfsShare: row } },
+    }).onSuccess(() => this.refresh(), this.destroyRef);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<NfsShare>(event, this.displayedColumns()));
+  }
+
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: !this.nfsShares.length ? [] : Object.keys(this.nfsShares[0]) as (keyof NfsShare)[],
     });
-    this.cdr.markForCheck();
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+  protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
   }
 
   private refresh(): void {
     this.dataProvider.load();
   }
 
-  private onChangeEnabledState(row: NfsShare): void {
+  protected onChangeEnabledState(row: NfsShare): void {
     this.api.call('sharing.nfs.update', [row.id, { enabled: !row.enabled }]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({

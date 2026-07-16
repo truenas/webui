@@ -4543,9 +4543,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.3.21":
-  version: 0.3.21
-  resolution: "@truenas/ui-components@npm:0.3.21"
+"@truenas/ui-components@npm:~0.3.23":
+  version: 0.3.23
+  resolution: "@truenas/ui-components@npm:0.3.23"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -4566,7 +4566,7 @@ __metadata:
     "@mdi/js": ^7.4.47
   bin:
     truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/c618afe5e9cea484c91d3a5d1ba9b5db6f5e4fd17e8c1316b1e23f0b3ae28e90a2585c3ec2a756ca533a9fb6e966855e3b189ef7fcfabb39887b9e9320ba038e
+  checksum: 10/8de042e3fe4f5c17127a2d327740a612f9a753439ad7db452983f856574d99e5106e234cd3b0f4ce7b21dc4becb23e6a440bf310a33b79ab47dfecdd1c7a76c2
   languageName: node
   linkType: hard
 
@@ -16053,7 +16053,7 @@ __metadata:
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.3.21"
+    "@truenas/ui-components": "npm:~0.3.23"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"

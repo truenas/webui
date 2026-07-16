@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
   TnStepComponent, TnStepperComponent, TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import {
@@ -50,7 +50,6 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    TnCardComponent,
     ReactiveFormsModule,
     TnStepperComponent,
     TnStepComponent,

@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { TnTableHarness } from '@truenas/ui-components';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SmbOpenFilesComponent } from './smb-open-files.component';
 
 const locks = [
@@ -51,7 +51,7 @@ const locks = [
 describe('SmbOpenFilesComponent', () => {
   let spectator: Spectator<SmbOpenFilesComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: SmbOpenFilesComponent,
@@ -65,16 +65,12 @@ describe('SmbOpenFilesComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      [
-        'Server',
-        'Username',
-        'Opened at',
-      ],
+    expect(await table.getHeaderTexts()).toEqual(['Server', 'Username', 'Opened at']);
+    expect(await table.getAllRowTexts()).toEqual([
       [
         '2102401:0:4294967295:4458796888113407749',
         'michelangelo (3004)',
@@ -95,9 +91,6 @@ describe('SmbOpenFilesComponent', () => {
         'leonardo (3007)',
         '2023-10-26T10:10:10.190608+02:00',
       ],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 });

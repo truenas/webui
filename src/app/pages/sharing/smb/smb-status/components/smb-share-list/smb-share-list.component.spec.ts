@@ -1,23 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SmbShareInfo } from 'app/interfaces/smb-status.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { SmbShareListComponent } from './smb-share-list.component';
 
 describe('SmbShareListComponent', () => {
   let spectator: Spectator<SmbShareListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const shares = [
     {
@@ -41,7 +37,6 @@ describe('SmbShareListComponent', () => {
     component: SmbShareListComponent,
     imports: [
       BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockApi([mockCall('smb.status', shares)]),
@@ -59,22 +54,19 @@ describe('SmbShareListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Service', 'Session ID', 'Machine', 'Connected at', 'Encryption', 'Signing'],
+    expect(await table.getHeaderTexts()).toEqual(['Service', 'Session ID', 'Machine', 'Connected at', 'Encryption', 'Signing']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['turtles', '1368450234', '10.234.16.211', '2023-10-26T12:17:17.457352+02:00', '-', '-'],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
   it('should call loadData when Refresh button is pressed', async () => {
     jest.spyOn(spectator.component.dataProvider, 'load');
-    const refreshButton = await loader.getHarness(MatButtonHarness.with({ text: 'Refresh' }));
+    const refreshButton = await loader.getHarness(TnButtonHarness.with({ label: 'Refresh' }));
     await refreshButton.click();
     expect(spectator.component.dataProvider.load).toHaveBeenCalled();
   });

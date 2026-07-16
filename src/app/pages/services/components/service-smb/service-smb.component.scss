@@ -6,8 +6,9 @@ ix-input[hidden] {
 // ix-form-actions still carries the legacy `.ix-form-container` 10px side margin,
 // which pushes "Advanced Settings" to the right of the fields. Align it flush-left
 // with the fields. (!important is needed to beat form-actions' own
-// `:host-context(.ix-form-container) :host` rule.)
-::ng-deep ix-form-actions {
+// `:host-context(.ix-form-container) :host` rule; :host confines the override
+// to this form — unprefixed ::ng-deep would leak globally.)
+:host ::ng-deep ix-form-actions {
   margin-left: 0 !important;
   margin-right: 0 !important;
 }

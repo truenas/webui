@@ -1,11 +1,5 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'iSCSI Groups' | translate }}
-    </h3>
-  </mat-card-header>
-  <mat-card-content>
-    @for (group of targetGroups(); track $index) {
+<tn-card class="card" padding="small" [title]="'iSCSI Groups' | translate">
+  @for (group of targetGroups(); track $index) {
       <div class="group">
         <div class="group-header">
           <h4 class="group-title">{{ 'Group' | translate }} {{ $index + 1 }}</h4>
@@ -29,8 +23,7 @@
           </div>
         </div>
       </div>
-    } @empty {
-      <p>{{ 'No groups.' | translate }}</p>
-    }
-  </mat-card-content>
-</mat-card>
+  } @empty {
+    <p>{{ 'No groups.' | translate }}</p>
+  }
+</tn-card>

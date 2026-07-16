@@ -1,87 +1,134 @@
-<mat-card>
-  <ix-fake-progress-bar [loading]="!!(dataProvider.isLoading$ | async)"></ix-fake-progress-bar>
-  <mat-toolbar-row>
-    <h3>{{ 'WebShare' | translate }}</h3>
+@if (!hasTruenasConnect()) {
+  <tn-banner
+    class="clickable"
+    role="button"
+    tabindex="0"
+    aria-live="polite"
+    [heading]="'TrueNAS Connect required' | translate"
+    [message]="'WebShare service requires TrueNAS Connect to be configured and active.' | translate"
+    (click)="openTruenasConnectDialog()"
+    (keydown.enter)="openTruenasConnectDialog()"
+    (keydown.space)="openTruenasConnectDialog(); $event.preventDefault()"
+  ></tn-banner>
+}
+@if (showNoWebshareUsersNotice()) {
+  <tn-banner
+    class="clickable"
+    role="button"
+    tabindex="0"
+    aria-live="polite"
+    [heading]="'No WebShare users' | translate"
+    [message]="'It appears you have no users configured to access WebShare.' | translate"
+    (click)="navigateToUsers()"
+    (keydown.enter)="navigateToUsers()"
+    (keydown.space)="navigateToUsers(); $event.preventDefault()"
+  ></tn-banner>
+}
+
+<tn-card [padContent]="false">
+  <div tnCardHeader class="header-title">
+    <h3 class="tn-card__title">{{ 'WebShare' | translate }}</h3>
     <ix-service-state-button
-      [service]="service$ | async"
-      [count]="+(dataProvider.currentPageCount$ | async)"
+      [service]="service()"
+      [count]="currentPageCount() ?? 0"
     ></ix-service-state-button>
-    <div class="actions action-icon">
+  </div>
+
+  <ng-template tnCardHeaderActions>
+    <div class="actions">
       <ix-basic-search
-        [query]="searchQuery"
+        [query]="searchQuery()"
         (queryChange)="onListFiltered($event)"
       ></ix-basic-search>
 
-      <ix-table-columns-selector
+      <ix-table-column-picker
+        [columns]="columns()"
         [columnPreferencesKey]="'webshareList'"
-        [columns]="columns"
-        (columnsChange)="columnsChange($event)"
-      ></ix-table-columns-selector>
+        (columnsChange)="onColumnsChange($event)"
+      ></ix-table-column-picker>
 
-      <button
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
         color="primary"
-        ixTest="add-webshare"
+        [testId]="'add-webshare'"
         [ixUiSearch]="searchableElements.elements.createWebShare"
-        [disabled]="!(hasTruenasConnect$ | async)"
-        (click)="doAdd()"
-      >
-        {{ 'Add' | translate }}
-      </button>
+        [disabled]="!hasTruenasConnect()"
+        [label]="'Add' | translate"
+        (onClick)="doAdd()"
+      ></tn-button>
     </div>
-  </mat-toolbar-row>
-  <mat-card-content>
-    @if (!(hasTruenasConnect$ | async)) {
-      <div
-        class="info-message clickable"
-        role="button"
-        tabindex="0"
-        aria-live="polite"
-        (click)="openTruenasConnectDialog()"
-        (keydown.enter)="openTruenasConnectDialog()"
-        (keydown.space)="openTruenasConnectDialog(); $event.preventDefault()"
-      >
-        <tn-icon name="information" library="mdi"></tn-icon>
-        <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>
-      </div>
-    }
-    @if (showNoWebshareUsersNotice$ | async) {
-      <div
-        class="info-message clickable"
-        role="button"
-        tabindex="0"
-        aria-live="polite"
-        (click)="navigateToUsers()"
-        (keydown.enter)="navigateToUsers()"
-        (keydown.space)="navigateToUsers(); $event.preventDefault()"
-      >
-        <tn-icon name="information" library="mdi"></tn-icon>
-        <span>{{ 'It appears you have no users configured to access WebShare.' | translate }}</span>
-      </div>
-    }
-    @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
-      <ix-empty [conf]="emptyConfig" [requiredRoles]="requiredRoles"></ix-empty>
-    } @else {
-      <ix-table
-        [ixUiSearch]="searchableElements.elements.webshareList"
-        [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-        [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-      >
-        <thead
-          ix-table-head
-          [columns]="columns"
-          [dataProvider]="dataProvider"
-        ></thead>
-        <tbody
-          ix-table-body
-          [columns]="columns"
-          [dataProvider]="dataProvider"
-          [isLoading]="!!(dataProvider.isLoading$ | async)"
-        ></tbody>
-      </ix-table>
+  </ng-template>
 
-      <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
-    }
-  </mat-card-content>
-</mat-card>
+  @if (emptyType() === EmptyType.NoPageData && !currentPageCount()) {
+    <tn-empty
+      icon="webshare"
+      iconLibrary="custom"
+      iconSize="56px"
+      [title]="'WebShare service provides web-based file access.' | translate"
+      [description]="'Users can access these shares if they have the WebShare Enabled option set on their account.' | translate"
+    ></tn-empty>
+  } @else {
+    @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
+    <tn-table
+      class="table"
+      [testId]="'table-table'"
+      [ixUiSearch]="searchableElements.elements.webshareList"
+      [dataSource]="rows()"
+      [displayedColumns]="displayedColumns()"
+      [trackBy]="trackByWebShareId"
+      [loading]="isLoading()"
+      [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+      [emptyIcon]="emptyConf?.icon ?? ''"
+      (sortChange)="onSortChange($event)"
+    >
+      <ng-container [tnColumnDef]="'name'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span class="webshare-name-container">
+            <span
+              tnTestIdType="text"
+              [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            >{{ row.name }}</span>
+            @if (row.isHomeBase) {
+              <!-- role/aria-label expose the icon-only home-share state to AT; the tooltip is hover-only. -->
+              <tn-icon
+                class="home-icon"
+                name="folder-account"
+                library="mdi"
+                role="img"
+                [attr.aria-label]="'Home Share' | translate"
+                [tnTooltip]="'Home Share' | translate"
+              ></tn-icon>
+            }
+          </span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'path'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.path || ''"
+          >{{ row.path }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'actions'" [width]="'120px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-actions-cell
+            mode="inline"
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-table-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
+
+    <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+  }
+</tn-card>

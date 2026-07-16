@@ -1,0 +1,12 @@
+// Field rhythm for tn-* controls (webshare-shares-form canonical). Bare tn-checkboxes
+// (not wrapped in a form-field) get the same spacing; a checkbox inside a form-field
+// is spaced by the field itself.
+tn-form-field,
+tn-checkbox {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+tn-form-field tn-checkbox {
+  margin-bottom: 0;
+}

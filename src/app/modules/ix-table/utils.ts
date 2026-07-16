@@ -1,7 +1,8 @@
-import { Signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { isSignal, Signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { type TnSortEvent } from '@truenas/ui-components';
 import { get } from 'lodash-es';
+import { Observable, switchMap } from 'rxjs';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -26,8 +27,13 @@ export function convertStringToId(inputString: string): string {
 
 export function createTable<T>(
   columns: Column<T, ColumnComponent<T>>[],
-  config: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
+  config?: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
 ): Column<T, ColumnComponent<T>>[] {
+  // tn-table renders cells from the template and supplies its own row tags/aria
+  // labels, so migrated tables build a column model for the picker without config.
+  if (!config) {
+    return columns;
+  }
   return columns.map((column) => {
     const uniqueRowTag = (row: T): string => convertStringToId(config.uniqueRowTag(row));
     const ariaLabels = (row: T): string[] => config.ariaLabels(row);
@@ -65,22 +71,52 @@ export function mapTnSortToTableSort<T>(
 }
 
 /**
+ * Bridges the ix-table column model driven by `<ix-table-columns-selector>` to
+ * the `displayedColumns` list a `tn-table` expects. The selector toggles each
+ * column's `hidden` flag (and persists visibility via `columnPreferencesKey`);
+ * this maps the still-visible columns, in declaration order, to the
+ * `*tnColumnDef` names a tn-table renders. Shared so every column-selectable
+ * tn-table migration bridges the two models identically.
+ *
+ * A column's tn-table name is its `propertyName` — matching the `(sortChange)`
+ * convention `mapTnSortToTableSort` relies on. Columns without a `propertyName`
+ * (e.g. an actions column, which is also never user-toggleable since it has no
+ * `title`) fall back to `'actions'`.
+ */
+export function toDisplayedColumns<T>(columns: Column<T, ColumnComponent<T>>[]): string[] {
+  return columns
+    .filter((column) => !column.hidden)
+    .map((column) => (column.propertyName ? String(column.propertyName) : 'actions'));
+}
+
+function fromProvider<T, R>(
+  provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
+  select: (instance: BaseDataProvider<T>) => Observable<R>,
+): Observable<R> {
+  return isSignal(provider)
+    ? toObservable(provider).pipe(switchMap((instance) => select(instance)))
+    : select(provider);
+}
+
+/**
  * Adapts a data provider's paged rows into a signal for binding to a `tn-table`
  * `[dataSource]`. Replaces the `(dataProvider.currentPage$ | async) ?? []` idiom
- * so migrated cards follow the declarative-signal recipe. Must be called from an
- * injection context (e.g. a component field initializer).
+ * so migrated cards follow the declarative-signal recipe. Accepts the provider
+ * directly or as a signal (e.g. an `input.required` provider). Must be called
+ * from an injection context (e.g. a component field initializer).
  */
-export function dataProviderRows<T>(provider: BaseDataProvider<T>): Signal<T[]> {
-  return toSignal(provider.currentPage$, { initialValue: [] as T[] });
+export function dataProviderRows<T>(provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>): Signal<T[]> {
+  return toSignal(fromProvider(provider, (instance) => instance.currentPage$), { initialValue: [] as T[] });
 }
 
 /**
  * Adapts a data provider's loading state into a signal for binding to a `tn-table`
- * `[loading]`. Must be called from an injection context (e.g. a component field
- * initializer).
+ * `[loading]`. Accepts the provider directly or as a signal (e.g. an
+ * `input.required` provider). Must be called from an injection context (e.g. a
+ * component field initializer).
  */
-export function dataProviderLoading<T>(provider: BaseDataProvider<T>): Signal<boolean> {
-  return toSignal(provider.isLoading$, { initialValue: false });
+export function dataProviderLoading<T>(provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>): Signal<boolean> {
+  return toSignal(fromProvider(provider, (instance) => instance.isLoading$), { initialValue: false });
 }
 
 /**

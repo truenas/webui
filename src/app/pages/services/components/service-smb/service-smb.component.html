@@ -15,11 +15,16 @@
       <tn-input formControlName="netbiosname"></tn-input>
     </tn-form-field>
 
-    <ix-chips
-      formControlName="netbiosalias"
+    <tn-form-field
       [label]="'NetBIOS Alias' | translate"
       [tooltip]="tooltips.netbiosalias | translate"
-    ></ix-chips>
+    >
+      <tn-chip-input
+        formControlName="netbiosalias"
+        [testId]="'netbiosalias'"
+        [allowCustomValue]="true"
+      ></tn-chip-input>
+    </tn-form-field>
 
     <tn-form-field
       [label]="'Workgroup' | translate"
@@ -112,17 +117,39 @@
         </div>
       }
 
-      <ix-group-combobox
-        formControlName="admin_group"
+      <tn-form-field
         [label]="'Administrators Group' | translate"
         [tooltip]="tooltips.admin_group | translate"
-      ></ix-group-combobox>
+      >
+        <tn-autocomplete
+          formControlName="admin_group"
+          [testId]="'admin-group'"
+          [placeholder]="'Administrators Group' | translate"
+          [options]="(groupOptions$ | async) ?? []"
+          [allowCustomValue]="true"
+          [loading]="groupsLoading()"
+          [loadingText]="'Loading...' | translate"
+          [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
+          (searchChange)="groupSearch$.next($event)"
+        ></tn-autocomplete>
+      </tn-form-field>
 
-      <ix-user-combobox
-        formControlName="guest"
+      <tn-form-field
         [label]="'Guest Account' | translate"
         [tooltip]="tooltips.guest | translate"
-      ></ix-user-combobox>
+      >
+        <tn-autocomplete
+          formControlName="guest"
+          [testId]="'guest'"
+          [placeholder]="'Guest Account' | translate"
+          [options]="(userOptions$ | async) ?? []"
+          [allowCustomValue]="true"
+          [loading]="usersLoading()"
+          [loadingText]="'Loading...' | translate"
+          [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
+          (searchChange)="userSearch$.next($event)"
+        ></tn-autocomplete>
+      </tn-form-field>
 
       <tn-form-field
         [label]="'File Mask' | translate"

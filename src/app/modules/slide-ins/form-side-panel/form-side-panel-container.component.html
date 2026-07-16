@@ -78,7 +78,9 @@
     </div>
   }
 
-  @if (!footerless() && form(); as form) {
+  <!-- `hideSave` check sits inside this @if's condition (not a nested block) so the button stays
+       the block's single projectable node and keeps routing into the footer slot. -->
+  @if (!footerless() && !form()?.hideSave?.() && form(); as form) {
     <tn-button
       *ixRequiresRoles="form.requiredRoles || []"
       tnSidePanelAction

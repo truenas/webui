@@ -1,23 +1,18 @@
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  DestroyRef,
-  OnInit,
-  inject,
-  signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnCardHeaderDirective,
+  TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective,
+  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { of, tap } from 'rxjs';
-import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -26,32 +21,28 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { shared } from 'app/helptext/sharing';
 import { SmbSharePurpose, SmbShare, ExternalSmbShareOptions } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import {
-  yesNoColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
-import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
+import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
@@ -68,27 +59,29 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./smb-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    FakeProgressBarComponent,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnCardHeaderActionsDirective,
     ServiceStateButtonComponent,
     BasicSearchComponent,
-    MatAnchor,
-    TestDirective,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
-    MatButton,
-    UiSearchDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    TnTablePagerComponent,
-    TranslateModule,
-    AsyncPipe,
+    TnButtonComponent,
+    TnTestIdDirective,
     RouterLink,
-    EmptyComponent,
+    UiSearchDirective,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TableToggleCellComponent,
+    TableActionsCellComponent,
+    TierStatusComponent,
+    TnTablePagerComponent,
+    TnTooltipDirective,
+    TranslateModule,
+    YesNoPipe,
   ],
 })
 export class SmbListComponent implements OnInit {
@@ -108,15 +101,25 @@ export class SmbListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly searchableElements = smbListElements;
-  protected readonly emptyConfig = smbCardEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
-  service$ = this.store$.select(selectService(ServiceName.Cifs));
+  private readonly service$ = this.store$.select(selectService(ServiceName.Cifs));
+  protected readonly service = toSignal(this.service$);
 
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<SmbShare>;
+  protected searchQuery = signal('');
 
-  smbShares: SmbShare[] = [];
+  private readonly shares$ = this.api.call('sharing.smb.query').pipe(
+    tap((shares) => this.smbShares = shares),
+    takeUntilDestroyed(this.destroyRef),
+  );
+
+  protected dataProvider = new AsyncDataProvider<SmbShare>(this.shares$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
+  protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$);
+
+  private smbShares: SmbShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
 
@@ -126,14 +129,62 @@ export class SmbListComponent implements OnInit {
     requiredRoles: this.requiredRoles,
   });
 
-  columns = createTable<SmbShare>([
+  protected readonly actions: IconActionConfig<SmbShare>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+    },
+    {
+      iconName: tnIconMarker('share-variant', 'mdi'),
+      tooltip: this.translate.instant('Edit Share ACL'),
+      disabled: (row) => of(isShareUnavailable(row, this.activePoolPaths())),
+      disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
+      onClick: (row) => this.doEditShareAcl(row),
+    },
+    {
+      iconName: tnIconMarker('security', 'mdi'),
+      tooltip: this.translate.instant('Edit Filesystem ACL'),
+      disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths())),
+      disabledTooltip: (row: SmbShare) => this.translate.instant(
+        getFilesystemAclUnavailableReason(row, this.activePoolPaths()),
+      ),
+      onClick: (row) => {
+        this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+          queryParams: {
+            path: row.path,
+            returnUrl: this.router.url,
+          },
+        });
+      },
+    },
+    this.tierAction,
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => {
+        this.dialog.confirmDelete({
+          title: this.translate.instant('Unshare {name}', { name: row.name }),
+          message: this.translate.instant(shared.deleteShareMessage),
+          buttonText: this.translate.instant('Unshare'),
+          call: () => this.api.call('sharing.smb.delete', [row.id]),
+        }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.dataProvider.load());
+      },
+    },
+  ];
+
+  // ix-table column model retained purely to drive <ix-table-column-picker>;
+  // tn-table renders cells from the template and derives `displayedColumns` via
+  // `toDisplayedColumns`. The `tier` column is reactive, not picker-managed.
+  protected readonly columns = signal(createTable<SmbShare>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
     textColumn({
       title: this.translate.instant('Path'),
-      getValue: (row) => (row.options as ExternalSmbShareOptions)?.remote_path?.join(', ') || row.path,
+      propertyName: 'path',
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -142,96 +193,52 @@ export class SmbListComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      requiredRoles: this.requiredRoles,
-      onRowToggle: (row) => this.onChangeEnabledState(row),
-      isDisabled: (row: SmbShare) => isShareUnavailable(row, this.activePoolPaths()),
-      getDisabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
     }),
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
-      getValue: (row) => Boolean(row.audit?.enable),
+      propertyName: 'audit',
     }),
-    storageTierColumn({
-      title: this.translate.instant('Storage Tier'),
-      hidden: true,
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (smbShare) => {
-            this.formPanel.open(SmbFormComponent, {
-              title: this.translate.instant('Edit SMB Share'),
-              inputs: { smbShareData: { existingSmbShare: smbShare } },
-            }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
-          },
-        },
-        {
-          iconName: tnIconMarker('share-variant', 'mdi'),
-          tooltip: this.translate.instant('Edit Share ACL'),
-          disabled: (row) => of(isShareUnavailable(row, this.activePoolPaths())),
-          disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
-          onClick: (row) => {
-            // A home share has a name (homes) set; row.name works for other shares
-            const searchName = (row.purpose === SmbSharePurpose.LegacyShare && row.options?.home)
-              ? 'homes'
-              : row.name;
-            this.loader.open();
-            this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
-              .pipe(takeUntilDestroyed(this.destroyRef))
-              .subscribe((shareAcl) => {
-                this.loader.close();
-                this.formPanel.open(SmbAclComponent, {
-                  title: this.translate.instant('Share ACL for {share}', { share: shareAcl.share_name }),
-                  inputs: { shareName: shareAcl.share_name },
-                }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
-              });
-          },
-        },
-        {
-          iconName: tnIconMarker('security', 'mdi'),
-          tooltip: this.translate.instant('Edit Filesystem ACL'),
-          disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths())),
-          disabledTooltip: (row: SmbShare) => this.translate.instant(
-            getFilesystemAclUnavailableReason(row, this.activePoolPaths()),
-          ),
-          onClick: (row) => {
-            this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-              queryParams: {
-                path: row.path,
-                returnUrl: this.router.url,
-              },
-            });
-          },
-        },
-        this.tierAction,
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => {
-            this.dialog.confirmDelete({
-              title: this.translate.instant('Unshare {name}', { name: row.name }),
-              message: this.translate.instant(shared.deleteShareMessage),
-              buttonText: this.translate.instant('Unshare'),
-              call: () => this.api.call('sharing.smb.delete', [row.id]),
-            }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.dataProvider.load());
-          },
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'smb-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
+    actionsColumn({}),
+  ]));
+
+  protected readonly displayedColumns = computed<string[]>(() => {
+    const columns = toDisplayedColumns(this.columns());
+    if (this.tierService.tierEnabled()) {
+      const actionsIndex = columns.indexOf('actions');
+      const insertAt = actionsIndex >= 0 ? actionsIndex : columns.length;
+      columns.splice(insertAt, 0, 'tier');
+    }
+    return columns;
   });
 
+  protected readonly trackBySmbId = (_index: number, row: SmbShare): number => row.id;
+
+  protected uniqueRowTag(row: SmbShare): string {
+    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('share1' → 'share-1')
+    // while the library's kebab does not, so the tag resolves identically through the legacy
+    // [ixTest] directive and the tn cell components — byte-matching pre-migration data-test values.
+    return kebabCase(convertStringToId('smb-' + row.name));
+  }
+
+  protected ariaLabel(row: SmbShare): string {
+    return [row.name, this.translate.instant('SMB Share')].join(' ');
+  }
+
+  protected getPathValue(row: SmbShare): string {
+    return (row.options as ExternalSmbShareOptions)?.remote_path?.join(', ') || row.path;
+  }
+
+  protected isToggleDisabled(row: SmbShare): boolean {
+    return isShareUnavailable(row, this.activePoolPaths());
+  }
+
+  protected getEnabledTooltip(row: SmbShare): string {
+    return this.isToggleDisabled(row)
+      ? this.translate.instant(getUnavailableReason(row, this.activePoolPaths()))
+      : '';
+  }
+
   ngOnInit(): void {
-    const shares$ = this.api.call('sharing.smb.query').pipe(
-      tap((shares) => this.smbShares = shares),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<SmbShare>(shares$);
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -249,11 +256,11 @@ export class SmbListComponent implements OnInit {
       },
     });
 
-    this.tierService.attachTierToShareList<SmbShare>({
+    // Prime the tier config so `displayedColumns` reactively reveals the tier
+    // column when tiering is enabled, and reload the list on tier-job ticks.
+    this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.tierService.wireTierJobRefresh({
       destroyRef: this.destroyRef,
-      cdr: this.cdr,
-      getColumns: () => this.columns,
-      setColumns: (columns) => { this.columns = columns; },
       reload: () => this.dataProvider.load(),
     });
   }
@@ -273,6 +280,34 @@ export class SmbListComponent implements OnInit {
     }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
+  protected doEdit(row: SmbShare): void {
+    this.formPanel.open(SmbFormComponent, {
+      title: this.translate.instant('Edit SMB Share'),
+      inputs: { smbShareData: { existingSmbShare: row } },
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
+  }
+
+  private doEditShareAcl(row: SmbShare): void {
+    // A home share has a name (homes) set; row.name works for other shares.
+    const searchName = (row.purpose === SmbSharePurpose.LegacyShare && row.options?.home)
+      ? 'homes'
+      : row.name;
+    this.loader.open();
+    this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((shareAcl) => {
+        this.loader.close();
+        this.formPanel.open(SmbAclComponent, {
+          title: this.translate.instant('Share ACL for {share}', { share: shareAcl.share_name }),
+          inputs: { shareName: shareAcl.share_name },
+        }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
+      });
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<SmbShare>(event, this.displayedColumns()));
+  }
+
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({
@@ -282,13 +317,11 @@ export class SmbListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+  protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
   }
 
-  private onChangeEnabledState(row: SmbShare): void {
+  protected onChangeEnabledState(row: SmbShare): void {
     this.api.call('sharing.smb.update', [row.id, { enabled: !row.enabled }]).pipe(
       this.loader.withLoader(),
       takeUntilDestroyed(this.destroyRef),

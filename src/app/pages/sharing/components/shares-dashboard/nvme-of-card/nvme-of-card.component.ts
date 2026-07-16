@@ -190,8 +190,8 @@ export class NvmeOfCardComponent implements OnInit {
   }
 
   openForm(): void {
-    // Opened footerless — the add-subsystem stepper owns its own Next/Back/Save buttons. Uses the
-    // side-panel host (not legacy SlideIn) so a nested panel it opens (e.g. Add Host) stacks on top.
+    // Uses the side-panel host (not legacy SlideIn) so a nested panel it opens (e.g. Add Host)
+    // stacks on top.
     this.formPanel.open(AddSubsystemComponent, {
       title: this.translate.instant('Add Subsystem'),
       footerless: true,

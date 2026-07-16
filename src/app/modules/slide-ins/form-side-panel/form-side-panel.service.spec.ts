@@ -46,6 +46,27 @@ class SecondTestFormComponent extends SidePanelForm {
   }
 }
 
+@Component({
+  selector: 'ix-wizard-test-form',
+  template: '<p>wizard form body</p>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class WizardTestFormComponent extends SidePanelForm {
+  /** Static so the test can flip it without a handle on the portaled instance. */
+  static readonly saveHidden = signal(true);
+
+  protected readonly form = new FormControl('');
+  readonly canSubmit = signal(true);
+
+  hideSave(): boolean {
+    return WizardTestFormComponent.saveHidden();
+  }
+
+  protected onSubmit(): void {
+    this.close(true);
+  }
+}
+
 @Component({ selector: 'ix-test-host', template: '', changeDetection: ChangeDetectionStrategy.OnPush })
 class TestHostComponent {}
 
@@ -73,7 +94,10 @@ describe('FormSidePanelService', () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [TestHostComponent, TestFormComponent, SecondTestFormComponent, TranslateModule.forRoot()],
+      imports: [
+        TestHostComponent, TestFormComponent, SecondTestFormComponent, WizardTestFormComponent,
+        TranslateModule.forRoot(),
+      ],
       providers: [
         mockAuth(),
         {
@@ -116,6 +140,20 @@ describe('FormSidePanelService', () => {
     expect(onSuccess).toHaveBeenCalledWith(true);
   });
 
+  it('hides the footer Save while the hosted form\'s hideSave() returns true', async () => {
+    WizardTestFormComponent.saveHidden.set(true);
+    service.open(WizardTestFormComponent, { title: 'Wizard' });
+    fixture.detectChanges();
+
+    expect(await rootLoader.hasHarness(TnButtonHarness.with({ label: 'Save' }))).toBe(false);
+
+    // E.g. the wizard advanced to its final step.
+    WizardTestFormComponent.saveHidden.set(false);
+    fixture.detectChanges();
+
+    expect(await rootLoader.hasHarness(TnButtonHarness.with({ label: 'Save' }))).toBe(true);
+  });
+
   it('removes the panel from the DOM after it closes', async () => {
     service.open(TestFormComponent, { title: 'NFS' });
     fixture.detectChanges();
@@ -124,7 +162,7 @@ describe('FormSidePanelService', () => {
     await save.click();
     flushPanelClose();
 
-    expect(document.querySelector('.tn-side-panel__panel')).toBeNull();
+    expect(await rootLoader.hasHarness(TnSidePanelHarness)).toBe(false);
   });
 
   it('dedupes a re-entrant open of the same component, returning the in-flight result', async () => {
@@ -135,13 +173,13 @@ describe('FormSidePanelService', () => {
     fixture.detectChanges();
 
     expect(second$).toBe(first$);
-    expect(document.querySelectorAll('.tn-side-panel__panel')).toHaveLength(1);
+    expect(await rootLoader.getAllHarnesses(TnSidePanelHarness)).toHaveLength(1);
 
     const panel = await rootLoader.getHarness(TnSidePanelHarness);
     expect(await panel.getTitle()).toBe('NFS');
   });
 
-  it('stacks a second panel for a different component (nested open)', () => {
+  it('stacks a second panel for a different component (nested open)', async () => {
     service.open(TestFormComponent, { title: 'NFS' });
     fixture.detectChanges();
 
@@ -149,20 +187,20 @@ describe('FormSidePanelService', () => {
     fixture.detectChanges();
 
     // Both panels are mounted; the newer one is appended later so it paints on top.
-    expect(document.querySelectorAll('.tn-side-panel__panel')).toHaveLength(2);
+    expect(await rootLoader.getAllHarnesses(TnSidePanelHarness)).toHaveLength(2);
   });
 
-  it('closeAll tears down every panel in the stack', () => {
+  it('closeAll tears down every panel in the stack', async () => {
     service.open(TestFormComponent, { title: 'NFS' });
     fixture.detectChanges();
     service.open(SecondTestFormComponent, { title: 'SMB' });
     fixture.detectChanges();
-    expect(document.querySelectorAll('.tn-side-panel__panel')).toHaveLength(2);
+    expect(await rootLoader.getAllHarnesses(TnSidePanelHarness)).toHaveLength(2);
 
     service.closeAll();
     fixture.detectChanges();
 
-    expect(document.querySelector('.tn-side-panel__panel')).toBeNull();
+    expect(await rootLoader.hasHarness(TnSidePanelHarness)).toBe(false);
   });
 
   it('allows opening a new panel after the previous one closed', async () => {
@@ -192,7 +230,7 @@ describe('FormSidePanelService', () => {
     service.closeAll();
     fixture.detectChanges();
 
-    expect(document.querySelector('.tn-side-panel__panel')).toBeNull();
+    expect(await rootLoader.hasHarness(TnSidePanelHarness)).toBe(false);
     expect(onCancel).toHaveBeenCalled();
     expect(onSuccess).not.toHaveBeenCalled();
   });

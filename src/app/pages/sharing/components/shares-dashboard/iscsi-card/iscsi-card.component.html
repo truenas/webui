@@ -1,5 +1,6 @@
 <tn-card
   padding="small"
+  [padContent]="false"
   [headerStatus]="serviceStatus()"
   [headerMenu]="serviceMenu()"
   [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
@@ -7,7 +8,8 @@
   <a
     tnCardHeader
     class="card-title-link"
-    [ixTest]="['iscsi-share', 'open-in-new']"
+    tnTestIdType="link"
+    [tnTestId]="['iscsi-share', 'open-in-new']"
     [ixUiSearch]="searchableElements.elements.wizard"
     [routerLink]="['/sharing', 'iscsi', 'targets']"
     [tnTooltip]="'Open iSCSI list in full page' | translate"
@@ -51,7 +53,7 @@
     ></tn-button>
   </ng-template>
 
-  @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
+  @if (!rows().length && !isLoading()) {
     <tn-empty
       icon="iscsi-share"
       iconLibrary="custom"
@@ -61,17 +63,18 @@
   } @else {
     <tn-table
       class="table"
-      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [dataSource]="rows()"
       [displayedColumns]="displayedColumns()"
       [trackBy]="trackByIscsiId"
-      [loading]="!!(dataProvider.isLoading$ | async)"
+      [loading]="isLoading()"
       (sortChange)="onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'name'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Target Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Target Name' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Target Name' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.name ? (row.name | translate) : ''"
           >{{ row.name }}</span>
         </ng-template>
@@ -81,7 +84,8 @@
         <ng-template tnHeaderCellDef>{{ 'Target Alias' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Target Alias' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Target Alias' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.alias ? (row.alias | translate) : ''"
           >{{ row.alias }}</span>
         </ng-template>
@@ -91,7 +95,11 @@
         <ng-template tnHeaderCellDef>{{ 'Mode' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           @let mode = getModeValue(row);
-          <span [ixTest]="[('Mode' | translate), uniqueRowTag(row), 'row-text']" [tnTooltip]="mode">{{ mode }}</span>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Mode' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="mode"
+          >{{ mode }}</span>
         </ng-template>
       </ng-container>
 

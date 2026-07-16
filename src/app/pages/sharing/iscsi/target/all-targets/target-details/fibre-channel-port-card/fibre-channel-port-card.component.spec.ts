@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnCardComponent } from '@truenas/ui-components';
 import { IsHaDirective } from 'app/directives/is-ha/is-ha.directive';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -37,12 +38,12 @@ describe('FibreChannelPortCardComponent', () => {
   });
 
   it('renders Fibre Channel Ports title', () => {
-    const title = spectator.query('h3[mat-card-title]');
-    expect(title).toHaveText('Fibre Channel Ports');
+    // White-box: no TnCardHarness in @truenas/ui-components yet.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Fibre Channel Ports');
   });
 
   it('displays port details correctly', () => {
-    const content = spectator.queryAll('mat-card-content p');
+    const content = spectator.queryAll('tn-card p');
     expect(content).toHaveLength(3);
     expect(content[0]).toHaveText('Port: fc1/5');
     expect(content[1]).toHaveText('Controller A WWPN: 10:00:00:00:c9:20:00:00');
@@ -52,7 +53,7 @@ describe('FibreChannelPortCardComponent', () => {
   it('displays "No associated Fibre Channel ports" message', () => {
     spectator.setInput('ports', []);
     spectator.setInput('isLoading', false);
-    const content = spectator.query('mat-card-content');
+    const content = spectator.query('tn-card');
     expect(content).toHaveText('No associated Fibre Channel ports');
   });
 
@@ -75,7 +76,7 @@ describe('FibreChannelPortCardComponent', () => {
     const portGroups = spectator.queryAll('.port-group');
     expect(portGroups).toHaveLength(2);
 
-    const allParagraphs = spectator.queryAll('mat-card-content p');
+    const allParagraphs = spectator.queryAll('tn-card p');
     expect(allParagraphs[0]).toHaveText('Port: fc0');
     expect(allParagraphs[3]).toHaveText('Port: fc1');
   });
@@ -112,7 +113,7 @@ describe('FibreChannelPortCardComponent not HA', () => {
   });
 
   it('displays port details correctly for non HA system', () => {
-    const content = spectator.queryAll('mat-card-content p');
+    const content = spectator.queryAll('tn-card p');
     expect(content).toHaveLength(2);
     expect(content[0]).toHaveText('Port: fc1/5');
     expect(content[1]).toHaveText('WWPN: 10:00:00:00:c9:20:00:00');

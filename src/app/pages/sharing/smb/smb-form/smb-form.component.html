@@ -17,7 +17,8 @@
     id="smb-form-toggle-advanced-options"
     type="button"
     tabindex="-1"
-    ixTest="toggle-advanced-options-anchor"
+    tnTestIdType="button"
+    [tnTestId]="'toggle-advanced-options-anchor'"
     (click)="openAdvancedMode()"
   ></button>
 
@@ -30,6 +31,7 @@
       [required]="true"
     >
       <tn-select
+        testId="purpose"
         formControlName="purpose"
         [options]="(purposeOptions$ | async) ?? []"
       ></tn-select>
@@ -60,7 +62,7 @@
     }
 
     <tn-form-field [label]="helptextSharingSmb.nameLabel | translate" [required]="true">
-      <tn-input formControlName="name"></tn-input>
+      <tn-input testId="name" formControlName="name"></tn-input>
     </tn-form-field>
 
     @if (form.controls.remote_path.enabled) {
@@ -69,16 +71,17 @@
         [tooltip]="'This is the path to the external server and share. Each server entry must include a full domain name or IP address and share name. Separate the server and share with the `\\` character. \n\n Example: 192.168.0.200\\SHARE' | translate"
         [required]="true"
       >
-        <tn-chip-input formControlName="remote_path" [allowCustomValue]="true"></tn-chip-input>
+        <tn-chip-input testId="remote-path" formControlName="remote_path" [allowCustomValue]="true"></tn-chip-input>
       </tn-form-field>
     }
 
     <tn-form-field [label]="helptextSharingSmb.commentLabel | translate">
-      <tn-input formControlName="comment"></tn-input>
+      <tn-input testId="comment" formControlName="comment"></tn-input>
     </tn-form-field>
 
     <tn-form-field>
       <tn-checkbox
+        testId="enabled"
         formControlName="enabled"
         [label]="helptextSharingSmb.enabledLabel | translate"
       ></tn-checkbox>
@@ -90,6 +93,7 @@
       @if (form.controls.acl.enabled) {
         <tn-form-field [tooltip]="helptextSharingSmb.aclTooltip | translate">
           <tn-checkbox
+            testId="acl"
             formControlName="acl"
             [label]="helptextSharingSmb.aclLabel | translate"
           ></tn-checkbox>
@@ -99,6 +103,7 @@
       @if (form.controls.readonly.enabled) {
         <tn-form-field [tooltip]="helptextSharingSmb.readOnlyTooltip | translate">
           <tn-checkbox
+            testId="readonly"
             formControlName="readonly"
             [label]="helptextSharingSmb.readOnlyLabel | translate"
           ></tn-checkbox>
@@ -108,6 +113,7 @@
       @if (form.controls.browsable.enabled) {
         <tn-form-field [tooltip]="helptextSharingSmb.browsableTooltip | translate">
           <tn-checkbox
+            testId="browsable"
             formControlName="browsable"
             [label]="helptextSharingSmb.browsableLabel | translate"
           ></tn-checkbox>
@@ -117,6 +123,7 @@
       @if (form.controls.guestok.enabled) {
         <tn-form-field [tooltip]="helptextSharingSmb.guestokTooltip | translate">
           <tn-checkbox
+            testId="guestok"
             formControlName="guestok"
             [label]="helptextSharingSmb.guestokLabel | translate"
           ></tn-checkbox>
@@ -126,6 +133,7 @@
       @if (form.controls.access_based_share_enumeration.enabled) {
         <tn-form-field [tooltip]="helptextSharingSmb.abeTooltip | translate">
           <tn-checkbox
+            testId="access-based-share-enumeration"
             formControlName="access_based_share_enumeration"
             [label]="helptextSharingSmb.abeLabel | translate"
           ></tn-checkbox>
@@ -137,7 +145,7 @@
           [label]="helptextSharingSmb.hostsallowLabel | translate"
           [tooltip]="helptextSharingSmb.hostsAllowTooltip | translate"
         >
-          <tn-chip-input formControlName="hostsallow" [allowCustomValue]="true"></tn-chip-input>
+          <tn-chip-input testId="hostsallow" formControlName="hostsallow" [allowCustomValue]="true"></tn-chip-input>
         </tn-form-field>
       }
 
@@ -146,7 +154,7 @@
           [label]="helptextSharingSmb.hostsdenyLabel | translate"
           [tooltip]="helptextSharingSmb.hostsdenyTooltip | translate"
         >
-          <tn-chip-input formControlName="hostsdeny" [allowCustomValue]="true"></tn-chip-input>
+          <tn-chip-input testId="hostsdeny" formControlName="hostsdeny" [allowCustomValue]="true"></tn-chip-input>
         </tn-form-field>
       }
     </tn-form-section>
@@ -154,6 +162,7 @@
     <tn-form-section formGroupName="audit" [heading]="'Audit Logging' | translate">
       <tn-form-field [tooltip]="helptextSharingSmb.auditLogTooltip | translate">
         <tn-checkbox
+          testId="enable"
           formControlName="enable"
           [label]="'Enable Logging' | translate"
         ></tn-checkbox>
@@ -167,6 +176,7 @@
           [tooltip]="helptextSharingSmb.watchListTooltip | translate"
         >
           <tn-chip-input
+            testId="watch-list"
             formControlName="watch_list"
             [suggestions]="(groupSuggestions$ | async) ?? []"
             [allowCustomValue]="true"
@@ -179,6 +189,7 @@
           [tooltip]="helptextSharingSmb.ignoreListTooltip | translate"
         >
           <tn-chip-input
+            testId="ignore-list"
             formControlName="ignore_list"
             [suggestions]="(groupSuggestions$ | async) ?? []"
             [allowCustomValue]="true"
@@ -193,6 +204,7 @@
         @if (form.controls.home.enabled) {
           <tn-form-field [tooltip]="helptextSharingSmb.homeTooltip | translate">
             <tn-checkbox
+              testId="home"
               formControlName="home"
               [label]="helptextSharingSmb.homeLabel | translate"
             ></tn-checkbox>
@@ -202,6 +214,7 @@
         @if (form.controls.timemachine.enabled) {
           <tn-form-field [tooltip]="helptextSharingSmb.timemachineTooltip | translate">
             <tn-checkbox
+              testId="timemachine"
               formControlName="timemachine"
               [label]="helptextSharingSmb.timemachineLabel | translate"
             ></tn-checkbox>
@@ -224,6 +237,7 @@
         @if (form.controls.afp.enabled) {
           <tn-form-field [tooltip]="helptextSharingSmb.afpTooltip | translate">
             <tn-checkbox
+              testId="afp"
               formControlName="afp"
               [label]="helptextSharingSmb.afpLabel | translate"
             ></tn-checkbox>
@@ -233,6 +247,7 @@
         @if (form.controls.shadowcopy.enabled) {
           <tn-form-field [tooltip]="helptextSharingSmb.shadowcopyTooltip | translate">
             <tn-checkbox
+              testId="shadowcopy"
               formControlName="shadowcopy"
               [label]="helptextSharingSmb.shadowcopyLabel | translate"
             ></tn-checkbox>
@@ -242,6 +257,7 @@
         @if (form.controls.recyclebin.enabled) {
           <tn-form-field [tooltip]="helptextSharingSmb.recyclebinTooltip | translate">
             <tn-checkbox
+              testId="recyclebin"
               formControlName="recyclebin"
               [label]="helptextSharingSmb.recyclebinLabel | translate"
             ></tn-checkbox>
@@ -251,6 +267,7 @@
         @if (form.controls.aapl_name_mangling.enabled || form.controls.purpose.value === SmbPresetType.FcpShare) {
           <tn-form-field [tooltip]="helptextSharingSmb.aaplNameManglingTooltip | translate">
             <tn-checkbox
+              testId="aapl-name-mangling"
               formControlName="aapl_name_mangling"
               [label]="helptextSharingSmb.aaplNameManglingLabel | translate"
             ></tn-checkbox>
@@ -260,6 +277,7 @@
         @if (form.controls.streams.enabled) {
           <tn-form-field [tooltip]="helptextSharingSmb.streamsTooltip | translate">
             <tn-checkbox
+              testId="streams"
               formControlName="streams"
               [label]="helptextSharingSmb.streamsLabel | translate"
             ></tn-checkbox>
@@ -269,6 +287,7 @@
         @if (form.controls.durablehandle.enabled) {
           <tn-form-field [tooltip]="helptextSharingSmb.durablehandleTooltip | translate">
             <tn-checkbox
+              testId="durablehandle"
               formControlName="durablehandle"
               [label]="helptextSharingSmb.durablehandleLabel | translate"
             ></tn-checkbox>
@@ -278,6 +297,7 @@
         @if (form.controls.fsrvp.enabled) {
           <tn-form-field [tooltip]="helptextSharingSmb.fsrvpTooltip | translate">
             <tn-checkbox
+              testId="fsrvp"
               formControlName="fsrvp"
               [label]="helptextSharingSmb.fsrvpLabel | translate"
             ></tn-checkbox>
@@ -289,7 +309,7 @@
             [label]="helptextSharingSmb.pathSuffixLabel | translate"
             [tooltip]="helptextSharingSmb.pathSuffixTooltip | translate"
           >
-            <tn-input formControlName="path_suffix"></tn-input>
+            <tn-input testId="path-suffix" formControlName="path_suffix"></tn-input>
           </tn-form-field>
         }
 
@@ -298,7 +318,7 @@
             [label]="helptextSharingSmb.auxsmbconfLabel | translate"
             [tooltip]="helptextSharingSmb.auxsmbconfTooltip | translate"
           >
-            <tn-input formControlName="auxsmbconf"></tn-input>
+            <tn-input testId="auxsmbconf" formControlName="auxsmbconf"></tn-input>
           </tn-form-field>
         }
 
@@ -307,13 +327,14 @@
             [label]="'VUID' | translate"
             [tooltip]="'Unique identifier for user session. Enter a valid UUID4 string.' | translate"
           >
-            <tn-input formControlName="vuid"></tn-input>
+            <tn-input testId="vuid" formControlName="vuid"></tn-input>
           </tn-form-field>
         }
 
         @if (form.controls.auto_snapshot.enabled) {
           <tn-form-field [tooltip]="'Enable automatic snapshot creation for Time Machine shares.' | translate">
             <tn-checkbox
+              testId="auto-snapshot"
               formControlName="auto_snapshot"
               [label]="'Auto Snapshot' | translate"
             ></tn-checkbox>
@@ -323,6 +344,7 @@
         @if (form.controls.auto_dataset_creation.enabled) {
           <tn-form-field [tooltip]="helptextSharingSmb.autoDatasetCreationTooltip | translate">
             <tn-checkbox
+              testId="auto-dataset-creation"
               formControlName="auto_dataset_creation"
               [label]="helptextSharingSmb.autoDatasetCreationLabel | translate"
             ></tn-checkbox>
@@ -334,7 +356,7 @@
             [label]="helptextSharingSmb.datasetNamingSchemaLabel | translate"
             [tooltip]="helptextSharingSmb.datasetNamingSchemaTooltip | translate"
           >
-            <tn-input formControlName="dataset_naming_schema"></tn-input>
+            <tn-input testId="dataset-naming-schema" formControlName="dataset_naming_schema"></tn-input>
           </tn-form-field>
         }
 
@@ -343,7 +365,7 @@
             [label]="helptextSharingSmb.gracePeriodLabel | translate"
             [tooltip]="helptextSharingSmb.gracePeriodTooltip | translate"
           >
-            <tn-input formControlName="grace_period" [inputType]="InputType.Number"></tn-input>
+            <tn-input testId="grace-period" formControlName="grace_period" [inputType]="InputType.Number"></tn-input>
           </tn-form-field>
         }
 
@@ -352,7 +374,7 @@
             [label]="helptextSharingSmb.autoQuotaLabel | translate"
             [tooltip]="helptextSharingSmb.autoQuotaTooltip | translate"
           >
-            <tn-input formControlName="auto_quota" [inputType]="InputType.Number"></tn-input>
+            <tn-input testId="auto-quota" formControlName="auto_quota" [inputType]="InputType.Number"></tn-input>
           </tn-form-field>
         }
       </tn-form-section>

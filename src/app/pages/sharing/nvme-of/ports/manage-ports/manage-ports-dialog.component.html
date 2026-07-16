@@ -1,23 +1,68 @@
 <tn-dialog-shell testId="dialog" [title]="'Ports' | translate">
-
-
-  <ix-table
+  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
+  <tn-table
     class="table"
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    [testId]="'table-table'"
+    [dataSource]="rows()"
+    [displayedColumns]="displayedColumns"
+    [trackBy]="trackByPortId"
+    [loading]="isLoading()"
+    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyIcon]="emptyConf?.icon ?? ''"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    ></tbody>
-  </ix-table>
+    <ng-container [tnColumnDef]="'addr_trtype'">
+      <ng-template tnHeaderCellDef>{{ 'Type' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Type' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ transportLabel(row) }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'addr_traddr'">
+      <ng-template tnHeaderCellDef>{{ 'Address' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Address' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.addr_traddr }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'addr_trsvcid'">
+      <ng-template tnHeaderCellDef>{{ 'Port' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Port' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.addr_trsvcid }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'usedInSubsystems'">
+      <ng-template tnHeaderCellDef>{{ 'Used In Subsystems' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Used In Subsystems' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.usedInSubsystems }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'actions'" [width]="'120px'">
+      <ng-template tnHeaderCellDef></ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-actions-cell
+          mode="inline"
+          [actions]="actions"
+          [row]="row"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [ariaLabel]="row.id + ' ' + ('Port' | translate)"
+        ></ix-table-actions-cell>
+      </ng-template>
+    </ng-container>
+  </tn-table>
 
   <tn-button
     tnDialogAction

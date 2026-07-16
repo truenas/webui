@@ -7,7 +7,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnStepComponent, TnStepperComponent, TnStepperNextDirective,
+  TnButtonComponent, TnStepComponent, TnStepperComponent, TnStepperNextDirective,
   TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import {
@@ -64,7 +64,6 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnCardComponent,
     ReactiveFormsModule,
     TnStepperComponent,
     TnStepComponent,
@@ -96,18 +95,19 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
   protected readonly extentStep = viewChild.required(ExtentWizardStepComponent);
   protected readonly protocolOptionsStep = viewChild(ProtocolOptionsWizardStepComponent);
 
-  isLoading = signal<boolean>(false);
-  toStop = signal<boolean>(false);
-  namesInUse = signal<string[]>([]);
-  fcHosts = signal<{ id: number; alias: string }[]>([]);
-  availableFcPorts = signal<string[]>([]);
+  protected isLoading = signal<boolean>(false);
+  private toStop = signal<boolean>(false);
+  private namesInUse = signal<string[]>([]);
+  private fcHosts = signal<{ id: number; alias: string }[]>([]);
+  protected availableFcPorts = signal<string[]>([]);
 
+  // Public: the spec seeds this directly to exercise the rollback path.
   createdZvol: Dataset | undefined;
-  createdExtent: IscsiExtent | undefined;
-  createdPortal: IscsiPortal | undefined;
-  createdInitiator: IscsiInitiatorGroup | undefined;
-  createdTarget: IscsiTarget | undefined;
-  createdTargetExtent: IscsiTargetExtent | undefined;
+  private createdExtent: IscsiExtent | undefined;
+  private createdPortal: IscsiPortal | undefined;
+  private createdInitiator: IscsiInitiatorGroup | undefined;
+  private createdTarget: IscsiTarget | undefined;
+  private createdTargetExtent: IscsiTargetExtent | undefined;
 
   form = this.fb.group({
     target: this.fb.group({
@@ -416,7 +416,7 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
     return lastValueFrom(this.api.call('iscsi.targetextent.create', [payload]));
   }
 
-  rollBack(): void {
+  private rollBack(): void {
     this.isLoading.set(false);
 
     const requests = [];
@@ -468,7 +468,7 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
     }
   }
 
-  handleError(error: unknown): void {
+  private handleError(error: unknown): void {
     this.toStop.set(true);
     this.errorHandler.showErrorModal(error);
   }

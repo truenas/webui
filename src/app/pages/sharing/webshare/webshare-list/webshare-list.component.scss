@@ -1,23 +1,41 @@
-.info-message {
-  align-items: center;
-  background-color: var(--bg1);
-  border: 1px solid var(--lines);
-  border-radius: 4px;
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 16px;
+@import '../../components/tn-table-in-card';
 
-  tn-icon {
-    color: var(--primary);
-  }
+@include tn-table-in-card;
+
+:host {
+  display: block;
+  max-width: 1080px;
+}
+
+.header-title {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+tn-banner {
+  display: block;
+  margin-bottom: 16px;
 
   &.clickable {
     cursor: pointer;
-    transition: background-color 0.2s ease;
+  }
+}
 
-    &:hover {
-      background-color: var(--bg2);
-    }
+.webshare-name-container {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+
+  .home-icon {
+    flex-shrink: 0;
   }
 }

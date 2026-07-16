@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, DestroyRef,
 } from '@angular/core';
@@ -20,10 +19,12 @@ import {
   TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   type TnSortEvent,
   TnDialog,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import {
   filter, startWith, tap,
 } from 'rxjs';
@@ -40,9 +41,10 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
+} from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -75,7 +77,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCardFooterActionsDirective,
     TnSlideToggleComponent,
     RequiresRolesDirective,
-    TestDirective,
+    TnTestIdDirective,
     TnIconComponent,
     TnTooltipDirective,
     UiSearchDirective,
@@ -85,7 +87,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCellDefDirective,
     IxTablePagerShowMoreComponent,
     TranslateModule,
-    AsyncPipe,
     RouterLink,
     TnEmptyComponent,
     CardAlertBadgeComponent,
@@ -105,9 +106,9 @@ export class IscsiCardComponent implements OnInit {
   private authService = inject(AuthService);
   protected actionsMenu = inject(ServiceActionsMenuService);
 
-  service$ = this.store$.select(selectService(ServiceName.Iscsi));
+  private service$ = this.store$.select(selectService(ServiceName.Iscsi));
   protected service = toSignal(this.service$);
-  requiredRoles = [
+  protected requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -115,7 +116,7 @@ export class IscsiCardComponent implements OnInit {
 
   private hasWriteRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
-  targets = signal<IscsiTarget[] | null>(null);
+  private targets = signal<IscsiTarget[] | null>(null);
 
   protected readonly hasFibreChannel = toSignal(
     this.license.hasFibreChannel$.pipe(startWith(false)),
@@ -140,7 +141,16 @@ export class IscsiCardComponent implements OnInit {
     });
   }
 
-  dataProvider: AsyncDataProvider<IscsiTarget>;
+  private readonly iscsiShares$ = this.api.call('iscsi.target.query').pipe(
+    tap((targets) => {
+      this.targets.set(targets);
+    }),
+    takeUntilDestroyed(this.destroyRef),
+  );
+
+  protected dataProvider = new AsyncDataProvider<IscsiTarget>(this.iscsiShares$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
 
   protected readonly actions: IconActionConfig<IscsiTarget>[] = [
     {
@@ -173,7 +183,9 @@ export class IscsiCardComponent implements OnInit {
   protected readonly trackByIscsiId = (_index: number, row: IscsiTarget): number => row.id;
 
   protected uniqueRowTag(row: IscsiTarget): string {
-    return convertStringToId('card-iscsi-target-' + row.name);
+    // Pre-split with lodash kebabCase so digit-bearing target names resolve identically
+    // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+    return kebabCase(convertStringToId('card-iscsi-target-' + row.name));
   }
 
   protected ariaLabel(row: IscsiTarget): string {
@@ -189,18 +201,11 @@ export class IscsiCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const iscsiShares$ = this.api.call('iscsi.target.query').pipe(
-      tap((targets) => {
-        this.targets.set(targets);
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
     this.setDefaultSort();
     this.dataProvider.load();
   }
 
-  openForm(row?: IscsiTarget, openWizard?: boolean): void {
+  protected openForm(row?: IscsiTarget, openWizard?: boolean): void {
     if (openWizard) {
       // Opened footerless — the wizard's stepper owns its own Next/Back/Save buttons.
       this.formPanel.open(IscsiWizardComponent, {
@@ -217,7 +222,7 @@ export class IscsiCardComponent implements OnInit {
     }
   }
 
-  doDelete(iscsi: IscsiTarget): void {
+  private doDelete(iscsi: IscsiTarget): void {
     this.tnDialog
       .open(DeleteTargetDialog, { data: iscsi, width: '600px' })
       .closed
@@ -225,7 +230,7 @@ export class IscsiCardComponent implements OnInit {
       .subscribe(() => this.dataProvider.load());
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,

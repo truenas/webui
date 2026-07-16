@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCardComponent, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -9,15 +9,8 @@ import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
@@ -32,21 +25,10 @@ const targets = [{
 describe('TargetListComponent', () => {
   let spectator: Spectator<TargetListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: TargetListComponent,
-    imports: [
-      BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
-      FakeProgressBarComponent,
-    ],
     providers: [
       mockProvider(EmptyService),
       mockApi([
@@ -54,7 +36,6 @@ describe('TargetListComponent', () => {
         mockCall('iscsi.target.delete'),
         mockCall('iscsi.global.sessions', []),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -72,17 +53,18 @@ describe('TargetListComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('shows accurate page title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Targets');
+    // White-box: no TnCardHarness in @truenas/ui-components yet.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Targets');
   });
 
   it('opens target form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
+    spectator.detectChanges();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(TargetFormComponent, {
       title: 'Add ISCSI Target',
@@ -91,24 +73,18 @@ describe('TargetListComponent', () => {
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Alias', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Alias', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['test-iscsi-target', 'test-iscsi-target-alias', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
-  it('should show extra Mode column', async () => {
+  it('should show extra Mode column when a non-iSCSI target exists', async () => {
     spectator.setInput('targets', targets);
 
-    const expectedRows = [
-      ['Name', 'Alias', 'Mode', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Alias', 'Mode', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['test-iscsi-target', 'test-iscsi-target-alias', 'Fibre Channel', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 });

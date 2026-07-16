@@ -6,12 +6,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent } from '@truenas/ui-components';
+import {
+  TnAutocompleteComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { isNumber } from 'lodash-es';
 import {
-  concatMap, firstValueFrom, from, mergeMap, Observable, of,
+  BehaviorSubject, catchError, combineLatest, concatMap, debounceTime, distinctUntilChanged, firstValueFrom, from,
+  map, mergeMap, Observable, of, shareReplay, switchMap, tap, toArray,
 } from 'rxjs';
-import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
@@ -22,9 +24,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
@@ -32,8 +31,8 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
@@ -64,7 +63,7 @@ interface FormAclEntry {
     TnSelectComponent,
     IxListComponent,
     IxListItemComponent,
-    IxComboboxComponent,
+    TnAutocompleteComponent,
     IxErrorsComponent,
     TranslateModule,
   ],
@@ -120,12 +119,77 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
 
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
-  readonly userProvider = new UserComboboxProvider(
-    this.userService,
-    { valueField: 'uid', queryType: ComboboxQueryType.Smb },
+
+  // Options seeded from the loaded ACL so existing uid/gid values display as
+  // names (the search query below only covers what the user has typed).
+  private readonly initialUserOptions$ = new BehaviorSubject<Option[]>([]);
+  private readonly initialGroupOptions$ = new BehaviorSubject<Option[]>([]);
+
+  // Server-searched option streams for the per-entry user/group autocompletes.
+  // All entries share one stream per kind — options only matter while that
+  // dropdown is open — and shareReplay collapses the `async` subscribers into a
+  // single SMB directory query per search. Option values are uid/gid numbers;
+  // free-typed names commit as strings and are resolved to ids on submit
+  // (see `getAclEntriesFromForm`), matching the old combobox behavior.
+  // On a failed fetch the stream stays alive with empty options and the dropdown
+  // shows "Options cannot be loaded" via [noResultsText] — the same in-panel
+  // signal the old ix-combobox rendered (a modal per failed keystroke query
+  // would be far noisier than the transient panel notice).
+  protected readonly usersFetchFailed = signal(false);
+  protected readonly usersLoading = signal(false);
+  protected readonly userSearch$ = new BehaviorSubject('');
+  protected readonly userOptions$ = combineLatest([
+    this.userSearch$.pipe(
+      debounceTime(defaultDebounceTimeMs),
+      distinctUntilChanged(),
+      tap(() => this.usersLoading.set(true)),
+      switchMap((query) => this.userService.smbUserQueryDsCache(query).pipe(
+        tap(() => this.usersFetchFailed.set(false)),
+        catchError((error: unknown) => {
+          console.error('SMB user autocomplete fetch failed:', error);
+          this.usersFetchFailed.set(true);
+          return of([] as User[]);
+        }),
+      )),
+      map((users) => users.map((user) => ({ label: user.username, value: user.uid }))),
+      tap(() => this.usersLoading.set(false)),
+    ),
+    this.initialUserOptions$,
+  ]).pipe(
+    map(([options, initial]) => [
+      ...initial.filter((item) => !options.some((option) => option.value === item.value)),
+      ...options,
+    ]),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  protected groupProvider: GroupComboboxProvider;
+  protected readonly groupsFetchFailed = signal(false);
+  protected readonly groupsLoading = signal(false);
+  protected readonly groupSearch$ = new BehaviorSubject('');
+  protected readonly groupOptions$ = combineLatest([
+    this.groupSearch$.pipe(
+      debounceTime(defaultDebounceTimeMs),
+      distinctUntilChanged(),
+      tap(() => this.groupsLoading.set(true)),
+      switchMap((query) => this.userService.smbGroupQueryDsCache(query, false).pipe(
+        tap(() => this.groupsFetchFailed.set(false)),
+        catchError((error: unknown) => {
+          console.error('SMB group autocomplete fetch failed:', error);
+          this.groupsFetchFailed.set(true);
+          return of([] as Group[]);
+        }),
+      )),
+      map((groups) => groups.map((group) => ({ label: group.group, value: group.gid }))),
+      tap(() => this.groupsLoading.set(false)),
+    ),
+    this.initialGroupOptions$,
+  ]).pipe(
+    map(([options, initial]) => [
+      ...initial.filter((item) => !options.some((option) => option.value === item.value)),
+      ...options,
+    ]),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   ngOnInit(): void {
     // Share name arrives via the `shareName` input from the side-panel host.
@@ -258,38 +322,26 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
         concatMap((ace: SmbSharesecAce) => {
           return this.initialValueDataFromAce(ace);
         }),
+        toArray(),
+        takeUntilDestroyed(this.destroyRef),
       )
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((aceData: unknown[]) => {
-        const initialOptions: Option[] = [];
+      .subscribe((aceData) => {
+        const userOptions: Option[] = [];
+        const groupOptions: Option[] = [];
 
-        if (aceData.length) {
-          const firstItem = aceData[0] as Group | User;
-          let option: Option;
-
-          if ('gid' in firstItem) {
-            option = {
-              label: ignoreTranslation(firstItem.group),
-              value: firstItem.gid,
-            };
-          } else if ('uid' in firstItem || (firstItem as User).uid?.toString() === '0') {
-            option = {
-              label: ignoreTranslation(firstItem.username),
-              value: firstItem.uid,
-            };
-          } else {
+        aceData.flat().forEach((item) => {
+          if (typeof item === 'string') {
             return;
           }
-
-          initialOptions.push(option);
-        }
-
-        this.groupProvider = new GroupComboboxProvider(this.userService, {
-          initialOptions,
-          valueField: 'gid',
-          queryType: ComboboxQueryType.Smb,
+          if ('gid' in item) {
+            groupOptions.push({ label: item.group, value: item.gid } as Option);
+          } else if ('uid' in item) {
+            userOptions.push({ label: item.username, value: item.uid } as Option);
+          }
         });
 
+        this.initialUserOptions$.next(userOptions);
+        this.initialGroupOptions$.next(groupOptions);
         this.isLoading.set(false);
       });
   }

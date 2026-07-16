@@ -27,6 +27,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 @Component({
   selector: 'ix-protocol-options-wizard-step',
   templateUrl: './protocol-options-wizard-step.component.html',
+  styleUrls: ['./protocol-options-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

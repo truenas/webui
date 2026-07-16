@@ -1,30 +1,22 @@
-import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog, TnDialogShellComponent, tnIconMarker } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCellDefDirective, TnDialog, TnDialogShellComponent, TnHeaderCellDefDirective,
+  TnTableColumnDirective, TnTableComponent, TnTestIdDirective, tnIconMarker,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import {
-  actionsColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import {
-  yesNoColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -44,63 +36,51 @@ interface NvmeOfHostAndUsage extends NvmeOfHost {
     TnDialogShellComponent,
     TnButtonComponent,
     TranslateModule,
-    AsyncPipe,
-    IxTableBodyComponent,
-    IxTableComponent,
-    IxTableHeadComponent,
-    IxTableEmptyDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnTestIdDirective,
+    TableActionsCellComponent,
   ],
 })
 export class ManageHostsDialog implements OnInit {
   private nvmeOfStore = inject(NvmeOfStore);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
-  private formPanel = inject(FormSidePanelService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);
+  private formPanel = inject(FormSidePanelService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  protected columns = createTable<NvmeOfHostAndUsage>([
-    textColumn({
-      title: this.translate.instant('NQN'),
-      propertyName: 'hostnqn',
-    }),
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'description',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Has Host Authentication'),
-      propertyName: 'dhchap_key',
-    }),
-    textColumn({
-      title: this.translate.instant('Used In Subsystems'),
-      propertyName: 'usedInSubsystems',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.onEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.onDelete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => `host-${row.hostnqn}`,
-    ariaLabels: (row) => [String(row.id), this.translate.instant('Host')],
-  });
+  protected readonly displayedColumns = ['hostnqn', 'description', 'dhchap_key', 'usedInSubsystems', 'actions'];
+
+  protected readonly trackByHostId = (_: number, row: NvmeOfHostAndUsage): number => row.id;
+
+  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
+  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+  protected uniqueRowTag(row: NvmeOfHostAndUsage): string {
+    return kebabCase(convertStringToId('host-' + row.hostnqn));
+  }
+
+  protected readonly actions: IconActionConfig<NvmeOfHostAndUsage>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.onEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => this.onDelete(row),
+    },
+  ];
 
   protected dataProvider = new AsyncDataProvider(
     this.nvmeOfStore.state$.pipe(
@@ -114,6 +94,10 @@ export class ManageHostsDialog implements OnInit {
       }),
     ),
   );
+
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
 
   ngOnInit(): void {
     this.dataProvider.load();
