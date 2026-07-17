@@ -30,7 +30,6 @@ import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.i
 import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
 import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
-import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
@@ -124,7 +123,6 @@ export interface ApiJobDirectory {
 
   // IPMI
   'ipmi.sel.clear': { params: void; response: void };
-  'ipmi.sel.elist': { params: void; response: IpmiEvent[] };
 
   // KMIP
   'kmip.update': { params: [KmipConfigUpdate]; response: KmipConfig };
