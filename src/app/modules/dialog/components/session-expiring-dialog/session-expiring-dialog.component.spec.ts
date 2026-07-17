@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   SessionExpiringDialog,
@@ -27,7 +27,7 @@ describe('SessionExpiringDialog', () => {
     providers: [
       { provide: DIALOG_DATA, useValue: options },
       mockProvider(DialogRef),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(NavigateAndHighlightService),
@@ -62,7 +62,10 @@ describe('SessionExpiringDialog', () => {
     spectator.click(preferencesLink);
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PreferencesFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      PreferencesFormComponent,
+      { title: 'Preferences' },
+    );
 
     jest.runAllTimers();
 
