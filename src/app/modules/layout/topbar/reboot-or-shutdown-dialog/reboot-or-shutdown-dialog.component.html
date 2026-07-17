@@ -9,11 +9,12 @@
     </tn-form-field>
 
     @if(form.controls.customReason.enabled) {
-      <ix-input
-        [formControl]="form.controls.customReason"
-        [label]="'Custom Reason' | translate"
-        [required]="true"
-      ></ix-input>
+      <tn-form-field [label]="'Custom Reason' | translate" [required]="true">
+        <tn-input
+          testId="custom-reason"
+          [formControl]="form.controls.customReason"
+        ></tn-input>
+      </tn-form-field>
     }
   }
 

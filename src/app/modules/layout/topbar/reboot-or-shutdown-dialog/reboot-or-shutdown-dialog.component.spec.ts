@@ -3,8 +3,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import {
   RebootOrShutdownDialog,
 } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
@@ -89,7 +90,7 @@ describe('RebootOrShutdownDialogComponent', () => {
       const select = await loader.getHarness(TnSelectHarness);
       await select.selectOption(/Custom Reason/);
 
-      const customReasonInput = await loader.getHarness(IxInputHarness.with({ label: 'Custom Reason' }));
+      const customReasonInput = await loader.getHarness(TnInputHarness);
       await customReasonInput.setValue('House on fire');
 
       const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
