@@ -32,9 +32,9 @@
   z-index: 3;
 }
 
+// No border-bottom: the tn-tree box directly below draws its own top border.
 .tree-header {
   align-items: center;
-  border-bottom: 2px solid var(--lines);
   color: var(--fg2);
   display: grid;
   grid-gap: 8px;
