@@ -1,14 +1,20 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatDivider } from '@angular/material/divider';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
+import {
+  TnDialog,
+  TnIconButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
+  TnTestIdDirective,
+} from '@truenas/ui-components';
 import { filter, map, of, switchMap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AuthService } from 'app/modules/auth/auth.service';
 import {
@@ -17,7 +23,6 @@ import {
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { userMenuElements } from 'app/modules/layout/topbar/user-menu/user-menu.elements';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.actions';
 
 @Component({
@@ -28,15 +33,11 @@ import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.ac
   imports: [
     TnIconButtonComponent,
     TnTestIdDirective,
-    MatMenuTrigger,
-    TnIconComponent,
-    MatMenu,
-    MatMenuItem,
-    RouterLink,
-    MatDivider,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     TranslateModule,
     UiSearchDirective,
-    TestDirective,
   ],
 })
 export class UserMenuComponent {
@@ -46,6 +47,7 @@ export class UserMenuComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private window = inject<Window>(WINDOW);
 
   protected readonly tooltips = helptextTopbar.tooltips;
   protected searchableElements = userMenuElements;
@@ -77,6 +79,16 @@ export class UserMenuComponent {
 
   onTwoFactorAuth(): void {
     this.router.navigate(['/two-factor-auth']);
+  }
+
+  openMyApiKeys(): void {
+    this.router.navigate(['/credentials/users/api-keys'], {
+      queryParams: { userName: this.loggedInUser()?.pw_name },
+    });
+  }
+
+  openGuide(): void {
+    this.window.open('https://www.truenas.com/docs/', '_blank');
   }
 
   onSignOut(): void {
