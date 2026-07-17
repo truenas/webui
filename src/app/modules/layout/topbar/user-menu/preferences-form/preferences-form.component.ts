@@ -28,6 +28,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
@@ -90,16 +91,26 @@ export class PreferencesFormComponent extends SidePanelForm implements OnInit {
 
   protected readonly InputType = InputType;
 
-  protected lightThemeOptions: TnSelectOption[] = this.themeService.allThemes
-    .filter((theme) => !this.themeService.isDarkTheme(theme.name))
-    .map((theme) => ({ label: theme.label, value: theme.name }));
+  // tn-select renders labels verbatim, so pre-translate them (the old ix-select piped
+  // every option label through translate at render).
+  protected lightThemeOptions: TnSelectOption[] = translateOptions(
+    this.translate,
+    this.themeService.allThemes
+      .filter((theme) => !this.themeService.isDarkTheme(theme.name))
+      .map((theme) => ({ label: theme.label, value: theme.name })),
+  );
 
-  protected darkThemeOptions: TnSelectOption[] = this.themeService.allThemes
-    .filter((theme) => this.themeService.isDarkTheme(theme.name))
-    .map((theme) => ({ label: theme.label, value: theme.name }));
+  protected darkThemeOptions: TnSelectOption[] = translateOptions(
+    this.translate,
+    this.themeService.allThemes
+      .filter((theme) => this.themeService.isDarkTheme(theme.name))
+      .map((theme) => ({ label: theme.label, value: theme.name })),
+  );
 
-  protected themeOptions: TnSelectOption[] = this.themeService.allThemes
-    .map((theme) => ({ label: theme.label, value: theme.name }));
+  protected themeOptions: TnSelectOption[] = translateOptions(
+    this.translate,
+    this.themeService.allThemes.map((theme) => ({ label: theme.label, value: theme.name })),
+  );
 
   protected languageOptions = toSignal(
     this.sysGeneralService.languageOptions(true),

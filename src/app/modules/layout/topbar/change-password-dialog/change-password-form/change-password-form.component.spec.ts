@@ -15,7 +15,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-describe('ChangePasswordDialogComponent', () => {
+describe('ChangePasswordFormComponent (via ChangePasswordDialog)', () => {
   let spectator: Spectator<ChangePasswordDialog>;
   let loader: HarnessLoader;
   let api: ApiService;
