@@ -92,6 +92,7 @@
     opacity: 0.7;
     position: absolute;
     right: 9px;
-    top: -1px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
