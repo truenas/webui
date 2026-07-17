@@ -5,19 +5,23 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
 import {
-  Subscription, merge, of, startWith,
+  InputType,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+  TnSelectOption,
+} from '@truenas/ui-components';
+import {
+  Subscription, merge, startWith,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
-import { Option } from 'app/interfaces/option.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -39,10 +43,11 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   imports: [
     ModalHeaderComponent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TnInputComponent,
     IxComboboxComponent,
     FormActionsComponent,
     TnButtonComponent,
@@ -83,28 +88,25 @@ export class PreferencesFormComponent extends SidePanelForm implements OnInit {
     { initialValue: false },
   );
 
-  protected lightThemeOptions = of(
-    this.themeService.allThemes
-      .filter((theme) => !this.themeService.isDarkTheme(theme.name))
-      .map((theme) => ({ label: theme.label, value: theme.name })),
-  );
+  protected readonly InputType = InputType;
 
-  protected darkThemeOptions = of(
-    this.themeService.allThemes
-      .filter((theme) => this.themeService.isDarkTheme(theme.name))
-      .map((theme) => ({ label: theme.label, value: theme.name })),
-  );
+  protected lightThemeOptions: TnSelectOption[] = this.themeService.allThemes
+    .filter((theme) => !this.themeService.isDarkTheme(theme.name))
+    .map((theme) => ({ label: theme.label, value: theme.name }));
 
-  protected themeOptions = of(
-    this.themeService.allThemes.map((theme) => ({ label: theme.label, value: theme.name })),
-  );
+  protected darkThemeOptions: TnSelectOption[] = this.themeService.allThemes
+    .filter((theme) => this.themeService.isDarkTheme(theme.name))
+    .map((theme) => ({ label: theme.label, value: theme.name }));
+
+  protected themeOptions: TnSelectOption[] = this.themeService.allThemes
+    .map((theme) => ({ label: theme.label, value: theme.name }));
 
   protected languageProvider = new SimpleAsyncComboboxProvider(
     this.sysGeneralService.languageOptions(true),
   );
 
-  protected dateFormatOptions = of<Option[]>([]);
-  protected timeFormatOptions = of<Option[]>([]);
+  protected dateFormatOptions = signal<TnSelectOption[]>([]);
+  protected timeFormatOptions = signal<TnSelectOption[]>([]);
 
   /** Submission is synchronous (store dispatches only), so there is no loading state. */
   readonly canSubmit = this.trackCanSubmit(signal(false));
@@ -183,8 +185,8 @@ export class PreferencesFormComponent extends SidePanelForm implements OnInit {
   }
 
   private setTimeOptions(tz: string): void {
-    this.dateFormatOptions = of(this.localeService.getDateFormatOptions(tz));
-    this.timeFormatOptions = of(this.localeService.getTimeFormatOptions(tz));
+    this.dateFormatOptions.set(this.localeService.getDateFormatOptions(tz));
+    this.timeFormatOptions.set(this.localeService.getTimeFormatOptions(tz));
   }
 
   private getOsTheme(light: string, dark: string): string {
