@@ -69,18 +69,15 @@ export class IpmiEventsDialog implements OnInit {
 
   private loadEvents(): void {
     this.isLoading.set(true);
-    this.api.job('ipmi.sel.elist').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (job) => {
-        if (job.state !== JobState.Success) {
-          return;
-        }
-
-        this.events = this.sortEvents(job.result);
+    this.api.call('ipmi.sel.elist').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (events) => {
+        this.events = this.sortEvents(events);
       },
       complete: () => {
         this.isLoading.set(false);
       },
       error: (error: unknown) => {
+        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });
