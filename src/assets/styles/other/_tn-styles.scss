@@ -188,9 +188,16 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   }
 
   .mat-mdc-menu-panel,
-  .mat-mdc-option.mat-active,
-  .nav-list a {
+  .mat-mdc-option.mat-active {
     @include variable(background, --bg2, $bg2);
+    @include variable(color, --fg2, $fg2, !important);
+  }
+
+  // Nav anchors stay transparent (the panel supplies the bg2 backdrop) so the
+  // `.sidenav-link:hover` background on the list item shows through; an opaque
+  // anchor background would swallow the hover state. Anchors inherit the fg2
+  // item color. Highlighted items opt back into an opaque bg2 anchor below.
+  .nav-list a {
     @include variable(color, --fg2, $fg2, !important);
   }
 
