@@ -2,6 +2,7 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnTreeHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -12,7 +13,6 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
@@ -89,7 +89,7 @@ describe('BootStatusListComponent', () => {
   it('loads boot pool state and shows it when one disk', async () => {
     expect(api.call).toHaveBeenCalledWith('boot.get_state');
 
-    const tree = await loader.getHarness(TreeHarness);
+    const tree = await loader.getHarness(TnTreeHarness);
     const nodes = await tree.getNodes();
     expect(nodes).toHaveLength(2);
 

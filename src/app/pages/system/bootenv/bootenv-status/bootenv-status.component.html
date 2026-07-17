@@ -40,50 +40,35 @@
         <div>{{ 'Errors' | translate }}</div>
       </div>
 
-      <ix-tree-view
+      <tn-tree
         class="tree"
-        [ixDataSource]="dataSource"
-        [ixTreeControl]="treeControl"
+        [dataSource]="dataSource"
+        [treeControl]="treeControl"
       >
-      <ix-tree-node
-        *treeNodeDef="let topologyItem; dataSource: dataSource"
-        [treeNodeDefDataSource]="dataSource"
-      >
-        <span class="spacer" treeNodeToggle></span>
-        <ix-bootenv-node-item
-          [node]="topologyItem"
-          [poolInstance]="poolInstance"
-          [oneDisk]="oneDisk"
-          (invokeAction)="doAction($event)"
-        ></ix-bootenv-node-item>
-      </ix-tree-node>
-
-      <ix-nested-tree-node
-        *treeNodeDef="let topologyItem; dataSource: dataSource; when: hasNestedChild"
-        [treeNodeDefDataSource]="dataSource"
-      >
-        <div class="nested-tree-root-node">
-          <tn-icon-button
-            treeNodeToggle
-            library="mdi"
-            [name]="treeControl.isExpanded(topologyItem) ? 'chevron-down' : 'chevron-right'"
-            [testId]="['toggle-row', topologyItem.guid]"
-            [ariaLabel]="'Toggle {row}' | translate: { row: topologyItem.guid }"
-            (click)="$event.preventDefault()"
-          ></tn-icon-button>
+        <tn-nested-tree-node *cdkTreeNodeDef="let topologyItem">
           <ix-bootenv-node-item
             [node]="topologyItem"
             [poolInstance]="poolInstance"
             [oneDisk]="oneDisk"
             (invokeAction)="doAction($event)"
           ></ix-bootenv-node-item>
-        </div>
+        </tn-nested-tree-node>
 
-        @if (treeControl.isExpanded(topologyItem)) {
-          <ng-container treeNodeOutlet></ng-container>
-        }
-      </ix-nested-tree-node>
-      </ix-tree-view>
+        <tn-nested-tree-node
+          *cdkTreeNodeDef="let topologyItem; when: hasNestedChild"
+          [toggleAriaLabel]="'Toggle {row}' | translate: { row: topologyItem.guid }"
+          [toggleTestId]="['toggle-row', topologyItem.guid]"
+        >
+          <ix-bootenv-node-item
+            [node]="topologyItem"
+            [poolInstance]="poolInstance"
+            [oneDisk]="oneDisk"
+            (invokeAction)="doAction($event)"
+          ></ix-bootenv-node-item>
+
+          <ng-container slot="children" tnTreeNodeOutlet></ng-container>
+        </tn-nested-tree-node>
+      </tn-tree>
     }
   </div>
 </div>

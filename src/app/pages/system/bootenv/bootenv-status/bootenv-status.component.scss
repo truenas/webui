@@ -51,12 +51,6 @@ $padding-left: 8px;
   z-index: 3;
 }
 
-.spacer {
-  display: block;
-  flex-grow: 0;
-  width: 40px;
-}
-
 .tree-header {
   align-items: center;
   border-bottom: 2px solid var(--lines);
@@ -66,7 +60,8 @@ $padding-left: 8px;
   grid-template-columns: auto 100px 100px 100px 100px 100px 70px;
   min-height: 48px;
   min-width: fit-content;
-  padding-left: 48px;
+  // Aligns with the row content: 8px row padding + 24px toggle/spacer + 8px gap.
+  padding-left: 40px;
   width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
@@ -101,23 +96,11 @@ $padding-left: 8px;
   }
 }
 
-.nested-tree-root-node {
-  align-items: center;
-  border-bottom: 1px solid var(--lines);
-  display: flex;
-  position: relative;
-
-  &:hover {
-    background-color: var(--hover-bg);
-  }
-}
-
-:host ::ng-deep {
-  button.ix-tree-node-toggle {
-    margin-left: 5px;
-  }
-
-  ix-bootenv-node-item {
-    padding-left: 5px;
-  }
+// The boot-pool tree is a table-like grid: every row's columns must align with
+// the .tree-header regardless of depth (depth is conveyed by the toggle/spacer,
+// matching the previous ix-tree rendering, which had no per-level indent).
+// TEMP: until @truenas/ui-components exposes a children-indent input on
+// tn-nested-tree-node, zero the library's built-in 40px per-level indent.
+:host ::ng-deep div.tn-nested-tree-node-container {
+  padding-left: 0;
 }
