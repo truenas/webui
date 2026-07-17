@@ -90,6 +90,15 @@
   height: 100%;
 }
 
+// The mixin's .tree-wrapper (flex: 1 + overflow: auto + min-height: 100%, which
+// resolves to 0 against this page's content-driven height chain) collapses and
+// clips the tree to a sliver. Let the wrapper grow to its content; the page
+// itself scrolls. Extra ancestor class out-specifies the parent component's
+// host-scoped copy of the same mixin rule.
+.table-container .tree-wrapper {
+  min-height: fit-content;
+}
+
 .table-container {
   max-width: none;
 }
