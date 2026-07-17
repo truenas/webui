@@ -32,6 +32,11 @@
   z-index: 3;
 }
 
+// Visual separation between the scrub panel and the tree table below it.
+tn-expansion-panel {
+  margin-bottom: 16px;
+}
+
 // No border-bottom: the tn-tree box directly below draws its own top border.
 .tree-header {
   align-items: center;
