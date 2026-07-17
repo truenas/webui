@@ -48,8 +48,9 @@
           <p class="product-type">
             @if (!isEnterprise()) {
               <a
-                ixTest="navigate-to-enterprise-marketing-link"
+                tnTestIdType="link"
                 target="_blank"
+                [tnTestId]="'navigate-to-enterprise-marketing-link'"
                 [href]="currentMessageHref()"
               >
                 {{ productTypeText }}

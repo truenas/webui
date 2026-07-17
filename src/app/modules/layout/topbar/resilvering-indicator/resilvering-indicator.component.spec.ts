@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent, TnIconButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -43,7 +43,8 @@ describe('ResilveringIndicatorComponent', () => {
     const button = await loader.getHarness(TnIconButtonHarness);
 
     expect(await button.getName()).toBe('autorenew');
-    expect(spectator.query('tn-icon.spin')).toBeTruthy();
+    // No TnIconButtonHarness.getIconClass() yet — read the input directly.
+    expect(spectator.query(TnIconButtonComponent)?.iconClass()).toBe('spin');
   });
 
   it('opens resilver progress dialog when icon is pressed', async () => {

@@ -9,7 +9,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnDrawerComponent, TnDrawerContainerComponent, TnDrawerContentComponent,
-  TnDrawerMode, TnIconComponent, TnTooltipDirective,
+  TnDrawerMode, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { filter, map, pairwise, startWith } from 'rxjs';
 import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
@@ -30,7 +30,6 @@ import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { FocusService } from 'app/services/focus.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
@@ -47,7 +46,7 @@ import {
   styleUrls: ['./admin-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
+    TnTestIdDirective,
     TnDrawerContainerComponent,
     TnDrawerComponent,
     TnDrawerContentComponent,

@@ -47,6 +47,7 @@
           testId="reboot-info"
           [dense]="true"
           [tooltip]="tooltips.rebootInfo | translate"
+          [ariaLabel]="tooltips.rebootInfo | translate"
           (onClick)="showRebootInfoDialog()"
         ></tn-icon-button>
       }
@@ -63,6 +64,7 @@
           testId="update-is-running"
           [dense]="true"
           [tooltip]="tooltips.update | translate"
+          [ariaLabel]="tooltips.update | translate"
           (onClick)="showUpdateDialog()"
         ></tn-icon-button>
       }
