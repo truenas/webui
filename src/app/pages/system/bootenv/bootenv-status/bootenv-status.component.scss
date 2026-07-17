@@ -96,6 +96,22 @@ $padding-left: 8px;
   }
 }
 
+.tree {
+  // Bridge the library's --tn-* design tokens onto webui's theme variables so the
+  // tree's borders/hover/focus render correctly in both themes (the global token
+  // bridge is not wired yet; mirrors dataset-management). --tn-bg1 maps to --bg2
+  // specifically so the node-item's sticky-cell gradients (painted with --bg2)
+  // blend into the row background instead of showing as lighter boxes.
+  --tn-lines: var(--lines);
+  --tn-alt-bg1: var(--hover-bg);
+  --tn-alt-bg2: var(--hover-bg);
+  --tn-bg3: var(--hover-bg);
+  --tn-fg1: var(--fg1);
+  --tn-fg2: var(--fg2);
+  --tn-primary: var(--primary);
+  --tn-bg1: var(--bg2);
+}
+
 // The boot-pool tree is a table-like grid: every row's columns must align with
 // the .tree-header regardless of depth (depth is conveyed by the toggle/spacer,
 // matching the previous ix-tree rendering, which had no per-level indent).
@@ -103,4 +119,13 @@ $padding-left: 8px;
 // tn-nested-tree-node, zero the library's built-in 40px per-level indent.
 :host ::ng-deep div.tn-nested-tree-node-container {
   padding-left: 0;
+}
+
+// Remove the library node's background transition so hover / hover-off matches the
+// (instant) sticky-cell gradient backgrounds — otherwise the inner content fades
+// out of step and the hover looks delayed and only partially full-width.
+// TEMP (NAS-141021): reaches a library-private class; remove once the library
+// exposes a hover-transition control (same workaround as dataset-management).
+:host ::ng-deep .tn-nested-tree-node__content {
+  transition: none;
 }
