@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import {
   HarborAssistantCameraLiveSessionResponse,
+  HarborAssistantKnowledgeAnswerResponse,
   HarborAssistantSearchCameraStateResponse,
   HarborAssistantSearchDvrStatusResponse,
   HarborAssistantSearchDvrTimelineResponse,
@@ -22,7 +23,16 @@ export class HarborAssistantContentApiService {
   }
 
   search(payload: HarborAssistantSearchRequest): Observable<HarborAssistantSearchResponse> {
-    return this.http.post<HarborAssistantSearchResponse>(this.apiUrl('/knowledge/search'), payload);
+    return this.http.post<HarborAssistantKnowledgeAnswerResponse>(this.apiUrl('/knowledge/answer'), payload).pipe(
+      map((response) => ({
+        ...response.search,
+        answer: response.answer,
+        answer_degraded: response.degraded,
+        answer_degraded_reason: response.degraded_reason,
+        answer_intent: response.query_understanding?.intent ?? null,
+        warnings: [...new Set([...response.search.warnings, ...response.warnings])],
+      })),
+    );
   }
 
   cameraState(): Observable<HarborAssistantSearchCameraStateResponse> {

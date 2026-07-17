@@ -18,6 +18,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_documents: true,
       include_images: true,
       include_videos: true,
+      use_retrieval: true,
       source_scope: 'dvr_library',
       camera_id: null,
       from: null,
@@ -29,6 +30,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_documents: false,
       include_images: true,
       include_videos: false,
+      use_retrieval: true,
       source_scope: 'dvr_library',
     });
     expect(buildHarborAssistantSearchPayload('report', 'text')).toEqual({
@@ -37,6 +39,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_documents: true,
       include_images: false,
       include_videos: false,
+      use_retrieval: true,
       source_scope: 'dvr_library',
     });
     expect(buildHarborAssistantSearchPayload('clip', 'videos')).toEqual({
@@ -45,6 +48,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_documents: false,
       include_images: false,
       include_videos: true,
+      use_retrieval: true,
       source_scope: 'dvr_library',
       camera_id: null,
       from: null,
@@ -60,6 +64,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_documents: false,
       include_images: false,
       include_videos: true,
+      use_retrieval: true,
       source_scope: 'dvr_library',
       camera_id: 'camera-main',
       from: '1714600000',
@@ -71,11 +76,14 @@ describe('Harbor Assistant search result helpers', () => {
       include_documents: true,
       include_images: true,
       include_videos: true,
+      use_retrieval: true,
       source_scope: 'nas_files',
       camera_id: null,
       from: null,
       to: null,
     });
+    expect(buildHarborAssistantSearchPayload('陪我聊聊', 'all', 24, { useRetrieval: false }))
+      .toEqual(expect.objectContaining({ use_retrieval: false }));
   });
 
   it('encodes same-origin preview URLs', () => {

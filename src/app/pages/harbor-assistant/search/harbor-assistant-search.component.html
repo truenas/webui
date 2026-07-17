@@ -6,9 +6,10 @@
           @if (response(); as result) {
             <div class="results-header">
               <div>
-                <h2>{{ 'Search results' | translate }}</h2>
+                <h2>{{ (conversationResponse(result) ? 'Conversation' : 'Search results') | translate }}</h2>
                 <p>{{ form.controls.query.value }}</p>
               </div>
+              @if (!conversationResponse(result)) {
               <div class="result-summary">
                 <strong>{{ result.total_matches }}</strong>
                 <span>{{ 'results' | translate }}</span>
@@ -17,6 +18,7 @@
                   <span>{{ userFacingSearchNotice(result.degraded_reason || '') | translate }}</span>
                 }
               </div>
+              }
             </div>
           } @else {
             <div class="results-header">
@@ -38,7 +40,18 @@
               <div class="skeleton-card"></div>
             </section>
           } @else if (response(); as result) {
-            @if (noResults()) {
+            @if (result.answer) {
+              <section class="rag-answer" aria-live="polite">
+                <div class="rag-answer-heading">
+                  <strong>{{ 'Answer' | translate }}</strong>
+                  @if (result.answer_degraded) {
+                    <span>{{ userFacingSearchNotice(result.answer_degraded_reason || '') | translate }}</span>
+                  }
+                </div>
+                <p>{{ result.answer }}</p>
+              </section>
+            }
+            @if (!conversationResponse(result) && noResults()) {
               <div class="empty-state filter-empty-state">
                 <span>{{ emptyMessage(result) | translate }}</span>
                 @if (availableResultFilters(result).length > 0) {
@@ -51,7 +64,7 @@
                   </div>
                 }
               </div>
-            } @else {
+            } @else if (!conversationResponse(result)) {
               <section class="results-waterfall" aria-live="polite">
                 @for (item of waterfallItems(); track resultTrackKey($index, item)) {
                   <mat-card class="result-card" [ngClass]="item.kind" tabindex="0" (click)="openPreview(item)" (keydown.enter)="openPreview(item)">
@@ -105,6 +118,16 @@
             [placeholder]="'Try asking: who is pouring beer?' | translate"
           ></textarea>
           <div class="query-actions">
+            <button
+              mat-stroked-button
+              type="button"
+              class="retrieval-toggle"
+              [class.selected]="useRetrieval()"
+              [attr.aria-pressed]="useRetrieval()"
+              (click)="toggleRetrieval()"
+            >
+              {{ 'Use retrieval' | translate }}
+            </button>
             <button mat-flat-button color="primary" type="submit" [disabled]="loading() || form.invalid">
               {{ 'Search' | translate }}
             </button>

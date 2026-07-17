@@ -38,7 +38,8 @@
 .assistant-panel,
 .notice,
 .empty-state,
-.result-summary {
+.result-summary,
+.rag-answer {
   background: var(--bg2);
   border: 1px solid var(--lines);
   border-radius: 8px;
@@ -504,8 +505,25 @@
   align-items: center;
   border-top: 1px solid var(--lines);
   display: flex;
+  gap: 10px;
   justify-content: flex-end;
   padding: 10px;
+}
+
+.query-actions .retrieval-toggle {
+  background: #fff;
+  border-color: var(--lines);
+  color: #1f2937;
+  min-width: 110px;
+}
+
+.query-actions .retrieval-toggle.selected {
+  --mdc-outlined-button-label-text-color: var(--primary-txt);
+  --mdc-outlined-button-outline-color: var(--primary);
+
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: var(--primary-txt) !important;
 }
 
 .query-actions button {
@@ -616,8 +634,38 @@
 
 .notice,
 .empty-state,
-.result-summary {
+.result-summary,
+.rag-answer {
   padding: 12px 14px;
+}
+
+.rag-answer {
+  display: grid;
+  gap: 8px;
+}
+
+.rag-answer-heading {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.rag-answer-heading strong {
+  color: var(--fg1);
+  font-size: 16px;
+}
+
+.rag-answer-heading span {
+  color: #7a5313;
+  font-size: 12px;
+}
+
+.rag-answer p {
+  color: var(--fg1);
+  font-size: 14px;
+  white-space: pre-wrap;
 }
 
 .filter-empty-state {

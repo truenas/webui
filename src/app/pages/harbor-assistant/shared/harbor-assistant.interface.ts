@@ -7,6 +7,7 @@ export interface HarborAssistantSearchRequest {
   include_documents: boolean;
   include_images: boolean;
   include_videos: boolean;
+  use_retrieval?: boolean;
   source_scope?: HarborAssistantSearchSourceScope;
   camera_id?: string | null;
   from?: string | null;
@@ -59,6 +60,27 @@ export interface HarborAssistantSearchResponse {
   resource_profile: string;
   empty_reason?: string | null;
   empty_guidance?: string | null;
+  answer?: string | null;
+  answer_degraded?: boolean;
+  answer_degraded_reason?: string | null;
+  answer_intent?: string | null;
+}
+
+export interface HarborAssistantQueryUnderstanding {
+  intent: string;
+  needs_retrieval: boolean;
+}
+
+export interface HarborAssistantKnowledgeAnswerResponse {
+  status: string;
+  degraded: boolean;
+  degraded_reason?: string | null;
+  query: string;
+  answer: string;
+  citations: unknown[];
+  search: HarborAssistantSearchResponse;
+  warnings: string[];
+  query_understanding?: HarborAssistantQueryUnderstanding | null;
 }
 
 export interface HarborAssistantSearchWaterfallItem {

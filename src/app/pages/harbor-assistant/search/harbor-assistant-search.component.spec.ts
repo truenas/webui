@@ -89,6 +89,74 @@ describe('Harbor Assistant search component', () => {
     expect(spectator.query('.embedding-action')).toHaveText('Open model settings');
   }));
 
+  it('defaults retrieval on and sends false after the user turns it off', fakeAsync(() => {
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      form: { controls: { query: { setValue: (value: string) => void } } };
+      search: () => void;
+    };
+    const toggle = spectator.query<HTMLButtonElement>('button.retrieval-toggle');
+
+    expect(toggle).toHaveClass('selected');
+    expect(toggle?.getAttribute('aria-pressed')).toBe('true');
+    spectator.click(toggle as HTMLButtonElement);
+    spectator.detectChanges();
+    expect(toggle).not.toHaveClass('selected');
+    expect(toggle?.getAttribute('aria-pressed')).toBe('false');
+
+    component.form.controls.query.setValue('我今天不开心，跟我谈谈话');
+    component.search();
+    tick();
+
+    expect(api.search).toHaveBeenCalledWith(expect.objectContaining({
+      query: '我今天不开心，跟我谈谈话',
+      use_retrieval: false,
+    }));
+  }));
+
+  it('renders the grounded answer above the evidence results', fakeAsync(() => {
+    api.search = jest.fn(() => of(searchResponse({
+      answer: '春天相关的文章包括《spring.md》。 [1]',
+    })));
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      form: { controls: { query: { setValue: (value: string) => void } } };
+      search: () => void;
+    };
+
+    component.form.controls.query.setValue('有哪些春天的文章');
+    component.search();
+    tick();
+    spectator.detectChanges();
+
+    expect(spectator.query('.rag-answer')).toHaveText('春天相关的文章包括《spring.md》。 [1]');
+  }));
+
+  it('renders ordinary conversation without search result chrome or empty guidance', fakeAsync(() => {
+    api.search = jest.fn(() => of(searchResponse({
+      answer: '听起来你今天有些难受，我在这里。愿意和我说说发生了什么吗？',
+      answer_intent: 'conversation',
+      total_matches: 0,
+      videos: [],
+    })));
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      form: { controls: { query: { setValue: (value: string) => void } } };
+      search: () => void;
+    };
+
+    component.form.controls.query.setValue('我今天不开心，跟我谈谈话');
+    component.search();
+    tick();
+    spectator.detectChanges();
+
+    expect(spectator.query('.results-header h2')).toHaveText('Conversation');
+    expect(spectator.query('.rag-answer')).toHaveText('我在这里');
+    expect(spectator.query('.result-summary')).not.toExist();
+    expect(spectator.query('.filter-empty-state')).not.toExist();
+    expect(spectator.query('.results-waterfall')).not.toExist();
+  }));
+
   it('shows a user-facing filter hint instead of debug evidence when the current type has no results', fakeAsync(() => {
     spectator = createComponent();
     const component = spectator.component as unknown as {
@@ -180,5 +248,9 @@ function searchResponse(partial: Partial<HarborAssistantSearchResponse> = {}): H
     source_scope: [],
     privacy_level: 'strict_local',
     resource_profile: 'cpu_only',
+    answer: partial.answer,
+    answer_degraded: partial.answer_degraded,
+    answer_degraded_reason: partial.answer_degraded_reason,
+    answer_intent: partial.answer_intent,
   };
 }

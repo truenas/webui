@@ -78,6 +78,7 @@ export class HarborAssistantSearchComponent implements OnInit {
   protected readonly response = signal<HarborAssistantSearchResponse | null>(null);
   protected readonly error = signal<string | null>(null);
   protected readonly searchHistory = signal<string[]>([]);
+  protected readonly useRetrieval = signal(true);
 
   ngOnInit(): void {
     this.searchHistory.set(this.loadSearchHistory());
@@ -97,6 +98,7 @@ export class HarborAssistantSearchComponent implements OnInit {
         from: this.localDateTimeToUnixSeconds(this.form.controls.from.value),
         sourceScope: this.form.controls.sourceScope.value,
         to: this.localDateTimeToUnixSeconds(this.form.controls.to.value),
+        useRetrieval: this.useRetrieval(),
       },
     );
 
@@ -147,6 +149,14 @@ export class HarborAssistantSearchComponent implements OnInit {
 
   noResults(): boolean {
     return this.waterfallItems().length === 0;
+  }
+
+  toggleRetrieval(): void {
+    this.useRetrieval.update((selected) => !selected);
+  }
+
+  conversationResponse(result: HarborAssistantSearchResponse | null = this.response()): boolean {
+    return result?.answer_intent === 'conversation';
   }
 
   hasAnyResult(result: HarborAssistantSearchResponse | null = this.response()): boolean {

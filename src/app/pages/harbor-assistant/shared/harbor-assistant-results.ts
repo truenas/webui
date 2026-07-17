@@ -15,6 +15,7 @@ export interface HarborAssistantSearchScope {
   from?: string | null;
   sourceScope?: HarborAssistantSearchSourceScope;
   to?: string | null;
+  useRetrieval?: boolean;
 }
 
 export function buildHarborAssistantSearchPayload(
@@ -29,6 +30,7 @@ export function buildHarborAssistantSearchPayload(
     include_documents: filter === 'all' || filter === 'text',
     include_images: filter === 'all' || filter === 'images',
     include_videos: filter === 'all' || filter === 'videos',
+    use_retrieval: scope.useRetrieval ?? true,
     source_scope: scope.sourceScope ?? 'dvr_library',
   };
   if (filter === 'videos' || filter === 'all') {
