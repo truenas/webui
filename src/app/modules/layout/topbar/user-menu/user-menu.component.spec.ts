@@ -18,7 +18,7 @@ import {
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 
 describe('UserMenuComponent', () => {
@@ -31,7 +31,7 @@ describe('UserMenuComponent', () => {
     component: UserMenuComponent,
     providers: [
       mockProvider(TnDialog),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockApi(),
@@ -85,7 +85,10 @@ describe('UserMenuComponent', () => {
     it('has a Preferences menu item that opens the preferences form', async () => {
       await menu.clickItem({ label: 'Preferences' });
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PreferencesFormComponent);
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+        PreferencesFormComponent,
+        { title: 'Preferences' },
+      );
     });
 
     it('has an API Keys menu item that takes user to list of API Keys', async () => {

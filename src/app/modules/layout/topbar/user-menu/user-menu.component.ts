@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnDialog,
   TnIconButtonComponent,
@@ -22,7 +22,7 @@ import {
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { userMenuElements } from 'app/modules/layout/topbar/user-menu/user-menu.elements';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.actions';
 
 @Component({
@@ -42,7 +42,8 @@ import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.ac
 })
 export class UserMenuComponent {
   private tnDialog = inject(TnDialog);
-  private slideIn = inject(SlideIn);
+  private formSidePanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private store$ = inject(Store);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -73,7 +74,7 @@ export class UserMenuComponent {
   }
 
   openPreferencesForm(): void {
-    this.slideIn.open(PreferencesFormComponent)
+    this.formSidePanel.open(PreferencesFormComponent, { title: this.translate.instant('Preferences') })
       .onCancel(() => this.store$.dispatch(guiFormClosedWithoutSaving()), this.destroyRef);
   }
 

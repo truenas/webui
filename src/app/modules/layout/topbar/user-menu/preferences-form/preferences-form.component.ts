@@ -1,12 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
   Subscription, merge, of, startWith,
 } from 'rxjs';
@@ -22,9 +21,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
@@ -40,8 +38,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxCheckboxComponent,
     IxFieldsetComponent,
@@ -49,12 +45,11 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     IxSelectComponent,
     IxComboboxComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class PreferencesFormComponent implements OnInit {
+export class PreferencesFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
@@ -65,11 +60,10 @@ export class PreferencesFormComponent implements OnInit {
   private sysGeneralService = inject(SystemGeneralService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   private previewSubscription: Subscription;
 
-  protected form = this.fb.nonNullable.group({
+  protected readonly form = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     syncThemeWithOS: [false],
     lightTheme: [''],
@@ -112,11 +106,11 @@ export class PreferencesFormComponent implements OnInit {
   protected dateFormatOptions = of<Option[]>([]);
   protected timeFormatOptions = of<Option[]>([]);
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+  /** Submission is synchronous (store dispatches only), so there is no loading state. */
+  readonly canSubmit = this.trackCanSubmit(signal(false));
 
+  constructor() {
+    super();
     this.setupThemePreview();
   }
 
@@ -185,7 +179,7 @@ export class PreferencesFormComponent implements OnInit {
     this.langService.setLanguage(values.language);
 
     this.snackbar.success(this.translate.instant('Preferences saved'));
-    this.slideInRef.close({ response: true });
+    this.close(true);
   }
 
   private setTimeOptions(tz: string): void {
