@@ -1,25 +1,7 @@
 @import 'scss-imports/variables';
 
-$singlecolumn-max-width: ($card-width-slim + $gap * 2);
-$dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
-$scrollbar-offset: 20px;
-
-$level-offset: 24px;
-$padding-left: 8px;
-
 :host {
   display: block;
-}
-
-.table-container {
-  box-sizing: border-box;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  margin-right: 16px;
-  max-width: $table-width;
-  min-width: $table-min-width;
-  position: relative;
 }
 
 .tree-wrapper {
@@ -41,7 +23,6 @@ $padding-left: 8px;
     min-width: unset;
     overflow-x: auto;
   }
-
 }
 
 .loader-bar {
@@ -59,37 +40,16 @@ $padding-left: 8px;
   grid-gap: 8px;
   grid-template-columns: auto 100px 100px 100px 100px 100px 70px;
   min-height: 48px;
-  min-width: fit-content;
   // Aligns with the row content: 8px row padding + 24px toggle/spacer + 8px gap.
   padding-left: 40px;
-  width: 100%;
-
-  @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: 45px auto 0 0 0 0 0 0;
-    width: auto;
-  }
-
-  @media (min-width: $breakpoint-singlecolumn) {
-    grid-template-columns: auto 100px 100px 100px 100px 100px 70px;
-    overflow-x: hidden;
-  }
 
   > div {
     font-weight: bold;
-    padding: 4px 0;
 
     @media (max-width: $breakpoint-tablet) {
       display: none;
-    }
 
-    &:first-child {
-      background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
-      left: 0;
-      padding-left: $padding-left;
-      padding-right: 15px;
-      position: sticky;
-
-      @media (max-width: $breakpoint-tablet) {
+      &:first-child {
         display: block;
       }
     }
@@ -99,9 +59,8 @@ $padding-left: 8px;
 .tree {
   // Bridge the library's --tn-* design tokens onto webui's theme variables so the
   // tree's borders/hover/focus render correctly in both themes (the global token
-  // bridge is not wired yet; mirrors dataset-management). --tn-bg1 maps to --bg2
-  // specifically so the node-item's sticky-cell gradients (painted with --bg2)
-  // blend into the row background instead of showing as lighter boxes.
+  // bridge is not wired yet; mirrors dataset-management). Rows sit transparent on
+  // the page background.
   --tn-lines: var(--lines);
   --tn-alt-bg1: var(--hover-bg);
   --tn-alt-bg2: var(--hover-bg);
@@ -109,7 +68,7 @@ $padding-left: 8px;
   --tn-fg1: var(--fg1);
   --tn-fg2: var(--fg2);
   --tn-primary: var(--primary);
-  --tn-bg1: var(--bg2);
+  --tn-bg1: transparent;
 }
 
 // The boot-pool tree is a table-like grid: every row's columns must align with
@@ -119,13 +78,4 @@ $padding-left: 8px;
 // tn-nested-tree-node, zero the library's built-in 40px per-level indent.
 :host ::ng-deep div.tn-nested-tree-node-container {
   padding-left: 0;
-}
-
-// Remove the library node's background transition so hover / hover-off matches the
-// (instant) sticky-cell gradient backgrounds — otherwise the inner content fades
-// out of step and the hover looks delayed and only partially full-width.
-// TEMP (NAS-141021): reaches a library-private class; remove once the library
-// exposes a hover-transition control (same workaround as dataset-management).
-:host ::ng-deep .tn-nested-tree-node__content {
-  transition: none;
 }

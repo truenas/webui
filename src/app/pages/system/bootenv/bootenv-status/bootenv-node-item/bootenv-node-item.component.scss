@@ -1,15 +1,11 @@
 @import 'scss-imports/variables';
 
-$level-offset: 25px;
-$padding-left: 8px;
-
 :host {
   align-items: center;
   display: flex;
   flex: 1;
   font-weight: 500;
   min-height: 48px;
-  padding: 0;
 }
 
 .tree-node-grid {
@@ -17,78 +13,46 @@ $padding-left: 8px;
   display: grid;
   grid-gap: 8px;
   grid-template-columns: auto 100px 100px 100px 100px 100px 70px;
-  min-width: fit-content;
   width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0 0 30px;
-    width: 100%;
-  }
-
-  .cell {
-    align-items: center;
-    display: inline-flex;
-    min-height: 48px;
-
-    @media (max-width: $breakpoint-tablet) {
-      display: none;
-    }
-
-    &:first-child {
-      left: 15px;
-      position: sticky;
-
-      @media (max-width: $breakpoint-tablet) {
-        display: inline-flex;
-      }
-    }
-
-    &:last-child {
-      justify-content: flex-end;
-      padding-right: $level-offset;
-      position: sticky;
-      right: 0;
-
-      @media (max-width: $breakpoint-tablet) {
-        display: inline-flex;
-      }
-
-      button {
-        left: 0;
-        position: absolute;
-      }
-    }
-  }
-
-  .cell-name .name {
-    background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
-    font-weight: bold;
-  }
-
-  .cell-status {
-    gap: 8px;
-
-    .tn-icon {
-      display: flex;
-      font-size: 20px;
-      height: 20px;
-      margin: 0;
-      width: 20px;
-    }
-  }
-
-  .cell-actions {
-    background: linear-gradient(270deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
   }
 }
 
-// TODO: Fragile (at least with css selectors)
-:host-context(.tn-nested-tree-node__content:hover) {
-  .tree-node-grid .cell-name .name {
-    background: linear-gradient(90deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+.cell {
+  align-items: center;
+  display: inline-flex;
+  min-height: 48px;
+
+  @media (max-width: $breakpoint-tablet) {
+    display: none;
   }
 
-  .tree-node-grid .cell-actions {
-    background: linear-gradient(270deg, var(--hover-bg) 0%, var(--hover-bg) calc(100% - 11px), transparent 100%);
+  &:first-child,
+  &:last-child {
+    @media (max-width: $breakpoint-tablet) {
+      display: inline-flex;
+    }
+  }
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+}
+
+.cell-name .name {
+  font-weight: bold;
+}
+
+.cell-status {
+  gap: 8px;
+
+  .tn-icon {
+    display: flex;
+    font-size: 20px;
+    height: 20px;
+    margin: 0;
+    width: 20px;
   }
 }
