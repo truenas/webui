@@ -54,9 +54,18 @@
   }
 }
 
+// Replaces the former mat-toolbar/mat-toolbar-row pair: one flex row, 48px tall.
 .topbar {
+  align-items: center;
   background-color: var(--topbar) !important;
+  box-sizing: border-box;
   color: var(--topbar-txt) !important;
+  display: flex;
+  flex-direction: row;
+  height: 48px;
+  padding: 0 16px;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .topbar button:focus-visible {
@@ -94,13 +103,7 @@ ix-truenas-logo {
   }
 }
 
-:host ::ng-deep nav mat-toolbar {
-  min-height: 48px;
-
-  .mat-toolbar-row {
-    height: 48px !important;
-  }
-
+:host ::ng-deep nav .topbar {
   button tn-icon,
   button span {
     color: var(--topbar-txt) !important;
@@ -131,11 +134,6 @@ ix-truenas-logo {
     --alert-glow: var(--orange);
     animation: ring 2s ease-in-out 3;
     color: var(--orange) !important;
-  }
-
-  .mat-mdc-select-value {
-    color: #fff;
-    font-weight: 400;
   }
 
   .topbar-button-right {
@@ -180,7 +178,7 @@ ix-truenas-logo {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :host ::ng-deep nav mat-toolbar {
+  :host ::ng-deep nav .topbar {
     tn-icon.alert-critical,
     tn-icon.alert-warning {
       animation: none;

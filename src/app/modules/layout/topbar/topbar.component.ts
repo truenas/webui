@@ -4,7 +4,6 @@ import {
   OnInit, signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -52,8 +51,6 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatToolbar,
-    MatToolbarRow,
     TnIconButtonComponent,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,
