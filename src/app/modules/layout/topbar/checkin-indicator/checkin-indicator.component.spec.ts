@@ -1,6 +1,9 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -14,6 +17,7 @@ import {
 
 describe('CheckinIndicatorComponent', () => {
   let spectator: Spectator<CheckinIndicatorComponent>;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: CheckinIndicatorComponent,
     providers: [
@@ -38,14 +42,18 @@ describe('CheckinIndicatorComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows checkin indicator when there are pending network changes', () => {
-    expect(spectator.query('button tn-icon')).toBeTruthy();
+  it('shows checkin indicator when there are pending network changes', async () => {
+    const button = await loader.getHarness(TnIconButtonHarness);
+
+    expect(await button.getName()).toBe('hub');
   });
 
-  it('shows pending changes prompt when indicator is pressed', () => {
-    spectator.click('button');
+  it('shows pending changes prompt when indicator is pressed', async () => {
+    const button = await loader.getHarness(TnIconButtonHarness);
+    await button.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -55,13 +63,14 @@ describe('CheckinIndicatorComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/network']);
   });
 
-  it('dispatches checkinIndicatorPressed when indicator is pressed and checkin is waiting', () => {
+  it('dispatches checkinIndicatorPressed when indicator is pressed and checkin is waiting', async () => {
     const store$ = spectator.inject(MockStore);
     store$.overrideSelector(selectNetworkInterfacesCheckinWaiting, 50);
     store$.refreshState();
     jest.spyOn(store$, 'dispatch');
 
-    spectator.click('button');
+    const button = await loader.getHarness(TnIconButtonHarness);
+    await button.click();
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkinIndicatorPressed());
   });

@@ -1,4 +1,6 @@
-.spin {
+// The icon lives inside tn-icon-button's own template (applied via `iconClass`),
+// so the scoped selector needs ::ng-deep to reach it.
+:host ::ng-deep .spin {
   animation: spin 2s infinite linear;
 }
 

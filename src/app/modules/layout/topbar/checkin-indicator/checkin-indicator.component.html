@@ -1,12 +1,15 @@
 @if (hasPendingNetworkChanges$ | async) {
-  <button
-    mat-icon-button
+  <tn-icon-button
     id="network"
     class="topbar-button-right"
-    ixTest="has-pending-network-changes"
-    [tnTooltip]="tooltips.pendingNetworkChanges | translate"
-    (click)="showNetworkChangesDialog()"
-  >
-    <tn-icon size="lg" class="movement" name="hub" library="mdi"></tn-icon>
-  </button>
+    name="hub"
+    library="mdi"
+    size="lg"
+    iconClass="movement"
+    testId="has-pending-network-changes"
+    [dense]="true"
+    [tooltip]="tooltips.pendingNetworkChanges | translate"
+    [ariaLabel]="tooltips.pendingNetworkChanges | translate"
+    (onClick)="showNetworkChangesDialog()"
+  ></tn-icon-button>
 }

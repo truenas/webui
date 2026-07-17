@@ -1,12 +1,15 @@
 @if (isResilvering$ | async) {
-  <button
-    mat-icon-button
+  <tn-icon-button
     id="resilver"
     class="topbar-button-right"
-    ixTest="resilvering"
-    [tnTooltip]="tooltips.resilvering | translate"
-    (click)="showDetails()"
-  >
-    <tn-icon size="lg" class="spin" name="autorenew" library="mdi"></tn-icon>
-  </button>
+    name="autorenew"
+    library="mdi"
+    size="lg"
+    iconClass="spin"
+    testId="resilvering"
+    [dense]="true"
+    [tooltip]="tooltips.resilvering | translate"
+    [ariaLabel]="tooltips.resilvering | translate"
+    (onClick)="showDetails()"
+  ></tn-icon-button>
 }

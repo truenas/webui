@@ -1,5 +1,7 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -14,6 +16,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('ResilveringIndicatorComponent', () => {
   let spectator: Spectator<ResilveringIndicatorComponent>;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: ResilveringIndicatorComponent,
     providers: [
@@ -33,14 +36,19 @@ describe('ResilveringIndicatorComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows resilvering icon when there is an unfinished scan of Resilver type', () => {
-    expect(spectator.query('button tn-icon.spin')).toBeTruthy();
+  it('shows resilvering icon when there is an unfinished scan of Resilver type', async () => {
+    const button = await loader.getHarness(TnIconButtonHarness);
+
+    expect(await button.getName()).toBe('autorenew');
+    expect(spectator.query('tn-icon.spin')).toBeTruthy();
   });
 
-  it('opens resilver progress dialog when icon is pressed', () => {
-    spectator.click('button');
+  it('opens resilver progress dialog when icon is pressed', async () => {
+    const button = await loader.getHarness(TnIconButtonHarness);
+    await button.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ResilverProgressDialog);
   });

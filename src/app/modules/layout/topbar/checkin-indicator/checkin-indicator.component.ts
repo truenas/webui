@@ -1,16 +1,14 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { checkinIndicatorPressed } from 'app/store/network-interfaces/network-interfaces.actions';
 import {
@@ -23,12 +21,9 @@ import {
   templateUrl: './checkin-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
-    TnTooltipDirective,
-    TnIconComponent,
+    TnIconButtonComponent,
     AsyncPipe,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class CheckinIndicatorComponent implements OnInit {
