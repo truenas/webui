@@ -74,7 +74,8 @@
   outline-width: 0;
 }
 
-// tn-icon-button renders its own inner <button>, which the scoped rule above
+// TEMP: until @truenas/ui-components exposes a focus-ring theme token/hook on
+// tn-icon-button. It renders its own inner <button>, which the scoped rule above
 // can't reach. Override the library's default focus outline with the branded
 // inset shadow (a plain outline gets clipped by the bar).
 :host ::ng-deep .tn-icon-button:focus-visible {
@@ -103,6 +104,8 @@ ix-truenas-logo {
   }
 }
 
+// TEMP: until @truenas/ui-components exposes a theme hook for icon-button
+// icon/text color in dark bars; reaches into tn-icon-button's inner <button>.
 :host ::ng-deep nav .topbar {
   button tn-icon,
   button span {

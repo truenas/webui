@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef,
-  ElementRef, OnDestroy, OnInit, ViewChild, inject,
+  ElementRef, OnDestroy, OnInit, ViewChild, inject, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
@@ -76,7 +76,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private focusService = inject(FocusService);
   private destroyRef = inject(DestroyRef);
 
-  @ViewChild(TnDrawerComponent) private sideNav: TnDrawerComponent;
+  private sideNav = viewChild.required(TnDrawerComponent);
   @ViewChild('alertPanel', { static: true }) private alertPanel: ElementRef<HTMLElement>;
   @ViewChild(TopbarComponent) private topbar: TopbarComponent;
 
@@ -193,7 +193,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.sidenavService.setSidenav(this.sideNav);
+    this.sidenavService.setSidenav(this.sideNav());
   }
 
   ngOnDestroy(): void {
