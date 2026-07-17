@@ -30,34 +30,6 @@ div.mat-toolbar {
   margin: 16px;
 }
 
-/* mat-sidenav */
-mat-sidenav-content.fn-maincontent {
-  transform: translate3d(0, 0, 0);
-}
-
-body.collapsed-menu mat-sidenav.mat-sidenav-closed mat-sidenav-content.fn-maincontent {
-  margin-left: 48px !important;
-  margin-right: 0 !important;
-  transform: translate3d(0, 0, 0);
-}
-
-body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.fn-maincontent {
-  margin-left: 48px !important;
-  margin-right: 0 !important;
-  transform: translate3d(0, 0, 0);
-}
-
-.mat-sidenav.mat-sidenav-opened,
-.mat-sidenav.mat-sidenav-opening {
-  transform: translate3d(0, 0, 0);
-}
-
-/* side menu*/
-.mat-nav-list .mat-mdc-list-item {
-  display: block;
-  height: auto !important;
-}
-
 .cdk-drop-list-dragging {
   cursor: grabbing;
 }

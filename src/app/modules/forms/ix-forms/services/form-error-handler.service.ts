@@ -35,15 +35,17 @@ export class FormErrorHandlerService {
   ): void {
     // Clear any existing errors when handling new validation
     this.unhandledErrors = [];
-    const isValidationError = isApiCallError(error)
-      && isApiErrorDetails(error.error.data)
-      && error.error.data.errname === ApiErrorName.Validation
-      && error.error.data.extra;
 
     // Normalize input to array for consistent handling
     const formGroups = Array.isArray(formGroupOrGroups) ? formGroupOrGroups : [formGroupOrGroups];
 
-    if (isValidationError) {
+    // Inlined (not precomputed) so the type guards narrow `error.error.data` for the call below.
+    if (
+      isApiCallError(error)
+      && isApiErrorDetails(error.error.data)
+      && error.error.data.errname === ApiErrorName.Validation
+      && error.error.data.extra
+    ) {
       this.handleValidationError(error.error.data, formGroups, fieldsMap, triggerAnchor, error);
       return;
     }
@@ -170,7 +172,7 @@ export class FormErrorHandlerService {
     if (!element && this.document?.querySelector) {
       // Fallback: try to find element by formControlName attribute
       const foundElement = this.document.querySelector(`[formControlName="${field}"]`);
-      element = foundElement instanceof HTMLElement ? foundElement : null;
+      element = foundElement instanceof HTMLElement ? foundElement : undefined;
     }
 
     if (!element) {

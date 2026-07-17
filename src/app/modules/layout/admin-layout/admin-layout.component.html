@@ -1,12 +1,14 @@
-<mat-sidenav-container class="app-side-nav-container">
+<tn-drawer-container class="app-side-nav-container">
   <!-- Main side navigation -->
-  <mat-sidenav
+  <tn-drawer
     class="sidebar-panel not-alerts"
-    [style.flex-basis]="sidenavWidth"
+    [ariaLabel]="'Main navigation' | translate"
+    [width]="sidenavWidth"
     [opened]="isSidenavOpen"
     [mode]="sidenavMode"
     [disableClose]="sidenavMode !== 'over'"
-    (closedStart)="onMenuClosed()"
+    (openedChange)="onSidenavOpenedChange($event)"
+    (closed)="onMenuClosed()"
   >
     <div id="scroll-area" class="navigation-hold">
       <ix-truenas-logo [hideText]="isSidenavCollapsed"></ix-truenas-logo>
@@ -46,8 +48,9 @@
           <p class="product-type">
             @if (!isEnterprise()) {
               <a
-                ixTest="navigate-to-enterprise-marketing-link"
+                tnTestIdType="link"
                 target="_blank"
+                [tnTestId]="'navigate-to-enterprise-marketing-link'"
                 [href]="currentMessageHref()"
               >
                 {{ productTypeText }}
@@ -63,13 +66,9 @@
         </div>
       }
     </div>
-  </mat-sidenav>
+  </tn-drawer>
 
-  <mat-sidenav-content
-    class="fn-maincontent"
-    [style.flex-basis]="'calc(100% - ' + sidenavWidth + ')'"
-    [style.margin-left]="sidenavWidth"
-  >
+  <tn-drawer-content class="fn-maincontent">
     <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpenSecondaryMenu">
       <ix-secondary-menu
         [subMenuItems]="subs"
@@ -93,11 +92,11 @@
     @if (hasConsoleFooter$ | async) {
       <ix-console-footer></ix-console-footer>
     }
-  </mat-sidenav-content>
+  </tn-drawer-content>
 
-</mat-sidenav-container>
+</tn-drawer-container>
 
-<!-- Alert bar - rendered outside mat-sidenav-container so it layers above CDK overlays (slide-ins) -->
+<!-- Alert bar - rendered outside the drawer container so it layers above CDK overlays (slide-ins) -->
 <div
   class="alert-panel-backdrop"
   aria-hidden="true"

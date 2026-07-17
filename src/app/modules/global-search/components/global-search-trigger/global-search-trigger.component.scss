@@ -63,8 +63,12 @@
     top: 50%;
     transform: translateY(-50%);
 
+    // On mobile the input is hidden and the icon is the whole trigger — show it
+    // at full strength and make it read as clickable.
     @media(max-width: $breakpoint-xs) {
+      cursor: pointer;
       height: 28px;
+      opacity: 1;
       position: static;
       transform: none;
       width: 28px;
@@ -88,6 +92,7 @@
     opacity: 0.7;
     position: absolute;
     right: 9px;
-    top: -1px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }

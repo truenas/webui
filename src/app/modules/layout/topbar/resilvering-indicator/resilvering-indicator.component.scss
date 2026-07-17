@@ -1,4 +1,7 @@
-.spin {
+// TEMP: `.spin` is applied via tn-icon-button's public `iconClass` input, but the
+// icon lives inside the library template, so the scoped selector needs ::ng-deep
+// to reach it — until the library offers a styling hook for iconClass classes.
+:host ::ng-deep .spin {
   animation: spin 2s infinite linear;
 }
 

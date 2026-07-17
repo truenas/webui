@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnIconButtonHarness } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
@@ -19,7 +18,7 @@ describe('HaStatusIconComponent', () => {
   const createComponent = createComponentFactory({
     component: HaStatusIconComponent,
     providers: [
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       provideMockStore({
         selectors: [
           {
@@ -77,7 +76,7 @@ describe('HaStatusIconComponent', () => {
     const button = await loader.getHarness(TnIconButtonHarness);
     await button.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
       HaStatusPopoverComponent,
       expect.objectContaining({
         data: [],
