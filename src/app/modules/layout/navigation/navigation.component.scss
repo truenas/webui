@@ -71,6 +71,9 @@
 
   .sidebar-list-item a {
     align-items: center;
+    // Submenu toggles are href-less anchors (role="button") and don't get the
+    // browser's link cursor on their own.
+    cursor: pointer;
     display: flex;
     gap: 12px;
   }
