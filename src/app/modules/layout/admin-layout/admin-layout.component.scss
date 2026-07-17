@@ -90,6 +90,13 @@ ix-truenas-logo {
   text-align: center;
 }
 
+// The shell drawer resizes after first paint (saved collapse state arriving from the
+// preferences store, breakpoint changes) — render those instantly instead of sliding
+// the content area around on load. The old mat-sidenav shell never animated width.
+tn-drawer.sidebar-panel {
+  transition: none !important;
+}
+
 .fn-maincontent {
   overflow: hidden !important;
   position: relative;

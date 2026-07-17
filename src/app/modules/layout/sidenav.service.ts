@@ -14,6 +14,8 @@ import { sidenavIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar
 
 export const collapsedMenuClass = 'collapsed-menu';
 
+const mobileBreakpoints = [Breakpoints.XSmall, Breakpoints.Small];
+
 @Injectable({
   providedIn: 'root',
 })
@@ -70,6 +72,14 @@ export class SidenavService {
   }
 
   constructor() {
+    // Seed from the current breakpoint synchronously so the first paint lays out in the
+    // correct mode — waiting for the observer's first emission briefly renders the mobile
+    // 'over' drawer on desktop and resizes the content area after load.
+    const isMobile = this.breakpointObserver.isMatched(mobileBreakpoints);
+    this.isMobile.set(isMobile);
+    this.isOpen = !isMobile;
+    this.mode = isMobile ? 'over' : 'side';
+
     this.listenForScreenSizeChanges();
     this.listenForRouteChanges();
     this.listenForSidenavIndicatorPressed();
@@ -103,7 +113,7 @@ export class SidenavService {
 
   private listenForScreenSizeChanges(): void {
     this.breakpointObserver
-      .observe([Breakpoints.XSmall, Breakpoints.Small])
+      .observe(mobileBreakpoints)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state) => {
         const isMobile = state.matches;
