@@ -48,12 +48,15 @@
   </tn-form-section>
 
   <tn-form-section [heading]="'Localization' | translate">
-    <ix-combobox
-      formControlName="language"
-      [label]="'Language' | translate"
-      [provider]="languageProvider"
-      [required]="true"
-    ></ix-combobox>
+    <tn-form-field [label]="'Language' | translate" [required]="true">
+      <tn-autocomplete
+        formControlName="language"
+        [testId]="'language'"
+        [options]="languageOptions()"
+        [requireSelection]="true"
+        [noResultsText]="'No results found' | translate"
+      ></tn-autocomplete>
+    </tn-form-field>
     <tn-form-field [label]="'Date Format' | translate">
       <tn-select
         formControlName="date_format"

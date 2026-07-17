@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
+  TnAutocompleteComponent,
   TnButtonComponent,
   TnCheckboxComponent,
   TnFormFieldComponent,
@@ -19,9 +20,8 @@ import {
   Subscription, merge, startWith,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
+import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -48,7 +48,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     TnCheckboxComponent,
     TnSelectComponent,
     TnInputComponent,
-    IxComboboxComponent,
+    TnAutocompleteComponent,
     FormActionsComponent,
     TnButtonComponent,
     TranslateModule,
@@ -101,8 +101,9 @@ export class PreferencesFormComponent extends SidePanelForm implements OnInit {
   protected themeOptions: TnSelectOption[] = this.themeService.allThemes
     .map((theme) => ({ label: theme.label, value: theme.name }));
 
-  protected languageProvider = new SimpleAsyncComboboxProvider(
+  protected languageOptions = toSignal(
     this.sysGeneralService.languageOptions(true),
+    { initialValue: [] as Option[] },
   );
 
   protected dateFormatOptions = signal<TnSelectOption[]>([]);

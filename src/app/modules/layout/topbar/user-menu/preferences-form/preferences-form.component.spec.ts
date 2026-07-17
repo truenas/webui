@@ -5,13 +5,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Option } from 'app/interfaces/option.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
@@ -112,14 +111,14 @@ describe('PreferencesFormComponent', () => {
     const syncCheckbox = await loader.getHarness(TnCheckboxHarness);
     const themeSelect = await getSelect('theme');
     const timeoutInput = await loader.getHarness(TnInputHarness);
-    const languageCombobox = await loader.getHarness(IxComboboxHarness);
+    const languageAutocomplete = await loader.getHarness(TnAutocompleteHarness);
     const dateFormatSelect = await getSelect('date_format');
     const timeFormatSelect = await getSelect('time_format');
 
     expect(await syncCheckbox.isChecked()).toBe(false);
     expect(await themeSelect.getDisplayText()).toBe('Dark');
     expect(await timeoutInput.getValue()).toBe('600');
-    expect(await languageCombobox.getValue()).toBe('English (en)');
+    expect(await languageAutocomplete.getInputValue()).toBe('English (en)');
     expect(await dateFormatSelect.getDisplayText()).toBe('2021-10-16');
     expect(await timeFormatSelect.getDisplayText()).toBe('16:22:14 (24 Hours)');
   });
@@ -140,7 +139,9 @@ describe('PreferencesFormComponent', () => {
 
     await (await getSelect('theme')).selectOption('Blue');
     await (await loader.getHarness(TnInputHarness)).setValue('120');
-    await (await loader.getHarness(IxComboboxHarness)).setValue('French (fr)');
+    const languageAutocomplete = await loader.getHarness(TnAutocompleteHarness);
+    await languageAutocomplete.setInputValue('French');
+    await languageAutocomplete.selectOption('French (fr)');
     await (await getSelect('date_format')).selectOption('October 16, 2021');
     await (await getSelect('time_format')).selectOption('04:22:14 PM');
 
