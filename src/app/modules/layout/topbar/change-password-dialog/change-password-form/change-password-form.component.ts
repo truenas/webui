@@ -3,7 +3,9 @@ import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject }
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
@@ -11,7 +13,6 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -25,7 +26,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
     TnButtonComponent,
     TranslateModule,
@@ -46,6 +48,8 @@ export class ChangePasswordFormComponent {
   private destroyRef = inject(DestroyRef);
 
   readonly passwordUpdated = output();
+
+  protected readonly InputType = InputType;
 
   form = this.fb.nonNullable.group({
     old_password: [''],
