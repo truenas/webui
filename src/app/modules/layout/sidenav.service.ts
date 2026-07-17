@@ -1,10 +1,10 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DestroyRef, Injectable, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { TnDrawerComponent, TnDrawerMode } from '@truenas/ui-components';
 import { take, filter, distinctUntilChanged } from 'rxjs';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
@@ -24,21 +24,26 @@ export class SidenavService {
   private actions$ = inject(Actions);
   private destroyRef = inject(DestroyRef);
 
-  sidenav: MatSidenav;
+  sidenav: TnDrawerComponent;
   isOpen = true;
   // TODO: How is this different from isMenuCollapsed?
   isCollapsed = false;
-  mode: MatDrawerMode = 'over';
+  mode: TnDrawerMode = 'over';
   isOpenSecondaryMenu = false;
   menuName: string;
   subs: SubMenuItem[];
 
   get sidenavWidth(): string {
+    // In 'over' (mobile) mode the drawer overlays content at full menu width;
+    // the open/closed state is what shows or hides it.
+    if (this.mode === 'over') {
+      return '240px';
+    }
     const iconified = this.isMenuCollapsed;
-    if (this.isOpen && iconified && this.mode === 'side') {
+    if (this.isOpen && iconified) {
       return '48px';
     }
-    if (this.isOpen && !iconified && this.mode === 'side') {
+    if (this.isOpen && !iconified) {
       return '240px';
     }
     return '0px';
@@ -70,7 +75,7 @@ export class SidenavService {
     this.listenForSidenavIndicatorPressed();
   }
 
-  setSidenav(sidenav: MatSidenav): void {
+  setSidenav(sidenav: TnDrawerComponent): void {
     this.sidenav = sidenav;
   }
 
@@ -144,8 +149,8 @@ export class SidenavService {
     }
 
     const data: SidenavStatusData = {
-      isOpen: this.sidenav.opened,
-      mode: this.sidenav.mode,
+      isOpen: this.sidenav.opened(),
+      mode: this.sidenav.mode(),
       isCollapsed: this.isMenuCollapsed,
     };
 

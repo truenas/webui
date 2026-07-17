@@ -1,16 +1,16 @@
 import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef,
-  ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, inject,
+  ElementRef, OnDestroy, OnInit, ViewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import {
-  MatDrawerMode, MatSidenav, MatSidenavContainer, MatSidenavContent,
-} from '@angular/material/sidenav';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnDrawerComponent, TnDrawerContainerComponent, TnDrawerContentComponent,
+  TnDrawerMode, TnIconComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { filter, map, pairwise, startWith } from 'rxjs';
 import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
 import { productTypeLabels } from 'app/enums/product-type.enum';
@@ -48,14 +48,14 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TestDirective,
-    MatSidenavContainer,
-    MatSidenav,
+    TnDrawerContainerComponent,
+    TnDrawerComponent,
+    TnDrawerContentComponent,
     TnIconComponent,
     NavigationComponent,
     SecondaryMenuComponent,
     TnTooltipDirective,
     CopyrightLineComponent,
-    MatSidenavContent,
     TopbarComponent,
     DefaultPageHeaderComponent,
     RouterOutlet,
@@ -77,7 +77,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private focusService = inject(FocusService);
   private destroyRef = inject(DestroyRef);
 
-  @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
+  @ViewChild(TnDrawerComponent) private sideNav: TnDrawerComponent;
   @ViewChild('alertPanel', { static: true }) private alertPanel: ElementRef<HTMLElement>;
   @ViewChild(TopbarComponent) private topbar: TopbarComponent;
 
@@ -101,7 +101,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.sidenavService.isCollapsed;
   }
 
-  get sidenavMode(): MatDrawerMode {
+  get sidenavMode(): TnDrawerMode {
     return this.sidenavService.mode;
   }
 
@@ -138,7 +138,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.languageService.setLanguage(config.language);
     });
-    this.listenForSidenavChanges();
     this.setupGlobalHighlightHandler();
     this.setupAlertPanelFocus();
   }
@@ -195,31 +194,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.sidenavService.setSidenav(this.sideNavs?.first);
-    this.disableSidenavFocusTrap();
-  }
-
-  private disableSidenavFocusTrap(): void {
-    this.sideNavs?.forEach((sidenav) => {
-      const sidenavWithFocusTrap = sidenav as unknown as { _focusTrap?: { enabled: boolean } };
-      if (sidenavWithFocusTrap._focusTrap) {
-        sidenavWithFocusTrap._focusTrap.enabled = false;
-      }
-    });
-
-    // Also remove any focus trap anchors from DOM
-    const focusTrapAnchors = document.querySelectorAll('.cdk-focus-trap-anchor');
-    focusTrapAnchors.forEach((anchor) => anchor.remove());
+    this.sidenavService.setSidenav(this.sideNav);
   }
 
   ngOnDestroy(): void {
     this.sessionTimeoutService.stop();
-  }
-
-  private listenForSidenavChanges(): void {
-    this.sideNavs?.changes.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.sidenavService.setSidenav(this.sideNavs.first);
-    });
   }
 
   toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
@@ -228,6 +207,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onMenuClosed(): void {
     this.sidenavService.closeSecondaryMenu();
+  }
+
+  // Keeps the service in sync when the drawer closes itself (backdrop click in mobile
+  // 'over' mode) — otherwise the stale [opened] binding would force it back open.
+  onSidenavOpenedChange(isOpen: boolean): void {
+    this.sidenavService.isOpen = isOpen;
   }
 
   onAlertPanelKeydown(event: KeyboardEvent): void {

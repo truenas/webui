@@ -34,26 +34,20 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 .ix-dark {
   @include mat.all-component-themes($ix-theme);
 
-  .mat-bg-primary,
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret) {
+  .mat-bg-primary {
     background: map.get($md-primary, 500) !important;
     color: #fff !important;
   }
 
-  .mat-color-primary,
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-mdc-list-item.selected a {
+  .mat-color-primary {
     color: map.get($md-primary, 500) !important;
   }
 
-  .sidebar-panel .mat-nav-list .mat-mdc-list-item {
+  .sidebar-panel .nav-list .sidebar-list-item {
     color: rgba(0, 0, 0, 0.94);
   }
 
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-mdc-list-item-unscoped-content > .sub-menu {
-    @include variable(border-left, --primary, $primary, !important);
-  }
-
-  .mat-sidenav-container {
+  .app-side-nav-container {
     @include variable(background, --bg1, $bg1);
   }
 
@@ -110,7 +104,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   .mat-raised-button.mat-primary,
   .mat-fab.mat-primary,
   .mat-mini-fab.mat-primary,
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
   .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error):not(.mat-step-icon-state-number):not(.mat-step-icon-state-edit) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
@@ -126,8 +119,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     color: black;
   }
 
-  .mat-drawer,
-  .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
+  .sidebar-panel .navigation-hold#scroll-area,
   .mat-mdc-card,
   .mat-mdc-option,
   .mat-mdc-paginator,
@@ -154,7 +146,8 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     opacity: 0.15;
   }
 
-  .sidebar-panel .mat-nav-list .mat-mdc-list-item,
+  .sidebar-panel .nav-list .sidebar-list-item,
+  .slidein-nav .slide-in-nav-item,
   .app-user .app-user-name,
   .mat-expansion-panel-header-title,
   .mat-expansion-panel-header-description,
@@ -164,7 +157,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   .mat-mdc-paginator-navigation-next,
   .mat-mdc-paginator-navigation-previous,
 
-  .mat-nav-list .mat-mdc-list-item,
   .mat-mdc-form-field-label,
   .mat-mdc-selection-list .mat-mdc-list-item,
   .mat-mdc-option,
@@ -197,7 +189,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
   .mat-mdc-menu-panel,
   .mat-mdc-option.mat-active,
-  .mat-nav-list a {
+  .nav-list a {
     @include variable(background, --bg2, $bg2);
     @include variable(color, --fg2, $fg2, !important);
   }
@@ -607,16 +599,8 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   }
 
   // Fix for overscrolling problem with sidenav
-  .sidebar-panel.mat-sidenav .navigation-hold {
+  .sidebar-panel .navigation-hold {
     position: static !important;
-  }
-
-  .mat-drawer {
-    overflow-y: hidden !important;
-  }
-
-  ix-admin-layout .not-alerts .mat-drawer-inner-container {
-    overflow: visible !important;
   }
 
   // Bring theme colors to rollover effect for standard primary buttons
@@ -746,14 +730,14 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
   /// Slide-in menu ///////////////////////////////
 
-  .sidebar-panel.mat-sidenav .sidebar-list-item {
+  .sidebar-panel .sidebar-list-item {
     border-bottom: 1px solid var(--lines);
     border-left: 6px solid rgba(0, 0, 0, 0);
     border-radius: 0;
     padding: 0;
   }
 
-  .sidebar-panel.mat-sidenav .sidebar-list-item:hover {
+  .sidebar-panel .sidebar-list-item:hover {
     border-left: 6px solid var(--hover-bg);
   }
 
@@ -768,11 +752,11 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     box-shadow: -1px 0 0 1px var(--btn-default-bg) !important;
   }
 
-  .sidebar-panel.mat-sidenav .sidebar-list-item.highlighted {
+  .sidebar-panel .sidebar-list-item.highlighted {
     background-color: var(--bg2);
     border-left: 6px solid var(--primary);
 
-    .mat-mdc-list-item-unscoped-content > a {
+    > a {
       background-color: var(--bg2);
 
       tn-icon {
@@ -780,7 +764,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
       }
     }
 
-    .mat-mdc-list-item-unscoped-content > a:focus-visible {
+    > a:focus-visible {
       background: var(--hover-bg);
     }
   }
@@ -800,11 +784,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     z-index: 3;
   }
 
-  .slidein-nav .mat-mdc-list {
-    padding: 0;
-  }
-
-  .slidein-nav .mat-mdc-list-item {
+  .slidein-nav .slide-in-nav-item {
     border-bottom: solid 1px var(--lines);
   }
 

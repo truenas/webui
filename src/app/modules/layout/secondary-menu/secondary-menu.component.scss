@@ -1,4 +1,10 @@
 :host {
+  .slide-in-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
   .slidein-nav-link {
     align-items: center;
     display: flex;

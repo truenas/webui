@@ -2,15 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, inject, input, output,
 } from '@angular/core';
-import { MatList, MatListItem } from '@angular/material/list';
 import { RouterLinkActive, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-secondary-menu',
@@ -19,15 +17,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
-    MatList,
-    MatListItem,
+    TnTestIdDirective,
     TnTooltipDirective,
     RouterLinkActive,
     RouterLink,
     AsyncPipe,
     TranslateModule,
     HasAccessDirective,
-    TestDirective,
   ],
 })
 export class SecondaryMenuComponent {

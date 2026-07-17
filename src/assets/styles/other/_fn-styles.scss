@@ -187,8 +187,8 @@ samp {
 /*--------- Material ---------*/
 mat-list a[mat-list-item] .mat-mdc-list-item-unscoped-content,
 mat-list mat-list-item .mat-mdc-list-item-unscoped-content,
-mat-nav-list a[mat-list-item] .mat-mdc-list-item-unscoped-content,
-mat-nav-list mat-list-item .mat-mdc-list-item-unscoped-content,
+.nav-list .sidebar-list-item,
+.slide-in-nav-item,
 [mat-menu-item],
 .mat-mdc-option,
 body .mat-mdc-select-trigger {
@@ -248,15 +248,12 @@ body * {
 }
 
 /*---- Main Sidenav -----*/
-.sidebar-panel.mat-sidenav {
+// Width is driven by tn-drawer's [width] input; only the elevation lives here.
+.sidebar-panel {
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  min-width: var(--sidenav-width);
-  /*15rem;*/
-  width: var(--sidenav-width);
-  /*15rem;*/
 }
 
-.sidebar-panel.mat-sidenav .navigation-hold {
+.sidebar-panel .navigation-hold {
   background: rgba(255, 255, 255, 0.95);
   height: 100%;
   padding-top: 48px;
@@ -270,26 +267,7 @@ body * {
   padding: 16px 0 0 16px;
 }
 
-.sidebar-panel.mat-sidenav .mat-nav-list .sidebar-list-item .mat-mdc-list-item-unscoped-content {
-  display: block;
-  font-size: 0.875rem !important;
-  height: auto;
-  overflow: hidden;
-  padding: 0;
-  transition: max-height 0.3s cubic-bezier(0.35, 0, 0.25, 1);
-  width: 100%;
-}
-
-.mat-nav-list .mat-mdc-list-item-unscoped-content.mat-mdc-list-item-focus,
-.mat-nav-list .mat-mdc-list-item-unscoped-content:hover {
-  background: transparent;
-}
-
-.sidebar-list-item.open>.mat-mdc-list-item-unscoped-content {
-  background: rgba(0, 0, 0, 0.03);
-}
-
-.sidebar-panel .mat-nav-list a,
+.sidebar-panel .nav-list a,
 .slide-in-nav-item a {
   align-items: center;
   box-align: center;
@@ -305,7 +283,7 @@ body * {
   z-index: 99;
 }
 
-.sidebar-panel.mat-sidenav .sidebar-list-item tn-icon:not(.menu-caret) {
+.sidebar-panel .sidebar-list-item tn-icon:not(.menu-caret) {
   line-height: 48px;
   margin-bottom: 2px;
   margin-left: 12px;
@@ -314,7 +292,7 @@ body * {
   z-index: 1;
 }
 
-.sidebar-panel.mat-sidenav .mat-mdc-list-item-unscoped-content>a,
+.sidebar-panel .sidebar-list-item>a,
 .slide-in-nav-item a {
   align-items: center;
   box-direction: normal;
@@ -334,52 +312,22 @@ body * {
   box-shadow: none !important;
 }
 
-.sidebar-panel.mat-sidenav {
-  .sidebar-list-item.open>.mat-mdc-list-item-unscoped-content>.sub-menu {
-    max-height: 1000px;
-  }
-
-  .sidebar-list-item .sub-menu {
-    padding: 0;
-    transition: max-height 0.3s cubic-bezier(0.35, 0, 0.25, 1);
-
-    .mat-mdc-list-item {
-      transition: height 0.3s cubic-bezier(0.35, 0, 0.25, 1);
-
-      &.selected {
-        background: rgba(0, 0, 0, 0.05);
-      }
-    }
-  }
-
-  .sub-menu a {
-    padding-left: 54px;
-  }
-}
-
-.app-side-nav-container .mat-sidenav-content {
-  padding: 0;
-}
-
 /*------- Collapsed Sidenav -------*/
 .collapsed-menu {
   .sidebar-panel {
-    min-width: 48px;
     overflow: visible !important;
-    width: 48px;
 
     .sidebar-list-item {
       border-left: 0 solid rgba(0, 0, 0, 0) !important;
       width: 100% !important;
     }
 
-    .sidebar-list-item>.mat-mdc-list-item-unscoped-content>a {
+    .sidebar-list-item>a {
       padding: 0;
       position: relative;
     }
 
-    .navigation-hold,
-    .sidebar-list-item>.mat-mdc-list-item-unscoped-content {
+    .navigation-hold {
       overflow: visible !important;
     }
 
@@ -401,29 +349,6 @@ body * {
       max-width: 48px;
     }
 
-    .sidebar-list-item.open .sub-menu {
-      background: #fff;
-      box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
-      display: block;
-      left: 47px;
-      max-height: 600px !important;
-      overflow-y: auto;
-      position: absolute;
-      top: 0;
-      width: 200px;
-      z-index: 9999;
-    }
-
-    .sidebar-list-item.open .sub-menu .mat-mdc-list-item a {
-      padding-left: 1rem;
-    }
-
-    .mat-nav-list>div>.sidebar-list-item a .menu-caret {
-      font-size: medium;
-      left: 33px;
-      position: absolute;
-      top: 16px;
-    }
   }
 }
 
