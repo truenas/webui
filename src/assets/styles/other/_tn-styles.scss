@@ -43,7 +43,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     color: map.get($md-primary, 500) !important;
   }
 
-  .sidebar-panel .nav-list .sidebar-list-item {
+  .nav-list .sidebar-list-item {
     color: rgba(0, 0, 0, 0.94);
   }
 
@@ -119,7 +119,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     color: black;
   }
 
-  .sidebar-panel .navigation-hold#scroll-area,
+  .navigation-hold#scroll-area,
   .mat-mdc-card,
   .mat-mdc-option,
   .mat-mdc-paginator,
@@ -146,7 +146,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     opacity: 0.15;
   }
 
-  .sidebar-panel .nav-list .sidebar-list-item,
+  .nav-list .sidebar-list-item,
   .slidein-nav .slide-in-nav-item,
   .app-user .app-user-name,
   .mat-expansion-panel-header-title,
@@ -599,7 +599,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   }
 
   // Fix for overscrolling problem with sidenav
-  .sidebar-panel .navigation-hold {
+  .navigation-hold {
     position: static !important;
   }
 
@@ -730,14 +730,14 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
   /// Slide-in menu ///////////////////////////////
 
-  .sidebar-panel .sidebar-list-item {
+  .nav-list .sidebar-list-item {
     border-bottom: 1px solid var(--lines);
     border-left: 6px solid rgba(0, 0, 0, 0);
     border-radius: 0;
     padding: 0;
   }
 
-  .sidebar-panel .sidebar-list-item:hover {
+  .nav-list .sidebar-list-item:hover {
     border-left: 6px solid var(--hover-bg);
   }
 
@@ -752,7 +752,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     box-shadow: -1px 0 0 1px var(--btn-default-bg) !important;
   }
 
-  .sidebar-panel .sidebar-list-item.highlighted {
+  .nav-list .sidebar-list-item.highlighted {
     background-color: var(--bg2);
     border-left: 6px solid var(--primary);
 

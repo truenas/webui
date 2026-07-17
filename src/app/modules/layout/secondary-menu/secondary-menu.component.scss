@@ -9,6 +9,8 @@
     align-items: center;
     display: flex;
     gap: 8px;
+    // The old mat-list-item supplied this via MDC's default content padding.
+    padding-left: 16px;
   }
 
   .submenu-text {
