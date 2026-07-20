@@ -14,6 +14,7 @@ export interface HarborAssistantSearchScope {
   cameraId?: string | null;
   from?: string | null;
   sourceScope?: HarborAssistantSearchSourceScope;
+  sourceRootIds?: string[];
   to?: string | null;
   useRetrieval?: boolean;
 }
@@ -32,6 +33,7 @@ export function buildHarborAssistantSearchPayload(
     include_videos: filter === 'all' || filter === 'videos',
     use_retrieval: scope.useRetrieval ?? true,
     source_scope: scope.sourceScope ?? 'dvr_library',
+    source_root_ids: scope.sourceRootIds ?? [],
   };
   if (filter === 'videos' || filter === 'all') {
     payload.camera_id = scope.cameraId || null;

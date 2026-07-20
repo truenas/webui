@@ -62,7 +62,9 @@
 
   @if (isTab('search')) {
     <section class="tab-panel assistant-search-tab">
-      <ix-harbor-assistant-search></ix-harbor-assistant-search>
+      <ix-harbor-assistant-search
+        [knowledgeSourceRoots]="knowledgeSourceRoots()"
+      ></ix-harbor-assistant-search>
     </section>
   }
 

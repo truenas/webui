@@ -20,6 +20,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_videos: true,
       use_retrieval: true,
       source_scope: 'dvr_library',
+      source_root_ids: [],
       camera_id: null,
       from: null,
       to: null,
@@ -32,6 +33,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_videos: false,
       use_retrieval: true,
       source_scope: 'dvr_library',
+      source_root_ids: [],
     });
     expect(buildHarborAssistantSearchPayload('report', 'text')).toEqual({
       query: 'report',
@@ -41,6 +43,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_videos: false,
       use_retrieval: true,
       source_scope: 'dvr_library',
+      source_root_ids: [],
     });
     expect(buildHarborAssistantSearchPayload('clip', 'videos')).toEqual({
       query: 'clip',
@@ -50,6 +53,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_videos: true,
       use_retrieval: true,
       source_scope: 'dvr_library',
+      source_root_ids: [],
       camera_id: null,
       from: null,
       to: null,
@@ -66,6 +70,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_videos: true,
       use_retrieval: true,
       source_scope: 'dvr_library',
+      source_root_ids: [],
       camera_id: 'camera-main',
       from: '1714600000',
       to: '1714600300',
@@ -78,12 +83,16 @@ describe('Harbor Assistant search result helpers', () => {
       include_videos: true,
       use_retrieval: true,
       source_scope: 'nas_files',
+      source_root_ids: [],
       camera_id: null,
       from: null,
       to: null,
     });
     expect(buildHarborAssistantSearchPayload('陪我聊聊', 'all', 24, { useRetrieval: false }))
       .toEqual(expect.objectContaining({ use_retrieval: false }));
+    expect(buildHarborAssistantSearchPayload('folder search', 'text', 24, {
+      sourceRootIds: ['documents'],
+    })).toEqual(expect.objectContaining({ source_root_ids: ['documents'] }));
   });
 
   it('encodes same-origin preview URLs', () => {

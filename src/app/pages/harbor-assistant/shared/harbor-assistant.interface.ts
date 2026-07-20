@@ -9,6 +9,7 @@ export interface HarborAssistantSearchRequest {
   include_videos: boolean;
   use_retrieval?: boolean;
   source_scope?: HarborAssistantSearchSourceScope;
+  source_root_ids?: string[];
   camera_id?: string | null;
   from?: string | null;
   to?: string | null;

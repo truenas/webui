@@ -172,63 +172,62 @@
 
         <div class="composer-toolbar">
           <div class="composer-controls">
-            <details class="source-selector">
+            <details #searchSettings class="composer-options">
               <summary
-                class="source-selector-trigger"
                 [class.selected]="useRetrieval()"
-                [attr.aria-label]="'Choose knowledge sources' | translate"
+                [attr.aria-label]="'Search settings' | translate"
               >
                 <span class="at-mark" aria-hidden="true">&#64;</span>
-                <span>{{ retrievalSourceLabel() | translate }}</span>
+                <span>{{ 'Search settings' | translate }}</span>
                 @if (selectedRetrievalSources().length > 0) {
                   <span class="source-count">{{ selectedRetrievalSources().length }}</span>
                 }
               </summary>
-              <div class="source-popover">
+              <div class="options-popover">
                 <div class="source-popover-heading">
                   <div>
-                    <strong>{{ 'Knowledge sources' | translate }}</strong>
-                    <span>{{ 'Select one or more sources. Clear all for ordinary conversation.' | translate }}</span>
+                    <strong>{{ 'Knowledge folders' | translate }}</strong>
+                    <span>{{ 'Select folders configured in Settings. Clear all for ordinary conversation.' | translate }}</span>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  class="source-option all-sources"
-                  [class.selected]="allRetrievalSourcesSelected()"
-                  [attr.aria-checked]="allRetrievalSourcesSelected()"
-                  role="checkbox"
+                @if (retrievalSources().length === 0) {
+                  <div class="source-empty">{{ 'No enabled knowledge folders are configured.' | translate }}</div>
+                } @else {
+                  <button
+                    type="button"
+                    class="source-option all-sources"
+                    role="checkbox"
+                    [class.selected]="allRetrievalSourcesSelected()"
+                    [attr.aria-checked]="allRetrievalSourcesSelected()"
                   (click)="toggleAllRetrievalSources()"
                 >
                   <span class="source-check" aria-hidden="true">{{ allRetrievalSourcesSelected() ? '✓' : '' }}</span>
                   <span>
                     <strong>{{ 'Select all' | translate }}</strong>
-                    <small>{{ 'Selects every knowledge source currently available in Harbor Assistant.' | translate }}</small>
+                    <small>{{ 'Selects every enabled folder configured in Harbor Assistant.' | translate }}</small>
                   </span>
-                </button>
+                  </button>
 
-                @for (source of retrievalSources; track source.id) {
-                  <button
-                    type="button"
-                    class="source-option"
-                    [class.selected]="retrievalSourceSelected(source.id)"
-                    [attr.aria-checked]="retrievalSourceSelected(source.id)"
-                    role="checkbox"
+                  @for (source of retrievalSources(); track source.id) {
+                    <button
+                      type="button"
+                      class="source-option"
+                      role="checkbox"
+                      [class.selected]="retrievalSourceSelected(source.id)"
+                      [attr.aria-checked]="retrievalSourceSelected(source.id)"
                     (click)="toggleRetrievalSource(source.id)"
                   >
                     <span class="source-check" aria-hidden="true">{{ retrievalSourceSelected(source.id) ? '✓' : '' }}</span>
                     <span>
-                      <strong>{{ source.label | translate }}</strong>
-                      <small>{{ source.description | translate }}</small>
+                      <strong>{{ source.label }}</strong>
+                      <small>{{ source.description }}</small>
                     </span>
                   </button>
+                  }
                 }
-              </div>
-            </details>
 
-            <details class="composer-options">
-              <summary>{{ 'Search settings' | translate }}</summary>
-              <div class="options-popover">
+                <div class="options-divider"></div>
                 <label>{{ 'Result type' | translate }}</label>
                 <mat-button-toggle-group class="mode-toggle" formControlName="filter" aria-label="Search result filter">
                   <mat-button-toggle value="all">{{ 'All' | translate }}</mat-button-toggle>

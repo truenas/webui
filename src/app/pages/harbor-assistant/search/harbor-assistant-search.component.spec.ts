@@ -4,6 +4,7 @@ import { MockComponent } from 'ng-mocks';
 import { MarkdownModule } from 'ngx-markdown';
 import { of } from 'rxjs';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { KnowledgeSourceRoot } from 'app/pages/harbor-assistant/interfaces/harbor-assistant-status.interface';
 import { HarborAssistantSearchComponent } from 'app/pages/harbor-assistant/search/harbor-assistant-search.component';
 import { HarborAssistantContentApiService } from 'app/pages/harbor-assistant/shared/harbor-assistant-content-api.service';
 import { HarborAssistantSearchResponse } from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
@@ -27,6 +28,22 @@ describe('Harbor Assistant search component', () => {
     ],
   });
 
+  const configuredRoots: KnowledgeSourceRoot[] = [
+    {
+      root_id: 'documents', label: '文档资料', path: '/mnt/documents', enabled: true, include: [], exclude: [],
+    },
+    {
+      root_id: 'camera-recordings', label: '摄像头录像', path: '/mnt/camera', enabled: true, include: [], exclude: [],
+    },
+  ];
+
+  function createSearchComponent(): Spectator<HarborAssistantSearchComponent> {
+    const result = createComponent();
+    result.setInput('knowledgeSourceRoots', configuredRoots);
+    result.detectChanges();
+    return result;
+  }
+
   beforeEach(() => {
     scrollToSpy = jest.fn();
     (Element.prototype as unknown as { scrollTo: jest.Mock }).scrollTo = scrollToSpy;
@@ -38,7 +55,7 @@ describe('Harbor Assistant search component', () => {
   });
 
   it('renders a WeKnora-style chat stream and bottom composer without DVR controls', () => {
-    spectator = createComponent();
+    spectator = createSearchComponent();
     spectator.detectChanges();
 
     expect(spectator.query('[data-testid="harbor-assistant-chat-stream"]')).toExist();
@@ -51,8 +68,40 @@ describe('Harbor Assistant search component', () => {
     expect(spectator.query('.assistant-panel')).not.toExist();
   });
 
+  it('uses configured folders in the combined @ search settings', () => {
+    spectator = createSearchComponent();
+    const sourceOptions = spectator.queryAll<HTMLButtonElement>('.source-option:not(.all-sources)');
+
+    expect(spectator.query('details.composer-options')).toExist();
+    expect(spectator.query('.composer-options > summary')).toHaveText('2');
+    expect(sourceOptions[0]).toHaveText('文档资料');
+    expect(sourceOptions[0]).toHaveText('/mnt/documents');
+    expect(sourceOptions[1]).toHaveText('摄像头录像');
+  });
+
+  it('inserts the full translated quick prompt', () => {
+    spectator = createSearchComponent();
+    const suggestions = spectator.queryAll<HTMLButtonElement>('.suggestion-card');
+    const query = spectator.query<HTMLTextAreaElement>('textarea[aria-label="Assistant search query"]');
+
+    spectator.click(suggestions[1]);
+
+    expect(query?.value).toBe('Find recent camera videos');
+  });
+
+  it('closes search settings when clicking elsewhere', () => {
+    spectator = createSearchComponent();
+    const settings = spectator.query<HTMLDetailsElement>('details.composer-options') as HTMLDetailsElement;
+    settings.open = true;
+
+    document.body.click();
+    spectator.detectChanges();
+
+    expect(settings.open).toBe(false);
+  });
+
   it('defaults Harbor Assistant search to all knowledge sources', fakeAsync(() => {
-    spectator = createComponent();
+    spectator = createSearchComponent();
     const component = spectator.component as unknown as {
       form: { controls: { query: { setValue: (value: string) => void } } };
       search: () => void;
@@ -67,6 +116,7 @@ describe('Harbor Assistant search component', () => {
       query: '谁在倒啤酒',
       include_videos: true,
       source_scope: 'all',
+      source_root_ids: ['documents', 'camera-recordings'],
       use_retrieval: true,
     }));
     expect(scrollToSpy).toHaveBeenCalled();
@@ -78,7 +128,7 @@ describe('Harbor Assistant search component', () => {
       degraded_reason: 'embedding_unavailable',
       warnings: ['Embedding model unavailable'],
     })));
-    spectator = createComponent();
+    spectator = createSearchComponent();
     const component = spectator.component as unknown as {
       form: { controls: { query: { setValue: (value: string) => void } } };
       search: () => void;
@@ -94,12 +144,12 @@ describe('Harbor Assistant search component', () => {
   }));
 
   it('uses the @ source selector for multi-scope retrieval and ordinary conversation', fakeAsync(() => {
-    spectator = createComponent();
+    spectator = createSearchComponent();
     const component = spectator.component as unknown as {
       form: { controls: { query: { setValue: (value: string) => void } } };
       search: () => void;
     };
-    const sourceTrigger = spectator.query<HTMLElement>('.source-selector-trigger');
+    const sourceTrigger = spectator.query<HTMLElement>('.composer-options > summary');
     const selectAll = spectator.query<HTMLButtonElement>('.source-option.all-sources');
 
     expect(sourceTrigger).toHaveClass('selected');
@@ -121,7 +171,7 @@ describe('Harbor Assistant search component', () => {
   }));
 
   it('maps one selected source to its scope and multiple sources to all', fakeAsync(() => {
-    spectator = createComponent();
+    spectator = createSearchComponent();
     const component = spectator.component as unknown as {
       form: { controls: { query: { setValue: (value: string) => void } } };
       search: () => void;
@@ -134,7 +184,7 @@ describe('Harbor Assistant search component', () => {
     tick();
 
     expect(api.search).toHaveBeenLastCalledWith(expect.objectContaining({
-      source_scope: 'nas_files',
+      source_root_ids: ['documents'],
       use_retrieval: true,
     }));
 
@@ -146,6 +196,7 @@ describe('Harbor Assistant search component', () => {
 
     expect(api.search).toHaveBeenLastCalledWith(expect.objectContaining({
       source_scope: 'all',
+      source_root_ids: ['documents', 'camera-recordings'],
       use_retrieval: true,
     }));
   }));
@@ -154,7 +205,7 @@ describe('Harbor Assistant search component', () => {
     api.search = jest.fn(() => of(searchResponse({
       answer: '春天相关的文章包括《spring.md》。 [1]',
     })));
-    spectator = createComponent();
+    spectator = createSearchComponent();
     const component = spectator.component as unknown as {
       form: { controls: { query: { setValue: (value: string) => void } } };
       search: () => void;
@@ -178,7 +229,7 @@ describe('Harbor Assistant search component', () => {
       total_matches: 0,
       videos: [],
     })));
-    spectator = createComponent();
+    spectator = createSearchComponent();
     const component = spectator.component as unknown as {
       form: { controls: { query: { setValue: (value: string) => void } } };
       search: () => void;
@@ -198,7 +249,7 @@ describe('Harbor Assistant search component', () => {
   }));
 
   it('shows a user-facing filter hint instead of debug evidence when the current type has no results', fakeAsync(() => {
-    spectator = createComponent();
+    spectator = createSearchComponent();
     const component = spectator.component as unknown as {
       form: {
         controls: {
@@ -222,7 +273,7 @@ describe('Harbor Assistant search component', () => {
   }));
 
   it('stores only recent search terms and reuses them without changing filters', fakeAsync(() => {
-    spectator = createComponent();
+    spectator = createSearchComponent();
     const component = spectator.component as unknown as {
       form: {
         controls: {

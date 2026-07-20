@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, computed, effect, inject, input, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
@@ -10,6 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { finalize } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
+import { KnowledgeSourceRoot } from 'app/pages/harbor-assistant/interfaces/harbor-assistant-status.interface';
 import { HarborAssistantContentApiService } from 'app/pages/harbor-assistant/shared/harbor-assistant-content-api.service';
 import {
   buildHarborAssistantSearchPayload,
@@ -25,7 +26,6 @@ import {
   HarborAssistantSearchResultFilter,
   HarborAssistantSearchHit,
   HarborAssistantSearchResponse,
-  HarborAssistantSearchSourceScope,
   HarborAssistantSearchWaterfallItem,
 } from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
 
@@ -33,7 +33,6 @@ interface HarborAssistantSearchPromptSuggestion {
   label: string;
   query: string;
   filter: HarborAssistantSearchResultFilter;
-  sourceScope: HarborAssistantSearchSourceScope;
 }
 
 interface HarborAssistantChatTurn {
@@ -46,7 +45,7 @@ interface HarborAssistantChatTurn {
 }
 
 interface HarborAssistantRetrievalSource {
-  id: Exclude<HarborAssistantSearchSourceScope, 'all'>;
+  id: string;
   label: string;
   description: string;
 }
@@ -55,6 +54,9 @@ interface HarborAssistantRetrievalSource {
   selector: 'ix-harbor-assistant-search',
   templateUrl: './harbor-assistant-search.component.html',
   styleUrl: './harbor-assistant-search.component.scss',
+  host: {
+    '(document:click)': 'closeSearchSettingsOnOutsideClick($event)',
+  },
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
@@ -71,6 +73,7 @@ interface HarborAssistantRetrievalSource {
 })
 export class HarborAssistantSearchComponent implements OnInit {
   private nextTurnId = 1;
+  private retrievalSourcesInitialized = false;
   private readonly searchHistoryStorageKey = 'harborAssistant.searchTerms.v1';
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly api = inject(HarborAssistantContentApiService);
@@ -78,6 +81,9 @@ export class HarborAssistantSearchComponent implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly window = inject<Window>(WINDOW);
   @ViewChild('chatScroll') private chatScroll?: ElementRef<HTMLElement>;
+  @ViewChild('searchSettings') private searchSettings?: ElementRef<HTMLDetailsElement>;
+
+  readonly knowledgeSourceRoots = input<KnowledgeSourceRoot[]>([]);
 
   protected readonly form = this.formBuilder.group({
     query: ['', Validators.required],
@@ -88,16 +94,16 @@ export class HarborAssistantSearchComponent implements OnInit {
 
   protected readonly promptSuggestions: HarborAssistantSearchPromptSuggestion[] = [
     {
-      label: 'Who is pouring beer?', query: 'who is pouring beer', filter: 'videos', sourceScope: 'all',
+      label: 'Who is pouring beer?', query: 'Who is pouring beer?', filter: 'videos',
     },
     {
-      label: 'What recent camera videos are available?', query: 'recent camera videos', filter: 'videos', sourceScope: 'all',
+      label: 'Find recent camera videos', query: 'Find recent camera videos', filter: 'videos',
     },
     {
-      label: 'What recent recordings are available?', query: 'recent recordings', filter: 'videos', sourceScope: 'all',
+      label: 'Find recent recordings', query: 'Find recent recordings', filter: 'videos',
     },
     {
-      label: 'summarize recent documents', query: 'summarize recent documents', filter: 'text', sourceScope: 'all',
+      label: 'Summarize recent documents', query: 'Summarize recent documents', filter: 'text',
     },
   ];
 
@@ -105,14 +111,23 @@ export class HarborAssistantSearchComponent implements OnInit {
   protected readonly response = signal<HarborAssistantSearchResponse | null>(null);
   protected readonly error = signal<string | null>(null);
   protected readonly searchHistory = signal<string[]>([]);
-  protected readonly retrievalSources: HarborAssistantRetrievalSource[] = [
-    { id: 'nas_files', label: 'NAS folders', description: 'Documents, photos, and files indexed from NAS folders' },
-    { id: 'dvr_library', label: 'DVR media library', description: 'Camera recordings and DVR media indexed locally' },
-  ];
+  protected readonly retrievalSources = computed<HarborAssistantRetrievalSource[]>(() => this.knowledgeSourceRoots()
+    .filter((root) => root.enabled)
+    .map((root) => ({ id: root.root_id, label: root.label || root.path, description: root.path })));
 
-  protected readonly selectedRetrievalSources = signal<HarborAssistantRetrievalSource['id'][]>(
-    this.retrievalSources.map((source) => source.id),
-  );
+  protected readonly selectedRetrievalSources = signal<string[]>([]);
+
+  private readonly syncRetrievalSources = effect(() => {
+    const availableIds = this.retrievalSources().map((source) => source.id);
+    this.selectedRetrievalSources.update((selected) => {
+      if (!this.retrievalSourcesInitialized && availableIds.length > 0) {
+        this.retrievalSourcesInitialized = true;
+        return availableIds;
+      }
+      const available = new Set(availableIds);
+      return selected.filter((sourceId) => available.has(sourceId));
+    });
+  });
 
   protected readonly useRetrieval = computed(() => this.selectedRetrievalSources().length > 0);
   protected readonly chatTurns = signal<HarborAssistantChatTurn[]>([]);
@@ -137,7 +152,8 @@ export class HarborAssistantSearchComponent implements OnInit {
       24,
       {
         from: this.localDateTimeToUnixSeconds(this.form.controls.from.value),
-        sourceScope: this.resolvedSourceScope(),
+        sourceRootIds: this.selectedRetrievalSources(),
+        sourceScope: 'all',
         to: this.localDateTimeToUnixSeconds(this.form.controls.to.value),
         useRetrieval,
       },
@@ -189,7 +205,6 @@ export class HarborAssistantSearchComponent implements OnInit {
   }
 
   usePromptSuggestion(suggestion: HarborAssistantSearchPromptSuggestion): void {
-    this.selectSourceScope(suggestion.sourceScope);
     this.form.patchValue({
       query: this.translate.instant(suggestion.query),
       filter: suggestion.filter,
@@ -230,7 +245,7 @@ export class HarborAssistantSearchComponent implements OnInit {
   toggleAllRetrievalSources(): void {
     this.selectedRetrievalSources.set(this.allRetrievalSourcesSelected()
       ? []
-      : this.retrievalSources.map((source) => source.id));
+      : this.retrievalSources().map((source) => source.id));
   }
 
   retrievalSourceSelected(source: HarborAssistantRetrievalSource['id']): boolean {
@@ -238,7 +253,8 @@ export class HarborAssistantSearchComponent implements OnInit {
   }
 
   allRetrievalSourcesSelected(): boolean {
-    return this.selectedRetrievalSources().length === this.retrievalSources.length;
+    const sourceCount = this.retrievalSources().length;
+    return sourceCount > 0 && this.selectedRetrievalSources().length === sourceCount;
   }
 
   retrievalSourceLabel(): string {
@@ -246,11 +262,19 @@ export class HarborAssistantSearchComponent implements OnInit {
     if (count === 0) {
       return 'No knowledge selected';
     }
-    if (count === this.retrievalSources.length) {
-      return 'All knowledge sources';
+    if (count === this.retrievalSources().length) {
+      return 'All configured folders';
     }
-    return this.retrievalSources.find((source) => this.retrievalSourceSelected(source.id))?.label
-      ?? 'Knowledge sources';
+    return this.retrievalSources().find((source) => this.retrievalSourceSelected(source.id))?.label
+      ?? 'Selected folders';
+  }
+
+  protected closeSearchSettingsOnOutsideClick(event: Event): void {
+    const settings = this.searchSettings?.nativeElement;
+    const target = event.target;
+    if (settings?.open && target instanceof Node && !settings.contains(target)) {
+      settings.open = false;
+    }
   }
 
   conversationResponse(result: HarborAssistantSearchResponse | null = this.response()): boolean {
@@ -276,18 +300,6 @@ export class HarborAssistantSearchComponent implements OnInit {
 
   openPreview(item: HarborAssistantSearchWaterfallItem): void {
     this.window.open(item.previewUrl, '_blank', 'noopener');
-  }
-
-  searchScopeLabel(): string {
-    switch (this.resolvedSourceScope()) {
-      case 'dvr_library':
-        return 'DVR media library';
-      case 'nas_files':
-        return 'NAS folders';
-      case 'all':
-      default:
-        return 'All knowledge sources';
-    }
   }
 
   timeRangeLabel(): string {
@@ -431,17 +443,6 @@ export class HarborAssistantSearchComponent implements OnInit {
       return null;
     }
     return Math.floor(timestamp / 1000).toString();
-  }
-
-  private resolvedSourceScope(): HarborAssistantSearchSourceScope {
-    const selected = this.selectedRetrievalSources();
-    return selected.length === 1 ? selected[0] : 'all';
-  }
-
-  private selectSourceScope(scope: HarborAssistantSearchSourceScope): void {
-    this.selectedRetrievalSources.set(scope === 'all'
-      ? this.retrievalSources.map((source) => source.id)
-      : [scope]);
   }
 
   private formatLocalDateTimeLabel(value: string): string {
