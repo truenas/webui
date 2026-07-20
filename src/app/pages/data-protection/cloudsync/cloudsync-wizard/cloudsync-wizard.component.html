@@ -1,11 +1,3 @@
-@if (slideInRef) {
-  <ix-modal-header
-    [requiredRoles]="requiredRoles"
-    [title]="'Cloud Sync Task Wizard' | translate"
-    [loading]="!!(mergedLoading$ | async)"
-  ></ix-modal-header>
-}
-
 <tn-stepper orientation="vertical" [linear]="true">
   <tn-step [label]="'Provider' | translate" [completed]="!!existingCredential">
     <ix-cloudsync-provider

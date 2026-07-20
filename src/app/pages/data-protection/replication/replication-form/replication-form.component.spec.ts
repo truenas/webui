@@ -1,9 +1,6 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -83,7 +80,6 @@ const existingTask: ReplicationTask = {
 
 describe('ReplicationFormComponent', () => {
   let spectator: Spectator<ReplicationFormComponent>;
-  let loader: HarnessLoader;
   const remoteNodeProvider = jest.fn();
   const localNodeProvider = jest.fn();
   const slideInRef: SlideInRef<ReplicationTask | undefined, unknown> = {
@@ -195,7 +191,6 @@ describe('ReplicationFormComponent', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent();
       tick();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     }));
 
     it('shows form sections', () => {
@@ -206,18 +201,17 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.query(ScheduleSectionComponent)).toExist();
     });
 
-    it('switches to wizard when Switch To Wizard is pressed', async () => {
-      const switchButton = await loader.getHarness(TnButtonHarness.with({ label: 'Switch To Wizard' }));
-      await switchButton.click();
+    it('switches to wizard when the Switch To Wizard footer action is triggered', () => {
+      const switchAction = spectator.component.footerActions.find((action) => action.testId === 'switch-to-wizard');
+      switchAction?.onClick();
 
       expect(
         slideInRef.swap,
       ).toHaveBeenCalledWith(ReplicationWizardComponent, { wide: true });
     });
 
-    it('creates a new replication task', async () => {
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+    it('creates a new replication task', () => {
+      spectator.component.submit();
 
       expect(spectator.query(GeneralSectionComponent)!.getPayload).toHaveBeenCalled();
       expect(spectator.query(TransportSectionComponent)!.getPayload).toHaveBeenCalled();
@@ -275,12 +269,10 @@ describe('ReplicationFormComponent', () => {
         ],
       });
       tick();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     }));
 
-    it('updates an existing replication task', async () => {
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+    it('updates an existing replication task', () => {
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.update', [
         1,
@@ -304,7 +296,6 @@ describe('ReplicationFormComponent', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent();
       tick();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     }));
 
     it('push from local to remote', fakeAsync(() => {
@@ -356,7 +347,6 @@ describe('ReplicationFormComponent', () => {
         },
       });
       tick();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     }));
 
     it('emits closed when saved via the host submit() entry point', () => {
@@ -373,7 +363,6 @@ describe('ReplicationFormComponent', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent();
       tick();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     }));
 
     it('opens sudo enabled dialog when choosing to existing ssh credential', fakeAsync(() => {

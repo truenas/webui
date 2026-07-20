@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, output, OnInit, signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { map, of } from 'rxjs';
+import {
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent,
+} from '@truenas/ui-components';
+import { defaultIfEmpty, map } from 'rxjs';
 import { datasetsRootNode, slashRootNode } from 'app/constants/basic-root-nodes.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -23,18 +23,15 @@ import {
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -43,19 +40,14 @@ import { FilesystemService } from 'app/services/filesystem.service';
   templateUrl: './cloud-backup-restore-from-snapshot-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxRadioGroupComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnRadioComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    IxInputComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
     FormatDateTimePipe,
   ],
@@ -65,16 +57,32 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
-  private snackbar = inject(SnackbarService);
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private dialogService = inject(DialogService);
-  slideInRef = inject<SlideInRef<{
+  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
+  // `<tn-side-panel>` form panel, where data arrives via {@link restoreData}.
+  private slideInRef = inject<SlideInRef<{
     backup: CloudBackup;
     snapshot: CloudBackupSnapshot;
-  }, boolean>>(SlideInRef);
+  }, boolean>>(SlideInRef, { optional: true });
 
   private destroyRef = inject(DestroyRef);
+
+  /**
+   * The backup + snapshot to restore, supplied by the `<tn-side-panel>` host (via
+   * {@link FormSidePanelService} `inputs`). The legacy SlideIn host passes the same shape through
+   * `slideInRef.getData()`; {@link ngOnInit} resolves from whichever host is present.
+   */
+  readonly restoreData = input<{ backup: CloudBackup; snapshot: CloudBackupSnapshot } | undefined>(undefined);
+
+  // This form hosts `<ix-form>` directly and forwards its submit()/canSubmit()/isBusy()/closed, so it
+  // follows the ix-form dual-host recipe rather than extending `SidePanelForm`.
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
+  readonly closed = output<boolean>();
+
+  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
 
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   readonly mntPath = mntPath;
@@ -85,14 +93,13 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   fileNodeProvider: TreeNodeProvider;
   snapshotNodeProvider: TreeNodeProvider;
 
-  readonly includeExcludeOptions$ = of(mapToOptions(snapshotIncludeExcludeOptions, this.translate));
-
-  get title(): string {
-    return this.translate.instant('Restore from Snapshot');
-  }
+  protected readonly includeExcludeOptions = mapToOptions(snapshotIncludeExcludeOptions, this.translate);
 
   form = this.fb.group({
-    target: [null as string | null, Validators.required],
+    target: [null as string | null, [
+      Validators.required,
+      validateNotPoolRoot(this.translate.instant(helptextTruecloudBackup.targetPoolRootError)),
+    ]],
     includeExclude: [SnapshotIncludeExclude.IncludeEverything, Validators.required],
     excludedPaths: [[] as string[], Validators.required],
     excludePattern: [null as string | null, Validators.required],
@@ -104,8 +111,6 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   protected readonly rootDatasetNode: ExplorerNodeData = datasetsRootNode;
   protected readonly slashRootNode: ExplorerNodeData = slashRootNode;
-
-  protected isLoading = signal(false);
 
   get backupMntPath(): string {
     return this.data.backup.absolute_paths ? this.data.backup.path : '/';
@@ -123,52 +128,62 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     return this.form.controls.includeExclude.value === SnapshotIncludeExclude.IncludeFromSubFolder;
   }
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
+  submit(): void {
+    this.ixForm()?.submit();
+  }
 
-    this.data = this.slideInRef.getData();
-    this.form.patchValue({
-      subFolder: this.backupMntPath,
-    });
+  /** Whether the form may be submitted right now; the `<tn-side-panel>` host reads this for its Save action. */
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
 
-    this.updateIncludedPathsRootNodes();
+  /** Whether the form is currently submitting; the host shows a progress bar while true. */
+  isBusy(): boolean {
+    return this.ixForm()?.isLoading() ?? false;
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   ngOnInit(): void {
+    // Resolve from whichever host opened the form: the legacy SlideIn (`getData()`) or the
+    // `<tn-side-panel>` (the `restoreData` input, set before this hook runs).
+    this.data = this.slideInRef?.getData() ?? this.restoreData();
+
+    this.form.patchValue({
+      subFolder: this.backupMntPath,
+    });
+    this.updateIncludedPathsRootNodes();
+
     this.setFileNodeProvider();
     this.setSnapshotNodeProvider();
     this.disableHiddenFields();
     this.listenForFormChanges();
   }
 
-  onSubmit(): void {
-    this.isLoading.set(true);
-
+  protected handleSubmit = (): SubmitResult => {
     const params = this.prepareParams();
 
-    this.dialogService.jobDialog(
-      this.api.job('cloud_backup.restore', params),
-      {
-        title: this.translate.instant('Restoring backup'),
-        canMinimize: true,
+    return {
+      // `canMinimize` job dialogs complete without emitting (next never fires), so map the empty
+      // completion to a value for ix-form's next-based success/close handling.
+      request$: this.dialogService.jobDialog(
+        this.api.job('cloud_backup.restore', params),
+        {
+          title: this.translate.instant('Restoring backup'),
+          canMinimize: true,
+        },
+      ).afterClosed().pipe(defaultIfEmpty(true)),
+      successMessage: this.translate.instant('Cloud Backup Restored Successfully'),
+      onError: (error: unknown): boolean => {
+        this.errorHandler.handleValidationErrors(error, this.form);
+        return true;
       },
-    )
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        complete: () => {
-          this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
-          this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.errorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    };
+  };
 
   private getSnapshotNodeProvider(): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
