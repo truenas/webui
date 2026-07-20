@@ -1,8 +1,9 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconButtonHarness, TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonHarness, TnIconComponent, TnTreeHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-node/topology-item-node.component';
@@ -465,17 +466,6 @@ describe('VDevsListComponent', () => {
     jest.spyOn(console, 'warn').mockImplementation();
   });
 
-  /**
-   * Child node insertion is deferred to a microtask (one per tree depth) by
-   * tn-nested-tree-node — settle a few rounds so the whole tree is rendered.
-   */
-  async function settle(passes = 4): Promise<void> {
-    for (let i = 0; i < passes; i++) {
-      await spectator.fixture.whenStable();
-      spectator.detectChanges();
-    }
-  }
-
   it('shows the devices of the pool', async () => {
     spectator = createComponent({
       props: { poolId: 2 },
@@ -496,7 +486,7 @@ describe('VDevsListComponent', () => {
       ],
     });
     spectator.detectChanges();
-    await settle();
+    await settleDeferredTree(spectator.fixture);
     const vdevGroup = spectator.query('ix-vdev-group-node')!;
     const text = vdevGroup.querySelector('.caption-name')!;
     expect(text.textContent).toBe('Data VDEVs');
@@ -506,14 +496,17 @@ describe('VDevsListComponent', () => {
     expect(treeNodes[2].textContent).toBe('sdd');
 
     // The custom group toggle collapses the auto-expanded group. Collapsed children
-    // stay in the DOM (hidden via the library's .tn-tree-invisible class) — assert
-    // the hidden group container rather than element removal.
-    const groupLoader = await TestbedHarnessEnvironment.loader(spectator.fixture).getChildLoader('ix-vdev-group-node');
+    // stay in the DOM (hidden via CSS) — assert the group's expansion state through
+    // the harness rather than element removal.
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const groupLoader = await loader.getChildLoader('ix-vdev-group-node');
     const groupToggle = await groupLoader.getHarness(TnIconButtonHarness);
+    const tree = await loader.getHarness(TnTreeHarness);
+    const [groupNode] = await tree.getNodes({ level: 0 });
+    expect(await groupNode.isExpanded()).toBe(true);
     await groupToggle.click();
     spectator.detectChanges();
-    expect(spectator.query('tn-nested-tree-node .tn-nested-tree-node-container')!.classList)
-      .toContain('tn-tree-invisible');
+    expect(await groupNode.isExpanded()).toBe(false);
   });
 
   describe('auto-expand on descendant warning', () => {
@@ -564,14 +557,18 @@ describe('VDevsListComponent', () => {
         ],
       });
       spectator.detectChanges();
-      await settle();
+      await settleDeferredTree(spectator.fixture);
 
       const faultedRow = spectator.queryAll('.cell-name')
         .find((el) => el.textContent?.trim() === 'sde');
       expect(faultedRow).toBeTruthy();
-      // The FAULTED disk's ancestors are auto-expanded, so no containing group
-      // is left CSS-hidden.
-      expect(faultedRow!.closest('.tn-tree-invisible')).toBeNull();
+      // The FAULTED disk's ancestors (group and mirror) are auto-expanded, so the
+      // disk row is not left hidden under a collapsed parent.
+      const tree = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(TnTreeHarness);
+      const [group] = await tree.getNodes({ level: 0 });
+      const [mirror] = await tree.getNodes({ level: 1 });
+      expect(await group.isExpanded()).toBe(true);
+      expect(await mirror.isExpanded()).toBe(true);
     });
   });
 });

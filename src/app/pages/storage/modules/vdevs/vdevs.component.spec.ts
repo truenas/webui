@@ -5,6 +5,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -230,12 +231,7 @@ describe('VDevsComponent', () => {
   });
 
   it('shows the devices and details', async () => {
-    // Child tree nodes are inserted a microtask after their parent renders
-    // (one level per pass) — settle before reading the rows.
-    for (let i = 0; i < 4; i++) {
-      await spectator.fixture.whenStable();
-      spectator.detectChanges();
-    }
+    await settleDeferredTree(spectator.fixture);
     const rows = spectator.queryAll('.cell-name');
     expect(rows.map((row) => row.textContent)).toEqual(['MIRROR', 'sdc', 'sdd']);
     const headerContainer = spectator.query('.header-container')!;

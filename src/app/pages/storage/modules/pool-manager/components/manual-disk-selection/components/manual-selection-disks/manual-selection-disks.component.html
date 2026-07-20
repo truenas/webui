@@ -44,10 +44,15 @@
         </div>
       </tn-nested-tree-node>
 
+      <!-- hideToggle: the group row draws its own chevron, so the whole row toggles.
+           Enter/Space mirror the click for keyboard users focused on the treeitem host
+           (the library's built-in keyboard toggle is suppressed with the button). -->
       <tn-nested-tree-node
         *cdkTreeNodeDef="let group; when: isGroup"
         hideToggle
         (click)="toggleGroup(group)"
+        (keydown.enter)="toggleGroup(group)"
+        (keydown.space)="$event.preventDefault(); toggleGroup(group)"
       >
         <div
           class="group-row"
