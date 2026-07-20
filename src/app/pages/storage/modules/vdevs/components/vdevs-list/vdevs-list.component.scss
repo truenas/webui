@@ -4,6 +4,11 @@
 @include tree-node-with-details-container;
 
 .disk-tree {
+  // The tree sits flush under the search/header block — square off the top
+  // corners so the two read as one surface.
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+
   // TEMP: the library's .tn-tree sets width: 100% + border without border-box,
   // so the right border clips inside a fitted container. Remove once the library
   // adds box-sizing to .tn-tree.
