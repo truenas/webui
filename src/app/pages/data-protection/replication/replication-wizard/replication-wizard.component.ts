@@ -71,8 +71,6 @@ export class ReplicationWizardComponent {
   protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);
   protected when = viewChild.required(ReplicationWhenComponent);
 
-  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
-
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (true = saved). */
   readonly closed = output<boolean>();
 

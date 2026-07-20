@@ -203,7 +203,8 @@ describe('ReplicationFormComponent', () => {
 
     it('switches to wizard when the Switch To Wizard footer action is triggered', () => {
       const switchAction = spectator.component.footerActions.find((action) => action.testId === 'switch-to-wizard');
-      switchAction?.onClick();
+      expect(switchAction).toBeTruthy();
+      switchAction!.onClick();
 
       expect(
         slideInRef.swap,

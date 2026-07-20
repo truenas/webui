@@ -10,7 +10,6 @@ import {
   of,
 } from 'rxjs';
 import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
-import { Role } from 'app/enums/role.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -51,8 +50,6 @@ export class CloudSyncWizardComponent {
 
   readonly cloudSyncProvider: Signal<CloudSyncProviderComponent>
     = viewChild(forwardRef(() => CloudSyncProviderComponent));
-
-  protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (true = saved). */
   readonly closed = output<boolean>();
