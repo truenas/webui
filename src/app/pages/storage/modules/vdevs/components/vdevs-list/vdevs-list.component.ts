@@ -18,12 +18,12 @@ import {
   createNestedTreeControl,
 } from '@truenas/ui-components';
 import { filter, map } from 'rxjs/operators';
+import { flattenTreeWithFilter } from 'app/helpers/flatten-tree-with-filter.utils';
 import { VDevNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
   isTopologyDisk, isVdev, TopologyDisk,
 } from 'app/interfaces/storage.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
