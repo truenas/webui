@@ -1,16 +1,12 @@
 <section class="harbor-assistant-chat-page">
   <div class="chat-shell">
-    <header class="chat-header">
-      <div>
-        <h1>{{ 'Harbor Assistant' | translate }}</h1>
-        <p>{{ 'Ask questions about your local files, photos, and videos.' | translate }}</p>
-      </div>
-      @if (chatTurns().length > 0) {
+    @if (chatTurns().length > 0) {
+      <header class="chat-actions">
         <button mat-stroked-button type="button" (click)="clearConversation()">
           {{ 'New conversation' | translate }}
         </button>
-      }
-    </header>
+      </header>
+    }
 
     <main #chatScroll class="chat-scroll" data-testid="harbor-assistant-chat-stream">
       <div class="chat-thread">

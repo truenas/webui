@@ -44,6 +44,7 @@ describe('Harbor Assistant search component', () => {
     expect(spectator.query('[data-testid="harbor-assistant-chat-stream"]')).toExist();
     expect(spectator.query('.chat-composer')).toExist();
     expect(spectator.query('.chat-welcome')).toExist();
+    expect(spectator.query('.chat-header')).not.toExist();
     expect(spectator.query('.live-panel')).not.toExist();
     expect(spectator.query('[data-testid="harbor-assistant-search-media-library"]')).not.toExist();
     expect(spectator.query('textarea[aria-label="Assistant search query"]')).toExist();

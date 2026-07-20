@@ -382,6 +382,9 @@ export const harborAssistantI18nMarkers = [
   selector: 'ix-harbor-assistant',
   templateUrl: './harbor-assistant.component.html',
   styleUrls: ['./harbor-assistant.component.scss'],
+  host: {
+    '[class.search-tab-active]': "isTab('search')",
+  },
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatAnchor,

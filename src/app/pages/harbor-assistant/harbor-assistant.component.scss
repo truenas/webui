@@ -21,6 +21,20 @@ $hd-space-5: 20px;
   overscroll-behavior: contain;
 }
 
+:host.search-tab-active {
+  display: flex;
+  flex-direction: column;
+}
+
+:host.search-tab-active ix-page-header {
+  flex: 0 0 auto;
+}
+
+:host.search-tab-active .harbor-assistant-page {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 .harbor-assistant-page {
   --fg1: #172033;
   --fg2: #64748b;
@@ -170,6 +184,12 @@ $hd-space-5: 20px;
 .assistant-search-tab,
 .assistant-camera-tab {
   padding: 0;
+}
+
+.assistant-search-tab {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .assistant-camera-tab {
