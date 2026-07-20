@@ -1,14 +1,10 @@
-<mat-nav-list
-  role="navigation"
-  [attr.aria-label]="'Main menu' | translate"
->
-  @for (item of menuItems; track item; let i = $index) {
-    <div>
+<nav [attr.aria-label]="'Main menu' | translate">
+  <ul class="nav-list" role="list">
+    @for (item of menuItems; track item; let i = $index) {
       @if (!item.isVisible$ || (item.isVisible$ | async)) {
         <!-- links and submenus -->
-        <mat-list-item
+        <li
           class="sidebar-list-item sidenav-link"
-          role="listitem"
           [routerLinkActive]="item.type === MenuItemType.Link ? 'highlighted' : ''"
           [id]="'nav-' + i"
           [class.has-submenu]="item.type === MenuItemType.SlideOut"
@@ -18,7 +14,8 @@
             @let badgeCount = getBadgeCount(item);
             <a
               tnTooltipPosition="right"
-              [ixTest]="getItemName(item)"
+              tnTestIdType="link"
+              [tnTestId]="getItemName(item)"
               [routerLink]="getRouterLink(item.state)"
               [name]="getItemName(item)"
               [tnTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
@@ -47,7 +44,8 @@
               tabindex="0"
               role="button"
               tnTooltipPosition="right"
-              [ixTest]="getItemName(item)"
+              tnTestIdType="link"
+              [tnTestId]="getItemName(item)"
               [name]="getItemName(item)"
               [attr.aria-expanded]="isMenuExpanded(item.state)"
               [attr.aria-label]="(item.name | translate) + ' submenu'"
@@ -75,8 +73,8 @@
               <tn-icon class="menu-caret" name="chevron-right" library="mdi" size="lg"></tn-icon>
             </a>
           }
-        </mat-list-item>
+        </li>
       }
-    </div>
-  }
-</mat-nav-list>
+    }
+  </ul>
+</nav>

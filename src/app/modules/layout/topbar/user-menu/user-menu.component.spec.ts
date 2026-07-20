@@ -1,14 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { TnDialog, TnSpriteLoaderService } from '@truenas/ui-components';
+import {
+  TnDialog, TnIconButtonHarness, TnMenuHarness, TnSpriteLoaderService,
+} from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
+import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import {
@@ -16,20 +18,20 @@ import {
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 
 describe('UserMenuComponent', () => {
   let spectator: Spectator<UserMenuComponent>;
   let loader: HarnessLoader;
-  let menu: MatMenuHarness;
+  let menu: TnMenuHarness;
   const globalTwoFactorConfig$ = new BehaviorSubject({ enabled: true } as GlobalTwoFactorConfig);
 
   const createComponent = createComponentFactory({
     component: UserMenuComponent,
     providers: [
       mockProvider(TnDialog),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockApi(),
@@ -38,6 +40,7 @@ describe('UserMenuComponent', () => {
         getGlobalTwoFactorConfig: jest.fn(() => globalTwoFactorConfig$),
         user$: of(dummyUser),
       }),
+      mockProvider(Router),
       mockProvider(TnSpriteLoaderService, {
         ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
         getIconUrl: jest.fn(),
@@ -45,68 +48,67 @@ describe('UserMenuComponent', () => {
         isSpriteLoaded: jest.fn(() => true),
         getSpriteConfig: jest.fn(),
       }),
+      {
+        provide: WINDOW,
+        useValue: {
+          open: jest.fn(),
+        },
+      },
     ],
   });
 
-  describe('closed menu', () => {
-    beforeEach(async () => {
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-    });
+  async function openMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'account-circle' }));
+    await trigger.click();
+    return TestbedHarnessEnvironment.documentRootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
 
-    it('should display correct username to the left of user icon in top bar', () => {
-      const username = spectator.query('.username');
-      expect(username).toBeTruthy();
-      expect(username?.textContent).toContain('root');
-    });
+  beforeEach(async () => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    menu = await openMenu();
+  });
+
+  it('should display correct username to the left of user icon in top bar', () => {
+    const username = spectator.query('.username');
+    expect(username).toBeTruthy();
+    expect(username?.textContent).toContain('root');
   });
 
   describe('opened menu', () => {
-    beforeEach(async () => {
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-    });
-
     it('has a Change Password menu item if logged in user has { local: true } that opens ChangePasswordDialogComponent when opened', async () => {
-      const changePassword = await menu.getItems({ text: /Change Password$/ });
-      await changePassword[0].click();
+      await menu.clickItem({ label: 'Change Password' });
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ChangePasswordDialog);
     });
 
     it('has a Preferences menu item that opens the preferences form', async () => {
-      const preferences = await menu.getItems({ text: /Preferences$/ });
-      await preferences[0].click();
+      await menu.clickItem({ label: 'Preferences' });
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PreferencesFormComponent);
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+        PreferencesFormComponent,
+        { title: 'Preferences' },
+      );
     });
 
     it('has an API Keys menu item that takes user to list of API Keys', async () => {
-      const apiKeys = await menu.getItems({ text: /My API Keys$/ });
-      const apiKeysElement = await apiKeys[0].host();
+      await menu.clickItem({ label: 'My API Keys' });
 
-      expect(await apiKeysElement.getAttribute('href')).toBe('/credentials/users/api-keys?userName=root');
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/credentials/users/api-keys'], {
+        queryParams: { userName: 'root' },
+      });
     });
 
     it('has a Guide menu item that opens user guide', async () => {
-      const guide = await menu.getItems({ text: /Guide$/ });
-      const guideElement = await guide[0].host();
+      await menu.clickItem({ label: 'Guide' });
 
-      expect(await guideElement.getAttribute('href')).toBe('https://www.truenas.com/docs/');
-      expect(await guideElement.getAttribute('target')).toBe('_blank');
+      expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith('https://www.truenas.com/docs/', '_blank');
     });
 
     it('has a Log Out menu item that logs user out when pressed', async () => {
-      const logout = await menu.getItems({ text: /Log Out$/ });
-      await logout[0].click();
-      const authService = spectator.inject(AuthService);
-      jest.spyOn(authService, 'logout');
+      await menu.clickItem({ label: 'Log Out' });
 
-      expect(authService.logout).toHaveBeenCalled();
+      expect(spectator.inject(AuthService).logout).toHaveBeenCalled();
     });
 
     describe('two factor authentication', () => {
@@ -120,18 +122,16 @@ describe('UserMenuComponent', () => {
         globalTwoFactorConfig$.next({
           enabled: false,
         } as GlobalTwoFactorConfig);
+        spectator.detectChanges();
 
-        const twoFactorAuth = await menu.getItems({ text: /Two-Factor Authentication$/ });
-        expect(twoFactorAuth).toHaveLength(0);
+        const labels = await menu.getItemLabels();
+        expect(labels).not.toContain('Two-Factor Authentication');
       });
 
       it('has an 2fa menu item that redirects user to TwoFactorComponent when clicked', async () => {
-        const twoFactorAuth = await menu.getItems({ text: /Two-Factor Authentication$/ });
-        const router = spectator.inject(Router);
-        jest.spyOn(router, 'navigate');
+        await menu.clickItem({ label: 'Two-Factor Authentication' });
 
-        await twoFactorAuth[0].click();
-        expect(router.navigate).toHaveBeenCalledWith(['/two-factor-auth']);
+        expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/two-factor-auth']);
       });
     });
   });

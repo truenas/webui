@@ -3,16 +3,14 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatNavList, MatListItem } from '@angular/material/list';
 import { NavigationEnd, Router, RouterLinkActive, RouterLink, isActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
 @Component({
@@ -21,15 +19,13 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
   styleUrls: ['./navigation.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatNavList,
-    MatListItem,
     RouterLinkActive,
     RouterLink,
     TnTooltipDirective,
+    TnTestIdDirective,
     TnIconComponent,
     AsyncPipe,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class NavigationComponent {

@@ -1,17 +1,17 @@
-<mat-list role="list">
+<ul class="slide-in-list" role="list">
   @for (subItem of subMenuItems(); track subItem) {
     @if (!subItem.isVisible$ || (subItem.isVisible$ | async)) {
       @let badgeCount = getBadgeCount(subItem);
-      <mat-list-item
+      <li
         *ixHasAccess="!subItem.hasAccess$ || (subItem.hasAccess$ | async) || false"
         routerLinkActive="selected"
         class="sidebar-list-item slide-in-nav-item"
-        role="listitem"
         (click)="toggleMenu.emit()"
       >
         <a
           class="slidein-nav-link"
-          [ixTest]="subItem.name"
+          tnTestIdType="link"
+          [tnTestId]="subItem.name"
           [routerLink]="['/', menuName(), subItem.state]"
         >
           <span class="submenu-text">{{ subItem.name | translate }}
@@ -30,7 +30,7 @@
             }
           </span>
         </a>
-      </mat-list-item>
+      </li>
     }
   }
-</mat-list>
+</ul>

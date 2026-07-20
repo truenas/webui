@@ -1,15 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Option } from 'app/interfaces/option.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
@@ -94,33 +95,40 @@ describe('PreferencesFormComponent', () => {
     ],
   });
 
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const hasSelect = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  )).length > 0;
+
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows current preferences values', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+    const syncCheckbox = await loader.getHarness(TnCheckboxHarness);
+    const themeSelect = await getSelect('theme');
+    const timeoutInput = await loader.getHarness(TnInputHarness);
+    const languageAutocomplete = await loader.getHarness(TnAutocompleteHarness);
+    const dateFormatSelect = await getSelect('date_format');
+    const timeFormatSelect = await getSelect('time_format');
 
-    expect(values).toEqual({
-      'Sync Theme With OS': false,
-      Theme: 'Dark',
-      'Session Timeout': '600',
-      Language: 'English (en)',
-      'Date Format': '2021-10-16',
-      'Time Format': '16:22:14 (24 Hours)',
-    });
+    expect(await syncCheckbox.isChecked()).toBe(false);
+    expect(await themeSelect.getDisplayText()).toBe('Dark');
+    expect(await timeoutInput.getValue()).toBe('600');
+    expect(await languageAutocomplete.getInputValue()).toBe('English (en)');
+    expect(await dateFormatSelect.getDisplayText()).toBe('2021-10-16');
+    expect(await timeFormatSelect.getDisplayText()).toBe('16:22:14 (24 Hours)');
   });
 
   it('dispatches themeChangedInGuiForm when theme is changed', async () => {
     const store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Theme: 'Dracula',
-    });
+    const themeSelect = await getSelect('theme');
+    await themeSelect.selectOption('Dracula');
 
     expect(store$.dispatch).toHaveBeenCalledWith(themeChangedInGuiForm({ theme: 'dracula' }));
   });
@@ -129,16 +137,15 @@ describe('PreferencesFormComponent', () => {
     const store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Theme: 'Blue',
-      'Session Timeout': '120',
-      Language: 'French (fr)',
-      'Date Format': 'October 16, 2021',
-      'Time Format': '04:22:14 PM',
-    });
+    await (await getSelect('theme')).selectOption('Blue');
+    await (await loader.getHarness(TnInputHarness)).setValue('120');
+    const languageAutocomplete = await loader.getHarness(TnAutocompleteHarness);
+    await languageAutocomplete.setInputValue('French');
+    await languageAutocomplete.selectOption('French (fr)');
+    await (await getSelect('date_format')).selectOption('October 16, 2021');
+    await (await getSelect('time_format')).selectOption('04:22:14 PM');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 120 }));
@@ -159,31 +166,26 @@ describe('PreferencesFormComponent', () => {
   });
 
   it('shows Light Theme and Dark Theme dropdowns when Sync Theme With OS is checked', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Sync Theme With OS': true,
-    });
+    const syncCheckbox = await loader.getHarness(TnCheckboxHarness);
+    await syncCheckbox.check();
 
-    const labels = await form.getLabels();
-    expect(labels).toContain('Light Theme');
-    expect(labels).toContain('Dark Theme');
-    expect(labels).not.toContain('Theme');
+    expect(await hasSelect('lightTheme')).toBe(true);
+    expect(await hasSelect('darkTheme')).toBe(true);
+    expect(await hasSelect('theme')).toBe(false);
   });
 
   it('dispatches preview theme during editing and stops after save', async () => {
     const store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Theme: 'Dracula',
-    });
+    const themeSelect = await getSelect('theme');
+    await themeSelect.selectOption('Dracula');
 
     expect(store$.dispatch).toHaveBeenCalledWith(themeChangedInGuiForm({ theme: 'dracula' }));
 
     jest.clearAllMocks();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(store$.dispatch).not.toHaveBeenCalledWith(
@@ -195,16 +197,12 @@ describe('PreferencesFormComponent', () => {
     const store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Sync Theme With OS': true,
-    });
-    await form.fillForm({
-      'Light Theme': 'Blue',
-      'Dark Theme': 'Dracula',
-    });
+    const syncCheckbox = await loader.getHarness(TnCheckboxHarness);
+    await syncCheckbox.check();
+    await (await getSelect('lightTheme')).selectOption('Blue');
+    await (await getSelect('darkTheme')).selectOption('Dracula');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(store$.dispatch).toHaveBeenCalledWith(guiFormSubmitted({

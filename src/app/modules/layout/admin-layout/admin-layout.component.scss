@@ -1,7 +1,7 @@
 @import 'scss-imports/cssvars';
 @import 'scss-imports/variables';
 
-.mat-sidenav-container {
+.app-side-nav-container {
   height: 100vh; // Fallback for browsers without dvh support
   height: 100dvh;
 }
@@ -82,10 +82,6 @@ ix-truenas-logo {
   }
 }
 
-.app-side-nav-container {
-  height: 100vh;
-  height: 100%;
-}
 
 .hostname-label {
   font-size: 12px;
@@ -94,8 +90,19 @@ ix-truenas-logo {
   text-align: center;
 }
 
+// The shell drawer resizes after first paint (saved collapse state arriving from the
+// preferences store, breakpoint changes) — render those instantly instead of sliding
+// the content area around on load. The old mat-sidenav shell never animated width.
+tn-drawer.sidebar-panel {
+  transition: none !important;
+}
+
 .fn-maincontent {
   overflow: hidden !important;
+  position: relative;
+  // Containing block for the fixed-position topbar and absolute overlays inside the
+  // content area (carried over from the old mat-sidenav-content egret override).
+  transform: translate3d(0, 0, 0);
 }
 
 .sidenav-copyright-txt {

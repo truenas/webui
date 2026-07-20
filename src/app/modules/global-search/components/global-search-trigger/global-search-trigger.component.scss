@@ -34,8 +34,13 @@
   }
 
   .search-icon {
+    // On mobile the input is hidden and the icon is the whole trigger — show it
+    // at full strength and make it read as clickable. (Base icon styles come
+    // from the search-box mixin.)
     @media(max-width: $breakpoint-xs) {
+      cursor: pointer;
       height: 28px;
+      opacity: 1;
       position: static;
       transform: none;
       width: 28px;

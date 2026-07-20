@@ -7,12 +7,16 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnDialogShellComponent,
+  TnFormFieldComponent,
+  TnInputComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -32,7 +36,7 @@ const customReasonValue = 'CUSTOM_REASON_VALUE';
     TnCheckboxComponent,
     TnFormFieldComponent,
     TnSelectComponent,
-    IxInputComponent,
+    TnInputComponent,
     FormActionsComponent,
   ],
 })

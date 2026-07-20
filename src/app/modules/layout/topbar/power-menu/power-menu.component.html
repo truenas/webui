@@ -6,31 +6,28 @@
   testId="power-menu"
   [dense]="true"
   [tooltip]="tooltips.power | translate"
-  [matMenuTriggerFor]="powerMenu"
+  [ariaLabel]="tooltips.power | translate"
+  [tnMenuTriggerFor]="powerMenu"
   [ixUiSearch]="searchableElements.elements.powerMenu"
 ></tn-icon-button>
-<mat-menu #powerMenu="matMenu">
-  <button
+<tn-menu #powerMenu>
+  <tn-menu-item
     *ixRequiresRoles="requiredRoles"
-    name="power-restart"
-    mat-menu-item
-    ixTest="restart"
+    icon="refresh"
+    iconLibrary="mdi"
+    [testId]="'restart'"
+    [label]="'Restart' | translate"
     [ixUiSearch]="searchableElements.elements.restart"
-    (click)="onReboot()"
-  >
-    <tn-icon size="lg" name="refresh" library="mdi"></tn-icon>
-    {{ 'Restart' | translate }}
-  </button>
+    (itemClick)="onReboot()"
+  ></tn-menu-item>
 
-  <button
+  <tn-menu-item
     *ixRequiresRoles="requiredRoles"
-    name="power-shut-down"
-    mat-menu-item
-    ixTest="shut-down"
+    icon="power"
+    iconLibrary="mdi"
+    [testId]="'shut-down'"
+    [label]="'Shut Down' | translate"
     [ixUiSearch]="searchableElements.elements.shutDown"
-    (click)="onShutdown()"
-  >
-    <tn-icon size="lg" name="power" library="mdi"></tn-icon>
-    {{ 'Shut Down' | translate }}
-  </button>
-</mat-menu>
+    (itemClick)="onShutdown()"
+  ></tn-menu-item>
+</tn-menu>
