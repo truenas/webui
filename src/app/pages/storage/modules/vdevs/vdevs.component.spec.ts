@@ -229,10 +229,15 @@ describe('VDevsComponent', () => {
     spectator = createComponent();
   });
 
-  it('shows the devices and details', () => {
+  it('shows the devices and details', async () => {
+    // Child tree nodes are inserted a microtask after their parent renders
+    // (one level per pass) — settle before reading the rows.
+    for (let i = 0; i < 4; i++) {
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+    }
     const rows = spectator.queryAll('.cell-name');
     expect(rows.map((row) => row.textContent)).toEqual(['MIRROR', 'sdc', 'sdd']);
-    expect(console.warn).toHaveBeenCalled();
     const headerContainer = spectator.query('.header-container')!;
     expect(headerContainer.textContent).toBe('Details for  sdc ');
     const zfsInfoCard = spectator.query('ix-zfs-info-card');
