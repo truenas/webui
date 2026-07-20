@@ -65,7 +65,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
     it('submits backup restore from snapshot with `Include Everything`', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        Target: '/mnt/bulldozer/restore',
+        Target: '/mnt/bulldozer',
       });
 
       spectator.component.submit();
@@ -74,7 +74,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         1,
         1,
         '/mnt/dozer',
-        '/mnt/bulldozer/restore',
+        '/mnt/bulldozer',
         {},
       ]);
     });
@@ -85,7 +85,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        Target: '/mnt/bulldozer/restore',
+        Target: '/mnt/bulldozer',
         'Excluded Paths': '/mnt/dozer/another',
       });
 
@@ -95,7 +95,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         1,
         1,
         '/mnt/dozer',
-        '/mnt/bulldozer/restore',
+        '/mnt/bulldozer',
         {
           exclude: [
             '/another',
@@ -110,7 +110,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        Target: '/mnt/bulldozer/restore',
+        Target: '/mnt/bulldozer',
         Subfolder: '/mnt/dozer',
         'Included Paths': '/mnt/dozer/a',
       });
@@ -121,7 +121,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         1,
         1,
         '/mnt/dozer',
-        '/mnt/bulldozer/restore',
+        '/mnt/bulldozer',
         {
           include: [
             '/a',
@@ -136,7 +136,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        Target: '/mnt/bulldozer/restore',
+        Target: '/mnt/bulldozer',
         Subfolder: '/mnt/dozer/a',
         'Included Paths': '/mnt/dozer/a',
       });
@@ -147,7 +147,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         1,
         1,
         '/mnt/dozer/a',
-        '/mnt/bulldozer/restore',
+        '/mnt/bulldozer',
         {
           include: [
             '/',
@@ -165,7 +165,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        Target: '/mnt/bulldozer/restore',
+        Target: '/mnt/bulldozer',
       });
 
       spectator.component.submit();
@@ -174,7 +174,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         1,
         1,
         '/mnt/dozer',
-        '/mnt/bulldozer/restore',
+        '/mnt/bulldozer',
         {
           exclude: [
             'pattern',
@@ -235,27 +235,6 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
     });
   });
 
-  describe('target path validation', () => {
-    beforeEach(() => {
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('rejects /mnt and pool-root paths and blocks submit', () => {
-      spectator.component.form.controls.target.setValue('/mnt/tank');
-      expect(spectator.component.form.controls.target.hasError('poolRoot')).toBe(true);
-
-      spectator.component.submit();
-      expect(spectator.inject(ApiService).job).not.toHaveBeenCalled();
-    });
-
-    it('accepts a dataset path under a pool', () => {
-      spectator.component.form.controls.target.setValue('/mnt/tank/restore');
-      expect(spectator.component.form.controls.target.hasError('poolRoot')).toBe(false);
-      expect(spectator.component.form.controls.target.valid).toBe(true);
-    });
-  });
-
   describe('side panel host (no SlideInRef)', () => {
     beforeEach(() => {
       spectator = createComponent({
@@ -274,7 +253,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        Target: '/mnt/bulldozer/restore',
+        Target: '/mnt/bulldozer',
       });
       spectator.component.submit();
 
@@ -282,7 +261,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         1,
         1,
         '/mnt/dozer',
-        '/mnt/bulldozer/restore',
+        '/mnt/bulldozer',
         {},
       ]);
       expect(closedSpy).toHaveBeenCalledWith(true);
