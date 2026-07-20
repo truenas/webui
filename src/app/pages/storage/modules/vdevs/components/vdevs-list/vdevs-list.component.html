@@ -39,7 +39,7 @@
             routerLinkActive="selected"
             [class.selected]="topologyItem.guid === selectedNode?.guid"
             [routerLink]="['/storage', poolId(), 'vdevs', topologyItem.guid]"
-            (click)="viewDetails(poolId(), topologyItem.guid)"
+            (click)="viewDetails(poolId(), topologyItem.guid); $event.stopPropagation()"
             (keydown.enter)="onRowEnter($event, topologyItem.guid)"
           >
             <ix-topology-item-node
@@ -80,7 +80,7 @@
             [toggleTestId]="['toggle', vdev.guid]"
             [class.selected]="vdev.guid === selectedNode?.guid"
             [routerLink]="['/storage', poolId(), 'vdevs', vdev.guid]"
-            (click)="viewDetails(poolId(), vdev.guid)"
+            (click)="viewDetails(poolId(), vdev.guid); $event.stopPropagation()"
             (keydown.enter)="onRowEnter($event, vdev.guid)"
           >
             <ix-topology-item-node
