@@ -65,12 +65,24 @@
     padding: 6px 0;
   }
 
+  // Plain button (was mat-button): the reset below replaces the Material
+  // text-button chrome it used to inherit.
   .toggle-show-more {
+    appearance: none;
     background-color: var(--bg2);
+    border: 0;
     bottom: 0;
+    color: var(--primary);
+    cursor: pointer;
+    font: inherit;
+    min-height: 36px;
     position: sticky;
     width: 100%;
     z-index: 1;
+
+    &:hover {
+      background-color: var(--bg1);
+    }
 
     &:focus-visible {
       background-color: var(--bg1);

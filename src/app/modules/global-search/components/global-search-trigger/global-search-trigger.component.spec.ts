@@ -1,7 +1,6 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ElementRef, signal } from '@angular/core';
-import { MatInput } from '@angular/material/input';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -47,7 +46,7 @@ describe('GlobalSearchTriggerComponent', () => {
   });
 
   it('renders and input prompting for search', () => {
-    const input = spectator.query(MatInput);
+    const input = spectator.query('input.search-input');
     expect(input).toExist();
     expect(input).toHaveAttribute('placeholder', 'Search UI');
   });

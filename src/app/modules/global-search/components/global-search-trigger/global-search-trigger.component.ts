@@ -2,15 +2,13 @@ import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, HostListener, ViewContainerRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatInput } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnInputDirective, TnTestIdDirective } from '@truenas/ui-components';
 import { delay, take } from 'rxjs';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { KeyboardShortcutComponent } from 'app/modules/keyboard-shortcut/keyboard-shortcut.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FocusService } from 'app/services/focus.service';
 
 @Component({
@@ -20,8 +18,8 @@ import { FocusService } from 'app/services/focus.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
-    MatInput,
-    TestDirective,
+    TnInputDirective,
+    TnTestIdDirective,
     KeyboardShortcutComponent,
     TranslateModule,
   ],
