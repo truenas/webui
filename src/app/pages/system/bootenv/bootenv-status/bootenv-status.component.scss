@@ -89,6 +89,9 @@ tn-expansion-panel {
 // matching the previous ix-tree rendering, which had no per-level indent).
 // TEMP: until @truenas/ui-components exposes a children-indent input on
 // tn-nested-tree-node, zero the library's built-in 40px per-level indent.
-:host ::ng-deep div.tn-nested-tree-node-container {
+// The .tree ancestor out-specifies the library's own rule (a bare
+// div.tn-nested-tree-node-container selector only ties with it, and loses or
+// wins on style-tag order).
+:host ::ng-deep .tree div.tn-nested-tree-node-container {
   padding-left: 0;
 }

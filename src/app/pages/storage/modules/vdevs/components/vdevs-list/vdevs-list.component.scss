@@ -28,7 +28,10 @@
 // matching the previous ix-tree rendering, which had no per-level indent).
 // TEMP: until @truenas/ui-components exposes a children-indent input on
 // tn-nested-tree-node, zero the library's built-in 40px per-level indent.
-:host ::ng-deep div.tn-nested-tree-node-container {
+// The .disk-tree ancestor out-specifies the library's own rule (a bare
+// div.tn-nested-tree-node-container selector only ties with it, and loses or
+// wins on style-tag order).
+:host ::ng-deep .disk-tree div.tn-nested-tree-node-container {
   padding-left: 0;
 }
 
@@ -108,10 +111,29 @@
   border-top-right-radius: 8px;
 }
 
-// Match the row grid's horizontal insets so the fixed-width columns line up:
-// left = tree border (1) + row padding (8) + toggle/spacer (24) + gap (8);
-// right = tree border (1) + row padding (8). Overrides the mixin's 25px.
-.tree-header {
+// Match the row grid's horizontal geometry so the fixed-width columns line up:
+// - insets: left = tree border (1) + row padding (8) + toggle/spacer (24) + gap (8);
+//   right = tree border (1) + row padding (8);
+// - tracks: the rows' exact template. The mixin's base template carries a
+//   phantom trailing 40px actions column (dropped only above the singlecolumn
+//   breakpoint) that the rows don't have, which drifts the auto column.
+// The .sticky-header ancestor out-specifies the parent component's host-scoped
+// copies of the mixin rules.
+.sticky-header .tree-header {
+  grid-template-columns: auto 125px 125px 125px;
   padding-left: 41px;
   padding-right: 9px;
+
+  // Below the details-panel breakpoint the rows show a trailing mobile-nav
+  // chevron (20px icon + 12px margins + 8px flex gap = 52px) — mirror it so
+  // the fixed columns stay aligned.
+  @media (max-width: $breakpoint-hidden) {
+    padding-right: 61px;
+  }
+
+  // Below tablet only the name column renders; no fixed columns to align.
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: auto 0 0 0;
+    padding-right: 9px;
+  }
 }
