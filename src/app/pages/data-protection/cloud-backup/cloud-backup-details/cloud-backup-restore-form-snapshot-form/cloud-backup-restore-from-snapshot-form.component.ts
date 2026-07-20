@@ -30,7 +30,6 @@ import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -96,10 +95,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   protected readonly includeExcludeOptions = mapToOptions(snapshotIncludeExcludeOptions, this.translate);
 
   form = this.fb.group({
-    target: [null as string | null, [
-      Validators.required,
-      validateNotPoolRoot(this.translate.instant(helptextTruecloudBackup.targetPoolRootError)),
-    ]],
+    target: [null as string | null, Validators.required],
     includeExclude: [SnapshotIncludeExclude.IncludeEverything, Validators.required],
     excludedPaths: [[] as string[], Validators.required],
     excludePattern: [null as string | null, Validators.required],

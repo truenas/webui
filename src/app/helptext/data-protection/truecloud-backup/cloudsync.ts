@@ -9,5 +9,4 @@ export const helptextTruecloudBackup = {
     includedPaths: T('Select files and directories to include from the backup. Leave empty to include everything.'),
     subFolder: T('Select a subfolder from which to restore content.'),
   },
-  targetPoolRootError: T('Cannot restore to /mnt or a pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).'),
 };
