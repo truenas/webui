@@ -8,6 +8,8 @@ $search-box-height: 32px;
 @mixin search-box {
   background: var(--bg1);
   border: solid 1px var(--lines);
+  // Matches tn-input's design radius.
+  border-radius: 0.375rem;
   display: flex;
   flex-direction: row;
   font-size: 12px;
