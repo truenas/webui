@@ -64,6 +64,10 @@
 
 .tree-container {
   border: 1px solid transparent;
+  // Match the 0 24px inset of the filter fields above (see
+  // manual-selection-disk-filters.component.scss) so the tree and the form
+  // fields share the same width.
+  margin: 0 24px;
   overflow-y: auto;
 }
 
@@ -84,7 +88,7 @@ tn-tree {
 
   background: none;
   border: 0;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 :host ::ng-deep tn-tree {
