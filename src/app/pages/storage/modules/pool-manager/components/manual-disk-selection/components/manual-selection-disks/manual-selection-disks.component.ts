@@ -1,9 +1,18 @@
+import { CdkTreeModule } from '@angular/cdk/tree';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLinkActive } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnIconComponent,
+  TnNestedTreeDataSource,
+  TnNestedTreeNodeComponent,
+  TnTooltipDirective,
+  TnTreeComponent,
+  TnTreeExpansion,
+  TnTreeNodeOutletDirective,
+  createNestedTreeControl,
+} from '@truenas/ui-components';
 import {
   DndDropEvent, DndDropzoneDirective, DndDraggableDirective, DndDragImageRefDirective,
 } from 'ngx-drag-drop';
@@ -12,15 +21,6 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
-import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
-import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
-import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
-import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
-import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
-import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
-import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
-import { createNestedTreeControl } from 'app/modules/ix-tree/tree-control.factory';
-import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
 import {
   ManualDiskSelectionFilters,
@@ -56,7 +56,6 @@ const noEnclosureId = 'no-enclosure';
     ManualSelectionDiskFiltersComponent,
     DndDropzoneDirective,
     NgClass,
-    RouterLinkActive,
     DndDraggableDirective,
     DiskIconComponent,
     DndDragImageRefDirective,
@@ -65,12 +64,10 @@ const noEnclosureId = 'no-enclosure';
     TnTooltipDirective,
     TranslateModule,
     AsyncPipe,
-    TreeViewComponent,
-    TreeNodeComponent,
-    NestedTreeNodeComponent,
-    TreeNodeDefDirective,
-    TreeNodeToggleDirective,
-    TreeNodeOutletDirective,
+    CdkTreeModule,
+    TnTreeComponent,
+    TnNestedTreeNodeComponent,
+    TnTreeNodeOutletDirective,
   ],
 })
 export class ManualSelectionDisksComponent implements OnInit {
@@ -84,8 +81,8 @@ export class ManualSelectionDisksComponent implements OnInit {
 
   protected readonly enclosureTooltip = this.translate.instant('Enclosure');
 
-  dataSource: NestedTreeDataSource<DiskOrGroup>;
-  treeControl: TreeExpansion<DiskOrGroup, string> = createNestedTreeControl<DiskOrGroup, string>(
+  dataSource: TnNestedTreeDataSource<DiskOrGroup>;
+  treeControl: TnTreeExpansion<DiskOrGroup, string> = createNestedTreeControl<DiskOrGroup, string>(
     (node) => node.children,
     { trackBy: (node) => node.identifier },
   );
@@ -96,6 +93,10 @@ export class ManualSelectionDisksComponent implements OnInit {
 
   isExpanded(group: DiskOrGroup): boolean {
     return this.treeControl.isExpanded(group);
+  }
+
+  protected toggleGroup(group: DiskOrGroup): void {
+    this.treeControl.toggle(group);
   }
 
   ngOnInit(): void {
@@ -125,7 +126,7 @@ export class ManualSelectionDisksComponent implements OnInit {
           ? disksInEnclosures[0].children
           : disksInEnclosures;
 
-        this.dataSource = new NestedTreeDataSource(nodes);
+        this.dataSource = new TnNestedTreeDataSource(nodes);
       });
   }
 
