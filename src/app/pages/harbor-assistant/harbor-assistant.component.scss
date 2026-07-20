@@ -110,22 +110,13 @@ $hd-space-5: 20px;
   padding: $hd-space-3 $hd-space-5;
 }
 
-.rules-review-entry {
-  align-items: center;
-  background: $hd-bg-canvas;
-  border-bottom: 1px solid $hd-border-subtle;
-  display: flex;
-  justify-content: flex-end;
-  padding: $hd-space-3 $hd-space-5;
-}
-
-.rules-review-drawer {
+.rules-settings-card {
   border-left: 0;
   border-right: 0;
   border-top: 0;
 }
 
-.rules-review-drawer mat-card-content {
+.rules-settings-card mat-card-content {
   display: grid;
   gap: $hd-space-4;
 }

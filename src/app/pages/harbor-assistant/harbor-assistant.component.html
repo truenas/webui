@@ -7,6 +7,14 @@
   >
     {{ 'Refresh' | translate }}
   </button>
+  <button
+    mat-button
+    type="button"
+    color="primary"
+    (click)="selectSettingsSection('rules')"
+  >
+    {{ 'Rules' | translate }} {{ pendingRuleCount() }} {{ 'pending' | translate }}
+  </button>
   <a
     mat-button
     color="primary"
@@ -51,88 +59,6 @@
       </button>
     }
   </nav>
-
-  <section class="rules-review-entry">
-    <button
-      mat-button
-      type="button"
-      color="primary"
-      (click)="toggleRulesDrawer()"
-    >
-      {{ 'Rules' | translate }} {{ pendingRuleCount() }} {{ 'pending' | translate }}
-    </button>
-  </section>
-
-  @if (rulesDrawerOpen()) {
-    <mat-card class="settings-card native-panel rules-review-drawer">
-      <mat-card-header>
-        <mat-card-title>{{ 'Rules / Pending Reviews' | translate }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <form class="rule-draft-form" [formGroup]="ruleDraftForm" (ngSubmit)="saveRuleDraft()">
-          <mat-form-field>
-            <mat-label>{{ 'Natural-language rule draft' | translate }}</mat-label>
-            <textarea matInput rows="3" formControlName="prompt"></textarea>
-          </mat-form-field>
-          <button mat-button color="primary" type="submit" [disabled]="actionBusy('automation-review-create')">
-            {{ actionBusy('automation-review-create') ? ('Saving' | translate) : ('Save draft' | translate) }}
-          </button>
-        </form>
-
-        @if (pendingRuleReviews().length === 0) {
-          <div class="empty-state">{{ 'No rule reviews are waiting.' | translate }}</div>
-        } @else {
-          <div class="rule-review-list">
-            @for (review of pendingRuleReviews(); track review.review_id) {
-              <article class="rule-review-card">
-                <div>
-                  <div class="rule-review-meta">
-                    <span class="pill" [ngClass]="'tone-' + ruleReviewStatusTone(review)">{{ review.status | translate }}</span>
-                    <span class="pill">{{ ruleReviewSourceLabel(review) | translate }}</span>
-                    <span class="pill">{{ review.risk_level || 'medium' }}</span>
-                  </div>
-                  <h2>{{ review.original_prompt }}</h2>
-                  <p class="muted">{{ 'Expires' | translate }}: {{ review.expires_at || 'Unknown' }}</p>
-                </div>
-                <div class="row-actions">
-                  <button mat-button color="primary" type="button" [disabled]="isBusy()" (click)="enableRuleReview(review)">
-                    {{ actionBusy('automation-review-enable:' + review.review_id) ? ('Enabling' | translate) : ('Enable' | translate) }}
-                  </button>
-                  <button mat-button type="button" [disabled]="isBusy()" (click)="discardRuleReview(review)">
-                    {{ actionBusy('automation-review-discard:' + review.review_id) ? ('Discarding' | translate) : ('Discard' | translate) }}
-                  </button>
-                </div>
-              </article>
-            }
-          </div>
-        }
-
-        @if (activeRuleReviews().length > 0) {
-          <mat-divider></mat-divider>
-          <div class="rule-review-list">
-            @for (review of activeRuleReviews().slice(0, 8); track review.review_id) {
-              <article class="rule-review-card compact">
-                <div>
-                  <div class="rule-review-meta">
-                    <span class="pill" [ngClass]="'tone-' + ruleReviewStatusTone(review)">{{ review.status | translate }}</span>
-                    <span class="pill">{{ ruleReviewSourceLabel(review) | translate }}</span>
-                  </div>
-                  <h2>{{ review.original_prompt }}</h2>
-                </div>
-                <div class="row-actions">
-                  @if (review.status === 'active') {
-                    <button mat-button type="button" [disabled]="isBusy()" (click)="pauseRuleReview(review)">
-                      {{ actionBusy('automation-review-pause:' + review.review_id) ? ('Pausing' | translate) : ('Pause' | translate) }}
-                    </button>
-                  }
-                </div>
-              </article>
-            }
-          </div>
-        }
-      </mat-card-content>
-    </mat-card>
-  }
 
   @if (isTab('search')) {
     <section class="tab-panel assistant-search-tab">
@@ -1057,6 +983,79 @@
         }
       </details>
     </section>
+      }
+
+      @if (isSettingsSection('rules')) {
+        <section class="settings-section-panel rules-settings-tab">
+          <mat-card class="settings-card native-panel rules-settings-card">
+            <mat-card-header>
+              <mat-card-title>{{ 'Rules / Pending Reviews' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <form class="rule-draft-form" [formGroup]="ruleDraftForm" (ngSubmit)="saveRuleDraft()">
+                <mat-form-field>
+                  <mat-label>{{ 'Natural-language rule draft' | translate }}</mat-label>
+                  <textarea matInput rows="3" formControlName="prompt"></textarea>
+                </mat-form-field>
+                <button mat-button color="primary" type="submit" [disabled]="actionBusy('automation-review-create')">
+                  {{ actionBusy('automation-review-create') ? ('Saving' | translate) : ('Save draft' | translate) }}
+                </button>
+              </form>
+
+              @if (pendingRuleReviews().length === 0) {
+                <div class="empty-state">{{ 'No rule reviews are waiting.' | translate }}</div>
+              } @else {
+                <div class="rule-review-list">
+                  @for (review of pendingRuleReviews(); track review.review_id) {
+                    <article class="rule-review-card">
+                      <div>
+                        <div class="rule-review-meta">
+                          <span class="pill" [ngClass]="'tone-' + ruleReviewStatusTone(review)">{{ review.status | translate }}</span>
+                          <span class="pill">{{ ruleReviewSourceLabel(review) | translate }}</span>
+                          <span class="pill">{{ review.risk_level || 'medium' }}</span>
+                        </div>
+                        <h2>{{ review.original_prompt }}</h2>
+                        <p class="muted">{{ 'Expires' | translate }}: {{ review.expires_at || 'Unknown' }}</p>
+                      </div>
+                      <div class="row-actions">
+                        <button mat-button color="primary" type="button" [disabled]="isBusy()" (click)="enableRuleReview(review)">
+                          {{ actionBusy('automation-review-enable:' + review.review_id) ? ('Enabling' | translate) : ('Enable' | translate) }}
+                        </button>
+                        <button mat-button type="button" [disabled]="isBusy()" (click)="discardRuleReview(review)">
+                          {{ actionBusy('automation-review-discard:' + review.review_id) ? ('Discarding' | translate) : ('Discard' | translate) }}
+                        </button>
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+
+              @if (activeRuleReviews().length > 0) {
+                <mat-divider></mat-divider>
+                <div class="rule-review-list">
+                  @for (review of activeRuleReviews().slice(0, 8); track review.review_id) {
+                    <article class="rule-review-card compact">
+                      <div>
+                        <div class="rule-review-meta">
+                          <span class="pill" [ngClass]="'tone-' + ruleReviewStatusTone(review)">{{ review.status | translate }}</span>
+                          <span class="pill">{{ ruleReviewSourceLabel(review) | translate }}</span>
+                        </div>
+                        <h2>{{ review.original_prompt }}</h2>
+                      </div>
+                      <div class="row-actions">
+                        @if (review.status === 'active') {
+                          <button mat-button type="button" [disabled]="isBusy()" (click)="pauseRuleReview(review)">
+                            {{ actionBusy('automation-review-pause:' + review.review_id) ? ('Pausing' | translate) : ('Pause' | translate) }}
+                          </button>
+                        }
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        </section>
       }
 
       @if (isSettingsSection('camera')) {

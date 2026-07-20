@@ -1,5 +1,5 @@
-import { convertToParamMap, ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { convertToParamMap, ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
@@ -107,8 +107,13 @@ describe('Harbor Assistant component', () => {
 
     const component = spectator.component as unknown as {
       selectTab: (tab: 'messages' | 'home-assistant' | 'settings') => void;
-      selectSettingsSection: (section: 'ai' | 'camera') => void;
+      selectSettingsSection: (section: 'ai' | 'camera' | 'rules') => void;
     };
+
+    const headerButtons = spectator.queryAll('ix-page-header button');
+    expect(headerButtons[0]).toHaveText('Refresh');
+    expect(headerButtons[1]).toHaveText('Rules 0 pending');
+    expect(spectator.query('.rules-review-entry')).not.toExist();
 
     expect(spectator.query('.tab-strip')).toHaveText('Search');
     expect(spectator.query('.tab-strip')).toHaveText('Camera');
@@ -137,6 +142,12 @@ describe('Harbor Assistant component', () => {
     expect(spectator.query('.simple-dvr-form')).toExist();
     expect(spectator.query('.device-edit-grid')).toExist();
     expect(spectator.query('.system-tab')).not.toExist();
+
+    component.selectSettingsSection('rules');
+    spectator.detectChanges();
+    expect(spectator.query('.rules-settings-tab')).toExist();
+    expect(spectator.query('.rules-settings-card')).toExist();
+    expect(spectator.query('.rule-draft-form')).toExist();
   });
 
   it('shows read-only local vision events in the camera tab', () => {

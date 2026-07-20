@@ -226,7 +226,7 @@ interface RagSourceRootSummary {
 }
 
 type AiSettingsTabId = 'sources' | 'models' | 'cloud-api';
-type AssistantSettingsSectionId = 'ai' | 'camera';
+type AssistantSettingsSectionId = 'ai' | 'camera' | 'rules';
 type CloudUsageMode = 'local_only' | 'local_first_cloud' | 'selected_capabilities';
 type CloudCapabilityId = 'semantic_router' | 'retrieval_answer';
 
@@ -432,6 +432,7 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly settingsSections: AssistantSettingsSection[] = [
     { id: 'ai', label: T('AI settings'), detail: '' },
     { id: 'camera', label: T('Camera settings'), detail: '' },
+    { id: 'rules', label: T('Automation rules'), detail: '' },
   ];
 
   protected readonly activeTab = signal<HarborAssistantTabId>('search');
@@ -474,7 +475,6 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly shareLinks = signal<ShareLinkSummary[]>([]);
   protected readonly automationReviews = signal<AutomationRuleReview[]>([]);
   protected readonly localVisionEvents = signal<StoredLocalVisionEvent[]>([]);
-  protected readonly rulesDrawerOpen = signal(false);
   protected readonly evidenceByDevice = signal<Record<string, DeviceEvidenceResponse>>({});
   protected readonly selectedDeviceId = signal<string>('');
   protected readonly pendingDeleteDeviceId = signal<string | null>(null);
@@ -818,10 +818,6 @@ export class HarborAssistantComponent implements OnInit {
     return this.activeTab() === tabId;
   }
 
-  protected toggleRulesDrawer(): void {
-    this.rulesDrawerOpen.set(!this.rulesDrawerOpen());
-  }
-
   protected saveRuleDraft(): void {
     if (this.ruleDraftForm.invalid) {
       this.ruleDraftForm.markAllAsTouched();
@@ -856,7 +852,6 @@ export class HarborAssistantComponent implements OnInit {
       next: (response) => {
         this.automationReviews.set(response.reviews ?? []);
         this.ruleDraftForm.reset();
-        this.rulesDrawerOpen.set(true);
         this.actionMessage.set(T('Rule draft is waiting for review.'));
       },
       error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
@@ -5099,6 +5094,10 @@ export class HarborAssistantComponent implements OnInit {
       case 'aiot':
       case 'dvr':
         return 'camera';
+      case 'rules':
+      case 'automation':
+      case 'reviews':
+        return 'rules';
       case 'diagnostics':
       case 'system':
       case 'harboros':
