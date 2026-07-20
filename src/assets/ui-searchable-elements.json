@@ -5804,9 +5804,7 @@
     ],
     "requiredRoles": [],
     "visibleTokens": [],
-    "routerLink": [
-      "/credentials/users/api-keys"
-    ],
+    "routerLink": null,
     "anchor": "my-api-keys",
     "triggerAnchor": "user-menu",
     "section": "ui"
