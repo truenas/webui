@@ -9,9 +9,10 @@
   <div class="search-box">
     <tn-icon name="magnify" library="mdi" class="search-icon"></tn-icon>
 
+    <!-- Deliberately not tnInput: bespoke overlay search input; the library's
+         stock input chrome (min-height, focus border) doesn't fit. -->
     <input
       #searchInput
-      tnInput
       tnTestId="global-search"
       tnTestIdType="input"
       class="search-input"

@@ -97,3 +97,14 @@
     }
   }
 }
+
+// Native input resets that matInput used to provide — the .search-box wrapper
+// owns the visible chrome; the input itself must stay invisible.
+.search-box .search-input {
+  background: transparent;
+  border: 0;
+  caret-color: var(--fg1);
+  color: var(--fg1);
+  font: inherit;
+  outline: none;
+}

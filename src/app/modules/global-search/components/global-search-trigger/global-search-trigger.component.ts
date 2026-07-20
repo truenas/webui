@@ -3,7 +3,7 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, HostListener, ViewContainerRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnInputDirective, TnTestIdDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { delay, take } from 'rxjs';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
@@ -18,7 +18,6 @@ import { FocusService } from 'app/services/focus.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
-    TnInputDirective,
     TnTestIdDirective,
     KeyboardShortcutComponent,
     TranslateModule,

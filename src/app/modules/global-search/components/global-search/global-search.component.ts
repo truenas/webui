@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnInputDirective, TnTestIdDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   debounceTime, filter, switchMap, tap,
 } from 'rxjs';
@@ -33,7 +33,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   imports: [
     CdkTrapFocus,
     TnIconComponent,
-    TnInputDirective,
     TnTestIdDirective,
     ReactiveFormsModule,
     GlobalSearchResultsComponent,
