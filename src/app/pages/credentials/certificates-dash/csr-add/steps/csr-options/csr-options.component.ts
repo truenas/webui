@@ -4,8 +4,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
-  TnStepperNextDirective, TnStepperPreviousDirective,
+  InputType, TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent, TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -31,6 +31,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     ReactiveFormsModule,
     TnSelectComponent,
     TnFormFieldComponent,
+    TnFormSectionComponent,
     TnInputComponent,
     FormActionsComponent,
     TnButtonComponent,

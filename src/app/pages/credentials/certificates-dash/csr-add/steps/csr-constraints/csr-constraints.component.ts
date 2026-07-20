@@ -4,8 +4,8 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
-  TnStepperNextDirective, TnStepperPreviousDirective,
+  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent, TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { omit } from 'lodash-es';
 import { of } from 'rxjs';
@@ -44,6 +44,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     ReactiveFormsModule,
     TnCheckboxComponent,
     TnFormFieldComponent,
+    TnFormSectionComponent,
     TnInputComponent,
     TnSelectComponent,
     FormActionsComponent,
