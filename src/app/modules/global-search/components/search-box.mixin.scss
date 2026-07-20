@@ -8,7 +8,6 @@ $search-box-height: 32px;
 @mixin search-box {
   background: var(--bg1);
   border: solid 1px var(--lines);
-  border-radius: 2px;
   display: flex;
   flex-direction: row;
   font-size: 12px;
