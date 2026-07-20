@@ -1,0 +1,56 @@
+// Shared styling for the global-search box, used by BOTH components that render
+// one: the topbar decoy (global-search-trigger) and the overlay's real input
+// (global-search), which is absolutely positioned to sit exactly on top of the
+// decoy. Keeping the geometry here — and only here — is what keeps the two
+// pixel-identical so the overlay swap is invisible.
+$search-box-height: 32px;
+
+@mixin search-box {
+  background: var(--bg1);
+  border: solid 1px var(--lines);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+  height: $search-box-height;
+  position: relative;
+  width: 450px;
+
+  @media(max-width: $breakpoint-md) {
+    width: 250px;
+  }
+
+  &:focus-within {
+    border-color: var(--primary);
+
+    .search-input,
+    .search-icon {
+      opacity: 1;
+    }
+  }
+
+  .search-icon {
+    color: var(--fg1);
+    left: 4px;
+    opacity: 0.2;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  // The input owns its geometry explicitly — no Material/library input chrome,
+  // and no dependence on global form input padding (which made it balloon).
+  .search-input {
+    background: transparent;
+    border: 0;
+    caret-color: var(--fg1);
+    color: var(--fg1);
+    flex: 1;
+    font: inherit;
+    height: 100%;
+    min-width: 0;
+    opacity: 0.7;
+    outline: none;
+    padding: 0 30px;
+  }
+}
