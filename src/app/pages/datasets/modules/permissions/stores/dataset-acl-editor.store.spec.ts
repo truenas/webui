@@ -1,15 +1,17 @@
 import { Router } from '@angular/router';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
 import { NfsAcl, SetAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 import { StorageService } from 'app/services/storage.service';
 import { DatasetAclEditorStore } from './dataset-acl-editor.store';
 
@@ -283,6 +285,87 @@ describe('DatasetAclEditorStore', () => {
       });
 
       expect(router.navigate).toHaveBeenCalledWith(['datasets', 'pool/dataset']);
+    });
+  });
+
+  describe('effective ACL traverse validation', () => {
+    let dialog: DialogService;
+    let errorHandler: ErrorHandlerService;
+
+    const traverseError = new FailedJobError({
+      error: 'Filesystem permissions on path /mnt/pool prevent access for user "john" to the path '
+        + '/mnt/pool/dataset. This may be fixed by granting the aforementioned user execute '
+        + 'permissions on the path: /mnt/pool.',
+    } as Job);
+
+    const saveParams = {
+      recursive: false,
+      traverse: false,
+      owner: 'root',
+      ownerGroup: 'wheel',
+      applyOwner: false,
+      applyGroup: false,
+    };
+
+    beforeEach(async () => {
+      dialog = spectator.inject(DialogService);
+      errorHandler = spectator.inject(ErrorHandlerService);
+
+      store.loadAcl('/mnt/pool/dataset');
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+    });
+
+    it('offers to save without validation when the ACL lacks traverse access, then retries', async () => {
+      (dialog.jobDialog as jest.Mock)
+        .mockReturnValueOnce({ afterClosed: () => throwError(() => traverseError) })
+        .mockReturnValueOnce({ afterClosed: () => of(fakeSuccessfulJob()) });
+
+      store.saveAcl(saveParams);
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
+      expect(dialog.confirm).toHaveBeenCalled();
+      expect(errorHandler.showErrorModal).not.toHaveBeenCalled();
+      expect(api.job).toHaveBeenCalledTimes(2);
+      expect(api.job).toHaveBeenLastCalledWith(
+        'filesystem.setacl',
+        [expect.objectContaining({
+          options: expect.objectContaining({ validate_effective_acl: false }),
+        } as SetAcl)],
+      );
+    });
+
+    it('does not retry when the user declines the traverse warning', async () => {
+      (dialog.confirm as jest.Mock).mockReturnValueOnce(of(false));
+      (dialog.jobDialog as jest.Mock)
+        .mockReturnValueOnce({ afterClosed: () => throwError(() => traverseError) });
+
+      store.saveAcl(saveParams);
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
+      expect(dialog.confirm).toHaveBeenCalled();
+      expect(api.job).toHaveBeenCalledTimes(1);
+      expect(errorHandler.showErrorModal).not.toHaveBeenCalled();
+    });
+
+    it('shows the error modal for non-traverse failures without offering to bypass validation', async () => {
+      const otherError = new FailedJobError({ error: 'Something else went wrong.' } as Job);
+      (dialog.jobDialog as jest.Mock)
+        .mockReturnValueOnce({ afterClosed: () => throwError(() => otherError) });
+
+      store.saveAcl(saveParams);
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
+      expect(errorHandler.showErrorModal).toHaveBeenCalledWith(otherError);
+      expect(dialog.confirm).not.toHaveBeenCalled();
+      expect(api.job).toHaveBeenCalledTimes(1);
     });
   });
 });
