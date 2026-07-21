@@ -28,7 +28,7 @@ export class FileValidatorService {
       }
 
       const path = control.value;
-      const lastSelectedPath = explorer.lastSelectedNode()?.data?.path;
+      const lastSelectedPath = explorer.lastSelectedNode()?.path;
       const err = {
         selectionMustBeFile: true,
       };
@@ -42,7 +42,7 @@ export class FileValidatorService {
       // case: existing file or directory selected.
       if (path === lastSelectedPath) {
         // if the selected node is a file, no problems
-        if (explorer.lastSelectedNode()?.data.type === ExplorerNodeType.File) {
+        if (explorer.lastSelectedNode()?.type === ExplorerNodeType.File) {
           return null;
         }
 

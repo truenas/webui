@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
 } from '@truenas/ui-components';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
@@ -52,6 +53,8 @@ export class ReplicationRestoreDialog {
   });
 
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
+  // The dataset provider works with relative dataset names ("tank/child").
+  protected readonly rootNodes = [emptyRootNode];
   readonly helptext = helptextReplication;
 
   onSubmit(): void {

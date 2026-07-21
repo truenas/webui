@@ -500,10 +500,10 @@ export class DeviceFormComponent implements OnInit {
       const explorer = this.rawFileExplorer();
       const selectedNode = explorer?.lastSelectedNode();
 
-      if (selectedNode?.data?.type === ExplorerNodeType.File) {
+      if (selectedNode?.type === ExplorerNodeType.File) {
         // User selected an existing file from the tree
         this.rawFileForm.patchValue({ exists: true }, { emitEvent: false });
-      } else if (selectedNode?.data?.type === ExplorerNodeType.Directory) {
+      } else if (selectedNode?.type === ExplorerNodeType.Directory) {
         // User selected a directory - reset exists
         this.rawFileForm.patchValue({ exists: false }, { emitEvent: false });
       } else if (!this.rawFileForm.value.path) {
@@ -549,7 +549,7 @@ export class DeviceFormComponent implements OnInit {
     const hasSize = !!this.rawFileForm.value.size;
 
     // User selected an existing file from the tree
-    if (selectedNode?.data?.type === ExplorerNodeType.File) {
+    if (selectedNode?.type === ExplorerNodeType.File) {
       return true;
     }
 
