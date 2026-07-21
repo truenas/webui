@@ -10,6 +10,7 @@
     >
       <tn-select
         formControlName="tag"
+        [ariaLabel]="'Who' | translate"
         [options]="tags"
       ></tn-select>
     </tn-form-field>
@@ -78,6 +79,7 @@
         >
           <tn-select
             formControlName="basicPermission"
+            [ariaLabel]="'Permissions' | translate"
             [options]="basicPermissions"
           ></tn-select>
         </tn-form-field>
