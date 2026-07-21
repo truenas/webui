@@ -457,6 +457,29 @@ describe('OtherOptionsSectionComponent', () => {
       expect(await getSelectValue('casesensitivity')).toBe('Sensitive');
     });
 
+    it('preserves an explicit ACL Mode choice when the dataset preset is changed', async () => {
+      spectator.setInput({ parent: parentDataset });
+      spectator.setInput({ datasetPreset: DatasetPreset.Apps });
+
+      await (await getSelect('aclmode')).selectOption('Restricted');
+
+      // Changing the preset must not silently discard the user's explicit choice.
+      spectator.setInput({ datasetPreset: DatasetPreset.Multiprotocol });
+
+      expect(await getSelectValue('aclmode')).toBe('Restricted');
+    });
+
+    it('applies the preset ACL Mode default when the user has not changed it', async () => {
+      spectator.setInput({ parent: parentDataset });
+
+      // SMB forces Restricted; switching to a non-SMB preset restores the Passthrough default.
+      spectator.setInput({ datasetPreset: DatasetPreset.Smb });
+      expect(await getSelectValue('aclmode')).toBe('Restricted');
+
+      spectator.setInput({ datasetPreset: DatasetPreset.Apps });
+      expect(await getSelectValue('aclmode')).toBe('Passthrough');
+    });
+
     it('shows warning if user selects "Sync" as Disabled', async () => {
       spectator.setInput({
         parent: parentDataset,
