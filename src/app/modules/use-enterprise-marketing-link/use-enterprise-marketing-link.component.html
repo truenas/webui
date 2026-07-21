@@ -1,13 +1,30 @@
-<a
-  ixTest="use-enterprise-marketing-link"
-  target="_blank"
-  [href]="currentMessageHref()"
->
-  <span class="text-above">
-    {{ currentMessage() }}
-  </span>
+@let message = currentMessage();
+@let href = currentMessageHref();
 
-  <span>
-    {{ 'Explore TrueNAS Enterprise' | translate }}
-  </span>
-</a>
+@if (href) {
+  <a
+    ixTest="use-enterprise-marketing-link"
+    target="_blank"
+    [href]="href"
+  >
+    <span class="text-above">
+      {{ message.text | translate }}
+    </span>
+
+    <span>
+      {{ message.cta | translate }}
+    </span>
+  </a>
+} @else {
+  <div class="no-link" ixTest="use-enterprise-marketing-link">
+    <span class="text-above">
+      {{ message.text | translate }}
+    </span>
+
+    @if (message.cta) {
+      <span>
+        {{ message.cta | translate }}
+      </span>
+    }
+  </div>
+}
