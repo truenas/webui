@@ -1,3 +1,9 @@
 :host {
   display: block;
 }
+
+// TEMP: until @truenas/ui-components ships a full-width input on tn-button.
+// Consumers size the .oauth-button host to 100%; the inner button must follow.
+:host ::ng-deep .oauth-button button {
+  width: 100%;
+}

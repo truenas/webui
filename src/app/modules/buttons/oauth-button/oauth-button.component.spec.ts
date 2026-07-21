@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
@@ -39,8 +39,8 @@ describe('OauthButtonComponent', () => {
     spectator.setInput('oauthType', OauthButtonType.Gmail);
     spectator.setInput('oauthUrl', 'https://oauth/gmail?origin=');
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
-    expect(await button.getText()).toBe('Log In To Gmail');
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Gmail' }));
+    expect(await button.getLabel()).toBe('Log In To Gmail');
 
     await button.click();
     const window = spectator.inject<Window>(WINDOW);
@@ -51,15 +51,15 @@ describe('OauthButtonComponent', () => {
     );
 
     spectator.setInput('isLoggedIn', true);
-    expect(await button.getText()).toBe('Logged In To Gmail');
+    expect(await button.getLabel()).toBe('Logged In To Gmail');
   });
 
   it('shows Login In To Jira Button', async () => {
     spectator.setInput('oauthType', OauthButtonType.Jira);
     spectator.setInput('oauthUrl', 'https://oauth/jira?origin=');
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Login To Jira To Submit' }));
-    expect(await button.getText()).toBe('Login To Jira To Submit');
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Login To Jira To Submit' }));
+    expect(await button.getLabel()).toBe('Login To Jira To Submit');
 
     await button.click();
     const window = spectator.inject<Window>(WINDOW);
@@ -70,15 +70,15 @@ describe('OauthButtonComponent', () => {
     );
 
     spectator.setInput('isLoggedIn', true);
-    expect(await button.getText()).toBe('Logged In To Jira');
+    expect(await button.getLabel()).toBe('Logged In To Jira');
   });
 
   it('shows Login In To Provider Button', async () => {
     spectator.setInput('oauthType', OauthButtonType.Provider);
     spectator.setInput('oauthUrl', 'https://oauth/provider?origin=');
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Provider' }));
-    expect(await button.getText()).toBe('Log In To Provider');
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Provider' }));
+    expect(await button.getLabel()).toBe('Log In To Provider');
 
     await button.click();
     const window = spectator.inject<Window>(WINDOW);
@@ -89,7 +89,7 @@ describe('OauthButtonComponent', () => {
     );
 
     spectator.setInput('isLoggedIn', true);
-    expect(await button.getText()).toBe('Logged In To Provider');
+    expect(await button.getLabel()).toBe('Logged In To Provider');
   });
 
   it('disables button while oauth window is open', async () => {
@@ -100,7 +100,7 @@ describe('OauthButtonComponent', () => {
     spectator.setInput('oauthType', OauthButtonType.Jira);
     spectator.setInput('oauthUrl', 'https://oauth/jira?origin=');
 
-    const button = await loader.getHarness(MatButtonHarness);
+    const button = await loader.getHarness(TnButtonHarness);
 
     expect(await button.isDisabled()).toBe(false);
 

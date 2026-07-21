@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnDestroy, output, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { map, interval, takeWhile, finalize } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { MailSendMethod, MailOauthConfig } from 'app/interfaces/mail-config.interface';
@@ -9,7 +9,6 @@ import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { OauthJiraMessage } from 'app/modules/feedback/interfaces/file-ticket.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { OauthProviderData } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 
 @Component({
@@ -18,9 +17,7 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   styleUrls: ['./oauth-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    TestDirective,
-    TranslateModule,
+    TnButtonComponent,
   ],
 })
 export class OauthButtonComponent implements OnDestroy {

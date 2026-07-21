@@ -1,11 +1,8 @@
-<button
-  mat-button
-  type="button"
+<tn-button
   class="oauth-button"
-  [ixTest]="testId()"
+  [testId]="testId()"
   [disabled]="disabled() || oauthWindowOpen()"
-  [color]="isLoggedIn() ? 'accent' : 'primary'"
-  (click)="onOauthClicked()"
->
-  {{ buttonText() | translate }}
-</button>
+  [color]="isLoggedIn() ? 'secondary' : 'primary'"
+  [label]="buttonText()"
+  (onClick)="onOauthClicked()"
+></tn-button>

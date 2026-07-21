@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { TnInputHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
@@ -61,7 +60,7 @@ describe('OauthProviderComponent', () => {
   });
 
   it('opens a modal with authentication flow when Log In To Provider is pressed', async () => {
-    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Provider' }));
+    const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Provider' }));
     await loginButton.click();
 
     expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith(
@@ -77,7 +76,7 @@ describe('OauthProviderComponent', () => {
   });
 
   it('updates form with client_id and client_secret when oAuth callback is called', async () => {
-    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Provider' }));
+    const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Provider' }));
     await loginButton.click();
 
     spectator.click(spectator.query(byText('Configure manually')));
@@ -90,7 +89,7 @@ describe('OauthProviderComponent', () => {
     const authenticatedOutput = jest.fn();
     spectator.component.authenticated.subscribe(authenticatedOutput);
 
-    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Provider' }));
+    const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Provider' }));
     await loginButton.click();
 
     expect(authenticatedOutput).toHaveBeenCalledWith({
@@ -101,7 +100,7 @@ describe('OauthProviderComponent', () => {
   });
 
   it('calls removeEventListener when oAuth callback is called', async () => {
-    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Provider' }));
+    const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Provider' }));
     await loginButton.click();
 
     expect(spectator.inject<Window>(WINDOW).removeEventListener)
@@ -136,7 +135,7 @@ describe('OauthProviderComponent', () => {
       const configureLink = spectator.query(byText('Configure manually'));
       spectator.click(configureLink);
 
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Provider' }));
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Provider' }));
       await loginButton.click();
 
       const clientIdInput = await getInputOrNull('client_id');
